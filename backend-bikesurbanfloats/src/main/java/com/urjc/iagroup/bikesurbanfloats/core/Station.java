@@ -2,6 +2,8 @@ package com.urjc.iagroup.bikesurbanfloats.core;
 
 import java.util.ArrayList;
 
+import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+
 public class Station {
 
 	private ArrayList<Bike> bikes;
