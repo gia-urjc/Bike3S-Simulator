@@ -3,7 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats.events;
 import java.util.List;
 import java.util.ArrayList;
 
-public class EventUserArrivesStation extends EventUser {
+public class EventUserArrivesStationToRentBike extends EventUser {
 	private int time;
 
 	public List<Event> execute() {
