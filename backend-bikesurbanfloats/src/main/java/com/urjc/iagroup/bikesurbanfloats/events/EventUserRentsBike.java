@@ -2,26 +2,21 @@ package com.urjc.iagroup.bikesurbanfloats.events;
 
 import java.util.List;
 import java.util.ArrayList;
+import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
 public class EventUserRentsBike extends EventUser {
-	private Bike bike;
-	
-	public EventUserRentsBike(int instant, User user, Station station, Bike bike) {
-		super(instant, user, station, bike);
-		this.bike = bike;
-	}
-	
-	public Bike getBike() {
-		return bike;
+
+
+	public EventUserRentsBike(int instant, Person user, Station station) {
+		super(instant, user, station);
 	}
 
-	public void setBike(Bike bike) {
-		this.bike = bike;
-	}
 
 	public List<Event> execute() {
-		getUser().setBike(bike);
-		station.subtractBike();
+		getUser().removeBikeFrom(getStation());
+		List<Event> events = new ArrayList<Event>();
+		events.add(new EventUserWantsToLeaveBike(getInstant()+1, getUser(), getStation()));
+		return events; 
 		
 	}
 

@@ -1,19 +1,22 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
+import com.urjc.iagroup.bikesurbanfloats.entities.*; 
+
 public abstract class EventUser extends Event {
-	private User user;
+	private Person user;
 	private Station station;
 	
-	public EventUser(User user, Station station) {
-		this.user=user;
-		this.station=station;
+	public EventUser(int instant, Person user, Station station) {
+		super(instant);
+		this.user = user;
+		this.station = station;
 	}
 
-	public User getUser() {
+	public  Person getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Person user) {
 		this.user = user;
 	}
 

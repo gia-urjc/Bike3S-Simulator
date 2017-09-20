@@ -2,24 +2,32 @@ package com.urjc.iagroup.bikesurbanfloats.events;
 
 import java.util.List;
 import java.util.ArrayList;
+import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
-public class EventUserArrivesStationToRentBike extends EventUser {
+public class EventUserArrivesAtStationToRentBike extends EventUser {
 	private int time;
-
-	public List<Event> execute() {
-	List<Event> events=new ArrayList<Event>();
-	if (getStation().getBikes()>0) {
-		events.add(new EventUserRentsBike(getInstant()+time, user, station));
-		return evetns;
+	
+	public EventUserArrivesAtStationToRentBike 
+(int instant, Person user, Station station, int time) {
+		super(instant, user, station);
+		this.time = time;
 	}
-	else {
-		//if there aren't bikes, user decides to go to another station or to leave the system
-		Station decision=user.decides();
-		if (decision!=null) {   //if user decides to go to another station
-			int newTime = user.getLocation().distance(decision.getLocation());   //time that user takes in arriving at the new station
-			events.add(new EventUserWantsToRentBike(getInstant()+1, user, decision, newTime));
+	public List<Event> execute() {
+		getUser().setPosition(getStation().getPosition());
+		List<Event> events = new ArrayList<Event>();
+		if (getStation().availableBikes() > 0) {
+					events.add(new EventUserRentsBike(getInstant()+1, getUser(), getStation()));
+					return events;
 		}
-		else   //user leaves the system
-			return events;
+		else {
+			//if there aren't bikes, user decides to go to another station or to leave the system
+			Station decision = getUser().determineDestination();
+			if (decision != null) {   //if user decides to go to another station
+				events.add(new EventUserWantsToRentBike(getInstant()+1, getUser(), decision));
+				return events;
+			}
+			else   //user leaves the system
+				return events;
+		}
 	}
 }

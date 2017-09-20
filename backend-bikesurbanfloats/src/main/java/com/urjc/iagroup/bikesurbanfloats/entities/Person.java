@@ -10,16 +10,16 @@ public class Person {
 
     private GeoPoint position;
 
-    private Station destination;
+//    private Station destination;
     private Bike bike;
 
-    private Double walkingVelocity;
-    private Double cyclingVelocity;
+    private Double walkingVelocity;  // meters/second
+    private Double cyclingVelocity;  // meters/second
 
     public Person(GeoPoint position) {
         this.position = position;
 
-        this.destination = null;
+//        this.destination = null;
         this.bike = null;
 
         // random velocity between 3km/h and 7km/h in m/s
@@ -42,9 +42,9 @@ public class Person {
         this.position.setLongitude(longitude);
     }
 
-    public Station getDestination() {
+/*    public Station getDestination() {
         return destination;
-    }
+    } */
 
     public Bike getBike() {
         return bike;
@@ -88,8 +88,20 @@ public class Person {
         return bike == null ? walkingVelocity : cyclingVelocity;
     }
 
+		/*
+		 * time that user takes in arriving at the new station
+		 * time = distance/velocity 
+		 */
+				   
+		public int timeTo(@NotNull GeoPoint destination) {
+   // time in seconds
+			return (position.distanceTo(destination.getPosition()))/getAvarageVelocity();
+		}
+
+
     public Station determineDestination() {
         // TODO: read available stations from system and choose a 'reasonable' one (e.g. the closest for now)
+    	   Station destination;
         return destination;
     }
 }

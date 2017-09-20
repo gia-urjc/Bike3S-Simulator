@@ -1,5 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
+import java.util.List;
+
 public abstract class Event implements Comparable<Event> {
 	private int instant;
 	
@@ -21,13 +23,11 @@ public abstract class Event implements Comparable<Event> {
 	
 	public abstract List<Event> execute();
 	
-  public int compareTo(Object o) {
-	  if (!(o instanceof Event))
-		  throw new ClassCastException();
-	  Event event=(Event)o;
-	  if (this.instant<event.instant)
+  public int compareTo(Event event) {
+	  
+	  if (this.instant < event.instant)
 		  return -1;
-	  else if (this.instant>event.instant)
+	  else if (this.instant > event.instant)
 		  return 1;
 	  return 0;
   }
