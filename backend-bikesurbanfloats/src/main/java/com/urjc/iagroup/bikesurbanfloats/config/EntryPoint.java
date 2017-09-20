@@ -3,9 +3,6 @@ package com.urjc.iagroup.bikesurbanfloats.config;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 public class EntryPoint {
-
-	private static final String POISON_DISTRIBUTION = "poisson";
-	
 	
 	private GeoPoint position;
 	private String distribution;

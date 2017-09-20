@@ -11,12 +11,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
-public class ConfigJacksonReader {
+public class ConfigJsonReader {
 	
 	private ConfigInfo configInfo = new ConfigInfo();
 	private String configFile;
 	
-	public ConfigJacksonReader(String configFile) {
+	public ConfigJsonReader(String configFile) {
 		this.configFile = configFile;
 	}
 
