@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
 public class ConfigJacksonReader {
 	
@@ -30,7 +31,7 @@ public class ConfigJacksonReader {
 	public ConfigInfo readJson() throws FileNotFoundException {
 		
 		GsonBuilder gsonBuilder = new GsonBuilder();
-		gsonBuilder.registerTypeAdapter(ConfigInfo.class, new ConfigInfoDeserializer());
+		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer());
 		Gson gson = gsonBuilder.create();
 		FileInputStream inputStreamJson = new FileInputStream(new File(configFile));
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
