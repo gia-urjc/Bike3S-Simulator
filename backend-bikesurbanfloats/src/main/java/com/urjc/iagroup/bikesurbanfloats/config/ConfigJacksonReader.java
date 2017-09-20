@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class ConfigJacksonReader {
 	
@@ -28,12 +29,12 @@ public class ConfigJacksonReader {
 	
 	public ConfigInfo readJson() throws FileNotFoundException {
 		
-		Gson gson = new Gson();
+		GsonBuilder gsonBuilder = new GsonBuilder();
+		gsonBuilder.registerTypeAdapter(ConfigInfo.class, new ConfigInfoDeserializer());
+		Gson gson = gsonBuilder.create();
 		FileInputStream inputStreamJson = new FileInputStream(new File(configFile));
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		this.configInfo = gson.fromJson(bufferedReader, ConfigInfo.class);
-		
-		System.out.println(configInfo.toString());
 		 
 		return this.configInfo;
 	}

@@ -15,7 +15,7 @@ public class Application {
 
 	
     public static void main(String[] args) {
-        ConfigJacksonReader jsonReader = new ConfigJacksonReader("configuration/config.json");
+        ConfigJacksonReader jsonReader = new ConfigJacksonReader("configuration/config_bikes_number.json");
         ConfigInfo config;
 		try {
 			config = jsonReader.readJson();
@@ -23,7 +23,6 @@ public class Application {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-        
+		} 
     }
 }

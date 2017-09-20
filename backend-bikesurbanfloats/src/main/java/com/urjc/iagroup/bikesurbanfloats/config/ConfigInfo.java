@@ -2,7 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.config;
 
 import java.util.ArrayList;
 
-import com.urjc.iagroup.bikesurbanfloats.core.Station;
+import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
 public class ConfigInfo {
 	
@@ -15,8 +15,9 @@ public class ConfigInfo {
 		this.setEntryPoints(new ArrayList<>());
 	}
 	
-	public ConfigInfo(ArrayList<Station> stations, String distribution) {
+	public ConfigInfo(ArrayList<Station> stations, ArrayList<EntryPoint> entryPoints) {
 		this.stations = stations;
+		this.entryPoints = entryPoints;
 	}
 	
 	public ArrayList<Station> getStations() {
