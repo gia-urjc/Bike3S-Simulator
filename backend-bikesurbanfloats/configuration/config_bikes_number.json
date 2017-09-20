@@ -1,0 +1,43 @@
+{
+  "stations" : [
+  {
+    "bikes": 5,
+    "position": {
+      "latitude" : 40.2831091,
+      "longitude" : -3.8216838
+    },
+    "capacity" : 10
+  },
+  {
+    "bikes": 1,
+    "position": {
+      "latitude" : 40.2849756,
+      "longitude" : -3.8219115
+    },
+    "capacity" : 9
+  },
+  {
+    "bikes": 2,
+    "position": {
+      "latitude" : 40.2849756,
+      "longitude" : -3.8165869
+    },
+    "capacity" : 10
+  },
+  {
+    "bikes": 9,
+    "position": {
+      "latitude" : 40.279191,
+      "longitude" : -3.8165869
+    },
+    "capacity" : 8
+  }],
+  "entryPoints" : [{
+    "position" : {
+      "latitude" : 40.28144,
+      "longitude" : -3.8157126
+    },
+    "distribution" : "poisson",
+    "parameterDistribution": 10.0
+  }]
+}
