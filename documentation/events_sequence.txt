@@ -1,0 +1,6 @@
+1: Users Appears--->2: User Arrives At Station To Rent a Bike
+2: User Arrives At Station To Rent a Bike--->If there are bikes--->3: User Arrives At Station to Leave the Bike OR 4: User Wants To Leave the Bike
+2: User Arrives At Station To Rent a Bike--->If there are not bikes--->2: User Arrives At Station To Rent a Bike OR user leaves the system
+3: User Arrives At Station To Leave the Bike--->if there are not slots--->3: User Arrives At Station To Leave the Bike
+3: User Arrives At Station To Leave the Bike--->if there are slots--->user leaves the system 
+4: User Wants To Leave the Bike--->3: User Arrives At Station To Leave the Bike
