@@ -20,6 +20,8 @@ public class EventUserArrivesAtStationToReturnBike extends Event {
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
 
+        user.setPosition(station.getPosition());
+
         if (!user.returnBikeTo(station)) {
             Station destination = user.determineDestination();
             int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
