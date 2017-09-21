@@ -1,8 +1,8 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
 import java.util.List;
-
-import com.urjc.iagroup.bikesurbanfloats.entities.Person;
+import java.util.ArrayList;
+import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
 public class EventUserWantsToLeaveBike extends Event{
 
@@ -22,10 +22,10 @@ public class EventUserWantsToLeaveBike extends Event{
 	}
 	
 	public List<Event> execute() {
-		List<Event> newEvents = new ArrayList<Evet>();
+		List<Event> newEvents = new ArrayList<Event>();
 		Station decision = user.determineDestination();
-		int arrivalTime = user.timToReach(decision.getPosition());
-		newEvents.add(new EventUserArrivesAtStationToLeaveBike(arrivalTime, user, decision));
+		int arrivalTime = user.timeToReach(decision.getPosition());
+		newEvents.add(new EventUserArrivesAtStationToReturnBike(arrivalTime, user, decision));
 		return newEvents;
 		
 	}
