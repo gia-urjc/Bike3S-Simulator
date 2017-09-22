@@ -27,7 +27,7 @@ public class EventUserArrivesAtStationToRentBike extends Event {
             int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
             newEvents.add(new EventUserArrivesAtStationToReturnBike(arrivalTime, user, destination));
         } else {
-            // TODO: let user decide to go to another station or to leave the simulation
+            // TODO: let user decides to go to another station or to leave the simulation
         }
 
         return newEvents;
