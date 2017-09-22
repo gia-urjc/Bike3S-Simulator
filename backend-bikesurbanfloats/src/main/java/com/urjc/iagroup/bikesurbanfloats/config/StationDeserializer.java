@@ -25,7 +25,7 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 		if(jsonElementBikes.isJsonArray()) {
 			JsonArray jsonArrayBikes = jsonElementBikes.getAsJsonArray();
 			for(int j = 0; j < jsonArrayBikes.size(); j++) {
-				Bike bike = gson.fromJson(json, Bike.class);
+				Bike bike = gson.fromJson(jsonArrayBikes.get(j), Bike.class);
 				bikes.add(bike);
 			}
 		}

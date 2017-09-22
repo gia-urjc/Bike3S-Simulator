@@ -9,6 +9,7 @@ public class ConfigInfo {
 
 	private ArrayList<Station> stations;
 	private ArrayList<EntryPoint> entryPoints;
+
 	
 	public ConfigInfo() {
 		this.stations = new ArrayList<>();

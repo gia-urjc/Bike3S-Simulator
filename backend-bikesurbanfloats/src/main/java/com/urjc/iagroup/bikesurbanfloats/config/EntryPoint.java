@@ -4,22 +4,22 @@ import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 public class EntryPoint {
 	
-	private GeoPoint position;
+	private GeoPoint location;
 	private String distribution;
 	private double parameterDistribution;
 
 	public EntryPoint(GeoPoint location, String distribution, double parameterDistribution) {
-		this.position = location;
+		this.location = location;
 		this.distribution = distribution;
 		this.parameterDistribution = parameterDistribution;
 	}
 
 	public GeoPoint getLocation() {
-		return position;
+		return location;
 	}
 
 	public void setLocation(GeoPoint location) {
-		this.position = location;
+		this.location = location;
 	}
 
 	public String getDistribution() {
@@ -40,7 +40,7 @@ public class EntryPoint {
 	
 //	public List<Event> generateEvents() {
 //		if(this.distribution.equals(POISON_DISTRIBUTION)) {
-//			// To do
+//			// TODO: Poisson distribution
 //		}
 //	}
 	

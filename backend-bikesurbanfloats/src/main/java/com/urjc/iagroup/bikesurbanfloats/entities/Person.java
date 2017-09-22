@@ -6,7 +6,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import javax.naming.ServiceUnavailableException;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Person {
+public abstract class Person {
 
     private GeoPoint position;
 
@@ -88,8 +88,7 @@ public class Person {
         return bike == null ? walkingVelocity : cyclingVelocity;
     }
 
-    public Station determineDestination() {
-        // TODO: read available stations from system and choose a 'reasonable' one (e.g. the closest for now)
-        return destination;
-    }
+    // TODO: Posible
+    abstract Station determineDestination();
+    
 }
