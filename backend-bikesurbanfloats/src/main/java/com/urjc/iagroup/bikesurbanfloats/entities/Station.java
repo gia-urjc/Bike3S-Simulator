@@ -12,18 +12,30 @@ public class Station {
 
     private int capacity;
     private LinkedList<Bike> bikes;
+    private int reservedBikes;
 
     public Station(@NotNull final GeoPoint position, int capacity, LinkedList<Bike> bikes) {
         this.position = position;
         this.capacity  = capacity;
         this.bikes = bikes;
+        this.reservedBikes = 0;
     }
 
     public GeoPoint getPosition() {
         return position;
     }
+    
+    
 
-    public int availableBikes() {
+    public int getReservedBikes() {
+		return reservedBikes;
+	}
+
+	public void setReservedBikes(int reservedBikes) {
+		this.reservedBikes = reservedBikes;
+	}
+
+	public int availableBikes() {
         return this.bikes.size();
     }
     
