@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import com.sun.istack.internal.NotNull;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 import javax.naming.ServiceUnavailableException;
@@ -12,7 +13,7 @@ public class Station {
     private int capacity;
     private LinkedList<Bike> bikes;
 
-    public Station(final GeoPoint position, int capacity, LinkedList<Bike> bikes) {
+    public Station(@NotNull final GeoPoint position, int capacity, LinkedList<Bike> bikes) {
         this.position = position;
         this.capacity  = capacity;
         this.bikes = bikes;
