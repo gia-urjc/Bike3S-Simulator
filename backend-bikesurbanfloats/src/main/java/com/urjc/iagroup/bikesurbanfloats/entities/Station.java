@@ -43,4 +43,12 @@ public class Station {
         }
         this.bikes.add(bike);
     }
+    
+    @Override
+    public String toString() {
+		String result = position.toString();
+		result += "Capacity: " + capacity;
+		result += "Number of bikes: " + bikes;
+    	return result;
+    }
 }

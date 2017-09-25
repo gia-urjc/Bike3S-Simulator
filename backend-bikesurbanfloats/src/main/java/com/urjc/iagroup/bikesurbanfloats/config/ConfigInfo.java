@@ -9,16 +9,18 @@ public class ConfigInfo {
 
 	private ArrayList<Station> stations;
 	private ArrayList<EntryPoint> entryPoints;
-
+	private final int timeReserve;
 	
 	public ConfigInfo() {
 		this.stations = new ArrayList<>();
 		this.setEntryPoints(new ArrayList<>());
+		this.timeReserve = 0; 
 	}
 	
-	public ConfigInfo(ArrayList<Station> stations, ArrayList<EntryPoint> entryPoints) {
+	public ConfigInfo(ArrayList<Station> stations, ArrayList<EntryPoint> entryPoints, int timeReserve) {
 		this.stations = stations;
 		this.entryPoints = entryPoints;
+		this.timeReserve = timeReserve;
 	}
 	
 	public ArrayList<Station> getStations() {
@@ -39,7 +41,9 @@ public class ConfigInfo {
 
 	@Override
 	public String toString() {
-		return "Stations=" + stations + ", entryPoints=" + entryPoints + "]";
+		String result = "====================\n";
+		result += "prueba";
+		return result;
 	}
 
 	

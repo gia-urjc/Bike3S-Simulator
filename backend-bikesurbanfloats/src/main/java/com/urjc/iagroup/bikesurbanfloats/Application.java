@@ -19,7 +19,7 @@ public class Application {
         ConfigInfo config;
 		try {
 			config = jsonReader.readJson();
-			config.toString();
+			System.out.println(config.toString());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

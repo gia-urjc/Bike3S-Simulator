@@ -39,5 +39,6 @@
     },
     "distribution" : "poisson",
     "parameterDistribution": 10.0
-  }]
+  }],
+  "timeReserve" : 30
 }
