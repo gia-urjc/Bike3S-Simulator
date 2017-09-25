@@ -23,6 +23,7 @@ public class EventUserArrivesAtStationToRentBike extends Event {
         user.setPosition(station.getPosition());
 
         if (user.removeBikeFrom(station)) {
+        	// TODO: user can decide to go to a point in the city or to go go another station to return the bike 
             Station destination = user.determineDestination();
             int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
             newEvents.add(new EventUserArrivesAtStationToReturnBike(arrivalTime, user, destination));

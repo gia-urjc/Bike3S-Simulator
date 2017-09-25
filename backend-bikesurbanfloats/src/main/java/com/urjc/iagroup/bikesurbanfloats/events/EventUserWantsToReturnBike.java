@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.ArrayList;
 import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
-public class EventUserWantsToLeaveBike extends Event{
+public class EventUserWantsToReturnBike extends Event{
 
 	private Person user;
 	
-	public EventUserWantsToLeaveBike(int instant, Person user) {
+	public EventUserWantsToReturnBike(int instant, Person user) {
 		super(instant);
 		this.user = user;
 	}

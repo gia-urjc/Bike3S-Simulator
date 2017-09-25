@@ -97,4 +97,9 @@ public class Person {
         // TODO: read available stations from system and choose a 'reasonable' one (e.g. the closest for now)
         return null;
     }
+    
+    public boolean wantsToGoDirectlyToStation() {
+    	// TODO: user decides to go to a station or to ride the bike to a point in the city
+    	return true;
+    }
 }

@@ -7,5 +7,6 @@ import java.util.PriorityQueue;
 
 
 public class SimulationEngine {
+	PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
 
 }
