@@ -53,8 +53,8 @@ public class GeoPoint {
     
     @Override
     public String toString() {
-    	String result = "Latitude: " + Double.toString(latitude) + " \n";
-    	result += "Longitude: " + Double.toString(longitude) + " \n";
+    	String result = "Latitude: " + Double.toString(latitude);
+    	result += "| Longitude: " + Double.toString(longitude) + " \n";
     	return result;
     }
 }

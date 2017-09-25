@@ -47,9 +47,9 @@ public class Station {
     
     @Override
     public String toString() {
-		String result = position.toString();
-		result += "Capacity: " + capacity;
-		result += "Number of bikes: " + bikes;
+		String result = "| " + position.toString();
+		result += "| Capacity: " + capacity;
+		result += "| Number of bikes: " + bikes.size() + "\n";
     	return result;
     }
 }

@@ -43,6 +43,10 @@ public abstract class Person {
     public Bike getBike() {
         return bike;
     }
+    
+    public boolean hasBike() {
+    	return bike != null ? true : false;
+    }
 
     public boolean removeBikeFrom(Station station) {
         if (bike != null) {
@@ -96,5 +100,14 @@ public abstract class Person {
     public abstract Station determineDestination();
     
     public abstract boolean wantsToGoDirectlyToStation();
+    
+    @Override
+    public String toString() {
+    	String result = position.toString();
+    	result += " | Has Bike: " + hasBike();
+    	result += "| Walking Velocity: " + walkingVelocity;
+    	result += "| Cycling Velocity: " + cyclingVelocity + "\n";
+    	return result;
+    }
     
 }
