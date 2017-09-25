@@ -6,7 +6,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import javax.naming.ServiceUnavailableException;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Person {
+public abstract class Person {
 
     private GeoPoint position;
 
@@ -93,13 +93,8 @@ public class Person {
     }
 
 
-    public Station determineDestination() {
-        // TODO: read available stations from system and choose a 'reasonable' one (e.g. the closest for now)
-        return null;
-    }
+    public abstract Station determineDestination();
     
-    public boolean wantsToGoDirectlyToStation() {
-    	// TODO: user decides to go to a station or to ride the bike to a point in the city
-    	return true;
-    }
+    public abstract boolean wantsToGoDirectlyToStation();
+    
 }
