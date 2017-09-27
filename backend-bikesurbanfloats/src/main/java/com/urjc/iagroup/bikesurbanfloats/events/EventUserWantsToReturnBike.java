@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
 public class EventUserWantsToReturnBike extends Event {
-
 	private Person user;
 	
 	public EventUserWantsToReturnBike(int instant, Person user) {
@@ -23,9 +22,16 @@ public class EventUserWantsToReturnBike extends Event {
 	
 	public List<Event> execute() {
 		List<Event> newEvents = new ArrayList<Event>();
-		Station decision = user.determineStation();
+
+		Station destination = user.determineStation();
 		int arrivalTime = user.timeToReach(decision.getPosition());
-		newEvents.add(new EventUserArrivesAtStationToReturnBike(arrivalTime, user, decision));
+		
+		if ( (user.decidesToReserveSlot(destination)) && (ConfigInfo.reservationTime < arrivalTime) ) {
+			user.cancelsSlotReservation(destination);
+			newEvents.add(new(getInstant() + arrivalTime, user));
+		}
+		else
+			newEvents.add(new EventUserArrivesAtStationToReturnBike(getInstant() + arrivalTime, user, destination));
 		return newEvents;
 		
 	}

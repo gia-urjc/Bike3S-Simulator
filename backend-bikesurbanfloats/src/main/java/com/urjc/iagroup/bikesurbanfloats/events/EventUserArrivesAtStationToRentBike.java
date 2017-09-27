@@ -34,7 +34,8 @@ public class EventUserArrivesAtStationToRentBike extends Event {
             	user.cancelsSlotReservation(destination);
             	newEvents.add(new EventSlotReservationTimeout(getInstant() + ConfigInfo.reservationTime, user));
             }
-            newEvents.add(new EventUserArrivesAtStationToReturnBike(getInstant() + arrivalTime, user, destination));
+            else
+            	newEvents.add(new EventUserArrivesAtStationToReturnBike(getInstant() + arrivalTime, user, destination));
         	}
         	else {
         		GeoPoint point = user.decidesNextPoint();

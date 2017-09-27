@@ -34,7 +34,8 @@ public class EventBikeReservationTimeout extends Event {
 	        		user.cancelsBikeReservation(destination);
 	       			newEvents.add(new EventBikeReservationTimeout(this.getInstant() + ConfigInfo.reservationTime, user ));
 	        	}
-	      			newEvents.add(new EventUserArrivesAtStationToRentBike(this.getInstant() + arrivalTime, user, destination));
+	        	else
+	        		newEvents.add(new EventUserArrivesAtStationToRentBike(this.getInstant() + arrivalTime, user, destination));
 	        }
 	 
 		return newEvents;
