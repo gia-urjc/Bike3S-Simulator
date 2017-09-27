@@ -2,6 +2,8 @@ package com.urjc.iagroup.bikesurbanfloats.events;
 
 import java.util.List;
 import java.util.ArrayList;
+
+import com.urjc.iagroup.bikesurbanfloats.config.ConfigInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
 public class EventUserWantsToReturnBike extends Event {
@@ -24,7 +26,7 @@ public class EventUserWantsToReturnBike extends Event {
 		List<Event> newEvents = new ArrayList<Event>();
 
 		Station destination = user.determineStation();
-		int arrivalTime = user.timeToReach(decision.getPosition());
+		int arrivalTime = user.timeToReach(destination.getPosition());
 		
 		if ( (user.decidesToReserveSlot(destination)) && (ConfigInfo.reservationTime < arrivalTime) ) {
 			user.cancelsSlotReservation(destination);
