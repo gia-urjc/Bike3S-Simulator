@@ -9,16 +9,21 @@ public class ConfigInfo {
 
 	private ArrayList<Station> stations;
 	private ArrayList<EntryPoint> entryPoints;
-
+	private final int timeReserve;
+	private final int totalTimeSimulation;
 	
 	public ConfigInfo() {
 		this.stations = new ArrayList<>();
 		this.setEntryPoints(new ArrayList<>());
+		this.timeReserve = 0; 
+		this.totalTimeSimulation = 0;
 	}
 	
-	public ConfigInfo(ArrayList<Station> stations, ArrayList<EntryPoint> entryPoints) {
+	public ConfigInfo(ArrayList<Station> stations, ArrayList<EntryPoint> entryPoints, int timeReserve, int totalTimeSimulation) {
 		this.stations = stations;
 		this.entryPoints = entryPoints;
+		this.timeReserve = timeReserve;
+		this.totalTimeSimulation = totalTimeSimulation;
 	}
 	
 	public ArrayList<Station> getStations() {
@@ -36,10 +41,44 @@ public class ConfigInfo {
 	public void setEntryPoints(ArrayList<EntryPoint> entryPoints) {
 		this.entryPoints = entryPoints;
 	}
+	
+	public int getTotalTimeSimulation() {
+		return totalTimeSimulation;
+	}
 
 	@Override
 	public String toString() {
-		return "Stations=" + stations + ", entryPoints=" + entryPoints + "]";
+		String result = "==============\n";
+		result += "Configuration\n";
+		result += "==============\n";
+		result += "--------------\n";
+		result += "Stations\n";
+		result += "--------------\n";
+		int index = 1;
+		for(Station s: stations) {
+			result += "Station " + index + "\n";
+			result += "\n";
+			result += s.toString();
+			result += "\n";
+			index++;
+		}
+		result += "--------------\n";
+		result += "Entry Points\n";
+		result += "--------------\n";
+		
+		index = 1;
+		for(EntryPoint e: entryPoints) {
+			result += "EntryPoint " + index + "\n";
+			result += "\n";
+			result += e.toString();
+			result += "\n";
+			index++;
+		}
+		result += "--------------\n";
+		result += "Reservation times\n";
+		result += "--------------\n";
+		result += "Time Reserve: " + timeReserve + "\n"; 
+		return result;
 	}
 
 	

@@ -49,6 +49,10 @@ public abstract class Person {
     public Bike getBike() {
         return bike;
     }
+    
+    public boolean hasBike() {
+    	return bike != null ? true : false;
+    }
 
     public boolean hasReservedBike() {
 		return reservedBike;
@@ -149,5 +153,14 @@ public abstract class Person {
     // returns: true -> user goes to a station; false -> user rides his bike to a site which isn't a station
     public abstract boolean decidesToReturnBike();
 
+    
+    @Override
+    public String toString() {
+    	String result = position.toString();
+    	result += " | Has Bike: " + hasBike();
+    	result += "| Walking Velocity: " + walkingVelocity;
+    	result += "| Cycling Velocity: " + cyclingVelocity + "\n";
+    	return result;
+    }
     
 }

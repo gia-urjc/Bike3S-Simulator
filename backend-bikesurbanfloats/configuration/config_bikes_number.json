@@ -37,7 +37,9 @@
       "latitude" : 40.28144,
       "longitude" : -3.8157126
     },
-    "distribution" : "poisson",
-    "parameterDistribution": 10.0
-  }]
+    "distribution" : "POISSON",
+    "parameterDistribution": 10
+  }],
+  "timeReserve" : 30,
+  "totalTimeSimulation" : 300
 }

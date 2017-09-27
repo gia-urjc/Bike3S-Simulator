@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 
 import com.urjc.iagroup.bikesurbanfloats.config.ConfigInfo;
 import com.urjc.iagroup.bikesurbanfloats.config.ConfigJsonReader;
+import com.urjc.iagroup.bikesurbanfloats.config.EntryPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.MathDistributions;
 
 /**
  * Hello world!
@@ -19,7 +21,10 @@ public class Application {
         ConfigInfo config;
 		try {
 			config = jsonReader.readJson();
-			config.toString();
+			System.out.println(config.toString());
+			for(EntryPoint e: config.getEntryPoints()) {
+				e.generateEvents(10000);
+			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
