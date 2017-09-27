@@ -1,7 +1,6 @@
-package com.urjc.iagroup.bikesurbanfloats.config;
+package com.urjc.iagroup.bikesurbanfloats.config.deserialize;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.google.gson.Gson;
@@ -9,7 +8,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
@@ -27,7 +25,7 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 		if(jsonElementBikes.isJsonArray()) {
 			JsonArray jsonArrayBikes = jsonElementBikes.getAsJsonArray();
 			for(int j = 0; j < jsonArrayBikes.size(); j++) {
-				Bike bike = gson.fromJson(json, Bike.class);
+				Bike bike = gson.fromJson(jsonArrayBikes.get(j), Bike.class);
 				bikes.add(bike);
 			}
 		}

@@ -50,4 +50,11 @@ public class GeoPoint {
     private Double haversine(Double value) {
         return Math.pow(Math.sin(value / 2), 2);
     }
+    
+    @Override
+    public String toString() {
+    	String result = "Latitude: " + Double.toString(latitude);
+    	result += "| Longitude: " + Double.toString(longitude) + " \n";
+    	return result;
+    }
 }

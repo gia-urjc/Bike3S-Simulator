@@ -1,8 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.ArrayList;
-import java.util.Random;
-
 import com.urjc.iagroup.bikesurbanfloats.config.ConfigInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
@@ -14,7 +12,7 @@ public class PersonTest extends Person {
 	}
 
 	@Override
-	public Station determineDestination() {
+	public Station determineStation() {
 		ArrayList<Station> stations = ConfigInfo.stations;
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
@@ -34,9 +32,27 @@ public class PersonTest extends Person {
 	}
 
 	@Override
-	public boolean wantsToGoDirectlyToStation() {
-		Random random = new Random();
-	    return random.nextBoolean();
+	public boolean decidesToReserveBike(Station station) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean decidesToReserveSlot(Station station) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public GeoPoint decidesNextPoint() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean decidesToReturnBike() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -25,24 +25,11 @@
     "capacity" : 10
   },
   {
-    "bikes": 9,
+    "bikes": 8,
     "position": {
       "latitude" : 40.279191,
       "longitude" : -3.8165869
     },
     "capacity" : 8
-<<<<<<< Updated upstream:backend-bikesurbanfloats/configuration/config_bikes_number.json
-  }],
-  "entryPoints" : [{
-    "position" : {
-      "latitude" : 40.28144,
-      "longitude" : -3.8157126
-    },
-    "distribution" : "poisson",
-    "parameterDistribution": 10.0
   }]
 }
-=======
-  }]
-}
->>>>>>> Stashed changes:backend-bikesurbanfloats/configuration/config_stations.json

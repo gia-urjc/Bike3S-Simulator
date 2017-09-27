@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -13,27 +12,17 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.urjc.iagroup.bikesurbanfloats.config.deserialize.StationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
-public class ConfigJacksonReader {
+public class ConfigJsonReader {
 	
 	public final static String JSON_ATR_STATION = "stations";
 	public final static String JSON_ATR_ENTRYPOINTS = "entryPoints";
 	public final static String JSON_ATR_TIME_RESERVE = "reservationTime";
 	public final static String JSON_ATR_TIME_SIMULATION = "totalTimeSimulation";
 	
-<<<<<<< Updated upstream:backend-bikesurbanfloats/src/main/java/com/urjc/iagroup/bikesurbanfloats/config/ConfigJacksonReader.java
-	public ConfigJacksonReader(String configFile) {
-		this.configFile = configFile;
-	}
 
-	public ConfigInfo getConfigInfo() {
-		return configInfo;
-	}
-
-	public void setConfigInfo(ConfigInfo configInfo) {
-		this.configInfo = configInfo;
-=======
 	private String stationsFileName;
 	private String entryPointsFileName;
 	private String configSimulationFileName;
@@ -42,8 +31,6 @@ public class ConfigJacksonReader {
 		this.stationsFileName = stationsFileName;
 		this.entryPointsFileName = entryPointsFileName;
 		this.configSimulationFileName = configSimulationFileName;
-		
->>>>>>> Stashed changes:backend-bikesurbanfloats/src/main/java/com/urjc/iagroup/bikesurbanfloats/config/ConfigJsonReader.java
 	}
 	
 	public void readJson() throws FileNotFoundException {
