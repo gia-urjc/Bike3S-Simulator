@@ -13,34 +13,51 @@ public class Station {
     private int capacity;
     private LinkedList<Bike> bikes;
     private int reservedBikes;
+    private int reservedSlots;
 
     public Station(@NotNull final GeoPoint position, int capacity, LinkedList<Bike> bikes) {
         this.position = position;
         this.capacity  = capacity;
         this.bikes = bikes;
         this.reservedBikes = 0;
+        this.reservedSlots = 0;
     }
 
     public GeoPoint getPosition() {
         return position;
     }
     
-    
-
+   
     public int getReservedBikes() {
 		return reservedBikes;
 	}
 
-	public void setReservedBikes(int reservedBikes) {
-		this.reservedBikes = reservedBikes;
+	public void reservesBike() {
+		this.reservedBikes++;
+	}
+	
+	public void cancelsBikeReservation() {
+		this.reservedBikes--;
+	}
+	
+	public int getReservedSlots() {
+		return reservedSlots;
+	}
+	
+	public void reservesSlot() {
+		this.reservedSlots++;
+	}
+	
+	public void cancelsSlotReservation() {
+		this.reservedSlots--;
 	}
 
 	public int availableBikes() {
-        return this.bikes.size();
+        return bikes.size() - reservedBikes;
     }
     
     public int availableSlots() {
-        return this.capacity - availableBikes();
+        return this.capacity - availableBikes() - reservedSlots;
     }
 
     public Bike removeBike() throws ServiceUnavailableException {

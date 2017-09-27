@@ -14,6 +14,10 @@ public abstract class Person {
 
     private Double walkingVelocity;  // meters/second
     private Double cyclingVelocity;  // meters/second
+    
+    private boolean reservedBike;
+    private boolean reservedSlot;
+    
 
     public Person(@NotNull GeoPoint position) {
         this.position = position;
@@ -25,6 +29,8 @@ public abstract class Person {
 
         // random velocity between 10km/h and 20km/h in m/s
         this.cyclingVelocity = ThreadLocalRandom.current().nextInt(10, 21) / 3.6;
+        this.reservedBike = false;
+        this.reservedSlot = false;
     }
 
     public GeoPoint getPosition() {
@@ -44,12 +50,48 @@ public abstract class Person {
         return bike;
     }
 
-    public boolean removeBikeFrom(Station station) {
+    public boolean hasReservedBike() {
+		return reservedBike;
+	}
+    
+	public boolean hasReservedSlot() {
+		return reservedSlot;
+	}
+
+	public void setReservedSlot(boolean reservedSlot) {
+		this.reservedSlot = reservedSlot;
+	}
+
+	public void reservesBike(Station station) {
+		this.reservedBike = true;
+		station.reservesBike();
+	}
+	
+	public void reservesSlot(Station station) {
+		this.reservedSlot = true;
+		station.reservesSlot();
+	}
+	
+	public void cancelsBikeReservation(Station station) {
+		this.reservedBike = false;
+		station.cancelsBikeReservation();
+	}
+	
+	public void cancelsSlotReservation(Station station) {
+		this.reservedSlot = false;
+		station.cancelsSlotReservation();
+	}
+
+	public boolean removeBikeFrom(Station station) {
         if (bike != null) {
             // TODO: log warning (or throw error?)
             return false;
         }
-
+        
+        if (hasReservedBike())
+        	// first, reservation is cancelled to let a bike available at station to make sure one bike is available for take away
+        	cancelsBikeReservation(station);
+         
         try {
             this.bike = station.removeBike();
         } catch (ServiceUnavailableException e) {
@@ -92,9 +134,20 @@ public abstract class Person {
         return (int) Math.round(position.distanceTo(destination) / getAverageVelocity());
     }
 
-
-    public abstract Station determineDestination();
+    // returns: station = null -> user leaves the system
+    public abstract Station determineStation();
     
-    public abstract boolean wantsToGoDirectlyToStation();
+    // it musts call reservesBike method inside it 
+    public abstract boolean decidesToReserveBike(Station station);
+    
+    // it musts call reservesSlot method inside it 
+    public abstract boolean decidesToReserveSlot(Station station);
+
+    // returns: user decides where to go to to ride his bike (not to a station)
+    public abstract GeoPoint decidesNextPoint();
+    
+    // returns: true -> user goes to a station; false -> user rides his bike to a site which isn't a station
+    public abstract boolean decidesToReturnBike();
+
     
 }

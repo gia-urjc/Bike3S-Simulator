@@ -23,7 +23,7 @@ public class EventUserArrivesAtStationToReturnBike extends Event {
         user.setPosition(station.getPosition());
 
         if (!user.returnBikeTo(station)) {
-            Station destination = user.determineDestination();
+            Station destination = user.determineStation();
             int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
             newEvents.add(new EventUserArrivesAtStationToReturnBike(arrivalTime, user, destination));
         }

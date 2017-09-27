@@ -23,7 +23,7 @@ public class EventUserWantsToReturnBike extends Event {
 	
 	public List<Event> execute() {
 		List<Event> newEvents = new ArrayList<Event>();
-		Station decision = user.determineDestination();
+		Station decision = user.determineStation();
 		int arrivalTime = user.timeToReach(decision.getPosition());
 		newEvents.add(new EventUserArrivesAtStationToReturnBike(arrivalTime, user, decision));
 		return newEvents;
