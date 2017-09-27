@@ -6,7 +6,12 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
 public class ConfigInfo {
 	
+	public static ArrayList<Station> stations;
+	public static ArrayList<EntryPoint> entryPoints;
+	public static int reservationTime = 0;
+	public static int totalTimeSimulation = 0;
 
+<<<<<<< Updated upstream
 	private ArrayList<Station> stations;
 	private ArrayList<EntryPoint> entryPoints;
 	
@@ -42,4 +47,6 @@ public class ConfigInfo {
 	}
 
 	
+=======
+>>>>>>> Stashed changes
 }

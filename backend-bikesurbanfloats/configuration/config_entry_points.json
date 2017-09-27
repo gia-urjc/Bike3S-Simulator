@@ -1,0 +1,11 @@
+{
+  "entryPoints" : [{
+    "position" : {
+      "latitude" : 40.28144,
+      "longitude" : -3.8157126
+    },
+    "distribution" : "poisson",
+    "parameterDistribution": 10.0,
+    "personType" : "PersonTest"
+  }]
+}
