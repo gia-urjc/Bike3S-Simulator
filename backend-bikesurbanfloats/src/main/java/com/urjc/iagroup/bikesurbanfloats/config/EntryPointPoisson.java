@@ -36,10 +36,10 @@ public class EntryPointPoisson implements EntryPoint {
 			Person person = personFactory.createPerson(personType, position);
 			double u = (double) 1 / parameterDistribution;
 			int timeEvent = MathDistributions.poissonRandomInterarrivalDelay(u);
+			System.out.println(timeEvent);
 			actualTime += timeEvent;
 			Event newEvent = new EventUserAppears(actualTime, person);
 			generatedEvents.add(newEvent);
-			System.out.println(actualTime);
 		}
 		return generatedEvents;
 	}

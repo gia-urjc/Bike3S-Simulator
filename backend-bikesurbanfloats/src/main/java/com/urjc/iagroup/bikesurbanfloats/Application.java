@@ -1,9 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats;
 
-import com.urjc.iagroup.bikesurbanfloats.config.ConfigInfo;
 import com.urjc.iagroup.bikesurbanfloats.config.ConfigJsonReader;
-import com.urjc.iagroup.bikesurbanfloats.config.EntryPoint;
-import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.core.SimulationEngine;
 
 
 /**
@@ -20,14 +18,8 @@ public class Application {
         		"configuration/config_entry_points.json", "configuration/config_simulation.json");
 		try {
 			jsonReader.readJson();
-			for(Station s: ConfigInfo.stations) {
-				System.out.println(s.toString());
-			}
-			for(EntryPoint e: ConfigInfo.entryPoints) {
-				System.out.println(e.toString());
-			}
-			System.out.println(ConfigInfo.reservationTime);
-			System.out.println(ConfigInfo.totalTimeSimulation);
+			SimulationEngine simulation = new SimulationEngine();
+			simulation.processConfig();
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

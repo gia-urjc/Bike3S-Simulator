@@ -20,8 +20,8 @@ public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
 		
 		Gson gson = new Gson();
 		JsonObject jsonElementEntryP = json.getAsJsonObject();
-		JsonElement jsonElementDistr = jsonElementEntryP.get(Distribution.POISSON.toString());
-		Distribution distribution = gson.fromJson(jsonElementDistr, Distribution.class);
+		String distributionStr = jsonElementEntryP.get("distribution").getAsString();
+		Distribution distribution = Distribution.valueOf(distributionStr);
 		switch(distribution) {
 			case POISSON: return gson.fromJson(jsonElementEntryP, EntryPointPoisson.class);
 			default: throw new JsonParseException("Type of EntryPoint doesn't exists");

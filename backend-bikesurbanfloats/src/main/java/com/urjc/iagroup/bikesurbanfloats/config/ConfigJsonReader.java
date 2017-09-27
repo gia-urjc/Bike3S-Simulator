@@ -12,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.urjc.iagroup.bikesurbanfloats.config.deserialize.EntryPointDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.deserialize.StationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
@@ -37,6 +38,7 @@ public class ConfigJsonReader {
 		
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer());
+		gsonBuilder.registerTypeAdapter(EntryPoint.class, new EntryPointDeserializer());
 		Gson gson = gsonBuilder.create();
 		
 		//Stations
