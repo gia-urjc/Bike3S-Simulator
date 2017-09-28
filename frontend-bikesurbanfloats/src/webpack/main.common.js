@@ -2,7 +2,7 @@
 
 module.exports = {
     entry: {
-        main: './src/main/main.ts'
+        index: './src/main/index.ts'
     },
 
     target: 'electron'

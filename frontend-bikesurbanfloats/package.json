@@ -14,7 +14,8 @@
       "files": {
         "from": "build"
       }
-    }
+    },
+    "asar": false
   },
   "devDependencies": {
     "@angular/animations": "^4.4.0-RC.0",
