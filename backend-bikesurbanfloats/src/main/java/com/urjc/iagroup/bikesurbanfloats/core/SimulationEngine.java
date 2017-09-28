@@ -29,8 +29,15 @@ public class SimulationEngine {
 	}
 	
 	public void run() {
-		for(Event event: eventsQueue)
-			event.execute();
+		for(Event event: eventsQueue) {
+			List<Event> newEvents = event.execute();
+
+			if (!newEvents.isEmpty()) {
+				for(Event newEvent: newEvents) {
+					eventsQueue.add(newEvent);
+				}
+			}
+		}
 	}
 
 }

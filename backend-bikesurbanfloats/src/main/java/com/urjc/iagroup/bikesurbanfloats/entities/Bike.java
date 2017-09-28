@@ -1,9 +1,11 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 public class Bike {
+	//private int id;
 	private boolean reserved;
 	
-	public Bike() {
+	public Bike( /* int id */ ) {
+		//this.id = id;
 		this.reserved = false;
 	}
 
@@ -15,6 +17,11 @@ public class Bike {
 		this.reserved = reserved;
 	}
 	
-	
+/*	
+	public int getId() {
+    	return id;
+    }
+*/
+
 	
 }
