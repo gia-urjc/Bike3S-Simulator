@@ -23,5 +23,9 @@ public abstract class Event implements Comparable<Event> {
     public int compareTo(Event event) {
         return Integer.compare(this.instant, event.instant);
     }
+    
+    public String toString() {
+    	return "Event: "+getClass().getName()+"\n Instant: "+instant+"\n";
+    }
 
 }

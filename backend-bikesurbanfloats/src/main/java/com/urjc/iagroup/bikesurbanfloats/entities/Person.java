@@ -7,6 +7,7 @@ import javax.naming.ServiceUnavailableException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Person {
+	private int id;
 
     private GeoPoint position;
 
@@ -19,7 +20,8 @@ public abstract class Person {
     private boolean reservedSlot;
     
 
-    public Person(@NotNull GeoPoint position) {
+    public Person(int id, @NotNull GeoPoint position) {
+    				this.id = id; 
         this.position = position;
 
         this.bike = null;
@@ -31,6 +33,10 @@ public abstract class Person {
         this.cyclingVelocity = ThreadLocalRandom.current().nextInt(10, 21) / 3.6;
         this.reservedBike = false;
         this.reservedSlot = false;
+    }
+    
+    public int getId() {
+    	return id;
     }
 
     public GeoPoint getPosition() {

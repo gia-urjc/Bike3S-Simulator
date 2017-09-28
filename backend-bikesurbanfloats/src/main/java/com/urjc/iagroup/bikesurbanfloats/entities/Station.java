@@ -7,7 +7,7 @@ import javax.naming.ServiceUnavailableException;
 import java.util.LinkedList;
 
 public class Station {
-
+				private int id;
     private final GeoPoint position;
 
     private int capacity;
@@ -21,6 +21,10 @@ public class Station {
         this.bikes = bikes;
         this.reservedBikes = 0;
         this.reservedSlots = 0;
+    }
+    
+    public int getId() {
+    	return id;
     }
 
     public GeoPoint getPosition() {

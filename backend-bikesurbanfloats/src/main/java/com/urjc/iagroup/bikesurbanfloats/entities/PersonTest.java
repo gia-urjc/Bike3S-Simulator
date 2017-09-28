@@ -1,14 +1,15 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 import com.urjc.iagroup.bikesurbanfloats.config.ConfigInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 public class PersonTest extends Person {
-
+	private static final ThreadLocalRandom random = ThreadLocalRandom.current();
 	
-	public PersonTest(GeoPoint position) {
-		super(position);
+	public PersonTest(int id, GeoPoint position) {
+		super(id, position);
 	}
 
 	@Override
@@ -18,7 +19,7 @@ public class PersonTest extends Person {
 		Station destination = null;
 		for(Station currentStation: stations) {
 			GeoPoint stationGeoPoint = currentStation.getPosition();
-			GeoPoint personGeoPoint = currentStation.getPosition();
+			GeoPoint personGeoPoint =	getPosition();
 			double distance = stationGeoPoint.distanceTo(personGeoPoint);
 			if(distance < minDistance) {
 				minDistance = distance;
@@ -32,27 +33,34 @@ public class PersonTest extends Person {
 	}
 
 	@Override
-	public boolean decidesToReserveBike(Station station) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+public boolean decidesToReserveBike(Station station) {
+		boolean decidesToReserve = random.nextBoolean(); 
+
+		if (decidesToReserve) {
+			reservesBike(station);
+		}
+		return decidesToReserve;
+}
 
 	@Override
 	public boolean decidesToReserveSlot(Station station) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+		boolean decidesToReserve = random.nextBoolean();
+		if (decidesToReserve) {
+			reservesSlot(station);
+		}
+		return decidesToReserve;	
+		}
 
 	@Override
 	public GeoPoint decidesNextPoint() {
-		// TODO Auto-generated method stub
-		return null;
+		double latitud = random.nextDouble(-90, 90+1);
+		double longitud = random.nextDouble(-180, 180+1);
+		return new GeoPoint(latitud, longitud);
 	}
-
+	
 	@Override
 	public boolean decidesToReturnBike() {
-		// TODO Auto-generated method stub
-		return false;
+		return random.nextBoolean();
 	}
 
 }
