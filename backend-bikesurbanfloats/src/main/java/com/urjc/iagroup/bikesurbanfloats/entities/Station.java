@@ -7,7 +7,7 @@ import javax.naming.ServiceUnavailableException;
 import java.util.LinkedList;
 
 public class Station {
-				private int id;
+    private int id;
     private final GeoPoint position;
 
     private int capacity;
@@ -15,51 +15,51 @@ public class Station {
     private int reservedBikes;
     private int reservedSlots;
 
-    public Station(@NotNull final GeoPoint position, int capacity, LinkedList<Bike> bikes) {
+    public Station(int id, @NotNull final GeoPoint position, int capacity, LinkedList<Bike> bikes) {
+        this.id = id;
         this.position = position;
-        this.capacity  = capacity;
+        this.capacity = capacity;
         this.bikes = bikes;
         this.reservedBikes = 0;
         this.reservedSlots = 0;
     }
-    
+
     public int getId() {
-    	return id;
+        return id;
     }
 
     public GeoPoint getPosition() {
         return position;
     }
-    
-   
+
     public int getReservedBikes() {
-		return reservedBikes;
-	}
+        return reservedBikes;
+    }
 
-	public void reservesBike() {
-		this.reservedBikes++;
-	}
-	
-	public void cancelsBikeReservation() {
-		this.reservedBikes--;
-	}
-	
-	public int getReservedSlots() {
-		return reservedSlots;
-	}
-	
-	public void reservesSlot() {
-		this.reservedSlots++;
-	}
-	
-	public void cancelsSlotReservation() {
-		this.reservedSlots--;
-	}
+    public void reservesBike() {
+        this.reservedBikes++;
+    }
 
-	public int availableBikes() {
+    public void cancelsBikeReservation() {
+        this.reservedBikes--;
+    }
+
+    public int getReservedSlots() {
+        return reservedSlots;
+    }
+
+    public void reservesSlot() {
+        this.reservedSlots++;
+    }
+
+    public void cancelsSlotReservation() {
+        this.reservedSlots--;
+    }
+
+    public int availableBikes() {
         return bikes.size() - reservedBikes;
     }
-    
+
     public int availableSlots() {
         return this.capacity - availableBikes() - reservedSlots;
     }
@@ -77,12 +77,12 @@ public class Station {
         }
         this.bikes.add(bike);
     }
-    
+
     @Override
     public String toString() {
-		String result = "| " + position.toString();
-		result += "| Capacity: " + capacity;
-		result += "| Number of bikes: " + bikes.size() + "\n";
-    	return result;
+        String result = "| " + position.toString();
+        result += "| Capacity: " + capacity;
+        result += "| Number of bikes: " + bikes.size() + "\n";
+        return result;
     }
 }

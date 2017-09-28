@@ -7,7 +7,7 @@ import javax.naming.ServiceUnavailableException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Person {
-	private int id;
+    private int id;
 
     private GeoPoint position;
 
@@ -15,13 +15,13 @@ public abstract class Person {
 
     private Double walkingVelocity;  // meters/second
     private Double cyclingVelocity;  // meters/second
-    
+
     private boolean reservedBike;
     private boolean reservedSlot;
-    
+
 
     public Person(int id, @NotNull GeoPoint position) {
-    				this.id = id; 
+        this.id = id;
         this.position = position;
 
         this.bike = null;
@@ -34,9 +34,9 @@ public abstract class Person {
         this.reservedBike = false;
         this.reservedSlot = false;
     }
-    
+
     public int getId() {
-    	return id;
+        return id;
     }
 
     public GeoPoint getPosition() {
@@ -55,53 +55,53 @@ public abstract class Person {
     public Bike getBike() {
         return bike;
     }
-    
+
     public boolean hasBike() {
-    	return bike != null ? true : false;
+        return bike != null ? true : false;
     }
 
     public boolean hasReservedBike() {
-		return reservedBike;
-	}
-    
-	public boolean hasReservedSlot() {
-		return reservedSlot;
-	}
+        return reservedBike;
+    }
 
-	public void setReservedSlot(boolean reservedSlot) {
-		this.reservedSlot = reservedSlot;
-	}
+    public boolean hasReservedSlot() {
+        return reservedSlot;
+    }
 
-	public void reservesBike(Station station) {
-		this.reservedBike = true;
-		station.reservesBike();
-	}
-	
-	public void reservesSlot(Station station) {
-		this.reservedSlot = true;
-		station.reservesSlot();
-	}
-	
-	public void cancelsBikeReservation(Station station) {
-		this.reservedBike = false;
-		station.cancelsBikeReservation();
-	}
-	
-	public void cancelsSlotReservation(Station station) {
-		this.reservedSlot = false;
-		station.cancelsSlotReservation();
-	}
+    public void setReservedSlot(boolean reservedSlot) {
+        this.reservedSlot = reservedSlot;
+    }
 
-	public boolean removeBikeFrom(Station station) {
+    public void reservesBike(Station station) {
+        this.reservedBike = true;
+        station.reservesBike();
+    }
+
+    public void reservesSlot(Station station) {
+        this.reservedSlot = true;
+        station.reservesSlot();
+    }
+
+    public void cancelsBikeReservation(Station station) {
+        this.reservedBike = false;
+        station.cancelsBikeReservation();
+    }
+
+    public void cancelsSlotReservation(Station station) {
+        this.reservedSlot = false;
+        station.cancelsSlotReservation();
+    }
+
+    public boolean removeBikeFrom(Station station) {
         if (bike != null) {
             // TODO: log warning (or throw error?)
             return false;
         }
-        
+
         if (hasReservedBike())
-        	// first, reservation is cancelled to let a bike available at station to make sure one bike is available for take away
-        	cancelsBikeReservation(station);
-         
+            // first, reservation is cancelled to let a bike available at station to make sure one bike is available for take away
+            cancelsBikeReservation(station);
+
         try {
             this.bike = station.removeBike();
         } catch (ServiceUnavailableException e) {
@@ -146,27 +146,27 @@ public abstract class Person {
 
     // returns: station = null -> user leaves the system
     public abstract Station determineStation();
-    
+
     // it musts call reservesBike method inside it 
     public abstract boolean decidesToReserveBike(Station station);
-    
+
     // it musts call reservesSlot method inside it 
     public abstract boolean decidesToReserveSlot(Station station);
 
     // returns: user decides where to go to to ride his bike (not to a station)
     public abstract GeoPoint decidesNextPoint();
-    
+
     // returns: true -> user goes to a station; false -> user rides his bike to a site which isn't a station
     public abstract boolean decidesToReturnBike();
 
-    
+
     @Override
     public String toString() {
-    	String result = position.toString();
-    	result += " | Has Bike: " + hasBike();
-    	result += "| Walking Velocity: " + walkingVelocity;
-    	result += "| Cycling Velocity: " + cyclingVelocity + "\n";
-    	return result;
+        String result = position.toString();
+        result += " | Has Bike: " + hasBike();
+        result += "| Walking Velocity: " + walkingVelocity;
+        result += "| Cycling Velocity: " + cyclingVelocity + "\n";
+        return result;
     }
-    
+
 }
