@@ -1,11 +1,8 @@
 package com.urjc.iagroup.bikesurbanfloats;
 
-import java.io.FileNotFoundException;
-
-import com.urjc.iagroup.bikesurbanfloats.config.ConfigInfo;
 import com.urjc.iagroup.bikesurbanfloats.config.ConfigJsonReader;
-import com.urjc.iagroup.bikesurbanfloats.config.EntryPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.MathDistributions;
+import com.urjc.iagroup.bikesurbanfloats.core.SimulationEngine;
+
 
 /**
  * Hello world!
@@ -17,15 +14,14 @@ public class Application {
 
 	
     public static void main(String[] args) {
-        ConfigJsonReader jsonReader = new ConfigJsonReader("configuration/config_bikes_number.json");
-        ConfigInfo config;
+        ConfigJsonReader jsonReader = new ConfigJsonReader("configuration/config_stations.json",
+        		"configuration/config_entry_points.json", "configuration/config_simulation.json");
 		try {
-			config = jsonReader.readJson();
-			System.out.println(config.toString());
-			for(EntryPoint e: config.getEntryPoints()) {
-				e.generateEvents(10000);
-			}
-		} catch (FileNotFoundException e) {
+			jsonReader.readJson();
+			SimulationEngine simulation = new SimulationEngine();
+			simulation.processConfig();
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 

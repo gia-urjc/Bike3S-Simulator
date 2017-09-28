@@ -1,4 +1,4 @@
-package com.urjc.iagroup.bikesurbanfloats.config;
+package com.urjc.iagroup.bikesurbanfloats.config.deserialize;
 
 import java.lang.reflect.Type;
 import java.util.LinkedList;

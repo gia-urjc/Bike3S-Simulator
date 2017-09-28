@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.core;
 
-import com.urjc.iagroup.bikesurbanfloats.entities.*;
 import com.urjc.iagroup.bikesurbanfloats.events.*;
 import com.urjc.iagroup.bikesurbanfloats.config.*;
 import java.util.PriorityQueue;
@@ -8,18 +7,23 @@ import java.util.List;
 
 
 public class SimulationEngine {
-	PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
+	
+	private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
 	
 	public SimulationEngine() {
 		eventsQueue = new PriorityQueue<Event>();
-			}
+	}
 	
-	public void processConfig(ConfigInfo config) {
-		List<EntryPoint> entryPoints = config.getEntryPoints();
+	public void processConfig() {
+		List<EntryPoint> entryPoints = ConfigInfo.entryPoints;
 		for(EntryPoint entryPoint: entryPoints) {
 			List<Event> events = entryPoint.generateEvents();
-			for(Event event: events)
+			for(Event event: events) {
 				eventsQueue.add(event);
+				//Temporal println
+				System.out.println("Added person at instant " + event.getInstant());
+			}
+				
 		}
 		
 	}
