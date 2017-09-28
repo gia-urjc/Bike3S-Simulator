@@ -30,7 +30,7 @@ module.exports = {
 
     plugins: [
         new CopyWebpackPlugin([{
-            from: path.resolve(process.cwd(), 'src', 'package.json'),
+            from: path.resolve(process.cwd(), 'src', 'main', 'package.json'),
             dest: path.resolve(process.cwd(), 'build', 'package.json')
         }])
     ],
