@@ -2,12 +2,14 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.sun.istack.internal.NotNull;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 import javax.naming.ServiceUnavailableException;
 import java.util.LinkedList;
 
 public class Station {
-    private int id;
+	
+	private int id;
     private final GeoPoint position;
 
     private int capacity;

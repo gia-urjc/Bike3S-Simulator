@@ -1,6 +1,9 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
+
 public class Bike {
+	
     private int id;
     private boolean reserved;
 

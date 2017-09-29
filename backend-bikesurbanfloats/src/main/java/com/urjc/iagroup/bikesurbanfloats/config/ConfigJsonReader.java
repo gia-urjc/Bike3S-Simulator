@@ -14,7 +14,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.urjc.iagroup.bikesurbanfloats.config.deserialize.EntryPointDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.deserialize.StationDeserializer;
+import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 public class ConfigJsonReader {
 	
@@ -36,30 +38,34 @@ public class ConfigJsonReader {
 	
 	public void readJson() throws FileNotFoundException {
 		
+		IdGenerator bikeIdGen = new IdGenerator();
+		IdGenerator stationIdGen = new IdGenerator();
+		
 		GsonBuilder gsonBuilder = new GsonBuilder();
-		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer());
+		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer(bikeIdGen, stationIdGen));
 		gsonBuilder.registerTypeAdapter(EntryPoint.class, new EntryPointDeserializer());
 		Gson gson = gsonBuilder.create();
 		
 		//Stations
 		FileInputStream inputStreamJson = new FileInputStream(new File(stationsFileName));
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
-		ConfigInfo.stations = readStations(gson, bufferedReader);
+		SystemInfo.stations = readStations(gson, bufferedReader);
 		
 		//EntryPoints
 		inputStreamJson = new FileInputStream(new File(entryPointsFileName));
 		bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
-		ConfigInfo.entryPoints = readEntryPoints(gson, bufferedReader);
+		SystemInfo.entryPoints = readEntryPoints(gson, bufferedReader);
 		
 		//Configuration
 		inputStreamJson = new FileInputStream(new File(configSimulationFileName));
 		bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		JsonObject jsonConfig = gson.fromJson(bufferedReader, JsonObject.class);
-		ConfigInfo.reservationTime = jsonConfig.get(JSON_ATR_TIME_RESERVE).getAsInt();
-		ConfigInfo.totalTimeSimulation = jsonConfig.get(JSON_ATR_TIME_SIMULATION).getAsInt();
+		SystemInfo.reservationTime = jsonConfig.get(JSON_ATR_TIME_RESERVE).getAsInt();
+		SystemInfo.totalTimeSimulation = jsonConfig.get(JSON_ATR_TIME_SIMULATION).getAsInt();
 	}
 	
 	private ArrayList<Station> readStations(Gson gson, BufferedReader bufferedReader) {
+		
 		ArrayList<Station> allStations = new ArrayList<>();
 		JsonArray jsonStationsArray = gson.fromJson(bufferedReader, JsonObject.class)
 				.get(JSON_ATR_STATION).getAsJsonArray();
@@ -70,6 +76,7 @@ public class ConfigJsonReader {
 	}
 	
 	private ArrayList<EntryPoint> readEntryPoints(Gson gson, BufferedReader bufferedReader) {
+		
 		ArrayList<EntryPoint> allEntryPoints = new ArrayList<>();
 		JsonArray jsonStationsArray = gson.fromJson(bufferedReader, JsonObject.class)
 				.get(JSON_ATR_ENTRYPOINTS).getAsJsonArray();

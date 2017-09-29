@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.config.ConfigInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
@@ -29,7 +29,7 @@ public class EventUserWantsToReturnBike extends Event {
         Station destination = user.determineStation();
         int arrivalTime = user.timeToReach(destination.getPosition());
 
-        if (user.decidesToReserveSlot(destination) && ConfigInfo.reservationTime < arrivalTime) {
+        if (user.decidesToReserveSlot(destination) && SystemInfo.reservationTime < arrivalTime) {
             user.cancelsSlotReservation(destination);
             newEvents.add(new EventSlotReservationTimeout(getInstant() + arrivalTime, user));
         } else {

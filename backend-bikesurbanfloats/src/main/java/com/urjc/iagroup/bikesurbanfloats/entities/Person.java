@@ -2,15 +2,16 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.sun.istack.internal.NotNull;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 import javax.naming.ServiceUnavailableException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Person {
-    private int id;
+	
+	private int id;
 
     private GeoPoint position;
-
     private Bike bike;
 
     private Double walkingVelocity;  // meters/second

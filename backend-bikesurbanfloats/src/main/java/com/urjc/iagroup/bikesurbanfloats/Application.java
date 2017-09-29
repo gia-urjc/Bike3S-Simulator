@@ -2,6 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats;
 
 import com.urjc.iagroup.bikesurbanfloats.config.ConfigJsonReader;
 import com.urjc.iagroup.bikesurbanfloats.core.SimulationEngine;
+import com.urjc.iagroup.bikesurbanfloats.util.MathDistributions;
 
 
 /**

@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.config.ConfigInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
@@ -32,9 +32,9 @@ public class EventUserArrivesAtStationToRentBike extends Event {
                 Station destination = user.determineStation();
                 int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
 
-                if (user.decidesToReserveSlot(destination) && ConfigInfo.reservationTime < arrivalTime) {
+                if (user.decidesToReserveSlot(destination) && SystemInfo.reservationTime < arrivalTime) {
                     user.cancelsSlotReservation(destination);
-                    newEvents.add(new EventSlotReservationTimeout(getInstant() + ConfigInfo.reservationTime, user));
+                    newEvents.add(new EventSlotReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
                 } else {
                     newEvents.add(new EventUserArrivesAtStationToReturnBike(getInstant() + arrivalTime, user, destination));
                 }
@@ -50,9 +50,9 @@ public class EventUserArrivesAtStationToRentBike extends Event {
             if (decision != null) { // user decides not to leave the system
                 int arrivalTime = user.timeToReach(decision.getPosition());
 
-                if (user.decidesToReserveBike(decision) && ConfigInfo.reservationTime < arrivalTime) {
+                if (user.decidesToReserveBike(decision) && SystemInfo.reservationTime < arrivalTime) {
                     user.cancelsBikeReservation(decision);
-                    newEvents.add(new EventBikeReservationTimeout(getInstant() + ConfigInfo.reservationTime, user));
+                    newEvents.add(new EventBikeReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
                 } else {
                     newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant() + arrivalTime, user, decision));
                 }

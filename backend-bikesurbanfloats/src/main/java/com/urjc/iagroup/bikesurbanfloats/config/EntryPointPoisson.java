@@ -10,6 +10,7 @@ import com.urjc.iagroup.bikesurbanfloats.events.Event;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.Distribution;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.MathDistributions;
 
 public class EntryPointPoisson implements EntryPoint {
@@ -28,15 +29,15 @@ public class EntryPointPoisson implements EntryPoint {
 	}
 
 	@Override
-	public List<Event> generateEvents() {
+	public List<Event> generateEvents(IdGenerator personIdGenerator) {
 		int actualTime = 0;
 		List<Event> generatedEvents = new LinkedList<>();
 		PersonFactory personFactory = new PersonFactory();
-		while(actualTime < ConfigInfo.totalTimeSimulation) {
-			Person person = personFactory.createPerson(personType, position);
-			double u = (double) 1 / parameterDistribution;
-			int timeEvent = MathDistributions.poissonRandomInterarrivalDelay(u);
-			System.out.println(timeEvent);
+		while(actualTime < SystemInfo.totalTimeSimulation) {
+			int id = personIdGenerator.next();
+			Person person = personFactory.createPerson(id, personType, position);
+			double lambda = parameterDistribution;
+			int timeEvent = MathDistributions.poissonRandomInterarrivalDelay(lambda);
 			actualTime += timeEvent;
 			Event newEvent = new EventUserAppears(actualTime, person);
 			generatedEvents.add(newEvent);

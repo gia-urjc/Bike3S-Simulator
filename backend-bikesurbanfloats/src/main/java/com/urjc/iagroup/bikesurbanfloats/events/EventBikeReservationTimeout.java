@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.config.ConfigInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
@@ -31,9 +31,9 @@ public class EventBikeReservationTimeout extends Event {
         if (destination != null) {  // user doesn`t want to leave the system
             int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
 
-            if (user.decidesToReserveBike(destination) && ConfigInfo.reservationTime < arrivalTime) {
+            if (user.decidesToReserveBike(destination) && SystemInfo.reservationTime < arrivalTime) {
                 user.cancelsBikeReservation(destination);
-                newEvents.add(new EventBikeReservationTimeout(this.getInstant() + ConfigInfo.reservationTime, user));
+                newEvents.add(new EventBikeReservationTimeout(this.getInstant() + SystemInfo.reservationTime, user));
             } else {
                 newEvents.add(new EventUserArrivesAtStationToRentBike(this.getInstant() + arrivalTime, user, destination));
             }

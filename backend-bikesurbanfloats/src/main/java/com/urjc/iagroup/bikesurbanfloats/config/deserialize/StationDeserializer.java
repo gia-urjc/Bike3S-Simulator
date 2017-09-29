@@ -12,9 +12,18 @@ import com.google.gson.JsonParseException;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 public class StationDeserializer implements JsonDeserializer<Station>  {
 
+	private IdGenerator bikeIdGen;
+	private IdGenerator stationIdGen;
+	
+	public StationDeserializer(IdGenerator bikeIdGen, IdGenerator stationIdGen) {
+		this.bikeIdGen = bikeIdGen;
+		this.stationIdGen = stationIdGen;
+	}
+	
 	@Override
 	public Station deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 			throws JsonParseException {
@@ -32,15 +41,16 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 		else {
 			int numBikes = jsonElementBikes.getAsInt();
 			for(int j = 0; j < numBikes; j++) {
-				bikes.add(new Bike());
+				int id = bikeIdGen.next();
+				bikes.add(new Bike(id));
 			}
 		}
 		
 		JsonElement jsonElemGeoP = json.getAsJsonObject().get("position");
 		GeoPoint position = gson.fromJson(jsonElemGeoP, GeoPoint.class);
 		int capacity = json.getAsJsonObject().get("capacity").getAsInt();
-		
-		Station station = new Station(position, capacity, bikes);
+		int id = stationIdGen.next();
+		Station station = new Station(id, position, capacity, bikes);
 		return station;
 	}
 	

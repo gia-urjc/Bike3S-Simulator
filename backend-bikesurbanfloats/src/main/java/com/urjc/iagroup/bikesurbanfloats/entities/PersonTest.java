@@ -2,7 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
-import com.urjc.iagroup.bikesurbanfloats.config.ConfigInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 public class PersonTest extends Person {
@@ -14,7 +14,7 @@ public class PersonTest extends Person {
 
 	@Override
 	public Station determineStation() {
-		ArrayList<Station> stations = ConfigInfo.stations;
+		ArrayList<Station> stations = SystemInfo.stations;
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
 		for(Station currentStation: stations) {
