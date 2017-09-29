@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
-import com.urjc.iagroup.bikesurbanfloats.entities.personfactory.PersonFactory;
-import com.urjc.iagroup.bikesurbanfloats.entities.personfactory.PersonType;
+import com.urjc.iagroup.bikesurbanfloats.entities.factory.PersonFactory;
+import com.urjc.iagroup.bikesurbanfloats.entities.factory.PersonType;
 import com.urjc.iagroup.bikesurbanfloats.events.Event;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.Distribution;
