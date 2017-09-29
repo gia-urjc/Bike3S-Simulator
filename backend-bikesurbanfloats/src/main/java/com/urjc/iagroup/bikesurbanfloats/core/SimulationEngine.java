@@ -29,8 +29,10 @@ public class SimulationEngine {
 	}
 	
 	public void run() {
-		for(Event event: eventsQueue) {
+		while (!eventsQueue.isEmpty()) {
+			Event event = eventsQueue.poll();  // retrieves and removes first element
 			List<Event> newEvents = event.execute();
+			System.out.println(event.toString());
 
 			if (!newEvents.isEmpty()) {
 				for(Event newEvent: newEvents) {

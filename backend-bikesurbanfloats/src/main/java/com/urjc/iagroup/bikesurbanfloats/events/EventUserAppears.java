@@ -10,7 +10,6 @@ import java.util.List;
 public class EventUserAppears extends Event {
     private Person user;
 
-
     public EventUserAppears(int instant, Person user) {
         super(instant);
         this.user = user;
@@ -30,6 +29,11 @@ public class EventUserAppears extends Event {
         }
 
         return newEvents;
+    }
+    
+    public String toString() {
+    	String str = super.toString();
+    	return str+"User: "+user.getId()+"\n";
     }
 
 }

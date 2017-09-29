@@ -38,6 +38,10 @@ public class EventSlotReservationTimeout extends Event {
 
         return newEvents;
     }
+    
+    public String toString() {
+    	String str = super.toString();
+    	return str+"User: "+user.getId()+"\n";
 
-
+    }
 }
