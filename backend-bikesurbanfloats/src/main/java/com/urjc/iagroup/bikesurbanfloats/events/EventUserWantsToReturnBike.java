@@ -38,5 +38,10 @@ public class EventUserWantsToReturnBike extends Event {
 
         return newEvents;
     }
+    
+    public String toString() {
+    	String str = super.toString();
+    	return str+"User: "+user.getId()+"\n";
+    }
 
 }
