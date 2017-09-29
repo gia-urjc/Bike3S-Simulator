@@ -48,8 +48,7 @@ module.exports = {
         }),
 
         new CommonsChunkPlugin({
-            name: ['renderer', 'vendor', 'polyfills'],
-            minChunks: Infinity
+            name: ['renderer', 'vendor', 'polyfills']
         }),
 
         new HtmlWebpackPlugin({
