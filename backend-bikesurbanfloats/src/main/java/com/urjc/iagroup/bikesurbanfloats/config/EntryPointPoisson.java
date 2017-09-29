@@ -8,7 +8,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.factory.PersonFactory;
 import com.urjc.iagroup.bikesurbanfloats.entities.factory.PersonType;
 import com.urjc.iagroup.bikesurbanfloats.events.Event;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
-import com.urjc.iagroup.bikesurbanfloats.util.Distribution;
+import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.MathDistributions;
@@ -17,11 +17,11 @@ public class EntryPointPoisson implements EntryPoint {
 	
 	
 	private GeoPoint position;
-	private Distribution distribution;
+	private DistributionType distribution;
 	private double parameterDistribution;
 	private PersonType personType;
 
-	public EntryPointPoisson(GeoPoint location, Distribution distribution, double parameterDistribution, String className, PersonType personType) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public EntryPointPoisson(GeoPoint location, DistributionType distribution, double parameterDistribution, String className, PersonType personType) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		this.position = location;
 		this.distribution = distribution;
 		this.parameterDistribution = parameterDistribution;

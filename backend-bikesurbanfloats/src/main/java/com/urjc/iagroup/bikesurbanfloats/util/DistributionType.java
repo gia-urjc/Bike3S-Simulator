@@ -1,5 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.util;
 
-public enum Distribution {
+public enum DistributionType {
 	POISSON, RANDOM
 }

@@ -10,10 +10,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.urjc.iagroup.bikesurbanfloats.config.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.config.EntryPointPoisson;
-import com.urjc.iagroup.bikesurbanfloats.util.Distribution;
+import com.urjc.iagroup.bikesurbanfloats.entities.factory.EntryPointFactory;
+import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 
 public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
 
+	private EntryPointFactory entryPointFactory;
+	
+	public EntryPointDeserializer() {
+		this.entryPointFactory = new EntryPointFactory();
+	}
+	
 	@Override
 	public EntryPoint deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 			throws JsonParseException {
@@ -21,11 +28,8 @@ public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
 		Gson gson = new Gson();
 		JsonObject jsonElementEntryP = json.getAsJsonObject();
 		String distributionStr = jsonElementEntryP.get("distribution").getAsString();
-		Distribution distribution = Distribution.valueOf(distributionStr);
-		switch(distribution) {
-			case POISSON: return gson.fromJson(jsonElementEntryP, EntryPointPoisson.class);
-			default: throw new JsonParseException("Type of EntryPoint doesn't exists");
-		}
+		DistributionType distribution = DistributionType.valueOf(distributionStr);
+		return entryPointFactory.createEntryPoint(jsonElementEntryP, distribution);
 		
 	}
 
