@@ -1,8 +1,10 @@
 package com.urjc.iagroup.bikesurbanfloats.core;
 
 import com.urjc.iagroup.bikesurbanfloats.events.*;
+import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.config.*;
+
 import java.util.PriorityQueue;
 import java.util.List;
 
@@ -29,6 +31,9 @@ public class SimulationEngine {
 	}
 	
 	public void run() {
+
+        History.init();
+
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element
 			List<Event> newEvents = event.execute();

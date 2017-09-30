@@ -34,6 +34,14 @@ public class Station {
         return position;
     }
 
+    public int getCapacity() {
+        return this.capacity;
+    }
+
+    public LinkedList<Bike> getBikes() {
+        return bikes;
+    }
+
     public int getReservedBikes() {
         return reservedBikes;
     }

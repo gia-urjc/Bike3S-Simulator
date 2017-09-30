@@ -15,6 +15,10 @@ public class GeoPoint {
         this.longitude = longitude;
     }
 
+    public GeoPoint(GeoPoint geoPoint) {
+        this(geoPoint.latitude, geoPoint.longitude);
+    }
+
     public GeoPoint() {
         this(0.0, 0.0);
     }
