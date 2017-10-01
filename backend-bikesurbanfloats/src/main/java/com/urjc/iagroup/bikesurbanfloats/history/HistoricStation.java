@@ -41,6 +41,8 @@ class HistoricStation extends Station {
             changes.add("bikes", bikes);
         }
 
+        // TODO: add other possible changes
+
         return hasChanges ? changes : null;
     }
 }
