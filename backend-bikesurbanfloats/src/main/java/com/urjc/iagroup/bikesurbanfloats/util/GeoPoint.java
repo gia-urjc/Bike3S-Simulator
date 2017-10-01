@@ -62,8 +62,7 @@ public class GeoPoint {
 
         GeoPoint geoPoint = (GeoPoint) o;
 
-        if (Double.compare(geoPoint.latitude, latitude) != 0) return false;
-        return Double.compare(geoPoint.longitude, longitude) == 0;
+        return Double.compare(geoPoint.latitude, latitude) == 0 && Double.compare(geoPoint.longitude, longitude) == 0;
     }
 
     @Override

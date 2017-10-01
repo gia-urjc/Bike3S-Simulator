@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.history;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
@@ -18,25 +17,24 @@ class HistoricUser extends Person {
         this.bike = user.getBike() == null ? null : new HistoricBike(user.getBike());
     }
 
-    public JsonObject getChanges(HistoricUser previous) {
-        if (previous == null) return null;
+    JsonObject getChanges(HistoricUser previousSelf) {
+        if (previousSelf == null) return null;
 
         JsonObject changes = new JsonObject();
         boolean hasChanges = false;
 
         changes.add("id", new JsonPrimitive(this.getId()));
 
-        if (this.bike == null && previous.bike != null) {
-            changes.add("bike", new JsonPrimitive(-1));
-            hasChanges = true;
-        } else if (this.bike != null && (previous.bike == null || this.bike.getId() != previous.bike.getId())) {
-            changes.add("bike", new JsonPrimitive(this.bike.getId()));
+        JsonObject bike = History.idChange(previousSelf.bike, this.bike);
+
+        if (bike != null) {
+            changes.add("bike", bike);
             hasChanges = true;
         }
 
-        if (!this.getPosition().equals(previous.getPosition())) {
-            double dlat = this.getPosition().getLatitude() - previous.getPosition().getLatitude();
-            double dlon = this.getPosition().getLongitude() - previous.getPosition().getLongitude();
+        if (!this.getPosition().equals(previousSelf.getPosition())) {
+            double dlat = this.getPosition().getLatitude() - previousSelf.getPosition().getLatitude();
+            double dlon = this.getPosition().getLongitude() - previousSelf.getPosition().getLongitude();
             changes.add("position", History.gson.toJsonTree(new GeoPoint(dlat, dlon)));
             hasChanges = true;
         }

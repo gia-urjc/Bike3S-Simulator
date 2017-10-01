@@ -5,12 +5,14 @@ import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.config.*;
 
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.List;
 
 
 public class SimulationEngine {
-	
+
+    private List<EventUserAppears> userAppearsList = new ArrayList<>();
 	private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
 	
 	public SimulationEngine() {
@@ -21,18 +23,20 @@ public class SimulationEngine {
 		IdGenerator personIdGen = new IdGenerator();
 		List<EntryPoint> entryPoints = SystemInfo.entryPoints;
 		for(EntryPoint entryPoint: entryPoints) {
-			List<Event> events = entryPoint.generateEvents(personIdGen);
-			for(Event event: events) {
-				eventsQueue.add(event);
+			List<EventUserAppears> events = entryPoint.generateEvents(personIdGen);
+			for(EventUserAppears event: events) {
+				userAppearsList.add(event);
 				System.out.println("Added person at instant " + event.getInstant());
 			}
 		}
+
+        eventsQueue.addAll(userAppearsList);
 		
 	}
 	
 	public void run() {
 
-        History.init();
+        History.init(userAppearsList);
 
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element

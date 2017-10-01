@@ -1,7 +1,9 @@
 package com.urjc.iagroup.bikesurbanfloats.config.deserialize;
 
 import java.lang.reflect.Type;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -30,28 +32,23 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 		
 		Gson gson = new Gson();
 		JsonElement jsonElementBikes = json.getAsJsonObject().get("bikes");
-		LinkedList<Bike> bikes = new LinkedList<>();
-		if(jsonElementBikes.isJsonArray()) {
-			JsonArray jsonArrayBikes = jsonElementBikes.getAsJsonArray();
-			for(int j = 0; j < jsonArrayBikes.size(); j++) {
-				Bike bike = gson.fromJson(jsonArrayBikes.get(j), Bike.class);
-				bikes.add(bike);
-			}
-		}
-		else {
-			int numBikes = jsonElementBikes.getAsInt();
-			for(int j = 0; j < numBikes; j++) {
-				int id = bikeIdGen.next();
-				bikes.add(new Bike(id));
-			}
+		int capacity = json.getAsJsonObject().get("capacity").getAsInt();
+		List<Bike> bikes = new ArrayList<>(Collections.nCopies(capacity, null));
+
+		boolean isArray = jsonElementBikes.isJsonArray();
+		JsonArray jsonArrayBikes = isArray ? jsonElementBikes.getAsJsonArray() : null;
+		int n = isArray ? jsonArrayBikes.size() : jsonElementBikes.getAsInt();
+		for (int i = 0; i < n; i++) {
+			// TODO: we shouldn't store bike id's in the initial configuration
+			// TODO: it would possibly lead to duplicate ids in mixed configurations with defined bikes and just n bikes
+			// TODO: therefore we will need a bike deserializer that uses the id generator also for defined bikes
+			Bike bike = isArray ? gson.fromJson(jsonArrayBikes.get(i), Bike.class) : new Bike(bikeIdGen.next());
+			bikes.add(i, bike);
 		}
 		
 		JsonElement jsonElemGeoP = json.getAsJsonObject().get("position");
 		GeoPoint position = gson.fromJson(jsonElemGeoP, GeoPoint.class);
-		int capacity = json.getAsJsonObject().get("capacity").getAsInt();
-		int id = stationIdGen.next();
-		Station station = new Station(id, position, capacity, bikes);
-		return station;
+		return new Station(stationIdGen.next(), position, capacity, bikes);
 	}
 	
 }

@@ -6,9 +6,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import javax.naming.ServiceUnavailableException;
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class Person {
-	
-	private int id;
+public abstract class Person extends Entity {
 
     private GeoPoint position;
     private Bike bike;
@@ -21,7 +19,8 @@ public abstract class Person {
 
 
     public Person(int id, @NotNull GeoPoint position) {
-        this.id = id;
+        super(id);
+
         this.position = position;
 
         this.bike = null;
@@ -33,10 +32,6 @@ public abstract class Person {
         this.cyclingVelocity = ThreadLocalRandom.current().nextInt(10, 21) / 3.6;
         this.reservedBike = false;
         this.reservedSlot = false;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public GeoPoint getPosition() {
