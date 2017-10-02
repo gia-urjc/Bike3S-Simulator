@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPointPoisson;
+import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPointSingle;
 import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 
 public class EntryPointFactory {
@@ -18,6 +19,7 @@ public class EntryPointFactory {
 	public EntryPoint createEntryPoint(JsonObject json, DistributionType distribution) {
 		switch(distribution) {
 			case POISSON: return gson.fromJson(json, EntryPointPoisson.class);
+			case SINGLE: return gson.fromJson(json, EntryPointSingle.class); 
 			default: throw new JsonParseException("Type of EntryPoint doesn't exists");
 		}
 	}

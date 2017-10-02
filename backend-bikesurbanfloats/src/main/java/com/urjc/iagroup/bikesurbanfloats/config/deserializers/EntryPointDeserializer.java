@@ -1,7 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.config.deserializers;
 
 import java.lang.reflect.Type;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -26,9 +25,19 @@ public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
 			throws JsonParseException {
 		
 		Gson gson = new Gson();
-		JsonObject jsonElementEntryP = json.getAsJsonObject();
-		String distributionStr = jsonElementEntryP.get("distribution").getAsString();
-		DistributionType distribution = DistributionType.valueOf(distributionStr);
+		JsonObject	jsonElementEntryP = json.getAsJsonObject();
+		DistributionType distribution = null;
+		
+		// if entryPoint does'nt contain a distribution attribute, it's of type single (one person)
+		if (jsonElementEntryP.has(distribution.name())) {
+			String distributionStr = jsonElementEntryP.get("distribution")
+					.getAsJsonObject().get("distributionType").getAsString();
+			distribution = DistributionType.valueOf(distributionStr);
+		}
+		else {
+			distribution = DistributionType.SINGLE;		
+			}
+		
 		return entryPointFactory.createEntryPoint(jsonElementEntryP, distribution);
 		
 	}
