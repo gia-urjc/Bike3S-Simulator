@@ -39,11 +39,8 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 		JsonArray jsonArrayBikes = isArray ? jsonElementBikes.getAsJsonArray() : null;
 		int n = isArray ? jsonArrayBikes.size() : jsonElementBikes.getAsInt();
 		for (int i = 0; i < n; i++) {
-			// TODO: we shouldn't store bike id's in the initial configuration
-			// TODO: it would possibly lead to duplicate ids in mixed configurations with defined bikes and just n bikes
-			// TODO: therefore we will need a bike deserializer that uses the id generator also for defined bikes
 			Bike bike = isArray ? gson.fromJson(jsonArrayBikes.get(i), Bike.class) : new Bike(bikeIdGen.next());
-			bikes.add(i, bike);
+			bikes.add(bike);
 		}
 		
 		JsonElement jsonElemGeoP = json.getAsJsonObject().get("position");

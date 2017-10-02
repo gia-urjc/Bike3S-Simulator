@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,16 +15,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.urjc.iagroup.bikesurbanfloats.config.deserialize.EntryPointDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.deserialize.StationDeserializer;
-import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 public class ConfigJsonReader {
 	
-	public final static String JSON_ATR_STATION = "stations";
-	public final static String JSON_ATR_ENTRYPOINTS = "entryPoints";
-	public final static String JSON_ATR_TIME_RESERVE = "reservationTime";
-	public final static String JSON_ATR_TIME_SIMULATION = "totalTimeSimulation";
+	private final static String JSON_ATR_STATION = "stations";
+	private final static String JSON_ATR_ENTRYPOINTS = "entryPoints";
+	private final static String JSON_ATR_TIME_RESERVE = "reservationTime";
+	private final static String JSON_ATR_TIME_SIMULATION = "totalTimeSimulation";
+	private final static String JSON_ATR_RANDOM_SEED = "randomSeed";
 	
 
 	private String stationsFileName;
@@ -62,6 +63,8 @@ public class ConfigJsonReader {
 		JsonObject jsonConfig = gson.fromJson(bufferedReader, JsonObject.class);
 		SystemInfo.reservationTime = jsonConfig.get(JSON_ATR_TIME_RESERVE).getAsInt();
 		SystemInfo.totalTimeSimulation = jsonConfig.get(JSON_ATR_TIME_SIMULATION).getAsInt();
+		SystemInfo.randomSeed = jsonConfig.get(JSON_ATR_RANDOM_SEED).getAsLong();
+		SystemInfo.random = new Random(SystemInfo.randomSeed);
 	}
 	
 	private ArrayList<Station> readStations(Gson gson, BufferedReader bufferedReader) {

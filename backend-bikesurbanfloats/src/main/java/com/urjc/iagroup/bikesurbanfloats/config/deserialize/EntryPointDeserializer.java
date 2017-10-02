@@ -15,6 +15,8 @@ import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 
 public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
 
+	private final static String JSON_ATR_DISTRIBUTION = "distribution";
+	
 	private EntryPointFactory entryPointFactory;
 	
 	public EntryPointDeserializer() {
@@ -25,9 +27,8 @@ public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
 	public EntryPoint deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 			throws JsonParseException {
 		
-		Gson gson = new Gson();
 		JsonObject jsonElementEntryP = json.getAsJsonObject();
-		String distributionStr = jsonElementEntryP.get("distribution").getAsString();
+		String distributionStr = jsonElementEntryP.get(JSON_ATR_DISTRIBUTION).getAsString();
 		DistributionType distribution = DistributionType.valueOf(distributionStr);
 		return entryPointFactory.createEntryPoint(jsonElementEntryP, distribution);
 		
