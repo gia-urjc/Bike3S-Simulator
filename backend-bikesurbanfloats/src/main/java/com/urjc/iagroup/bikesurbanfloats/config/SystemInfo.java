@@ -2,6 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.config;
 
 import java.util.ArrayList;
 
+import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
 public class SystemInfo {

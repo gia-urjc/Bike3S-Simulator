@@ -1,4 +1,4 @@
-package com.urjc.iagroup.bikesurbanfloats.config;
+package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 
 import java.util.List;
 

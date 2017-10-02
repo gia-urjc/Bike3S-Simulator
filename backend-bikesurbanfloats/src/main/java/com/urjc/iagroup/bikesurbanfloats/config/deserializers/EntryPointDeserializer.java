@@ -1,4 +1,4 @@
-package com.urjc.iagroup.bikesurbanfloats.config.deserialize;
+package com.urjc.iagroup.bikesurbanfloats.config.deserializers;
 
 import java.lang.reflect.Type;
 
@@ -8,9 +8,9 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.urjc.iagroup.bikesurbanfloats.config.EntryPoint;
-import com.urjc.iagroup.bikesurbanfloats.config.EntryPointPoisson;
-import com.urjc.iagroup.bikesurbanfloats.entities.factory.EntryPointFactory;
+import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
+import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPointPoisson;
+import com.urjc.iagroup.bikesurbanfloats.entities.factories.EntryPointFactory;
 import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 
 public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
