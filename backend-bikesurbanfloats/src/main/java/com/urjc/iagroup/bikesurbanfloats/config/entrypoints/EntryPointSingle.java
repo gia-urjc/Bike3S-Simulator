@@ -53,4 +53,12 @@ public class EntryPointSingle implements EntryPoint {
 		generatedEvents.add(event);
 		return generatedEvents;
 	}
+	
+	public String toString() {
+		String result = position.toString();
+		result += "| SINGLE PERSON \n";
+		result += "Person Type: " + personType + "\n";
+		result += "Instant: " + instant + "\n";
+		return result;
+	}
 }

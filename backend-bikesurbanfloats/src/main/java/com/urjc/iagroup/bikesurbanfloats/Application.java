@@ -28,7 +28,6 @@ public class Application {
 			jsonReader.readJson();
 			SimulationEngine simulation = new SimulationEngine();
 			simulation.processConfig();
-			System.out.println(SystemInfo.strInfo());
 		} catch (FileNotFoundException e) {
 			
 			e.printStackTrace();

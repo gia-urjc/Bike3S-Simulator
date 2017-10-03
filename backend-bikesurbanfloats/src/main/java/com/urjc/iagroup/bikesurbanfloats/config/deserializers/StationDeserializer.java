@@ -18,6 +18,10 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 public class StationDeserializer implements JsonDeserializer<Station>  {
 
+	private static final String JSON_ATTR_BIKES = "bikes";
+	private static final String JSON_ATTR_CAPACITY = "capacity";
+	private static final String JSON_ATTR_POSITION = "position";
+	
 	private IdGenerator bikeIdGen;
 	private IdGenerator stationIdGen;
 	
@@ -31,8 +35,8 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 			throws JsonParseException {
 		
 		Gson gson = new Gson();
-		JsonElement jsonElementBikes = json.getAsJsonObject().get("bikes");
-		int capacity = json.getAsJsonObject().get("capacity").getAsInt();
+		JsonElement jsonElementBikes = json.getAsJsonObject().get(JSON_ATTR_BIKES);
+		int capacity = json.getAsJsonObject().get(JSON_ATTR_CAPACITY).getAsInt();
 		List<Bike> bikes = new ArrayList<>(Collections.nCopies(capacity, null));
 
 		boolean isArray = jsonElementBikes.isJsonArray();
@@ -43,7 +47,7 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 			bikes.add(bike);
 		}
 		
-		JsonElement jsonElemGeoP = json.getAsJsonObject().get("position");
+		JsonElement jsonElemGeoP = json.getAsJsonObject().get(JSON_ATTR_POSITION);
 		GeoPoint position = gson.fromJson(jsonElemGeoP, GeoPoint.class);
 		return new Station(stationIdGen.next(), position, capacity, bikes);
 	}

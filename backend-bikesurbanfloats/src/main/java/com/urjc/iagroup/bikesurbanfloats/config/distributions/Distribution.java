@@ -1,4 +1,4 @@
-package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
+package com.urjc.iagroup.bikesurbanfloats.config.distributions;
 
 import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 

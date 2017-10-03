@@ -27,7 +27,6 @@ public class SimulationEngine {
 			List<Event> events = entryPoint.generateEvents(personIdGen);
 			for(Event event: events) {
 				userAppearsList.add((EventUserAppears) event);
-				System.out.println("Added person at instant " + event.getInstant());
 			}
 		}
 
@@ -38,7 +37,7 @@ public class SimulationEngine {
 	public void run() {
 		
 		
-        History.init(userAppearsList);
+        //History.init(userAppearsList);
 
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element
