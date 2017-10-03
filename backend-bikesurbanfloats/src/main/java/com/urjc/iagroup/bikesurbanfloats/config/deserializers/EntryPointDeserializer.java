@@ -13,7 +13,8 @@ import com.urjc.iagroup.bikesurbanfloats.entities.factories.EntryPointFactory;
 import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 
 public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
-
+	private final static String JSON_ATTR_DISTRIBUTION = "distribution";
+	private final static String JSON_ATTR_DISTRIBUTIONTYPE = "distributionType";
 	private EntryPointFactory entryPointFactory;
 	
 	public EntryPointDeserializer() {
@@ -26,19 +27,19 @@ public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
 		
 		Gson gson = new Gson();
 		JsonObject	jsonElementEntryP = json.getAsJsonObject();
-		DistributionType distribution = null;
+		DistributionType distributionType = null;
 		
 		// if entryPoint does'nt contain a distribution attribute, it's of type single (one person)
-		if (jsonElementEntryP.has(distribution.name())) {
-			String distributionStr = jsonElementEntryP.get("distribution")
-					.getAsJsonObject().get("distributionType").getAsString();
-			distribution = DistributionType.valueOf(distributionStr);
+		if (jsonElementEntryP.has(JSON_ATTR_DISTRIBUTION)) {
+			String distributionStr = jsonElementEntryP.get(JSON_ATTR_DISTRIBUTION)
+					.getAsJsonObject().get(JSON_ATTR_DISTRIBUTIONTYPE).getAsString();
+			distributionType = DistributionType.valueOf(distributionStr);
 		}
 		else {
-			distribution = DistributionType.SINGLE;		
+			distributionType = DistributionType.NONEDISTRIBUTION;		
 			}
 		
-		return entryPointFactory.createEntryPoint(jsonElementEntryP, distribution);
+		return entryPointFactory.createEntryPoint(jsonElementEntryP, distributionType);
 		
 	}
 

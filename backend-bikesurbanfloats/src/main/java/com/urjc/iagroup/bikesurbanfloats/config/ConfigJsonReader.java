@@ -21,10 +21,10 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 public class ConfigJsonReader {
 	
-	public final static String JSON_ATR_STATION = "stations";
-	public final static String JSON_ATR_ENTRYPOINTS = "entryPoints";
-	public final static String JSON_ATR_TIME_RESERVE = "reservationTime";
-	public final static String JSON_ATR_TIME_SIMULATION = "totalTimeSimulation";
+	public final static String JSON_ATTR_STATION = "stations";
+	public final static String JSON_ATTR_ENTRYPOINTS = "entryPoints";
+	public final static String JSON_ATTR_TIME_RESERVE = "reservationTime";
+	public final static String JSON_ATTR_TIME_SIMULATION = "totalTimeSimulation";
 	
 
 	private String stationsFileName;
@@ -61,15 +61,15 @@ public class ConfigJsonReader {
 		inputStreamJson = new FileInputStream(new File(configSimulationFileName));
 		bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		JsonObject jsonConfig = gson.fromJson(bufferedReader, JsonObject.class);
-		SystemInfo.reservationTime = jsonConfig.get(JSON_ATR_TIME_RESERVE).getAsInt();
-		SystemInfo.totalTimeSimulation = jsonConfig.get(JSON_ATR_TIME_SIMULATION).getAsInt();
+		SystemInfo.reservationTime = jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt();
+		SystemInfo.totalTimeSimulation = jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt();
 	}
 	
 	private ArrayList<Station> readStations(Gson gson, BufferedReader bufferedReader) {
 		
 		ArrayList<Station> allStations = new ArrayList<>();
 		JsonArray jsonStationsArray = gson.fromJson(bufferedReader, JsonObject.class)
-				.get(JSON_ATR_STATION).getAsJsonArray();
+				.get(JSON_ATTR_STATION).getAsJsonArray();
 		for(JsonElement elemStation: jsonStationsArray) {
 			allStations.add(gson.fromJson(elemStation, Station.class));
 		}
@@ -80,7 +80,7 @@ public class ConfigJsonReader {
 		
 		ArrayList<EntryPoint> allEntryPoints = new ArrayList<>();
 		JsonArray jsonStationsArray = gson.fromJson(bufferedReader, JsonObject.class)
-				.get(JSON_ATR_ENTRYPOINTS).getAsJsonArray();
+				.get(JSON_ATTR_ENTRYPOINTS).getAsJsonArray();
 		for(JsonElement elemStation: jsonStationsArray) {
 			allEntryPoints.add(gson.fromJson(elemStation, EntryPoint.class));
 		}
