@@ -1,7 +1,9 @@
 package com.urjc.iagroup.bikesurbanfloats.config.deserializers;
 
 import java.lang.reflect.Type;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -16,6 +18,10 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 public class StationDeserializer implements JsonDeserializer<Station>  {
 
+	private static final String JSON_ATTR_BIKES = "bikes";
+	private static final String JSON_ATTR_CAPACITY = "capacity";
+	private static final String JSON_ATTR_POSITION = "position";
+	
 	private IdGenerator bikeIdGen;
 	private IdGenerator stationIdGen;
 	
@@ -29,29 +35,21 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 			throws JsonParseException {
 		
 		Gson gson = new Gson();
-		JsonElement jsonElementBikes = json.getAsJsonObject().get("bikes");
-		LinkedList<Bike> bikes = new LinkedList<>();
-		if(jsonElementBikes.isJsonArray()) {
-			JsonArray jsonArrayBikes = jsonElementBikes.getAsJsonArray();
-			for(int j = 0; j < jsonArrayBikes.size(); j++) {
-				Bike bike = gson.fromJson(jsonArrayBikes.get(j), Bike.class);
-				bikes.add(bike);
-			}
-		}
-		else {
-			int numBikes = jsonElementBikes.getAsInt();
-			for(int j = 0; j < numBikes; j++) {
-				int id = bikeIdGen.next();
-				bikes.add(new Bike(id));
-			}
+		JsonElement jsonElementBikes = json.getAsJsonObject().get(JSON_ATTR_BIKES);
+		int capacity = json.getAsJsonObject().get(JSON_ATTR_CAPACITY).getAsInt();
+		List<Bike> bikes = new ArrayList<>(Collections.nCopies(capacity, null));
+
+		boolean isArray = jsonElementBikes.isJsonArray();
+		JsonArray jsonArrayBikes = isArray ? jsonElementBikes.getAsJsonArray() : null;
+		int n = isArray ? jsonArrayBikes.size() : jsonElementBikes.getAsInt();
+		for (int i = 0; i < n; i++) {
+			Bike bike = isArray ? gson.fromJson(jsonArrayBikes.get(i), Bike.class) : new Bike(bikeIdGen.next());
+			bikes.add(bike);
 		}
 		
-		JsonElement jsonElemGeoP = json.getAsJsonObject().get("position");
+		JsonElement jsonElemGeoP = json.getAsJsonObject().get(JSON_ATTR_POSITION);
 		GeoPoint position = gson.fromJson(jsonElemGeoP, GeoPoint.class);
-		int capacity = json.getAsJsonObject().get("capacity").getAsInt();
-		int id = stationIdGen.next();
-		Station station = new Station(id, position, capacity, bikes);
-		return station;
+		return new Station(stationIdGen.next(), position, capacity, bikes);
 	}
 	
 }

@@ -1,8 +1,10 @@
-package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
+package com.urjc.iagroup.bikesurbanfloats.config.distributions;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
+import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class DistributionPoisson extends Distribution {
 	private double lambda;
@@ -28,8 +30,8 @@ public class DistributionPoisson extends Distribution {
      */
 	
 	public int randomInterarrivalDelay() {
-	    
-	    double randomValue = Math.log(1.0 - ThreadLocalRandom.current().nextDouble(Double.MIN_VALUE, 1));
+		RandomUtil random = new RandomUtil();
+	    double randomValue = Math.log(1.0 - random.nextDouble(Double.MIN_VALUE, 1));
 	    Double result = (double) -randomValue/lambda;
 	    Long longResult = Math.round(result);
 	    return longResult.intValue();

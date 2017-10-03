@@ -1,15 +1,16 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.sun.istack.internal.NotNull;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
+import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 import javax.naming.ServiceUnavailableException;
+
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class Person {
-	
-	private int id;
+public abstract class Person extends Entity {
 
     private GeoPoint position;
     private Bike bike;
@@ -22,22 +23,20 @@ public abstract class Person {
 
 
     public Person(int id, @NotNull GeoPoint position) {
-        this.id = id;
+        super(id);
+
         this.position = position;
 
         this.bike = null;
 
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = ThreadLocalRandom.current().nextInt(3, 8) / 3.6;
+        RandomUtil randomUtil = new RandomUtil();
+        this.walkingVelocity = randomUtil.nextInt(3, 8) / 3.6;
 
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = ThreadLocalRandom.current().nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = randomUtil.nextInt(10, 21) / 3.6;
         this.reservedBike = false;
         this.reservedSlot = false;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public GeoPoint getPosition() {

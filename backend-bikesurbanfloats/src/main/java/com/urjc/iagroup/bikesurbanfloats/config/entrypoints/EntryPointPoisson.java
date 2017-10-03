@@ -1,17 +1,16 @@
 package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.distributions.DistributionPoisson;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonFactory;
 import com.urjc.iagroup.bikesurbanfloats.events.Event;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
-import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
-import com.urjc.iagroup.bikesurbanfloats.util.MathDistributions;
 import com.urjc.iagroup.bikesurbanfloats.util.PersonType;
 
 public class EntryPointPoisson implements EntryPoint {
@@ -26,28 +25,35 @@ public class EntryPointPoisson implements EntryPoint {
 		this.personType = personType;
 	}
 
+
 	@Override
 	public List<Event> generateEvents(IdGenerator personIdGenerator) {
-		List<Event> generatedEvents = new LinkedList<>();
-		PersonFactory personFactory = new PersonFactory();
-		
 		int actualTime = 0;
+		int acum = 0;
+		int elems = 0;
+		List<Event> generatedEvents = new ArrayList<>();
+		PersonFactory personFactory = new PersonFactory();
 		while(actualTime < SystemInfo.totalTimeSimulation) {
 			int id = personIdGenerator.next();
 			Person person = personFactory.createPerson(id, personType, position);
-			int eventTime = distribution.randomInterarrivalDelay();
-			actualTime += eventTime; 
-			Event newEvent = new EventUserAppears(actualTime, person);
+			int timeEvent = distribution.randomInterarrivalDelay();
+			System.out.println(timeEvent);
+			acum += timeEvent;
+			elems++;
+			actualTime += timeEvent;
+			EventUserAppears newEvent = new EventUserAppears(actualTime, person);
 			generatedEvents.add(newEvent);
 		}
+		System.out.println("Media: " + acum/elems);
 		return generatedEvents;
 	}
 	
 	@Override
 	public String toString() {
 		String result = position.toString();
-		result += "| Distribution " + distribution;
-		result += "| distributionParameter" + distribution.getLambda() + "\n";
+		result += "| Distribution " + distribution.getDistribution();
+		result += "| distributionParameter " + distribution.getLambda() + "\n";
+		result += "Person Type: " + personType;
 		return result;
 	}
 	
