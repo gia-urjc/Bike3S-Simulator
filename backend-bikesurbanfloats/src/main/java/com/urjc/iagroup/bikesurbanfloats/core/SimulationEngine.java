@@ -5,8 +5,9 @@ import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.config.*;
 
-import java.util.ArrayList;
+import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import java.util.PriorityQueue;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,9 +24,9 @@ public class SimulationEngine {
 		IdGenerator personIdGen = new IdGenerator();
 		List<EntryPoint> entryPoints = SystemInfo.entryPoints;
 		for(EntryPoint entryPoint: entryPoints) {
-			List<EventUserAppears> events = entryPoint.generateEvents(personIdGen);
-			for(EventUserAppears event: events) {
-				userAppearsList.add(event);
+			List<Event> events = entryPoint.generateEvents(personIdGen);
+			for(Event event: events) {
+				userAppearsList.add((EventUserAppears) event);
 				System.out.println("Added person at instant " + event.getInstant());
 			}
 		}
@@ -35,7 +36,8 @@ public class SimulationEngine {
 	}
 	
 	public void run() {
-
+		
+		
         History.init(userAppearsList);
 
 		while (!eventsQueue.isEmpty()) {
