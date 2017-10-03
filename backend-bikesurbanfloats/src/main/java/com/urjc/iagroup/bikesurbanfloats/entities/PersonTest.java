@@ -62,5 +62,7 @@ public boolean decidesToReserveBike(Station station) {
 	public boolean decidesToReturnBike() {
 		return random.nextBoolean();
 	}
-
+	
+	public void update() {}
+	
 }

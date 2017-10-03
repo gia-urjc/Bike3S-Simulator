@@ -30,6 +30,7 @@ public class EventSlotReservationTimeout extends Event {
         int arrivalTime = user.timeToReach(destination.getPosition());
 
         if (user.decidesToReserveSlot(destination) && SystemInfo.reservationTime < arrivalTime) {
+        				user.updatePosition();
             user.cancelsSlotReservation(destination);
             newEvents.add(new EventSlotReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
         } else {
