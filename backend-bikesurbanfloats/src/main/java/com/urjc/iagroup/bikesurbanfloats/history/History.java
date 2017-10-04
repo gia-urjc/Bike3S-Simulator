@@ -62,6 +62,11 @@ public class History {
         }
 
         // TODO: serialize stations and write json to file
+        
+        List<JsonObject> stations = new ArrayList<>();
+        for(Station station: stations) {
+        	
+        }
 
     }
 

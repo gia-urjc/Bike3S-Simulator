@@ -63,6 +63,11 @@ public boolean decidesToReserveBike(Station station) {
 		return random.nextBoolean();
 	}
 	
-	public void update() {}
+	public void updatePosition(int time) {
+		double distance = time * position.distanceTo(destinationStation) / timeToReach(destinationStation);
+ 		GeoPoint newPoint = position.reachedPoint(distance, destinationStation);
+		setPosition(newPoint);
+		
+	}
 	
 }
