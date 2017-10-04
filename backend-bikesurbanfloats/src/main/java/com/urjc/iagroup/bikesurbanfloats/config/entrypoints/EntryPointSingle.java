@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
@@ -44,8 +44,8 @@ public class EntryPointSingle implements EntryPoint {
 	}
 
 	@Override
-	public List<Event> generateEvents(IdGenerator personIdGenerator) {
-		List<Event> generatedEvents = new LinkedList<>();
+	public List<EventUserAppears> generateEvents(IdGenerator personIdGenerator) {
+		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		PersonFactory personFactory = new PersonFactory();
 		int id = personIdGenerator.next();
 		Person person = personFactory.createPerson(id, personType, position);

@@ -27,11 +27,11 @@ public class EntryPointPoisson implements EntryPoint {
 
 
 	@Override
-	public List<Event> generateEvents(IdGenerator personIdGenerator) {
+	public List<EventUserAppears> generateEvents(IdGenerator personIdGenerator) {
 		int actualTime = 0;
 		int acum = 0;
 		int elems = 0;
-		List<Event> generatedEvents = new ArrayList<>();
+		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		PersonFactory personFactory = new PersonFactory();
 		while(actualTime < SystemInfo.totalTimeSimulation) {
 			int id = personIdGenerator.next();

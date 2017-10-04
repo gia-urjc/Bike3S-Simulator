@@ -8,6 +8,6 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 public interface EntryPoint {
 	
-	public List<Event> generateEvents(IdGenerator personIdGenerator);
+	public List<EventUserAppears> generateEvents(IdGenerator personIdGenerator);
 	
 }
