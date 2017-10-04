@@ -1,4 +1,5 @@
 {
 	"reservationTime" : 30,
-	"totalTimeSimulation" : 86400
+	"totalTimeSimulation" : 84600,
+	"randomSeed": 2
 }

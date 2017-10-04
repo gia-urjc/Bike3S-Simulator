@@ -1,8 +1,7 @@
 {
   "entryPoints" : [{
-  	"distribution" : "POISSON",
-  	"parameterDistribution": 0.003333333,
     "personType" : "PersonTest",
+    "instant" : 0,
     "position" : {
       "latitude" : 40.28144,
       "longitude" : -3.8157126

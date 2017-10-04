@@ -2,23 +2,22 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.sun.istack.internal.NotNull;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 import javax.naming.ServiceUnavailableException;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
-public class Station {
-	
-	private int id;
+public class Station extends Entity {
+
     private final GeoPoint position;
 
     private int capacity;
-    private LinkedList<Bike> bikes;
+    private List<Bike> bikes;
     private int reservedBikes;
     private int reservedSlots;
 
-    public Station(int id, @NotNull final GeoPoint position, int capacity, LinkedList<Bike> bikes) {
-        this.id = id;
+    public Station(int id, @NotNull final GeoPoint position, int capacity, List<Bike> bikes) {
+        super(id);
         this.position = position;
         this.capacity = capacity;
         this.bikes = bikes;
@@ -26,12 +25,16 @@ public class Station {
         this.reservedSlots = 0;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public GeoPoint getPosition() {
         return position;
+    }
+
+    public int getCapacity() {
+        return this.capacity;
+    }
+
+    public List<Bike> getBikes() {
+        return bikes;
     }
 
     public int getReservedBikes() {
@@ -59,7 +62,7 @@ public class Station {
     }
 
     public int availableBikes() {
-        return bikes.size() - reservedBikes;
+        return (int)bikes.stream().filter(Objects::nonNull).count() - reservedBikes;
     }
 
     public int availableSlots() {
@@ -70,7 +73,16 @@ public class Station {
         if (this.availableBikes() == 0) {
             throw new ServiceUnavailableException("Trying to remove a bike while there are none available!");
         }
-        return this.bikes.removeLast();
+
+        for (int i = 0; i < bikes.size(); i++) {
+            Bike bike = bikes.get(i);
+            if (bike != null) {
+                bikes.add(i, null);
+                return bike;
+            }
+        }
+
+        return null;
     }
 
     public void returnBike(Bike bike) throws ServiceUnavailableException {
@@ -78,6 +90,13 @@ public class Station {
             throw new ServiceUnavailableException("Trying to return a bike while there are no free slots!");
         }
         this.bikes.add(bike);
+
+        for (int i = 0; i < bikes.size(); i++) {
+            if (bikes.get(i) == null) {
+                bikes.add(i, bike);
+                break;
+            }
+        }
     }
 
     @Override

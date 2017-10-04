@@ -1,12 +1,12 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class PersonTest extends Person {
-	private static final ThreadLocalRandom random = ThreadLocalRandom.current();
+	private static final RandomUtil random = new RandomUtil();
 	
 	public PersonTest(int id, GeoPoint position) {
 		super(id, position);

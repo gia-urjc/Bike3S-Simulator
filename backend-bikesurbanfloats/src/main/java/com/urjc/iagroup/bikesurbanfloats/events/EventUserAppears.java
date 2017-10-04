@@ -15,6 +15,10 @@ public class EventUserAppears extends Event {
         this.user = user;
     }
 
+    public Person getUser() {
+        return user;
+    }
+
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
 

@@ -1,16 +1,19 @@
 package com.urjc.iagroup.bikesurbanfloats.core;
 
 import com.urjc.iagroup.bikesurbanfloats.events.*;
+import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.config.*;
-import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 
+import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import java.util.PriorityQueue;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class SimulationEngine {
-	
+
+    private List<EventUserAppears> userAppearsList = new ArrayList<>();
 	private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
 	
 	public SimulationEngine() {
@@ -23,14 +26,19 @@ public class SimulationEngine {
 		for(EntryPoint entryPoint: entryPoints) {
 			List<Event> events = entryPoint.generateEvents(personIdGen);
 			for(Event event: events) {
-				eventsQueue.add(event);
-				System.out.println("Added person at instant " + event.getInstant());
+				userAppearsList.add((EventUserAppears) event);
 			}
 		}
+
+        eventsQueue.addAll(userAppearsList);
 		
 	}
 	
 	public void run() {
+		
+		
+        //History.init(userAppearsList);
+
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element
 			List<Event> newEvents = event.execute();
