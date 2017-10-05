@@ -2,11 +2,13 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.ArrayList;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class PersonTest extends Person {
 	private static final RandomUtil random = new RandomUtil();
+	private static final RectangleSimulation rectangleSimulator = SystemInfo.rectangle;
 	
 	public PersonTest(int id, GeoPoint position) {
 		super(id, position);
@@ -57,9 +59,7 @@ public class PersonTest extends Person {
 
 	@Override
 	public GeoPoint decidesNextPoint() {
-		double latitud = random.nextDouble(-90, 90+1);
-		double longitud = random.nextDouble(-180, 180+1);
-		return new GeoPoint(latitud, longitud);
+		return rectangleSimulator.randomPoint();
 	}
 	
 	@Override

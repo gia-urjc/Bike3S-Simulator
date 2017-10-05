@@ -25,7 +25,7 @@ public abstract class Event implements Comparable<Event> {
     }
     
     public String toString() {
-    	return "Event: "+getClass().getName()+"\n Instant: "+instant+"\n";
+    	return "Event: "+getClass().getSimpleName() +"\nInstant: "+instant+"\n";
     }
 
 }

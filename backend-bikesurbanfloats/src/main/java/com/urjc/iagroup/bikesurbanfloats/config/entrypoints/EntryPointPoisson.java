@@ -7,7 +7,6 @@ import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.config.distributions.DistributionPoisson;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonFactory;
-import com.urjc.iagroup.bikesurbanfloats.events.Event;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
@@ -29,8 +28,6 @@ public class EntryPointPoisson implements EntryPoint {
 	@Override
 	public List<EventUserAppears> generateEvents(IdGenerator personIdGenerator) {
 		int actualTime = 0;
-		int acum = 0;
-		int elems = 0;
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		PersonFactory personFactory = new PersonFactory();
 		while(actualTime < SystemInfo.totalTimeSimulation) {
@@ -38,13 +35,10 @@ public class EntryPointPoisson implements EntryPoint {
 			Person person = personFactory.createPerson(id, personType, position);
 			int timeEvent = distribution.randomInterarrivalDelay();
 			System.out.println(timeEvent);
-			acum += timeEvent;
-			elems++;
 			actualTime += timeEvent;
 			EventUserAppears newEvent = new EventUserAppears(actualTime, person);
 			generatedEvents.add(newEvent);
 		}
-		System.out.println("Media: " + acum/elems);
 		return generatedEvents;
 	}
 	

@@ -15,8 +15,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.EntryPointDeserializer;
+import com.urjc.iagroup.bikesurbanfloats.config.deserializers.RectangleSimulationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.StationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
+import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
@@ -27,6 +29,7 @@ public class ConfigJsonReader {
 	private final static String JSON_ATTR_TIME_RESERVE = "reservationTime";
 	private final static String JSON_ATTR_TIME_SIMULATION = "totalTimeSimulation";
 	private final static String JSON_ATTR_RANDOM_SEED = "randomSeed";
+	private final static String JSON_ATTR_RECTANGLE_SIMULATION = "rectangleSimulation";
 	
 
 	private String stationsFileName;
@@ -47,6 +50,7 @@ public class ConfigJsonReader {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer(bikeIdGen, stationIdGen));
 		gsonBuilder.registerTypeAdapter(EntryPoint.class, new EntryPointDeserializer());
+		gsonBuilder.registerTypeAdapter(RectangleSimulation.class, new RectangleSimulationDeserializer());
 		Gson gson = gsonBuilder.create();
 		
 		//Stations
@@ -67,6 +71,9 @@ public class ConfigJsonReader {
 		SystemInfo.totalTimeSimulation = jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt();
 		SystemInfo.randomSeed = jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong();
 		SystemInfo.random = new Random(SystemInfo.randomSeed);
+		JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
+		RectangleSimulation rec = gson.fromJson(rectangleJson, RectangleSimulation.class);
+		SystemInfo.rectangle = rec;
 	}
 	
 	private ArrayList<Station> readStations(Gson gson, BufferedReader bufferedReader) {
