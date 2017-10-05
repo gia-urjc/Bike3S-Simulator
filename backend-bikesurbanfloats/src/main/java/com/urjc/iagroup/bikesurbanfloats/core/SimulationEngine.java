@@ -24,9 +24,10 @@ public class SimulationEngine {
 		IdGenerator personIdGen = new IdGenerator();
 		List<EntryPoint> entryPoints = SystemInfo.entryPoints;
 		for(EntryPoint entryPoint: entryPoints) {
-			List<Event> events = entryPoint.generateEvents(personIdGen);
-			for(Event event: events) {
-				userAppearsList.add((EventUserAppears) event);
+			List<EventUserAppears> events = entryPoint.generateEvents(personIdGen);
+			for(EventUserAppears event: events) {
+				userAppearsList.add(event);
+				SystemInfo.persons.add(event.getUser());
 			}
 		}
 

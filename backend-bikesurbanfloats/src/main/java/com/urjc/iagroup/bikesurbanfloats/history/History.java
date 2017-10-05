@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class History {
-
+	
+	
     static Gson gson = new Gson();
 
     private static HistoryEntry lastEntry;
@@ -48,26 +49,26 @@ public class History {
     public static void init(List<EventUserAppears> userAppearsList) {
         nextEntry = new HistoryEntry(0);
         nextEntry.getStations().putAll(SystemInfo.stations.stream().collect(Collectors.toMap(Station::getId, HistoricStation::new)));
-
+        JsonObject entry = new JsonObject();
+        
         List<JsonObject> users = new ArrayList<>();
-
+        
         for (EventUserAppears event : userAppearsList) {
             JsonObject serializedUser = new JsonObject();
-            Person user = event.getUser();
-
+            Person person = event.getUser();
+            nextEntry.getUsers().put(person.getId(), new HistoricUser(person));
+            
             serializedUser.add("appearsOn", new JsonPrimitive(event.getInstant()));
-            // TODO: add other properties of user
+            serializedUser.add("user", gson.toJsonTree(person, Person.class));
 
             users.add(serializedUser);
         }
-
-        // TODO: serialize stations and write json to file
+           
+        entry.add("users", gson.toJsonTree(users));
+        entry.add("stations", gson.toJsonTree(SystemInfo.stations));
+        entry.add("bikes", gson.toJsonTree(SystemInfo.bikes));
         
-        List<JsonObject> stations = new ArrayList<>();
-        for(Station station: stations) {
-        	
-        }
-
+        serializedEntries.add(entry);
     }
 
     public static void register(int timeInstant, Person user, Station station, Bike bike) {
@@ -77,13 +78,17 @@ public class History {
             nextEntry = new HistoryEntry(timeInstant, lastEntry);
         }
 
-        // TODO: update entities in nextEntry
+        nextEntry = new HistoryEntry(timeInstant);
+        nextEntry.getStations().putAll(SystemInfo.stations.stream().collect(Collectors.toMap(Station::getId, HistoricStation::new)));
+        nextEntry.getUsers().putAll(SystemInfo.persons.stream().collect(Collectors.toMap(Person::getId, HistoricUser::new)));
+        nextEntry.getBikes().putAll(SystemInfo.bikes.stream().collect(Collectors.toMap(Bike::getId, HistoricBike::new)));
     }
 
     private static JsonObject serializeChanges() {
         JsonObject entry = new JsonObject();
 
         List<JsonObject> users = new ArrayList<>();
+        List<JsonObject> stations = new ArrayList<>();
 
         for (HistoricUser user : nextEntry.getUsers().values()) {
             JsonObject changes = user.getChanges(lastEntry.getUsers().get(user.getId()));
@@ -94,7 +99,14 @@ public class History {
             entry.add("users", gson.toJsonTree(users));
         }
 
-        // TODO: serialize station changes (and bikes?)
+        for (HistoricStation station: nextEntry.getStations().values()) {
+        	JsonObject changes = station.getChanges(lastEntry.getStations().get(station.getId()));
+        	if (changes != null) stations.add(changes);
+        }
+        
+        if(!stations.isEmpty()) {
+        	entry.add("stations", gson.toJsonTree(stations));
+        }
 
         return entry;
     }

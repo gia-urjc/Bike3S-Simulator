@@ -29,7 +29,7 @@ public class EventBikeReservationTimeout extends Event {
         Station destination = user.determineStation();
 
         if (destination != null) {  // user doesn`t want to leave the system
-            int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
+            int arrivalTime = user.timeToReach(destination.getPosition());
 
             if (user.decidesToReserveBike(destination) && SystemInfo.reservationTime < arrivalTime) {
             				user.updatePosition(SystemInfo.reservationTime);

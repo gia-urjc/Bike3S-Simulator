@@ -11,6 +11,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
@@ -45,6 +46,7 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 		for (int i = 0; i < n; i++) {
 			Bike bike = isArray ? gson.fromJson(jsonArrayBikes.get(i), Bike.class) : new Bike(bikeIdGen.next());
 			bikes.add(bike);
+			SystemInfo.bikes.add(bike);
 		}
 		
 		JsonElement jsonElemGeoP = json.getAsJsonObject().get(JSON_ATTR_POSITION);

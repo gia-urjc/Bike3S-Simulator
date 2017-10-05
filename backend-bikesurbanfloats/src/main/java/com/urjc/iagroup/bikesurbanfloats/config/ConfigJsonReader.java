@@ -49,12 +49,15 @@ public class ConfigJsonReader {
 		gsonBuilder.registerTypeAdapter(EntryPoint.class, new EntryPointDeserializer());
 		Gson gson = gsonBuilder.create();
 		
+		//Bikes initialization
+		SystemInfo.bikes = new ArrayList<>();
 		//Stations
 		FileInputStream inputStreamJson = new FileInputStream(new File(stationsFileName));
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		SystemInfo.stations = readStations(gson, bufferedReader);
 		
 		//EntryPoints
+		SystemInfo.persons = new ArrayList<>();
 		inputStreamJson = new FileInputStream(new File(entryPointsFileName));
 		bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		SystemInfo.entryPoints = readEntryPoints(gson, bufferedReader);
@@ -86,7 +89,8 @@ public class ConfigJsonReader {
 		JsonArray jsonStationsArray = gson.fromJson(bufferedReader, JsonObject.class)
 				.get(JSON_ATTR_ENTRYPOINTS).getAsJsonArray();
 		for(JsonElement elemStation: jsonStationsArray) {
-			allEntryPoints.add(gson.fromJson(elemStation, EntryPoint.class));
+			EntryPoint newEntryPoint = gson.fromJson(elemStation, EntryPoint.class);
+			allEntryPoints.add(newEntryPoint);
 		}
 		return allEntryPoints;
 	}

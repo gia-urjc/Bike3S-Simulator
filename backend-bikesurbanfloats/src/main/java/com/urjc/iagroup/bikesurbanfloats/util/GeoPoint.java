@@ -52,14 +52,16 @@ public class GeoPoint {
     }
     
     public GeoPoint reachedPoint(double distance, GeoPoint destination) {
-    // REVISE
+    	double totalDistance = this.distanceTo(destination);
+    	double percentage = distance * 100 / totalDistance; 
     	
-    	double x = Math.abs(destination.longitude - this.longitude);
-    	double y = Math.abs(destination.latitude - this.latitude);
-    	double angle = Math.atan(y/x);
-    	double x2 = Math.cos(angle) * distance; 
-    	double y2 = Math.sin(angle) * distance;
-    	return new GeoPoint(y2, x2);
+    	double totalX = destination.longitude - this.longitude;
+    	double totalY = destination.latitude - this.latitude;
+
+    	double travelledX = totalX * percentage / 100;  
+    	double travelledY = totalY * percentage / 100;
+    	
+    	return new GeoPoint(latitude + travelledY, longitude + travelledX);
    
     }
 

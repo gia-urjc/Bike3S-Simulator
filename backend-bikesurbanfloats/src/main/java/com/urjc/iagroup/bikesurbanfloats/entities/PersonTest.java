@@ -64,8 +64,8 @@ public boolean decidesToReserveBike(Station station) {
 	}
 	
 	public void updatePosition(int time) {
-		double distance = time * position.distanceTo(destinationStation) / timeToReach(destinationStation);
- 		GeoPoint newPoint = position.reachedPoint(distance, destinationStation);
+		double distance = time * getPosition().distanceTo(getDestinationStation().getPosition()) / timeToReach(getDestinationStation().getPosition());
+ 		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
 		setPosition(newPoint);
 		
 	}

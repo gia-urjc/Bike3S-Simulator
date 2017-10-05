@@ -73,4 +73,6 @@ class HistoricUser extends Person {
     public boolean decidesToReturnBike() {
         return false;
     }
+    
+    public void updatePosition(int time) {}
 }
