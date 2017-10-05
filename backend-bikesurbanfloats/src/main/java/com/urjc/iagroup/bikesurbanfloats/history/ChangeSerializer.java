@@ -3,8 +3,8 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 import com.google.gson.JsonObject;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 
-public interface ChangeSerializer {
+public interface ChangeSerializer<E extends Entity> {
 	
-	JsonObject getChanges(Entity oldEntity, Entity newEntity);
+	JsonObject getChanges(E oldEntity, E newEntity);
 	
 }

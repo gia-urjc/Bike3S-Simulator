@@ -2,15 +2,13 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
-public class ChangeSerializerStation implements ChangeSerializer{
+public class ChangeSerializerStation implements ChangeSerializer<Station> {
 
 	@Override
-	public JsonObject getChanges(Entity oldEntity, Entity newEntity) {
-		Station oldStation = (Station) oldEntity;
-		Station newStation = (Station) newEntity;
+	public JsonObject getChanges(Station oldStation, Station newStation) {
+
 		if (oldStation == null) return null;
 
         JsonObject changes = new JsonObject();
