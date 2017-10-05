@@ -31,8 +31,10 @@ public class EventUserArrivesAtStationToRentBike extends Event {
             if (user.decidesToReturnBike()) {
                 Station destination = user.determineStation();
                 int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
+                user.setDestinationStation(destination);
 
                 if (user.decidesToReserveSlot(destination) && SystemInfo.reservationTime < arrivalTime) {
+                	user.updatePosition(SystemInfo.reservationTime);
                     user.cancelsSlotReservation(destination);
                     newEvents.add(new EventSlotReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
                 } else {
@@ -41,7 +43,7 @@ public class EventUserArrivesAtStationToRentBike extends Event {
             } else {
                 GeoPoint point = user.decidesNextPoint();
                 int arrivalTime = user.timeToReach(point);
-                newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user));
+                newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
             }
         } else {
             // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation
@@ -49,11 +51,14 @@ public class EventUserArrivesAtStationToRentBike extends Event {
 
             if (decision != null) { // user decides not to leave the system
                 int arrivalTime = user.timeToReach(decision.getPosition());
+                user.setDestinationStation(decision);
 
                 if (user.decidesToReserveBike(decision) && SystemInfo.reservationTime < arrivalTime) {
+                				user.updatePosition(SystemInfo.reservationTime);
                     user.cancelsBikeReservation(decision);
                     newEvents.add(new EventBikeReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
                 } else {
+
                     newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant() + arrivalTime, user, decision));
                 }
 

@@ -26,8 +26,10 @@ public class EventUserArrivesAtStationToReturnBike extends Event {
         if (!user.returnBikeTo(station)) {
             Station destination = user.determineStation();
             int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
+            user.setDestinationStation(destination);
 
             if (user.decidesToReserveSlot(destination) && SystemInfo.reservationTime < arrivalTime) {
+            				user.updatePosition(SystemInfo.reservationTime);
                 user.cancelsSlotReservation(destination);
                 newEvents.add(new EventSlotReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
             } else {

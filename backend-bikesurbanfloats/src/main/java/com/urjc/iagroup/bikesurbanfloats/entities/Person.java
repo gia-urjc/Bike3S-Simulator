@@ -17,26 +17,23 @@ public class Person extends Entity {
 
     private double walkingVelocity;  // meters/second
     private double cyclingVelocity;  // meters/second
-
     private boolean reservedBike;
     private boolean reservedSlot;
-
+    private Station destinationStation;
 
     public Person(int id, @NotNull GeoPoint position) {
         super(id);
 
         this.position = position;
-
         this.bike = null;
-
         // random velocity between 3km/h and 7km/h in m/s
         RandomUtil randomUtil = new RandomUtil();
         this.walkingVelocity = randomUtil.nextInt(3, 8) / 3.6;
-
         // random velocity between 10km/h and 20km/h in m/s
         this.cyclingVelocity = randomUtil.nextInt(10, 21) / 3.6;
         this.reservedBike = false;
         this.reservedSlot = false;
+        this.destinationStation = null;
     }
     
     public Person(Person person) {
@@ -104,8 +101,18 @@ public class Person extends Entity {
         this.reservedSlot = false;
         station.cancelsSlotReservation();
     }
+    
+    
 
-    public boolean removeBikeFrom(Station station) {
+    public Station getDestinationStation() {
+					return destinationStation;
+				}
+
+				public void setDestinationStation(Station destinationStation) {
+							this.destinationStation = destinationStation;
+						}
+
+	public boolean removeBikeFrom(Station station) {
         if (bike != null) {
             // TODO: log warning (or throw error?)
             return false;
@@ -178,9 +185,16 @@ public class Person extends Entity {
     }
 
     // returns: true -> user goes to a station; false -> user rides his bike to a site which isn't a station
+
     public boolean decidesToReturnBike() {
     	throw new IllegalStateException("Base person has not implemented decidesToReturnBike");
     }
+
+    // walked distance during a time period 
+    public void updatePosition(int time) {
+    	throw new IllegalStateException("Base person has not implemented updatePosition");
+    }
+
 
 
     @Override

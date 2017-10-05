@@ -66,5 +66,12 @@ public class PersonTest extends Person {
 	public boolean decidesToReturnBike() {
 		return random.nextBoolean();
 	}
-
+	
+	public void updatePosition(int time) {
+		double distance = time * getPosition().distanceTo(getDestinationStation().getPosition()) / timeToReach(getDestinationStation().getPosition());
+ 		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
+		setPosition(newPoint);
+		
+	}
+	
 }

@@ -30,11 +30,14 @@ public class EventBikeReservationTimeout extends Event {
 
         if (destination != null) {  // user doesn`t want to leave the system
             int arrivalTime = user.timeToReach(destination.getPosition());
+            user.setDestinationStation(destination);
 
             if (user.decidesToReserveBike(destination) && SystemInfo.reservationTime < arrivalTime) {
+            				user.updatePosition(SystemInfo.reservationTime);
                 user.cancelsBikeReservation(destination);
                 newEvents.add(new EventBikeReservationTimeout(this.getInstant() + SystemInfo.reservationTime, user));
             } else {
+            				user.setPosition(destination.getPosition());
                 newEvents.add(new EventUserArrivesAtStationToRentBike(this.getInstant() + arrivalTime, user, destination));
             }
         }

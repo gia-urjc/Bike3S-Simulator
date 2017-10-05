@@ -77,7 +77,6 @@ public class History {
         entry.add("bikes", gson.toJsonTree(SystemInfo.bikes));
         
         serializedEntries.add(entry);
-
     }
 
     public static void register(int timeInstant) {

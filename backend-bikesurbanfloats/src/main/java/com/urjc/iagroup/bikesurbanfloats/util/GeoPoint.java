@@ -50,6 +50,20 @@ public class GeoPoint {
         double h = haversine(f[1] - f[0]) + Math.cos(f[0]) * Math.cos(f[1]) * haversine(l[1] - l[0]);
         return 2 * EARTH_RADIUS * Math.asin(Math.sqrt(h));
     }
+    
+    public GeoPoint reachedPoint(double distance, GeoPoint destination) {
+    	double totalDistance = this.distanceTo(destination);
+    	double percentage = distance * 100 / totalDistance; 
+    	
+    	double totalX = destination.longitude - this.longitude;
+    	double totalY = destination.latitude - this.latitude;
+
+    	double travelledX = totalX * percentage / 100;  
+    	double travelledY = totalY * percentage / 100;
+    	
+    	return new GeoPoint(latitude + travelledY, longitude + travelledX);
+   
+    }
 
     private double haversine(double value) {
         return Math.pow(Math.sin(value / 2), 2);
