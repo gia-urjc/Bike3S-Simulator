@@ -10,14 +10,25 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
 public class SystemInfo {
 	
-	public static ArrayList<Station> stations;
-	public static ArrayList<EntryPoint> entryPoints;
-	public static ArrayList<Bike> bikes;
-	public static ArrayList<Person> persons;
+	public static ArrayList<Station> stations = new ArrayList<>();
+	public static ArrayList<EntryPoint> entryPoints = new ArrayList<>();
+	public static ArrayList<Bike> bikes = new ArrayList<>();
+	public static ArrayList<Person> persons = new ArrayList<>();
 	public static int reservationTime = 0;
 	public static int totalTimeSimulation = 0;
 	public static long randomSeed = 0;
 	public static Random random = null;
+	
+	public static void resetInfo() {
+		stations = new ArrayList<>();
+		entryPoints = new ArrayList<>();
+		bikes = new ArrayList<>();
+		persons = new ArrayList<>();
+		reservationTime = 0;
+		totalTimeSimulation = 0;
+		randomSeed = 0;
+		random = null;
+	}
 	
 	public static String strInfo() {
 		String result = "";

@@ -7,6 +7,10 @@ public abstract class Entity {
     public Entity(int id) {
         this.id = id;
     }
+    
+    public Entity(Entity entity) {
+    	this.id = entity.id;
+    }
 
     public int getId() {
         return this.id;

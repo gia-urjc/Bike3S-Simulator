@@ -10,13 +10,13 @@ import javax.naming.ServiceUnavailableException;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class Person extends Entity {
+public class Person extends Entity {
 
     private GeoPoint position;
     private Bike bike;
 
-    private Double walkingVelocity;  // meters/second
-    private Double cyclingVelocity;  // meters/second
+    private double walkingVelocity;  // meters/second
+    private double cyclingVelocity;  // meters/second
 
     private boolean reservedBike;
     private boolean reservedSlot;
@@ -37,6 +37,19 @@ public abstract class Person extends Entity {
         this.cyclingVelocity = randomUtil.nextInt(10, 21) / 3.6;
         this.reservedBike = false;
         this.reservedSlot = false;
+    }
+    
+    public Person(Person person) {
+    	super(person.getId());
+    	this.position = new GeoPoint(person.position);
+        
+    	if(person.bike != null) this.bike = new Bike(person.bike);
+        else this.bike = null;
+    	
+    	this.walkingVelocity = person.walkingVelocity;
+    	this.cyclingVelocity = person.cyclingVelocity;
+    	this.reservedBike = person.reservedBike;
+    	this.reservedSlot = person.reservedSlot;
     }
 
     public GeoPoint getPosition() {
@@ -145,19 +158,29 @@ public abstract class Person extends Entity {
     }
 
     // returns: station = null -> user leaves the system
-    public abstract Station determineStation();
+    public Station determineStation() {
+    	throw new IllegalStateException("Base person has not implemented determineStation");
+    }
 
     // it musts call reservesBike method inside it 
-    public abstract boolean decidesToReserveBike(Station station);
+    public boolean decidesToReserveBike(Station station) {
+    	throw new IllegalStateException("Base person has not implemented decidesToReserveBike");
+    }
 
     // it musts call reservesSlot method inside it 
-    public abstract boolean decidesToReserveSlot(Station station);
+    public boolean decidesToReserveSlot(Station station) {
+    	throw new IllegalStateException("Base person has not implemented decidesToReserveSlot");
+    }
 
     // returns: user decides where to go to to ride his bike (not to a station)
-    public abstract GeoPoint decidesNextPoint();
+    public GeoPoint decidesNextPoint() {
+    	throw new IllegalStateException("Base person has not implemented decidesNextPoint");
+    }
 
     // returns: true -> user goes to a station; false -> user rides his bike to a site which isn't a station
-    public abstract boolean decidesToReturnBike();
+    public boolean decidesToReturnBike() {
+    	throw new IllegalStateException("Base person has not implemented decidesToReturnBike");
+    }
 
 
     @Override

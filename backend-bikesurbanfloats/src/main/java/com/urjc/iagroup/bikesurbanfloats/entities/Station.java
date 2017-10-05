@@ -2,10 +2,11 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.sun.istack.internal.NotNull;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-
 import javax.naming.ServiceUnavailableException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Station extends Entity {
 
@@ -23,6 +24,18 @@ public class Station extends Entity {
         this.bikes = bikes;
         this.reservedBikes = 0;
         this.reservedSlots = 0;
+    }
+    
+    public Station(Station station) {
+    	super(station.getId());
+    	this.position = new GeoPoint(station.position);
+    	this.capacity = station.capacity;
+    	this.bikes = new ArrayList<>();
+    	this.bikes.addAll(station.getBikes().stream()
+                .map(bike -> bike == null ? null : new Bike(bike))
+                .collect(Collectors.toList()));
+    	this.reservedBikes = station.reservedBikes;
+    	this.reservedSlots = station.reservedSlots;
     }
 
     public GeoPoint getPosition() {

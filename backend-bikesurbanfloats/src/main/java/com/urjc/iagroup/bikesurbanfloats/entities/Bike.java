@@ -8,6 +8,11 @@ public class Bike extends Entity {
         super(id);
         this.reserved = false;
     }
+    
+    public Bike(Bike bike) {
+    	super(bike.getId());
+    	this.reserved = bike.reserved;
+    }
 
     public boolean isReserved() {
         return reserved;

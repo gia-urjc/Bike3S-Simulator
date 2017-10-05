@@ -49,7 +49,7 @@ public class EntryPointSingle implements EntryPoint {
 		PersonFactory personFactory = new PersonFactory();
 		int id = personIdGenerator.next();
 		Person person = personFactory.createPerson(id, personType, position);
-		Event event = new EventUserAppears(instant, person);
+		EventUserAppears event = new EventUserAppears(instant, person);
 		generatedEvents.add(event);
 		return generatedEvents;
 	}

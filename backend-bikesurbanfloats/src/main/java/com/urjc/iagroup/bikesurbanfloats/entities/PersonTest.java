@@ -11,6 +11,10 @@ public class PersonTest extends Person {
 	public PersonTest(int id, GeoPoint position) {
 		super(id, position);
 	}
+	
+	public PersonTest(PersonTest personTest) {
+		super(personTest);
+	}
 
 	@Override
 	public Station determineStation() {
@@ -33,14 +37,14 @@ public class PersonTest extends Person {
 	}
 
 	@Override
-public boolean decidesToReserveBike(Station station) {
+	public boolean decidesToReserveBike(Station station) {
 		boolean decidesToReserve = random.nextBoolean(); 
 
 		if (decidesToReserve) {
 			reservesBike(station);
 		}
 		return decidesToReserve;
-}
+	}
 
 	@Override
 	public boolean decidesToReserveSlot(Station station) {
