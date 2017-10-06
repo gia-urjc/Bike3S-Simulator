@@ -17,6 +17,11 @@ public class PersonTest extends Person {
 	public PersonTest(PersonTest personTest) {
 		super(personTest);
 	}
+	
+	@Override
+	public boolean decidesToLeaveSystem() {
+		return random.nextBoolean();
+	}
 
 	@Override
 	public Station determineStation() {
