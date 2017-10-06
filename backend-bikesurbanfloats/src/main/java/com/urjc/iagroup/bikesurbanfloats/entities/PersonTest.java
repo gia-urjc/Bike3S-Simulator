@@ -17,6 +17,11 @@ public class PersonTest extends Person {
 	public PersonTest(PersonTest personTest) {
 		super(personTest);
 	}
+	
+	@Override
+	public boolean decidesToLeaveSystem() {
+		return random.nextBoolean();
+	}
 
 	@Override
 	public Station determineStation() {
@@ -27,7 +32,7 @@ public class PersonTest extends Person {
 			GeoPoint stationGeoPoint = currentStation.getPosition();
 			GeoPoint personGeoPoint =	getPosition();
 			double distance = stationGeoPoint.distanceTo(personGeoPoint);
-			if(distance < minDistance) {
+			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
 				minDistance = distance;
 				destination = currentStation;
 			}
@@ -64,6 +69,10 @@ public class PersonTest extends Person {
 	
 	@Override
 	public boolean decidesToReturnBike() {
+		return random.nextBoolean();
+	}
+	
+	public boolean decidesToRentBikeAtOtherStation() {
 		return random.nextBoolean();
 	}
 	

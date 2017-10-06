@@ -159,6 +159,9 @@ public abstract class Person extends Entity {
         // time in seconds
         return (int) Math.round(position.distanceTo(destination) / getAverageVelocity());
     }
+    
+    public abstract boolean decidesToLeaveSystem();
+
 
     // returns: station = null -> user leaves the system
     public abstract Station determineStation();
@@ -175,6 +178,8 @@ public abstract class Person extends Entity {
     // returns: true -> user goes to a station; false -> user rides his bike to a site which isn't a station
 
     public abstract boolean decidesToReturnBike();
+    
+    public abstract boolean decidesToRentBikeAtOtherStation(); 
  
     public abstract void updatePosition(int time);
     

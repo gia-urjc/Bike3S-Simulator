@@ -25,17 +25,16 @@ public class EventSlotReservationTimeout extends Event {
 
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
+        user.updatePosition(SystemInfo.reservationTime);
 
         Station destination = user.determineStation();
-        int arrivalTime = user.timeToReach(destination.getPosition());
         user.setDestinationStation(destination);
+        int arrivalTime = user.timeToReach(destination.getPosition());
 
         if (user.decidesToReserveSlot(destination) && SystemInfo.reservationTime < arrivalTime) {
-        				user.updatePosition(SystemInfo.reservationTime);
             user.cancelsSlotReservation(destination);
             newEvents.add(new EventSlotReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
         } else {
-												user.setPosition(destination.getPosition());
             newEvents.add(new EventUserArrivesAtStationToReturnBike(getInstant() + arrivalTime, user, destination));
         }
 

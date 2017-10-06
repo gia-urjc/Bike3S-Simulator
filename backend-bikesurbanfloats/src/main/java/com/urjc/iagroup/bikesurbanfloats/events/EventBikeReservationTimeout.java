@@ -25,25 +25,21 @@ public class EventBikeReservationTimeout extends Event {
 
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
+        user.updatePosition(SystemInfo.reservationTime);
 
-        Station destination = user.determineStation();
-
-        if (destination != null) {  // user doesn`t want to leave the system
-            int arrivalTime = user.timeToReach(destination.getPosition());
+        if (!user.decidesToLeaveSystem()) {
+            Station destination = user.determineStation();
             user.setDestinationStation(destination);
-
+            int arrivalTime = user.timeToReach(destination.getPosition());
+            
             if (user.decidesToReserveBike(destination) && SystemInfo.reservationTime < arrivalTime) {
-            				user.updatePosition(SystemInfo.reservationTime);
                 user.cancelsBikeReservation(destination);
                 newEvents.add(new EventBikeReservationTimeout(this.getInstant() + SystemInfo.reservationTime, user));
             } else {
-            				user.setPosition(destination.getPosition());
                 newEvents.add(new EventUserArrivesAtStationToRentBike(this.getInstant() + arrivalTime, user, destination));
             }
         }
-
         return newEvents;
-
     }
     
     public String toString() {

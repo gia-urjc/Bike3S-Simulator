@@ -23,16 +23,14 @@ public class EventUserAppears extends Event {
         List<Event> newEvents = new ArrayList<>();
 
         Station destination = user.determineStation();
-        int arrivalTime = user.timeToReach(destination.getPosition());
         user.setDestinationStation(destination);
+        int arrivalTime = user.timeToReach(destination.getPosition());
 
         if (user.decidesToReserveBike(destination) && SystemInfo.reservationTime < arrivalTime) {
-        				user.updatePosition(SystemInfo.reservationTime);
             user.cancelsBikeReservation(destination);
             newEvents.add(new EventBikeReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
         } else {
-												user.setPosition(destination.getPosition());
-            newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant() + arrivalTime, user, destination));
+												newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant() + arrivalTime, user, destination));
         }
 
         return newEvents;

@@ -21,7 +21,6 @@ public class EventUserArrivesAtStationToRentBike extends Event {
 
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
-
         user.setPosition(station.getPosition());
 
         boolean removedBike = user.removeBikeFrom(station);   // user tries to remove bike
@@ -30,11 +29,10 @@ public class EventUserArrivesAtStationToRentBike extends Event {
 
             if (user.decidesToReturnBike()) {
                 Station destination = user.determineStation();
-                int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
                 user.setDestinationStation(destination);
+                int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
 
                 if (user.decidesToReserveSlot(destination) && SystemInfo.reservationTime < arrivalTime) {
-                	user.updatePosition(SystemInfo.reservationTime);
                     user.cancelsSlotReservation(destination);
                     newEvents.add(new EventSlotReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
                 } else {
@@ -47,21 +45,18 @@ public class EventUserArrivesAtStationToRentBike extends Event {
             }
         } else {
             // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation
-            Station decision = user.determineStation();
-
-            if (decision != null) { // user decides not to leave the system
-                int arrivalTime = user.timeToReach(decision.getPosition());
+            
+            if (!user.decidesToLeaveSystem()) { 
+                Station decision = user.determineStation();
                 user.setDestinationStation(decision);
-
+                int arrivalTime = user.timeToReach(decision.getPosition());
+                
                 if (user.decidesToReserveBike(decision) && SystemInfo.reservationTime < arrivalTime) {
-                				user.updatePosition(SystemInfo.reservationTime);
                     user.cancelsBikeReservation(decision);
                     newEvents.add(new EventBikeReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
                 } else {
-
                     newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant() + arrivalTime, user, decision));
                 }
-
             }
         }
 
