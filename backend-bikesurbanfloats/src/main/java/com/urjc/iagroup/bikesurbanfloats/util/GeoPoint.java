@@ -39,6 +39,7 @@ public class GeoPoint {
         this.longitude = longitude;
     }
 
+
     /**
      * Calculates the distance to another point using the haversine formula.
      * @return The distance in meters.
@@ -51,6 +52,7 @@ public class GeoPoint {
         return 2 * EARTH_RADIUS * Math.asin(Math.sqrt(h));
     }
     
+    // distnace: travelled distance during a concret time; destination: where user pretended to arrive
     public GeoPoint reachedPoint(double distance, GeoPoint destination) {
     	double totalDistance = this.distanceTo(destination);
     	double percentage = distance * 100 / totalDistance; 
@@ -76,7 +78,7 @@ public class GeoPoint {
 
         GeoPoint geoPoint = (GeoPoint) o;
 
-        return Double.compare(geoPoint.latitude, latitude) == 0 && Double.compare(geoPoint.longitude, longitude) == 0;
+        return (geoPoint.latitude == this.latitude && geoPoint.longitude == this.longitude);
     }
 
     @Override
