@@ -1,35 +1,27 @@
 {
   "stations" : [
   {
-    "bikes": 5,
+    "bikes": 3,
     "position": {
-      "latitude" : 40.2831091,
-      "longitude" : -3.8216838
+      "latitude" : 40.32159,
+      "longitude" : -3.86469
     },
     "capacity" : 10
   },
   {
-    "bikes": 1,
+    "bikes": 6,
     "position": {
-      "latitude" : 40.2849756,
-      "longitude" : -3.8219115
-    },
-    "capacity" : 9
-  },
-  {
-    "bikes": 2,
-    "position": {
-      "latitude" : 40.2849756,
-      "longitude" : -3.8165869
+      "latitude" : 40.32724,
+      "longitude" : -3.87516
     },
     "capacity" : 10
   },
   {
-    "bikes": 8,
+    "bikes": 4,
     "position": {
-      "latitude" : 40.279191,
-      "longitude" : -3.8165869
+      "latitude" : 40.32709,
+      "longitude" : -3.85465
     },
-    "capacity" : 8
+    "capacity" : 10
   }]
 }

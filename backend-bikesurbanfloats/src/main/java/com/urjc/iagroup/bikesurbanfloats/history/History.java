@@ -63,7 +63,7 @@ public class History {
         for (EventUserAppears event : userAppearsList) {
             JsonObject serializedUser = new JsonObject();
             Person person = event.getUser();
-            nextEntry.getUsers().put(person.getId(), new Person(person));
+            nextEntry.getUsers().put(person.getId(), person.copy());
             
             serializedUser.add("appearsOn", new JsonPrimitive(event.getInstant()));
             serializedUser.add("user", gson.toJsonTree(person, Person.class));
@@ -86,7 +86,7 @@ public class History {
         }
         nextEntry = new HistoryEntry(timeInstant);
         nextEntry.getStations().putAll(SystemInfo.stations.stream().collect(Collectors.toMap(Station::getId, Station::new)));
-        nextEntry.getUsers().putAll(SystemInfo.persons.stream().collect(Collectors.toMap(Person::getId, Person::new)));
+        SystemInfo.persons.stream().map(person -> nextEntry.getUsers().put(person.getId(), person.copy()));
         nextEntry.getBikes().putAll(SystemInfo.bikes.stream().collect(Collectors.toMap(Bike::getId, Bike::new)));
     }
 

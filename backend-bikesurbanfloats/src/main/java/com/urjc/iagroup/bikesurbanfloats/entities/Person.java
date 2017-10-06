@@ -1,16 +1,12 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.sun.istack.internal.NotNull;
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 import javax.naming.ServiceUnavailableException;
 
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
-public class Person extends Entity {
+public abstract class Person extends Entity {
 
     private GeoPoint position;
     private Bike bike;
@@ -165,37 +161,26 @@ public class Person extends Entity {
     }
 
     // returns: station = null -> user leaves the system
-    public Station determineStation() {
-    	throw new IllegalStateException("Base person has not implemented determineStation");
-    }
+    public abstract Station determineStation();
 
     // it musts call reservesBike method inside it 
-    public boolean decidesToReserveBike(Station station) {
-    	throw new IllegalStateException("Base person has not implemented decidesToReserveBike");
-    }
+    public abstract boolean decidesToReserveBike(Station station);
 
     // it musts call reservesSlot method inside it 
-    public boolean decidesToReserveSlot(Station station) {
-    	throw new IllegalStateException("Base person has not implemented decidesToReserveSlot");
-    }
+    public abstract boolean decidesToReserveSlot(Station station);
 
     // returns: user decides where to go to to ride his bike (not to a station)
-    public GeoPoint decidesNextPoint() {
-    	throw new IllegalStateException("Base person has not implemented decidesNextPoint");
-    }
+    public abstract GeoPoint decidesNextPoint();
 
     // returns: true -> user goes to a station; false -> user rides his bike to a site which isn't a station
 
-    public boolean decidesToReturnBike() {
-    	throw new IllegalStateException("Base person has not implemented decidesToReturnBike");
-    }
+    public abstract boolean decidesToReturnBike();
+ 
+    public abstract void updatePosition(int time);
+    
+    public abstract Person copy();
 
-    // walked distance during a time period 
-    public void updatePosition(int time) {
-    	throw new IllegalStateException("Base person has not implemented updatePosition");
-    }
-
-
+ 
 
     @Override
     public String toString() {

@@ -18,8 +18,7 @@ public class RectangleSimulation {
 		double y = position.getLatitude();
 		double width = lengthLongitude;
 		double height = lengthLatitude;
-		System.out.println(x + " " + y + " " + " " + width + " " + height);
-		System.out.println(x + width + " " + y + height);
+		System.out.println(x + " " + y + " " + width + " " + height);
 		this.rectangle = new Rectangle2D.Double(x, y, width, height);
 	}
 	
@@ -39,10 +38,11 @@ public class RectangleSimulation {
 		this.rectangle.x = position.getLongitude();
 		this.rectangle.y = position.getLatitude();
 	}
+	 
 	public GeoPoint randomPoint() {
 		RandomUtil random = new RandomUtil();
 		double x = random.nextDouble(rectangle.getX(), rectangle.getX() + rectangle.getWidth());
-		double y = random.nextDouble(rectangle.getY() - rectangle.getHeight(), rectangle.getY());
+		double y = random.nextDouble(rectangle.getY(), rectangle.getY() + rectangle.getHeight());
 		return new GeoPoint(y, x);
 	}
 

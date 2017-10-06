@@ -73,5 +73,10 @@ public class PersonTest extends Person {
 		setPosition(newPoint);
 		
 	}
+
+	@Override
+	public Person copy() {
+		return new PersonTest(this);
+	}
 	
 }

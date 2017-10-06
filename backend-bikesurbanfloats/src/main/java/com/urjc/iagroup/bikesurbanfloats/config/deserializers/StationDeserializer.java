@@ -38,7 +38,7 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 		Gson gson = new Gson();
 		JsonElement jsonElementBikes = json.getAsJsonObject().get(JSON_ATTR_BIKES);
 		int capacity = json.getAsJsonObject().get(JSON_ATTR_CAPACITY).getAsInt();
-		List<Bike> bikes = new ArrayList<>(Collections.nCopies(capacity, null));
+		List<Bike> bikes = new ArrayList<>();
 
 		boolean isArray = jsonElementBikes.isJsonArray();
 		JsonArray jsonArrayBikes = isArray ? jsonElementBikes.getAsJsonArray() : null;
