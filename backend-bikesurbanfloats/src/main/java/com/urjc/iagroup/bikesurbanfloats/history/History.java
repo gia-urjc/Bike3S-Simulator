@@ -96,10 +96,9 @@ public class History {
         List<JsonObject> users = new ArrayList<>();
         List<JsonObject> stations = new ArrayList<>();
 
-        for (Person user : nextEntry.getUsers().values()) {
-        	Person oldPerson = lastEntry.getUsers().get(user.getId());
-        	Person newPerson = nextEntry.getUsers().get(user.getId());
-            JsonObject changes = changesPerson.getChanges(oldPerson, newPerson);
+        for (Person newPerson : nextEntry.getUsers().values()) {
+        	Person oldPerson = lastEntry.getUsers().get(newPerson.getId());
+        	 JsonObject changes = changesPerson.getChanges(oldPerson, newPerson);
             if (changes != null) users.add(changes);
         }
 
@@ -107,9 +106,9 @@ public class History {
             entry.add("users", gson.toJsonTree(users));
         }
 
-        for (Station station: nextEntry.getStations().values()) {
-        	Station oldStation = lastEntry.getStations().get(station.getId());
-        	Station newStation = nextEntry.getStations().get(station.getId());
+        for (Station newStation: nextEntry.getStations().values()) {
+        	Station oldStation = lastEntry.getStations().get(newStation.getId());
+
         	JsonObject changes = changesStation.getChanges(oldStation, newStation);
         	if (changes != null) stations.add(changes);
         }
@@ -120,7 +119,5 @@ public class History {
 
         return entry;
     }
-
-	
 
 }
