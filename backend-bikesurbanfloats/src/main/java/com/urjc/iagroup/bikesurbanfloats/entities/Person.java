@@ -101,16 +101,15 @@ public abstract class Person extends Entity {
     }
 
     public Station getDestinationStation() {
-					return destinationStation;
-				}
+		return destinationStation;
+	}
 
-				public void setDestinationStation(Station destinationStation) {
-							this.destinationStation = destinationStation;
-						}
+	public void setDestinationStation(Station destinationStation) {
+		this.destinationStation = destinationStation;
+	}
 
 	public boolean removeBikeFrom(Station station) {
         if (bike != null) {
-            // TODO: log warning (or throw error?)
             return false;
         }
 
@@ -118,13 +117,8 @@ public abstract class Person extends Entity {
             // first, reservation is cancelled to let a bike available at station to make sure one bike is available for take away
             cancelsBikeReservation(station);
 
-        try {
-            this.bike = station.removeBike();
-        } catch (ServiceUnavailableException e) {
-            return false;
-        }
-
-        return true;
+        this.bike = station.removeBike();
+        return bike != null;
     }
 
     public boolean returnBikeTo(Station station) {
@@ -132,14 +126,7 @@ public abstract class Person extends Entity {
             // TODO: log warning (or throw error?)
             return false;
         }
-
-        try {
-            station.returnBike(this.bike);
-        } catch (ServiceUnavailableException e) {
-            return false;
-        }
-
-        return true;
+        return station.returnBike(this.bike);
     }
 
     /**
@@ -164,8 +151,7 @@ public abstract class Person extends Entity {
     public String toString() {
         String result = position.toString();
         result += " | Has Bike: " + hasBike();
-        result += " | Walking Velocity: " + walkingVelocity;
-        result += " | Cycling Velocity: " + cyclingVelocity + "\n";
+        result += " | Actual velocity: " + getAverageVelocity();
         return result;
     }
 }

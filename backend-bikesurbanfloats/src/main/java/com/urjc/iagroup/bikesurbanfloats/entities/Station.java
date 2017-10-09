@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import com.sun.istack.internal.NotNull;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import javax.naming.ServiceUnavailableException;
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ public class Station extends Entity {
     private int reservedBikes;
     private int reservedSlots;
 
-    public Station(int id, @NotNull final GeoPoint position, int capacity, List<Bike> bikes) {
+    public Station(int id, final GeoPoint position, int capacity, List<Bike> bikes) {
         super(id);
         this.position = position;
         this.capacity = capacity;
@@ -82,14 +81,15 @@ public class Station extends Entity {
         return this.capacity - availableBikes() - reservedSlots;
     }
 
-    public Bike removeBike() throws ServiceUnavailableException {
+    public Bike removeBike() {
         if (this.availableBikes() == 0) {
-            throw new ServiceUnavailableException("Trying to remove a bike while there are none available!");
+           return null;
         }
 
         for (int i = 0; i < bikes.size(); i++) {
             Bike bike = bikes.get(i);
             if (bike != null) {
+                bikes.remove(i);
                 bikes.add(i, null);
                 return bike;
             }
@@ -98,18 +98,19 @@ public class Station extends Entity {
         return null;
     }
 
-    public void returnBike(Bike bike) throws ServiceUnavailableException {
+    public boolean returnBike(Bike bike) {
         if (this.availableSlots() == 0) {
-            throw new ServiceUnavailableException("Trying to return a bike while there are no free slots!");
+            return false;
         }
         this.bikes.add(bike);
-
         for (int i = 0; i < bikes.size(); i++) {
             if (bikes.get(i) == null) {
+            	bikes.remove(i);
                 bikes.add(i, bike);
-                break;
+                return true;
             }
         }
+		return false;
     }
 
     @Override
@@ -117,7 +118,7 @@ public class Station extends Entity {
         String result = "Id: " + getId();
     	result = " | Position " + position.toString();
         result += " | Capacity: " + capacity;
-        result += " | Number of bikes: " + bikes.size() + "\n";
+        result += " | Number of bikes: " + availableBikes() + "\n";
         return result;
     }
 }

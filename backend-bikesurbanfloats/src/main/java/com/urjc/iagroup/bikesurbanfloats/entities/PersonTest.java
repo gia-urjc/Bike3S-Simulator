@@ -2,9 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.ArrayList;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
-import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class PersonTest extends Person implements PersonBehaviour {
 	
@@ -73,11 +71,6 @@ public class PersonTest extends Person implements PersonBehaviour {
  		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
 		setPosition(newPoint);
 		
-	}
-
-	@Override
-	public Person copy() {
-		return new PersonTest(this);
 	}
 	
 }

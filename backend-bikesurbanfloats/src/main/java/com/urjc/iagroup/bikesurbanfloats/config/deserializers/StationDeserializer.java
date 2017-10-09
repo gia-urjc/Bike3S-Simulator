@@ -43,11 +43,16 @@ public class StationDeserializer implements JsonDeserializer<Station>  {
 		boolean isArray = jsonElementBikes.isJsonArray();
 		JsonArray jsonArrayBikes = isArray ? jsonElementBikes.getAsJsonArray() : null;
 		int n = isArray ? jsonArrayBikes.size() : jsonElementBikes.getAsInt();
+		int naux = capacity - n;
 		for (int i = 0; i < n; i++) {
 			Bike bike = isArray ? gson.fromJson(jsonArrayBikes.get(i), Bike.class) : new Bike(bikeIdGen.next());
 			bikes.add(bike);
 			SystemInfo.bikes.add(bike);
 		}
+		for(int i = 0; i < naux; i++) {
+			bikes.add(null);
+		}
+		System.out.println(bikes.size());
 		
 		JsonElement jsonElemGeoP = json.getAsJsonObject().get(JSON_ATTR_POSITION);
 		GeoPoint position = gson.fromJson(jsonElemGeoP, GeoPoint.class);
