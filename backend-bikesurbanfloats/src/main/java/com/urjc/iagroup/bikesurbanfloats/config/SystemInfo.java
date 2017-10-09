@@ -9,6 +9,7 @@ import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class SystemInfo {
 	
@@ -20,7 +21,7 @@ public class SystemInfo {
 	public static int reservationTime = 0;
 	public static int totalTimeSimulation = 0;
 	public static long randomSeed = 0;
-	public static Random random = null;
+	public static RandomUtil random = null;
 	
 	public static RectangleSimulation rectangle = null;
 	

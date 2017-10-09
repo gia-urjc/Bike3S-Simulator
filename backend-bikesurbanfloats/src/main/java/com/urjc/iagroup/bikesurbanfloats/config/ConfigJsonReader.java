@@ -21,6 +21,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
+import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class ConfigJsonReader {
 	
@@ -70,7 +71,7 @@ public class ConfigJsonReader {
 		SystemInfo.reservationTime = jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt();
 		SystemInfo.totalTimeSimulation = jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt();
 		SystemInfo.randomSeed = jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong();
-		SystemInfo.random = new Random(SystemInfo.randomSeed);
+		SystemInfo.random = new RandomUtil(SystemInfo.randomSeed);
 		JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
 		RectangleSimulation rec = gson.fromJson(rectangleJson, RectangleSimulation.class);
 		SystemInfo.rectangle = rec;

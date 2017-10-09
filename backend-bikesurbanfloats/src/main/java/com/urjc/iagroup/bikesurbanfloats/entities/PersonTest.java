@@ -6,9 +6,7 @@ import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
-public class PersonTest extends Person {
-	private static final RandomUtil random = new RandomUtil();
-	private static final RectangleSimulation rectangleSimulator = SystemInfo.rectangle;
+public class PersonTest extends Person implements PersonBehaviour {
 	
 	public PersonTest(int id, GeoPoint position) {
 		super(id, position);
@@ -17,13 +15,11 @@ public class PersonTest extends Person {
 	public PersonTest(PersonTest personTest) {
 		super(personTest);
 	}
-	
-	@Override
+
 	public boolean decidesToLeaveSystem() {
 		return random.nextBoolean();
 	}
 
-	@Override
 	public Station determineStation() {
 		ArrayList<Station> stations = SystemInfo.stations;
 		double minDistance = Double.MAX_VALUE;
@@ -42,8 +38,7 @@ public class PersonTest extends Person {
 		}
 		return destination;
 	}
-
-	@Override
+	
 	public boolean decidesToReserveBike(Station station) {
 		boolean decidesToReserve = random.nextBoolean(); 
 
@@ -53,7 +48,6 @@ public class PersonTest extends Person {
 		return decidesToReserve;
 	}
 
-	@Override
 	public boolean decidesToReserveSlot(Station station) {
 		boolean decidesToReserve = random.nextBoolean();
 		if (decidesToReserve) {
@@ -61,13 +55,11 @@ public class PersonTest extends Person {
 		}
 		return decidesToReserve;	
 		}
-
-	@Override
+	
 	public GeoPoint decidesNextPoint() {
-		return rectangleSimulator.randomPoint();
+		return rectangle.randomPoint();
 	}
 	
-	@Override
 	public boolean decidesToReturnBike() {
 		return random.nextBoolean();
 	}

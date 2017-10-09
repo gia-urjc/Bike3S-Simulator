@@ -1,9 +1,9 @@
 package com.urjc.iagroup.bikesurbanfloats.core;
 
 import java.awt.geom.Rectangle2D;
-
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 
 public class RectangleSimulation {
 	
@@ -40,7 +40,7 @@ public class RectangleSimulation {
 	}
 	 
 	public GeoPoint randomPoint() {
-		RandomUtil random = new RandomUtil();
+		RandomUtil random = SystemInfo.random;
 		double x = random.nextDouble(rectangle.getX(), rectangle.getX() + rectangle.getWidth());
 		double y = random.nextDouble(rectangle.getY(), rectangle.getY() + rectangle.getHeight());
 		return new GeoPoint(y, x);

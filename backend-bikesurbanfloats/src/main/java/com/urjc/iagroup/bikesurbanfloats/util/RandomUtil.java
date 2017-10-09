@@ -8,8 +8,8 @@ public class RandomUtil {
 	
 	private Random random;
 	
-	public RandomUtil() {
-		this.random = SystemInfo.random;
+	public RandomUtil(long seed) {
+		this.random = new Random(seed);
 	}
 	
 	public int nextInt(int min, int max) {	
