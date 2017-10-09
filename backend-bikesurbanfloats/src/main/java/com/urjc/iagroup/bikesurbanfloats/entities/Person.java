@@ -1,6 +1,9 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import com.sun.istack.internal.NotNull;
+
+import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
+
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
@@ -16,17 +19,20 @@ public abstract class Person extends Entity {
     private boolean reservedBike;
     private boolean reservedSlot;
     private Station destinationStation;
+    
+    protected final RandomUtil random = SystemInfo.random;
+    protected final RectangleSimulation rectangle = SystemInfo.rectangle;
+   
 
-    public Person(int id, @NotNull GeoPoint position) {
+    public Person(int id, GeoPoint position) {
         super(id);
 
         this.position = position;
         this.bike = null;
         // random velocity between 3km/h and 7km/h in m/s
-        RandomUtil randomUtil = new RandomUtil();
-        this.walkingVelocity = randomUtil.nextInt(3, 8) / 3.6;
+        this.walkingVelocity = random.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = randomUtil.nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = random.nextInt(10, 21) / 3.6;
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
@@ -49,7 +55,7 @@ public abstract class Person extends Entity {
         return position;
     }
 
-    public void setPosition(@NotNull GeoPoint position) {
+    public void setPosition(GeoPoint position) {
         this.position = position;
     }
 
@@ -74,10 +80,6 @@ public abstract class Person extends Entity {
         return reservedSlot;
     }
 
-    public void setReservedSlot(boolean reservedSlot) {
-        this.reservedSlot = reservedSlot;
-    }
-
     public void reservesBike(Station station) {
         this.reservedBike = true;
         station.reservesBike();
@@ -97,8 +99,6 @@ public abstract class Person extends Entity {
         this.reservedSlot = false;
         station.cancelsSlotReservation();
     }
-    
-    
 
     public Station getDestinationStation() {
 					return destinationStation;
@@ -155,45 +155,17 @@ public abstract class Person extends Entity {
      * time that user takes in arriving at the new station
      * time = distance/velocity
      */
-    public int timeToReach(@NotNull GeoPoint destination) {
+    public int timeToReach(GeoPoint destination) {
         // time in seconds
         return (int) Math.round(position.distanceTo(destination) / getAverageVelocity());
     }
-    
-    public abstract boolean decidesToLeaveSystem();
+      
 
-
-    // returns: station = null -> user leaves the system
-    public abstract Station determineStation();
-
-    // it musts call reservesBike method inside it 
-    public abstract boolean decidesToReserveBike(Station station);
-
-    // it musts call reservesSlot method inside it 
-    public abstract boolean decidesToReserveSlot(Station station);
-
-    // returns: user decides where to go to to ride his bike (not to a station)
-    public abstract GeoPoint decidesNextPoint();
-
-    // returns: true -> user goes to a station; false -> user rides his bike to a site which isn't a station
-
-    public abstract boolean decidesToReturnBike();
-    
-    public abstract boolean decidesToRentBikeAtOtherStation(); 
- 
-    public abstract void updatePosition(int time);
-    
-    public abstract Person copy();
-
- 
-
-    @Override
     public String toString() {
         String result = position.toString();
         result += " | Has Bike: " + hasBike();
-        result += "| Walking Velocity: " + walkingVelocity;
-        result += "| Cycling Velocity: " + cyclingVelocity + "\n";
+        result += " | Walking Velocity: " + walkingVelocity;
+        result += " | Cycling Velocity: " + cyclingVelocity + "\n";
         return result;
     }
-
 }
