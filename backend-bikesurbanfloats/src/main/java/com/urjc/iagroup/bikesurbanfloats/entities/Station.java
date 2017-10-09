@@ -114,9 +114,10 @@ public class Station extends Entity {
 
     @Override
     public String toString() {
-        String result = "| " + position.toString();
-        result += "| Capacity: " + capacity;
-        result += "| Number of bikes: " + bikes.size() + "\n";
+        String result = "Id: " + getId();
+    	result = " | Position " + position.toString();
+        result += " | Capacity: " + capacity;
+        result += " | Number of bikes: " + bikes.size() + "\n";
         return result;
     }
 }

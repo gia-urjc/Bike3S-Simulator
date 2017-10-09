@@ -18,7 +18,6 @@ public class RectangleSimulation {
 		double y = position.getLatitude();
 		double width = lengthLongitude;
 		double height = lengthLatitude;
-		System.out.println(x + " " + y + " " + width + " " + height);
 		this.rectangle = new Rectangle2D.Double(x, y, width, height);
 	}
 	

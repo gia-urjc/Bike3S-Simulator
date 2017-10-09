@@ -52,7 +52,7 @@ public class EventUserArrivesAtStationToReturnBike extends Event {
     
     public String toString() {
     	String str = super.toString();
-    	return str+"User: "+user.getId()+"\nStation: "+station.getId();
+    	return str+"User: "+user.toString()+"\nStation: "+station.toString();
     }
 
 }

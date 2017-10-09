@@ -18,31 +18,6 @@ public class EntryPointSingle implements EntryPoint {
 		this.personType = personType;
 	}
 
-	public GeoPoint getPosition() {
-		return position;
-	}
-
-	public void setPosition(GeoPoint position) {
-		this.position = position;
-	}
-
-	public PersonType getPersonType() {
-		return personType;
-	}
-
-	public void setPersonType(PersonType personType) {
-		this.personType = personType;
-	}
-	
-	
-	public int getInstant() {
-		return instant;
-	}
-
-	public void setInstant(int instant) {
-		this.instant = instant;
-	}
-
 	@Override
 	public List<EventUserAppears> generateEvents(IdGenerator personIdGenerator) {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
