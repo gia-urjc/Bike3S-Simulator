@@ -1,7 +1,7 @@
 {
-	"reservationTime" : 3600,
+	"reservationTime" : 3000,
 	"totalTimeSimulation" : 84600,
-	"randomSeed": 100,
+	"randomSeed": 106,
 	"rectangleSimulation": {
 		"position": {
 			"latitude": 40.329103,

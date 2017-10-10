@@ -122,11 +122,17 @@ public abstract class Person extends Entity implements PersonCommonBehaviour {
     }
 
     public boolean returnBikeTo(Station station) {
-        if (bike == null) {
+        boolean result = false;
+    	if (bike == null) {
             // TODO: log warning (or throw error?)
             return false;
         }
-        return station.returnBike(this.bike);
+        if(station.returnBike(this.bike)){
+        	this.bike = null;
+        	result = true;
+        }
+        
+        return result;
     }
 
     /**
