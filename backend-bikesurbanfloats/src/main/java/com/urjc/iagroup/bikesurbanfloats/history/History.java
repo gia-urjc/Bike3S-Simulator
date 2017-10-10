@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
+import com.urjc.iagroup.bikesurbanfloats.entities.PersonBehaviour;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 
@@ -17,12 +18,8 @@ public class History {
 	
     static Gson gson = new Gson();
 
-    private static HistoryEntry lastEntry;
-    private static HistoryEntry nextEntry;
-    
-    private static ChangeSerializerPerson changesPerson = new ChangeSerializerPerson();
-    private static ChangeSerializerBike changesBike = new ChangeSerializerBike();
-    private static ChangeSerializerStation changesStation = new ChangeSerializerStation();
+    public static HistoryEntry lastEntry;
+    public static HistoryEntry nextEntry;
     
 
     private static ArrayList<JsonObject> serializedEntries = new ArrayList<>();
@@ -55,22 +52,22 @@ public class History {
 
     public static void init(List<EventUserAppears> userAppearsList) {
         nextEntry = new HistoryEntry(0);
-        nextEntry.getStations().putAll(SystemInfo.stations.stream().collect(Collectors.toMap(Station::getId, Station::new)));
+        nextEntry.getStations().putAll(SystemInfo.stations.stream().collect(Collectors.toMap(Station::getId, HistoricStation::new)));
         JsonObject entry = new JsonObject();
         
         List<JsonObject> users = new ArrayList<>();
         
         for (EventUserAppears event : userAppearsList) {
             JsonObject serializedUser = new JsonObject();
-            Person person = event.getUser();
-            nextEntry.getUsers().put(person.getId(), person.copy()); 
+            HistoricPerson person = new HistoricPerson((Person) event.getUser());
+            nextEntry.getPersons().put(person.getId(), person); 
             
             serializedUser.add("appearsOn", new JsonPrimitive(event.getInstant()));
             serializedUser.add("user", gson.toJsonTree(person, Person.class));
 
             users.add(serializedUser);
         }
-        nextEntry.getBikes().putAll(SystemInfo.bikes.stream().collect(Collectors.toMap(Bike::getId, Bike::new)));
+        nextEntry.getBikes().putAll(SystemInfo.bikes.stream().collect(Collectors.toMap(Bike::getId, HistoricBike::new)));
            
         entry.add("users", gson.toJsonTree(users));
         entry.add("stations", gson.toJsonTree(SystemInfo.stations));
@@ -85,9 +82,10 @@ public class History {
             lastEntry = nextEntry;
         }
         nextEntry = new HistoryEntry(timeInstant);
-        nextEntry.getStations().putAll(SystemInfo.stations.stream().collect(Collectors.toMap(Station::getId, Station::new)));
-        SystemInfo.persons.stream().map(person -> nextEntry.getUsers().put(person.getId(), person.copy()));
-        nextEntry.getBikes().putAll(SystemInfo.bikes.stream().collect(Collectors.toMap(Bike::getId, Bike::new)));
+        nextEntry.getStations().putAll(SystemInfo.stations.stream().collect(Collectors.toMap(Station::getId, HistoricStation::new)));
+        nextEntry.getBikes().putAll(SystemInfo.bikes.stream().collect(Collectors.toMap(Bike::getId, HistoricBike::new)));
+		SystemInfo.persons.stream().map(person -> nextEntry.getPersons().put(person.getId(), new HistoricPerson((Person) person)));
+        
     }
 
     private static JsonObject serializeChanges() {
@@ -96,9 +94,9 @@ public class History {
         List<JsonObject> users = new ArrayList<>();
         List<JsonObject> stations = new ArrayList<>();
 
-        for (Person newPerson : nextEntry.getUsers().values()) {
-        	Person oldPerson = lastEntry.getUsers().get(newPerson.getId());
-        	 JsonObject changes = changesPerson.getChanges(oldPerson, newPerson);
+        for (HistoricPerson nextPerson : nextEntry.getPersons().values()) {
+        	HistoricPerson lastPerson = lastEntry.getPersons().get(nextPerson.getId());
+        	JsonObject changes = nextPerson.getChanges(lastPerson);
             if (changes != null) users.add(changes);
         }
 
@@ -106,10 +104,10 @@ public class History {
             entry.add("users", gson.toJsonTree(users));
         }
 
-        for (Station newStation: nextEntry.getStations().values()) {
-        	Station oldStation = lastEntry.getStations().get(newStation.getId());
+        for (HistoricStation newStation: nextEntry.getStations().values()) {
+        	HistoricStation oldStation = lastEntry.getStations().get(newStation.getId());
 
-        	JsonObject changes = changesStation.getChanges(oldStation, newStation);
+        	JsonObject changes = newStation.getChanges(oldStation);
         	if (changes != null) stations.add(changes);
         }
         

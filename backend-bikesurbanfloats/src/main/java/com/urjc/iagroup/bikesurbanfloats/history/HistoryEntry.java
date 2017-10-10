@@ -7,23 +7,23 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
-class HistoryEntry {
+public class HistoryEntry {
 
     private int timeInstant;
-    private Map<Integer, Person> users;
-    private Map<Integer, Station> stations;
-    private Map<Integer, Bike> bikes;
+    private Map<Integer, HistoricPerson> persons;
+    private Map<Integer, HistoricStation> stations;
+    private Map<Integer, HistoricBike> bikes;
 
     HistoryEntry(int timeInstant) {
         this.timeInstant = timeInstant;
-        this.users = new HashMap<>();
+        this.persons = new HashMap<>();
         this.stations = new HashMap<>();
         this.bikes = new HashMap<>();
     }
 
     HistoryEntry(int timeInstant, HistoryEntry entry) {
         this(timeInstant);
-        this.users.putAll(entry.users);
+        this.persons.putAll(entry.persons);
         this.stations.putAll(entry.stations);
         this.bikes.putAll(entry.bikes);
     }
@@ -32,15 +32,15 @@ class HistoryEntry {
         return timeInstant;
     }
 
-    Map<Integer, Person> getUsers() {
-        return users;
+    Map<Integer, HistoricPerson> getPersons() {
+        return persons;
     }
 
-    Map<Integer, Station> getStations() {
+    Map<Integer, HistoricStation> getStations() {
         return stations;
     }
 
-    Map<Integer, Bike> getBikes() {
+    Map<Integer, HistoricBike> getBikes() {
         return bikes;
     }
 }
