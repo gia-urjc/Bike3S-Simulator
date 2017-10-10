@@ -15,29 +15,37 @@ public class HistoricPerson extends Person  {
         this.bike = user.getBike() == null ? null : new HistoricBike(user.getBike());
     }
 
+    // only if there are changes, the method registry them
     JsonObject getChanges(HistoricPerson previousSelf) {
-        if (previousSelf == null) return null;
+    	Gson gson = new Gson();
+    	if (previousSelf == null) return null;
 
         JsonObject changes = new JsonObject();
+        JsonObject oldEntity = new JsonObject(); 
+        JsonObject newEntity = new JsonObject(); 
         boolean hasChanges = false;
 
-        changes.add("id", new JsonPrimitive(this.getId()));
+        oldEntity.add("id", new JsonPrimitive(this.getId()));
+        newEntity.add("id", new JsonPrimitive(this.getId()));
 
-        JsonObject bike = History.idChange(previousSelf.bike, this.bike);
+        JsonObject[] bike = History.idChange(previousSelf.bike, this.bike);
 
         if (bike != null) {
-            changes.add("bike", bike);
+            old.add("bike", bike[0]);
+            new.add("bike", bike[1]);
             hasChanges = true;
         }
 
         if (!this.getPosition().equals(previousSelf.getPosition())) {
-            double dlat = this.getPosition().getLatitude() - previousSelf.getPosition().getLatitude();
-            double dlon = this.getPosition().getLongitude() - previousSelf.getPosition().getLongitude();
-            changes.add("position", History.gson.toJsonTree(new GeoPoint(dlat, dlon)));
+            old.add("position", gson.toJsonTree(previousSelf.getPosition()));
+            new.add("position", gson.toJsonTree(this.getPosition()));
             hasChanges = true;
         }
 
         // TODO: implement other possible changes like destination
+        
+        changes.add("old", old);
+        changes.add("new", new);
 
         return hasChanges ? changes : null;
     }
