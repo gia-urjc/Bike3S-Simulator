@@ -155,7 +155,8 @@ public abstract class Person extends Entity implements PersonCommonBehaviour {
       
 
     public String toString() {
-        String result = position.toString();
+        String result = "| Id: " + getId();
+        result += "| Actual Position: " + position.toString();
         result += " | Has Bike: " + hasBike();
         result += " | Actual velocity: " + getAverageVelocity();
         return result;

@@ -1,6 +1,6 @@
 {
 	"reservationTime" : 3000,
-	"totalTimeSimulation" : 84600,
+	"totalTimeSimulation" : 18000,
 	"randomSeed": 106,
 	"rectangleSimulation": {
 		"position": {
