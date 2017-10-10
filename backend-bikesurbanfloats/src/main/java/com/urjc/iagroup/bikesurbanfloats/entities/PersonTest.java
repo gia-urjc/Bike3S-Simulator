@@ -4,14 +4,10 @@ import java.util.ArrayList;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
-public class PersonTest extends Person implements PersonSpecificBehaviour {
+public class PersonTest extends Person {
 	
 	public PersonTest(int id, GeoPoint position) {
 		super(id, position);
-	}
-	
-	public PersonTest(PersonTest personTest) {
-		super(personTest);
 	}
 
 	public boolean decidesToLeaveSystem() {

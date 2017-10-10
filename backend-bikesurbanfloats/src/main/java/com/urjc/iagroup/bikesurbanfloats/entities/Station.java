@@ -1,13 +1,13 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import com.urjc.iagroup.bikesurbanfloats.entities.models.StationModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-import javax.naming.ServiceUnavailableException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class Station extends Entity {
+public class Station implements Entity, StationModel<Bike> {
+
+    private int id;
 
     private final GeoPoint position;
 
@@ -17,24 +17,17 @@ public class Station extends Entity {
     private int reservedSlots;
 
     public Station(int id, final GeoPoint position, int capacity, List<Bike> bikes) {
-        super(id);
+        this.id = id;
         this.position = position;
         this.capacity = capacity;
         this.bikes = bikes;
         this.reservedBikes = 0;
         this.reservedSlots = 0;
     }
-    
-    public Station(Station station) {
-    	super(station.getId());
-    	this.position = new GeoPoint(station.position);
-    	this.capacity = station.capacity;
-    	this.bikes = new ArrayList<>();
-    	this.bikes.addAll(station.getBikes().stream()
-                .map(bike -> bike == null ? null : new Bike(bike))
-                .collect(Collectors.toList()));
-    	this.reservedBikes = station.reservedBikes;
-    	this.reservedSlots = station.reservedSlots;
+
+    @Override
+    public int getId() {
+        return id;
     }
 
     public GeoPoint getPosition() {

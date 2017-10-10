@@ -6,7 +6,7 @@ import java.util.List;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.config.distributions.DistributionPoisson;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
-import com.urjc.iagroup.bikesurbanfloats.entities.PersonSpecificBehaviour;
+import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonFactory;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
@@ -33,7 +33,7 @@ public class EntryPointPoisson implements EntryPoint {
 		PersonFactory personFactory = new PersonFactory();
 		while(actualTime < SystemInfo.totalTimeSimulation) {
 			int id = personIdGenerator.next();
-			PersonSpecificBehaviour person = personFactory.createPerson(id, personType, position);
+			Person person = personFactory.createPerson(id, personType, position);
 			int timeEvent = distribution.randomInterarrivalDelay();
 			System.out.println(timeEvent);
 			actualTime += timeEvent;

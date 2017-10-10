@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
-import com.urjc.iagroup.bikesurbanfloats.entities.PersonSpecificBehaviour;
+import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
@@ -13,7 +13,7 @@ public class SystemInfo {
 	public static ArrayList<Station> stations = new ArrayList<>();
 	public static ArrayList<EntryPoint> entryPoints = new ArrayList<>();
 	public static ArrayList<Bike> bikes = new ArrayList<>();
-	public static ArrayList<PersonSpecificBehaviour> persons = new ArrayList<>();
+	public static ArrayList<Person> persons = new ArrayList<>();
 	
 	public static int reservationTime = 0;
 	public static int totalTimeSimulation = 0;
