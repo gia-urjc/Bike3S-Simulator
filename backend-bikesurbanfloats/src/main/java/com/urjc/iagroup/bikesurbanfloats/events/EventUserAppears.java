@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.entities.PersonBehaviour;
+import com.urjc.iagroup.bikesurbanfloats.entities.PersonSpecificBehaviour;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 
@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventUserAppears extends Event {
-    private PersonBehaviour user;
+    private PersonSpecificBehaviour user;
 
-    public EventUserAppears(int instant, PersonBehaviour user) {
+    public EventUserAppears(int instant, PersonSpecificBehaviour user) {
         super(instant);
         this.user = user;
     }
 
-    public PersonBehaviour getUser() {
+    public PersonSpecificBehaviour getUser() {
         return user;
     }
 
