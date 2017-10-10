@@ -9,7 +9,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 import javax.naming.ServiceUnavailableException;
 
-public abstract class Person extends Entity {
+public abstract class Person extends Entity implements PersonCommonBehaviour {
 
     private GeoPoint position;
     private Bike bike;

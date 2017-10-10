@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
-public class PersonTest extends Person implements PersonBehaviour {
+public class PersonTest extends Person implements PersonSpecificBehaviour {
 	
 	public PersonTest(int id, GeoPoint position) {
 		super(id, position);
