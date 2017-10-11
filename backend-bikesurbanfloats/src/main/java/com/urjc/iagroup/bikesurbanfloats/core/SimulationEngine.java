@@ -40,8 +40,6 @@ public class SimulationEngine {
 		
 		
         History.init(userAppearsList);
-        HistoryEntry last = History.lastEntry;
-        HistoryEntry next = History.nextEntry;
 
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element

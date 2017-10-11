@@ -44,6 +44,7 @@ public class EventBikeReservationTimeout extends Event {
     
     public String toString() {
     	String str = super.toString();
+    	str += "| Destination" + user.getDestinationStation().getId();
     	return str+"User: "+user.toString()+"\n";
     }
 
