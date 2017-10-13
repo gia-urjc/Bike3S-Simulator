@@ -75,41 +75,40 @@ public class Station implements Entity, StationModel<Bike> {
     }
 
     public Bike removeBike() {
-        if (this.availableBikes() == 0) {
+        Bike bike = null;
+    	if (this.availableBikes() == 0) {
            return null;
         }
-
         for (int i = 0; i < bikes.size(); i++) {
-            Bike bike = bikes.get(i);
+            bike = bikes.get(i);
             if (bike != null) {
-                bikes.remove(i);
-                bikes.add(i, null);
-                return bike;
+                bikes.set(i, null);
+                break;       
             }
         }
 
-        return null;
+        return bike;
     }
 
     public boolean returnBike(Bike bike) {
-        if (this.availableSlots() == 0) {
+        boolean result = false;
+    	if (this.availableSlots() == 0) {
             return false;
         }
-        this.bikes.add(bike);
         for (int i = 0; i < bikes.size(); i++) {
             if (bikes.get(i) == null) {
-            	bikes.remove(i);
-                bikes.add(i, bike);
-                return true;
+                bikes.set(i, bike);
+                result = true;
+                break;
             }
         }
-		return false;
+		return result;
     }
 
     @Override
     public String toString() {
         String result = "Id: " + getId();
-    	result = " | Position " + position.toString();
+    	result += " | Position " + position.toString();
         result += " | Capacity: " + capacity;
         result += " | Number of bikes: " + availableBikes() + "\n";
         return result;

@@ -11,7 +11,7 @@ public class PersonTest extends Person {
 	}
 
 	public boolean decidesToLeaveSystem() {
-		return random.nextBoolean();
+		return SystemInfo.random.nextBoolean();
 	}
 
 	public Station determineStation() {
@@ -34,7 +34,7 @@ public class PersonTest extends Person {
 	}
 	
 	public boolean decidesToReserveBike(Station station) {
-		boolean decidesToReserve = random.nextBoolean(); 
+		boolean decidesToReserve = SystemInfo.random.nextBoolean(); 
 
 		if (decidesToReserve) {
 			reservesBike(station);
@@ -43,7 +43,7 @@ public class PersonTest extends Person {
 	}
 
 	public boolean decidesToReserveSlot(Station station) {
-		boolean decidesToReserve = random.nextBoolean();
+		boolean decidesToReserve = SystemInfo.random.nextBoolean();
 		if (decidesToReserve) {
 			reservesSlot(station);
 		}
@@ -51,15 +51,15 @@ public class PersonTest extends Person {
 		}
 	
 	public GeoPoint decidesNextPoint() {
-		return rectangle.randomPoint();
+		return SystemInfo.rectangle.randomPoint();
 	}
 	
 	public boolean decidesToReturnBike() {
-		return random.nextBoolean();
+		return SystemInfo.random.nextBoolean();
 	}
 	
 	public boolean decidesToRentBikeAtOtherStation() {
-		return random.nextBoolean();
+		return SystemInfo.random.nextBoolean();
 	}
 	
 	public void updatePosition(int time) {

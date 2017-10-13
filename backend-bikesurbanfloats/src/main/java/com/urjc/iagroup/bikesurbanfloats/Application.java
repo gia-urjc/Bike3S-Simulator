@@ -1,7 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.ConfigJsonReader;
 import com.urjc.iagroup.bikesurbanfloats.core.SimulationEngine;

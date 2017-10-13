@@ -2,10 +2,10 @@ package com.urjc.iagroup.bikesurbanfloats.config;
 
 import java.util.ArrayList;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
-import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.util.BoundaryRectangle;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class SystemInfo {
@@ -20,7 +20,7 @@ public class SystemInfo {
 	public static long randomSeed = 0;
 	public static RandomUtil random = null;
 	
-	public static RectangleSimulation rectangle = null;
+	public static BoundaryRectangle rectangle = null;
 	
 	public static void resetInfo() {
 		stations = new ArrayList<>();

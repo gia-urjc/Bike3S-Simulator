@@ -1,11 +1,8 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
-import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
-
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public abstract class Person implements Entity, UserModel<Bike, Station> {
 
@@ -19,9 +16,6 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     private boolean reservedBike;
     private boolean reservedSlot;
     private Station destinationStation;
-    
-    protected final RandomUtil random = SystemInfo.random;
-    protected final RectangleSimulation rectangle = SystemInfo.rectangle;
    
 
     public Person(int id, GeoPoint position) {
@@ -30,9 +24,9 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         this.position = position;
         this.bike = null;
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = random.nextInt(3, 8) / 3.6;
+        this.walkingVelocity = SystemInfo.random.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = random.nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = SystemInfo.random.nextInt(10, 21) / 3.6;
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
@@ -114,11 +108,17 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     }
 
     public boolean returnBikeTo(Station station) {
-        if (bike == null) {
+        boolean result = false;
+    	if (bike == null) {
             // TODO: log warning (or throw error?)
             return false;
         }
-        return station.returnBike(this.bike);
+        if(station.returnBike(this.bike)){
+        	this.bike = null;
+        	result = true;
+        }
+        
+        return result;
     }
 
     /**
@@ -149,7 +149,8 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     public abstract boolean decidesToRentBikeAtOtherStation();
 
     public String toString() {
-        String result = position.toString();
+        String result = "| Id: " + getId();
+        result += "| Actual Position: " + position.toString();
         result += " | Has Bike: " + hasBike();
         result += " | Actual velocity: " + getAverageVelocity();
         return result;

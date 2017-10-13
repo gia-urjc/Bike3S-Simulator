@@ -2,7 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.entities.models;
 
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
-public interface UserModel<BikeType extends BikeModel, StationType extends StationModel> {
+public interface UserModel<BikeType extends BikeModel, StationType extends StationModel<BikeType>> {
 	
     GeoPoint getPosition();
     

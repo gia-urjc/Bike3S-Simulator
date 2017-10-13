@@ -3,7 +3,6 @@ package com.urjc.iagroup.bikesurbanfloats.entities.factories;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.PersonTest;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.PersonType;
 
 public class PersonFactory {
 
