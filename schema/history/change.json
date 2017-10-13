@@ -15,13 +15,15 @@
                             "properties": {
                                 "bike": { "$ref": "#/definitions/idReference" },
                                 "position": {
-                                    "type": "object",
-                                    "properties": {
-                                        "old": { "$ref": "../common/geopoint" },
-                                        "new": { "$ref": "../common/geopoint" }
-                                    },
-                                    "required": [ "old", "new" ],
-                                    "additionalProperties": false
+                                    "allOf": [
+                                        { "$ref": "#/definitions/propertyChangeBase" },
+                                        {
+                                            "properties": {
+                                                "old": { "$ref": "../common/geopoint" },
+                                                "new": { "$ref": "../common/geopoint" }
+                                            }
+                                        }
+                                    ]
                                 }
                             },
                             "additionalProperties": false
@@ -41,24 +43,31 @@
         "additionalProperties": false
     },
     "definitions": {
-        "idReference": {
+        "propertyChangeBase": {
             "type": "object",
-            "properties": {
-                "old": {
-                    "anyOf": [
-                        { "$ref": "../common/id" },
-                        { "type": "null" }
-                    ]
-                },
-                "new": {
-                    "anyOf": [
-                        { "$ref": "../common/id" },
-                        { "type": "null" }
-                    ]
-                }
-            },
             "required": [ "old", "new" ],
             "additionalProperties": false
+        },
+        "idReference": {
+            "allOf": [
+                { "$ref": "#/definitions/propertyChangeBase" },
+                {
+                    "properties": {
+                        "old": {
+                            "anyOf": [
+                                { "$ref": "../common/id" },
+                                { "type": "null" }
+                            ]
+                        },
+                        "new": {
+                            "anyOf": [
+                                { "$ref": "../common/id" },
+                                { "type": "null" }
+                            ]
+                        }
+                    }
+                }
+            ]
         }
     }
 }
