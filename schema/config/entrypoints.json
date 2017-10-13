@@ -9,9 +9,7 @@
                     "UserTest"
                 ]
             },
-            "position": {
-                "$ref": "../common/geopoint"
-            }
+            "position": { "$ref": "../common/geopoint" }
         },
         "oneOf": [
             {
@@ -21,7 +19,7 @@
                         "minimum": 0
                     }
                 },
-                "required": ["instant"]
+                "required": ["timeInstant"]
             },
             {
                 "properties": {

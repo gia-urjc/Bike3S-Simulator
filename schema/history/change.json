@@ -1,0 +1,64 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "users": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": { "$ref": "../common/id" },
+                        "changes": {
+                            "type": "object",
+                            "properties": {
+                                "bike": { "$ref": "#/definitions/idReference" }
+                                "position": {
+                                    "type": "object",
+                                    "properties": {
+                                        "old": { "$ref": "../common/geopoint" },
+                                        "new": { "$ref": "../common/geopoint" }
+                                    },
+                                    "required": [ "old", "new" ],
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "required": [
+                        "id",
+                        "changes"
+                    ],
+                    "additionalProperties": false
+                }
+            }
+        },
+        "required": [
+            "users"
+        ],
+        "additionalProperties": false
+    },
+    "definitions": {
+        "idReference": {
+            "type": "object",
+            "properties": {
+                "old": {
+                    "anyOf": [
+                        { "$ref": "../common/id" },
+                        { "type": "null" }
+                    ]
+                },
+                "new": {
+                    "anyOf": [
+                        { "$ref": "../common/id" },
+                        { "type": "null" }
+                    ]
+                }
+            },
+            "required": [ "old", "new" ],
+            "additionalProperties": false
+        }
+    }
+}
