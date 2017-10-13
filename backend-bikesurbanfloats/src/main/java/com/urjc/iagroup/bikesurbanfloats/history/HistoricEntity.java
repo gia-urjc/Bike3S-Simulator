@@ -36,7 +36,13 @@ public interface HistoricEntity<E extends Entity> extends Entity {
     }
 	
 	default JsonObject getChanges(E previousSelf) {
-		if (previousSelf == null || previousSelf.getId() != this.getId()) return null;
+		if (previousSelf == null) return null;
+
+		if (previousSelf.getId() != this.getId()) {
+		    String msg = "The id of previousSelf must be identical! Got: " + previousSelf.getId() + ", expected: " + this.getId();
+		    throw new IllegalArgumentException(msg);
+        }
+
 		return new JsonObject();
 	}
 	
