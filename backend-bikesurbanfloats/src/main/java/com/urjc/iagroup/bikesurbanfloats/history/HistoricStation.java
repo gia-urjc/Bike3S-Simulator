@@ -3,7 +3,6 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
-import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.StationModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class HistoricStation implements Entity, StationModel<HistoricBike>, HistoricEntity<HistoricStation> {
+public class HistoricStation implements HistoricEntity<HistoricStation>, StationModel<HistoricBike> {
 
     private static Function<Bike, HistoricBike> bikeConverter = bike -> bike == null ? null : new HistoricBike(bike);
 

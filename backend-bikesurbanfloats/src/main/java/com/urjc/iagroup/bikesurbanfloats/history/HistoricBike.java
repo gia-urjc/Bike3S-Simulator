@@ -2,10 +2,9 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 
 import com.google.gson.JsonObject;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
-import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.BikeModel;
 
-public class HistoricBike implements Entity, BikeModel, HistoricEntity<HistoricBike> {
+public class HistoricBike implements HistoricEntity<HistoricBike>, BikeModel {
 
 	private int id;
 
