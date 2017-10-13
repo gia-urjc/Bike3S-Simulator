@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.history;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
@@ -8,21 +8,19 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 public interface HistoricEntity<E extends Entity> extends Entity {
 
     static JsonObject idChange(Entity oldEntity, Entity newEntity) {
-        Gson gson = new Gson();
-
         JsonObject id = new JsonObject();
 
         if (oldEntity == null && newEntity == null) return null;
 
         if (oldEntity == null && newEntity != null) {
-            id.add("old", gson.toJsonTree("null"));
+            id.add("old", JsonNull.INSTANCE);
             id.add("new", new JsonPrimitive(newEntity.getId()));
             return id;
         }
 
         if (oldEntity != null && newEntity == null) {
             id.add("old", new JsonPrimitive(oldEntity.getId()));
-            id.add("new", gson.toJsonTree("null"));
+            id.add("new", JsonNull.INSTANCE);
             return id;
         }
 
