@@ -6,6 +6,9 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<HistoricBike, HistoricStation> {
 
 	private int id;
@@ -76,31 +79,31 @@ public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<His
     }
 
     @Override
-	public JsonObject getChanges(HistoricUser previousSelf) {
-		JsonObject changes = HistoricEntity.super.getChanges(previousSelf);
+	public JsonObject makeChangeEntryFrom(HistoricUser previousSelf) {
+		JsonObject changeEntry = HistoricEntity.super.makeChangeEntryFrom(previousSelf);
 
-		if (changes == null) return null;
+		if (changeEntry == null) return null;
 
-		boolean hasChanges = false;
+		JsonObject changes = new JsonObject();
 
-		changes.add("id", new JsonPrimitive(id));
+        Map<String, JsonObject> properties = new HashMap<>();
 
-		JsonObject bike = HistoricEntity.idChange(previousSelf.bike, this.bike);
+        properties.put("bike", HistoricEntity.idReferenceChange(previousSelf.bike, this.bike));
+        properties.put("position", HistoricEntity.propertyChange(previousSelf.position, this.position));
+
+		// TODO: add other possible changes like destination
+
+        properties.forEach((property, json) -> {
+            if (!json.entrySet().isEmpty()) {
+                changes.add(property, json);
+            }
+        });
+
+        if (changes.entrySet().isEmpty()) return null;
+
+        changeEntry.add("id", new JsonPrimitive(id));
+        changeEntry.add("changes", changes);
 	
-		if (bike != null) {
-			changes.add("bike", bike);
-			hasChanges = true;
-		}
-	
-		if (!this.position.equals(previousSelf.position)) {
-			double dlat = this.position.getLatitude() - previousSelf.position.getLatitude();
-			double dlon = this.position.getLongitude() - previousSelf.position.getLongitude();
-			changes.add("position", History.gson.toJsonTree(new GeoPoint(dlat, dlon)));
-			hasChanges = true;
-		}
-	
-		// TODO: implement other possible changes like destination
-	
-	    return hasChanges ? changes : null;
+	    return changeEntry;
 	}
 }

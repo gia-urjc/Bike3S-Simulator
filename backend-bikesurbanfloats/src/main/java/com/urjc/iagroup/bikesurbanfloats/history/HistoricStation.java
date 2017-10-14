@@ -80,8 +80,8 @@ public class HistoricStation implements HistoricEntity<HistoricStation>, Station
     }
 
     @Override
-	public JsonObject getChanges(HistoricStation previousSelf) {
-        JsonObject changes = HistoricEntity.super.getChanges(previousSelf);
+	public JsonObject makeChangeEntryFrom(HistoricStation previousSelf) {
+        JsonObject changes = HistoricEntity.super.makeChangeEntryFrom(previousSelf);
 
         if (changes == null) return null;
 
@@ -92,7 +92,7 @@ public class HistoricStation implements HistoricEntity<HistoricStation>, Station
         JsonObject bikes = new JsonObject();
 
         for (int i = 0; i < capacity; i++) {
-            JsonObject bike = HistoricEntity.idChange(previousSelf.bikes.get(i), this.bikes.get(i));
+            JsonObject bike = HistoricEntity.idReferenceChange(previousSelf.bikes.get(i), this.bikes.get(i));
             if (bike != null) {
                 bikes.add(Integer.toString(i), bike);
                 hasChanges = true;

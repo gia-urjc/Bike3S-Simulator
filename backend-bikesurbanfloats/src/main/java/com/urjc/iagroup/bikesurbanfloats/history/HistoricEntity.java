@@ -2,38 +2,30 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
+
+import javax.validation.constraints.NotNull;
 
 public interface HistoricEntity<E extends Entity> extends Entity {
 
-    static JsonObject idChange(Entity oldEntity, Entity newEntity) {
-        JsonObject id = new JsonObject();
+    static JsonObject propertyChange(@NotNull Object oldProperty, @NotNull Object newProperty) {
+        JsonObject property = new JsonObject();
 
-        if (oldEntity == null && newEntity == null) return null;
-
-        if (oldEntity == null && newEntity != null) {
-            id.add("old", JsonNull.INSTANCE);
-            id.add("new", new JsonPrimitive(newEntity.getId()));
-            return id;
+        if (!oldProperty.equals(newProperty)) {
+            property.add("old", History.gson.toJsonTree(oldProperty));
+            property.add("new", History.gson.toJsonTree(newProperty));
         }
 
-        if (oldEntity != null && newEntity == null) {
-            id.add("old", new JsonPrimitive(oldEntity.getId()));
-            id.add("new", JsonNull.INSTANCE);
-            return id;
-        }
+        return property;
+    }
 
-        if (oldEntity.equals(newEntity)) {
-            id.add("old", new JsonPrimitive(oldEntity.getId()));
-            id.add("new", new JsonPrimitive(newEntity.getId()));
-            return id;
-        }
-
-        return null;
+    static JsonObject idReferenceChange(Entity oldEntity, Entity newEntity) {
+        Object oldId = oldEntity == null ? JsonNull.INSTANCE : oldEntity.getId();
+        Object newId = newEntity == null ? JsonNull.INSTANCE : newEntity.getId();
+        return propertyChange(oldId, newId);
     }
 	
-	default JsonObject getChanges(E previousSelf) {
+	default JsonObject makeChangeEntryFrom(E previousSelf) {
 		if (previousSelf == null) return null;
 
 		if (previousSelf.getId() != this.getId()) {

@@ -31,7 +31,7 @@ public class HistoricBike implements HistoricEntity<HistoricBike>, BikeModel {
 	}
 
 	@Override
-	public JsonObject getChanges(HistoricBike previousSelf) {
+	public JsonObject makeChangeEntryFrom(HistoricBike previousSelf) {
 		// TODO: serialize changes
 		return null;
 	}

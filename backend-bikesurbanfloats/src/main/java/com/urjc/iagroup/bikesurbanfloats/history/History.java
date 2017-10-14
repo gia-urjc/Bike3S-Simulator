@@ -69,7 +69,7 @@ public class History {
         List<JsonObject> stations = new ArrayList<>();
 
         for (HistoricUser user : nextEntry.getUsers().values()) {
-            JsonObject changes = user.getChanges(lastEntry.getUsers().get(user.getId()));
+            JsonObject changes = user.makeChangeEntryFrom(lastEntry.getUsers().get(user.getId()));
             if (changes != null) users.add(changes);
         }
 
@@ -78,7 +78,7 @@ public class History {
         }
 
         for (HistoricStation station : nextEntry.getStations().values()) {
-        	JsonObject changes = station.getChanges(lastEntry.getStations().get(station.getId()));
+        	JsonObject changes = station.makeChangeEntryFrom(lastEntry.getStations().get(station.getId()));
         	if (changes != null) stations.add(changes);
         }
         
