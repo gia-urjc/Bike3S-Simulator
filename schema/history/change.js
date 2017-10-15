@@ -1,15 +1,7 @@
-/*const _ = require('lodash');
-
-const merge = (target, ...sources) => _.mergeWith(target, sources, (targetValue, sourceValue) => {
-    if (_.isArray(targetValue)) return targetValue.concat(sourceValue);
-});*/
-
-const { merge } = require('lodash');
+const merge = require('../util/merge');
 
 const ID = require('../common/id');
 const GeoPoint = require('../common/geopoint');
-
-const NULL = { type: 'null' };
 
 const entityChangeBase = {
     type: 'object',
@@ -32,8 +24,8 @@ const propertyChangeBase = {
 
 const idReference = merge({
     properties: {
-        old: { anyOf: [ID, NULL] },
-        new: { anyOf: [ID, NULL] },
+        old: { anyOf: [ID, { type: 'null' }] },
+        new: { anyOf: [ID, { type: 'null' }] },
     }
 }, propertyChangeBase);
 
