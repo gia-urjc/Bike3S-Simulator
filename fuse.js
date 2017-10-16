@@ -8,10 +8,10 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra');
 
-Sparky.task('backend:package', () => new Promise((resolve, reject) => {
+Sparky.task('build:backend', () => new Promise((resolve, reject) => {
     const backendPath = path.resolve(process.cwd(), 'backend-bikesurbanfloats');
 
-    const maven = spawn('mvn', ['package'], {
+    const maven = spawn('mvn', ['clean', 'package'], {
         cwd: backendPath,
         shell: true // necessary for windows
     });
@@ -29,7 +29,7 @@ Sparky.task('backend:package', () => new Promise((resolve, reject) => {
         if (code === 0) {
             const targetPath = path.resolve(backendPath, 'target');
             const target = path.resolve(targetPath, fs.readdirSync(targetPath).find((file) => file.endsWith('.jar')));
-            const destination = path.resolve(process.cwd(), 'dist', 'resources', 'backend.jar');
+            const destination = path.resolve(process.cwd(), 'build', 'backend.jar');
 
             fs.copySync(target, destination);
 
@@ -48,13 +48,15 @@ Sparky.task('build:schema', () => new Promise((resolve, reject) => {
         spaces: 4
     };
 
+    // add schemas here
+    // one entry has the schema subdirectory as key and an array of file names without extension as value
     const schemas = {
         config: ['entrypoints'],
         history: ['change']
     };
 
     Object.keys(schemas).forEach((type) => schemas[type].forEach((schema) => {
-        const out = path.resolve(process.cwd(), 'dist', 'resources', 'schema', type, `${schema}.json`);
+        const out = path.resolve(process.cwd(), 'build', 'schema', type, `${schema}.json`);
 
         log.time().green(`Writing schema to: ${out}`).echo();
 
