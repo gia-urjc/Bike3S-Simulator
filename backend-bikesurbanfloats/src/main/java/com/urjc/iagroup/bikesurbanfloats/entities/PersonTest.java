@@ -4,18 +4,14 @@ import java.util.ArrayList;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
-public class PersonTest extends Person implements PersonSpecificBehaviour {
+public class PersonTest extends Person {
 	
 	public PersonTest(int id, GeoPoint position) {
 		super(id, position);
 	}
-	
-	public PersonTest(PersonTest personTest) {
-		super(personTest);
-	}
 
 	public boolean decidesToLeaveSystem() {
-		return random.nextBoolean();
+		return SystemInfo.random.nextBoolean();
 	}
 
 	public Station determineStation() {
@@ -38,7 +34,7 @@ public class PersonTest extends Person implements PersonSpecificBehaviour {
 	}
 	
 	public boolean decidesToReserveBike(Station station) {
-		boolean decidesToReserve = random.nextBoolean(); 
+		boolean decidesToReserve = SystemInfo.random.nextBoolean(); 
 
 		if (decidesToReserve) {
 			reservesBike(station);
@@ -47,7 +43,7 @@ public class PersonTest extends Person implements PersonSpecificBehaviour {
 	}
 
 	public boolean decidesToReserveSlot(Station station) {
-		boolean decidesToReserve = random.nextBoolean();
+		boolean decidesToReserve = SystemInfo.random.nextBoolean();
 		if (decidesToReserve) {
 			reservesSlot(station);
 		}
@@ -55,15 +51,15 @@ public class PersonTest extends Person implements PersonSpecificBehaviour {
 		}
 	
 	public GeoPoint decidesNextPoint() {
-		return rectangle.randomPoint();
+		return SystemInfo.rectangle.randomPoint();
 	}
 	
 	public boolean decidesToReturnBike() {
-		return random.nextBoolean();
+		return SystemInfo.random.nextBoolean();
 	}
 	
 	public boolean decidesToRentBikeAtOtherStation() {
-		return random.nextBoolean();
+		return SystemInfo.random.nextBoolean();
 	}
 	
 	public void updatePosition(int time) {

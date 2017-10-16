@@ -1,7 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.config.distributions;
 
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;

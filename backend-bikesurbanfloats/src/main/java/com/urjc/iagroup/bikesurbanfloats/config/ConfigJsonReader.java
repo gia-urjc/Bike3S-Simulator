@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Random;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,8 +17,8 @@ import com.urjc.iagroup.bikesurbanfloats.config.deserializers.EntryPointDeserial
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.RectangleSimulationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.StationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
-import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.util.BoundaryRectangle;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
@@ -51,7 +50,7 @@ public class ConfigJsonReader {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer(bikeIdGen, stationIdGen));
 		gsonBuilder.registerTypeAdapter(EntryPoint.class, new EntryPointDeserializer());
-		gsonBuilder.registerTypeAdapter(RectangleSimulation.class, new RectangleSimulationDeserializer());
+		gsonBuilder.registerTypeAdapter(BoundaryRectangle.class, new RectangleSimulationDeserializer());
 		Gson gson = gsonBuilder.create();
 		
 		//Stations
@@ -73,7 +72,7 @@ public class ConfigJsonReader {
 		SystemInfo.randomSeed = jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong();
 		SystemInfo.random = new RandomUtil(SystemInfo.randomSeed);
 		JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
-		RectangleSimulation rec = gson.fromJson(rectangleJson, RectangleSimulation.class);
+		BoundaryRectangle rec = gson.fromJson(rectangleJson, BoundaryRectangle.class);
 		SystemInfo.rectangle = rec;
 	}
 	

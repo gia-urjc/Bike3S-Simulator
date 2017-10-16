@@ -1,19 +1,18 @@
-package com.urjc.iagroup.bikesurbanfloats.core;
+package com.urjc.iagroup.bikesurbanfloats.util;
 
 import java.awt.geom.Rectangle2D;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
+
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 
-public class RectangleSimulation {
+public class BoundaryRectangle {
 	
 	private Rectangle2D.Double rectangle;
 	
-	public RectangleSimulation() {
+	public BoundaryRectangle() {
 		this.rectangle = new Rectangle2D.Double();
 	}
 	
-	public RectangleSimulation(GeoPoint position, double lengthLongitude, double lengthLatitude) {
+	public BoundaryRectangle(GeoPoint position, double lengthLongitude, double lengthLatitude) {
 		double x = position.getLongitude();
 		double y = position.getLatitude();
 		double width = lengthLongitude;
