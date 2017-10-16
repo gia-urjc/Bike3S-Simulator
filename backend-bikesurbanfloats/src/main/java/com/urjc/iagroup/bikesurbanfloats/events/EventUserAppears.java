@@ -26,7 +26,7 @@ public class EventUserAppears extends Event {
         user.setDestinationStation(destination);
         int arrivalTime = user.timeToReach(destination.getPosition());
 
-        if (user.getDestinationStation().availableBikes() > 0 && user.decidesToReserveBike(destination) && SystemInfo.reservationTime < arrivalTime) {
+        if (user.decidesToReserveBike(destination) && SystemInfo.reservationTime < arrivalTime) {
             user.cancelsBikeReservation(destination);
             newEvents.add(new EventBikeReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
         } else {

@@ -66,14 +66,20 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         return reservedSlot;
     }
 
-    public void reservesBike(Station station) {
-        this.reservedBike = true;
-        station.reservesBike();
+    public boolean reservesBike(Station station) {
+    	if (station.availableBikes() > 0) {
+    		this.reservedBike = true;
+    		station.reservesBike();
+    	}
+    	return reservedBike;
     }
 
-    public void reservesSlot(Station station) {
+    public boolean reservesSlot(Station station) {
+    	if (station.availableSlots()) {
         this.reservedSlot = true;
         station.reservesSlot();
+    	}
+    	return reservedSlot;
     }
 
     public void cancelsBikeReservation(Station station) {

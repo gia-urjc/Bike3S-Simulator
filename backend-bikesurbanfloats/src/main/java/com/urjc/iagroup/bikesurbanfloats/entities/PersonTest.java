@@ -33,20 +33,21 @@ public class PersonTest extends Person {
 	}
 	
 	public boolean decidesToReserveBike(Station station) {
-		boolean decidesToReserve = SystemInfo.random.nextBoolean(); 
-
+		boolean decidesToReserve = SystemInfo.random.nextBoolean();
+		boolean reserved = false;
 		if (decidesToReserve) {
-			reservesBike(station);
+			reserved = this.reservesBike(station);
 		}
-		return decidesToReserve;
+		return (decidesToReserve && reserved);  
 	}
 
 	public boolean decidesToReserveSlot(Station station) {
 		boolean decidesToReserve = SystemInfo.random.nextBoolean();
+		boolean reserved = false;
 		if (decidesToReserve) {
-			reservesSlot(station);
+			reserved = this.reservesSlot(station);
 		}
-		return decidesToReserve;	
+		return (decidesToReserve && reserved);	
 		}
 	
 	public GeoPoint decidesNextPoint() {
