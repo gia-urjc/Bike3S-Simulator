@@ -35,17 +35,17 @@ public class EventUserArrivesAtStationToReturnBike extends Event {
             }
         }
         
-        if(!user.decidesToLeaveSystem()) {
-        	if(!user.decidesToRentBikeAtOtherStation()) {
-        		newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant(), user, station));
-        	}
-        	else {
-        		Station destination = user.determineStation();
-        		user.setDestinationStation(destination);
-        		int arrivalTime = user.timeToReach(destination.getPosition());
-        		newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant() + arrivalTime, user, destination));
-        	}
-        }
+//        if(!user.decidesToLeaveSystem()) {
+//        	if(!user.decidesToRentBikeAtOtherStation()) {
+//        		newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant(), user, station));
+//        	}
+//        	else {
+//        		Station destination = user.determineStation();
+//        		user.setDestinationStation(destination);
+//        		int arrivalTime = user.timeToReach(destination.getPosition());
+//        		newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant() + arrivalTime, user, destination));
+//        	}
+//        }
 
         return newEvents;
     }

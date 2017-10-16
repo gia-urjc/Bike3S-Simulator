@@ -28,7 +28,6 @@ public class PersonTest extends Person {
 			}
 		}
 		if(destination == null) {
-			throw new IllegalStateException("There's no stations in this configuration");
 		}
 		return destination;
 	}
