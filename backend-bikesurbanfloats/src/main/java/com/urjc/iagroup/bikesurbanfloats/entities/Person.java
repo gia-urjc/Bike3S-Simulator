@@ -75,9 +75,9 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     }
 
     public boolean reservesSlot(Station station) {
-    	if (station.availableSlots()) {
-        this.reservedSlot = true;
-        station.reservesSlot();
+    	if (station.availableSlots() > 0) {
+    		this.reservedSlot = true;
+    		station.reservesSlot();
     	}
     	return reservedSlot;
     }
