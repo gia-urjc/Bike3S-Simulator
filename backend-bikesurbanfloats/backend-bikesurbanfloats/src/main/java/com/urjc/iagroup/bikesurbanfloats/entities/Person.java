@@ -66,20 +66,14 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         return reservedSlot;
     }
 
-    public boolean reservesBike(Station station) {
-    	if (station.availableBikes() > 0) {
-    		this.reservedBike = true;
-    		station.reservesBike();
-    	}
-    	return reservedBike;
+    public void reservesBike(Station station) {
+        this.reservedBike = true;
+        station.reservesBike();
     }
 
-    public boolean reservesSlot(Station station) {
-    	if (station.availableSlots()) {
+    public void reservesSlot(Station station) {
         this.reservedSlot = true;
         station.reservesSlot();
-    	}
-    	return reservedSlot;
     }
 
     public void cancelsBikeReservation(Station station) {
@@ -147,14 +141,12 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
 
     public abstract boolean decidesToLeaveSystem();
     public abstract Station determineStation();
-    public abstract boolean decidesToReserveBike(); // must call reservesBike method inside it
-    public abstract boolean decidesToReserveSlot(); // must call reservesSlot method inside it
+    public abstract boolean decidesToReserveBike(Station station); // must call reservesBike method inside it
+    public abstract boolean decidesToReserveSlot(Station station); // must call reservesSlot method inside it
     public abstract GeoPoint decidesNextPoint(); // returns: user decides where to go to to ride his bike (not to a station)
     public abstract boolean decidesToReturnBike(); // returns: true -> user goes to a station; false -> user rides his bike to a site which isn't a station
     public abstract void updatePosition(int time); // walked distance during a time period
     public abstract boolean decidesToRentBikeAtOtherStation();
-    
-    public abstract boolean decidesToDetermineOtherStation();
 
     public String toString() {
         String result = "| Id: " + getId();

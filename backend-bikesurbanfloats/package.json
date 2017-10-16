@@ -1,0 +1,16 @@
+{
+    "name": "Project SURF Bike Rental Simulator",
+    "version": "0.0.1",
+    "dependencies": {
+        "lodash": "^4.17.4"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "^4.0.2",
+        "@types/lodash": "^4.14.77",
+        "@types/node": "^8.0.34",
+        "fliplog": "^1.0.4",
+        "fs-extra": "^4.0.2",
+        "fuse-box": "^2.3.3",
+        "typescript": "^2.5.3"
+    }
+}

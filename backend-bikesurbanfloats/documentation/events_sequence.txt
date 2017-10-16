@@ -1,0 +1,21 @@
+1: Users Appears--->2: User Arrives At Station To Rent a Bike
+1: Users Appears--->5: Bike Reservation Timeout
+
+2: User Arrives At Station To Rent a Bike--->>If there are bikes--->3: User Arrives At Station to Return the Bike
+2: User Arrives At Station To Rent a Bike--->>if there are bikes--->4: User Wants To Return the Bike
+2: User Arrives At Station To Rent a Bike--->if thereare bikes--->6: Slot Reservation Timeout
+2: User Arrives At Station To Rent a Bike--->If there are not bikes--->2: User Arrives At Station To Rent a Bike (OR user leaves the system)
+2: User Arrives At Station To Rent a Bike--->if there are not bikes--->5: Bike Reservation Timeout
+
+6: Slot Reservation Timeout--->6: Slot Reservation Timeout
+6: Slot Reservation Timeout--->3: User Arrives At Station To Return the Bike
+
+3: User Arrives At Station To Return the Bike--->if there are not slots--->3: User Arrives At Station To Return the Bike
+3: User Arrives At Station To Return the Bike--->if there are not slots--->6: Slot Reservation Timeout
+3: User Arrives At Station To Return the Bike--->if there are slots--->user returns the bike and leaves the system 
+
+4: User Wants To Return the Bike--->3: User Arrives At Station To Return the Bike
+4: User Wants To Return the Bike--->6: Slot Reservation Timeout
+
+5: Bike Reservation Timeout--->2: User Arrives At Station To Rent Bike
+5: Bike Reservation Timeout--->5: Bike Reservation Timeout

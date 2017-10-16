@@ -33,13 +33,22 @@ public class PersonTest extends Person {
 		return destination;
 	}
 	
-	public boolean decidesToReserveBike() {
-		return SystemInfo.random.nextBoolean();
+	public boolean decidesToReserveBike(Station station) {
+		boolean decidesToReserve = SystemInfo.random.nextBoolean(); 
+
+		if (decidesToReserve) {
+			reservesBike(station);
+		}
+		return decidesToReserve;
 	}
 
-	public boolean decidesToReserveSlot() {
-		return SystemInfo.random.nextBoolean();
-	}
+	public boolean decidesToReserveSlot(Station station) {
+		boolean decidesToReserve = SystemInfo.random.nextBoolean();
+		if (decidesToReserve) {
+			reservesSlot(station);
+		}
+		return decidesToReserve;	
+		}
 	
 	public GeoPoint decidesNextPoint() {
 		return SystemInfo.rectangle.randomPoint();
