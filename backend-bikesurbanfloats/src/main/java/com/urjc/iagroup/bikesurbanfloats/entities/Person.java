@@ -1,15 +1,12 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
-import com.urjc.iagroup.bikesurbanfloats.core.RectangleSimulation;
-
+import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
-import javax.naming.ServiceUnavailableException;
+public abstract class Person implements Entity, UserModel<Bike, Station> {
 
-public abstract class Person extends Entity implements PersonCommonBehaviour {
+    private int id;
 
     private GeoPoint position;
     private Bike bike;
@@ -19,36 +16,25 @@ public abstract class Person extends Entity implements PersonCommonBehaviour {
     private boolean reservedBike;
     private boolean reservedSlot;
     private Station destinationStation;
-    
-    protected final RandomUtil random = SystemInfo.random;
-    protected final RectangleSimulation rectangle = SystemInfo.rectangle;
    
 
     public Person(int id, GeoPoint position) {
-        super(id);
+        this.id = id;
 
         this.position = position;
         this.bike = null;
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = random.nextInt(3, 8) / 3.6;
+        this.walkingVelocity = SystemInfo.random.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = random.nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = SystemInfo.random.nextInt(10, 21) / 3.6;
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
     }
-    
-    public Person(Person person) {
-    	super(person.getId());
-    	this.position = new GeoPoint(person.position);
-        
-    	if(person.bike != null) this.bike = new Bike(person.bike);
-        else this.bike = null;
-    	
-    	this.walkingVelocity = person.walkingVelocity;
-    	this.cyclingVelocity = person.cyclingVelocity;
-    	this.reservedBike = person.reservedBike;
-    	this.reservedSlot = person.reservedSlot;
+
+    @Override
+    public int getId() {
+        return id;
     }
 
     public GeoPoint getPosition() {
@@ -140,7 +126,7 @@ public abstract class Person extends Entity implements PersonCommonBehaviour {
      *
      * @return
      */
-    public Double getAverageVelocity() {
+    public double getAverageVelocity() {
         return bike == null ? walkingVelocity : cyclingVelocity;
     }
 
@@ -152,7 +138,15 @@ public abstract class Person extends Entity implements PersonCommonBehaviour {
         // time in seconds
         return (int) Math.round(position.distanceTo(destination) / getAverageVelocity());
     }
-      
+
+    public abstract boolean decidesToLeaveSystem();
+    public abstract Station determineStation();
+    public abstract boolean decidesToReserveBike(Station station); // must call reservesBike method inside it
+    public abstract boolean decidesToReserveSlot(Station station); // must call reservesSlot method inside it
+    public abstract GeoPoint decidesNextPoint(); // returns: user decides where to go to to ride his bike (not to a station)
+    public abstract boolean decidesToReturnBike(); // returns: true -> user goes to a station; false -> user rides his bike to a site which isn't a station
+    public abstract void updatePosition(int time); // walked distance during a time period
+    public abstract boolean decidesToRentBikeAtOtherStation();
 
     public String toString() {
         String result = "| Id: " + getId();

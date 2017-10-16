@@ -1,0 +1,61 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "userType": {
+                "enum": [
+                    "UserTest"
+                ]
+            },
+            "position": { "$ref": "../common/geopoint" }
+        },
+        "oneOf": [
+            {
+                "properties": {
+                    "timeInstant": {
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                },
+                "required": ["timeInstant"]
+            },
+            {
+                "properties": {
+                    "distribution": {
+                        "type": "object",
+                        "oneOf": [
+                            {
+                                "properties": {
+                                    "type": {
+                                        "const": "random"
+                                    }
+                                }
+                            },
+                            {
+                                "properties": {
+                                    "type": {
+                                        "const": "poisson"
+                                    },
+                                    "lambda": {
+                                        "type": "number"
+                                    }
+                                },
+                                "required": ["lambda"]
+                            }
+                        ],
+                        "required": ["type"],
+                        "additionalProperties": false
+                    }
+                },
+                "required": ["distribution"]
+            }
+        ],
+        "required": [
+            "userType",
+            "position"
+        ],
+        "additionalProperties": false
+    }
+}

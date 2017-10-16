@@ -1,0 +1,103 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "users": {
+                "type": "array",
+                "items": {
+                    "allOf": [
+                        { "$ref": "#/definitions/entityChangeBase" },
+                        {
+                            "properties": {
+                                "changes": {
+                                    "properties": {
+                                        "bike": { "$ref": "#/definitions/idReference" },
+                                        "position": {
+                                            "allOf": [
+                                                { "$ref": "#/definitions/propertyChangeBase" },
+                                                {
+                                                    "properties": {
+                                                        "old": { "$ref": "../common/geopoint" },
+                                                        "new": { "$ref": "../common/geopoint" }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "stations": {
+                "type": "array",
+                "items": {
+                    "allOf": [
+                        { "$ref": "#/definitions/entityChangeBase" },
+                        {
+                            "properties": {
+                                "changes": {
+                                    "properties": {
+                                        "bikes": {
+                                            "type": "object",
+                                            "patternProperties": {
+                                                "^([1-9][0-9]*|0)$": { "$ref": "#/definitions/idReference" }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "required": [
+            "users"
+        ],
+        "additionalProperties": false
+    },
+    "definitions": {
+        "entityChangeBase": {
+            "type": "object",
+            "properties": {
+                "id": { "$ref": "../common/id" },
+                "changes": {
+                    "type": "object",
+                    "additionalProperties": false
+                }
+            },
+            "required": [ "id", "changes" ],
+            "additionalProperties": false
+        },
+        "propertyChangeBase": {
+            "type": "object",
+            "required": [ "old", "new" ],
+            "additionalProperties": false
+        },
+        "idReference": {
+            "allOf": [
+                { "$ref": "#/definitions/propertyChangeBase" },
+                {
+                    "properties": {
+                        "old": {
+                            "anyOf": [
+                                { "$ref": "../common/id" },
+                                { "type": "null" }
+                            ]
+                        },
+                        "new": {
+                            "anyOf": [
+                                { "$ref": "../common/id" },
+                                { "type": "null" }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

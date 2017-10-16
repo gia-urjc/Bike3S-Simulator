@@ -1,25 +1,25 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
-import com.urjc.iagroup.bikesurbanfloats.entities.PersonSpecificBehaviour;
+import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
 import java.util.List;
 import java.util.ArrayList;
 
 public class EventSlotReservationTimeout extends Event {
-    private PersonSpecificBehaviour user;
+    private Person user;
 
-    public EventSlotReservationTimeout(int instant, PersonSpecificBehaviour user) {
+    public EventSlotReservationTimeout(int instant, Person user) {
         super(instant);
         this.user = user;
     }
 
-    public PersonSpecificBehaviour getUser() {
+    public Person getUser() {
         return user;
     }
 
-    public void setUser(PersonSpecificBehaviour user) {
+    public void setUser(Person user) {
         this.user = user;
     }
 

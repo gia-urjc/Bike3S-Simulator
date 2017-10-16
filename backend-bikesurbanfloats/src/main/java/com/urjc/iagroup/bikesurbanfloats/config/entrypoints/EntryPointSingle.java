@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
-import com.urjc.iagroup.bikesurbanfloats.entities.PersonSpecificBehaviour;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonFactory;
+import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonType;
 import com.urjc.iagroup.bikesurbanfloats.events.*;
 import com.urjc.iagroup.bikesurbanfloats.util.*;
 
@@ -24,7 +24,7 @@ public class EntryPointSingle implements EntryPoint {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		PersonFactory personFactory = new PersonFactory();
 		int id = personIdGenerator.next();
-		PersonSpecificBehaviour person = personFactory.createPerson(id, personType, position);
+		Person person = personFactory.createPerson(id, personType, position);
 		EventUserAppears event = new EventUserAppears(instant, person);
 		generatedEvents.add(event);
 		return generatedEvents;

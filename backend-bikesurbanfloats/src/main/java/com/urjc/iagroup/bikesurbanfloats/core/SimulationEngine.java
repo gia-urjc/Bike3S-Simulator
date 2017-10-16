@@ -2,7 +2,6 @@ package com.urjc.iagroup.bikesurbanfloats.core;
 
 import com.urjc.iagroup.bikesurbanfloats.events.*;
 import com.urjc.iagroup.bikesurbanfloats.history.History;
-import com.urjc.iagroup.bikesurbanfloats.history.HistoryEntry;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.config.*;
 

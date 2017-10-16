@@ -2,8 +2,6 @@ package com.urjc.iagroup.bikesurbanfloats.util;
 
 import java.util.Random;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
-
 public class RandomUtil {
 	
 	private Random random;
