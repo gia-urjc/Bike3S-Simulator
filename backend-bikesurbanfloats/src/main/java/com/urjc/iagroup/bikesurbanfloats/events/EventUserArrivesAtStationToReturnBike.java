@@ -22,30 +22,14 @@ public class EventUserArrivesAtStationToReturnBike extends Event {
         List<Event> newEvents = new ArrayList<>();
         user.setPosition(station.getPosition());
 
-        if (!user.returnBikeTo(station)) {
-            Station destination = user.determineStation();
-            user.setDestinationStation(destination);
-            int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
-
-            if (user.decidesToReserveSlot(destination) && SystemInfo.reservationTime < arrivalTime) {
-                user.cancelsSlotReservation(destination);
-                newEvents.add(new EventSlotReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
-            } else {
-                newEvents.add(new EventUserArrivesAtStationToReturnBike(getInstant() + arrivalTime, user, destination));
-            }
-        }
+        boolean returnedBike = user.returnBikeTo(station);
         
-        if(!user.decidesToLeaveSystem()) {
-        	if(!user.decidesToRentBikeAtOtherStation()) {
-        		newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant(), user, station));
-        	}
-        	else {
-        		Station destination = user.determineStation();
-        		user.setDestinationStation(destination);
-        		int arrivalTime = user.timeToReach(destination.getPosition());
-        		newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant() + arrivalTime, user, destination));
-        	}
-        }
+        if(!returnedBike) {
+        	newEvents.add(new EventUserDecidesReserveSlotOrReturnBike(getInstant(), user));
+        }      
+//        else if(!user.decidesToLeaveSystem()) {
+//        	newEvents.add(new EventUserDecidesReserveOrRent(getInstant(), user));
+//        }
 
         return newEvents;
     }

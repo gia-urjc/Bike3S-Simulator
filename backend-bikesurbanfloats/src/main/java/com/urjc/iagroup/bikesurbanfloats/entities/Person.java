@@ -1,5 +1,8 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
@@ -16,6 +19,7 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     private boolean reservedBike;
     private boolean reservedSlot;
     private Station destinationStation;
+    private List<Station> stationsReservationAttemps;
    
 
     public Person(int id, GeoPoint position) {
@@ -27,12 +31,13 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         this.walkingVelocity = SystemInfo.random.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
         this.cyclingVelocity = SystemInfo.random.nextInt(10, 21) / 3.6;
+        this.stationsReservationAttemps = new ArrayList<>();
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
     }
 
-    @Override
+	@Override
     public int getId() {
         return id;
     }
@@ -75,9 +80,9 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     }
 
     public boolean reservesSlot(Station station) {
-    	if (station.availableSlots()) {
-        this.reservedSlot = true;
-        station.reservesSlot();
+    	if (station.availableSlots() > 0) {
+    		this.reservedSlot = true;
+    		station.reservesSlot();
     	}
     	return reservedSlot;
     }
@@ -98,6 +103,14 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
 
 	public void setDestinationStation(Station destinationStation) {
 		this.destinationStation = destinationStation;
+	}
+	
+    public List<Station> getStationsReservationAttemps() {
+		return stationsReservationAttemps;
+	}
+
+	public void setStationsReservationAttemps(List<Station> stationsReservationAttemps) {
+		this.stationsReservationAttemps = stationsReservationAttemps;
 	}
 
 	public boolean removeBikeFrom(Station station) {

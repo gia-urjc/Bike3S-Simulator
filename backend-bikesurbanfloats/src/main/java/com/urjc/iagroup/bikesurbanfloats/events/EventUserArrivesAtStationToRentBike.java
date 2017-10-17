@@ -28,16 +28,7 @@ public class EventUserArrivesAtStationToRentBike extends Event {
         if (removedBike) {
 
             if (user.decidesToReturnBike()) {
-                Station destination = user.determineStation();
-                user.setDestinationStation(destination);
-                int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
-
-                if (user.decidesToReserveSlot(destination) && SystemInfo.reservationTime < arrivalTime) {
-                    user.cancelsSlotReservation(destination);
-                    newEvents.add(new EventSlotReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
-                } else {
-                    newEvents.add(new EventUserArrivesAtStationToReturnBike(getInstant() + arrivalTime, user, destination));
-                }
+                newEvents.add(new EventUserDecidesReserveSlotOrReturnBike(getInstant(), user));
             } else {
                 GeoPoint point = user.decidesNextPoint();
                 int arrivalTime = user.timeToReach(point);
@@ -45,18 +36,8 @@ public class EventUserArrivesAtStationToRentBike extends Event {
             }
         } else {
             // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation
-            
             if (!user.decidesToLeaveSystem()) { 
-                Station decision = user.determineStation();
-                user.setDestinationStation(decision);
-                int arrivalTime = user.timeToReach(decision.getPosition());
-                
-                if (user.decidesToReserveBike(decision) && SystemInfo.reservationTime < arrivalTime) {
-                    user.cancelsBikeReservation(decision);
-                    newEvents.add(new EventBikeReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
-                } else {
-                    newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant() + arrivalTime, user, decision));
-                }
+                newEvents.add(new EventUserDecidesReserveOrRent(getInstant(), user));
             }
         }
 

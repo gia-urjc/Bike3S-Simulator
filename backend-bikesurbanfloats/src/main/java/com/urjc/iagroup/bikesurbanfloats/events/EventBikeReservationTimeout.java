@@ -28,7 +28,7 @@ public class EventBikeReservationTimeout extends Event {
         user.updatePosition(SystemInfo.reservationTime);
 
         if (!user.decidesToLeaveSystem()) {
-        	newEvents.add(new EventReservationManagement(getInstant(), user);
+        	newEvents.add(new EventUserDecidesReserveOrRent(getInstant(), user));
         }
         
         return newEvents;

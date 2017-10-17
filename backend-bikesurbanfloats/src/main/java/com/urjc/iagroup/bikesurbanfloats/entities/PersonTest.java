@@ -1,6 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.ArrayList;
+
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
@@ -22,7 +23,8 @@ public class PersonTest extends Person {
 			GeoPoint stationGeoPoint = currentStation.getPosition();
 			GeoPoint personGeoPoint =	getPosition();
 			double distance = stationGeoPoint.distanceTo(personGeoPoint);
-			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
+			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance 
+					&& getStationsReservationAttemps().contains(currentStation)) {
 				minDistance = distance;
 				destination = currentStation;
 			}
@@ -58,6 +60,12 @@ public class PersonTest extends Person {
  		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
 		setPosition(newPoint);
 		
+	}
+
+	@Override
+	public boolean decidesToDetermineOtherStation() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }
