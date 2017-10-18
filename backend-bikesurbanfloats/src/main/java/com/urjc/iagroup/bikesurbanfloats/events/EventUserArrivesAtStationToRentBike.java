@@ -20,9 +20,9 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
         user.setPosition(station.getPosition());
 
         if (user.removeBikeFrom(station)) {
-            if (user.decidesToReturnBike()) {
+            if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
                 newEvents = manageSlotReservationDecision();
-            } else {
+            } else {   // user rides his bike to a point which is not a station
                 GeoPoint point = user.decidesNextPoint();
                 int arrivalTime = user.timeToReach(point);
                 newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));

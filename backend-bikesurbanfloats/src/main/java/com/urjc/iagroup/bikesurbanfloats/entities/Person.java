@@ -16,11 +16,12 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
 
     private double walkingVelocity;  // meters/second
     private double cyclingVelocity;  // meters/second
+    
     private boolean reservedBike;
     private boolean reservedSlot;
+    
     private Station destinationStation;
-    private List<Station> bikeReservationAttempts;
-    private List<Station> slotReservationAttempts;
+    private List<Reservation> reservations;
    
     public Person(int id, GeoPoint position) {
         this.id = id;
@@ -31,29 +32,20 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         this.walkingVelocity = SystemInfo.random.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
         this.cyclingVelocity = SystemInfo.random.nextInt(10, 21) / 3.6;
-        this.bikeReservationAttempts = new ArrayList<>();
-        this.slotReservationAttempts = new ArrayList<>();
+        this.reservations = new ArrayList<>();        
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
     }
     
-    public List<Station> getBikeReservationAttempts() {
-    	return bikeReservationAttempts;
+    public List<Reservation> getReservations() {
+    	return reservations;
     }
     
-    public List<Station> getSlotReservationAttempts() {
-    	return slotReservationAttempts;
+    public void addReservation(Reservation reservation) {
+    	reservations.add(reservation);
     }
     
-    public void addBikeReservationAttemp(Station station) {
-    	bikeReservationAttempts.add(station);
-    }
-    
-    public void addSlotReservationAttempt(Station station) {
-    	slotReservationAttempts.add(station);
-    }
-
 	@Override
     public int getId() {
         return id;
