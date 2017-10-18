@@ -19,9 +19,9 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     private boolean reservedBike;
     private boolean reservedSlot;
     private Station destinationStation;
-    private List<Station> stationsReservationAttemps;
+    private List<Station> bikeReservationAttempts;
+    private List<Station> slotReservationAttempts;
    
-
     public Person(int id, GeoPoint position) {
         this.id = id;
 
@@ -31,10 +31,27 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         this.walkingVelocity = SystemInfo.random.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
         this.cyclingVelocity = SystemInfo.random.nextInt(10, 21) / 3.6;
-        this.stationsReservationAttemps = new ArrayList<>();
+        this.bikeReservationAttempts = new ArrayList<>();
+        this.slotReservationAttempts = new ArrayList<>();
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
+    }
+    
+    public List<Station> getBikeReservationAttempts() {
+    	return bikeReservationAttempts;
+    }
+    
+    public List<Station> getSlotReservationAttempts() {
+    	return slotReservationAttempts;
+    }
+    
+    public void addBikeReservationAttemp(Station station) {
+    	bikeReservationAttempts.add(station);
+    }
+    
+    public void addSlotReservationAttempt(Station station) {
+    	slotReservationAttempts.add(station);
     }
 
 	@Override
@@ -105,14 +122,6 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
 		this.destinationStation = destinationStation;
 	}
 	
-    public List<Station> getStationsReservationAttemps() {
-		return stationsReservationAttemps;
-	}
-
-	public void setStationsReservationAttemps(List<Station> stationsReservationAttemps) {
-		this.stationsReservationAttemps = stationsReservationAttemps;
-	}
-
 	public boolean removeBikeFrom(Station station) {
         if (bike != null) {
             return false;
@@ -159,7 +168,8 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     }
 
     public abstract boolean decidesToLeaveSystem();
-    public abstract Station determineStation();
+    public abstract Station determineStationToRentBike();
+    public abstract Station determineStationToReturnBike();
     public abstract boolean decidesToReserveBike(); // must call reservesBike method inside it
     public abstract boolean decidesToReserveSlot(); // must call reservesSlot method inside it
     public abstract GeoPoint decidesNextPoint(); // returns: user decides where to go to to ride his bike (not to a station)

@@ -1,6 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
@@ -14,24 +15,63 @@ public class PersonTest extends Person {
 	public boolean decidesToLeaveSystem() {
 		return SystemInfo.random.nextBoolean();
 	}
+	
+	private List<Station> obtainStationsWithoutBikeReservationAttempts() {
+		List<Station> stations = new ArrayList<>(SystemInfo.stations);
+		for (Station station: getBikeReservationAttempts()) {
+			stations.remove(station);
+		}
+		return stations;
+	}
+	
+	private List<Station> obtainStationsWithoutSlotReservationAttempts() {
+		List<Station> stations = new ArrayList<>(SystemInfo.stations); 
+		for (Station station: getSlotReservationAttempts()) {
+			stations.remove(station);
+		}
+		return stations;
+	}
 
-	public Station determineStation() {
-		ArrayList<Station> stations = SystemInfo.stations;
+	public Station determineStationToRentBike() {
+		List<Station> stations = obtainStationsWithoutBikeReservationAttempts();
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
 		for(Station currentStation: stations) {
 			GeoPoint stationGeoPoint = currentStation.getPosition();
 			GeoPoint personGeoPoint =	getPosition();
 			double distance = stationGeoPoint.distanceTo(personGeoPoint);
-			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance 
-					&& getStationsReservationAttemps().contains(currentStation)) {
+			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
 				minDistance = distance;
 				destination = currentStation;
 			}
 		}
 		if(destination == null) {
-			throw new IllegalStateException("There's no stations in this configuration");
+			int numberStations = SystemInfo.stations.size();
+			int indexStation = SystemInfo.random.nextInt(0,  numberStations - 1);
+			destination = SystemInfo.stations.get(indexStation);
 		}
+		return destination;
+	}
+	
+	public Station determineStationToReturnBike() {
+		List<Station> stations = obtainStationsWithoutSlotReservationAttempts();
+		double minDistance = Double.MAX_VALUE;
+		Station destination = null;
+		for(Station currentStation: stations) {
+			GeoPoint stationGeoPoint = currentStation.getPosition();
+			GeoPoint personGeoPoint =	getPosition();
+			double distance = stationGeoPoint.distanceTo(personGeoPoint);
+			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
+				minDistance = distance;
+				destination = currentStation;
+			}
+		}
+		if(destination == null) {
+			int numberStations = SystemInfo.stations.size();
+			int indexStation = SystemInfo.random.nextInt(0,  numberStations - 1);
+			destination = SystemInfo.stations.get(indexStation);
+		}
+		
 		return destination;
 	}
 	

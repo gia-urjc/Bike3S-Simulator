@@ -21,10 +21,4 @@ public class EventBikeReservationTimeout extends EventUser {
         }
         return newEvents;
     }
-    
-    public String toString() {
-    	String str = super.toString();
-    	return str += "| Destination" + user.getDestinationStation().getId();
-    }
-
 }
