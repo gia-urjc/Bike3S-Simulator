@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 
 import { FaIcon, FaListIcon } from './ngfa.component';
 
+import 'font-awesome/css/font-awesome.min.css';
+
 @NgModule({
     imports: [CommonModule],
     declarations: [

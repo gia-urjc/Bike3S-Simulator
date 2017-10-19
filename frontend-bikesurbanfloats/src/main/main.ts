@@ -9,7 +9,7 @@ namespace Main {
         window = new BrowserWindow({ width: 800, height: 600 });
 
         window.loadURL(url.format({
-            pathname: path.join(__dirname, 'index.html'),
+            pathname: path.join(app.getAppPath(), 'frontend', 'index.html'),
             protocol: 'file',
             slashes: true
         }));
@@ -21,7 +21,7 @@ namespace Main {
             shell.openExternal(url); // opens links (or dragged documents) in external browser
         });
 
-        if (process.env.target !== 'production') {
+        if (process.env.target === 'development') {
             window.webContents.openDevTools();
         }
     }
