@@ -1,6 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.ArrayList;
+
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
@@ -22,33 +23,24 @@ public class PersonTest extends Person {
 			GeoPoint stationGeoPoint = currentStation.getPosition();
 			GeoPoint personGeoPoint =	getPosition();
 			double distance = stationGeoPoint.distanceTo(personGeoPoint);
-			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
+			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance 
+					&& getStationsReservationAttemps().contains(currentStation)) {
 				minDistance = distance;
 				destination = currentStation;
 			}
 		}
 		if(destination == null) {
-			throw new IllegalStateException("There's no stations in this configuration");
 		}
 		return destination;
 	}
 	
-	public boolean decidesToReserveBike(Station station) {
-		boolean decidesToReserve = SystemInfo.random.nextBoolean(); 
-
-		if (decidesToReserve) {
-			reservesBike(station);
-		}
-		return decidesToReserve;
+	public boolean decidesToReserveBike() {
+		return SystemInfo.random.nextBoolean();
 	}
 
-	public boolean decidesToReserveSlot(Station station) {
-		boolean decidesToReserve = SystemInfo.random.nextBoolean();
-		if (decidesToReserve) {
-			reservesSlot(station);
-		}
-		return decidesToReserve;	
-		}
+	public boolean decidesToReserveSlot() {
+		return SystemInfo.random.nextBoolean();
+	}
 	
 	public GeoPoint decidesNextPoint() {
 		return SystemInfo.rectangle.randomPoint();
@@ -67,6 +59,12 @@ public class PersonTest extends Person {
  		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
 		setPosition(newPoint);
 		
+	}
+
+	@Override
+	public boolean decidesToDetermineOtherStation() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

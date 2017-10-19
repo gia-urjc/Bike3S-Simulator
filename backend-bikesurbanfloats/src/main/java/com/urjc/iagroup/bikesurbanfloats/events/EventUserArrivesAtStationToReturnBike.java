@@ -1,20 +1,17 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-public class EventUserArrivesAtStationToReturnBike extends Event {
-
-    private Person user;
+public class EventUserArrivesAtStationToReturnBike extends EventUser {
+   
     private Station station;
 
     public EventUserArrivesAtStationToReturnBike(int instant, Person user, Station station) {
-        super(instant);
-        this.user = user;
+        super(instant, user);
         this.station = station;
     }
 
@@ -22,37 +19,16 @@ public class EventUserArrivesAtStationToReturnBike extends Event {
         List<Event> newEvents = new ArrayList<>();
         user.setPosition(station.getPosition());
 
-        if (!user.returnBikeTo(station)) {
-            Station destination = user.determineStation();
-            user.setDestinationStation(destination);
-            int arrivalTime = getInstant() + user.timeToReach(destination.getPosition());
-
-            if (user.decidesToReserveSlot(destination) && SystemInfo.reservationTime < arrivalTime) {
-                user.cancelsSlotReservation(destination);
-                newEvents.add(new EventSlotReservationTimeout(getInstant() + SystemInfo.reservationTime, user));
-            } else {
-                newEvents.add(new EventUserArrivesAtStationToReturnBike(getInstant() + arrivalTime, user, destination));
-            }
-        }
-        
-        if(!user.decidesToLeaveSystem()) {
-        	if(!user.decidesToRentBikeAtOtherStation()) {
-        		newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant(), user, station));
-        	}
-        	else {
-        		Station destination = user.determineStation();
-        		user.setDestinationStation(destination);
-        		int arrivalTime = user.timeToReach(destination.getPosition());
-        		newEvents.add(new EventUserArrivesAtStationToRentBike(getInstant() + arrivalTime, user, destination));
-        	}
-        }
-
+        if(!user.returnBikeTo(station)) {
+        	newEvents = manageSlotReservationDecision();
+        }      
+       
         return newEvents;
     }
     
     public String toString() {
     	String str = super.toString();
-    	return str+"User: "+user.toString()+"\nStation: "+station.toString();
+    	return str+"Station: "+station.toString();
     }
 
 }

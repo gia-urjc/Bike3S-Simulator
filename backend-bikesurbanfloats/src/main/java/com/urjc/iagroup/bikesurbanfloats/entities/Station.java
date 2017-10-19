@@ -110,7 +110,8 @@ public class Station implements Entity, StationModel<Bike> {
         String result = "Id: " + getId();
     	result += " | Position " + position.toString();
         result += " | Capacity: " + capacity;
-        result += " | Number of bikes: " + availableBikes() + "\n";
+        result += " | Number of bikes availables: " + availableBikes() + "\n";
+        result += " | Number of slots availables: " + availableSlots() + "\n";
         return result;
     }
 }
