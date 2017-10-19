@@ -7,17 +7,17 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.urjc.iagroup.bikesurbanfloats.util.BoundaryRectangle;
+import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
-public class RectangleSimulationDeserializer implements JsonDeserializer<BoundaryRectangle>{
+public class RectangleSimulationDeserializer implements JsonDeserializer<BoundingBox>{
 	
 	private final static String JSON_ATTR_GEOPOINT = "position";
 	private final static String JSON_ATTR_LENGTHLAT= "lengthLatitude";
 	private final static String JSON_ATTR_LENGTHLON = "lengthLongitude";
 	
 	@Override
-	public BoundaryRectangle deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+	public BoundingBox deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 			throws JsonParseException {
 		
 		Gson gson = new Gson();
@@ -26,7 +26,7 @@ public class RectangleSimulationDeserializer implements JsonDeserializer<Boundar
 		double lengthLatitude = json.getAsJsonObject().get(JSON_ATTR_LENGTHLAT).getAsDouble();
 		double lengthLongitude = json.getAsJsonObject().get(JSON_ATTR_LENGTHLON).getAsDouble();
 		
-		return new BoundaryRectangle(position, lengthLongitude, lengthLatitude);
+		return new BoundingBox(position, lengthLongitude, lengthLatitude);
 	}
 
 }

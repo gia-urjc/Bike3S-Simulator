@@ -14,8 +14,16 @@ public class RandomUtil {
 		return min + random.nextInt((max - min) + 1);
 	}
 	
+	public int nextInt() {
+		return random.nextInt();
+	}
+	
 	public double nextDouble(double min, double max) {
 		return min + (max - min) * random.nextDouble();
+	}
+	
+	public double nextDouble() {
+		return random.nextDouble();
 	}
 	
 	public boolean nextBoolean() {
