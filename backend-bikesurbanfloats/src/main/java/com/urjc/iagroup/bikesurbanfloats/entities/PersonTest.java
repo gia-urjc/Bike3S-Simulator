@@ -17,10 +17,9 @@ public class PersonTest extends Person {
 	}
 	
 	private List<Station> obtainStationsWithoutBikeReservationAttempts() {
-		List<Station> stations = new ArrayList<>(SystemInfo.stations);
-		for (Station station: getBikeReservationAttempts()) {
-			stations.remove(station);
-		}
+ 		List<Reservation> reservations = getReservations().stream().filter(reservation -> reservation.getSuccessful() == false).collect(Collecto					rs				.toList());
+List<Station> stations;		
+
 		return stations;
 	}
 	

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
-import com.urjc.iagroup.bikesurbanfloats.entities.Person;
-import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
+import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
 public abstract class EventUser implements Event {
 	protected int instant;
@@ -80,8 +80,10 @@ List<Event> newEvents = new ArrayList<>();
         
         if (user.decidesToReserveSlot()) {
         	boolean reserved = user.reservesSlot(destination);
+        	Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);
                    	
             if (reserved) {  // User has been able to reserve
+            	user.addReservation(reservation);
             	if (SystemInfo.reservationTime < arrivalTime) {
             		user.cancelsSlotReservation(destination);
             		newEvents.add(new EventSlotReservationTimeout(this.getInstant() + SystemInfo.reservationTime, user));
