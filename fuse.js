@@ -1,7 +1,7 @@
-process.env.SPARKY_LOG = true;
+process.env.SPARKY_LOG = false;
 
 const { FuseBox, Sparky } = require('fuse-box');
-const { EnvPlugin, RawPlugin, WebIndexPlugin } = require('fuse-box');
+const { EnvPlugin, CSSPlugin, CSSResourcePlugin, RawPlugin, WebIndexPlugin } = require('fuse-box');
 
 const log = require('fliplog');
 const express = require('express');
@@ -126,6 +126,7 @@ Sparky.task('build:frontend:renderer', () => {
             EnvPlugin({ target: production ? 'production' : 'development' }),
             ['*.component.html', RawPlugin()],
             ['*.component.css', RawPlugin()],
+            [CSSResourcePlugin({ inline: true }), CSSPlugin()],
             WebIndexPlugin({
                 template: path.join(projectRoot.frontend.renderer(), 'index.html'),
                 path: '.'
@@ -143,6 +144,7 @@ Sparky.task('build:frontend:renderer', () => {
             app.get('*', (request, response) => {
                 response.send(path.join(projectRoot.build.frontend(), 'index.html'));
             });
+            // TODO: make the server close on electron window close
         });
 
         renderer.hmr().watch();
