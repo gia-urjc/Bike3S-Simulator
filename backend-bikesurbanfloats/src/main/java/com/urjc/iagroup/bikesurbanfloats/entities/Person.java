@@ -176,6 +176,8 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         result += "| Actual Position: " + position.toString();
         result += " | Has Bike: " + hasBike();
         result += " | Actual velocity: " + getAverageVelocity();
+    result += " | Has reserved bike: "+hasReservedBike();
+    result += " | Has reserved slot: "+hasReservedSlot();
         return result;
     }
 }

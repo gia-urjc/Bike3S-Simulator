@@ -7,18 +7,6 @@
         "latitude": 40.32246,
         "longitude": -3.87982
       }
-    },
-    {
-      "distribution": {
-        "distributionType": "POISSON",
-        "lambda": 0.003333333
-      },
-      "parameterDistribution": 0.003333333,
-      "personType": "PersonTest",
-      "position": {
-        "latitude": 40.28144,
-        "longitude": -3.8157126
-      }
     }
   ]
 }

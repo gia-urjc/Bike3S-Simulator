@@ -10,7 +10,7 @@ import com.google.gson.JsonParseException;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
-public class RectangleSimulationDeserializer implements JsonDeserializer<BoundingBox>{
+public class BoundarySimulationDeserializer implements JsonDeserializer<BoundingBox>{
 	
 	private final static String JSON_ATTR_GEOPOINT = "position";
 	private final static String JSON_ATTR_LENGTHLAT= "lengthLatitude";

@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
@@ -13,25 +14,35 @@ public class PersonTest extends Person {
 	}
 
 	public boolean decidesToLeaveSystem() {
+		// TODO: return true if user has tried to reserve in all stations and has no options to determine destination
 		return SystemInfo.random.nextBoolean();
 	}
 	
-	private List<Station> obtainStationsWithBikeReservationAttempts(int instant) {
- 		List<Reservation> reservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.BIKE && 
+	private List<Station> obtainStationsWithoutBikeReservationAttempts(int instant) {
+ 		List<Reservation> unsuccessfulBikeReservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.BIKE && 
  		reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
- 		List<Station> stations = reservations.stream().map(Reservation::getStation).collect(Collectors.toList());		
+ 		List<Station> failedStations = unsuccessfulBikeReservations.stream().map(Reservation::getStation).collect(Collectors.toList());
+ 	 List<Station> stations = new ArrayList<>(SystemInfo.stations);
+ 	 for(Station station: failedStations) {
+ 		 stations.remove(station);
+ 	 }
+
  		return stations;
 	}
 	
-	private List<Station> obtainStationsWithSlotReservationAttempts(int instant) {
- 		List<Reservation> reservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.SLOT && 
+	private List<Station> obtainStationsWithoutSlotReservationAttempts(int instant) {
+ 		List<Reservation> unsuccessfulSlotReservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.SLOT && 
  				reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
- 		List<Station> stations = reservations.stream().map(Reservation::getStation).collect(Collectors.toList());		
+ 		List<Station> failedStations = unsuccessfulSlotReservations.stream().map(Reservation::getStation).collect(Collectors.toList());
+ 		List<Station> stations = new ArrayList<>(SystemInfo.stations);
+ 		for(Station station: failedStations) {
+ 			stations.remove(station);
+ 		}
  		return stations;
 	}
 
 	public Station determineStationToRentBike(int instant) {
-		List<Station> stations = obtainStationsWithBikeReservationAttempts(instant);
+		List<Station> stations = obtainStationsWithoutBikeReservationAttempts(instant);
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
 		for(Station currentStation: stations) {
@@ -52,7 +63,7 @@ public class PersonTest extends Person {
 	}
 	
 	public Station determineStationToReturnBike(int instant) {
-		List<Station> stations = obtainStationsWithSlotReservationAttempts(instant);
+		List<Station> stations = obtainStationsWithoutSlotReservationAttempts(instant);
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
 		for(Station currentStation: stations) {

@@ -14,7 +14,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.EntryPointDeserializer;
-import com.urjc.iagroup.bikesurbanfloats.config.deserializers.RectangleSimulationDeserializer;
+import com.urjc.iagroup.bikesurbanfloats.config.deserializers.BoundarySimulationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.StationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
@@ -50,7 +50,7 @@ public class ConfigJsonReader {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer(bikeIdGen, stationIdGen));
 		gsonBuilder.registerTypeAdapter(EntryPoint.class, new EntryPointDeserializer());
-		gsonBuilder.registerTypeAdapter(BoundingBox.class, new RectangleSimulationDeserializer());
+		gsonBuilder.registerTypeAdapter(BoundingBox.class, new BoundarySimulationDeserializer());
 		Gson gson = gsonBuilder.create();
 		
 		//Stations
