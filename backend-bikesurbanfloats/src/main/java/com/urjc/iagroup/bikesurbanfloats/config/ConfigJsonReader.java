@@ -18,7 +18,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.deserializers.RectangleSimulatio
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.StationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-import com.urjc.iagroup.bikesurbanfloats.util.BoundaryRectangle;
+import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
@@ -50,7 +50,7 @@ public class ConfigJsonReader {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer(bikeIdGen, stationIdGen));
 		gsonBuilder.registerTypeAdapter(EntryPoint.class, new EntryPointDeserializer());
-		gsonBuilder.registerTypeAdapter(BoundaryRectangle.class, new RectangleSimulationDeserializer());
+		gsonBuilder.registerTypeAdapter(BoundingBox.class, new RectangleSimulationDeserializer());
 		Gson gson = gsonBuilder.create();
 		
 		//Stations
@@ -72,7 +72,7 @@ public class ConfigJsonReader {
 		SystemInfo.randomSeed = jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong();
 		SystemInfo.random = new RandomUtil(SystemInfo.randomSeed);
 		JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
-		BoundaryRectangle rec = gson.fromJson(rectangleJson, BoundaryRectangle.class);
+		BoundingBox rec = gson.fromJson(rectangleJson, BoundingBox.class);
 		SystemInfo.rectangle = rec;
 	}
 	

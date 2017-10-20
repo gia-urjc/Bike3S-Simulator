@@ -4,15 +4,15 @@ import java.awt.geom.Rectangle2D;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 
-public class BoundaryRectangle {
+public class BoundingBox {
 	
 	private Rectangle2D.Double rectangle;
 	
-	public BoundaryRectangle() {
+	public BoundingBox() {
 		this.rectangle = new Rectangle2D.Double();
 	}
 	
-	public BoundaryRectangle(GeoPoint position, double lengthLongitude, double lengthLatitude) {
+	public BoundingBox(GeoPoint position, double lengthLongitude, double lengthLatitude) {
 		double x = position.getLongitude();
 		double y = position.getLatitude();
 		double width = lengthLongitude;

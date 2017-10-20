@@ -13,7 +13,12 @@ module.exports = {
                     'UserTest',
                 ]
             },
-            position: GeoPoint
+            position: GeoPoint,
+            radio: {
+                type: 'integer',
+                minimum: 0,
+                required: false
+            }
         },
         oneOf: [
             {
