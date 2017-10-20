@@ -2,6 +2,12 @@ const merge = require('../util/merge');
 
 const GeoPoint = require('../common/geopoint');
 
+const distributionBase = {
+    type: 'object',
+    additionalProperties: false,
+    required: ['type']
+};
+
 const distributions = [
     {
         properties: {
@@ -15,7 +21,25 @@ const distributions = [
             lambda: { type: 'number' }
         },
     }
-];
+].map((distribution) => merge(distribution, distributionBase));
+
+const itemBase = {
+    type: 'object',
+    additionalProperties: false,
+    required: ['userType', 'position'],
+    properties: {
+        userType: {
+            enum: [
+                'UserTest',
+            ]
+        },
+        position: GeoPoint,
+        radio: {
+            type: 'integer',
+            minimum: 0
+        }
+    },
+};
 
 const validItems = [
     {
@@ -31,36 +55,16 @@ const validItems = [
         required: ['distribution'],
         properties: {
             distribution: {
-                oneOf: distributions.map((distribution) => merge(distribution, {
-                    type: 'object',
-                    additionalProperties: false,
-                    required: ['type']
-                })),
+                oneOf: distributions,
             }
         }
     }
-];
+].map((item) => merge(item, itemBase));
 
 module.exports = {
     $schema: 'http://json-schema.org/draft-06/schema#',
     type: 'array',
     items: {
-        oneOf: validItems.map((item) => merge(item, {
-            type: 'object',
-            additionalProperties: false,
-            required: ['userType', 'position'],
-            properties: {
-                userType: {
-                    enum: [
-                        'UserTest',
-                    ]
-                },
-                position: GeoPoint,
-                radio: {
-                    type: 'integer',
-                    minimum: 0
-                }
-            },
-        }))
+        oneOf: validItems
     }
 };
