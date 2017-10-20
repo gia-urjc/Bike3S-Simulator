@@ -57,8 +57,5 @@ public class BoundingCircle {
 	public boolean isPointInCircle(GeoPoint pos) {
 		return radio > position.distanceTo(pos);
 	}
-	
-	
-	
 
 }
