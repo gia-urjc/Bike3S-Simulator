@@ -1,9 +1,10 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import java.util.ArrayList;
-
+import java.util.List;
+import java.util.stream.Collectors;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
 
 public class PersonTest extends Person {
 	
@@ -14,23 +15,61 @@ public class PersonTest extends Person {
 	public boolean decidesToLeaveSystem() {
 		return SystemInfo.random.nextBoolean();
 	}
+	
+	private List<Station> obtainStationsWithBikeReservationAttempts(int instant) {
+ 		List<Reservation> reservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.BIKE && 
+ 		reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
+ 		List<Station> stations = reservations.stream().map(Reservation::getStation).collect(Collectors.toList());		
+ 		return stations;
+	}
+	
+	private List<Station> obtainStationsWithSlotReservationAttempts(int instant) {
+ 		List<Reservation> reservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.SLOT && 
+ 				reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
+ 		List<Station> stations = reservations.stream().map(Reservation::getStation).collect(Collectors.toList());		
+ 		return stations;
+	}
 
-	public Station determineStation() {
-		ArrayList<Station> stations = SystemInfo.stations;
+	public Station determineStationToRentBike(int instant) {
+		List<Station> stations = obtainStationsWithBikeReservationAttempts(instant);
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
 		for(Station currentStation: stations) {
 			GeoPoint stationGeoPoint = currentStation.getPosition();
 			GeoPoint personGeoPoint =	getPosition();
 			double distance = stationGeoPoint.distanceTo(personGeoPoint);
-			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance 
-					&& getStationsReservationAttemps().contains(currentStation)) {
+			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
 				minDistance = distance;
 				destination = currentStation;
 			}
 		}
 		if(destination == null) {
+			int numberStations = SystemInfo.stations.size();
+			int indexStation = SystemInfo.random.nextInt(0,  numberStations - 1);
+			destination = SystemInfo.stations.get(indexStation);
 		}
+		return destination;
+	}
+	
+	public Station determineStationToReturnBike(int instant) {
+		List<Station> stations = obtainStationsWithSlotReservationAttempts(instant);
+		double minDistance = Double.MAX_VALUE;
+		Station destination = null;
+		for(Station currentStation: stations) {
+			GeoPoint stationGeoPoint = currentStation.getPosition();
+			GeoPoint personGeoPoint =	getPosition();
+			double distance = stationGeoPoint.distanceTo(personGeoPoint);
+			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
+				minDistance = distance;
+				destination = currentStation;
+			}
+		}
+		if(destination == null) {
+			int numberStations = SystemInfo.stations.size();
+			int indexStation = SystemInfo.random.nextInt(0,  numberStations - 1);
+			destination = SystemInfo.stations.get(indexStation);
+		}
+		
 		return destination;
 	}
 	
