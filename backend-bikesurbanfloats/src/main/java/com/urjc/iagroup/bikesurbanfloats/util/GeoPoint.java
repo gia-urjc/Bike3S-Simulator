@@ -5,7 +5,8 @@ public class GeoPoint {
     /**
      * Earth radius in meters
      */
-    private final static double EARTH_RADIUS = 6371e3;
+    public final static double EARTH_RADIUS = 6371e3;
+    public final static double DEG_TO_RAD = Math.PI / 180.0;
 
     private double latitude;
     private double longitude;

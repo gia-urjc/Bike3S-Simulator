@@ -16,12 +16,13 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
 
     private double walkingVelocity;  // meters/second
     private double cyclingVelocity;  // meters/second
+    
     private boolean reservedBike;
     private boolean reservedSlot;
+    
     private Station destinationStation;
-    private List<Station> stationsReservationAttemps;
+    private List<Reservation> reservations;
    
-
     public Person(int id, GeoPoint position) {
         this.id = id;
 
@@ -31,12 +32,20 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         this.walkingVelocity = SystemInfo.random.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
         this.cyclingVelocity = SystemInfo.random.nextInt(10, 21) / 3.6;
-        this.stationsReservationAttemps = new ArrayList<>();
+        this.reservations = new ArrayList<>();        
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
     }
-
+    
+    public List<Reservation> getReservations() {
+    	return reservations;
+    }
+    
+    public void addReservation(Reservation reservation) {
+    	reservations.add(reservation);
+    }
+    
 	@Override
     public int getId() {
         return id;
@@ -105,14 +114,6 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
 		this.destinationStation = destinationStation;
 	}
 	
-    public List<Station> getStationsReservationAttemps() {
-		return stationsReservationAttemps;
-	}
-
-	public void setStationsReservationAttemps(List<Station> stationsReservationAttemps) {
-		this.stationsReservationAttemps = stationsReservationAttemps;
-	}
-
 	public boolean removeBikeFrom(Station station) {
         if (bike != null) {
             return false;
@@ -159,7 +160,8 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     }
 
     public abstract boolean decidesToLeaveSystem();
-    public abstract Station determineStation();
+    public abstract Station determineStationToRentBike(int instant);
+    public abstract Station determineStationToReturnBike(int instant);
     public abstract boolean decidesToReserveBike(); // must call reservesBike method inside it
     public abstract boolean decidesToReserveSlot(); // must call reservesSlot method inside it
     public abstract GeoPoint decidesNextPoint(); // returns: user decides where to go to to ride his bike (not to a station)
