@@ -17,7 +17,7 @@ public class Reservation {
 		this.user = user;
 		this.station = station;
 		this.bike = null;
-		this.successful = true;
+		this.successful = false;
 		this.timeout = false;
 	}
 

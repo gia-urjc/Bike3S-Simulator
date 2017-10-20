@@ -1,10 +1,10 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
 
 public class PersonTest extends Person {
 	
@@ -16,23 +16,22 @@ public class PersonTest extends Person {
 		return SystemInfo.random.nextBoolean();
 	}
 	
-	private List<Station> obtainStationsWithoutBikeReservationAttempts() {
- 		List<Reservation> reservations = getReservations().stream().filter(reservation -> reservation.getSuccessful() == false).collect(Collecto					rs				.toList());
-List<Station> stations;		
-
-		return stations;
+	private List<Station> obtainStationsWithBikeReservationAttempts(int instant) {
+ 		List<Reservation> reservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.BIKE && 
+ 		reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
+ 		List<Station> stations = reservations.stream().map(Reservation::getStation).collect(Collectors.toList());		
+ 		return stations;
 	}
 	
-	private List<Station> obtainStationsWithoutSlotReservationAttempts() {
-		List<Station> stations = new ArrayList<>(SystemInfo.stations); 
-		for (Station station: getSlotReservationAttempts()) {
-			stations.remove(station);
-		}
-		return stations;
+	private List<Station> obtainStationsWithSlotReservationAttempts(int instant) {
+ 		List<Reservation> reservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.SLOT && 
+ 				reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
+ 		List<Station> stations = reservations.stream().map(Reservation::getStation).collect(Collectors.toList());		
+ 		return stations;
 	}
 
-	public Station determineStationToRentBike() {
-		List<Station> stations = obtainStationsWithoutBikeReservationAttempts();
+	public Station determineStationToRentBike(int instant) {
+		List<Station> stations = obtainStationsWithBikeReservationAttempts(instant);
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
 		for(Station currentStation: stations) {
@@ -52,8 +51,8 @@ List<Station> stations;
 		return destination;
 	}
 	
-	public Station determineStationToReturnBike() {
-		List<Station> stations = obtainStationsWithoutSlotReservationAttempts();
+	public Station determineStationToReturnBike(int instant) {
+		List<Station> stations = obtainStationsWithSlotReservationAttempts(instant);
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
 		for(Station currentStation: stations) {

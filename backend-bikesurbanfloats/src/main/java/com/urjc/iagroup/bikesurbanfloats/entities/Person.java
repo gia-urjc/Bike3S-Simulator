@@ -160,8 +160,8 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     }
 
     public abstract boolean decidesToLeaveSystem();
-    public abstract Station determineStationToRentBike();
-    public abstract Station determineStationToReturnBike();
+    public abstract Station determineStationToRentBike(int instant);
+    public abstract Station determineStationToReturnBike(int instant);
     public abstract boolean decidesToReserveBike(); // must call reservesBike method inside it
     public abstract boolean decidesToReserveSlot(); // must call reservesSlot method inside it
     public abstract GeoPoint decidesNextPoint(); // returns: user decides where to go to to ride his bike (not to a station)
