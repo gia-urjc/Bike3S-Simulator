@@ -71,7 +71,7 @@ public class Station implements Entity, StationModel<Bike> {
     }
 
     public int availableSlots() {
-        return this.capacity - availableBikes() - reservedSlots;
+        return this.capacity - (int)bikes.stream().filter(Objects::nonNull).count() - reservedSlots;
     }
 
     public Bike removeBike() {

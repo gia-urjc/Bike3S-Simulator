@@ -16,7 +16,7 @@ public class EventBikeReservationTimeout extends EventUser {
         List<Event> newEvents = new ArrayList<>();
         user.updatePosition(SystemInfo.reservationTime);
 
-        if (!user.decidesToLeaveSystem()) {
+        if (!user.decidesToLeaveSystem(instant)) {
         	newEvents = manageBikeReservationDecision();
         }
         return newEvents;

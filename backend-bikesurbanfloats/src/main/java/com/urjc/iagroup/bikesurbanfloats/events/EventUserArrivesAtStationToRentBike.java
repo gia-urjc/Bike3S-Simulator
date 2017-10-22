@@ -28,7 +28,7 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
                 newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
             }
         } else {   // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation
-            if (!user.decidesToLeaveSystem()) { 
+            if (!user.decidesToLeaveSystem(instant)) { 
                 newEvents = manageBikeReservationDecision();
             }
         }

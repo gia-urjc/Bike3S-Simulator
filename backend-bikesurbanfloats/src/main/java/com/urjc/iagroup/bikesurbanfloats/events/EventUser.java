@@ -40,12 +40,12 @@ List<Event> newEvents = new ArrayList<>();
 		Station destination = user.determineStationToRentBike(instant); 
 		user.setDestinationStation(destination);
 		int arrivalTime = user.timeToReach(destination.getPosition());
+System.out.println("Destination before user arrival: "+		destination.toString());
 		
         if (user.decidesToReserveBike()) {
         	Reservation reservation = new Reservation(instant, ReservationType.BIKE, user, destination);
-        	boolean reserved = user.reservesBike(destination);
                    	
-            if (reserved) {  // User has been able to reserve
+            if (user.reservesBike(destination)) {  
             	reservation.setSuccessful(true);
             	if (SystemInfo.reservationTime < arrivalTime) {
             		reservation.setTimeout(true);
@@ -60,7 +60,7 @@ List<Event> newEvents = new ArrayList<>();
             }
             else {  // user hasn't been able to reserve
             	user.addReservation(reservation);
-            	if (!user.decidesToLeaveSystem()) {
+            	if (!user.decidesToLeaveSystem(instant)) {
             		
             		if (!user.decidesToDetermineOtherStation()) {  // user walks to the initially chosen station
             		newEvents.add(new EventUserArrivesAtStationToRentBike(this.getInstant() + arrivalTime, user, destination));
@@ -83,6 +83,7 @@ List<Event> newEvents = new ArrayList<>();
 		Station destination = user.determineStationToReturnBike(instant); 
 		user.setDestinationStation(destination);
 		int arrivalTime = user.timeToReach(destination.getPosition());
+		System.out.println("Destination before user arrival: "+		destination.toString());
         
         if (user.decidesToReserveSlot()) {
         	Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);

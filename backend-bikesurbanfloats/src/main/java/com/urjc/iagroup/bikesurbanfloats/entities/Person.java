@@ -2,10 +2,12 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
 
 public abstract class Person implements Entity, UserModel<Bike, Station> {
 
@@ -133,6 +135,10 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
             // TODO: log warning (or throw error?)
             return false;
         }
+    	
+    	if (hasReservedSlot())
+    		cancelsSlotReservation(station);
+    	
         if(station.returnBike(this.bike)){
         	this.bike = null;
         	result = true;
@@ -158,8 +164,44 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         // time in seconds
         return (int) Math.round(position.distanceTo(destination) / getAverageVelocity());
     }
+    
+public List<Station> obtainStationsWithBikeReservationAttempts(int instant) {
+ 		List<Reservation> unsuccessfulBikeReservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.BIKE && 
+ 		reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
+ 		List<Station> failedStations = unsuccessfulBikeReservations.stream().map(Reservation::getStation).collect(Collectors.toList());
+ 		return failedStations;
+}
 
-    public abstract boolean decidesToLeaveSystem();
+public List<Station> obtainStationsWithoutBikeReservationAttempts(int instant) {
+	List<Station> failedStations = obtainStationsWithBikeReservationAttempts(instant);
+ 		List<Station> stations = new ArrayList<>(SystemInfo.stations);
+ 		if (!failedStations.isEmpty()) {
+ 	 for (Station station: failedStations) {
+ 		 stations.remove(station);
+ 	 }
+ 		}
+ 		return stations;
+	}
+	
+	public List<Station> obtainStationsWithSlotReservationAttempts(int instant) {
+ 		List<Reservation> unsuccessfulSlotReservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.SLOT && 
+ 				reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
+ 		List<Station> failedStations = unsuccessfulSlotReservations.stream().map(Reservation::getStation).collect(Collectors.toList());
+ 		return failedStations;
+	}
+	
+	public List<Station> obtainStationsWithoutSlotReservationAttempts(int instant) {
+		List<Station> failedStations = obtainStationsWithSlotReservationAttempts(instant);
+ 		List<Station> stations = new ArrayList<>(SystemInfo.stations);
+ 		if (!failedStations.isEmpty()) {
+ 			for(Station station: failedStations) {
+ 				stations.remove(station);
+ 			}
+ 		}
+ 		return stations;
+	}
+
+    public abstract boolean decidesToLeaveSystem(int instant);
     public abstract Station determineStationToRentBike(int instant);
     public abstract Station determineStationToReturnBike(int instant);
     public abstract boolean decidesToReserveBike(); // must call reservesBike method inside it
@@ -176,8 +218,8 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         result += "| Actual Position: " + position.toString();
         result += " | Has Bike: " + hasBike();
         result += " | Actual velocity: " + getAverageVelocity();
-    result += " | Has reserved bike: "+hasReservedBike();
-    result += " | Has reserved slot: "+hasReservedSlot();
+        result += 	" | Has reserved bike: "+hasReservedBike();
+        result += " | Has reserved slot: "+hasReservedSlot()+"\n";
         return result;
     }
 }
