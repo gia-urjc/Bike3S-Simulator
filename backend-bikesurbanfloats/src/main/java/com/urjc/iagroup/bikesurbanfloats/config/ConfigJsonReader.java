@@ -14,12 +14,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.EntryPointDeserializer;
-import com.urjc.iagroup.bikesurbanfloats.config.deserializers.BoundarySimulationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.StationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
-import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
+import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 public class ConfigJsonReader {
 	
@@ -28,7 +27,7 @@ public class ConfigJsonReader {
 	private final static String JSON_ATTR_TIME_RESERVE = "reservationTime";
 	private final static String JSON_ATTR_TIME_SIMULATION = "totalTimeSimulation";
 	private final static String JSON_ATTR_RANDOM_SEED = "randomSeed";
-	private final static String JSON_ATTR_RECTANGLE_SIMULATION = "rectangleSimulation";
+	private final static String JSON_ATTR_RECTANGLE_SIMULATION = "bbox";
 	
 
 	private String stationsFileName;
@@ -56,9 +55,6 @@ public class ConfigJsonReader {
 		//EntryPoints
 		readEntryPoints(gson, systemInfo);
 		
-		//RandomUtils
-		systemInfo.boundingBox = new BoundingBox(systemInfo.random);
-		
 		return systemInfo;
 	}
 	
@@ -67,7 +63,6 @@ public class ConfigJsonReader {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer(systemInfo.bikeIdGen, systemInfo.stationIdGen));
 		gsonBuilder.registerTypeAdapter(EntryPoint.class, new EntryPointDeserializer());
-		gsonBuilder.registerTypeAdapter(BoundingBox.class, new BoundarySimulationDeserializer());
 		Gson gson = gsonBuilder.create();
 		return gson;
 	}
@@ -79,10 +74,9 @@ public class ConfigJsonReader {
 		systemInfo.reservationTime = jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt();
 		systemInfo.totalTimeSimulation = jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt();
 		systemInfo.randomSeed = jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong();
-		systemInfo.random = new RandomUtil(systemInfo.randomSeed);
+		StaticRandom.setSeed(systemInfo.randomSeed);
 		JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
-		BoundingBox rec = gson.fromJson(rectangleJson, BoundingBox.class);
-		systemInfo.boundingBox = rec;
+		systemInfo.boundingBox = gson.fromJson(rectangleJson, BoundingBox.class);
 	}
 	
 	private void readStations(Gson gson, SystemInfo systemInfo) throws FileNotFoundException {

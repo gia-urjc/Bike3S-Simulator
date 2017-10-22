@@ -12,7 +12,6 @@ import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
-import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class EntryPointPoisson implements EntryPoint {
 	
@@ -58,7 +57,7 @@ public class EntryPointPoisson implements EntryPoint {
 
 	private Person createUser(IdGenerator personIdGenerator, PersonFactory personFactory, SystemInfo systemInfo) {
 		int id = personIdGenerator.next();
-		BoundingCircle bcircle = new BoundingCircle(position, radio, systemInfo.random);
+		BoundingCircle bcircle = new BoundingCircle(position, radio);
 		Person person;
 		if(radio > 0.0) {
 			GeoPoint randomPosition = bcircle.randomPointInCircle();
@@ -77,8 +76,7 @@ public class EntryPointPoisson implements EntryPoint {
 		PersonFactory personFactory = new PersonFactory();
 		int actualTime, endTime;
 		IdGenerator userIdGenerator = systemInfo.userIdGenerator;
-		RandomUtil random = systemInfo.random;
-		if(timeRange != null) {
+		if(timeRange == null) {
 			actualTime = 0;
 			endTime = systemInfo.totalTimeSimulation;
 		}
@@ -88,8 +86,7 @@ public class EntryPointPoisson implements EntryPoint {
 		}
 		while(actualTime < endTime) {
 			Person person = createUser(userIdGenerator, personFactory, systemInfo);
-			int timeEvent = distribution.randomInterarrivalDelay(random);
-			System.out.println(timeEvent);
+			int timeEvent = distribution.randomInterarrivalDelay();
 			actualTime += timeEvent;
 			EventUserAppears newEvent = new EventUserAppears(actualTime, person, systemInfo);
 			generatedEvents.add(newEvent);

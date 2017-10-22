@@ -1,8 +1,10 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.List;
+
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 public class PersonTest extends Person {
 	
@@ -29,7 +31,7 @@ public class PersonTest extends Person {
 		}
 		if(destination == null) {
 			int numberStations = systemInfo.stations.size();
-			int indexStation = systemInfo.random.nextInt(0,  numberStations - 1);
+			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
 			destination = systemInfo.stations.get(indexStation);
 		}
 		return destination;
@@ -50,7 +52,7 @@ public class PersonTest extends Person {
 		}
 		if(destination == null) {
 			int numberStations = systemInfo.stations.size();
-			int indexStation = systemInfo.random.nextInt(0,  numberStations - 1);
+			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
 			destination = systemInfo.stations.get(indexStation);
 		}
 		
@@ -58,11 +60,11 @@ public class PersonTest extends Person {
 	}
 	
 	public boolean decidesToReserveBike() {
-		return systemInfo.random.nextBoolean();
+		return StaticRandom.nextBoolean();
 	}
 
 	public boolean decidesToReserveSlot() {
-		return systemInfo.random.nextBoolean();
+		return StaticRandom.nextBoolean();
 	}
 	
 	public GeoPoint decidesNextPoint() {
@@ -70,11 +72,11 @@ public class PersonTest extends Person {
 	}
 	
 	public boolean decidesToReturnBike() {
-		return systemInfo.random.nextBoolean();
+		return StaticRandom.nextBoolean();
 	}
 	
 	public boolean decidesToRentBikeAtOtherStation() {
-		return systemInfo.random.nextBoolean();
+		return StaticRandom.nextBoolean();
 	}
 	
 	public void updatePosition(int time) {

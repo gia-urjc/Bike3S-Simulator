@@ -7,7 +7,6 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
-import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class SystemInfo {
 	
@@ -28,7 +27,6 @@ public class SystemInfo {
 	public IdGenerator userIdGenerator = new IdGenerator();
 	
 	//Utils
-	public RandomUtil random = null;
 	public BoundingBox boundingBox = null;
 	
 	
@@ -42,7 +40,6 @@ public class SystemInfo {
 		reservationTime = 0;
 		totalTimeSimulation = 0;
 		randomSeed = 0;
-		random = null;
 		boundingBox = null;
 	}
 	

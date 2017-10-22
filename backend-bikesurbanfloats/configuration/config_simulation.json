@@ -1,13 +1,15 @@
 {
 	"reservationTime" : 3000,
 	"totalTimeSimulation" : 18000,
-	"randomSeed": 111,
-	"rectangleSimulation": {
-		"position": {
+	"randomSeed": 200,
+	"bbox": {
+		"point1": {
 			"latitude": 40.329103,
 			"longitude": -3.881946
 		},
-		"lengthLatitude": -0.008038,
-		"lengthLongitude": 0.030484
+		"point2": {
+			"latitude": 40.321065,
+			"longitude": -3.851462
+		}
 	}
 }

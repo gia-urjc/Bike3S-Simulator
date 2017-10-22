@@ -8,6 +8,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
+import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 public abstract class Person implements Entity, UserModel<Bike, Station> {
 
@@ -33,9 +34,9 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         this.position = position;
         this.bike = null;
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = systemInfo.random.nextInt(3, 8) / 3.6;
+        this.walkingVelocity = StaticRandom.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = systemInfo.random.nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = StaticRandom.nextInt(10, 21) / 3.6;
         this.reservations = new ArrayList<>();        
         this.reservedBike = false;
         this.reservedSlot = false;
