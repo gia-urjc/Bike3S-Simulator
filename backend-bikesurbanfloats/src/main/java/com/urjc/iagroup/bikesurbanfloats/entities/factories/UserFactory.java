@@ -7,9 +7,9 @@ import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 public class UserFactory {
 
-	public User createPerson(int id, UserType type, GeoPoint position, SystemInfo systemInfo) {
+	public User createUser(int id, UserType type, GeoPoint position, SystemInfo systemInfo) {
 		switch(type) {
-			case PersonTest: return new UserTest(id, position, systemInfo);
+		case UserTest: return new UserTest(id, position, systemInfo);
 		}
 		throw new IllegalArgumentException("The type" + type + "doesn't exists");
 	}
