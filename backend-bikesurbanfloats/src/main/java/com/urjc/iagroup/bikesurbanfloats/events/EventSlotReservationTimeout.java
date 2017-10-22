@@ -7,12 +7,12 @@ import java.util.List;
 
 public class EventSlotReservationTimeout extends EventUser {
 
-    public EventSlotReservationTimeout(int instant, Person user) {
-        super(instant, user);
+    public EventSlotReservationTimeout(int instant, Person user, SystemInfo systemInfo) {
+        super(instant, user, systemInfo);
     }
 
     public List<Event> execute() {
-        user.updatePosition(SystemInfo.reservationTime);
+        user.updatePosition(systemInfo.reservationTime);
         return manageSlotReservationDecision();
     }
 }

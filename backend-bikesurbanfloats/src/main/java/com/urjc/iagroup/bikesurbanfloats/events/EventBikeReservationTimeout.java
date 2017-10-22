@@ -8,13 +8,13 @@ import java.util.List;
 
 public class EventBikeReservationTimeout extends EventUser {
     
-    public EventBikeReservationTimeout(int instant, Person user) {
-        super(instant, user);
+    public EventBikeReservationTimeout(int instant, Person user, SystemInfo systemInfo) {
+        super(instant, user, systemInfo);
     }
     
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
-        user.updatePosition(SystemInfo.reservationTime);
+        user.updatePosition(systemInfo.reservationTime);
 
         if (!user.decidesToLeaveSystem(instant)) {
         	newEvents = manageBikeReservationDecision();

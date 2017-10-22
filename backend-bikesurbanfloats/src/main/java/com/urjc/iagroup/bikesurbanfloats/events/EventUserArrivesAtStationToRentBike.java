@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
+import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
@@ -10,8 +11,8 @@ import java.util.ArrayList;
 public class EventUserArrivesAtStationToRentBike extends EventUser {
     private Station station;
 
-    public EventUserArrivesAtStationToRentBike(int instant, Person user, Station station) {
-        super(instant, user);
+    public EventUserArrivesAtStationToRentBike(int instant, Person user, Station station, SystemInfo systemInfo) {
+        super(instant, user, systemInfo);
         this.station = station;
     }
 
@@ -25,7 +26,7 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
             } else {   // user rides his bike to a point which is not a station
                 GeoPoint point = user.decidesNextPoint();
                 int arrivalTime = user.timeToReach(point);
-                newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
+                newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point, systemInfo));
             }
         } else {   // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation
             if (!user.decidesToLeaveSystem(instant)) { 

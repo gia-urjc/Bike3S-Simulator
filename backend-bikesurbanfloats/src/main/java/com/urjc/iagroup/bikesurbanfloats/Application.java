@@ -3,6 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats;
 import java.io.FileNotFoundException;
 
 import com.urjc.iagroup.bikesurbanfloats.config.ConfigJsonReader;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.core.SimulationEngine;
 
 /**
@@ -21,9 +22,9 @@ public class Application {
         		CONFIG_ENTRYP_PATH, CONFIG_SIMULATION_PATH);
 		
         try {
-			jsonReader.readJson();
-			SimulationEngine simulation = new SimulationEngine();
-			simulation.processConfig();
+			SystemInfo systemInfo = jsonReader.readJson();
+			SimulationEngine simulation = new SimulationEngine(systemInfo);
+			simulation.processEntryPoints();
 			simulation.run();
 			
 		} catch (FileNotFoundException e) {

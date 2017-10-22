@@ -7,9 +7,11 @@ import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 public class BoundingBox {
 	
 	private Rectangle2D.Double rectangle;
+	private RandomUtil random;
 	
-	public BoundingBox() {
+	public BoundingBox(RandomUtil random) {
 		this.rectangle = new Rectangle2D.Double();
+		this.random = random;
 	}
 	
 	public BoundingBox(GeoPoint position, double lengthLongitude, double lengthLatitude) {
@@ -38,7 +40,6 @@ public class BoundingBox {
 	}
 	 
 	public GeoPoint randomPoint() {
-		RandomUtil random = SystemInfo.random;
 		double x = random.nextDouble(rectangle.getX(), rectangle.getX() + rectangle.getWidth());
 		double y = random.nextDouble(rectangle.getY(), rectangle.getY() + rectangle.getHeight());
 		return new GeoPoint(y, x);

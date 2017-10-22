@@ -2,7 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.core;
 
 import com.urjc.iagroup.bikesurbanfloats.events.*;
 import com.urjc.iagroup.bikesurbanfloats.history.History;
-import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
+
 import com.urjc.iagroup.bikesurbanfloats.config.*;
 
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
@@ -15,22 +15,22 @@ public class SimulationEngine {
 
     private List<EventUserAppears> userAppearsList = new ArrayList<>();
 	private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
+	private SystemInfo systemInfo;
 	
-	public SimulationEngine() {
+	public SimulationEngine(SystemInfo systemInfo) {
 		eventsQueue = new PriorityQueue<Event>();
+		this.systemInfo = systemInfo;
 	}
 	
-	public void processConfig() {
-		IdGenerator personIdGen = new IdGenerator();
-		List<EntryPoint> entryPoints = SystemInfo.entryPoints;
+	public void processEntryPoints() {
+		List<EntryPoint> entryPoints = systemInfo.entryPoints;
 		for(EntryPoint entryPoint: entryPoints) {
-			List<EventUserAppears> events = entryPoint.generateEvents(personIdGen);
+			List<EventUserAppears> events = entryPoint.generateEvents(systemInfo);
 			for(EventUserAppears event: events) {
 				userAppearsList.add(event);
-				SystemInfo.persons.add(event.getUser());
+				systemInfo.persons.add(event.getUser());
 			}
 		}
-
         eventsQueue.addAll(userAppearsList);
 		
 	}
@@ -38,7 +38,7 @@ public class SimulationEngine {
 	public void run() {
 		
 		
-        History.init(userAppearsList);
+        //History.init(userAppearsList, systemInfo);
 
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element

@@ -6,23 +6,35 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
+import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class SystemInfo {
 	
-	public static ArrayList<Station> stations = new ArrayList<>();
-	public static ArrayList<EntryPoint> entryPoints = new ArrayList<>();
-	public static ArrayList<Bike> bikes = new ArrayList<>();
-	public static ArrayList<Person> persons = new ArrayList<>();
+	//System Information
+	public ArrayList<Station> stations = new ArrayList<>();
+	public ArrayList<EntryPoint> entryPoints = new ArrayList<>();
+	public ArrayList<Bike> bikes = new ArrayList<>();
+	public ArrayList<Person> persons = new ArrayList<>();
+
+	//Configuration information
+	public int reservationTime = 0;
+	public int totalTimeSimulation = 0;
+	public long randomSeed = 0;
 	
-	public static int reservationTime = 0;
-	public static int totalTimeSimulation = 0;
-	public static long randomSeed = 0;
-	public static RandomUtil random = null;
+	//IdsGenerator
+	public IdGenerator bikeIdGen = new IdGenerator();
+	public IdGenerator stationIdGen = new IdGenerator();
+	public IdGenerator userIdGenerator = new IdGenerator();
 	
-	public static BoundingBox rectangle = null;
+	//Utils
+	public RandomUtil random = null;
+	public BoundingBox boundingBox = null;
 	
-	public static void resetInfo() {
+	
+	SystemInfo() {}
+	
+	public void resetInfo() {
 		stations = new ArrayList<>();
 		entryPoints = new ArrayList<>();
 		bikes = new ArrayList<>();
@@ -31,17 +43,17 @@ public class SystemInfo {
 		totalTimeSimulation = 0;
 		randomSeed = 0;
 		random = null;
-		rectangle = null;
+		boundingBox = null;
 	}
 	
-	public static String strInfo() {
+	public String toString() {
 		String result = "";
 		result += "STATIONS: \n ------------- \n";
-		for(Station s: SystemInfo.stations) {
+		for(Station s: stations) {
 			result += s.toString() + "\n";
 		}
 		result += "Entry Points: \n ------------- \n";
-		for(EntryPoint e: SystemInfo.entryPoints) {
+		for(EntryPoint e: entryPoints) {
 			result += e.toString() + "\n";
 		}
 		result += "Reservation time: " + reservationTime + "\n";

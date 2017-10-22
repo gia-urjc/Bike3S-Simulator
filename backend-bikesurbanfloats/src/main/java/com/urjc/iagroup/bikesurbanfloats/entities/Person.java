@@ -24,20 +24,23 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     
     private Station destinationStation;
     private List<Reservation> reservations;
+    
+    protected SystemInfo systemInfo;
    
-    public Person(int id, GeoPoint position) {
+    public Person(int id, GeoPoint position, SystemInfo systemInfo) {
         this.id = id;
 
         this.position = position;
         this.bike = null;
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = SystemInfo.random.nextInt(3, 8) / 3.6;
+        this.walkingVelocity = systemInfo.random.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = SystemInfo.random.nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = systemInfo.random.nextInt(10, 21) / 3.6;
         this.reservations = new ArrayList<>();        
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
+        this.systemInfo = systemInfo;
     }
     
     public List<Reservation> getReservations() {
@@ -165,22 +168,22 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
         return (int) Math.round(position.distanceTo(destination) / getAverageVelocity());
     }
     
-public List<Station> obtainStationsWithBikeReservationAttempts(int instant) {
+	public List<Station> obtainStationsWithBikeReservationAttempts(int instant) {
  		List<Reservation> unsuccessfulBikeReservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.BIKE && 
  		reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
  		List<Station> failedStations = unsuccessfulBikeReservations.stream().map(Reservation::getStation).collect(Collectors.toList());
  		return failedStations;
-}
+	}
 
-public List<Station> obtainStationsWithoutBikeReservationAttempts(int instant) {
-	List<Station> failedStations = obtainStationsWithBikeReservationAttempts(instant);
- 		List<Station> stations = new ArrayList<>(SystemInfo.stations);
- 		if (!failedStations.isEmpty()) {
- 	 for (Station station: failedStations) {
- 		 stations.remove(station);
- 	 }
- 		}
- 		return stations;
+	public List<Station> obtainStationsWithoutBikeReservationAttempts(int instant) {
+		List<Station> failedStations = obtainStationsWithBikeReservationAttempts(instant);
+	 	List<Station> stations = new ArrayList<>(systemInfo.stations);
+	 	if (!failedStations.isEmpty()) {
+	 		for (Station station: failedStations) {
+	 			stations.remove(station);
+	 		}
+	 	}
+		return stations;
 	}
 	
 	public List<Station> obtainStationsWithSlotReservationAttempts(int instant) {
@@ -192,7 +195,7 @@ public List<Station> obtainStationsWithoutBikeReservationAttempts(int instant) {
 	
 	public List<Station> obtainStationsWithoutSlotReservationAttempts(int instant) {
 		List<Station> failedStations = obtainStationsWithSlotReservationAttempts(instant);
- 		List<Station> stations = new ArrayList<>(SystemInfo.stations);
+ 		List<Station> stations = new ArrayList<>(systemInfo.stations);
  		if (!failedStations.isEmpty()) {
  			for(Station station: failedStations) {
  				stations.remove(station);

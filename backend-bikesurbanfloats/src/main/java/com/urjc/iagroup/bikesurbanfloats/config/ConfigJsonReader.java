@@ -19,7 +19,6 @@ import com.urjc.iagroup.bikesurbanfloats.config.deserializers.StationDeserialize
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
-import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class ConfigJsonReader {
@@ -42,41 +41,53 @@ public class ConfigJsonReader {
 		this.configSimulationFileName = configSimulationFileName;
 	}
 	
-	public void readJson() throws FileNotFoundException {
+	public SystemInfo readJson() throws FileNotFoundException {
+
+		SystemInfo systemInfo = new SystemInfo();
 		
-		IdGenerator bikeIdGen = new IdGenerator();
-		IdGenerator stationIdGen = new IdGenerator();
+		Gson gson = createAndConfigureGson(systemInfo);
 		
+		//Configuration
+		readGlobalConfigurations(gson, systemInfo);
+
+		//Stations
+		readStations(gson, systemInfo);
+		
+		//EntryPoints
+		readEntryPoints(gson, systemInfo);
+		
+		//RandomUtils
+		systemInfo.boundingBox = new BoundingBox(systemInfo.random);
+		
+		return systemInfo;
+	}
+	
+	
+	private Gson createAndConfigureGson(SystemInfo systemInfo) {
 		GsonBuilder gsonBuilder = new GsonBuilder();
-		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer(bikeIdGen, stationIdGen));
+		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer(systemInfo.bikeIdGen, systemInfo.stationIdGen));
 		gsonBuilder.registerTypeAdapter(EntryPoint.class, new EntryPointDeserializer());
 		gsonBuilder.registerTypeAdapter(BoundingBox.class, new BoundarySimulationDeserializer());
 		Gson gson = gsonBuilder.create();
-		
-		//Stations
-		FileInputStream inputStreamJson = new FileInputStream(new File(stationsFileName));
+		return gson;
+	}
+
+	private void readGlobalConfigurations(Gson gson, SystemInfo systemInfo) throws FileNotFoundException {
+		FileInputStream inputStreamJson = new FileInputStream(new File(configSimulationFileName));
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
-		SystemInfo.stations = readStations(gson, bufferedReader);
-		
-		//EntryPoints
-		inputStreamJson = new FileInputStream(new File(entryPointsFileName));
-		bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
-		SystemInfo.entryPoints = readEntryPoints(gson, bufferedReader);
-		
-		//Configuration
-		inputStreamJson = new FileInputStream(new File(configSimulationFileName));
-		bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		JsonObject jsonConfig = gson.fromJson(bufferedReader, JsonObject.class);
-		SystemInfo.reservationTime = jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt();
-		SystemInfo.totalTimeSimulation = jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt();
-		SystemInfo.randomSeed = jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong();
-		SystemInfo.random = new RandomUtil(SystemInfo.randomSeed);
+		systemInfo.reservationTime = jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt();
+		systemInfo.totalTimeSimulation = jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt();
+		systemInfo.randomSeed = jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong();
+		systemInfo.random = new RandomUtil(systemInfo.randomSeed);
 		JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
 		BoundingBox rec = gson.fromJson(rectangleJson, BoundingBox.class);
-		SystemInfo.rectangle = rec;
+		systemInfo.boundingBox = rec;
 	}
 	
-	private ArrayList<Station> readStations(Gson gson, BufferedReader bufferedReader) {
+	private void readStations(Gson gson, SystemInfo systemInfo) throws FileNotFoundException {
+		FileInputStream inputStreamJson = new FileInputStream(new File(stationsFileName));
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		
 		ArrayList<Station> allStations = new ArrayList<>();
 		JsonArray jsonStationsArray = gson.fromJson(bufferedReader, JsonObject.class)
@@ -84,10 +95,13 @@ public class ConfigJsonReader {
 		for(JsonElement elemStation: jsonStationsArray) {
 			allStations.add(gson.fromJson(elemStation, Station.class));
 		}
-		return allStations;
+		systemInfo.stations = allStations;
+		systemInfo.stations.stream().forEach(s -> systemInfo.bikes.addAll(s.getBikes()));
 	}
 	
-	private ArrayList<EntryPoint> readEntryPoints(Gson gson, BufferedReader bufferedReader) {
+	private void readEntryPoints(Gson gson, SystemInfo systemInfo) throws FileNotFoundException {
+		FileInputStream inputStreamJson = new FileInputStream(new File(entryPointsFileName));
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		
 		ArrayList<EntryPoint> allEntryPoints = new ArrayList<>();
 		JsonArray jsonStationsArray = gson.fromJson(bufferedReader, JsonObject.class)
@@ -96,7 +110,7 @@ public class ConfigJsonReader {
 			EntryPoint newEntryPoint = gson.fromJson(elemStation, EntryPoint.class);
 			allEntryPoints.add(newEntryPoint);
 		}
-		return allEntryPoints;
+		systemInfo.entryPoints = allEntryPoints;
 	}
 	
 

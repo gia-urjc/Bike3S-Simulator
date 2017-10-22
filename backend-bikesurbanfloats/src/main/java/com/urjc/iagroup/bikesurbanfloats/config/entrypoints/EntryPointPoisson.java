@@ -12,6 +12,7 @@ import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
+import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
 public class EntryPointPoisson implements EntryPoint {
 	
@@ -19,38 +20,78 @@ public class EntryPointPoisson implements EntryPoint {
 	private double radio; //meters
 	private DistributionPoisson distribution;
 	private PersonType personType;
-
-	public EntryPointPoisson(GeoPoint location, DistributionPoisson distribution, double parameterDistribution, String className, PersonType personType) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		this.position = location;
+	private TimeRange timeRange;
+	
+	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, PersonType personType) {
+		this.position = position;
 		this.distribution = distribution;
 		this.personType = personType;
+		this.timeRange = null;
+		this.radio = 0;
+	}
+	
+	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
+			PersonType personType, double radio) {
+		this.position = position;
+		this.distribution = distribution;
+		this.personType = personType;
+		this.radio = radio;
+	}
+	
+	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
+			PersonType personType, TimeRange timeRange) {
+		this.position = position;
+		this.distribution = distribution;
+		this.personType = personType;
+		this.timeRange = timeRange;
+		this.radio = 0;
+	}
+	
+	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
+			PersonType personType, TimeRange timeRange,  double radio) {
+		this.position = position;
+		this.distribution = distribution;
+		this.personType = personType;
+		this.timeRange = timeRange;
+		this.radio = radio;
 	}
 
-	private Person createUser(IdGenerator personIdGenerator, PersonFactory personFactory) {
+	private Person createUser(IdGenerator personIdGenerator, PersonFactory personFactory, SystemInfo systemInfo) {
 		int id = personIdGenerator.next();
-		BoundingCircle bcircle = new BoundingCircle(position, radio);
+		BoundingCircle bcircle = new BoundingCircle(position, radio, systemInfo.random);
 		Person person;
-		if(radio > 0) {
+		if(radio > 0.0) {
 			GeoPoint randomPosition = bcircle.randomPointInCircle();
-			person = personFactory.createPerson(id, personType, randomPosition);
+			person = personFactory.createPerson(id, personType, randomPosition, systemInfo);
 		}
 		else {
-			person = personFactory.createPerson(id, personType, position);
+			person = personFactory.createPerson(id, personType, position, systemInfo);
 		}
 		return person;
 	}
 
 	@Override
-	public List<EventUserAppears> generateEvents(IdGenerator personIdGenerator) {
-		int actualTime = 0;
+	public List<EventUserAppears> generateEvents(SystemInfo systemInfo) {
+		
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		PersonFactory personFactory = new PersonFactory();
-		while(actualTime < SystemInfo.totalTimeSimulation) {
-			Person person = createUser(personIdGenerator, personFactory);
-			int timeEvent = distribution.randomInterarrivalDelay();
+		int actualTime, endTime;
+		IdGenerator userIdGenerator = systemInfo.userIdGenerator;
+		RandomUtil random = systemInfo.random;
+		if(timeRange != null) {
+			actualTime = 0;
+			endTime = systemInfo.totalTimeSimulation;
+		}
+		else {
+			actualTime = timeRange.getStart();
+			endTime = timeRange.getEnd();
+		}
+		while(actualTime < endTime) {
+			Person person = createUser(userIdGenerator, personFactory, systemInfo);
+			int timeEvent = distribution.randomInterarrivalDelay(random);
 			System.out.println(timeEvent);
 			actualTime += timeEvent;
-			EventUserAppears newEvent = new EventUserAppears(actualTime, person);
+			EventUserAppears newEvent = new EventUserAppears(actualTime, person, systemInfo);
 			generatedEvents.add(newEvent);
 		}
 		return generatedEvents;

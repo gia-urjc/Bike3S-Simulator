@@ -1,7 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.config.distributions;
 
-
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 import com.urjc.iagroup.bikesurbanfloats.util.RandomUtil;
 
@@ -27,9 +25,7 @@ public class DistributionPoisson extends Distribution {
      * @return A realistic exponential value given a lambda parameter
      * @see <a href="https://en.wikipedia.org/wiki/Exponential_distribution#Generating_exponential_variates">Generating exponential variates</a>
      */
-	
-	public int randomInterarrivalDelay() {
-		RandomUtil random = SystemInfo.random;
+	public int randomInterarrivalDelay(RandomUtil random) {
 	    double randomValue = Math.log(1.0 - random.nextDouble(Double.MIN_VALUE, 1));
 	    Double result = (double) -randomValue/lambda;
 	    Long longResult = Math.round(result);

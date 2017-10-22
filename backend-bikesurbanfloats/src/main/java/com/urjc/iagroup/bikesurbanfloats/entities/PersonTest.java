@@ -1,20 +1,17 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
 
 public class PersonTest extends Person {
 	
-	public PersonTest(int id, GeoPoint position) {
-		super(id, position);
+	public PersonTest(int id, GeoPoint position, SystemInfo systemInfo) {
+		super(id, position, systemInfo);
 	}
 
 	public boolean decidesToLeaveSystem(int instant) {
-		return obtainStationsWithBikeReservationAttempts(instant).size() == SystemInfo.stations.size() ? true : false;
+		return obtainStationsWithBikeReservationAttempts(instant).size() == systemInfo.stations.size() ? true : false;
 	}
 	
 	public Station determineStationToRentBike(int instant) {
@@ -31,9 +28,9 @@ public class PersonTest extends Person {
 			}
 		}
 		if(destination == null) {
-			int numberStations = SystemInfo.stations.size();
-			int indexStation = SystemInfo.random.nextInt(0,  numberStations - 1);
-			destination = SystemInfo.stations.get(indexStation);
+			int numberStations = systemInfo.stations.size();
+			int indexStation = systemInfo.random.nextInt(0,  numberStations - 1);
+			destination = systemInfo.stations.get(indexStation);
 		}
 		return destination;
 	}
@@ -52,32 +49,32 @@ public class PersonTest extends Person {
 			}
 		}
 		if(destination == null) {
-			int numberStations = SystemInfo.stations.size();
-			int indexStation = SystemInfo.random.nextInt(0,  numberStations - 1);
-			destination = SystemInfo.stations.get(indexStation);
+			int numberStations = systemInfo.stations.size();
+			int indexStation = systemInfo.random.nextInt(0,  numberStations - 1);
+			destination = systemInfo.stations.get(indexStation);
 		}
 		
 		return destination;
 	}
 	
 	public boolean decidesToReserveBike() {
-		return SystemInfo.random.nextBoolean();
+		return systemInfo.random.nextBoolean();
 	}
 
 	public boolean decidesToReserveSlot() {
-		return SystemInfo.random.nextBoolean();
+		return systemInfo.random.nextBoolean();
 	}
 	
 	public GeoPoint decidesNextPoint() {
-		return SystemInfo.rectangle.randomPoint();
+		return systemInfo.boundingBox.randomPoint();
 	}
 	
 	public boolean decidesToReturnBike() {
-		return SystemInfo.random.nextBoolean();
+		return systemInfo.random.nextBoolean();
 	}
 	
 	public boolean decidesToRentBikeAtOtherStation() {
-		return SystemInfo.random.nextBoolean();
+		return systemInfo.random.nextBoolean();
 	}
 	
 	public void updatePosition(int time) {
