@@ -3,7 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 import com.google.gson.*;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
-import com.urjc.iagroup.bikesurbanfloats.entities.Person;
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 
@@ -30,7 +30,7 @@ public class History {
         
         for (EventUserAppears event : userAppearsList) {
             JsonObject serializedUser = new JsonObject();
-            Person person = event.getUser();
+            User person = event.getUser();
             nextEntry.getUsers().put(person.getId(), new HistoricUser(person));
             
             serializedUser.add("appearsOn", new JsonPrimitive(event.getInstant()));

@@ -5,13 +5,13 @@ import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
 public class Reservation {
 	private int instant;
 	private ReservationType type;
-	private Person user; 
+	private User user; 
 	private Station station;
 	private Bike bike;  // bike which user wants to rent or return
 	private boolean successful;  // reservation has been able to be made
 	private boolean timeout;  // timeOut has ocurred before user arrival
 	
-	public Reservation(int instant, ReservationType type, Person user, Station station) {
+	public Reservation(int instant, ReservationType type, User user, Station station) {
 		this.instant = instant;
 		this.type = type;
 		this.user = user;
@@ -29,7 +29,7 @@ public class Reservation {
 		return type;
 	}
 	
-	public Person getUser() {
+	public User getUser() {
 		return user;
 	}
 	

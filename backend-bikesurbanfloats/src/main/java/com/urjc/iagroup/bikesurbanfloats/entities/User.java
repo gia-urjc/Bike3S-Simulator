@@ -9,7 +9,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
 
-public abstract class Person implements Entity, UserModel<Bike, Station> {
+public abstract class User implements Entity, UserModel<Bike, Station> {
 
     private int id;
 
@@ -27,7 +27,7 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     
     protected SystemInfo systemInfo;
    
-    public Person(int id, GeoPoint position, SystemInfo systemInfo) {
+    public User(int id, GeoPoint position, SystemInfo systemInfo) {
         this.id = id;
 
         this.position = position;

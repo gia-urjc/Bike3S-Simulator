@@ -9,10 +9,10 @@ import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
 public abstract class EventUser implements Event {
 	protected int instant;
-	protected Person user;
+	protected User user;
 	protected SystemInfo systemInfo;
 
-    public EventUser(int instant, Person user, SystemInfo systemInfo) {
+    public EventUser(int instant, User user, SystemInfo systemInfo) {
         this.instant = instant;
         this.user = user;
         this.systemInfo = systemInfo;
@@ -22,7 +22,7 @@ public abstract class EventUser implements Event {
     	return instant;
     }
     
-    public Person getUser() {
+    public User getUser() {
     	return user;
     }
     

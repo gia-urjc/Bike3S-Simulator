@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
-import com.urjc.iagroup.bikesurbanfloats.entities.Person;
-import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonFactory;
-import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonType;
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
+import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserType;
 import com.urjc.iagroup.bikesurbanfloats.events.*;
 import com.urjc.iagroup.bikesurbanfloats.util.*;
 
 public class EntryPointSingle implements EntryPoint {
 	private GeoPoint position;
-	private PersonType personType;
+	private UserType personType;
 	private int instant; 
 	
-	public EntryPointSingle(GeoPoint position, PersonType personType, int instant) {
+	public EntryPointSingle(GeoPoint position, UserType personType, int instant) {
 		this.position = position;
 		this.personType = personType;
 		this.instant = instant;
@@ -24,10 +24,10 @@ public class EntryPointSingle implements EntryPoint {
 	@Override
 	public List<EventUserAppears> generateEvents(SystemInfo systemInfo) {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
-		PersonFactory personFactory = new PersonFactory();
+		UserFactory personFactory = new UserFactory();
 		IdGenerator userIdGenerator = systemInfo.userIdGenerator;
 		int id = userIdGenerator.next();
-		Person person = personFactory.createPerson(id, personType, position, systemInfo);
+		User person = personFactory.createPerson(id, personType, position, systemInfo);
 		EventUserAppears event = new EventUserAppears(instant, person, systemInfo);
 		generatedEvents.add(event);
 		return generatedEvents;

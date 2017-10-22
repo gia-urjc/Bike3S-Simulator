@@ -3,7 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats.config;
 import java.util.ArrayList;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
-import com.urjc.iagroup.bikesurbanfloats.entities.Person;
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
@@ -15,7 +15,7 @@ public class SystemInfo {
 	public ArrayList<Station> stations = new ArrayList<>();
 	public ArrayList<EntryPoint> entryPoints = new ArrayList<>();
 	public ArrayList<Bike> bikes = new ArrayList<>();
-	public ArrayList<Person> persons = new ArrayList<>();
+	public ArrayList<User> persons = new ArrayList<>();
 
 	//Configuration information
 	public int reservationTime = 0;

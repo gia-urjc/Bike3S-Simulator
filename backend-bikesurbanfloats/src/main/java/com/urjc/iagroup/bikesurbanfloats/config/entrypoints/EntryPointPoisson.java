@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.config.distributions.DistributionPoisson;
-import com.urjc.iagroup.bikesurbanfloats.entities.Person;
-import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonFactory;
-import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonType;
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
+import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserType;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
@@ -19,10 +19,10 @@ public class EntryPointPoisson implements EntryPoint {
 	private GeoPoint position;
 	private double radio; //meters
 	private DistributionPoisson distribution;
-	private PersonType personType;
+	private UserType personType;
 	private TimeRange timeRange;
 	
-	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, PersonType personType) {
+	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, UserType personType) {
 		this.position = position;
 		this.distribution = distribution;
 		this.personType = personType;
@@ -31,7 +31,7 @@ public class EntryPointPoisson implements EntryPoint {
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
-			PersonType personType, double radio) {
+			UserType personType, double radio) {
 		this.position = position;
 		this.distribution = distribution;
 		this.personType = personType;
@@ -39,7 +39,7 @@ public class EntryPointPoisson implements EntryPoint {
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
-			PersonType personType, TimeRange timeRange) {
+			UserType personType, TimeRange timeRange) {
 		this.position = position;
 		this.distribution = distribution;
 		this.personType = personType;
@@ -48,7 +48,7 @@ public class EntryPointPoisson implements EntryPoint {
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
-			PersonType personType, TimeRange timeRange,  double radio) {
+			UserType personType, TimeRange timeRange,  double radio) {
 		this.position = position;
 		this.distribution = distribution;
 		this.personType = personType;
@@ -56,10 +56,10 @@ public class EntryPointPoisson implements EntryPoint {
 		this.radio = radio;
 	}
 
-	private Person createUser(IdGenerator personIdGenerator, PersonFactory personFactory, SystemInfo systemInfo) {
+	private User createUser(IdGenerator personIdGenerator, UserFactory personFactory, SystemInfo systemInfo) {
 		int id = personIdGenerator.next();
 		BoundingCircle bcircle = new BoundingCircle(position, radio, systemInfo.random);
-		Person person;
+		User person;
 		if(radio > 0.0) {
 			GeoPoint randomPosition = bcircle.randomPointInCircle();
 			person = personFactory.createPerson(id, personType, randomPosition, systemInfo);
@@ -74,7 +74,7 @@ public class EntryPointPoisson implements EntryPoint {
 	public List<EventUserAppears> generateEvents(SystemInfo systemInfo) {
 		
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
-		PersonFactory personFactory = new PersonFactory();
+		UserFactory personFactory = new UserFactory();
 		int actualTime, endTime;
 		IdGenerator userIdGenerator = systemInfo.userIdGenerator;
 		RandomUtil random = systemInfo.random;
@@ -87,7 +87,7 @@ public class EntryPointPoisson implements EntryPoint {
 			endTime = timeRange.getEnd();
 		}
 		while(actualTime < endTime) {
-			Person person = createUser(userIdGenerator, personFactory, systemInfo);
+			User person = createUser(userIdGenerator, personFactory, systemInfo);
 			int timeEvent = distribution.randomInterarrivalDelay(random);
 			System.out.println(timeEvent);
 			actualTime += timeEvent;
