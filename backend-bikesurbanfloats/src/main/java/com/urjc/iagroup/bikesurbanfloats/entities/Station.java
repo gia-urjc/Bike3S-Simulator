@@ -45,9 +45,21 @@ public class Station implements Entity, StationModel<Bike> {
     public int getReservedBikes() {
         return reservedBikes;
     }
+    
+    private Bike getFirstAvailableBike() {
+    	int i = 0;
+    	Bike bike = null;
+    	while (bike == null && i < (bikes.size() -1) ) {
+    		bike = bikes.get(i);
+    	}
+    	return bike;
+    }
 
-    public void reservesBike() {
+    public Bike reservesBike() {
         this.reservedBikes++;
+        Bike bike = getFirstAvailableBike();
+        bike.setReserved(true);
+        return bike;
     }
 
     public void cancelsBikeReservation() {

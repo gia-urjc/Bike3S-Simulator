@@ -1,8 +1,11 @@
 package com.urjc.iagroup.bikesurbanfloats.config.distributions;
 
-import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
-
 public class Distribution {
+	
+	public enum DistributionType {
+		POISSON, RANDOM, NONEDISTRIBUTION
+	}
+
 	private DistributionType type;
 
 	public Distribution(DistributionType type) {

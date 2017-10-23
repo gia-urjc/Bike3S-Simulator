@@ -1,32 +1,58 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
-
 public class Reservation {
-	private int instant;
+	
+	public enum ReservationType {
+		SLOT, BIKE
+	}
+	
+	public enum ReservationState {
+		FAILED, ACTIVE, EXPIRED, SUCCESSFUL
+	}
+	
+	private static int timeout;	
+	private int startInstant;  // instant when user makes the reservation
+	private int endInstant;  // instant when reservation is resolved or expired
 	private ReservationType type;
+	private ReservationState state;
 	private User user; 
 	private Station station;
-	private Bike bike;  // bike which user wants to rent or return
-	private boolean successful;  // reservation has been able to be made
-	private boolean timeout;  // timeOut has ocurred before user arrival
+	private Bike bike;  // bike which user has reserved or wants to return
 	
-	public Reservation(int instant, ReservationType type, User user, Station station) {
-		this.instant = instant;
+	public Reservation(int startInstant, ReservationType type, User user, Station station, Bike bike) {
+		this.startInstant = startInstant;
+		this.endInstant = -1; // reservation has'nt ended
 		this.type = type;
+		this.state = ReservationState.ACTIVE;
+		this.user = user;
+		this.station = station;
+		this.bike = bike;
+			}
+	
+	public Reservation(int startInstant, ReservationType type, User user, Station station) {
+		this.startInstant = startInstant;
+		this.endInstant = -1; // reservation has'nt ended
+		this.type = type;
+		this.state = ReservationState.FAILED;
 		this.user = user;
 		this.station = station;
 		this.bike = null;
-		this.successful = false;
-		this.timeout = false;
+			}
+	
+	public void init(int time) {
+		timeout = time;
 	}
 
-	public int getInstant() {
-		return instant;
+	public int getStartInstant() {
+		return startInstant;
 	}
 	
 	public ReservationType getType() {
 		return type;
+	}
+	
+	public ReservationState getState() {
+		return state;
 	}
 	
 	public User getUser() {
@@ -40,25 +66,14 @@ public class Reservation {
 	public Bike getBike() {
 		return bike;
 	}
-	
-public void setBike(Bike bike) {
-		this.bike = bike;
-	}
 
-	public boolean getSuccessful() {
-		return successful;
-	}
+public void expire() {
+	this.state = ReservationState.EXPIRED;
+	this.endInstant = this.startInstant + timeout;
+}
 
-	public boolean isTimeout() {
-		return timeout;
-	}
-
-	public void setSuccessful(boolean successful) {
-		this.successful = successful;
-	}
-
-	public void setTimeout(boolean timeout) {
-		this.timeout = timeout;
-	}
-
+public void resolve(int endInstant) {
+	this.state = ReservationState.SUCCESSFUL;
+	this.endInstant = endInstant;
+}
 	}
