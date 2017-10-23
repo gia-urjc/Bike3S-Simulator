@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
-import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
+import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
 public abstract class EventUser implements Event {

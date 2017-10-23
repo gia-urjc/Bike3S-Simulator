@@ -1,8 +1,11 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
-
 public class Reservation {
+	
+	public enum ReservationType {
+		SLOT, BIKE
+	}
+
 	private int instant;
 	private ReservationType type;
 	private User user; 

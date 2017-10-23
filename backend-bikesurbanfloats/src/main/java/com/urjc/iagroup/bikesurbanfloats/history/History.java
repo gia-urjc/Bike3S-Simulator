@@ -33,11 +33,11 @@ public class History {
 
         for (EventUserAppears event : userAppearsList) {
             JsonObject serializedUser = new JsonObject();
-            User person = event.getUser();
-            nextEntry.getUsers().put(person.getId(), new HistoricUser(person));
+            User user = event.getUser();
+            nextEntry.getUsers().put(user.getId(), new HistoricUser(user));
 
             serializedUser.add("appearanceTime", new JsonPrimitive(event.getInstant()));
-            serializedUser.add("user", gson.toJsonTree(person, UserModel.class));
+            serializedUser.add("user", gson.toJsonTree(user, UserModel.class));
 
             users.add(serializedUser);
         }

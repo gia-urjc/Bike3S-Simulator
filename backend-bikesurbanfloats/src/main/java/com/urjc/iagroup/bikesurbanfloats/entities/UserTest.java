@@ -22,9 +22,9 @@ public class UserTest extends User {
 		Station destination = null;
 		for(Station currentStation: stations) {
 			GeoPoint stationGeoPoint = currentStation.getPosition();
-			GeoPoint personGeoPoint =	getPosition();
-			double distance = stationGeoPoint.distanceTo(personGeoPoint);
-			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
+			GeoPoint userGeoPoint =	getPosition();
+			double distance = stationGeoPoint.distanceTo(userGeoPoint);
+			if(!userGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
 				minDistance = distance;
 				destination = currentStation;
 			}
@@ -43,9 +43,9 @@ public class UserTest extends User {
 		Station destination = null;
 		for(Station currentStation: stations) {
 			GeoPoint stationGeoPoint = currentStation.getPosition();
-			GeoPoint personGeoPoint =	getPosition();
-			double distance = stationGeoPoint.distanceTo(personGeoPoint);
-			if(!personGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
+			GeoPoint userGeoPoint =	getPosition();
+			double distance = stationGeoPoint.distanceTo(userGeoPoint);
+			if(!userGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
 				minDistance = distance;
 				destination = currentStation;
 			}

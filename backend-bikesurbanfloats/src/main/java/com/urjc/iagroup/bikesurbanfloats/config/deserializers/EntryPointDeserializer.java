@@ -36,7 +36,7 @@ public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
 			distributionType = DistributionType.valueOf(distributionStr);
 		}
 		else {
-			distributionType = DistributionType.NONEDISTRIBUTION;		
+			distributionType = DistributionType.nonedistribution;		
 		}
 		
 		return entryPointFactory.createEntryPoint(jsonElementEntryP, distributionType);
