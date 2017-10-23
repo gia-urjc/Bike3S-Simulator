@@ -7,8 +7,8 @@ import java.util.List;
 
 public class EventUserAppears extends EventUser {
 
-    public EventUserAppears(int instant, User user, SystemConfiguration systemInfo) {
-        super(instant, user, systemInfo);
+    public EventUserAppears(int instant, User user, SystemConfiguration systemConfig) {
+        super(instant, user, systemConfig);
     }
     
     public List<Event> execute() {

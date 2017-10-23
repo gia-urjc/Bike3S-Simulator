@@ -8,12 +8,12 @@ import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 public class UserTest extends User {
 	
-	public UserTest(int id, GeoPoint position, SystemConfiguration systemInfo) {
-		super(id, position, systemInfo);
+	public UserTest(int id, GeoPoint position, SystemConfiguration systemConfig) {
+		super(id, position, systemConfig);
 	}
 
 	public boolean decidesToLeaveSystem(int instant) {
-		return obtainStationsWithBikeReservationAttempts(instant).size() == systemInfo.getStations().size() ? true : false;
+		return obtainStationsWithBikeReservationAttempts(instant).size() == systemConfig.getStations().size() ? true : false;
 	}
 	
 	public Station determineStationToRentBike(int instant) {
@@ -30,9 +30,9 @@ public class UserTest extends User {
 			}
 		}
 		if(destination == null) {
-			int numberStations = systemInfo.getStations().size();
+			int numberStations = systemConfig.getStations().size();
 			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
-			destination = systemInfo.getStations().get(indexStation);
+			destination = systemConfig.getStations().get(indexStation);
 		}
 		return destination;
 	}
@@ -51,9 +51,9 @@ public class UserTest extends User {
 			}
 		}
 		if(destination == null) {
-			int numberStations = systemInfo.getStations().size();
+			int numberStations = systemConfig.getStations().size();
 			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
-			destination = systemInfo.getStations().get(indexStation);
+			destination = systemConfig.getStations().get(indexStation);
 		}
 		
 		return destination;
@@ -68,7 +68,7 @@ public class UserTest extends User {
 	}
 	
 	public GeoPoint decidesNextPoint() {
-		return systemInfo.getBoundingBox().randomPoint();
+		return systemConfig.getBoundingBox().randomPoint();
 	}
 	
 	public boolean decidesToReturnBike() {

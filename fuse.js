@@ -63,8 +63,8 @@ Sparky.task('build:schema', () => new Promise((resolve, reject) => {
     // add schemas here
     // one entry has the schema subdirectory as key and an array of file names without extension as value
     const schemas = {
-        config: ['entrypoints'],
-        history: ['change']
+        config: ['entrypoints', 'stations', 'general'],
+        history: ['change', 'init']
     };
 
     Object.keys(schemas).forEach((type) => schemas[type].forEach((schema) => {

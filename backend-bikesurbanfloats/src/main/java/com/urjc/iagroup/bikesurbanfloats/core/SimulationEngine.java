@@ -33,7 +33,7 @@ public class SimulationEngine {
 	public void run() {
 		
 		
-        //History.init(userAppearsList, systemInfo);
+        //History.init(userAppearsList, systemConfig);
 
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element

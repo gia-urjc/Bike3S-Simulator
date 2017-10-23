@@ -1,7 +1,7 @@
 {
   "entryPoints": [
     {
-      "userType": "UserTest",
+      "userType": "USERTEST",
       "instant": 0,
       "position": {
         "latitude": 40.32246,
@@ -18,7 +18,7 @@
 			"type": "POISSON",
 			"lambda": 0.0033333
 		},      
-		"userType": "UserTest",
+		"userType": "USERTEST",
 		"timeRange": {
 			"start": 0,
 			"end": 36000

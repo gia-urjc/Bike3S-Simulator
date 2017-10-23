@@ -1,12 +1,14 @@
 package com.urjc.iagroup.bikesurbanfloats.history;
 
-import com.google.gson.*;
+
 import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 
@@ -23,10 +25,10 @@ public class History {
 
     private static ArrayList<JsonObject> serializedEntries = new ArrayList<>();
 
-    public static void init(List<EventUserAppears> userAppearsList, SystemConfiguration systemInfo) {
+    public static void init(List<EventUserAppears> userAppearsList, SystemConfiguration systemConfig) {
         lastEntry = new HistoryEntry(0);
         nextEntry = new HistoryEntry(0);
-        nextEntry.getStations().putAll(systemInfo.getStations().stream().collect(Collectors.toMap(Entity::getId, HistoricStation::new)));
+        nextEntry.getStations().putAll(systemConfig.getStations().stream().collect(Collectors.toMap(Entity::getId, HistoricStation::new)));
         JsonObject entry = new JsonObject();
 
         List<JsonObject> users = new ArrayList<>();
@@ -36,18 +38,18 @@ public class History {
             User user = event.getUser();
             nextEntry.getUsers().put(user.getId(), new HistoricUser(user));
 
-            serializedUser.add("appearanceTime", new JsonPrimitive(event.getInstant()));
+            serializedUser.add("timeInstant", new JsonPrimitive(event.getInstant()));
             serializedUser.add("user", gson.toJsonTree(user, UserModel.class));
 
             users.add(serializedUser);
         }
 
 
-        nextEntry.getBikes().putAll(systemInfo.getBikes().stream().collect(Collectors.toMap(Entity::getId, HistoricBike::new)));
+        nextEntry.getBikes().putAll(systemConfig.getBikes().stream().collect(Collectors.toMap(Entity::getId, HistoricBike::new)));
 
         entry.add("userAppearanceEvents", gson.toJsonTree(users));
-        entry.add("stations", gson.toJsonTree(systemInfo.getStations()));
-        // entry.add("bikes", gson.toJsonTree(SystemInfo.bikes));
+        entry.add("stations", gson.toJsonTree(systemConfig.getStations()));
+        // entry.add("bikes", gson.toJsonTree(systemConfig.bikes));
 
         // TODO: write file
     }

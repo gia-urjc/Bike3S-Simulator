@@ -7,6 +7,6 @@ import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 
 public interface EntryPoint {
 	
-	public List<EventUserAppears> generateEvents(SystemConfiguration systemInfo);
+	public List<EventUserAppears> generateEvents(SystemConfiguration systemConfig);
 	
 }

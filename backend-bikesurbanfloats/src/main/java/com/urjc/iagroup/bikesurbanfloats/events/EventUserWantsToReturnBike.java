@@ -10,8 +10,8 @@ public class EventUserWantsToReturnBike extends EventUser {
 
     private GeoPoint actualPosition;
 
-    public EventUserWantsToReturnBike(int instant, User user, GeoPoint actualPosition, SystemConfiguration systemInfo) {
-        super(instant, user, systemInfo);
+    public EventUserWantsToReturnBike(int instant, User user, GeoPoint actualPosition, SystemConfiguration systemConfig) {
+        super(instant, user, systemConfig);
         this.actualPosition = actualPosition;
     }
 

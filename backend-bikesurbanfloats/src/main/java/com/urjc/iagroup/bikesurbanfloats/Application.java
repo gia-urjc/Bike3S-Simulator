@@ -21,8 +21,8 @@ public class Application {
         		entryPath, simulationPath);
 		
         try {
-			SystemConfiguration systemInfo = jsonReader.readJson();
-			SimulationEngine simulation = new SimulationEngine(systemInfo);
+			SystemConfiguration systemConfig = jsonReader.readJson();
+			SimulationEngine simulation = new SimulationEngine(systemConfig);
 			simulation.processEntryPoints();
 			simulation.run();
 			

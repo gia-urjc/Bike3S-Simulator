@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.User.*;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
-import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserType;
 import com.urjc.iagroup.bikesurbanfloats.events.*;
 import com.urjc.iagroup.bikesurbanfloats.util.*;
 
@@ -22,13 +22,13 @@ public class EntryPointSingle implements EntryPoint {
 	}
 
 	@Override
-	public List<EventUserAppears> generateEvents(SystemConfiguration systemInfo) {
+	public List<EventUserAppears> generateEvents(SystemConfiguration systemConfig) {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		UserFactory userFactory = new UserFactory();
-		IdGenerator userIdGenerator = systemInfo.getUserIdGenerator();
+		IdGenerator userIdGenerator = systemConfig.getUserIdGenerator();
 		int id = userIdGenerator.next();
-		User user = userFactory.createUser(id, userType, position, systemInfo);
-		EventUserAppears event = new EventUserAppears(instant, user, systemInfo);
+		User user = userFactory.createUser(id, userType, position, systemConfig);
+		EventUserAppears event = new EventUserAppears(instant, user, systemConfig);
 		generatedEvents.add(event);
 		return generatedEvents;
 	}
