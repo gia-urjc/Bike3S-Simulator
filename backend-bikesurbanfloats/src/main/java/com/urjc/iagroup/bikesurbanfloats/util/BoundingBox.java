@@ -1,48 +1,43 @@
 package com.urjc.iagroup.bikesurbanfloats.util;
 
-import java.awt.geom.Rectangle2D;
-
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
-
 public class BoundingBox {
 	
-	private Rectangle2D.Double rectangle;
-	private RandomUtil random;
+	private GeoPoint point1;
+	private GeoPoint point2;
+
 	
-	public BoundingBox(RandomUtil random) {
-		this.rectangle = new Rectangle2D.Double();
-		this.random = random;
+	public BoundingBox(GeoPoint point1, GeoPoint point2) {
+		this.point1 = point1;
+		this.point2 = point2;
 	}
 	
-	public BoundingBox(GeoPoint position, double lengthLongitude, double lengthLatitude) {
-		double x = position.getLongitude();
-		double y = position.getLatitude();
-		double width = lengthLongitude;
-		double height = lengthLatitude;
-		this.rectangle = new Rectangle2D.Double(x, y, width, height);
+	public BoundingBox(double lat1, double lon1, double lat2, double lon2) {
+		this.point1 = new GeoPoint(lat1, lon1);
+		this.point2 = new GeoPoint(lat2, lon2);
 	}
 	
-	public GeoPoint getPosition() {
-		return new GeoPoint(rectangle.getY(), rectangle.getX());
+	public GeoPoint getPoint1() {
+		return point1;
 	}
 	
-	public double getLengthLongitude() {
-		return this.rectangle.getWidth();
+	public GeoPoint getPoint2() {
+		return point2;
 	}
 	
-	public double getLengthLatitude() {
-		return this.rectangle.getHeight();
+	public double getWidth() {
+		GeoPoint auxGeoPoint = new GeoPoint(point1.getLatitude(), point2.getLongitude());
+		return point1.distanceTo(auxGeoPoint);
 	}
 	
-	public void setPosition(GeoPoint position) {
-		this.rectangle.x = position.getLongitude();
-		this.rectangle.y = position.getLatitude();
+	public double getHeight() {
+		GeoPoint auxGeoPoint = new GeoPoint(point2.getLatitude(), point1.getLongitude());
+		return point1.distanceTo(auxGeoPoint);
 	}
 	 
 	public GeoPoint randomPoint() {
-		double x = random.nextDouble(rectangle.getX(), rectangle.getX() + rectangle.getWidth());
-		double y = random.nextDouble(rectangle.getY(), rectangle.getY() + rectangle.getHeight());
-		return new GeoPoint(y, x);
+		double newLatitude = StaticRandom.nextDouble(point1.getLatitude(), point2.getLatitude());
+		double newLongitude = StaticRandom.nextDouble(point1.getLongitude(), point2.getLongitude());
+		return new GeoPoint(newLatitude, newLongitude);
 	}
 
 }

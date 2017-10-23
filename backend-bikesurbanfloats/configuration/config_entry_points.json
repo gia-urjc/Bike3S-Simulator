@@ -14,7 +14,10 @@
     "longitude": -3.87982 
     },
     "radio": 5000.0,
-    "distribution": "DistributionPoisson",      
+    "distribution": {
+    "type": "DistributionPoisson",
+    "lambda": 0.0033333
+    },      
     "userType": "UserTest",
     "timeRange": {
     "start": 0,

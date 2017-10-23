@@ -3,18 +3,18 @@ package com.urjc.iagroup.bikesurbanfloats.config.distributions;
 import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 
 public class Distribution {
-	private DistributionType distributionType;
+	private DistributionType type;
 
-	public Distribution(DistributionType distributionType) {
-		this.distributionType = distributionType;
+	public Distribution(DistributionType type) {
+		this.type = type;
 	}
 
 	public DistributionType getDistribution() {
-		return distributionType;
+		return type;
 	}
 
 	public void setDistribution(DistributionType distribution) {
-		this.distributionType = distribution;
+		this.type = distribution;
 	}
 
 

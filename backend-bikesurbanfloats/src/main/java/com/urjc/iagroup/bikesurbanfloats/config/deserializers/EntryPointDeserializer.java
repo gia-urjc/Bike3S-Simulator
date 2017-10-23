@@ -13,7 +13,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
 
 	private final static String JSON_ATR_DISTRIBUTION = "distribution";
-	private final static String JSON_ATR_DISTR_TYPE = "distributionType";
+	private final static String JSON_ATR_DISTR_TYPE = "type";
 	
 	private EntryPointFactory entryPointFactory;
 	
