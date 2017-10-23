@@ -18,8 +18,8 @@ public class EntryPointFactory {
 	
 	public EntryPoint createEntryPoint(JsonObject json, DistributionType distribution) {
 		switch(distribution) {
-			case poisson: return gson.fromJson(json, EntryPointPoisson.class);
-			case nonedistribution: return gson.fromJson(json, EntryPointSingle.class); 
+			case POISSON: return gson.fromJson(json, EntryPointPoisson.class);
+			case NONEDISTRIBUTION: return gson.fromJson(json, EntryPointSingle.class); 
 			default: throw new JsonParseException("Type of EntryPoint doesn't exists");
 		}
 	}

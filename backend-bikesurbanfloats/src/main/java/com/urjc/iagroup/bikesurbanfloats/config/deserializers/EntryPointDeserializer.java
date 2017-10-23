@@ -29,14 +29,14 @@ public class EntryPointDeserializer implements JsonDeserializer<EntryPoint>  {
 		JsonObject	jsonElementEntryP = json.getAsJsonObject();
 		DistributionType distributionType = null;
 		
-		// if entryPoint does'nt contain a distribution attribute, it's of type single (one person)
+		// if entryPoint does'nt contain a distribution attribute, it's of type single (one user)
 		if (jsonElementEntryP.has(JSON_ATR_DISTRIBUTION)) {
 			String distributionStr = jsonElementEntryP.get(JSON_ATR_DISTRIBUTION)
 					.getAsJsonObject().get(JSON_ATR_DISTR_TYPE).getAsString();
 			distributionType = DistributionType.valueOf(distributionStr);
 		}
 		else {
-			distributionType = DistributionType.nonedistribution;		
+			distributionType = DistributionType.NONEDISTRIBUTION;		
 		}
 		
 		return entryPointFactory.createEntryPoint(jsonElementEntryP, distributionType);

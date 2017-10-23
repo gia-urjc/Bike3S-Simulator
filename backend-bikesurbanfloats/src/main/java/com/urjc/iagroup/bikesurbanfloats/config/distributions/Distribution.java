@@ -4,7 +4,7 @@ package com.urjc.iagroup.bikesurbanfloats.config.distributions;
 public class Distribution {
 	
 	public enum DistributionType {
-		poisson, random, nonedistribution
+		POISSON, RANDOM, NONEDISTRIBUTION
 	}
 	
 	private DistributionType type;
