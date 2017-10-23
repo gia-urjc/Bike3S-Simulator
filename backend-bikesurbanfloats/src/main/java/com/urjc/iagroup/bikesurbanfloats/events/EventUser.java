@@ -9,10 +9,10 @@ import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
 public abstract class EventUser implements Event {
 	protected int instant;
-	protected Person user;
+	protected User user;
 	protected SystemInfo systemInfo;
 
-    public EventUser(int instant, Person user, SystemInfo systemInfo) {
+    public EventUser(int instant, User user, SystemInfo systemInfo) {
         this.instant = instant;
         this.user = user;
         this.systemInfo = systemInfo;
@@ -22,7 +22,7 @@ public abstract class EventUser implements Event {
     	return instant;
     }
     
-    public Person getUser() {
+    public User getUser() {
     	return user;
     }
     
@@ -89,9 +89,8 @@ public abstract class EventUser implements Event {
         
         if (user.decidesToReserveSlot()) {
         	Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);
-        	boolean reserved = user.reservesSlot(destination);
-
-         if (reserved) {  // User has been able to reserve
+        	
+         if (user.reservesSlot(destination)) {  // User has been able to reserve
         	 reservation.setSuccessful(true);
         	 
             	if (systemInfo.getReservationTime() < arrivalTime) {

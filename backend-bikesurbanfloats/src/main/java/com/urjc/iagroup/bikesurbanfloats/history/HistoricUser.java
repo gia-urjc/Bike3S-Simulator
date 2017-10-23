@@ -2,7 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.urjc.iagroup.bikesurbanfloats.entities.Person;
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
@@ -25,7 +25,7 @@ public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<His
 	private HistoricStation destinationStation;
 
 
-	HistoricUser(Person user) {
+	HistoricUser(User user) {
 	    this.id = user.getId();
 	    this.position = new GeoPoint(user.getPosition());
 

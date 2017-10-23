@@ -10,7 +10,16 @@ import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
-public abstract class Person implements Entity, UserModel<Bike, Station> {
+/**
+ * This is the main entity of the system
+ * It represents the basic behaviour of all users type which can apper in the system
+ * It provides an implementation for basic methods which manage common information for all kind of users
+ * It provides a behaviour pattern (make decissions) which depends on specific user type properties  
+ * @author IAgroup
+ *
+ */
+
+public abstract class User implements Entity, UserModel<Bike, Station> {
 
     private int id;
 
@@ -28,7 +37,7 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     
     protected SystemInfo systemInfo;
    
-    public Person(int id, GeoPoint position, SystemInfo systemInfo) {
+    public User(int id, GeoPoint position, SystemInfo systemInfo) {
         this.id = id;
 
         this.position = position;
@@ -85,6 +94,12 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     public boolean hasReservedSlot() {
         return reservedSlot;
     }
+    
+    /**
+     *  user reserves a bike at the station
+     * @param station is the station where user wants to make a bike reservation
+     * @return true if user is able to reserve a bike at that station (there are available bikes)
+     */
 
     public boolean reservesBike(Station station) {
     	if (station.availableBikes() > 0) {
@@ -93,6 +108,12 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     	}
     	return reservedBike;
     }
+    
+    /**
+     * user reserves a slot at the station
+     * @param station is the station where user wants to make a slot reservation
+     * @return true if user is able to reserve a slot at that station
+     */
 
     public boolean reservesSlot(Station station) {
     	if (station.availableSlots() > 0) {
@@ -101,6 +122,11 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
     	}
     	return reservedSlot;
     }
+    
+    /**
+     * user cancels his bike reservation at the station
+     * @param station is station for which user wants to cancel his bike reservation  
+     */
 
     public void cancelsBikeReservation(Station station) {
         this.reservedBike = false;

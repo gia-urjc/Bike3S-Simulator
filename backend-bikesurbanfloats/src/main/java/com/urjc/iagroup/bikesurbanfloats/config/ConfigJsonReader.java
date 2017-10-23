@@ -80,6 +80,10 @@ public class ConfigJsonReader {
 		StaticRandom.setSeed(systemInfo.getRandomSeed());
 		JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
 		systemInfo.setBoundingBox(gson.fromJson(rectangleJson, BoundingBox.class));
+		systemInfo.setConfigStationPath(stationsFileName);
+		systemInfo.setConfigEntryPath(entryPointsFileName);
+		systemInfo.setConfigSimulationPath(configSimulationFileName);
+		
 	}
 	
 	private void readStations(Gson gson, SystemInfo systemInfo) throws FileNotFoundException {

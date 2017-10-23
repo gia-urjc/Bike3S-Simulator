@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.config.distributions.DistributionPoisson;
-import com.urjc.iagroup.bikesurbanfloats.entities.Person;
-import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonFactory;
-import com.urjc.iagroup.bikesurbanfloats.entities.factories.PersonType;
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
+import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserType;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
@@ -18,62 +18,63 @@ public class EntryPointPoisson implements EntryPoint {
 	private GeoPoint position;
 	private double radio; //meters
 	private DistributionPoisson distribution;
-	private PersonType personType;
+	private UserType userType;
 	private TimeRange timeRange;
 	
-	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, PersonType personType) {
+	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, UserType userType) {
 		this.position = position;
 		this.distribution = distribution;
-		this.personType = personType;
+		this.userType = userType;
 		this.timeRange = null;
 		this.radio = 0;
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
-			PersonType personType, double radio) {
+			UserType userType, double radio) {
 		this.position = position;
 		this.distribution = distribution;
-		this.personType = personType;
+		this.userType = userType;
 		this.radio = radio;
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
-			PersonType personType, TimeRange timeRange) {
+			UserType userType, TimeRange timeRange) {
 		this.position = position;
 		this.distribution = distribution;
-		this.personType = personType;
+		this.userType = userType;
 		this.timeRange = timeRange;
 		this.radio = 0;
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
-			PersonType personType, TimeRange timeRange,  double radio) {
+			UserType userType, TimeRange timeRange,  double radio) {
 		this.position = position;
 		this.distribution = distribution;
-		this.personType = personType;
+		this.userType = userType;
 		this.timeRange = timeRange;
 		this.radio = radio;
 	}
 
-	private Person createUser(IdGenerator personIdGenerator, PersonFactory personFactory, SystemInfo systemInfo) {
-		int id = personIdGenerator.next();
+
+	private User createUser(IdGenerator userIdGenerator, UserFactory userFactory, SystemInfo systemInfo) {
+		int id = userIdGenerator.next();
 		BoundingCircle bcircle = new BoundingCircle(position, radio);
-		Person person;
+		User user;
 		if(radio > 0.0) {
 			GeoPoint randomPosition = bcircle.randomPointInCircle();
-			person = personFactory.createPerson(id, personType, randomPosition, systemInfo);
+			user = userFactory.createUser(id, userType, randomPosition, systemInfo);
 		}
 		else {
-			person = personFactory.createPerson(id, personType, position, systemInfo);
+			user = userFactory.createUser(id, userType, position, systemInfo);
 		}
-		return person;
+		return user;
 	}
 
 	@Override
 	public List<EventUserAppears> generateEvents(SystemInfo systemInfo) {
 		
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
-		PersonFactory personFactory = new PersonFactory();
+		UserFactory userFactory = new UserFactory();
 		int actualTime, endTime;
 		IdGenerator userIdGenerator = systemInfo.getUserIdGenerator();
 		if(timeRange == null) {
@@ -85,10 +86,10 @@ public class EntryPointPoisson implements EntryPoint {
 			endTime = timeRange.getEnd();
 		}
 		while(actualTime < endTime) {
-			Person person = createUser(userIdGenerator, personFactory, systemInfo);
+			User user = createUser(userIdGenerator, userFactory, systemInfo);
 			int timeEvent = distribution.randomInterarrivalDelay();
 			actualTime += timeEvent;
-			EventUserAppears newEvent = new EventUserAppears(actualTime, person, systemInfo);
+			EventUserAppears newEvent = new EventUserAppears(actualTime, user, systemInfo);
 			generatedEvents.add(newEvent);
 		}
 		return generatedEvents;
@@ -99,7 +100,7 @@ public class EntryPointPoisson implements EntryPoint {
 		String result = position.toString();
 		result += "| Distribution " + distribution.getDistribution();
 		result += "| distributionParameter " + distribution.getLambda() + "\n";
-		result += "Person Type: " + personType;
+		result += "user Type: " + userType;
 		return result;
 	}
 	

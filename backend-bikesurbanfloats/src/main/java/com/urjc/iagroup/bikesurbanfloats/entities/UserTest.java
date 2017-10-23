@@ -6,9 +6,9 @@ import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
-public class PersonTest extends Person {
+public class UserTest extends User {
 	
-	public PersonTest(int id, GeoPoint position, SystemInfo systemInfo) {
+	public UserTest(int id, GeoPoint position, SystemInfo systemInfo) {
 		super(id, position, systemInfo);
 	}
 

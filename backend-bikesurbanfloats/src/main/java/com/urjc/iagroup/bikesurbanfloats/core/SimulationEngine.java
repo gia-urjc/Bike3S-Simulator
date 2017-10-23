@@ -25,7 +25,7 @@ public class SimulationEngine {
 		List<EventUserAppears> events = systemInfo.getEventUserAppears();
 		for(EventUserAppears event: events) {
 			userAppearsList.add(event);
-			systemInfo.getPersons().add(event.getUser());
+			systemInfo.getUsers().add(event.getUser());
 		}
         eventsQueue.addAll(userAppearsList);
 		

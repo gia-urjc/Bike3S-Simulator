@@ -1,5 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.factories;
 
-public enum PersonType {
-	PersonTest
+public enum UserType {
+	UserTest
 }

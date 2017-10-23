@@ -3,9 +3,8 @@ package com.urjc.iagroup.bikesurbanfloats.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
-import com.urjc.iagroup.bikesurbanfloats.entities.Person;
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
@@ -13,11 +12,16 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 public class SystemInfo {
 	
+	private String configStationPath = "configuration/config_stations.json";
+	private String configEntryPath = "configuration/config_entry_points.json";
+	private String configSimulationPath = "configuration/config_simulation.json";
+	
 	//System Information
 	private List<Station> stations = new ArrayList<>();
 	private List<EventUserAppears> eventUserAppears = new ArrayList<>();
 	private List<Bike> bikes = new ArrayList<>();
-	private List<Person> persons = new ArrayList<>();
+	private List<User> users = new ArrayList<>();
+
 
 	//Configuration information
 	private int reservationTime = 0;
@@ -49,13 +53,13 @@ public class SystemInfo {
 	public void setBikes(ArrayList<Bike> bikes) {
 		this.bikes = bikes;
 	}
-
-	public List<Person> getPersons() {
-		return persons;
+	
+	public List<User> getUsers() {
+		return users;
 	}
 
-	public void setPersons(ArrayList<Person> persons) {
-		this.persons = persons;
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 	public int getReservationTime() {
@@ -122,11 +126,36 @@ public class SystemInfo {
 		this.eventUserAppears = eventUserAppears;
 	}
 	
+	public String getConfigStationPath() {
+		return configStationPath;
+	}
+
+	public void setConfigStationPath(String configStationPath) {
+		this.configStationPath = configStationPath;
+	}
+
+	public String getConfigEntryPath() {
+		return configEntryPath;
+	}
+
+	public void setConfigEntryPath(String configEntryPath) {
+		this.configEntryPath = configEntryPath;
+	}
+
+	public String getConfigSimulationPath() {
+		return configSimulationPath;
+	}
+
+	public void setConfigSimulationPath(String configSimulationPath) {
+		this.configSimulationPath = configSimulationPath;
+	}
+
+	
 	public void resetInfo() {
 		stations = new ArrayList<>();
 		eventUserAppears = new ArrayList<>();
 		bikes = new ArrayList<>();
-		persons = new ArrayList<>();
+		setUsers(new ArrayList<>());
 		reservationTime = 0;
 		totalTimeSimulation = 0;
 		randomSeed = 0;

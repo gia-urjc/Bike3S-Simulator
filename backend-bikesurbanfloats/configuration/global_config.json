@@ -3,11 +3,11 @@
 	"totalTimeSimulation" : 18000,
 	"randomSeed": 200,
 	"bbox": {
-		"point1": {
+		"northWest": {
 			"latitude": 40.329103,
 			"longitude": -3.881946
 		},
-		"point2": {
+		"southEast": {
 			"latitude": 40.321065,
 			"longitude": -3.851462
 		}

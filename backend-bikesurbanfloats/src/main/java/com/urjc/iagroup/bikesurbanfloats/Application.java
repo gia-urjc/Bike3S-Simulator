@@ -13,13 +13,12 @@ import com.urjc.iagroup.bikesurbanfloats.core.SimulationEngine;
 
 public class Application {
 	
-	private static final String CONFIG_STATION_PATH = "configuration/config_stations.json";
-	private static final String CONFIG_ENTRYP_PATH = "configuration/config_entry_points.json";
-	private static final String CONFIG_SIMULATION_PATH = "configuration/config_simulation.json";
-	
     public static void main(String[] args) {
-        ConfigJsonReader jsonReader = new ConfigJsonReader(CONFIG_STATION_PATH, 
-        		CONFIG_ENTRYP_PATH, CONFIG_SIMULATION_PATH);
+    	String stationsPacth = args[0];
+    	String entryPath = args[1];
+    	String simulationPath = args[2];
+        ConfigJsonReader jsonReader = new ConfigJsonReader(stationsPacth, 
+        		entryPath, simulationPath);
 		
         try {
 			SystemInfo systemInfo = jsonReader.readJson();
