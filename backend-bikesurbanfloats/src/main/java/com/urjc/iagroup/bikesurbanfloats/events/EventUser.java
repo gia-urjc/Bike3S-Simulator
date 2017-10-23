@@ -89,9 +89,8 @@ public abstract class EventUser implements Event {
         
         if (user.decidesToReserveSlot()) {
         	Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);
-        	boolean reserved = user.reservesSlot(destination);
-
-         if (reserved) {  // User has been able to reserve
+        	
+         if (user.reservesSlot(destination)) {  // User has been able to reserve
         	 reservation.setSuccessful(true);
         	 
             	if (systemInfo.reservationTime < arrivalTime) {
