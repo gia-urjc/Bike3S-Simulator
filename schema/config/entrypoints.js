@@ -1,6 +1,7 @@
 const merge = require('../util/merge');
 
 const GeoPoint = require('../common/geopoint');
+const UserType = require('../common/userType');
 
 const distributionBase = {
     type: 'object',
@@ -28,11 +29,7 @@ const itemBase = {
     additionalProperties: false,
     required: ['userType', 'position'],
     properties: {
-        userType: {
-            enum: [
-                'UserTest',
-            ]
-        },
+        userType: UserType,
         position: GeoPoint,
         radio: {
             type: 'integer',
@@ -52,10 +49,14 @@ const validItems = [
         },
     },
     {
-        required: ['distribution'],
+        required: ['distribution', 'radius'],
         properties: {
             distribution: {
                 oneOf: distributions,
+            },
+            radius: {
+                type: 'number',
+                exclusiveMinimum: 0
             }
         }
     }

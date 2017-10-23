@@ -1,12 +1,13 @@
 package com.urjc.iagroup.bikesurbanfloats.history;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 
@@ -36,7 +37,7 @@ public class History {
             User user = event.getUser();
             nextEntry.getUsers().put(user.getId(), new HistoricUser(user));
 
-            serializedUser.add("appearanceTime", new JsonPrimitive(event.getInstant()));
+            serializedUser.add("timeInstant", new JsonPrimitive(event.getInstant()));
             serializedUser.add("user", gson.toJsonTree(user, UserModel.class));
 
             users.add(serializedUser);
