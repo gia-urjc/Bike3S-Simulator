@@ -10,6 +10,7 @@ public class Route {
 	
 	public Route(List<GeoPoint> geoPointList) {
 		this.geoPointList = geoPointList;
+		calculateDistances();
 	}
 	
 	private void calculateDistances() {
@@ -21,6 +22,27 @@ public class Route {
 			distancesBetweenPoints.add(currentDistance);
 			totalDistance += currentDistance;
 		}
+		distance = totalDistance;
+	}
+	
+	public Route calculateSubRoute(double finalTime, double velocity) throws Exception {
+		//t = d/v
+		double currentDistance = 0.0;
+		double currentTime = 0.0;
+		List<Double> newGeoPointList;
+		int i = 0;
+		while(i < geoPointList.size()-1 && currentTime < finalTime) {
+			currentDistance += distancesBetweenPoints.get(i);
+			currentTime += currentDistance/velocity;
+			i++;
+		}
+		if(currentTime < finalTime) {
+			throw new Exception("Can't create soubroute");
+		}
+		//TODO calculate point
+		
+		return null;
+		
 	}
 	
 	

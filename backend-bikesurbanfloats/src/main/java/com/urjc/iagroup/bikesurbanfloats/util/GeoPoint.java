@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.util;
 
+
 public class GeoPoint {
 
     /**
@@ -53,24 +54,46 @@ public class GeoPoint {
         return 2 * EARTH_RADIUS * Math.asin(Math.sqrt(h));
     }
     
-    // distnace: travelled distance during a concret time; destination: where user pretended to arrive
-    public GeoPoint reachedPoint(double distance, GeoPoint destination) {
-    	double totalDistance = this.distanceTo(destination);
-    	double percentage = distance * 100 / totalDistance; 
-    	
-    	double totalX = destination.longitude - this.longitude;
-    	double totalY = destination.latitude - this.latitude;
-
-    	double travelledX = totalX * percentage / 100;  
-    	double travelledY = totalY * percentage / 100;
-    	
-    	return new GeoPoint(latitude + travelledY, longitude + travelledX);
-   
-    }
-
     private double haversine(double value) {
         return Math.pow(Math.sin(value / 2), 2);
     }
+    
+    public double bearing(GeoPoint point2) {
+		double latPos1Rad = Math.toRadians(latitude);
+		double lonPos1Rad = Math.toRadians(longitude);
+		double latPos2Rad = Math.toRadians(point2.getLatitude());
+		double lonPos2Rad = Math.toRadians(point2.getLongitude());
+		
+		double y = Math.sin(lonPos2Rad - lonPos1Rad) * Math.cos(latPos2Rad);
+		double x = Math.cos(latPos1Rad)*Math.sin(latPos2Rad) 
+				- Math.sin(latPos1Rad)*Math.cos(latPos2Rad)*Math.cos(lonPos2Rad - lonPos1Rad);
+		
+		double bearing = Math.toDegrees(Math.atan2(y, x));
+		
+		return bearing;
+    }
+    
+    public GeoPoint reachedPoint(double distance, GeoPoint destination) {
+    	double latPosRad = Math.toRadians(latitude);
+		double lonPosRad = Math.toRadians(longitude);
+		double senLatitude = Math.sin(latPosRad);
+		double cosLatitude = Math.cos(latPosRad);
+		double bearing = Math.toRadians(this.bearing(destination));
+		double theta = distance / GeoPoint.EARTH_RADIUS;
+		double senBearing = Math.sin(bearing);
+		double cosBearing = Math.cos(bearing);
+		double senTheta = Math.sin(theta);
+		double cosTheta = Math.cos(theta);
+		
+		double resLatRadians = Math.asin(senLatitude*cosTheta+cosLatitude*senTheta*cosBearing);
+		double resLonRadians = lonPosRad + Math.atan2(senBearing*senTheta*cosLatitude, 
+				cosTheta-senLatitude*Math.sin(resLatRadians));
+		resLonRadians = ((resLonRadians+(Math.PI*3))%(Math.PI*2))-Math.PI;
+    	
+    	return new GeoPoint(Math.toDegrees(resLatRadians), Math.toDegrees(resLonRadians)); 
+    }
+
+    
 
     @Override
     public boolean equals(Object o) {
