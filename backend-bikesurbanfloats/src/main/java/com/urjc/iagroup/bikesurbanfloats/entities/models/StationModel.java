@@ -4,13 +4,13 @@ import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 import java.util.List;
 
-public interface StationModel<BikeType extends BikeModel> {
+public interface StationModel<B extends BikeModel> {
 
     GeoPoint getPosition();
 
     int getCapacity();
 
-    List<BikeType> getBikes();
+    List<B> getBikes();
 
     int getReservedBikes();
 

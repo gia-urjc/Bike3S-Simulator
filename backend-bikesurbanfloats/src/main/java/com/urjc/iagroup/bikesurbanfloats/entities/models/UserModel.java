@@ -2,16 +2,13 @@ package com.urjc.iagroup.bikesurbanfloats.entities.models;
 
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
-public interface UserModel<BikeType extends BikeModel, StationType extends StationModel<BikeType>> {
+public interface UserModel<B extends BikeModel, S extends StationModel<B>, R extends ReservationModel<?, B, S>> {
 	
     GeoPoint getPosition();
     
-    BikeType getBike();
-    boolean hasBike();
-    boolean hasReservedBike();
-    boolean hasReservedSlot();
-    
-    StationType getDestinationStation();
+    B getBike();
+    S getDestinationStation();
+    R getLastReservation();
     
     double getAverageVelocity();
    
