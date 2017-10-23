@@ -30,8 +30,10 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();;
         user.setPosition(station.getPosition());
-        reservation.resolve(instant);
-        user.addReservation(reservation);
+        if(reservation != null) {
+        	reservation.resolve(instant);
+        	user.addReservation(reservation);
+        }
 
         if (user.removeBikeFrom(station)) {
             if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
