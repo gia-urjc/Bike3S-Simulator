@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.*; 
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
@@ -20,6 +21,10 @@ import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
  */
 
 public abstract class User implements Entity, UserModel<Bike, Station> {
+
+	public enum UserType {
+		USERTEST
+	}
 
     private int id;
 
@@ -101,12 +106,13 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      * @return true if user is able to reserve a bike at that station (there are available bikes)
      */
 
-    public boolean reservesBike(Station station) {
+    public Bike reservesBike(Station station) {
+    	Bike bike = null;
     	if (station.availableBikes() > 0) {
     		this.reservedBike = true;
-    		station.reservesBike();
+    		bike = station.reservesBike();
     	}
-    	return reservedBike;
+    	return bike;
     }
     
     /**
@@ -197,7 +203,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     
 	public List<Station> obtainStationsWithBikeReservationAttempts(int instant) {
  		List<Reservation> unsuccessfulBikeReservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.BIKE && 
- 		reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
+ 		reservation.getState() == ReservationState.FAILED && reservation.getStartInstant() == instant).collect(Collectors.toList());
  		List<Station> failedStations = unsuccessfulBikeReservations.stream().map(Reservation::getStation).collect(Collectors.toList());
  		return failedStations;
 	}
@@ -215,7 +221,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 	
 	public List<Station> obtainStationsWithSlotReservationAttempts(int instant) {
  		List<Reservation> unsuccessfulSlotReservations = getReservations().stream().filter(reservation -> reservation.getType() == ReservationType.SLOT && 
- 				reservation.getSuccessful() == false && reservation.getInstant() == instant).collect(Collectors.toList());
+ 				reservation.getState() == ReservationState.FAILED && reservation.getStartInstant() == instant).collect(Collectors.toList());
  		List<Station> failedStations = unsuccessfulSlotReservations.stream().map(Reservation::getStation).collect(Collectors.toList());
  		return failedStations;
 	}

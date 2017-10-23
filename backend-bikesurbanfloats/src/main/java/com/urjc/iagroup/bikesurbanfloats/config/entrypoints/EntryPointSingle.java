@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.User.UserType;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
-import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserType;
 import com.urjc.iagroup.bikesurbanfloats.events.*;
 import com.urjc.iagroup.bikesurbanfloats.util.*;
 
