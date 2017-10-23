@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 
@@ -11,7 +11,7 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
    
     private Station station;
 
-    public EventUserArrivesAtStationToReturnBike(int instant, User user, Station station, SystemInfo systemInfo) {
+    public EventUserArrivesAtStationToReturnBike(int instant, User user, Station station, SystemConfiguration systemInfo) {
         super(instant, user, systemInfo);
         this.station = station;
     }

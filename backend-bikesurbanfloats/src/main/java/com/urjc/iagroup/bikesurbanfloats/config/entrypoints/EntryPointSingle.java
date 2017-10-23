@@ -3,7 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserType;
@@ -22,7 +22,7 @@ public class EntryPointSingle implements EntryPoint {
 	}
 
 	@Override
-	public List<EventUserAppears> generateEvents(SystemInfo systemInfo) {
+	public List<EventUserAppears> generateEvents(SystemConfiguration systemInfo) {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		UserFactory userFactory = new UserFactory();
 		IdGenerator userIdGenerator = systemInfo.getUserIdGenerator();

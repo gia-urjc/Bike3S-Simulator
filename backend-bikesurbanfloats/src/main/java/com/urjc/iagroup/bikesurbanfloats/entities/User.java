@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
@@ -35,9 +35,9 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     private Station destinationStation;
     private List<Reservation> reservations;
     
-    protected SystemInfo systemInfo;
+    protected SystemConfiguration systemInfo;
    
-    public User(int id, GeoPoint position, SystemInfo systemInfo) {
+    public User(int id, GeoPoint position, SystemConfiguration systemInfo) {
         this.id = id;
 
         this.position = position;
@@ -178,7 +178,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     }
 
     /**
-     * The person's average velocity in m/s
+     * The user's average velocity in m/s
      *
      * @return
      */

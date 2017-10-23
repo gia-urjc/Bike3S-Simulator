@@ -1,7 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.history;
 
 import com.google.gson.*;
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
@@ -23,7 +23,7 @@ public class History {
 
     private static ArrayList<JsonObject> serializedEntries = new ArrayList<>();
 
-    public static void init(List<EventUserAppears> userAppearsList, SystemInfo systemInfo) {
+    public static void init(List<EventUserAppears> userAppearsList, SystemConfiguration systemInfo) {
         lastEntry = new HistoryEntry(0);
         nextEntry = new HistoryEntry(0);
         nextEntry.getStations().putAll(systemInfo.getStations().stream().collect(Collectors.toMap(Entity::getId, HistoricStation::new)));

@@ -3,16 +3,16 @@ package com.urjc.iagroup.bikesurbanfloats.events;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.entities.*;
 
 public abstract class EventUser implements Event {
 	protected int instant;
 	protected User user;
-	protected SystemInfo systemInfo;
+	protected SystemConfiguration systemInfo;
 
-    public EventUser(int instant, User user, SystemInfo systemInfo) {
+    public EventUser(int instant, User user, SystemConfiguration systemInfo) {
         this.instant = instant;
         this.user = user;
         this.systemInfo = systemInfo;

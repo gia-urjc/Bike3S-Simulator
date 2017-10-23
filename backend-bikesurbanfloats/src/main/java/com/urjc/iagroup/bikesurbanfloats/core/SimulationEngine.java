@@ -13,18 +13,18 @@ public class SimulationEngine {
 
     private List<EventUserAppears> userAppearsList = new ArrayList<>();
 	private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
-	private SystemInfo systemInfo;
+	private SystemConfiguration systemConfig;
 	
-	public SimulationEngine(SystemInfo systemInfo) {
+	public SimulationEngine(SystemConfiguration systemConfig) {
 		eventsQueue = new PriorityQueue<Event>();
-		this.systemInfo = systemInfo;
+		this.systemConfig = systemConfig;
 	}
 	
 	public void processEntryPoints() {
-		List<EventUserAppears> events = systemInfo.getEventUserAppears();
+		List<EventUserAppears> events = systemConfig.getEventUserAppears();
 		for(EventUserAppears event: events) {
 			userAppearsList.add(event);
-			systemInfo.getUsers().add(event.getUser());
+			systemConfig.getUsers().add(event.getUser());
 		}
         eventsQueue.addAll(userAppearsList);
 		

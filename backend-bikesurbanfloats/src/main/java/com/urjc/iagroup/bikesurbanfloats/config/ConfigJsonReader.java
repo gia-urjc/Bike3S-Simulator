@@ -41,52 +41,52 @@ public class ConfigJsonReader {
 		this.configSimulationFileName = configSimulationFileName;
 	}
 	
-	public SystemInfo readJson() throws FileNotFoundException {
+	public SystemConfiguration readJson() throws FileNotFoundException {
 
-		SystemInfo systemInfo = new SystemInfo();
+		SystemConfiguration systemConfig = new SystemConfiguration();
 		
-		Gson gson = createAndConfigureGson(systemInfo);
+		Gson gson = createAndConfigureGson(systemConfig);
 		
 		//Configuration
-		readGlobalConfigurations(gson, systemInfo);
+		readGlobalConfigurations(gson, systemConfig);
 
 		//Stations
-		readStations(gson, systemInfo);
+		readStations(gson, systemConfig);
 		
 		//EntryPoints
-		readEntryPoints(gson, systemInfo);
+		readEntryPoints(gson, systemConfig);
 		
-		return systemInfo;
+		return systemConfig;
 	}
 	
 	
-	private Gson createAndConfigureGson(SystemInfo systemInfo) {
+	private Gson createAndConfigureGson(SystemConfiguration systemConfig) {
 		GsonBuilder gsonBuilder = new GsonBuilder();
-		IdGenerator bikeIdGen = systemInfo.getBikeIdGen();
-		IdGenerator stationIdGen = systemInfo.getStationIdGen();
+		IdGenerator bikeIdGen = systemConfig.getBikeIdGen();
+		IdGenerator stationIdGen = systemConfig.getStationIdGen();
 		gsonBuilder.registerTypeAdapter(Station.class, new StationDeserializer(bikeIdGen, stationIdGen));
 		gsonBuilder.registerTypeAdapter(EntryPoint.class, new EntryPointDeserializer());
 		Gson gson = gsonBuilder.create();
 		return gson;
 	}
 
-	private void readGlobalConfigurations(Gson gson, SystemInfo systemInfo) throws FileNotFoundException {
+	private void readGlobalConfigurations(Gson gson, SystemConfiguration systemConfig) throws FileNotFoundException {
 		FileInputStream inputStreamJson = new FileInputStream(new File(configSimulationFileName));
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		JsonObject jsonConfig = gson.fromJson(bufferedReader, JsonObject.class);
-		systemInfo.setReservationTime(jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt());
-		systemInfo.setTotalTimeSimulation(jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt());
-		systemInfo.setRandomSeed(jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong());
-		StaticRandom.setSeed(systemInfo.getRandomSeed());
+		systemConfig.setReservationTime(jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt());
+		systemConfig.setTotalTimeSimulation(jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt());
+		systemConfig.setRandomSeed(jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong());
+		StaticRandom.setSeed(systemConfig.getRandomSeed());
 		JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
-		systemInfo.setBoundingBox(gson.fromJson(rectangleJson, BoundingBox.class));
-		systemInfo.setConfigStationPath(stationsFileName);
-		systemInfo.setConfigEntryPath(entryPointsFileName);
-		systemInfo.setConfigSimulationPath(configSimulationFileName);
+		systemConfig.setBoundingBox(gson.fromJson(rectangleJson, BoundingBox.class));
+		systemConfig.setConfigStationPath(stationsFileName);
+		systemConfig.setConfigEntryPath(entryPointsFileName);
+		systemConfig.setConfigSimulationPath(configSimulationFileName);
 		
 	}
 	
-	private void readStations(Gson gson, SystemInfo systemInfo) throws FileNotFoundException {
+	private void readStations(Gson gson, SystemConfiguration systemConfig) throws FileNotFoundException {
 		FileInputStream inputStreamJson = new FileInputStream(new File(stationsFileName));
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		
@@ -96,11 +96,11 @@ public class ConfigJsonReader {
 		for(JsonElement elemStation: jsonStationsArray) {
 			allStations.add(gson.fromJson(elemStation, Station.class));
 		}
-		systemInfo.setStations(allStations);
-		systemInfo.getStations().stream().forEach(s -> systemInfo.getBikes().addAll(s.getBikes()));
+		systemConfig.setStations(allStations);
+		systemConfig.getStations().stream().forEach(s -> systemConfig.getBikes().addAll(s.getBikes()));
 	}
 	
-	private void readEntryPoints(Gson gson, SystemInfo systemInfo) throws FileNotFoundException {
+	private void readEntryPoints(Gson gson, SystemConfiguration systemConfig) throws FileNotFoundException {
 		FileInputStream inputStreamJson = new FileInputStream(new File(entryPointsFileName));
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 		
@@ -112,7 +112,7 @@ public class ConfigJsonReader {
 			allEntryPoints.add(newEntryPoint);
 		}
 		for(EntryPoint entryPoint: allEntryPoints) {
-			systemInfo.setEventUserAppears(entryPoint.generateEvents(systemInfo));
+			systemConfig.setEventUserAppears(entryPoint.generateEvents(systemConfig));
 		}
 	}
 	

@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class EventUserArrivesAtStationToRentBike extends EventUser {
     private Station station;
 
-    public EventUserArrivesAtStationToRentBike(int instant, User user, Station station, SystemInfo systemInfo) {
+    public EventUserArrivesAtStationToRentBike(int instant, User user, Station station, SystemConfiguration systemInfo) {
         super(instant, user, systemInfo);
         this.station = station;
     }

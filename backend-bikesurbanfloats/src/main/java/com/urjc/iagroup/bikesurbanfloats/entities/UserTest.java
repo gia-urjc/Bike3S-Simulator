@@ -2,13 +2,13 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import java.util.List;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 public class UserTest extends User {
 	
-	public UserTest(int id, GeoPoint position, SystemInfo systemInfo) {
+	public UserTest(int id, GeoPoint position, SystemConfiguration systemInfo) {
 		super(id, position, systemInfo);
 	}
 

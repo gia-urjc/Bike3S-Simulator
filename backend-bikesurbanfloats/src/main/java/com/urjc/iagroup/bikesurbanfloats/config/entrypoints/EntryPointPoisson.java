@@ -3,7 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.config.distributions.DistributionPoisson;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
@@ -56,7 +56,7 @@ public class EntryPointPoisson implements EntryPoint {
 	}
 
 
-	private User createUser(IdGenerator userIdGenerator, UserFactory userFactory, SystemInfo systemInfo) {
+	private User createUser(IdGenerator userIdGenerator, UserFactory userFactory, SystemConfiguration systemInfo) {
 		int id = userIdGenerator.next();
 		BoundingCircle bcircle = new BoundingCircle(position, radio);
 		User user;
@@ -71,7 +71,7 @@ public class EntryPointPoisson implements EntryPoint {
 	}
 
 	@Override
-	public List<EventUserAppears> generateEvents(SystemInfo systemInfo) {
+	public List<EventUserAppears> generateEvents(SystemConfiguration systemInfo) {
 		
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		UserFactory userFactory = new UserFactory();

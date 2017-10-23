@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemInfo;
+import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
@@ -10,7 +10,7 @@ public class EventUserWantsToReturnBike extends EventUser {
 
     private GeoPoint actualPosition;
 
-    public EventUserWantsToReturnBike(int instant, User user, GeoPoint actualPosition, SystemInfo systemInfo) {
+    public EventUserWantsToReturnBike(int instant, User user, GeoPoint actualPosition, SystemConfiguration systemInfo) {
         super(instant, user, systemInfo);
         this.actualPosition = actualPosition;
     }

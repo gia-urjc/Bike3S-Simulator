@@ -10,7 +10,7 @@ import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
-public class SystemInfo {
+public class SystemConfiguration {
 	
 	private String configStationPath = "configuration/config_stations.json";
 	private String configEntryPath = "configuration/config_entry_points.json";
@@ -36,7 +36,7 @@ public class SystemInfo {
 	//Utils
 	private BoundingBox boundingBox = null;
 
-	SystemInfo() {}
+	SystemConfiguration() {}
 	
 	public List<Station> getStations() {
 		return stations;
