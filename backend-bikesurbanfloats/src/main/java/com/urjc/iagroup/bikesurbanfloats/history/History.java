@@ -23,7 +23,7 @@ public class History {
     
     public static void init(List<EventUserAppears> userAppearsList, SystemInfo systemInfo) {
         nextEntry = new HistoryEntry(0);
-        nextEntry.getStations().putAll(systemInfo.stations.stream().collect(Collectors.toMap(Entity::getId, HistoricStation::new)));
+        nextEntry.getStations().putAll(systemInfo.getStations().stream().collect(Collectors.toMap(Entity::getId, HistoricStation::new)));
         JsonObject entry = new JsonObject();
         
         List<JsonObject> users = new ArrayList<>();
@@ -39,11 +39,11 @@ public class History {
             users.add(serializedUser);
         }
 
-        nextEntry.getBikes().putAll(systemInfo.bikes.stream().collect(Collectors.toMap(Entity::getId, HistoricBike::new)));
+        nextEntry.getBikes().putAll(systemInfo.getBikes().stream().collect(Collectors.toMap(Entity::getId, HistoricBike::new)));
            
         entry.add("users", gson.toJsonTree(users));
-        entry.add("stations", gson.toJsonTree(systemInfo.stations));
-        entry.add("bikes", gson.toJsonTree(systemInfo.bikes));
+        entry.add("stations", gson.toJsonTree(systemInfo.getStations()));
+        entry.add("bikes", gson.toJsonTree(systemInfo.getBikes()));
         
         serializedEntries.add(entry);
     }
@@ -58,9 +58,9 @@ public class History {
         }
 
         nextEntry = new HistoryEntry(timeInstant);
-        nextEntry.getStations().putAll(systemInfo.stations.stream().collect(Collectors.toMap(Entity::getId, HistoricStation::new)));
-        nextEntry.getUsers().putAll(systemInfo.persons.stream().collect(Collectors.toMap(Entity::getId, HistoricUser::new)));
-        nextEntry.getBikes().putAll(systemInfo.bikes.stream().collect(Collectors.toMap(Entity::getId, HistoricBike::new)));
+        nextEntry.getStations().putAll(systemInfo.getStations().stream().collect(Collectors.toMap(Entity::getId, HistoricStation::new)));
+        nextEntry.getUsers().putAll(systemInfo.getPersons().stream().collect(Collectors.toMap(Entity::getId, HistoricUser::new)));
+        nextEntry.getBikes().putAll(systemInfo.getBikes().stream().collect(Collectors.toMap(Entity::getId, HistoricBike::new)));
     }
 
     private static JsonObject serializeChanges() {

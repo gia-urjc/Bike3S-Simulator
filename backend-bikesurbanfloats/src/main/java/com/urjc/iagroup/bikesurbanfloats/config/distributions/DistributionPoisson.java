@@ -1,7 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.config.distributions;
 
 
-import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 public class DistributionPoisson extends Distribution {

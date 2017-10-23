@@ -22,13 +22,10 @@ public class SimulationEngine {
 	}
 	
 	public void processEntryPoints() {
-		List<EntryPoint> entryPoints = systemInfo.entryPoints;
-		for(EntryPoint entryPoint: entryPoints) {
-			List<EventUserAppears> events = entryPoint.generateEvents(systemInfo);
-			for(EventUserAppears event: events) {
-				userAppearsList.add(event);
-				systemInfo.persons.add(event.getUser());
-			}
+		List<EventUserAppears> events = systemInfo.getEventUserAppears();
+		for(EventUserAppears event: events) {
+			userAppearsList.add(event);
+			systemInfo.getPersons().add(event.getUser());
 		}
         eventsQueue.addAll(userAppearsList);
 		

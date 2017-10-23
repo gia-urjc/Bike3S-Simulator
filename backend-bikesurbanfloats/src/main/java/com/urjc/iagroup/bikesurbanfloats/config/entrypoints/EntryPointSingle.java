@@ -25,7 +25,7 @@ public class EntryPointSingle implements EntryPoint {
 	public List<EventUserAppears> generateEvents(SystemInfo systemInfo) {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		PersonFactory personFactory = new PersonFactory();
-		IdGenerator userIdGenerator = systemInfo.userIdGenerator;
+		IdGenerator userIdGenerator = systemInfo.getUserIdGenerator();
 		int id = userIdGenerator.next();
 		Person person = personFactory.createPerson(id, personType, position, systemInfo);
 		EventUserAppears event = new EventUserAppears(instant, person, systemInfo);

@@ -178,7 +178,7 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
 
 	public List<Station> obtainStationsWithoutBikeReservationAttempts(int instant) {
 		List<Station> failedStations = obtainStationsWithBikeReservationAttempts(instant);
-	 	List<Station> stations = new ArrayList<>(systemInfo.stations);
+	 	List<Station> stations = new ArrayList<>(systemInfo.getStations());
 	 	if (!failedStations.isEmpty()) {
 	 		for (Station station: failedStations) {
 	 			stations.remove(station);
@@ -196,7 +196,7 @@ public abstract class Person implements Entity, UserModel<Bike, Station> {
 	
 	public List<Station> obtainStationsWithoutSlotReservationAttempts(int instant) {
 		List<Station> failedStations = obtainStationsWithSlotReservationAttempts(instant);
- 		List<Station> stations = new ArrayList<>(systemInfo.stations);
+ 		List<Station> stations = new ArrayList<>(systemInfo.getStations());
  		if (!failedStations.isEmpty()) {
  			for(Station station: failedStations) {
  				stations.remove(station);

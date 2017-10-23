@@ -75,10 +75,10 @@ public class EntryPointPoisson implements EntryPoint {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		PersonFactory personFactory = new PersonFactory();
 		int actualTime, endTime;
-		IdGenerator userIdGenerator = systemInfo.userIdGenerator;
+		IdGenerator userIdGenerator = systemInfo.getUserIdGenerator();
 		if(timeRange == null) {
 			actualTime = 0;
-			endTime = systemInfo.totalTimeSimulation;
+			endTime = systemInfo.getTotalTimeSimulation();
 		}
 		else {
 			actualTime = timeRange.getStart();

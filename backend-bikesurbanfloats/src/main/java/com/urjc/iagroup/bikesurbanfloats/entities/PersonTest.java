@@ -13,7 +13,7 @@ public class PersonTest extends Person {
 	}
 
 	public boolean decidesToLeaveSystem(int instant) {
-		return obtainStationsWithBikeReservationAttempts(instant).size() == systemInfo.stations.size() ? true : false;
+		return obtainStationsWithBikeReservationAttempts(instant).size() == systemInfo.getStations().size() ? true : false;
 	}
 	
 	public Station determineStationToRentBike(int instant) {
@@ -30,9 +30,9 @@ public class PersonTest extends Person {
 			}
 		}
 		if(destination == null) {
-			int numberStations = systemInfo.stations.size();
+			int numberStations = systemInfo.getStations().size();
 			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
-			destination = systemInfo.stations.get(indexStation);
+			destination = systemInfo.getStations().get(indexStation);
 		}
 		return destination;
 	}
@@ -51,9 +51,9 @@ public class PersonTest extends Person {
 			}
 		}
 		if(destination == null) {
-			int numberStations = systemInfo.stations.size();
+			int numberStations = systemInfo.getStations().size();
 			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
-			destination = systemInfo.stations.get(indexStation);
+			destination = systemInfo.getStations().get(indexStation);
 		}
 		
 		return destination;
@@ -68,7 +68,7 @@ public class PersonTest extends Person {
 	}
 	
 	public GeoPoint decidesNextPoint() {
-		return systemInfo.boundingBox.randomPoint();
+		return systemInfo.getBoundingBox().randomPoint();
 	}
 	
 	public boolean decidesToReturnBike() {

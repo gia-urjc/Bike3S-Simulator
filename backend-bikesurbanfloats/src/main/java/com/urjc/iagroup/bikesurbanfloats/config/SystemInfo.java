@@ -1,40 +1,130 @@
 package com.urjc.iagroup.bikesurbanfloats.config;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Person;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 public class SystemInfo {
 	
 	//System Information
-	public ArrayList<Station> stations = new ArrayList<>();
-	public ArrayList<EntryPoint> entryPoints = new ArrayList<>();
-	public ArrayList<Bike> bikes = new ArrayList<>();
-	public ArrayList<Person> persons = new ArrayList<>();
+	private List<Station> stations = new ArrayList<>();
+	private List<EventUserAppears> eventUserAppears = new ArrayList<>();
+	private List<Bike> bikes = new ArrayList<>();
+	private List<Person> persons = new ArrayList<>();
 
 	//Configuration information
-	public int reservationTime = 0;
-	public int totalTimeSimulation = 0;
-	public long randomSeed = 0;
+	private int reservationTime = 0;
+	private int totalTimeSimulation = 0;
+	private long randomSeed = 0;
 	
 	//IdsGenerator
-	public IdGenerator bikeIdGen = new IdGenerator();
-	public IdGenerator stationIdGen = new IdGenerator();
-	public IdGenerator userIdGenerator = new IdGenerator();
+	private IdGenerator bikeIdGen = new IdGenerator();
+	private IdGenerator stationIdGen = new IdGenerator();
+	private IdGenerator userIdGenerator = new IdGenerator();
 	
 	//Utils
-	public BoundingBox boundingBox = null;
-	
-	
+	private BoundingBox boundingBox = null;
+
 	SystemInfo() {}
+	
+	public List<Station> getStations() {
+		return stations;
+	}
+
+	public void setStations(List<Station> stations) {
+		this.stations = stations;
+	}
+
+	public List<Bike> getBikes() {
+		return bikes;
+	}
+
+	public void setBikes(ArrayList<Bike> bikes) {
+		this.bikes = bikes;
+	}
+
+	public List<Person> getPersons() {
+		return persons;
+	}
+
+	public void setPersons(ArrayList<Person> persons) {
+		this.persons = persons;
+	}
+
+	public int getReservationTime() {
+		return reservationTime;
+	}
+
+	public void setReservationTime(int reservationTime) {
+		this.reservationTime = reservationTime;
+	}
+
+	public int getTotalTimeSimulation() {
+		return totalTimeSimulation;
+	}
+
+	public void setTotalTimeSimulation(int totalTimeSimulation) {
+		this.totalTimeSimulation = totalTimeSimulation;
+	}
+
+	public long getRandomSeed() {
+		return randomSeed;
+	}
+
+	public void setRandomSeed(long randomSeed) {
+		this.randomSeed = randomSeed;
+	}
+
+	public IdGenerator getBikeIdGen() {
+		return bikeIdGen;
+	}
+
+	public void setBikeIdGen(IdGenerator bikeIdGen) {
+		this.bikeIdGen = bikeIdGen;
+	}
+
+	public IdGenerator getStationIdGen() {
+		return stationIdGen;
+	}
+
+	public void setStationIdGen(IdGenerator stationIdGen) {
+		this.stationIdGen = stationIdGen;
+	}
+
+	public IdGenerator getUserIdGenerator() {
+		return userIdGenerator;
+	}
+
+	public void setUserIdGenerator(IdGenerator userIdGenerator) {
+		this.userIdGenerator = userIdGenerator;
+	}
+
+	public BoundingBox getBoundingBox() {
+		return boundingBox;
+	}
+
+	public void setBoundingBox(BoundingBox boundingBox) {
+		this.boundingBox = boundingBox;
+	}
+	
+	public List<EventUserAppears> getEventUserAppears() {
+		return eventUserAppears;
+	}
+
+	public void setEventUserAppears(List<EventUserAppears> eventUserAppears) {
+		this.eventUserAppears = eventUserAppears;
+	}
 	
 	public void resetInfo() {
 		stations = new ArrayList<>();
-		entryPoints = new ArrayList<>();
+		eventUserAppears = new ArrayList<>();
 		bikes = new ArrayList<>();
 		persons = new ArrayList<>();
 		reservationTime = 0;
@@ -50,7 +140,7 @@ public class SystemInfo {
 			result += s.toString() + "\n";
 		}
 		result += "Entry Points: \n ------------- \n";
-		for(EntryPoint e: entryPoints) {
+		for(EventUserAppears e: eventUserAppears) {
 			result += e.toString() + "\n";
 		}
 		result += "Reservation time: " + reservationTime + "\n";

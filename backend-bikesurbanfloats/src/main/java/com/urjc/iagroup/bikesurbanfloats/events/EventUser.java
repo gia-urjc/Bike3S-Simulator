@@ -49,11 +49,11 @@ public abstract class EventUser implements Event {
                    	
             if (user.reservesBike(destination)) {  
             	reservation.setSuccessful(true);
-            	if (systemInfo.reservationTime < arrivalTime) {
+            	if (systemInfo.getReservationTime() < arrivalTime) {
             		reservation.setTimeout(true);
             		user.addReservation(reservation);
             		user.cancelsBikeReservation(destination);
-            		newEvents.add(new EventBikeReservationTimeout(this.getInstant() + systemInfo.reservationTime, user, systemInfo));
+            		newEvents.add(new EventBikeReservationTimeout(this.getInstant() + systemInfo.getReservationTime(), user, systemInfo));
             	}
             	else {
             		user.addReservation(reservation);
@@ -94,11 +94,11 @@ public abstract class EventUser implements Event {
          if (reserved) {  // User has been able to reserve
         	 reservation.setSuccessful(true);
         	 
-            	if (systemInfo.reservationTime < arrivalTime) {
+            	if (systemInfo.getReservationTime() < arrivalTime) {
             		reservation.setTimeout(true);
             		user.addReservation(reservation);
             		user.cancelsSlotReservation(destination);
-            		newEvents.add(new EventSlotReservationTimeout(this.getInstant() + systemInfo.reservationTime, user, systemInfo));
+            		newEvents.add(new EventSlotReservationTimeout(this.getInstant() + systemInfo.getReservationTime(), user, systemInfo));
             	}
             	else {
             		user.addReservation(reservation);

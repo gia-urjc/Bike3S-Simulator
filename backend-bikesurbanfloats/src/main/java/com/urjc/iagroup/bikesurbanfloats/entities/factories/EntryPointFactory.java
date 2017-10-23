@@ -6,7 +6,7 @@ import com.google.gson.JsonParseException;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPointPoisson;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPointSingle;
-import com.urjc.iagroup.bikesurbanfloats.util.DistributionType;
+import com.urjc.iagroup.bikesurbanfloats.config.distributions.Distribution.DistributionType;;
 
 public class EntryPointFactory {
 	

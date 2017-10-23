@@ -12,7 +12,7 @@ public class EventSlotReservationTimeout extends EventUser {
     }
 
     public List<Event> execute() {
-        user.updatePosition(systemInfo.reservationTime);
+        user.updatePosition(systemInfo.getReservationTime());
         return manageSlotReservationDecision();
     }
 }
