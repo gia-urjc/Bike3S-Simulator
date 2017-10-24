@@ -12,10 +12,12 @@ public class UserTest extends User {
 		super(id, position, systemConfig);
 	}
 
+	@Override
 	public boolean decidesToLeaveSystem(int instant) {
 		return obtainStationsWithBikeReservationAttempts(instant).size() == systemConfig.getStations().size() ? true : false;
 	}
 	
+	@Override
 	public Station determineStationToRentBike(int instant) {
 		List<Station> stations = obtainStationsWithoutBikeReservationAttempts(instant);
 		double minDistance = Double.MAX_VALUE;
@@ -37,6 +39,7 @@ public class UserTest extends User {
 		return destination;
 	}
 	
+	@Override
 	public Station determineStationToReturnBike(int instant) {
 		List<Station> stations = obtainStationsWithoutSlotReservationAttempts(instant);
 		double minDistance = Double.MAX_VALUE;
@@ -55,41 +58,40 @@ public class UserTest extends User {
 			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
 			destination = systemConfig.getStations().get(indexStation);
 		}
-		
-		return destination;
+				return destination;
 	}
 	
+	@Override
 	public boolean decidesToReserveBike() {
 		return StaticRandom.nextBoolean();
 	}
 
+	@Override
 	public boolean decidesToReserveSlot() {
 		return StaticRandom.nextBoolean();
 	}
 	
+	@Override
 	public GeoPoint decidesNextPoint() {
 		return systemConfig.getBoundingBox().randomPoint();
 	}
 	
-	public boolean decidesToReturnBike() {
+	@Override
+		public boolean decidesToReturnBike() {
 		return StaticRandom.nextBoolean();
 	}
-	
-	public boolean decidesToRentBikeAtOtherStation() {
-		return StaticRandom.nextBoolean();
-	}
-	
+
+	// TODO: moving it to user class?
+	@Override
 	public void updatePosition(int time) {
 		double distance = time * getPosition().distanceTo(getDestinationStation().getPosition()) / timeToReach(getDestinationStation().getPosition());
  		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
 		setPosition(newPoint);
-		
 	}
 
 	@Override
 	public boolean decidesToDetermineOtherStation() {
-		// TODO Auto-generated method stub
-		return false;
+		return StaticRandom.nextBoolean();
 	}
 	
 }

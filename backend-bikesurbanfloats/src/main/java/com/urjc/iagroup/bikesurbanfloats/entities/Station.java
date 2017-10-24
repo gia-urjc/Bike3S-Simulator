@@ -29,21 +29,40 @@ public class Station implements Entity, StationModel<Bike> {
     public int getId() {
         return id;
     }
-
+    
+    @Override
     public GeoPoint getPosition() {
         return position;
     }
-
+    
+    @Override
     public int getCapacity() {
         return this.capacity;
     }
-
+    
+    @Override
     public List<Bike> getBikes() {
         return bikes;
     }
-
+    
+    @Override
     public int getReservedBikes() {
         return reservedBikes;
+    }
+    
+    @Override
+    public int getReservedSlots() {
+        return reservedSlots;
+    }
+    
+    @Override
+    public int availableBikes() {
+        return (int)bikes.stream().filter(Objects::nonNull).count() - reservedBikes;
+    }
+    
+    @Override
+    public int availableSlots() {
+        return this.capacity - (int)bikes.stream().filter(Objects::nonNull).count() - reservedSlots;
     }
     
     private Bike getFirstAvailableBike() {
@@ -65,11 +84,7 @@ public class Station implements Entity, StationModel<Bike> {
     public void cancelsBikeReservation() {
         this.reservedBikes--;
     }
-
-    public int getReservedSlots() {
-        return reservedSlots;
-    }
-
+    
     public void reservesSlot() {
         this.reservedSlots++;
     }
@@ -77,16 +92,8 @@ public class Station implements Entity, StationModel<Bike> {
     public void cancelsSlotReservation() {
         this.reservedSlots--;
     }
-
-    public int availableBikes() {
-        return (int)bikes.stream().filter(Objects::nonNull).count() - reservedBikes;
-    }
-
-    public int availableSlots() {
-        return this.capacity - (int)bikes.stream().filter(Objects::nonNull).count() - reservedSlots;
-    }
-
-    public Bike removeBike() {
+    
+        public Bike removeBike() {
         Bike bike = null;
     	if (this.availableBikes() == 0) {
            return null;

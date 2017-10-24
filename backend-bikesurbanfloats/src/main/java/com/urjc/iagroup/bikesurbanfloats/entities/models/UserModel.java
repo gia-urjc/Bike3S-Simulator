@@ -11,5 +11,5 @@ public interface UserModel<B extends BikeModel, S extends StationModel<B>, R ext
     R getLastReservation();
     
     double getAverageVelocity();
-   
+  
 }
