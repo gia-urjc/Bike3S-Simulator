@@ -29,7 +29,7 @@ public class SystemManager {
     }
 
     public List<Reservation> consultReservations(User user) {
-        return reservations.stream().filter(reservation -> reservation.getUser().equals(user)).collect(Collectors.toList());
+        return reservations.stream().filter(reservation -> reservation.getUser() == user).collect(Collectors.toList());
     }
 
     public List<Station> consultStations() {
