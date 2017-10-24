@@ -1,10 +1,10 @@
 package com.urjc.iagroup.bikesurbanfloats.history;
 
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
@@ -25,10 +25,10 @@ public class History {
 
     private static ArrayList<JsonObject> serializedEntries = new ArrayList<>();
 
-    public static void init(List<EventUserAppears> userAppearsList, SystemConfiguration systemConfig) {
+    public static void init(List<EventUserAppears> userAppearsList, SimulationConfiguration simulationConfiguration) {
         lastEntry = new HistoryEntry(0);
         nextEntry = new HistoryEntry(0);
-        nextEntry.getStations().putAll(systemConfig.getStations().stream().collect(Collectors.toMap(Entity::getId, HistoricStation::new)));
+        nextEntry.getStations().putAll(simulationConfiguration.getStations().stream().collect(Collectors.toMap(Entity::getId, HistoricStation::new)));
         JsonObject entry = new JsonObject();
 
         List<JsonObject> users = new ArrayList<>();
@@ -45,11 +45,11 @@ public class History {
         }
 
 
-        nextEntry.getBikes().putAll(systemConfig.getBikes().stream().collect(Collectors.toMap(Entity::getId, HistoricBike::new)));
+        nextEntry.getBikes().putAll(simulationConfiguration.getBikes().stream().collect(Collectors.toMap(Entity::getId, HistoricBike::new)));
 
         entry.add("userAppearanceEvents", gson.toJsonTree(users));
-        entry.add("stations", gson.toJsonTree(systemConfig.getStations()));
-        // entry.add("bikes", gson.toJsonTree(systemConfig.bikes));
+        entry.add("stations", gson.toJsonTree(simulationConfiguration.getStations()));
+        // entry.add("bikes", gson.toJsonTree(simulationConfiguration.bikes));
 
         // TODO: write file
     }

@@ -3,7 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.ReservationModel;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
-public class Reservation implements Entity, ReservationModel<User, Bike, Station> {
+public class Reservation implements Entity, ReservationModel<Bike, Station, User> {
 
     public enum ReservationType {
         SLOT, BIKE

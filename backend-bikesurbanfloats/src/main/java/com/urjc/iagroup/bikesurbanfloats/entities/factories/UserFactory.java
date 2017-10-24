@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.factories;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.User.UserType;
 import com.urjc.iagroup.bikesurbanfloats.entities.UserTest;
@@ -8,10 +7,11 @@ import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 public class UserFactory {
 
-	public User createUser(int id, UserType type, GeoPoint position, SystemConfiguration systemConfig) {
-		switch(type) {
-		case USER_TYPE: return new UserTest(id, position, systemConfig);
-		}
-		throw new IllegalArgumentException("The type" + type + "doesn't exists");
-	}
+    public User createUser(UserType type, GeoPoint position) {
+        switch (type) {
+            case USER_TEST:
+                return new UserTest(position);
+        }
+        throw new IllegalArgumentException("The type" + type + "doesn't exists");
+    }
 }

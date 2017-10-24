@@ -1,16 +1,15 @@
 package com.urjc.iagroup.bikesurbanfloats.config;
 
+import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
+import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
+import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
-import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
-import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
-import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
-
-public class SystemConfiguration {
+public class SimulationConfiguration {
 	
 	private String configStationPath = "configuration/config_stations.json";
 	private String configEntryPath = "configuration/config_entry_points.json";
@@ -28,15 +27,10 @@ public class SystemConfiguration {
 	private int totalTimeSimulation = 0;
 	private long randomSeed = 0;
 	
-	//IdsGenerator
-	private IdGenerator bikeIdGen = new IdGenerator();
-	private IdGenerator stationIdGen = new IdGenerator();
-	private IdGenerator userIdGenerator = new IdGenerator();
-	
 	//Utils
 	private BoundingBox boundingBox = null;
 
-	SystemConfiguration() {}
+	SimulationConfiguration() {}
 	
 	public List<Station> getStations() {
 		return stations;
@@ -84,30 +78,6 @@ public class SystemConfiguration {
 
 	public void setRandomSeed(long randomSeed) {
 		this.randomSeed = randomSeed;
-	}
-
-	public IdGenerator getBikeIdGen() {
-		return bikeIdGen;
-	}
-
-	public void setBikeIdGen(IdGenerator bikeIdGen) {
-		this.bikeIdGen = bikeIdGen;
-	}
-
-	public IdGenerator getStationIdGen() {
-		return stationIdGen;
-	}
-
-	public void setStationIdGen(IdGenerator stationIdGen) {
-		this.stationIdGen = stationIdGen;
-	}
-
-	public IdGenerator getUserIdGenerator() {
-		return userIdGenerator;
-	}
-
-	public void setUserIdGenerator(IdGenerator userIdGenerator) {
-		this.userIdGenerator = userIdGenerator;
 	}
 
 	public BoundingBox getBoundingBox() {

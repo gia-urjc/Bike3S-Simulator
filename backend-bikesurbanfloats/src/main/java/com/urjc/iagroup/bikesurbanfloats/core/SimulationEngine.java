@@ -1,30 +1,34 @@
 package com.urjc.iagroup.bikesurbanfloats.core;
 
-import com.urjc.iagroup.bikesurbanfloats.events.*;
+import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
+import com.urjc.iagroup.bikesurbanfloats.events.Event;
+import com.urjc.iagroup.bikesurbanfloats.events.EventUser;
+import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 
-import com.urjc.iagroup.bikesurbanfloats.config.*;
-
-import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 
 public class SimulationEngine {
 
     private List<EventUserAppears> userAppearsList = new ArrayList<>();
 	private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
-	private SystemConfiguration systemConfig;
+	private SimulationConfiguration simulationConfiguration;
+	private SystemManager systemManager;
 	
-	public SimulationEngine(SystemConfiguration systemConfig) {
-		eventsQueue = new PriorityQueue<Event>();
-		this.systemConfig = systemConfig;
+	public SimulationEngine(SimulationConfiguration simulationConfiguration, SystemManager systemManager) {
+		eventsQueue = new PriorityQueue<>(simulationConfiguration.getEventUserAppears());
+		this.simulationConfiguration = simulationConfiguration;
+		this.systemManager = systemManager;
+		simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(user -> user.setSystemManager(systemManager));
 	}
 	
 	public void processEntryPoints() {
-		List<EventUserAppears> events = systemConfig.getEventUserAppears();
+		List<EventUserAppears> events = simulationConfiguration.getEventUserAppears();
 		for(EventUserAppears event: events) {
 			userAppearsList.add(event);
-			systemConfig.getUsers().add(event.getUser());
+			simulationConfiguration.getUsers().add(event.getUser());
 		}
         eventsQueue.addAll(userAppearsList);
 		
@@ -33,7 +37,7 @@ public class SimulationEngine {
 	public void run() {
 		
 		
-        //History.init(userAppearsList, systemConfig);
+        //History.init(userAppearsList, simulationConfiguration);
 
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element

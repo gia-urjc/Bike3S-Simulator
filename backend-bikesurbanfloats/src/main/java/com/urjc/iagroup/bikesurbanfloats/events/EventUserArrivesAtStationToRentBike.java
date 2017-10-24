@@ -1,27 +1,27 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EventUserArrivesAtStationToRentBike extends EventUser {
     private Station station;
     private Reservation reservation;
 
 
-    public EventUserArrivesAtStationToRentBike(int instant, User user, Station station, Reservation reservation, SystemConfiguration systemConfig) {
-        super(instant, user, systemConfig);
+    public EventUserArrivesAtStationToRentBike(int instant, User user, Station station, Reservation reservation, SimulationConfiguration simulationConfiguration) {
+        super(instant, user, simulationConfiguration);
         this.station = station;
         this.reservation = reservation;
     }
     
-    public EventUserArrivesAtStationToRentBike(int instant, User user, Station station, SystemConfiguration systemConfig) {
-        super(instant, user, systemConfig);
+    public EventUserArrivesAtStationToRentBike(int instant, User user, Station station, SimulationConfiguration simulationConfiguration) {
+        super(instant, user, simulationConfiguration);
         this.station = station;
         this.reservation = null;
     }
@@ -41,7 +41,7 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
             } else {   // user rides his bike to a point which is not a station
                 GeoPoint point = user.decidesNextPoint();
                 int arrivalTime = user.timeToReach(point);
-                newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point, systemConfig));
+                newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point, simulationConfiguration));
             }
         } else {   // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation
             if (!user.decidesToLeaveSystem(instant)) { 

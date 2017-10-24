@@ -2,10 +2,14 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.models.StationModel;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
+
 import java.util.List;
 import java.util.Objects;
 
 public class Station implements Entity, StationModel<Bike> {
+
+    private static IdGenerator idGenerator = new IdGenerator();
 
     private int id;
 
@@ -16,8 +20,8 @@ public class Station implements Entity, StationModel<Bike> {
     private int reservedBikes;
     private int reservedSlots;
 
-    public Station(int id, final GeoPoint position, int capacity, List<Bike> bikes) {
-        this.id = id;
+    public Station(GeoPoint position, int capacity, List<Bike> bikes) {
+        this.id = idGenerator.next();
         this.position = position;
         this.capacity = capacity;
         this.bikes = bikes;

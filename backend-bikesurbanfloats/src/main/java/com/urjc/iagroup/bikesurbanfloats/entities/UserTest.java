@@ -1,25 +1,24 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import java.util.List;
-
-import com.urjc.iagroup.bikesurbanfloats.config.SystemConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
+import java.util.List;
+
 public class UserTest extends User {
 	
-	public UserTest(int id, GeoPoint position, SystemConfiguration systemConfig) {
-		super(id, position, systemConfig);
+	public UserTest(GeoPoint position) {
+		super(position);
 	}
 
 	@Override
 	public boolean decidesToLeaveSystem(int instant) {
-		return obtainStationsWithBikeReservationAttempts(instant).size() == systemConfig.getStations().size() ? true : false;
+		return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
 	}
 	
 	@Override
 	public Station determineStationToRentBike(int instant) {
-		List<Station> stations = obtainStationsWithoutBikeReservationAttempts(instant);
+		List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
 		for(Station currentStation: stations) {
@@ -32,16 +31,16 @@ public class UserTest extends User {
 			}
 		}
 		if(destination == null) {
-			int numberStations = systemConfig.getStations().size();
+			int numberStations = systemManager.consultStations().size();
 			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
-			destination = systemConfig.getStations().get(indexStation);
+			destination = systemManager.consultStations().get(indexStation);
 		}
 		return destination;
 	}
 	
 	@Override
 	public Station determineStationToReturnBike(int instant) {
-		List<Station> stations = obtainStationsWithoutSlotReservationAttempts(instant);
+		List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
 		for(Station currentStation: stations) {
@@ -54,9 +53,9 @@ public class UserTest extends User {
 			}
 		}
 		if(destination == null) {
-			int numberStations = systemConfig.getStations().size();
+			int numberStations = systemManager.consultStations().size();
 			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
-			destination = systemConfig.getStations().get(indexStation);
+			destination = systemManager.consultStations().get(indexStation);
 		}
 				return destination;
 	}
@@ -73,7 +72,9 @@ public class UserTest extends User {
 	
 	@Override
 	public GeoPoint decidesNextPoint() {
-		return systemConfig.getBoundingBox().randomPoint();
+		//return systemManager.getBoundingBox().randomPoint();
+        // TODO:
+        return new GeoPoint();
 	}
 	
 	@Override

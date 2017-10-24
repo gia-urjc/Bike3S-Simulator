@@ -6,7 +6,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 
 import javax.validation.constraints.NotNull;
 
-public interface HistoricEntity<E extends Entity> extends Entity {
+public interface HistoricEntity<E extends HistoricEntity> extends Entity {
 
     static JsonObject propertyChange(@NotNull Object oldProperty, @NotNull Object newProperty) {
         JsonObject property = new JsonObject();

@@ -19,22 +19,13 @@ public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<His
 
 	private double averageVelocity;
 
-	private boolean reservedBike;
-	private boolean reservedSlot;
-
 	private HistoricStation destinationStation;
 
-
-	HistoricUser(User user) {
-	    this.id = user.getId();
-	    this.position = new GeoPoint(user.getPosition());
-
+    HistoricUser(User user) {
+        this.id = user.getId();
+        this.position = new GeoPoint(user.getPosition());
         this.bike = user.getBike() == null ? null: new HistoricBike(user.getBike());
-
         this.averageVelocity = user.getAverageVelocity();
-        this.reservedBike = user.hasReservedBike();
-        this.reservedSlot = user.hasReservedSlot();
-
         this.destinationStation = user.getDestinationStation() == null ? null : new HistoricStation(user.getDestinationStation());
     }
 
@@ -51,21 +42,6 @@ public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<His
     @Override
     public HistoricBike getBike() {
         return bike;
-    }
-
-    @Override
-    public boolean hasBike() {
-        return this.bike != null;
-    }
-
-    @Override
-    public boolean hasReservedBike() {
-        return reservedBike;
-    }
-
-    @Override
-    public boolean hasReservedSlot() {
-        return reservedSlot;
     }
 
     @Override

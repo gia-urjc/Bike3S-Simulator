@@ -2,7 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.entities.models;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 
-public interface ReservationModel<U extends UserModel, B extends BikeModel, S extends StationModel<B>> {
+public interface ReservationModel<B extends BikeModel, S extends StationModel<B>, U extends UserModel<B, S>> {
 
     int getStartInstant();
     int getEndInstant();
