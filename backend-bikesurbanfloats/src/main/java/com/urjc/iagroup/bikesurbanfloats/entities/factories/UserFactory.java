@@ -10,7 +10,7 @@ public class UserFactory {
 
 	public User createUser(int id, UserType type, GeoPoint position, SystemConfiguration systemConfig) {
 		switch(type) {
-		case USERTEST: return new UserTest(id, position, systemConfig);
+		case USER_TYPE: return new UserTest(id, position, systemConfig);
 		}
 		throw new IllegalArgumentException("The type" + type + "doesn't exists");
 	}

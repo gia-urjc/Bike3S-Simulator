@@ -21,10 +21,10 @@ import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
  *
  */
 
-public abstract class User implements Entity, UserModel<Bike, Station> {
+public abstract class User implements Entity, UserModel<Bike, Station, Reservation> {
 
 	public enum UserType {
-		USERTEST
+        USER_TYPE
 	}
 
     private int id;
@@ -39,6 +39,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     private boolean reservedSlot;
     
     private Station destinationStation;
+    private Reservation lastReservation;
     private List<Reservation> reservations;
     
     protected SystemConfiguration systemConfig;
@@ -52,7 +53,8 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
         this.walkingVelocity = StaticRandom.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
         this.cyclingVelocity = StaticRandom.nextInt(10, 21) / 3.6;
-        this.reservations = new ArrayList<>();        
+        this.reservations = new ArrayList<>();
+        this.lastReservation = null;
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
@@ -65,6 +67,12 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     
     public void addReservation(Reservation reservation) {
     	reservations.add(reservation);
+    	lastReservation = reservation;
+    }
+
+    @Override
+    public Reservation getLastReservation() {
+        return lastReservation;
     }
     
 	@Override
