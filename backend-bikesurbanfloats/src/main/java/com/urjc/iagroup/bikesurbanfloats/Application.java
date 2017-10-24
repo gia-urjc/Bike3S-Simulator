@@ -24,7 +24,6 @@ public class Application {
 			SimulationConfiguration simulationConfiguration = jsonReader.createSystemConfiguration();
 			SystemManager systemManager = jsonReader.createSystemManager();
 			SimulationEngine simulation = new SimulationEngine(simulationConfiguration, systemManager);
-			simulation.processEntryPoints();
 			simulation.run();
 			
 		} catch (FileNotFoundException e) {

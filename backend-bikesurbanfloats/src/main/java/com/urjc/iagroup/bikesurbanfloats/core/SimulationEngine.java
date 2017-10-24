@@ -12,7 +12,6 @@ import java.util.PriorityQueue;
 
 public class SimulationEngine {
 
-    private List<EventUserAppears> userAppearsList = new ArrayList<>();
 	private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
 	private SimulationConfiguration simulationConfiguration;
 	private SystemManager systemManager;
@@ -22,16 +21,6 @@ public class SimulationEngine {
 		this.simulationConfiguration = simulationConfiguration;
 		this.systemManager = systemManager;
 		simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(user -> user.setSystemManager(systemManager));
-	}
-	
-	public void processEntryPoints() {
-		List<EventUserAppears> events = simulationConfiguration.getEventUserAppears();
-		for(EventUserAppears event: events) {
-			userAppearsList.add(event);
-			simulationConfiguration.getUsers().add(event.getUser());
-		}
-        eventsQueue.addAll(userAppearsList);
-		
 	}
 	
 	public void run() {
