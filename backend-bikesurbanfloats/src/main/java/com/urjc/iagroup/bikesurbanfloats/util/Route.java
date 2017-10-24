@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Route {
@@ -8,8 +9,12 @@ public class Route {
 	private double distance;
 	private List<Double> distancesBetweenPoints;
 	
-	public Route(List<GeoPoint> geoPointList) {
+	public Route(List<GeoPoint> geoPointList) throws Exception {
+		if(geoPointList.size() < 2) {
+			throw new Exception("Routes should have more than two points");
+		}
 		this.geoPointList = geoPointList;
+		this.distancesBetweenPoints = new ArrayList<>();
 		calculateDistances();
 	}
 	
@@ -25,24 +30,46 @@ public class Route {
 		distance = totalDistance;
 	}
 	
-	public Route calculateSubRoute(double finalTime, double velocity) throws Exception {
-		//t = d/v
-		double currentDistance = 0.0;
+	public Route calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws Exception {
+		double totalDistance = 0.0;
 		double currentTime = 0.0;
-		List<Double> newGeoPointList;
+		double currentDistance = 0.0;
+		GeoPoint currentPoint = null;
+		GeoPoint nextPoint = null;
+		List<GeoPoint> newGeoPointList = new ArrayList<>();
 		int i = 0;
 		while(i < geoPointList.size()-1 && currentTime < finalTime) {
-			currentDistance += distancesBetweenPoints.get(i);
-			currentTime += currentDistance/velocity;
+			currentPoint = geoPointList.get(i);
+			nextPoint = geoPointList.get(i+1);
+			currentDistance = distancesBetweenPoints.get(i);
+			totalDistance += currentDistance;
+			currentTime += currentDistance/velocity;	
+			newGeoPointList.add(geoPointList.get(i));
 			i++;
 		}
 		if(currentTime < finalTime) {
 			throw new Exception("Can't create soubroute");
 		}
-		//TODO calculate point
-		
-		return null;
-		
+		double x = totalDistance - finalTime*velocity;
+		double intermedDistance = currentDistance - x;
+		GeoPoint newPoint = currentPoint.reachedPoint(intermedDistance, nextPoint);
+		newGeoPointList.add(newPoint);
+		Route newRoute = new Route(newGeoPointList);
+		return newRoute;	
+	}
+	
+	@Override
+	public String toString() {
+		String result = "Points: \n";
+		for(GeoPoint p: geoPointList) {
+			result += p.getLatitude() + " " + p.getLongitude() + "\n";
+		}
+		result += "Distance: " + distance + " meters \n";
+		result += "Distances between points: ";
+		for(Double d: distancesBetweenPoints) {
+			result += d + "\n";
+		}
+		return result;
 	}
 	
 	
