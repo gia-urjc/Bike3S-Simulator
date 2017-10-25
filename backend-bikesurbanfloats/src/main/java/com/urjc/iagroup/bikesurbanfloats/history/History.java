@@ -1,17 +1,15 @@
 package com.urjc.iagroup.bikesurbanfloats.history;
 
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
-import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
-import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +52,7 @@ public class History {
         // TODO: write file
     }
 
-    public static void register(int timeInstant, User user, Station station, Bike bike) {
+    public static void register(int timeInstant, Entity entity) {
         if (timeInstant > nextEntry.getTimeInstant()) {
             JsonObject changes = serializeChanges();
 
@@ -69,33 +67,31 @@ public class History {
             nextEntry = new HistoryEntry(timeInstant);
         }
 
-        if (user != null) nextEntry.getUsers().put(user.getId(), new HistoricUser(user));
-        if (station != null) nextEntry.getStations().put(station.getId(), new HistoricStation(station));
-        if (bike != null) nextEntry.getBikes().put(bike.getId(), new HistoricBike(bike));
+        try {
+            Class<? extends Entity> entityClass = entity.getClass();
+            Class<? extends HistoricEntity> historicClass = EntityMapping.getFor(entityClass).getHistoricClass();
+            Constructor<? extends HistoricEntity> historicConstructor = historicClass.getConstructor(entity.getClass());
+            nextEntry.addToMapFor(historicClass, historicConstructor.newInstance(entity));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalStateException("A mapping in EntityMapping is probably wrong, or an implementation of HistoricEntity has a wrong copy constructor");
+        }
     }
 
     private static JsonObject serializeChanges() {
         JsonObject entry = new JsonObject();
 
-        List<JsonObject> users = new ArrayList<>();
-        List<JsonObject> stations = new ArrayList<>();
+        for (EntityMapping mapping : EntityMapping.values()) {
+            List<JsonObject> subTree = new ArrayList<>();
 
-        for (HistoricUser user : nextEntry.getUsers().values()) {
-            JsonObject changes = user.makeChangeEntryFrom(lastEntry.getUsers().get(user.getId()));
-            if (changes != null) users.add(changes);
-        }
+            for (HistoricEntity entity : nextEntry.getMapFor(mapping.getHistoricClass()).values()) {
+                JsonObject changes = entity.makeChangeEntryFrom(lastEntry.getMapFor(mapping.getHistoricClass()).get(entity.getId()));
+                if (changes != null) subTree.add(changes);
+            }
 
-        if (!users.isEmpty()) {
-            entry.add("users", gson.toJsonTree(users));
-        }
-
-        for (HistoricStation station : nextEntry.getStations().values()) {
-            JsonObject changes = station.makeChangeEntryFrom(lastEntry.getStations().get(station.getId()));
-            if (changes != null) stations.add(changes);
-        }
-
-        if(!stations.isEmpty()) {
-            entry.add("stations", gson.toJsonTree(stations));
+            if (!subTree.isEmpty()) {
+                entry.add(mapping.getJsonIdentifier(), gson.toJsonTree(subTree));
+            }
         }
 
         return entry.entrySet().isEmpty() ? null : entry;
