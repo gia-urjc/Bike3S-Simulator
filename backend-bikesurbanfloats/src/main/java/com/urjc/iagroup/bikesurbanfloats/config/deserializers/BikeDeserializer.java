@@ -23,7 +23,7 @@ public class BikeDeserializer implements JsonDeserializer<Bike>{
 	public Bike deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 			throws JsonParseException {
 		
-		Bike bike = new Bike(bikeIdGen.next());
+		Bike bike = new Bike();
 		boolean reservedBike = json.getAsJsonObject().get(JSON_ATR_RESERVED).getAsBoolean();
 		bike.setReserved(reservedBike);
 		return bike;
