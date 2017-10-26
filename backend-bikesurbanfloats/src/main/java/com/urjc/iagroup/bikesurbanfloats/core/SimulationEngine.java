@@ -4,6 +4,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.events.Event;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUser;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
+import com.urjc.iagroup.bikesurbanfloats.history.History;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +25,12 @@ public class SimulationEngine {
 	}
 	
 	public void run() {
-		
-		
-        //History.init(userAppearsList, simulationConfiguration);
+
+	    History.init(simulationConfiguration, systemManager);
+
+	    simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(History::registerNewEntity);
+	    systemManager.consultStations().forEach(History::registerNewEntity);
+	    systemManager.consultBikes().forEach(History::registerNewEntity);
 
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element
@@ -39,6 +43,8 @@ public class SimulationEngine {
 				}
 			}
 		}
+
+		History.close();
 	}
 
 }

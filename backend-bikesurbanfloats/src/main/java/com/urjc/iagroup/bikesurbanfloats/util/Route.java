@@ -9,9 +9,9 @@ public class Route {
 	private double distance;
 	private List<Double> distancesBetweenPoints;
 	
-	public Route(List<GeoPoint> geoPointList) throws Exception {
+	public Route(List<GeoPoint> geoPointList) throws IllegalStateException {
 		if(geoPointList.size() < 2) {
-			throw new Exception("Routes should have more than two points");
+			throw new IllegalStateException("Routes should have more than two points");
 		}
 		this.geoPointList = geoPointList;
 		this.distancesBetweenPoints = new ArrayList<>();
@@ -62,7 +62,7 @@ public class Route {
 	public String toString() {
 		String result = "Points: \n";
 		for(GeoPoint p: geoPointList) {
-			result += p.getLatitude() + " " + p.getLongitude() + "\n";
+			result += p.getLatitude() + "," + p.getLongitude() + "\n";
 		}
 		result += "Distance: " + distance + " meters \n";
 		result += "Distances between points: ";

@@ -1,7 +1,12 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
+import com.urjc.iagroup.bikesurbanfloats.history.IdReferenceAdapter;
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
+import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
@@ -14,6 +19,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
  * @author IAgroup
   */
 
+@HistoryReference(HistoricUser.class)
 public abstract class User implements Entity, UserModel<Bike, Station> {
 
 	public enum UserType {
@@ -22,18 +28,26 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 
 	private static IdGenerator idGenerator = new IdGenerator();
 
+	@Expose
     private int id;
 
+	@Expose
     private GeoPoint position;
+
+	@Expose @JsonAdapter(IdReferenceAdapter.class)
     private Bike bike;
 
+	@Expose @JsonAdapter(IdReferenceAdapter.class)
+    private Station destinationStation;
+
+	@Expose
     private double walkingVelocity;  // meters/second
+
+    @Expose
     private double cyclingVelocity;  // meters/second
     
     private boolean reservedBike;
     private boolean reservedSlot;
-    
-    private Station destinationStation;
     
     protected SystemManager systemManager;
    
@@ -200,6 +214,15 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
         return returned;
     }
 
+    public double getWalkingVelocity() {
+        return walkingVelocity;
+    }
+
+    public double getCyclingVelocity() {
+        return cyclingVelocity;
+    }
+
+    // TODO: remove
     /**
      * The user's average velocity in m/s
      * @return user walking velocity if he hasn't a bike at that moment and cycling velocity in other case

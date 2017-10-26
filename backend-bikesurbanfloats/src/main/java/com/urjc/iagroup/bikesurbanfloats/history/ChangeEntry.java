@@ -3,21 +3,13 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 import java.util.HashMap;
 import java.util.Map;
 
-class HistoryEntry {
+class ChangeEntry {
 
     private int timeInstant;
-    private Map<Integer, HistoricUser> users;
-    private Map<Integer, HistoricStation> stations;
-    private Map<Integer, HistoricBike> bikes;
-
     private Map<Class<? extends HistoricEntity>, Map<Integer, HistoricEntity>> entityMaps;
 
-    HistoryEntry(int timeInstant) {
+    ChangeEntry(int timeInstant) {
         this.timeInstant = timeInstant;
-        this.users = new HashMap<>();
-        this.stations = new HashMap<>();
-        this.bikes = new HashMap<>();
-
         this.entityMaps = new HashMap<>();
     }
 
@@ -35,17 +27,5 @@ class HistoryEntry {
         }
 
         entityMaps.get(entityClass).put(entity.getId(), entity);
-    }
-
-    Map<Integer, HistoricUser> getUsers() {
-        return users;
-    }
-
-    Map<Integer, HistoricStation> getStations() {
-        return stations;
-    }
-
-    Map<Integer, HistoricBike> getBikes() {
-        return bikes;
     }
 }
