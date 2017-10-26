@@ -1,14 +1,17 @@
-package com.urjc.iagroup.bikesurbanfloats.history;
+package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
+import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
+import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@JsonIdentifier("users")
 public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<HistoricBike, HistoricStation> {
 
 	private int id;
@@ -21,7 +24,7 @@ public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<His
 
 	private HistoricStation destinationStation;
 
-    HistoricUser(User user) {
+    public HistoricUser(User user) {
         this.id = user.getId();
         this.position = new GeoPoint(user.getPosition());
         this.bike = user.getBike() == null ? null: new HistoricBike(user.getBike());

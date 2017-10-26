@@ -1,12 +1,15 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.models.StationModel;
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricStation;
+import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 import java.util.List;
 import java.util.Objects;
 
+@HistoryReference(HistoricStation.class)
 public class Station implements Entity, StationModel<Bike> {
 
     private static IdGenerator idGenerator = new IdGenerator();

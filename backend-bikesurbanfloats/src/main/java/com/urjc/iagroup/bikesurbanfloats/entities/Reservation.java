@@ -1,8 +1,11 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.models.ReservationModel;
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricReservation;
+import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
+@HistoryReference(HistoricReservation.class)
 public class Reservation implements Entity, ReservationModel<Bike, Station, User> {
 
     public enum ReservationType {

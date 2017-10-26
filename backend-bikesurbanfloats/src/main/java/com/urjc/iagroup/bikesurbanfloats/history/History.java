@@ -8,10 +8,12 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricBike;
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricStation;
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class History {
@@ -22,6 +24,8 @@ public class History {
     private static HistoryEntry nextEntry;
 
     private static ArrayList<JsonObject> serializedEntries = new ArrayList<>();
+
+    private static Set<Class<? extends HistoricEntity>> historicClasses = new HashSet<>();
 
     public static void init(List<EventUserAppears> userAppearsList, SimulationConfiguration simulationConfiguration) {
         lastEntry = new HistoryEntry(0);
@@ -67,30 +71,56 @@ public class History {
             nextEntry = new HistoryEntry(timeInstant);
         }
 
+        Class<? extends Entity> entityClass = entity.getClass();
+        HistoryReference[] referenceClasses = entityClass.getAnnotationsByType(HistoryReference.class);
+
+        if (referenceClasses.length == 0) {
+            throw new IllegalStateException("No annotation @HistoryReference found for " + entityClass);
+        }
+
+        if (referenceClasses.length > 1) {
+            throw new IllegalStateException("Found more than one @HistoryReference annotation in inheritance chain for " + entityClass);
+        }
+
+        Class<? extends HistoricEntity> historicClass = referenceClasses[0].value();
+
+        historicClasses.add(historicClass);
+
         try {
-            Class<? extends Entity> entityClass = entity.getClass();
-            Class<? extends HistoricEntity> historicClass = EntityMapping.getFor(entityClass).getHistoricClass();
-            Constructor<? extends HistoricEntity> historicConstructor = historicClass.getConstructor(entity.getClass());
+            Constructor<? extends HistoricEntity> historicConstructor = historicClass.getConstructor(entityClass);
             nextEntry.addToMapFor(historicClass, historicConstructor.newInstance(entity));
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("No matching constructor found for " + historicClass);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IllegalStateException("A mapping in EntityMapping is probably wrong, or an implementation of HistoricEntity has a wrong copy constructor");
+            throw new IllegalStateException("Error trying to instantiate " + historicClass);
         }
     }
 
     private static JsonObject serializeChanges() {
         JsonObject entry = new JsonObject();
 
-        for (EntityMapping mapping : EntityMapping.values()) {
+        for (Class<? extends HistoricEntity> historicClass : historicClasses) {
             List<JsonObject> subTree = new ArrayList<>();
 
-            for (HistoricEntity entity : nextEntry.getMapFor(mapping.getHistoricClass()).values()) {
-                JsonObject changes = entity.makeChangeEntryFrom(lastEntry.getMapFor(mapping.getHistoricClass()).get(entity.getId()));
+            JsonIdentifier[] jsonIdentifiers = historicClass.getAnnotationsByType(JsonIdentifier.class);
+
+            if (jsonIdentifiers.length == 0) {
+                throw new IllegalStateException("No annotation @JsonIdentifier found for " + historicClass);
+            }
+
+            if (jsonIdentifiers.length > 1) {
+                throw new IllegalStateException("Found more than one @JsonIdentifier annotation in inheritance chain for " + historicClass);
+            }
+
+            for (HistoricEntity entity : nextEntry.getMapFor(historicClass).values()) {
+                JsonObject changes = entity.makeChangeEntryFrom(lastEntry.getMapFor(historicClass).get(entity.getId()));
                 if (changes != null) subTree.add(changes);
             }
 
             if (!subTree.isEmpty()) {
-                entry.add(mapping.getJsonIdentifier(), gson.toJsonTree(subTree));
+                entry.add(jsonIdentifiers[0].value(), gson.toJsonTree(subTree));
             }
         }
 
