@@ -1,5 +1,9 @@
 package com.urjc.iagroup.bikesurbanfloats.history;
 
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricBike;
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricStation;
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
+
 import java.util.HashMap;
 import java.util.Map;
 

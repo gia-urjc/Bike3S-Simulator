@@ -2,6 +2,8 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
+import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
@@ -15,6 +17,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
  *
  */
 
+@HistoryReference(HistoricUser.class)
 public abstract class User implements Entity, UserModel<Bike, Station> {
 
 	public enum UserType {
