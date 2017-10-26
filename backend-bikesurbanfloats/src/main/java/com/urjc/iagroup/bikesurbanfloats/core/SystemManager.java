@@ -36,6 +36,10 @@ public class SystemManager {
         return stations;
     }
 
+    public List<Bike> consultBikes() {
+        return bikes;
+    }
+
     public List<Station> consultStationsWithBikeReservationAttempt(User user, int timeInstant) {
         return consultReservations(user).stream()
                 .filter(reservation -> reservation.getType() == ReservationType.BIKE)

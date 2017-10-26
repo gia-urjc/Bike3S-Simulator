@@ -9,6 +9,7 @@ public interface UserModel<B extends BikeModel, S extends StationModel<B>> {
     B getBike();
     S getDestinationStation();
     
-    double getAverageVelocity();
+    double getWalkingVelocity();
+    double getCyclingVelocity();
   
 }
