@@ -2,61 +2,44 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
+import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
-import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
-import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
-import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricBike;
-import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricStation;
-import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class History {
 
     static Gson gson = new Gson();
 
-    private static HistoryEntry lastEntry;
-    private static HistoryEntry nextEntry;
+    private static ChangeEntry lastEntry;
+    private static ChangeEntry nextEntry;
 
     private static ArrayList<JsonObject> serializedEntries = new ArrayList<>();
 
     private static Set<Class<? extends HistoricEntity>> historicClasses = new HashSet<>();
 
-    public static void init(List<EventUserAppears> userAppearsList, SimulationConfiguration simulationConfiguration) {
-        lastEntry = new HistoryEntry(0);
-        nextEntry = new HistoryEntry(0);
-        nextEntry.getStations().putAll(simulationConfiguration.getStations().stream().collect(Collectors.toMap(Entity::getId, HistoricStation::new)));
-        JsonObject entry = new JsonObject();
-
-        List<JsonObject> users = new ArrayList<>();
-
-        for (EventUserAppears event : userAppearsList) {
-            JsonObject serializedUser = new JsonObject();
-            User user = event.getUser();
-            nextEntry.getUsers().put(user.getId(), new HistoricUser(user));
-
-            serializedUser.add("timeInstant", new JsonPrimitive(event.getInstant()));
-            serializedUser.add("user", gson.toJsonTree(user, UserModel.class));
-
-            users.add(serializedUser);
-        }
-
-
-        nextEntry.getBikes().putAll(simulationConfiguration.getBikes().stream().collect(Collectors.toMap(Entity::getId, HistoricBike::new)));
-
-        entry.add("userAppearanceEvents", gson.toJsonTree(users));
-        entry.add("stations", gson.toJsonTree(simulationConfiguration.getStations()));
-        // entry.add("bikes", gson.toJsonTree(simulationConfiguration.bikes));
+    public static void init(SimulationConfiguration simulationConfiguration, SystemManager systemManager) {
+        lastEntry = new ChangeEntry(0);
+        nextEntry = new ChangeEntry(0);
 
         // TODO: write file
     }
 
-    public static void register(int timeInstant, Entity entity) {
+    public static void close() {}
+
+    public static void registerNewEntity(Entity entity) {
+        Class<? extends Entity> entityClass = entity.getClass();
+        Class<? extends HistoricEntity> historicClass = getReferenceClass(entityClass);
+        nextEntry.getMapFor(historicClass).put(entity.getId(), instantiateHistoric(entity));
+        // TODO: add to initial file
+    }
+
+    public static void registerForChange(int timeInstant, Entity entity) {
         if (timeInstant > nextEntry.getTimeInstant()) {
             JsonObject changes = serializeChanges();
 
@@ -68,34 +51,12 @@ public class History {
 
             lastEntry = nextEntry;
 
-            nextEntry = new HistoryEntry(timeInstant);
+            nextEntry = new ChangeEntry(timeInstant);
         }
 
-        Class<? extends Entity> entityClass = entity.getClass();
-        HistoryReference[] referenceClasses = entityClass.getAnnotationsByType(HistoryReference.class);
-
-        if (referenceClasses.length == 0) {
-            throw new IllegalStateException("No annotation @HistoryReference found for " + entityClass);
-        }
-
-        if (referenceClasses.length > 1) {
-            throw new IllegalStateException("Found more than one @HistoryReference annotation in inheritance chain for " + entityClass);
-        }
-
-        Class<? extends HistoricEntity> historicClass = referenceClasses[0].value();
-
+        Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
         historicClasses.add(historicClass);
-
-        try {
-            Constructor<? extends HistoricEntity> historicConstructor = historicClass.getConstructor(entityClass);
-            nextEntry.addToMapFor(historicClass, historicConstructor.newInstance(entity));
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("No matching constructor found for " + historicClass);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new IllegalStateException("Error trying to instantiate " + historicClass);
-        }
+        nextEntry.addToMapFor(historicClass, instantiateHistoric(entity));
     }
 
     private static JsonObject serializeChanges() {
@@ -125,6 +86,36 @@ public class History {
         }
 
         return entry.entrySet().isEmpty() ? null : entry;
+    }
+
+    private static Class<? extends HistoricEntity> getReferenceClass(Class<? extends Entity> entityClass) {
+        HistoryReference[] referenceClasses = entityClass.getAnnotationsByType(HistoryReference.class);
+
+        if (referenceClasses.length == 0) {
+            throw new IllegalStateException("No annotation @HistoryReference found for " + entityClass);
+        }
+
+        if (referenceClasses.length > 1) {
+            throw new IllegalStateException("Found more than one @HistoryReference annotation in inheritance chain for " + entityClass);
+        }
+
+        return referenceClasses[0].value();
+    }
+
+    private static HistoricEntity instantiateHistoric(Entity entity) {
+        Class<? extends Entity> entityClass = entity.getClass();
+        Class<? extends HistoricEntity> historicClass = getReferenceClass(entityClass);
+
+        try {
+            Constructor<? extends HistoricEntity> historicConstructor = historicClass.getConstructor(entityClass);
+            return historicConstructor.newInstance(entity);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new IllegalStateException("No matching constructor found for " + historicClass);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalStateException("Error trying to instantiate " + historicClass);
+        }
     }
 
 }

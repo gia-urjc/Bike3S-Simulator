@@ -84,9 +84,7 @@ public class HistoricStation implements HistoricEntity<HistoricStation>, Station
 
     @Override
 	public JsonObject makeChangeEntryFrom(HistoricStation previousSelf) {
-        JsonObject changes = HistoricEntity.super.makeChangeEntryFrom(previousSelf);
-
-        if (changes == null) return null;
+        JsonObject changes = new JsonObject();
 
         boolean hasChanges = false;
 

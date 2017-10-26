@@ -1,6 +1,9 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.ReservationModel;
+import com.urjc.iagroup.bikesurbanfloats.history.IdReferenceAdapter;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricReservation;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
@@ -20,13 +23,28 @@ public class Reservation implements Entity, ReservationModel<Bike, Station, User
 
     private static IdGenerator idGenerator = new IdGenerator();
 
+    @Expose
     private int id;
+
+    @Expose
     private int startInstant;  // instant when user makes the reservation
+
+    @Expose
     private int endInstant;  // instant when reservation is resolved or expired
+
+    @Expose
     private ReservationType type;
+
+    @Expose
     private ReservationState state;
+
+    @Expose @JsonAdapter(IdReferenceAdapter.class)
     private User user;
+
+    @Expose @JsonAdapter(IdReferenceAdapter.class)
     private Station station;
+
+    @Expose @JsonAdapter(IdReferenceAdapter.class)
     private Bike bike;  // bike which user has reserved or wants to return
 
     public Reservation(int startInstant, ReservationType type, User user, Station station, Bike bike) {

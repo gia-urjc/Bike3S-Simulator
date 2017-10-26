@@ -20,7 +20,8 @@ public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<His
 
 	private HistoricBike bike;
 
-	private double averageVelocity;
+	private double walkingVelocity;
+	private double cyclingVelocity;
 
 	private HistoricStation destinationStation;
 
@@ -28,7 +29,8 @@ public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<His
         this.id = user.getId();
         this.position = new GeoPoint(user.getPosition());
         this.bike = user.getBike() == null ? null: new HistoricBike(user.getBike());
-        this.averageVelocity = user.getAverageVelocity();
+        this.walkingVelocity = user.getWalkingVelocity();
+        this.cyclingVelocity = user.getCyclingVelocity();
         this.destinationStation = user.getDestinationStation() == null ? null : new HistoricStation(user.getDestinationStation());
     }
 
@@ -53,15 +55,18 @@ public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<His
     }
 
     @Override
-    public double getAverageVelocity() {
-        return averageVelocity;
+    public double getWalkingVelocity() {
+        return walkingVelocity;
+    }
+
+    @Override
+    public double getCyclingVelocity() {
+        return cyclingVelocity;
     }
 
     @Override
 	public JsonObject makeChangeEntryFrom(HistoricUser previousSelf) {
-		JsonObject changeEntry = HistoricEntity.super.makeChangeEntryFrom(previousSelf);
-
-		if (changeEntry == null) return null;
+		JsonObject changeEntry = new JsonObject();
 
 		JsonObject changes = new JsonObject();
 
