@@ -21,7 +21,7 @@ public class EventUserWantsToReturnBike extends EventUser {
 
 	public List<Event> execute() {
         user.setPosition(actualPosition);
-        return manageSlotReservationDecision();
+        return manageSlotReservationDecisionAtOtherStation();
     }
     
 }

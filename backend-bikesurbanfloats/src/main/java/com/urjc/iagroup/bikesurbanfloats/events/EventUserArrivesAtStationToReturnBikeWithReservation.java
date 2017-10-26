@@ -8,37 +8,35 @@ import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventUserArrivesAtStationToReturnBike extends EventUser {
+public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventUser {
    
     private Station station;
     private Reservation reservation;
 
 
-    public EventUserArrivesAtStationToReturnBike(int instant, User user, Station station, Reservation reservation, SimulationConfiguration simulationConfiguration) {
+    public EventUserArrivesAtStationToReturnBikeWithReservation(int instant, User user, Station station, Reservation reservation, SimulationConfiguration simulationConfiguration) {
         super(instant, user, simulationConfiguration);
         this.station = station;
         this.reservation = reservation;
     }
     
-    public EventUserArrivesAtStationToReturnBike(int instant, User user, Station station, SimulationConfiguration simulationConfiguration) {
-        super(instant, user, simulationConfiguration);
-        this.station = station;
-        this.reservation = null;
+    public Station getStation() {
+        return station;
     }
 
+    public Reservation getReservation() {
+        return reservation;
+    }
 
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
         user.setPosition(station.getPosition());
-        if(reservation != null) {
-        	reservation.resolve(instant);
-            user.addReservation(reservation);
-        }
-        
-        if(!user.returnBikeTo(station)) {
-        	newEvents = manageSlotReservationDecision();
+       	reservation.resolve(instant);
+       user.addReservation(reservation);
+
+       if(!user.returnBikeTo(station)) {
+        	newEvents = manageSlotReservationDecisionAtOtherStation();
         }      
-       
         return newEvents;
     }
     

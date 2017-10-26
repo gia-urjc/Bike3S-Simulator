@@ -12,6 +12,6 @@ public class EventUserAppears extends EventUser {
     }
     
     public List<Event> execute() {
-        return manageBikeReservationDecision();
+        return manageBikeReservationDecisionAtOtherStation();
     }
 }

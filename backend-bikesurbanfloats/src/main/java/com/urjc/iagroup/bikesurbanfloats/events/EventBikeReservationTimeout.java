@@ -11,12 +11,14 @@ import java.util.List;
 public class EventBikeReservationTimeout extends EventUser {
 	private Reservation reservation;
     
-
     public EventBikeReservationTimeout(int instant, User user, Reservation reservation, SimulationConfiguration simulationConfiguration) {
         super(instant, user, simulationConfiguration);
         this.reservation = reservation;
     }
     
+    public Reservation getReservation() {
+        return reservation;
+    }
     
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
@@ -24,8 +26,13 @@ public class EventBikeReservationTimeout extends EventUser {
         reservation.expire();
         user.addReservation(reservation);
 
-        if (!user.decidesToLeaveSystem(instant)) {
-        	newEvents = manageBikeReservationDecision();
+        if (!user.decidesToLeaveSystemWhenTimeout(instant)) {
+            if (!user.decidesToDetermineOtherStationWhenTimeout()){
+                newEvents = manageBikeReservationDecisionAtSameStationAfterTimeout();
+            }
+            else {
+                newEvents = manageBikeReservationDecisionAtOtherStation();
+            }
         }
         return newEvents;
     }

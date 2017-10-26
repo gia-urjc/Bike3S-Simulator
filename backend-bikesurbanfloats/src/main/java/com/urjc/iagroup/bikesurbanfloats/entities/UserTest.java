@@ -12,9 +12,19 @@ public class UserTest extends User {
 	}
 
 	@Override
-	public boolean decidesToLeaveSystem(int instant) {
+	public boolean decidesToLeaveSystemWhenTimeout(int instant) {
 		return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
-	}
+}
+	
+	   @Override
+	    public boolean decidesToLeaveSystemWhenFailedReservation(int instant) {
+	        return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
+	    }
+
+	    @Override
+	    public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
+	        return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
+	    }
 	
 	@Override
 	public Station determineStationToRentBike(int instant) {
@@ -61,14 +71,23 @@ public class UserTest extends User {
 	}
 	
 	@Override
-	public boolean decidesToReserveBike() {
+	public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
 		return StaticRandom.nextBoolean();
 	}
+	
+	   public boolean decidesToReserveBikeAtNewDecidedStation() {
+	        return StaticRandom.nextBoolean();
+	    }
 
 	@Override
-	public boolean decidesToReserveSlot() {
+	public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
 		return StaticRandom.nextBoolean();
 	}
+	
+	   @Override
+	    public boolean decidesToReserveSlotAtNewDecidedStation() {
+	        return StaticRandom.nextBoolean();
+	    }
 	
 	@Override
 	public GeoPoint decidesNextPoint() {
@@ -91,8 +110,13 @@ public class UserTest extends User {
 	}
 
 	@Override
-	public boolean decidesToDetermineOtherStation() {
+	public boolean decidesToDetermineOtherStationWhenFailedReservation() {
 		return StaticRandom.nextBoolean();
 	}
 	
+	   @Override
+	    public boolean decidesToDetermineOtherStationWhenTimeout() {
+	        return StaticRandom.nextBoolean();
+	    }
+
 }

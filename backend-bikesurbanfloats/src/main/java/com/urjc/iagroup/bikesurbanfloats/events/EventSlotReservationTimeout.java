@@ -5,25 +5,30 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class EventSlotReservationTimeout extends EventUser {
 	private Reservation reservation;
-
 
     public EventSlotReservationTimeout(int instant, User user, Reservation reservation, SimulationConfiguration simulationConfiguration) {
         super(instant, user, simulationConfiguration);
         this.reservation = reservation;
     }
-    
-    public EventSlotReservationTimeout(int instant, User user, SimulationConfiguration simulationConfiguration) {
-        this(instant, user, null, simulationConfiguration);
+
+    public Reservation getReservation() {
+        return reservation;
     }
 
     public List<Event> execute() {
-
+        List<Event> newEvents = new ArrayList<>();
         user.updatePosition(simulationConfiguration.getReservationTime());
         reservation.expire();
         user.addReservation(reservation);
-        return manageSlotReservationDecision();
+        if (!user.decidesToDetermineOtherStationWhenTimeout()){
+            newEvents = manageSlotReservationDecisionAtSameStationAfterTimeout();
+        }
+        else
+            newEvents = manageSlotReservationDecisionAtOtherStation();
+        return newEvents;
     }
 }
