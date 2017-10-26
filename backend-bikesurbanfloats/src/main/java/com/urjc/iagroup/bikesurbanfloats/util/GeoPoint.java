@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.util;
 
-import java.math.BigDecimal;
 
 public class GeoPoint {
 
@@ -10,8 +9,8 @@ public class GeoPoint {
     public final static double EARTH_RADIUS = 6371e3;
     public final static double DEG_TO_RAD = Math.PI / 180.0;
 
-    private Double latitude;
-    private Double longitude;
+    private double latitude;
+    private double longitude;
 
     public GeoPoint(double latitude, double longitude) {
         this.latitude = latitude;
@@ -119,8 +118,8 @@ public class GeoPoint {
 
     @Override
     public String toString() {
-    	String result = "Latitude: " + Double.parseDouble(String.format("%.6f", latitude));
-    	result += "| Longitude: " + Double.parseDouble(String.format("%.6f", longitude)) + " \n";
+    	String result = "Latitude: " + Double.toString(latitude);
+    	result += "| Longitude: " + Double.toString(longitude) + " \n";
     	return result;
     }
 }

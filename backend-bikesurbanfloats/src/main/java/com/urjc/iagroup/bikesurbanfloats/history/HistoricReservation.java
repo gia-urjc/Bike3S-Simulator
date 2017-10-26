@@ -1,12 +1,9 @@
-package com.urjc.iagroup.bikesurbanfloats.history.entities;
+package com.urjc.iagroup.bikesurbanfloats.history;
 
 import com.google.gson.JsonObject;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.ReservationModel;
-import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
-import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
-@JsonIdentifier("reservations")
 public class HistoricReservation implements HistoricEntity<HistoricReservation>, ReservationModel<HistoricBike, HistoricStation, HistoricUser> {
 
     private int id;
@@ -20,7 +17,7 @@ public class HistoricReservation implements HistoricEntity<HistoricReservation>,
     private HistoricStation station;
     private HistoricBike bike;
 
-    public HistoricReservation(Reservation reservation) {
+    HistoricReservation(Reservation reservation) {
         this.id = reservation.getId();
         this.startTime = reservation.getStartInstant();
         this.endTime = reservation.getEndInstant();

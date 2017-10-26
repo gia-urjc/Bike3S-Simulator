@@ -1,19 +1,16 @@
-package com.urjc.iagroup.bikesurbanfloats.history.entities;
+package com.urjc.iagroup.bikesurbanfloats.history;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.StationModel;
-import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
-import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@JsonIdentifier("stations")
 public class HistoricStation implements HistoricEntity<HistoricStation>, StationModel<HistoricBike> {
 
     private static Function<Bike, HistoricBike> bikeConverter = bike -> bike == null ? null : new HistoricBike(bike);
@@ -31,7 +28,7 @@ public class HistoricStation implements HistoricEntity<HistoricStation>, Station
     private int bikesAvailable;
     private int slotsAvailable;
 
-    public HistoricStation(Station station) {
+    HistoricStation(Station station) {
         this.id = station.getId();
         this.position = new GeoPoint(station.getPosition());
         this.capacity = station.getCapacity();
@@ -84,7 +81,9 @@ public class HistoricStation implements HistoricEntity<HistoricStation>, Station
 
     @Override
 	public JsonObject makeChangeEntryFrom(HistoricStation previousSelf) {
-        JsonObject changes = new JsonObject();
+        JsonObject changes = HistoricEntity.super.makeChangeEntryFrom(previousSelf);
+
+        if (changes == null) return null;
 
         boolean hasChanges = false;
 
