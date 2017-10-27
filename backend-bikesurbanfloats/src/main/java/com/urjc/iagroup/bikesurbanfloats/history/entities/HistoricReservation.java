@@ -1,23 +1,31 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
-import com.google.gson.JsonObject;
+import com.google.gson.annotations.JsonAdapter;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
+import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationState;
+import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.ReservationModel;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
+import com.urjc.iagroup.bikesurbanfloats.history.IdReferenceAdapter;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
 @JsonIdentifier("reservations")
-public class HistoricReservation implements HistoricEntity<HistoricReservation>, ReservationModel<HistoricBike, HistoricStation, HistoricUser> {
+public class HistoricReservation implements HistoricEntity, ReservationModel<HistoricBike, HistoricStation, HistoricUser> {
 
     private int id;
     private int startTime;
     private int endTime;
 
-    private Reservation.ReservationType type;
-    private Reservation.ReservationState state;
+    private ReservationType type;
+    private ReservationState state;
 
+    @JsonAdapter(IdReferenceAdapter.class)
     private HistoricUser user;
+
+    @JsonAdapter(IdReferenceAdapter.class)
     private HistoricStation station;
+
+    @JsonAdapter(IdReferenceAdapter.class)
     private HistoricBike bike;
 
     public HistoricReservation(Reservation reservation) {
@@ -47,12 +55,12 @@ public class HistoricReservation implements HistoricEntity<HistoricReservation>,
     }
 
     @Override
-    public Reservation.ReservationType getType() {
+    public ReservationType getType() {
         return type;
     }
 
     @Override
-    public Reservation.ReservationState getState() {
+    public ReservationState getState() {
         return state;
     }
 
@@ -69,10 +77,5 @@ public class HistoricReservation implements HistoricEntity<HistoricReservation>,
     @Override
     public HistoricBike getBike() {
         return bike;
-    }
-
-    @Override
-    public JsonObject makeChangeEntryFrom(HistoricReservation previousSelf) {
-        return null;
     }
 }

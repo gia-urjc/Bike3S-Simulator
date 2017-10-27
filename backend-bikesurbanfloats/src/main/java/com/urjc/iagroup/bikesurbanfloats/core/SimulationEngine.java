@@ -24,7 +24,7 @@ public class SimulationEngine {
 	
 	public void run() {
 
-	    History.init(simulationConfiguration, systemManager);
+	    History.init(simulationConfiguration);
 
 	    simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(History::registerNewEntity);
 	    systemManager.consultStations().forEach(History::registerNewEntity);

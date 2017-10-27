@@ -6,7 +6,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 
 import javax.validation.constraints.NotNull;
 
-public interface HistoricEntity<E extends HistoricEntity> extends Entity {
+public interface HistoricEntity extends Entity {
 
     static JsonObject propertyChange(@NotNull Object oldProperty, @NotNull Object newProperty) {
         JsonObject property = new JsonObject();
@@ -24,7 +24,5 @@ public interface HistoricEntity<E extends HistoricEntity> extends Entity {
         Object newId = newEntity == null ? JsonNull.INSTANCE : newEntity.getId();
         return propertyChange(oldId, newId);
     }
-	
-	JsonObject makeChangeEntryFrom(E previousSelf);
 	
 }
