@@ -1,5 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.util;
 
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
+
 public class BoundingCircle {
 	
 	private GeoPoint position;

@@ -3,7 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats.config.deserializers;
 import com.google.gson.*;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

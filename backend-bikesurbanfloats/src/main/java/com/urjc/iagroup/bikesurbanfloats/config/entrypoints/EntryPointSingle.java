@@ -5,7 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.User.UserType;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;

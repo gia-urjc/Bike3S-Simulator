@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.models;
 
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
 public interface UserModel<B extends BikeModel, S extends StationModel<B>> {
 	

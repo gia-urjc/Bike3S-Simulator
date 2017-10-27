@@ -1,15 +1,15 @@
-package com.urjc.iagroup.bikesurbanfloats.util;
+package com.urjc.iagroup.bikesurbanfloats.graphs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Route {
+public class GeoRoute {
 	
 	private List<GeoPoint> geoPointList;
 	private double distance;
 	private List<Double> distancesBetweenPoints;
 	
-	public Route(List<GeoPoint> geoPointList) throws IllegalStateException {
+	public GeoRoute(List<GeoPoint> geoPointList) throws IllegalStateException {
 		if(geoPointList.size() < 2) {
 			throw new IllegalStateException("Routes should have more than two points");
 		}
@@ -30,7 +30,7 @@ public class Route {
 		distance = totalDistance;
 	}
 	
-	public Route calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws Exception {
+	public GeoRoute calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws Exception {
 		double totalDistance = 0.0;
 		double currentTime = 0.0;
 		double currentDistance = 0.0;
@@ -54,7 +54,7 @@ public class Route {
 		double intermedDistance = currentDistance - x;
 		GeoPoint newPoint = currentPoint.reachedPoint(intermedDistance, nextPoint);
 		newGeoPointList.add(newPoint);
-		Route newRoute = new Route(newGeoPointList);
+		GeoRoute newRoute = new GeoRoute(newGeoPointList);
 		return newRoute;	
 	}
 	

@@ -1,4 +1,4 @@
-package com.urjc.iagroup.bikesurbanfloats.util;
+package com.urjc.iagroup.bikesurbanfloats.graphs;
 
 import java.math.BigDecimal;
 
