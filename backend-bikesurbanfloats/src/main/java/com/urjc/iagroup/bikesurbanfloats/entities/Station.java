@@ -82,32 +82,60 @@ public class Station implements Entity, StationModel<Bike> {
     }
     
     private Bike getFirstAvailableBike() {
-    	int i = 0;
     	Bike bike = null;
-    	while (bike == null && i < (bikes.size() -1) ) {
-    		bike = bikes.get(i);
+    	for (Bike currentBike: bikes) {
+    		if (currentBike != null &&	!currentBike.isReserved()) {
+    			bike = currentBike;
+    			break;
+    		}
     	}
     	return bike;
     }
+    
+    /**
+     * Station locks a bike for a user if there're available bikes
+     * @return bike which has been reserved or bike with null value if there're no available bikes
+     */
 
     public Bike reservesBike() {
+    	Bike bike = null;
+    	if (availableBikes() > 0) {
         this.reservedBikes++;
-        Bike bike = getFirstAvailableBike();
+        bike = getFirstAvailableBike();
         bike.setReserved(true);
+    	}
         return bike;
     }
+    
+    /**
+     * Station unlocks a bike to make it available for other users 
+     */
 
     public void cancelsBikeReservation() {
         this.reservedBikes--;
     }
     
+    /**
+     * Station locks a slot for a user if there're available slots 
+     */
+    
     public void reservesSlot() {
+    	if (availableSlots() > 0)
         this.reservedSlots++;
     }
+    
+    /**
+     * Station unlocks a slot to make it available for other users
+     */
 
     public void cancelsSlotReservation() {
         this.reservedSlots--;
     }
+    
+    /**
+     * If there's one available bike at station, user can remove it leaving an available slot at station     
+     * @return a bike if there's one available or null if there's no available bikes 
+     */
     
         public Bike removeBike() {
         Bike bike = null;
@@ -124,6 +152,12 @@ public class Station implements Entity, StationModel<Bike> {
 
         return bike;
     }
+        
+        /**
+         * If there's available slots at station, it places a bike (which a user has returned) on a slot  
+         * @param bike: it is the bike which user wants to return
+         * @return true if returning the bike to station has been possible and false in other case (there's no available slots)
+         */
 
     public boolean returnBike(Bike bike) {
         boolean result = false;

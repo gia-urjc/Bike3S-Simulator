@@ -47,6 +47,10 @@ public class Reservation implements Entity, ReservationModel<Bike, Station, User
     @Expose @JsonAdapter(IdReferenceAdapter.class)
     private Bike bike;  // bike which user has reserved or wants to return
 
+    /**
+     * As it receives a bike param, it creates an active reservation 
+     */
+    
     public Reservation(int startInstant, ReservationType type, User user, Station station, Bike bike) {
         this.id = idGenerator.next();
         this.startInstant = startInstant;
@@ -57,6 +61,10 @@ public class Reservation implements Entity, ReservationModel<Bike, Station, User
         this.station = station;
         this.bike = bike;
     }
+    
+    /**
+     * As it doesn't receive a bike param, it creates a failed reservation 
+     */
 
     public Reservation(int startInstant, ReservationType type, User user, Station station) {
         this(startInstant, type, user, station, null);
