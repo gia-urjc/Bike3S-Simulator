@@ -6,8 +6,6 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationState;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
-import com.urjc.iagroup.bikesurbanfloats.graphs.GraphHopperImpl;
-import com.urjc.iagroup.bikesurbanfloats.graphs.GraphManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,6 @@ public class SystemManager {
     private List<Station> stations;
     private List<Bike> bikes;
     private List<Reservation> reservations;
-    private GraphManager graphManager;
 
     public SystemManager(List<Station> stations) {
         this.stations = new ArrayList<>(stations);

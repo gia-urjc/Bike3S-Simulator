@@ -7,17 +7,12 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
-import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 public class BikeDeserializer implements JsonDeserializer<Bike>{
 	
 	private final static String JSON_ATR_RESERVED = "reserved"; 
 	
-	private IdGenerator bikeIdGen;
-	
-	public BikeDeserializer(IdGenerator bikeIdGen) { 
-		this.bikeIdGen = bikeIdGen;
-	}
+	public BikeDeserializer() {}
 
 	@Override
 	public Bike deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)

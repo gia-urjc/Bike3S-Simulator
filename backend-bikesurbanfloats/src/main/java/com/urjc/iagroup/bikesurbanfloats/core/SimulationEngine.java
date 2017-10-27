@@ -3,10 +3,8 @@ package com.urjc.iagroup.bikesurbanfloats.core;
 import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.events.Event;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUser;
-import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.history.History;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 

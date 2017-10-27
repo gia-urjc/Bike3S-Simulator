@@ -7,8 +7,8 @@ import java.util.List;
 
 public class UserTest extends User {
 	
-	public UserTest(GeoPoint position) {
-		super(position);
+	public UserTest() {
+		super();
 	}
 
 	@Override

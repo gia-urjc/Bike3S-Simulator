@@ -51,10 +51,10 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     
     protected SystemManager systemManager;
    
-    public User(GeoPoint position) {
+    public User() {
         this.id = idGenerator.next();
 
-        this.position = position;
+        this.position = null;
         this.bike = null;
         // random velocity between 3km/h and 7km/h in m/s
         this.walkingVelocity = StaticRandom.nextInt(3, 8) / 3.6;
@@ -89,7 +89,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     }
 
     public void setPosition(Double latitude, Double longitude) {
-        this.position.setLatitude(latitude);
+    	this.position.setLatitude(latitude);
         this.position.setLongitude(longitude);
     }
 

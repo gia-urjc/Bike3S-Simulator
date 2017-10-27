@@ -1,7 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.graphs;
 
-import java.math.BigDecimal;
-
 public class GeoPoint {
 
     /**

@@ -1,0 +1,68 @@
+{
+  "reservationTime" : 3000,
+	"totalTimeSimulation" : 18000,
+	"randomSeed": 200,
+	"bbox": {
+		"northWest": {
+			"latitude": 40.329103,
+			"longitude": -3.881946
+		},
+		"southEast": {
+			"latitude": 40.321065,
+			"longitude": -3.851462
+		}
+	},
+
+  "entryPoints": [
+    {
+      "userType": "USER_TEST",
+      "instant": 0,
+      "position": {
+        "latitude": 40.32246,
+        "longitude": -3.87982
+      }
+    },
+    {
+		"position": {
+			"latitude": 40.32246,
+			"longitude": -3.87982 
+		},
+		"radius": 5000.0,
+		"distribution": {
+			"type": "POISSON",
+			"lambda": 0.0033333
+		},      
+		"userType": "USER_TEST",
+		"timeRange": {
+			"start": 0,
+			"end": 36000
+		}
+  	}
+    
+  ],
+  "stations" : [
+  {
+    "bikes": 3,
+    "position": {
+      "latitude" : 40.32159,
+      "longitude" : -3.86469
+    },
+    "capacity" : 10
+  },
+  {
+    "bikes": 6,
+    "position": {
+      "latitude" : 40.32724,
+      "longitude" : -3.87516
+    },
+    "capacity" : 10
+  },
+  {
+    "bikes": 4,
+    "position": {
+      "latitude" : 40.32709,
+      "longitude" : -3.85465
+    },
+    "capacity" : 10
+  }]
+}

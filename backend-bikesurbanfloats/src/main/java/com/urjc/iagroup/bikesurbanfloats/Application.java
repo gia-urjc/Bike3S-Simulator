@@ -15,16 +15,14 @@ import java.io.FileNotFoundException;
 public class Application {
 	
     public static void main(String[] args) {
-    	String stationsPath = args[0];
-    	String entryPath = args[1];
-    	String simulationPath = args[2];
-        ConfigJsonReader jsonReader = new ConfigJsonReader(stationsPath, entryPath, simulationPath);
+    	String configurationFile = args[0];
+        ConfigJsonReader jsonReader = new ConfigJsonReader(configurationFile);
 		
         try {
 			SimulationConfiguration simulationConfiguration = jsonReader.createSystemConfiguration();
 			SystemManager systemManager = jsonReader.createSystemManager();
 			SimulationEngine simulation = new SimulationEngine(simulationConfiguration, systemManager);
-			simulation.run();
+			//simulation.run();
 			
 		} catch (FileNotFoundException e) {
 			

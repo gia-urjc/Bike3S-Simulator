@@ -25,8 +25,8 @@ public class EntryPointSingle implements EntryPoint {
 	public List<EventUserAppears> generateEvents(SimulationConfiguration simulationConfiguration) {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		UserFactory userFactory = new UserFactory();
-		User user = userFactory.createUser(userType, position);
-		EventUserAppears event = new EventUserAppears(instant, user, simulationConfiguration);
+		User user = userFactory.createUser(userType);
+		EventUserAppears event = new EventUserAppears(instant, user, position, simulationConfiguration);
 		generatedEvents.add(event);
 		return generatedEvents;
 	}
