@@ -1,8 +1,8 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.models;
 
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-
 import java.util.List;
+
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
 public interface StationModel<B extends BikeModel> {
 

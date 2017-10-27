@@ -2,8 +2,8 @@ package com.urjc.iagroup.bikesurbanfloats.entities.factories;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.User.UserType;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.entities.UserTest;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 public class UserFactory {
 

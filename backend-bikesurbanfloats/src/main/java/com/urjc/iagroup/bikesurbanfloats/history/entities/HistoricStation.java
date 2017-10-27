@@ -5,9 +5,9 @@ import com.google.gson.JsonPrimitive;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.StationModel;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 import java.util.List;
 import java.util.function.Function;

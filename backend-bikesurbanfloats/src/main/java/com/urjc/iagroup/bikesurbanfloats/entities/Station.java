@@ -3,10 +3,10 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.StationModel;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.history.IdReferenceListAdapter;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricStation;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 import java.util.List;
