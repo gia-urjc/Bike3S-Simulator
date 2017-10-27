@@ -36,15 +36,16 @@ public class History {
         // TODO: write entitiesEntry to file
     }
 
-    public static void registerNewEntity(Entity entity) {
-        Class<? extends Entity> entityClass = entity.getClass();
-        Class<? extends HistoricEntity> historicClass = getReferenceClass(entityClass);
-        HistoricEntity historicEntity = instantiateHistoric(entity);
-        nextEntry.addToMapFor(historicClass, historicEntity);
-        entitiesEntry.addToMapFor(historicClass, historicEntity);
+    public static void registerNewEntity(Entity... entities) {
+        for (Entity entity : entities) {
+            Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
+            HistoricEntity historicEntity = instantiateHistoric(entity);
+            nextEntry.addToMapFor(historicClass, historicEntity);
+            entitiesEntry.addToMapFor(historicClass, historicEntity);
+        }
     }
 
-    public static void registerForChange(int timeInstant, Entity entity) {
+    public static void registerForChange(int timeInstant, Entity... entities) {
         if (timeInstant > nextEntry.getTimeInstant()) {
             JsonObject changes = serializeChanges();
 
@@ -59,9 +60,11 @@ public class History {
             nextEntry = new ChangeEntry(timeInstant);
         }
 
-        Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
-        historicClasses.add(historicClass);
-        nextEntry.addToMapFor(historicClass, instantiateHistoric(entity));
+        for (Entity entity : entities) {
+            Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
+            historicClasses.add(historicClass);
+            nextEntry.addToMapFor(historicClass, instantiateHistoric(entity));
+        }
     }
 
     private static JsonObject serializeChanges() {
