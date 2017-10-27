@@ -20,6 +20,9 @@ public class ConfigJsonReader {
     private final static String JSON_ATTR_TIME_SIMULATION = "totalTimeSimulation";
     private final static String JSON_ATTR_RANDOM_SEED = "randomSeed";
     private final static String JSON_ATTR_RECTANGLE_SIMULATION = "bbox";
+    private final static String JSON_ATTR_MAP_DIRECTORY = "mapDirectory";
+    private final static String JSON_ATTR_GRAPHHOPPER_DIRECORY = "graphhopperDirectory";
+    private final static String JSON_ATTR_GRAPHHOPPER_LOCALE = "graphHopperLocale";
 
     private String configurationFile;
 
@@ -43,7 +46,7 @@ public class ConfigJsonReader {
         return simulationConfiguration;
     }
 
-    public SystemManager createSystemManager() throws FileNotFoundException {
+    public SystemManager createSystemManager(SimulationConfiguration simulationConfiguration) throws IOException {
         FileInputStream inputStreamJson = new FileInputStream(new File(configurationFile));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 
@@ -53,8 +56,7 @@ public class ConfigJsonReader {
         for (JsonElement elemStation : jsonStationsArray) {
             allStations.add(gson.fromJson(elemStation, Station.class));
         }
-
-        return new SystemManager(allStations);
+        return new SystemManager(allStations, simulationConfiguration);
     }
 
 
@@ -76,7 +78,11 @@ public class ConfigJsonReader {
         StaticRandom.setSeed(simulationConfiguration.getRandomSeed());
         JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
         simulationConfiguration.setBoundingBox(gson.fromJson(rectangleJson, BoundingBox.class));
-        simulationConfiguration.setConfigurationFile(configurationFile);   
+        simulationConfiguration.setMapDirectory(jsonConfig.get(JSON_ATTR_MAP_DIRECTORY).getAsString());
+        simulationConfiguration.setGraphhopperDirectory(jsonConfig.get(JSON_ATTR_GRAPHHOPPER_DIRECORY).getAsString());
+        simulationConfiguration.setGraphHopperLocale(jsonConfig.get(JSON_ATTR_GRAPHHOPPER_LOCALE).getAsString());
+        simulationConfiguration.setConfigurationFile(configurationFile);
+        
     }
 
     private void readEntryPoints(SimulationConfiguration simulationConfiguration) throws FileNotFoundException {

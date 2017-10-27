@@ -23,13 +23,13 @@ public class GraphHopperImpl implements GraphManager {
 	private String locale;
 	private GHResponse rsp;
 	
-	public GraphHopperImpl(String mapDir, String graphhopperDir, String encodingManager, String locale) throws IOException {
+	public GraphHopperImpl(String mapDir, String graphhopperDir, String locale) throws IOException {
 		FileUtils.deleteDirectory(new File(graphhopperDir));
 		this.hopper = new GraphHopperOSM().forServer();
 		this.locale = locale;
 		hopper.setDataReaderFile(mapDir);
 		hopper.setGraphHopperLocation(graphhopperDir);
-		hopper.setEncodingManager(new EncodingManager(encodingManager));
+		hopper.setEncodingManager(new EncodingManager("foot"));
 		hopper.importOrLoad();
 		
 	}

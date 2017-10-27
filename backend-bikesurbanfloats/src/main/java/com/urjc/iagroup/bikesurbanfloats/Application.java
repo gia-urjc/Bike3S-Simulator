@@ -5,7 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.core.SimulationEngine;
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Hello world!
@@ -20,11 +20,11 @@ public class Application {
 		
         try {
 			SimulationConfiguration simulationConfiguration = jsonReader.createSystemConfiguration();
-			SystemManager systemManager = jsonReader.createSystemManager();
+			SystemManager systemManager = jsonReader.createSystemManager(simulationConfiguration);
 			SimulationEngine simulation = new SimulationEngine(simulationConfiguration, systemManager);
-			//simulation.run();
+			simulation.run();
 			
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			
 			e.printStackTrace();
 		}

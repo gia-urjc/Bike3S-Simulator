@@ -12,8 +12,10 @@
 			"longitude": -3.851462
 		}
 	},
-
-  "entryPoints": [
+	"mapDirectory": "maps/mostoles.osm",
+  	"graphhopperDirectory": "graphhopper_files",
+  	"graphHopperLocale": "ES",
+  	"entryPoints": [
     {
       "userType": "USER_TEST",
       "instant": 0,

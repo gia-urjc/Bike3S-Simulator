@@ -18,6 +18,11 @@ public class SimulationConfiguration {
 	private int totalTimeSimulation = 0;
 	private long randomSeed = 0;
 	
+	//GrapHopper Properties
+	private String mapDirectory;
+	private String graphhopperDirectory;
+	private String GraphHopperLocale;
+	
 	//Utils
 	private BoundingBox boundingBox = null;
 
@@ -69,6 +74,30 @@ public class SimulationConfiguration {
 
 	public void setConfigurationFile(String configurationFile) {
 		this.configurationFile = configurationFile;
+	}
+	
+	public String getMapDirectory() {
+		return mapDirectory;
+	}
+
+	public void setMapDirectory(String mapDirectory) {
+		this.mapDirectory = mapDirectory;
+	}
+
+	public String getGraphHopperLocale() {
+		return GraphHopperLocale;
+	}
+
+	public void setGraphHopperLocale(String graphHopperLocale) {
+		GraphHopperLocale = graphHopperLocale;
+	}
+
+	public String getGraphhopperDirectory() {
+		return graphhopperDirectory;
+	}
+
+	public void setGraphhopperDirectory(String graphhopperDirectory) {
+		this.graphhopperDirectory = graphhopperDirectory;
 	}
 	
 	public void resetInfo() {

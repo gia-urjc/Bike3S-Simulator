@@ -27,7 +27,7 @@ public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<His
 
     public HistoricUser(User user) {
         this.id = user.getId();
-        this.position = new GeoPoint(user.getPosition());
+        this.position = user.getPosition() == null? null : new GeoPoint(user.getPosition());
         this.bike = user.getBike() == null ? null: new HistoricBike(user.getBike());
         this.walkingVelocity = user.getWalkingVelocity();
         this.cyclingVelocity = user.getCyclingVelocity();

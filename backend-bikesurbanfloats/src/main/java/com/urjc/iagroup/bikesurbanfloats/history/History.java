@@ -33,7 +33,7 @@ public class History {
     public static void registerNewEntity(Entity entity) {
         Class<? extends Entity> entityClass = entity.getClass();
         Class<? extends HistoricEntity> historicClass = getReferenceClass(entityClass);
-        nextEntry.getMapFor(historicClass).put(entity.getId(), instantiateHistoric(entity));
+        nextEntry.addToMapFor(historicClass, instantiateHistoric(entity));
         // TODO: add to initial file
     }
 
