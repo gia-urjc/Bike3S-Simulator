@@ -52,8 +52,8 @@ public abstract class EventUser implements Event {
         else {  // user hasn't been able to reserve a bike
             Reservation reservation = new Reservation(instant, ReservationType.BIKE, user, destination);
             user.addReservation(reservation);
-            if (!user.decidesToLeaveSystemWhenFailedReservation(instant)) {
-                if (!user.decidesToDetermineOtherStationWhenFailedReservation()) {  // user walks to the initially chosen station
+            if (!user.decidesToLeaveSystemAffterFailedReservation(instant)) {
+                if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user walks to the initially chosen station
                 newEvents.add(new EventUserArrivesAtStationToRentBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination, simulationConfiguration));
                 }
                 else {
@@ -111,7 +111,7 @@ public abstract class EventUser implements Event {
            else {  // user hasn't been able to reserve a slot
            	Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);	
            	user.addReservation(reservation);
-       		if (!user.decidesToDetermineOtherStationWhenFailedReservation()) {  // user waljs to the initially chosen station 
+       		if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user waljs to the initially chosen station 
        			newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination, simulationConfiguration));
        		}
        		else {

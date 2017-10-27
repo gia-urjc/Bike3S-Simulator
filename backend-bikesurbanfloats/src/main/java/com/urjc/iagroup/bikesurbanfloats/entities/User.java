@@ -246,7 +246,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      * @return true if he decides to leave the system and false in other case (he decides to continue at system)
      */
     
-    public abstract boolean decidesToLeaveSystemWhenTimeout(int instant);
+    public abstract boolean decidesToLeaveSystemAfterTimeout(int instant);
     
     /**
     * User decides if he'll leave the system after not being able to make a bike reservation  
@@ -254,7 +254,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     * @return true if he decides to leave the system and false in other case (he decides to continue at system)
     */
     
-    public abstract boolean decidesToLeaveSystemWhenFailedReservation(int instant);
+    public abstract boolean decidesToLeaveSystemAffterFailedReservation(int instant);
     
     /**
      * User decides if he'll leave the system when there're no avalable bikes at station    
@@ -281,14 +281,14 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     public abstract Station determineStationToReturnBike(int instant);
     
     /**
-     * User decides if he'll make again a bike reservation at the previosly chosen station 
+     * User decides if he'll try to make again a bike reservation at the previosly chosen station after timeout happens 
      * @return true if user decides to reserve a bike at the initially chosen station
      */
     
     public abstract boolean decidesToReserveBikeAtSameStationAfterTimeout();
     
     /**
-     * User decides if he'll make again a bike reservation at a new chosen station
+     * User decides if he'll try to make a bike reservation at a new chosen station
 
      * @return true if user decides to reserve a bike at that new station and false in other case
      */
@@ -296,14 +296,14 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     public abstract boolean decidesToReserveBikeAtNewDecidedStation();
     
     /**
-     * User decides if he'll make again a slot reservation at the previosly chosen station 
+     * User decides if he'll try to make again a slot reservation at the previosly chosen station 
      * @return true if user decides to reserve a slot at the initially chosen station
      */
     
     public abstract boolean decidesToReserveSlotAtSameStationAfterTimeout();
     
     /**
-     * User decides if he'll make again a slot reservation at a new chosen station
+     * User decides if he'll try to make a slot reservation at a new chosen station
      * @return true if user decides to reserve a slot at that new station and false in other case
      */
     
@@ -318,7 +318,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 
     /**
      * User decides if he'll ride the bike to a station, just after removing it, in order to return it 
-          * @return true if user decides to cycle directly to a station in order to return 
+     * @return true if user decides to cycle directly to a station in order to return 
      * his bike and false in other case (he decides to ride it to another point before returning it)
      */
 
@@ -337,14 +337,14 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      * @return true if user chooses a new station to go and false if he continues to the previously chosen one
      */
 
-        public abstract boolean decidesToDetermineOtherStationWhenTimeout();
+        public abstract boolean decidesToDetermineOtherStationAfterTimeout();
         
 /**
  * When user hasn't been able to make a reservation at the destination station, he decides if he wants to choose another destination station
  * @return true if he decides to determine another destination station and false in other case (he keeps his previously decision) 
  */
         
-        public abstract boolean decidesToDetermineOtherStationWhenFailedReservation();
+        public abstract boolean decidesToDetermineOtherStationAfterFailedReservation();
     @Override
     public String toString() {
         String result = "| Id: " + getId();

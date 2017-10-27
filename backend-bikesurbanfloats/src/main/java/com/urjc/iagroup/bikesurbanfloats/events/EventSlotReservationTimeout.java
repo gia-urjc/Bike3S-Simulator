@@ -24,7 +24,7 @@ public class EventSlotReservationTimeout extends EventUser {
         user.updatePosition(simulationConfiguration.getReservationTime());
         reservation.expire();
         user.addReservation(reservation);
-        if (!user.decidesToDetermineOtherStationWhenTimeout()){
+        if (!user.decidesToDetermineOtherStationAfterTimeout()){
             newEvents = manageSlotReservationDecisionAtSameStationAfterTimeout();
         }
         else

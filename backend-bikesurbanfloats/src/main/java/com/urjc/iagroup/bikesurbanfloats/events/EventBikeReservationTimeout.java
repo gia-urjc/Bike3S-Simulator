@@ -26,8 +26,8 @@ public class EventBikeReservationTimeout extends EventUser {
         reservation.expire();
         user.addReservation(reservation);
 
-        if (!user.decidesToLeaveSystemWhenTimeout(instant)) {
-            if (!user.decidesToDetermineOtherStationWhenTimeout()){
+        if (!user.decidesToLeaveSystemAfterTimeout(instant)) {
+            if (!user.decidesToDetermineOtherStationAfterTimeout()){
                 newEvents = manageBikeReservationDecisionAtSameStationAfterTimeout();
             }
             else {

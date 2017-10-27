@@ -12,12 +12,12 @@ public class UserTest extends User {
 	}
 
 	@Override
-	public boolean decidesToLeaveSystemWhenTimeout(int instant) {
+	public boolean decidesToLeaveSystemAfterTimeout(int instant) {
 		return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
 }
 	
 	   @Override
-	    public boolean decidesToLeaveSystemWhenFailedReservation(int instant) {
+	    public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
 	        return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
 	    }
 
@@ -110,12 +110,12 @@ public class UserTest extends User {
 	}
 
 	@Override
-	public boolean decidesToDetermineOtherStationWhenFailedReservation() {
+	public boolean decidesToDetermineOtherStationAfterFailedReservation() {
 		return StaticRandom.nextBoolean();
 	}
 	
 	   @Override
-	    public boolean decidesToDetermineOtherStationWhenTimeout() {
+	    public boolean decidesToDetermineOtherStationAfterTimeout() {
 	        return StaticRandom.nextBoolean();
 	    }
 
