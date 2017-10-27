@@ -7,10 +7,8 @@ import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class History {
 
@@ -106,8 +104,14 @@ public class History {
         Class<? extends Entity> entityClass = entity.getClass();
         Class<? extends HistoricEntity> historicClass = getReferenceClass(entityClass);
 
+        Class<? extends Entity> constructorParameter = entityClass;
+
+        while (!constructorParameter.getSuperclass().equals(Object.class)) {
+            constructorParameter = (Class<? extends Entity>) constructorParameter.getSuperclass();
+        }
+
         try {
-            Constructor<? extends HistoricEntity> historicConstructor = historicClass.getConstructor(entityClass);
+            Constructor<? extends HistoricEntity> historicConstructor = historicClass.getConstructor(constructorParameter);
             return historicConstructor.newInstance(entity);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
