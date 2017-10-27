@@ -110,6 +110,14 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
         return reservedSlot;
     }
     
+    public Station getDestinationStation() {
+		return destinationStation;
+	}
+
+	public void setDestinationStation(Station destinationStation) {
+		this.destinationStation = destinationStation;
+	}
+
     /**
      *  User tries to reserve a bike at the specified station
      * @param station: it is the station for which user wants to make a bike reservation
@@ -125,14 +133,6 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     	}
     	return bike;
     }
-
-    public Station getDestinationStation() {
-		return destinationStation;
-	}
-
-	public void setDestinationStation(Station destinationStation) {
-		this.destinationStation = destinationStation;
-	}
 
     /**
      * User tries to reserve a slot at the specified station
