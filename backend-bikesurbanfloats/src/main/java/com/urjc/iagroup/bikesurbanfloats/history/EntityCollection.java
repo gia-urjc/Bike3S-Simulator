@@ -5,16 +5,10 @@ import java.util.Map;
 
 class EntityCollection {
 
-    private int timeInstant;
     private Map<Class<? extends HistoricEntity>, Map<Integer, HistoricEntity>> entityMaps;
 
-    EntityCollection(int timeInstant) {
-        this.timeInstant = timeInstant;
+    EntityCollection() {
         this.entityMaps = new HashMap<>();
-    }
-
-    int getTimeInstant() {
-        return timeInstant;
     }
 
     Map<Integer, HistoricEntity> getMapFor(Class<? extends HistoricEntity> entityClass) {

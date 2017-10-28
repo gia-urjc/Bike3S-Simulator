@@ -26,9 +26,9 @@ public class SimulationEngine {
 
 	    History.init(simulationConfiguration);
 
-	    simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(History::registerNewEntity);
-	    systemManager.consultStations().forEach(History::registerNewEntity);
-	    systemManager.consultBikes().forEach(History::registerNewEntity);
+	    simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(History::registerEntity);
+	    systemManager.consultStations().forEach(History::registerEntity);
+	    systemManager.consultBikes().forEach(History::registerEntity);
 
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element
