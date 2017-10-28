@@ -3,12 +3,12 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 import java.util.HashMap;
 import java.util.Map;
 
-class ChangeEntry {
+class EntityCollection {
 
     private int timeInstant;
     private Map<Class<? extends HistoricEntity>, Map<Integer, HistoricEntity>> entityMaps;
 
-    ChangeEntry(int timeInstant) {
+    EntityCollection(int timeInstant) {
         this.timeInstant = timeInstant;
         this.entityMaps = new HashMap<>();
     }
