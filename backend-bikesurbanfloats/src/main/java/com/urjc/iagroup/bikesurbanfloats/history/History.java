@@ -21,7 +21,7 @@ public class History {
     private static EntityCollection initialEntities;
     private static EntityCollection updatedEntities;
 
-    private static ArrayList<JsonObject> serializedEntries = new ArrayList<>();
+    private static Map<Integer, List<JsonObject>> serializedEntries = new HashMap<>();
 
     private static Set<Class<? extends HistoricEntity>> historicClasses = new HashSet<>();
 
@@ -49,7 +49,6 @@ public class History {
         JsonObject entry = new JsonObject();
 
         entry.add("event", new JsonPrimitive(event.getClass().getSimpleName()));
-        entry.add("time", new JsonPrimitive(event.getInstant()));
 
         List<HistoricEntity> historicEntities = new ArrayList<>();
 
@@ -64,7 +63,11 @@ public class History {
             entry.add("changes", changes);
         }
 
-        serializedEntries.add(entry);
+        if (!serializedEntries.containsKey(event.getInstant())) {
+            serializedEntries.put(event.getInstant(), new ArrayList<>());
+        }
+
+        serializedEntries.get(event.getInstant()).add(entry);
 
         // TODO: write fixed number of entries to file and clear list
 
