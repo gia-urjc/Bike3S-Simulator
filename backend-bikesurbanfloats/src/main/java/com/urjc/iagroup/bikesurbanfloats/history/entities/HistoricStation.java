@@ -1,12 +1,9 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
-import com.google.gson.annotations.JsonAdapter;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-import com.urjc.iagroup.bikesurbanfloats.entities.models.StationModel;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
-import com.urjc.iagroup.bikesurbanfloats.history.IdReferenceListAdapter;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
 import java.util.List;
@@ -14,9 +11,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @JsonIdentifier("stations")
-public class HistoricStation implements HistoricEntity, StationModel<HistoricBike> {
+public class HistoricStation implements HistoricEntity {
 
-    private static Function<Bike, HistoricBike> bikeConverter = bike -> bike == null ? null : new HistoricBike(bike);
+    private static Function<Bike, Integer> bikeIdConverter = bike -> bike == null ? null : bike.getId();
 
     private int id;
 
@@ -24,8 +21,7 @@ public class HistoricStation implements HistoricEntity, StationModel<HistoricBik
 
     private int capacity;
 
-    @JsonAdapter(IdReferenceListAdapter.class)
-    private List<HistoricBike> bikes;
+    private List<Integer> bikes;
 
     private int reservedBikes;
     private int reservedSlots;
@@ -36,7 +32,7 @@ public class HistoricStation implements HistoricEntity, StationModel<HistoricBik
         this.id = station.getId();
         this.position = new GeoPoint(station.getPosition());
         this.capacity = station.getCapacity();
-        this.bikes = station.getBikes().stream().map(bikeConverter).collect(Collectors.toList());
+        this.bikes = station.getBikes().stream().map(bikeIdConverter).collect(Collectors.toList());
         this.reservedBikes = station.getReservedBikes();
         this.reservedSlots = station.getReservedSlots();
         this.bikesAvailable = station.availableBikes();
@@ -47,40 +43,4 @@ public class HistoricStation implements HistoricEntity, StationModel<HistoricBik
     public int getId() {
         return id;
     }
-
-    @Override
-    public GeoPoint getPosition() {
-        return position;
-    }
-
-    @Override
-    public int getCapacity() {
-        return capacity;
-    }
-
-    @Override
-    public List<HistoricBike> getBikes() {
-        return bikes;
-    }
-
-    @Override
-    public int getReservedBikes() {
-        return reservedBikes;
-    }
-
-    @Override
-    public int getReservedSlots() {
-        return reservedSlots;
-    }
-
-    @Override
-    public int availableBikes() {
-        return bikesAvailable;
-    }
-
-    @Override
-    public int availableSlots() {
-        return slotsAvailable;
-    }
-
 }

@@ -1,12 +1,11 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import com.urjc.iagroup.bikesurbanfloats.entities.models.BikeModel;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricBike;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
 @HistoryReference(HistoricBike.class)
-public class Bike implements Entity, BikeModel {
+public class Bike implements Entity {
 
     private static IdGenerator idGenerator = new IdGenerator();
 
@@ -14,7 +13,7 @@ public class Bike implements Entity, BikeModel {
     private boolean reserved;
 
     public Bike() {
-        this.id = idGenerator.next();
+        this.id  = idGenerator.next();
         this.reserved = false;
     }
 
@@ -23,7 +22,6 @@ public class Bike implements Entity, BikeModel {
         return id;
     }
 
-    @Override
     public boolean isReserved() {
         return reserved;
     }

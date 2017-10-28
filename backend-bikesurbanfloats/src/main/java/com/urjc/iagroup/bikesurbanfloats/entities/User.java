@@ -1,7 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
-import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
@@ -17,7 +16,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
   */
 
 @HistoryReference(HistoricUser.class)
-public abstract class User implements Entity, UserModel<Bike, Station> {
+public abstract class User implements Entity {
 
 	public enum UserType {
         USER_TEST
@@ -25,7 +24,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 
 	private static IdGenerator idGenerator = new IdGenerator();
 
-    private int id;
+	private int id;
     private GeoPoint position;
     private Bike bike;
     private Station destinationStation;
@@ -51,6 +50,11 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
         this.destinationStation = null;
         this.systemManager = null;
     }
+
+    @Override
+    public int getId() {
+        return id;
+    }
     
     public void addReservation(Reservation reservation) {
     	systemManager.addReservation(reservation);
@@ -59,13 +63,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     public void setSystemManager(SystemManager systemManager) {
         this.systemManager = systemManager;
     }
-    
-	@Override
-    public int getId() {
-        return id;
-    }
 
-	@Override
     public GeoPoint getPosition() {
         return position;
     }
@@ -79,7 +77,6 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
         this.position.setLongitude(longitude);
     }
 
-    @Override
     public Bike getBike() {
         return bike;
     }

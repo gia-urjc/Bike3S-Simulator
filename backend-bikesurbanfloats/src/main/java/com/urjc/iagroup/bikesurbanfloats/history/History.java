@@ -4,8 +4,9 @@ import com.google.gson.*;
 import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class History {
@@ -16,18 +17,18 @@ public class History {
             .setPrettyPrinting()
             .create();
 
-    private static ChangeEntry entitiesEntry;
-    private static ChangeEntry lastEntry;
-    private static ChangeEntry nextEntry;
+    private static EntityCollection entitiesEntry;
+    private static EntityCollection lastEntry;
+    private static EntityCollection nextEntry;
 
     private static ArrayList<JsonObject> serializedEntries = new ArrayList<>();
 
     private static Set<Class<? extends HistoricEntity>> historicClasses = new HashSet<>();
 
     public static void init(SimulationConfiguration simulationConfiguration) {
-        entitiesEntry = new ChangeEntry(0);
-        lastEntry = new ChangeEntry(0);
-        nextEntry = new ChangeEntry(0);
+        entitiesEntry = new EntityCollection(0);
+        lastEntry = new EntityCollection(0);
+        nextEntry = new EntityCollection(0);
 
         // TODO: save history output path
     }
@@ -57,7 +58,7 @@ public class History {
 
             lastEntry = nextEntry;
 
-            nextEntry = new ChangeEntry(timeInstant);
+            nextEntry = new EntityCollection(timeInstant);
         }
 
         for (Entity entity : entities) {
@@ -89,22 +90,22 @@ public class History {
                 JsonObject changes = new JsonObject();
 
                 // TODO: maybe read private fields instead of methods for consistency with gson
-                for (Method getter : historicClass.getMethods()) {
-                    if (getter.getName().equals("getId")) continue;
+                for (Field field : historicClass.getDeclaredFields()) {
+                    if (field.getName().equals("id")) continue;
 
-                    JsonObject property;
+                    JsonElement property;
 
-                    if (HistoricEntity.class.isAssignableFrom(getter.getReturnType())) {
-                        property = HistoricEntity.idReferenceChange(oldEntity, entity);
-                    } else try {
-                        property = HistoricEntity.propertyChange(getter.invoke(oldEntity), getter.invoke(entity));
+                    field.setAccessible(true);
+
+                    try {
+                        property = propertyChange(field.get(oldEntity), field.get(entity));
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new IllegalStateException("Error invoking getter on " + historicClass);
+                        throw new IllegalStateException("Error reading field " + field + " from " + historicClass);
                     }
 
-                    if (!property.entrySet().isEmpty()) {
-                        changes.add(getFieldName(getter.getName()), property);
+                    if (property != null) {
+                        changes.add(field.getName(), property);
                     }
                 }
 
@@ -158,17 +159,14 @@ public class History {
         }
     }
 
-    /**
-     * Converts the name of a getter method to its field equivalent.
-     * For example getAverageWalkingVelocity -> averageWalkingVelocity
-     * @param methodName
-     * @return
-     */
-    private static String getFieldName(String methodName) {
-        String[] nameParts = methodName.split("(?=\\p{Lu})");
-        nameParts = Arrays.copyOfRange(nameParts, 1, nameParts.length);
-        nameParts[0] = nameParts[0].toLowerCase();
-        return String.join("", nameParts);
+    private static JsonObject propertyChange(@NotNull Object oldProperty, @NotNull Object newProperty) {
+        if (oldProperty.equals(newProperty)) return null;
+
+        JsonObject property = new JsonObject();
+        property.add("old", History.gson.toJsonTree(oldProperty));
+        property.add("new", History.gson.toJsonTree(newProperty));
+
+        return property;
     }
 
 }
