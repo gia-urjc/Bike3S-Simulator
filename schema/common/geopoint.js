@@ -1,9 +1,7 @@
-module.exports = {
-    type: 'object',
-    required: ['latitude', 'longitude'],
-    additionalProperties: false,
-    properties: {
-        latitude: { type: 'number' },
-        longitude: { type: 'number' }
-    },
-};
+const { JSObject, JSNumber } = require('../util/jsonschema');
+const { RequireAll } = require('../util/jsonschema/constraints');
+
+module.exports = JSObject({
+    latitude: JSNumber(),
+    longitude: JSNumber(),
+}, RequireAll());

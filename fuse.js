@@ -62,12 +62,26 @@ Sparky.task('build:schema', () => new Promise((resolve, reject) => {
 
     // add schemas here
     // one entry has the schema subdirectory as key and an array of file names without extension as value
-    const schemas = {
-        config: ['entrypoints', 'stations', 'general'],
-        history: ['change', 'init']
-    };
+    const schemas = ['config', 'history'];
 
-    Object.keys(schemas).forEach((type) => schemas[type].forEach((schema) => {
+    schemas.forEach((entry) => {
+        const collection = require(`./schema/${entry}`);
+
+        Object.keys(collection).forEach((schema) => {
+            const out = path.join(projectRoot.build.schema(), entry, `${schema}.json`);
+
+            log.time().green(`Writing schema to: ${out}`).echo();
+
+            try {
+                fs.outputJsonSync(out, collection[schema], jsonOptions);
+            } catch (error) {
+                log.time().red(`Error while writing json schema: ${error}`).echo();
+                reject();
+            }
+        })
+    });
+
+    /*Object.keys(schemas).forEach((type) => schemas[type].forEach((schema) => {
         const out = path.join(projectRoot.build.schema(), type, `${schema}.json`);
 
         log.time().green(`Writing schema to: ${out}`).echo();
@@ -78,7 +92,7 @@ Sparky.task('build:schema', () => new Promise((resolve, reject) => {
             log.time().red(`Error while writing json schema: ${error}`).echo();
             reject();
         }
-    }));
+    }));*/
 
     resolve();
 }));
