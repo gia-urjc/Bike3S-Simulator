@@ -1,6 +1,6 @@
-const { JSNumber, JSInteger, JSObject, JSArray, JSEnum, JSNull, JsonSchema } = require('../util/jsonschema');
+const { JSNumber, JSInteger, JSObject, JSArray, JSNull, JsonSchema } = require('../util/jsonschema');
 const { Min, XMin, RequireAll } = require('../util/jsonschema/constraints');
-const { GeoPoint, UserType, IdReference } = require('../common');
+const { GeoPoint, UserType, ReservationState, ReservationType } = require('../common');
 
 const User = JSObject({
     id: JSInteger(Min(0)),
@@ -17,7 +17,9 @@ const Station = JSObject({
     id: JSInteger(Min(0)),
     position: GeoPoint,
     capacity: JSInteger(Min(0)),
-    bikes: JSArray(IdReference)
+    bikes: JSArray({
+        anyOf: [JSInteger(Min(0)), JSNull()]
+    })
 }, RequireAll());
 
 const Reservation = JSObject({
@@ -29,8 +31,8 @@ const Reservation = JSObject({
     bike: {
         anyOf: [JSInteger(Min(0)), JSNull()]
     },
-    type: JSEnum('SLOT', 'BIKE'),
-    state: JSEnum('FAILED', 'ACTIVE', 'EXPIRED', 'SUCCESSFUL')
+    type: ReservationType,
+    state: ReservationState
 }, RequireAll());
 
 module.exports = JsonSchema(JSObject({

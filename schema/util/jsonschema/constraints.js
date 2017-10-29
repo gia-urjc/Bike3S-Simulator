@@ -1,21 +1,14 @@
+const Constraint = (type, args) => ({
+    type: type,
+    args: args || []
+});
+
 module.exports = {
-    Max: (value) => ({
-        maximum: value
-    }),
-    Min: (value) => ({
-        minimum: value
-    }),
-    XMax: (value) => ({
-        exclusiveMaximum: value
-    }),
-    XMin: (value) => ({
-        exclusiveMinimum: value
-    }),
-    Multiple: (value) => ({
-        multipleOf: value
-    }),
-    Require: (...properties) => ({
-        required: properties
-    }),
-    RequireAll: () => module.exports.RequireAll,
+    Min: (value) => Constraint(module.exports.Min, [value]),
+    Max: (value) => Constraint(module.exports.Max, [value]),
+    XMin: (value) => Constraint(module.exports.XMin, [value]),
+    XMax: (value) => Constraint(module.exports.XMax, [value]),
+    Multiple: (value) => Constraint(module.exports.Multiple, [value]),
+    Require: (...properties) => Constraint(module.exports.Require, properties),
+    RequireAll: () => Constraint(module.exports.RequireAll),
 };

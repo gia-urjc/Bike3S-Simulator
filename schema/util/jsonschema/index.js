@@ -1,4 +1,5 @@
 module.exports = {
+    JSBoolean: require('./boolean'),
     JSNumber: require('./number'),
     JSInteger: require('./integer'),
     JSString: require('./string'),
