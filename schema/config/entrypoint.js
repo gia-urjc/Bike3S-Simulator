@@ -1,34 +1,30 @@
-const merge = require('../util/merge');
+const { SNumber, SObject, SConst, SAny, SMerge } = require('../util/jsonschema');
+const { XMin, Require, RequireAll } = require('../util/jsonschema/constraints');
+const { UInt, GeoPoint, UserType } = require('../util/customtypes');
 
-const { JSNumber, JSInteger, JSObject, JSConst } = require('../util/jsonschema');
-const { Min, XMin, Require, RequireAll } = require('../util/jsonschema/constraints');
-const { GeoPoint, UserType } = require('../common');
+const Distributions = [
+    SObject({
+        type: SConst('RANDOM')
+    }, RequireAll()),
+    SObject({
+        type: SConst('POISSON'),
+        lambda: SNumber()
+    }, RequireAll()),
+];
 
-const distributions = [
-    {
-        type: JSConst('RANDOM')
-    },
-    {
-        type: JSConst('POISSON'),
-        lambda: JSNumber()
-    },
-].map((properties) => JSObject(properties, RequireAll()));
-
-const itemBase = JSObject({
+const ItemBase = SObject({
     userType: UserType,
     position: GeoPoint,
 }, RequireAll());
 
-const validItems = [
-    JSObject({
-        timeInstant: JSInteger(Min(0))
-    }, RequireAll()),
-    JSObject({
-        distribution: { oneOf: distributions },
-        radius: JSNumber(XMin(0))
-    }, Require('distribution')),
-].map((item) => merge(item, itemBase));
+const Items = [
+    SMerge(ItemBase, SObject({
+        timeInstant: UInt
+    }, RequireAll())),
+    SMerge(ItemBase, SObject({
+        distribution: SAny(...Distributions),
+        radius: SNumber(XMin(0))
+    }, Require('distribution'))),
+];
 
-module.exports = {
-    oneOf: validItems
-};
+module.exports = SAny(...Items);

@@ -7,13 +7,13 @@ module.exports = (properties, ...constraints) => Object.assign({
 }, ...constraints.map((constraint) => {
     switch (constraint.type) {
         case Min: return {
-            minProperties: constraint.args[0]
+            minProperties: constraint.argument
         };
         case Max: return {
-            maxProperties: constraint.args[0]
+            maxProperties: constraint.argument
         };
         case Require: return {
-            required: constraint.args
+            required: constraint.argument
         };
         case RequireAll: return {
             required: Object.keys(properties)

@@ -5,19 +5,19 @@ module.exports = (...constraints) => Object.assign({
 }, ...constraints.map((constraint) => {
     switch (constraint.type) {
         case Min: return {
-            minimum: constraint.args[0]
+            minimum: constraint.argument
         };
         case Max: return {
-            maximum: constraint.args[0]
+            maximum: constraint.argument
         };
         case XMin: return {
-            exclusiveMinimum: constraint.args[0]
+            exclusiveMinimum: constraint.argument
         };
         case XMax: return {
-            exclusiveMaximum: constraint.args[0]
+            exclusiveMaximum: constraint.argument
         };
         case Multiple: return {
-            multipleOf: constraint.args[0]
+            multipleOf: constraint.argument
         };
         default: {
             console.trace(`Unsupported constraint '${constraint.type.name}' for type 'number'`);

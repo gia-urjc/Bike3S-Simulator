@@ -5,10 +5,10 @@ module.exports = (...constraints) => Object.assign({
 }, ...constraints.map((constraint) => {
     switch (constraint.type) {
         case Min: return {
-            minLength: constraint.args[0]
+            minLength: constraint.argument
         };
         case Max: return {
-            maxLength: constraint.args[0]
+            maxLength: constraint.argument
         };
         default: {
             console.trace(`Unsupported constraint '${constraint.type.name}' for type 'string'`);

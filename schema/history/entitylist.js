@@ -1,43 +1,39 @@
-const { JSNumber, JSInteger, JSObject, JSArray, JSNull, JsonSchema } = require('../util/jsonschema');
-const { Min, XMin, RequireAll } = require('../util/jsonschema/constraints');
-const { GeoPoint, UserType, ReservationState, ReservationType } = require('../common');
+const { SNumber, SObject, SArray, Schema } = require('../util/jsonschema');
+const { XMin, RequireAll } = require('../util/jsonschema/constraints');
+const { UInt, GeoPoint, UserType, ReservationState, ReservationType, IdReference } = require('../util/customtypes');
 
-const User = JSObject({
-    id: JSInteger(Min(0)),
+const User = SObject({
+    id: UInt,
     type: UserType,
-    walkingVelocity: JSNumber(XMin(0)),
-    cyclingVelocity: JSNumber(XMin(0)),
+    walkingVelocity: SNumber(XMin(0)),
+    cyclingVelocity: SNumber(XMin(0)),
 }, RequireAll());
 
-const Bike = JSObject({
-    id: JSInteger(Min(0)),
+const Bike = SObject({
+    id: UInt,
 }, RequireAll());
 
-const Station = JSObject({
-    id: JSInteger(Min(0)),
+const Station = SObject({
+    id: UInt,
     position: GeoPoint,
-    capacity: JSInteger(Min(0)),
-    bikes: JSArray({
-        anyOf: [JSInteger(Min(0)), JSNull()]
-    })
+    capacity: UInt,
+    bikes: SArray(IdReference)
 }, RequireAll());
 
-const Reservation = JSObject({
-    id: JSInteger(Min(0)),
-    startTime: JSInteger(Min(0)),
-    endTime: JSInteger(Min(0)),
-    user: JSInteger(Min(0)),
-    station: JSInteger(Min(0)),
-    bike: {
-        anyOf: [JSInteger(Min(0)), JSNull()]
-    },
+const Reservation = SObject({
+    id: UInt,
+    startTime: UInt,
+    endTime: UInt,
+    user: UInt,
+    station: UInt,
+    bike: IdReference,
     type: ReservationType,
     state: ReservationState
 }, RequireAll());
 
-module.exports = JsonSchema(JSObject({
-    users: JSArray(User),
-    bikes: JSArray(Bike),
-    stations: JSArray(Station),
-    reservations: JSArray(Reservation)
+module.exports = Schema(SObject({
+    users: SArray(User),
+    bikes: SArray(Bike),
+    stations: SArray(Station),
+    reservations: SArray(Reservation)
 }, RequireAll()));

@@ -1,56 +1,49 @@
-const { JSBoolean, JSInteger, JSString, JSArray, JSObject, JSNull, JsonSchema } = require('../util/jsonschema');
+const { SBoolean, SInteger, SString, SArray, SObject, SNull, SAny, Schema } = require('../util/jsonschema');
 const { Min, Require, RequireAll } = require('../util/jsonschema/constraints');
-const { GeoPoint, ReservationState } = require('../common');
+const { UInt, GeoPoint, ReservationState, IdReference } = require('../util/customtypes');
 
-const PropertyChange = (...types) => {
-    const type = types.length === 1 ? types[0] : {
-        anyOf: types
-    };
-    return JSObject({
-        old: type,
-        new: type,
-    }, RequireAll());
-};
+const PropertyChange = (type) => SObject({
+    old: type,
+    new: type,
+}, RequireAll());
 
-const User = JSObject({
-    id: JSInteger(Min(0)),
-    position: PropertyChange(GeoPoint, JSNull()),
-    bike: PropertyChange(JSInteger(Min(0)), JSNull()),
-    destinationStation: PropertyChange(JSInteger(Min(0)), JSNull())
+const User = SObject({
+    id: UInt,
+    position: PropertyChange(SAny(GeoPoint, SNull())),
+    bike: PropertyChange(IdReference),
+    destinationStation: PropertyChange(IdReference)
 }, Require('id'), Min(2));
 
-const Station = JSObject({
-    id: JSInteger(Min(0)),
-    bikes: PropertyChange(JSArray({
-        anyOf: [JSInteger(Min(0)), JSNull()]
-    }))
+const Station = SObject({
+    id: UInt,
+    bikes: PropertyChange(SArray(IdReference))
     // TODO: check other attributes of station
 }, Require('id'), Min(2));
 
-const Bike = JSObject({
-    id: JSInteger(Min(0)),
-    reserved: PropertyChange(JSBoolean()),
+const Bike = SObject({
+    id: UInt,
+    reserved: PropertyChange(SBoolean()),
 }, Require('id'), Min(2));
 
-const Reservation = JSObject({
-    id: JSInteger(Min(0)),
-    endTime: PropertyChange(JSInteger(Min(0))),
+const Reservation = SObject({
+    id: UInt,
+    endTime: PropertyChange(UInt),
     state: PropertyChange(ReservationState)
 }, Require('id'), Min(2));
 
-const Event = JSObject({
-    name: JSString(),
-    changes: JSObject({
-        users: JSArray(User),
-        stations: JSArray(Station),
-        bikes: JSArray(Bike),
-        reservations: JSArray(Reservation)
+const Event = SObject({
+    name: SString(),
+    changes: SObject({
+        users: SArray(User),
+        stations: SArray(Station),
+        bikes: SArray(Bike),
+        reservations: SArray(Reservation)
     })
 }, RequireAll());
 
-const Entry = JSObject({
-    time: JSInteger(),
-    events: JSArray(Event),
+const Entry = SObject({
+    time: SInteger(),
+    events: SArray(Event),
 }, RequireAll());
 
-module.exports = JsonSchema(JSArray(Entry));
+module.exports = Schema(SArray(Entry));
