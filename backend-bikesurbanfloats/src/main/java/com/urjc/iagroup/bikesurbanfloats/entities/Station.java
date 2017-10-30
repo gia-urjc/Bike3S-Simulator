@@ -125,8 +125,9 @@ public class Station implements Entity, StationModel<Bike> {
      * Station unlocks a slot to make it available for other users
      */
 
-    public void cancelsSlotReservation() {
+    public void cancelsSlotReservation(Reservation reservation) {
         this.reservedSlots--;
+        reservation.getBike().setReserved(false);
     }
     
     /**
@@ -134,14 +135,14 @@ public class Station implements Entity, StationModel<Bike> {
      * @return a bike if there's one available or null if there's no available bikes 
      */
     
-        public Bike removeBike() {
+        public Bike removeBikeWithoutReservation() {
         Bike bike = null;
     	if (this.availableBikes() == 0) {
            return null;
         }
         for (int i = 0; i < bikes.size(); i++) {
             bike = bikes.get(i);
-            if (bike != null) {
+            if (bike != null && !bike.isReserved()) {
                 bikes.set(i, null);
                 break;       
             }
@@ -150,6 +151,14 @@ public class Station implements Entity, StationModel<Bike> {
         return bike;
     }
         
+        public Bike removeBikeWithReservation(Reservation  reservation) {
+        int i = bikes.indexOf(reservation.getBike());
+        bikes.set(i, null);
+        Bike bike = reservation.getBike();
+        bike.setReserved(false);
+        return bike;
+        }
+        
         /**
          * If there's available slots at station, it places a bike (which a user has returned) on a slot  
          * @param bike: it is the bike which user wants to return
@@ -157,19 +166,21 @@ public class Station implements Entity, StationModel<Bike> {
          */
 
     public boolean returnBike(Bike bike) {
-        boolean result = false;
+        boolean returned = false;
     	if (this.availableSlots() == 0) {
             return false;
         }
         for (int i = 0; i < bikes.size(); i++) {
             if (bikes.get(i) == null) {
                 bikes.set(i, bike);
-                result = true;
+                returned = true;
                 break;
             }
         }
-		return result;
+		return returned;
     }
+    
+    
 
     @Override
     public String toString() {

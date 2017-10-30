@@ -26,14 +26,39 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 	private static IdGenerator idGenerator = new IdGenerator();
 
     private int id;
+    /**
+     * Current user position
+     */
     private GeoPoint position;
+    /**
+     * Before user removes a bike or after returns it, this attribute is null
+     * While user is cycling, this attribute contains the bike tha user has removed
+     */
     private Bike bike;
+    /**
+     * It is the station to which user has decided to go at this moment
+     */
     private Station destinationStation;
-    private double walkingVelocity;  // meters/second
-    private double cyclingVelocity;  // meters/second
-    
+    /**
+     * Speed at which user walks in meters per second
+     */
+    private double walkingVelocity;
+    /**
+     * Speed at which user cycles in meters per second
+     */
+    private double cyclingVelocity;  
+    /**
+     * It indicates if user has a reserved bike currently
+     */
     private boolean reservedBike;
+    /**
+     * It indicates if user has a reserved slot currently
+     */
     private boolean reservedSlot;
+    /**
+     * It is the user current (bike or slot), i. e.,  the last reservation user has made
+     */
+    private Reservation reservation;
     
     protected SystemManager systemManager;
    
@@ -50,12 +75,14 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
         this.cyclingVelocity = random.nextInt(10, 21) / 3.6;
         this.reservedBike = false;
         this.reservedSlot = false;
+        this.reservation = null;
         this.destinationStation = null;
         this.systemManager = null;
     }
     
     public void addReservation(Reservation reservation) {
     	systemManager.addReservation(reservation);
+    	this.reservation = reservation;
     }
 
     public void setSystemManager(SystemManager systemManager) {
