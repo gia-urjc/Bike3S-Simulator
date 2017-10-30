@@ -5,6 +5,12 @@ import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricBike;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
+/**
+ * This is the main entity with which users and stations interact
+ * It represents bike state: reserved or available (not reserved)
+ * @author IAgroup
+ *
+ */
 @HistoryReference(HistoricBike.class)
 public class Bike implements Entity, BikeModel {
 

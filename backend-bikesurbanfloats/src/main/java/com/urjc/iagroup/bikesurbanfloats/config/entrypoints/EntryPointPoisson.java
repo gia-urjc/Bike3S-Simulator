@@ -12,20 +12,37 @@ import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents several users that appears at system with a Poisson distribution, taking as a reference to generate them the same entry point  
+ * @author IAgroup
+ *
+ */
+
 public class EntryPointPoisson implements EntryPoint {
 	
+	/**
+ * If a radius is given, position is the center of circle
+ * In other case, position is the specific point where user appears
+	 */
 	private GeoPoint position;
-	private double radio; //meters
+	/**
+	 * It is the radius of circle is going to be used to delimit area where users appears  
+	 */
+	private double radius;  
 	private DistributionPoisson distribution;
 	private UserType userType;
-	private TimeRange timeRange;
+	/**
+	 * It is the range of time within  which users can appears, i. e., 
+	 * within which events of users apparearances 
+	 */
+	private TimeRange timeRange;  
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, UserType userType) {
 		this.position = position;
 		this.distribution = distribution;
 		this.userType = userType;
 		this.timeRange = null;
-		this.radio = 0;
+		this.radius = 0;
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
@@ -33,7 +50,7 @@ public class EntryPointPoisson implements EntryPoint {
 		this.position = position;
 		this.distribution = distribution;
 		this.userType = userType;
-		this.radio = radio;
+		this.radius = radio;
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
@@ -42,7 +59,7 @@ public class EntryPointPoisson implements EntryPoint {
 		this.distribution = distribution;
 		this.userType = userType;
 		this.timeRange = timeRange;
-		this.radio = 0;
+		this.radius = 0;
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
@@ -51,12 +68,12 @@ public class EntryPointPoisson implements EntryPoint {
 		this.distribution = distribution;
 		this.userType = userType;
 		this.timeRange = timeRange;
-		this.radio = radio;
+		this.radius = radio;
 	}
 
 	@Override
 	public List<EventUserAppears> generateEvents(SimulationConfiguration simulationConfiguration) {
-		
+
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		UserFactory userFactory = new UserFactory();
 		int actualTime, endTime;
@@ -71,15 +88,15 @@ public class EntryPointPoisson implements EntryPoint {
 		while(actualTime < endTime) {
 			User user = userFactory.createUser(userType);
 			GeoPoint userPosition;
-			if(radio > 0) {
-				BoundingCircle boundingCircle = new BoundingCircle(position, radio);
+			if(radius > 0) {
+				BoundingCircle boundingCircle = new BoundingCircle(position, radius);
 				userPosition = boundingCircle.randomPointInCircle();
 			}
 			else {
 				userPosition = position;
 			}
-			int timeEvent = distribution.randomInterarrivalDelay();
-			actualTime += timeEvent;
+			int eventTime = distribution.randomInterarrivalDelay();
+			actualTime += eventTime;
 			EventUserAppears newEvent = new EventUserAppears(actualTime, user, userPosition, simulationConfiguration);
 			generatedEvents.add(newEvent);
 		}
