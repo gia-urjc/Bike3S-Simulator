@@ -26,7 +26,8 @@ public class DistributionPoisson extends Distribution {
      * @see <a href="https://en.wikipedia.org/wiki/Exponential_distribution#Generating_exponential_variates">Generating exponential variates</a>
      */
 	public int randomInterarrivalDelay() {
-	    double randomValue = Math.log(1.0 - StaticRandom.nextDouble(Double.MIN_VALUE, 1));
+		StaticRandom random = StaticRandom.createRandom();
+	    double randomValue = Math.log(1.0 - random.nextDouble(Double.MIN_VALUE, 1));
 	    Double result = (double) -randomValue/lambda;
 	    Long longResult = Math.round(result);
 	    return longResult.intValue();

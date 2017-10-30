@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.config.distributions.DistributionPoisson;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.User.UserType;
@@ -12,7 +11,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntryPointPoisson implements EntryPoint {
+public class EntryPointPoisson extends EntryPoint {
 	
 	private GeoPoint position;
 	private double radio; //meters
@@ -55,14 +54,14 @@ public class EntryPointPoisson implements EntryPoint {
 	}
 
 	@Override
-	public List<EventUserAppears> generateEvents(SimulationConfiguration simulationConfiguration) {
+	public List<EventUserAppears> generateEvents() {
 		
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		UserFactory userFactory = new UserFactory();
 		int actualTime, endTime;
 		if(timeRange == null) {
 			actualTime = 0;
-			endTime = simulationConfiguration.getTotalTimeSimulation();
+			endTime = TOTAL_TIME_SIMULATION;
 		}
 		else {
 			actualTime = timeRange.getStart();
@@ -80,7 +79,7 @@ public class EntryPointPoisson implements EntryPoint {
 			}
 			int timeEvent = distribution.randomInterarrivalDelay();
 			actualTime += timeEvent;
-			EventUserAppears newEvent = new EventUserAppears(actualTime, user, userPosition, simulationConfiguration);
+			EventUserAppears newEvent = new EventUserAppears(actualTime, user, userPosition);
 			generatedEvents.add(newEvent);
 		}
 		return generatedEvents;

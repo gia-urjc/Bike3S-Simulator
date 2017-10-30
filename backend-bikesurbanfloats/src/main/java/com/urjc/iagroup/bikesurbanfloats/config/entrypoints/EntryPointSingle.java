@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.User.UserType;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
@@ -10,7 +9,7 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntryPointSingle implements EntryPoint {
+public class EntryPointSingle extends EntryPoint {
 	private GeoPoint position;
 	private UserType userType;
 	private int instant; 
@@ -22,11 +21,11 @@ public class EntryPointSingle implements EntryPoint {
 	}
 
 	@Override
-	public List<EventUserAppears> generateEvents(SimulationConfiguration simulationConfiguration) {
+	public List<EventUserAppears> generateEvents() {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		UserFactory userFactory = new UserFactory();
 		User user = userFactory.createUser(userType);
-		EventUserAppears event = new EventUserAppears(instant, user, position, simulationConfiguration);
+		EventUserAppears event = new EventUserAppears(instant, user, position);
 		generatedEvents.add(event);
 		return generatedEvents;
 	}

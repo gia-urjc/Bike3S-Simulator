@@ -4,31 +4,50 @@ import java.util.Random;
 
 public class StaticRandom {
 	
-	private static Random random;
+	private static StaticRandom instance = null;
+	private Random random;
 	
-	public static void setSeed(long seed) {
+	private StaticRandom(long seed) {
+		this.random = new Random(seed);
+	}
+	
+	public void setSeed(long seed) {
 		random = new Random(seed);
 	}
 	
-	public static int nextInt(int min, int max) {	
+	public int nextInt(int min, int max) {	
 		return min + random.nextInt((max - min) + 1);
 	}
 	
-	public static int nextInt() {
+	public int nextInt() {
 		return random.nextInt();
 	}
 	
-	public static double nextDouble(double min, double max) {
+	public double nextDouble(double min, double max) {
 		return min + (max - min) * random.nextDouble();
 	}
 	
-	public static double nextDouble() {
+	public double nextDouble() {
 		return random.nextDouble();
 	}
 	
-	public static boolean nextBoolean() {
+	public boolean nextBoolean() {
 		return random.nextBoolean();
 	}
-
+	
+	public static StaticRandom createRandom(long seed) {
+		if(instance == null) {
+			instance = new StaticRandom(seed);
+			return instance;
+		}
+		return instance;
+	}
+	
+	public static StaticRandom createRandom() {
+		if(instance == null) {
+			throw new IllegalStateException("You should call first createRandom(seed)");
+		}
+		return instance;
+	}
 
 }

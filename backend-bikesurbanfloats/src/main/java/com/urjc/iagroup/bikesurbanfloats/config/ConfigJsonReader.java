@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.deserializers.EntryPointDeserial
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.StationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
+import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
@@ -72,16 +73,16 @@ public class ConfigJsonReader {
         FileInputStream inputStreamJson = new FileInputStream(new File(configurationFile));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
         JsonObject jsonConfig = gson.fromJson(bufferedReader, JsonObject.class);
-        simulationConfiguration.setReservationTime(jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt());
-        simulationConfiguration.setTotalTimeSimulation(jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt());
+        Reservation.VALID_TIME = jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt();
+        EntryPoint.TOTAL_TIME_SIMULATION = jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt();
         simulationConfiguration.setRandomSeed(jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong());
-        StaticRandom.setSeed(simulationConfiguration.getRandomSeed());
+        StaticRandom.createRandom(simulationConfiguration.getRandomSeed());
         JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
         simulationConfiguration.setBoundingBox(gson.fromJson(rectangleJson, BoundingBox.class));
         simulationConfiguration.setMapDirectory(jsonConfig.get(JSON_ATTR_MAP_DIRECTORY).getAsString());
-        simulationConfiguration.setGraphhopperDirectory(jsonConfig.get(JSON_ATTR_GRAPHHOPPER_DIRECORY).getAsString());
         simulationConfiguration.setGraphHopperLocale(jsonConfig.get(JSON_ATTR_GRAPHHOPPER_LOCALE).getAsString());
         simulationConfiguration.setConfigurationFile(configurationFile);
+        
         
     }
 
@@ -97,7 +98,7 @@ public class ConfigJsonReader {
             allEntryPoints.add(newEntryPoint);
         }
         for (EntryPoint entryPoint : allEntryPoints) {
-            simulationConfiguration.setEventUserAppears(entryPoint.generateEvents(simulationConfiguration));
+            simulationConfiguration.setEventUserAppears(entryPoint.generateEvents());
         }
     }
 

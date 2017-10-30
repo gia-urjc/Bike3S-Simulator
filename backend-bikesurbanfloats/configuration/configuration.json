@@ -13,17 +13,8 @@
 		}
 	},
 	"mapDirectory": "maps/mostoles.osm",
-  	"graphhopperDirectory": "graphhopper_files",
   	"graphHopperLocale": "ES",
   	"entryPoints": [
-    {
-      "userType": "USER_TEST",
-      "instant": 0,
-      "position": {
-        "latitude": 40.32246,
-        "longitude": -3.87982
-      }
-    },
     {
 		"position": {
 			"latitude": 40.32246,

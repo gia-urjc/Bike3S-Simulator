@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
@@ -13,8 +12,8 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
     private Station station;
     private Reservation reservation;
 
-    public EventUserArrivesAtStationToRentBikeWithReservation(int instant, User user, Station station, Reservation reservation, SimulationConfiguration simulationConfiguration) {
-        super(instant, user, simulationConfiguration);
+    public EventUserArrivesAtStationToRentBikeWithReservation(int instant, User user, Station station, Reservation reservation) {
+        super(instant, user);
         this.station = station;
         this.reservation = reservation;
     }
@@ -38,7 +37,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         } else {   // user rides his bike to a point which is not a station
             GeoPoint point = user.decidesNextPoint();
             int arrivalTime = user.timeToReach(point);
-            newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point, simulationConfiguration));
+            newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
         }
         return newEvents;
     }

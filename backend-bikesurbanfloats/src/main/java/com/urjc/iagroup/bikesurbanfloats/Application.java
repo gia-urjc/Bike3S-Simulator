@@ -25,7 +25,6 @@ public class Application {
 			simulation.run();
 			
 		} catch (IOException e) {
-			
 			e.printStackTrace();
 		}
     }
