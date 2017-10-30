@@ -1,7 +1,8 @@
 {
-  "reservationTime" : 3000,
-	"totalTimeSimulation" : 18000,
+  "reservationTime": 3000,
+	"totalTimeSimulation": 18000,
 	"randomSeed": 200,
+	
 	"bbox": {
 		"northWest": {
 			"latitude": 40.329103,
@@ -12,10 +13,24 @@
 			"longitude": -3.851462
 		}
 	},
+	
 	"mapDirectory": "maps/mostoles.osm",
   	"graphHopperLocale": "ES",
+  	
   	"entryPoints": [
     {
+<<<<<<< HEAD
+=======
+      "userType": "USER_TEST",
+      "instant": 0,
+      "position": {
+        "latitude": 40.32246,
+        "longitude": -3.87982
+      }
+    },
+    {
+    	"userType": "USER_TEST",
+>>>>>>> documentation
 		"position": {
 			"latitude": 40.32246,
 			"longitude": -3.87982 
@@ -25,15 +40,14 @@
 			"type": "POISSON",
 			"lambda": 0.0033333
 		},      
-		"userType": "USER_TEST",
 		"timeRange": {
 			"start": 0,
 			"end": 36000
 		}
   	}
-    
   ],
-  "stations" : [
+  
+  "stations": [
   {
     "bikes": 3,
     "position": {

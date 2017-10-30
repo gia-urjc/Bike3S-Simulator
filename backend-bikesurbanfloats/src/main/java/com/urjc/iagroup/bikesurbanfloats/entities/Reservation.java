@@ -5,6 +5,17 @@ import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricReservation;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
+/**
+ * It can be a bike or slot reservation depending on its type property
+ * It can represents a reservations at all its possible states:
+ * 	ACTIVE: the reservation is valid at that moment
+ *   FAILED: user has tried to make a reservation and it hasn't been possible (there're no available bikes or solts)
+ *   EXPIRED: reservation has been made but timeout has happend
+ *   SUCCESSFUL: user has removed or returned his bike, so reservation has been resolved succesfully (the reservation ceases to exist)  
+ * @author IAgroup
+ *
+ */
+
 @HistoryReference(HistoricReservation.class)
 public class Reservation implements Entity, ReservationModel<Bike, Station, User> {
 
@@ -13,10 +24,10 @@ public class Reservation implements Entity, ReservationModel<Bike, Station, User
     }
 
     public enum ReservationState {
-        FAILED, ACTIVE, EXPIRED, SUCCESSFUL
+        ACTIVE, FAILED, EXPIRED, SUCCESSFUL
     }
 
-    public static int VALID_TIME;
+    public static int VALID_TIME;  // valid time for a reservation (time which a reservation is active)
 
     private static IdGenerator idGenerator = new IdGenerator();
 
@@ -85,11 +96,20 @@ public class Reservation implements Entity, ReservationModel<Bike, Station, User
     public Bike getBike() {
         return bike;
     }
+    
+    /**
+     * Set reservation state to expired and updates reservation end instant 
+     */
 
     public void expire() {
         this.state = ReservationState.EXPIRED;
         this.endInstant = this.startInstant + VALID_TIME;
     }
+    
+    /**
+     * Set reservation state to successful and updates reservation end instant
+     * @param endInstant: it is the time instant when user removes or returns a bike with a previous bike or slot reservation, respectively
+     */
 
     public void resolve(int endInstant) {
         this.state = ReservationState.SUCCESSFUL;

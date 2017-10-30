@@ -8,6 +8,11 @@ import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPointPoisson;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPointSingle;
 import com.urjc.iagroup.bikesurbanfloats.config.distributions.Distribution.DistributionType;;
 
+/**
+ * It represents 
+ * @author Sandra
+ *
+ */
 public class EntryPointFactory {
 	
 	private Gson gson;

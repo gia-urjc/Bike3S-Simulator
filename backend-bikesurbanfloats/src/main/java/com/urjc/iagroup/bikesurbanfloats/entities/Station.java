@@ -9,6 +9,13 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This is the second main entity of the system
+ * It represents station state: how many bikes and slots contains and which of them are reserved
+ * It provides all actions a user can carry out with bikes (to remove, return or reserve them) and slots (to reserve)  
+ * @author IAgroup
+ *
+ */
 @HistoryReference(HistoricStation.class)
 public class Station implements Entity, StationModel<Bike> {
 

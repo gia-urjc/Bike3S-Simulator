@@ -9,7 +9,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 /**
- * This is the main entity of the system
+ * This is the main entity of the the system
  * It represents the basic behaviour of all users type which can apper in the system
  * It provides an implementation for basic methods which manage common information for all kind of users
  * It provides a behaviour pattern (make decissions) which depends on specific user type properties  
