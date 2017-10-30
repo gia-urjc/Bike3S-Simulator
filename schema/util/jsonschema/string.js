@@ -1,4 +1,4 @@
-const { Min, Max } = require('./constraints');
+const { Min, Max, Pattern } = require('./constraints');
 
 module.exports = (...constraints) => Object.assign({
     type: 'string'
@@ -9,6 +9,9 @@ module.exports = (...constraints) => Object.assign({
         };
         case Max: return {
             maxLength: constraint.argument
+        };
+        case Pattern: return {
+            pattern: new RegExp(constraint.argument).source
         };
         default: {
             console.trace(`Unsupported constraint '${constraint.type.name}' for type 'string'`);

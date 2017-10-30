@@ -11,4 +11,5 @@ module.exports = {
     Multiple: (value) => Constraint(module.exports.Multiple, value),
     Require: (...properties) => Constraint(module.exports.Require, properties),
     RequireAll: () => Constraint(module.exports.RequireAll),
+    Pattern: (regex) => Constraint(module.exports.Pattern, regex),
 };
