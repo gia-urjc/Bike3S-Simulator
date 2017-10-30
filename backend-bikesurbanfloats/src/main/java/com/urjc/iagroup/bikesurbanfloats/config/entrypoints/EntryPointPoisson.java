@@ -6,8 +6,8 @@ import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.User.UserType;
 import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,20 +54,6 @@ public class EntryPointPoisson implements EntryPoint {
 		this.radio = radio;
 	}
 
-
-	private User createUser(UserFactory userFactory) {
-		BoundingCircle bcircle = new BoundingCircle(position, radio);
-		User user;
-		if(radio > 0.0) {
-			GeoPoint randomPosition = bcircle.randomPointInCircle();
-			user = userFactory.createUser(userType, randomPosition);
-		}
-		else {
-			user = userFactory.createUser(userType, position);
-		}
-		return user;
-	}
-
 	@Override
 	public List<EventUserAppears> generateEvents(SimulationConfiguration simulationConfiguration) {
 		
@@ -83,10 +69,18 @@ public class EntryPointPoisson implements EntryPoint {
 			endTime = timeRange.getEnd();
 		}
 		while(actualTime < endTime) {
-			User user = createUser(userFactory);
+			User user = userFactory.createUser(userType);
+			GeoPoint userPosition;
+			if(radio > 0) {
+				BoundingCircle boundingCircle = new BoundingCircle(position, radio);
+				userPosition = boundingCircle.randomPointInCircle();
+			}
+			else {
+				userPosition = position;
+			}
 			int timeEvent = distribution.randomInterarrivalDelay();
 			actualTime += timeEvent;
-			EventUserAppears newEvent = new EventUserAppears(actualTime, user, simulationConfiguration);
+			EventUserAppears newEvent = new EventUserAppears(actualTime, user, userPosition, simulationConfiguration);
 			generatedEvents.add(newEvent);
 		}
 		return generatedEvents;

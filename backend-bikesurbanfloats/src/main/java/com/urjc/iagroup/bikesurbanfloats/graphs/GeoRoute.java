@@ -1,36 +1,36 @@
-package com.urjc.iagroup.bikesurbanfloats.util;
+package com.urjc.iagroup.bikesurbanfloats.graphs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Route {
+public class GeoRoute {
 	
-	private List<GeoPoint> geoPointList;
+	private List<GeoPoint> pointList;
 	private double distance;
-	private List<Double> distancesBetweenPoints;
+	private List<Double> distancesBetweenPointsList;
 	
-	public Route(List<GeoPoint> geoPointList) throws IllegalStateException {
+	public GeoRoute(List<GeoPoint> geoPointList) throws IllegalStateException {
 		if(geoPointList.size() < 2) {
 			throw new IllegalStateException("Routes should have more than two points");
 		}
-		this.geoPointList = geoPointList;
-		this.distancesBetweenPoints = new ArrayList<>();
+		this.pointList = geoPointList;
+		this.distancesBetweenPointsList = new ArrayList<>();
 		calculateDistances();
 	}
 	
 	private void calculateDistances() {
 		Double totalDistance = 0.0;
-		for(int i = 0; i < geoPointList.size()-1; i++) {
-			GeoPoint currentGPoint = geoPointList.get(i);
-			GeoPoint nextGPoint = geoPointList.get(i+1);
-			Double currentDistance = currentGPoint.distanceTo(nextGPoint);
-			distancesBetweenPoints.add(currentDistance);
+		for(int i = 0; i < pointList.size()-1; i++) {
+			GeoPoint currentPoint = pointList.get(i);
+			GeoPoint nextPoint = pointList.get(i+1);
+			Double currentDistance = currentPoint.distanceTo(nextPoint);
+			distancesBetweenPointsList.add(currentDistance);
 			totalDistance += currentDistance;
 		}
 		distance = totalDistance;
 	}
 	
-	public Route calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws Exception {
+	public GeoRoute calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws Exception {
 		double totalDistance = 0.0;
 		double currentTime = 0.0;
 		double currentDistance = 0.0;
@@ -38,13 +38,13 @@ public class Route {
 		GeoPoint nextPoint = null;
 		List<GeoPoint> newGeoPointList = new ArrayList<>();
 		int i = 0;
-		while(i < geoPointList.size()-1 && currentTime < finalTime) {
-			currentPoint = geoPointList.get(i);
-			nextPoint = geoPointList.get(i+1);
-			currentDistance = distancesBetweenPoints.get(i);
+		while(i < pointList.size()-1 && currentTime < finalTime) {
+			currentPoint = pointList.get(i);
+			nextPoint = pointList.get(i+1);
+			currentDistance = distancesBetweenPointsList.get(i);
 			totalDistance += currentDistance;
 			currentTime += currentDistance/velocity;	
-			newGeoPointList.add(geoPointList.get(i));
+			newGeoPointList.add(pointList.get(i));
 			i++;
 		}
 		if(currentTime < finalTime) {
@@ -54,19 +54,19 @@ public class Route {
 		double intermedDistance = currentDistance - x;
 		GeoPoint newPoint = currentPoint.reachedPoint(intermedDistance, nextPoint);
 		newGeoPointList.add(newPoint);
-		Route newRoute = new Route(newGeoPointList);
+		GeoRoute newRoute = new GeoRoute(newGeoPointList);
 		return newRoute;	
 	}
 	
 	@Override
 	public String toString() {
 		String result = "Points: \n";
-		for(GeoPoint p: geoPointList) {
+		for(GeoPoint p: pointList) {
 			result += p.getLatitude() + "," + p.getLongitude() + "\n";
 		}
 		result += "Distance: " + distance + " meters \n";
 		result += "Distances between points: ";
-		for(Double d: distancesBetweenPoints) {
+		for(Double d: distancesBetweenPointsList) {
 			result += d + "\n";
 		}
 		return result;

@@ -5,7 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.core.SimulationEngine;
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Hello world!
@@ -15,18 +15,16 @@ import java.io.FileNotFoundException;
 public class Application {
 	
     public static void main(String[] args) {
-    	String stationsPath = args[0];
-    	String entryPath = args[1];
-    	String simulationPath = args[2];
-        ConfigJsonReader jsonReader = new ConfigJsonReader(stationsPath, entryPath, simulationPath);
+    	String configurationFile = args[0];
+        ConfigJsonReader jsonReader = new ConfigJsonReader(configurationFile);
 		
         try {
 			SimulationConfiguration simulationConfiguration = jsonReader.createSystemConfiguration();
-			SystemManager systemManager = jsonReader.createSystemManager();
+			SystemManager systemManager = jsonReader.createSystemManager(simulationConfiguration);
 			SimulationEngine simulation = new SimulationEngine(simulationConfiguration, systemManager);
 			simulation.run();
 			
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			
 			e.printStackTrace();
 		}

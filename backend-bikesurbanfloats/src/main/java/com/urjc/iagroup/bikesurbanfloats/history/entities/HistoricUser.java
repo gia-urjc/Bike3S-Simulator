@@ -1,33 +1,32 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.annotations.JsonAdapter;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
+import com.urjc.iagroup.bikesurbanfloats.history.IdReferenceAdapter;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @JsonIdentifier("users")
-public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<HistoricBike, HistoricStation> {
+public class HistoricUser implements HistoricEntity, UserModel<HistoricBike, HistoricStation> {
 
 	private int id;
 
 	private GeoPoint position;
 
+    private double walkingVelocity;
+    private double cyclingVelocity;
+
+    @JsonAdapter(IdReferenceAdapter.class)
 	private HistoricBike bike;
 
-	private double walkingVelocity;
-	private double cyclingVelocity;
-
+    @JsonAdapter(IdReferenceAdapter.class)
 	private HistoricStation destinationStation;
 
     public HistoricUser(User user) {
         this.id = user.getId();
-        this.position = new GeoPoint(user.getPosition());
+        this.position = user.getPosition() == null? null : new GeoPoint(user.getPosition());
         this.bike = user.getBike() == null ? null: new HistoricBike(user.getBike());
         this.walkingVelocity = user.getWalkingVelocity();
         this.cyclingVelocity = user.getCyclingVelocity();
@@ -63,31 +62,4 @@ public class HistoricUser implements HistoricEntity<HistoricUser>, UserModel<His
     public double getCyclingVelocity() {
         return cyclingVelocity;
     }
-
-    @Override
-	public JsonObject makeChangeEntryFrom(HistoricUser previousSelf) {
-		JsonObject changeEntry = new JsonObject();
-
-		JsonObject changes = new JsonObject();
-
-        Map<String, JsonObject> properties = new HashMap<>();
-
-        properties.put("bike", HistoricEntity.idReferenceChange(previousSelf.bike, this.bike));
-        properties.put("position", HistoricEntity.propertyChange(previousSelf.position, this.position));
-
-		// TODO: add other possible changes like destination
-
-        properties.forEach((property, json) -> {
-            if (!json.entrySet().isEmpty()) {
-                changes.add(property, json);
-            }
-        });
-
-        if (changes.entrySet().isEmpty()) return null;
-
-        changeEntry.add("id", new JsonPrimitive(id));
-        changeEntry.add("changes", changes);
-	
-	    return changeEntry;
-	}
 }

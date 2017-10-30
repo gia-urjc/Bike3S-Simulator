@@ -1,8 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.config;
 
-import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
-import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
 
@@ -11,50 +8,25 @@ import java.util.List;
 
 public class SimulationConfiguration {
 	
-	private String configStationPath = "configuration/config_stations.json";
-	private String configEntryPath = "configuration/config_entry_points.json";
-	private String configSimulationPath = "configuration/config_simulation.json";
+	private String configurationFile = "configuration/config_stations.json";
 	
 	//System Information
-	private List<Station> stations = new ArrayList<>();
 	private List<EventUserAppears> eventUserAppears = new ArrayList<>();
-	private List<Bike> bikes = new ArrayList<>();
-	private List<User> users = new ArrayList<>();
-
 
 	//Configuration information
 	private int reservationTime = 0;
 	private int totalTimeSimulation = 0;
 	private long randomSeed = 0;
 	
+	//GrapHopper Properties
+	private String mapDirectory;
+	private String graphhopperDirectory;
+	private String GraphHopperLocale;
+	
 	//Utils
 	private BoundingBox boundingBox = null;
 
 	SimulationConfiguration() {}
-	
-	public List<Station> getStations() {
-		return stations;
-	}
-
-	public void setStations(List<Station> stations) {
-		this.stations = stations;
-	}
-
-	public List<Bike> getBikes() {
-		return bikes;
-	}
-
-	public void setBikes(ArrayList<Bike> bikes) {
-		this.bikes = bikes;
-	}
-	
-	public List<User> getUsers() {
-		return users;
-	}
-
-	public void setUsers(List<User> users) {
-		this.users = users;
-	}
 
 	public int getReservationTime() {
 		return reservationTime;
@@ -95,37 +67,41 @@ public class SimulationConfiguration {
 	public void setEventUserAppears(List<EventUserAppears> eventUserAppears) {
 		this.eventUserAppears = eventUserAppears;
 	}
+
+	public String getConfigurationFile() {
+		return configurationFile;
+	}
+
+	public void setConfigurationFile(String configurationFile) {
+		this.configurationFile = configurationFile;
+	}
 	
-	public String getConfigStationPath() {
-		return configStationPath;
+	public String getMapDirectory() {
+		return mapDirectory;
 	}
 
-	public void setConfigStationPath(String configStationPath) {
-		this.configStationPath = configStationPath;
+	public void setMapDirectory(String mapDirectory) {
+		this.mapDirectory = mapDirectory;
 	}
 
-	public String getConfigEntryPath() {
-		return configEntryPath;
+	public String getGraphHopperLocale() {
+		return GraphHopperLocale;
 	}
 
-	public void setConfigEntryPath(String configEntryPath) {
-		this.configEntryPath = configEntryPath;
+	public void setGraphHopperLocale(String graphHopperLocale) {
+		GraphHopperLocale = graphHopperLocale;
 	}
 
-	public String getConfigSimulationPath() {
-		return configSimulationPath;
+	public String getGraphhopperDirectory() {
+		return graphhopperDirectory;
 	}
 
-	public void setConfigSimulationPath(String configSimulationPath) {
-		this.configSimulationPath = configSimulationPath;
+	public void setGraphhopperDirectory(String graphhopperDirectory) {
+		this.graphhopperDirectory = graphhopperDirectory;
 	}
-
 	
 	public void resetInfo() {
-		stations = new ArrayList<>();
 		eventUserAppears = new ArrayList<>();
-		bikes = new ArrayList<>();
-		setUsers(new ArrayList<>());
 		reservationTime = 0;
 		totalTimeSimulation = 0;
 		randomSeed = 0;
@@ -134,10 +110,6 @@ public class SimulationConfiguration {
 	
 	public String toString() {
 		String result = "";
-		result += "STATIONS: \n ------------- \n";
-		for(Station s: stations) {
-			result += s.toString() + "\n";
-		}
 		result += "Entry Points: \n ------------- \n";
 		for(EventUserAppears e: eventUserAppears) {
 			result += e.toString() + "\n";

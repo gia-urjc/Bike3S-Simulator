@@ -16,8 +16,6 @@ import com.graphhopper.reader.osm.GraphHopperOSM;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.shapes.GHPoint3D;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.Route;
 
 public class GraphHopperImpl implements GraphManager {
 
@@ -25,24 +23,24 @@ public class GraphHopperImpl implements GraphManager {
 	private String locale;
 	private GHResponse rsp;
 	
-	public GraphHopperImpl(String mapDir, String graphhopperDir, String encodingManager, String locale) throws IOException {
+	public GraphHopperImpl(String mapDir, String graphhopperDir, String locale) throws IOException {
 		FileUtils.deleteDirectory(new File(graphhopperDir));
 		this.hopper = new GraphHopperOSM().forServer();
 		this.locale = locale;
 		hopper.setDataReaderFile(mapDir);
 		hopper.setGraphHopperLocation(graphhopperDir);
-		hopper.setEncodingManager(new EncodingManager(encodingManager));
+		hopper.setEncodingManager(new EncodingManager("foot"));
 		hopper.importOrLoad();
 		
 	}
 	
-	private Route responseGHToRoute(PathWrapper path) throws IllegalStateException {
+	private GeoRoute responseGHToRoute(PathWrapper path) throws IllegalStateException {
 		List<GeoPoint> geoPointList = new ArrayList<>();
     	PointList ghPointList = path.getPoints();
     	for(GHPoint3D p: ghPointList) {
     		geoPointList.add(new GeoPoint(p.getLat(), p.getLon()));
     	}
-    	Route route = new Route(geoPointList);
+    	GeoRoute route = new GeoRoute(geoPointList);
     	return route;
 	}
 	
@@ -64,7 +62,7 @@ public class GraphHopperImpl implements GraphManager {
 	}
 	
 	@Override
-	public Route getBestRoute() throws Exception {
+	public GeoRoute getBestRoute() throws Exception {
 		if(rsp == null){
 			throw new Exception("Route is not calculated");
 		}
@@ -73,11 +71,11 @@ public class GraphHopperImpl implements GraphManager {
 	}
 
 	@Override
-	public List<Route> getAllRoutes() throws Exception {
+	public List<GeoRoute> getAllRoutes() throws Exception {
 		if(rsp == null){
 			throw new Exception("Route is not calculated");
 		}
-		List<Route> routes = new ArrayList<>();
+		List<GeoRoute> routes = new ArrayList<>();
 		for(PathWrapper p: rsp.getAll()) {
 			routes.add(responseGHToRoute(p));
 		}

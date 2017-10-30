@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
-import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
 public class EventUserArrivesAtStationToRentBikeWithoutReservation extends EventUser {
     private Station station;

@@ -1,20 +1,20 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.annotations.JsonAdapter;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.StationModel;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
+import com.urjc.iagroup.bikesurbanfloats.history.IdReferenceListAdapter;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
-import com.urjc.iagroup.bikesurbanfloats.util.GeoPoint;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @JsonIdentifier("stations")
-public class HistoricStation implements HistoricEntity<HistoricStation>, StationModel<HistoricBike> {
+public class HistoricStation implements HistoricEntity, StationModel<HistoricBike> {
 
     private static Function<Bike, HistoricBike> bikeConverter = bike -> bike == null ? null : new HistoricBike(bike);
 
@@ -24,6 +24,7 @@ public class HistoricStation implements HistoricEntity<HistoricStation>, Station
 
     private int capacity;
 
+    @JsonAdapter(IdReferenceListAdapter.class)
     private List<HistoricBike> bikes;
 
     private int reservedBikes;
@@ -81,32 +82,5 @@ public class HistoricStation implements HistoricEntity<HistoricStation>, Station
     public int availableSlots() {
         return slotsAvailable;
     }
-
-    @Override
-	public JsonObject makeChangeEntryFrom(HistoricStation previousSelf) {
-        JsonObject changes = new JsonObject();
-
-        boolean hasChanges = false;
-
-        changes.add("id", new JsonPrimitive(id));
-
-        JsonObject bikes = new JsonObject();
-
-        for (int i = 0; i < capacity; i++) {
-            JsonObject bike = HistoricEntity.idReferenceChange(previousSelf.bikes.get(i), this.bikes.get(i));
-            if (bike != null) {
-                bikes.add(Integer.toString(i), bike);
-                hasChanges = true;
-            }
-        }
-
-        if (hasChanges) {
-            changes.add("bikes", bikes);
-        }
-
-        // TODO: add other possible changes
-
-        return hasChanges ? changes : null;
-	}
 
 }
