@@ -19,8 +19,6 @@
   	
   	"entryPoints": [
     {
-<<<<<<< HEAD
-=======
       "userType": "USER_TEST",
       "instant": 0,
       "position": {
@@ -30,7 +28,6 @@
     },
     {
     	"userType": "USER_TEST",
->>>>>>> documentation
 		"position": {
 			"latitude": 40.32246,
 			"longitude": -3.87982 

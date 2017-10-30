@@ -97,9 +97,9 @@ public class Station implements Entity, StationModel<Bike> {
     public Bike reservesBike() {
     	Bike bike = null;
     	if (availableBikes() > 0) {
-        this.reservedBikes++;
-        bike = getFirstAvailableBike();
-        bike.setReserved(true);
+	        bike = getFirstAvailableBike();
+	        this.reservedBikes++;
+	        bike.setReserved(true);
     	}
         return bike;
     }

@@ -18,6 +18,11 @@ public class GeoRoute {
 		calculateDistances();
 	}
 	
+	public double getDistance() {
+		return distance;
+	}
+
+	
 	private void calculateDistances() {
 		Double totalDistance = 0.0;
 		for(int i = 0; i < pointList.size()-1; i++) {
@@ -29,7 +34,7 @@ public class GeoRoute {
 		}
 		distance = totalDistance;
 	}
-	
+
 	public GeoRoute calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws Exception {
 		double totalDistance = 0.0;
 		double currentTime = 0.0;

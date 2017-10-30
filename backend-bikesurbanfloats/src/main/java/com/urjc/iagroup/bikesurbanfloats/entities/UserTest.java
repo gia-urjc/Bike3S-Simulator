@@ -1,6 +1,8 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import com.graphhopper.storage.index.QueryResult.Position;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 import java.util.List;
@@ -93,8 +95,10 @@ public class UserTest extends User {
     }
 	
 	@Override
-	public GeoPoint decidesNextPoint() {
-		return systemManager.generateBoundingBoxRandomPoint();
+	public void decidesNextPoint() throws Exception {
+		GeoPoint destination = systemManager.generateBoundingBoxRandomPoint();
+		systemManager.getGraphManager().calculateRoutes(getPosition(), destination);
+		this.actualRoute = this.determineRoute(systemManager.getGraphManager().getAllRoutes());
 	}
 	
 	@Override
@@ -104,8 +108,8 @@ public class UserTest extends User {
 
 	// TODO: moving it to user class?
 	@Override
-	public void updatePosition(int time) {
-		double distance = time * getPosition().distanceTo(getDestinationStation().getPosition()) / timeToReach(getDestinationStation().getPosition());
+	public void updatePosition(int time) throws Exception {
+		double distance = time * getPosition().distanceTo(getDestinationStation().getPosition()) / timeToReach();
  		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
 		setPosition(newPoint);
 	}
@@ -118,6 +122,11 @@ public class UserTest extends User {
 	@Override
 	public boolean decidesToDetermineOtherStationAfterFailedReservation() {
 		return systemManager.getRandom().nextBoolean();
+	}
+
+	@Override
+	public GeoRoute determineRoute(List<GeoRoute> routes) {
+		return routes.get(0);
 	}
 
 }
