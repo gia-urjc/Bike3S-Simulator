@@ -1,14 +1,20 @@
 package com.urjc.iagroup.bikesurbanfloats.core;
 
+import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationState;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GraphHopperImpl;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GraphManager;
+import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
+import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,12 +25,23 @@ public class SystemManager {
     private List<Station> stations;
     private List<Bike> bikes;
     private List<Reservation> reservations;
-    private GraphManager graphManager;
+    private GraphManager graphManager; 
+    private StaticRandom random;
+    private BoundingBox bbox;
 
-    public SystemManager(List<Station> stations) {
+    public SystemManager(List<Station> stations, SimulationConfiguration systemConfiguration) throws IOException {
         this.stations = new ArrayList<>(stations);
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         this.reservations = new ArrayList<>();
+        this.graphManager = createGraphManager(systemConfiguration);
+        this.random = StaticRandom.createRandom();
+        this.bbox = systemConfiguration.getBoundingBox();
+    }
+    
+    private GraphHopperImpl createGraphManager(SimulationConfiguration systemConfiguration) throws IOException {
+    	String mapDirectory = systemConfiguration.getMapDirectory();
+    	String graphhopperLocale = systemConfiguration.getGraphHopperLocale();
+    	return new GraphHopperImpl(mapDirectory, graphhopperLocale);
     }
 
     public void addReservation(Reservation reservation) {
@@ -42,6 +59,14 @@ public class SystemManager {
     public List<Bike> consultBikes() {
         return bikes;
     }
+    
+    public GraphManager getGraphManager() {
+		return graphManager;
+	}
+	
+	public StaticRandom getRandom() {
+		return random;
+	}
 
     public List<Station> consultStationsWithBikeReservationAttempt(User user, int timeInstant) {
         return consultReservations(user).stream()
@@ -72,4 +97,9 @@ public class SystemManager {
         filteredStations.removeAll(consultStationsWithSlotReservationAttempt(user, timeInstant));
         return filteredStations;
     }
+    
+    public GeoPoint generateBoundingBoxRandomPoint() {
+    	return bbox.randomPoint();
+    }
+    
 }

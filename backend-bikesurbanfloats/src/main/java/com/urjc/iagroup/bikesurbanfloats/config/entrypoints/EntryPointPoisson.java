@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.config.distributions.DistributionPoisson;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.User.UserType;
@@ -12,7 +11,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntryPointPoisson implements EntryPoint {
+public class EntryPointPoisson extends EntryPoint {
 	
 	private GeoPoint position;
 	private double radio; //meters
@@ -54,39 +53,33 @@ public class EntryPointPoisson implements EntryPoint {
 		this.radio = radio;
 	}
 
-
-	private User createUser(UserFactory userFactory) {
-		BoundingCircle bcircle = new BoundingCircle(position, radio);
-		User user;
-		if(radio > 0.0) {
-			GeoPoint randomPosition = bcircle.randomPointInCircle();
-			user = userFactory.createUser(userType, randomPosition);
-		}
-		else {
-			user = userFactory.createUser(userType, position);
-		}
-		return user;
-	}
-
 	@Override
-	public List<EventUserAppears> generateEvents(SimulationConfiguration simulationConfiguration) {
+	public List<EventUserAppears> generateEvents() {
 		
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		UserFactory userFactory = new UserFactory();
 		int actualTime, endTime;
 		if(timeRange == null) {
 			actualTime = 0;
-			endTime = simulationConfiguration.getTotalTimeSimulation();
+			endTime = TOTAL_TIME_SIMULATION;
 		}
 		else {
 			actualTime = timeRange.getStart();
 			endTime = timeRange.getEnd();
 		}
 		while(actualTime < endTime) {
-			User user = createUser(userFactory);
+			User user = userFactory.createUser(userType);
+			GeoPoint userPosition;
+			if(radio > 0) {
+				BoundingCircle boundingCircle = new BoundingCircle(position, radio);
+				userPosition = boundingCircle.randomPointInCircle();
+			}
+			else {
+				userPosition = position;
+			}
 			int timeEvent = distribution.randomInterarrivalDelay();
 			actualTime += timeEvent;
-			EventUserAppears newEvent = new EventUserAppears(actualTime, user, simulationConfiguration);
+			EventUserAppears newEvent = new EventUserAppears(actualTime, user, userPosition);
 			generatedEvents.add(newEvent);
 		}
 		return generatedEvents;

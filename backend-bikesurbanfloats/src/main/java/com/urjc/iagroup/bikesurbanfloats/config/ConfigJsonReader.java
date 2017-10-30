@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.deserializers.EntryPointDeserial
 import com.urjc.iagroup.bikesurbanfloats.config.deserializers.StationDeserializer;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
+import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
@@ -20,17 +21,16 @@ public class ConfigJsonReader {
     private final static String JSON_ATTR_TIME_SIMULATION = "totalTimeSimulation";
     private final static String JSON_ATTR_RANDOM_SEED = "randomSeed";
     private final static String JSON_ATTR_RECTANGLE_SIMULATION = "bbox";
+    private final static String JSON_ATTR_MAP_DIRECTORY = "mapDirectory";
+    private final static String JSON_ATTR_GRAPHHOPPER_DIRECORY = "graphhopperDirectory";
+    private final static String JSON_ATTR_GRAPHHOPPER_LOCALE = "graphHopperLocale";
 
-    private String stationsFileName;
-    private String entryPointsFileName;
-    private String configSimulationFileName;
+    private String configurationFile;
 
     private Gson gson;
 
-    public ConfigJsonReader(String stationsFileName, String entryPointsFileName, String configSimulationFileName) {
-        this.stationsFileName = stationsFileName;
-        this.entryPointsFileName = entryPointsFileName;
-        this.configSimulationFileName = configSimulationFileName;
+    public ConfigJsonReader(String configurationFile) {
+    	this.configurationFile = configurationFile;
         this.gson = createAndConfigureGson();
     }
 
@@ -47,18 +47,17 @@ public class ConfigJsonReader {
         return simulationConfiguration;
     }
 
-    public SystemManager createSystemManager() throws FileNotFoundException {
-        FileInputStream inputStreamJson = new FileInputStream(new File(stationsFileName));
+    public SystemManager createSystemManager(SimulationConfiguration simulationConfiguration) throws IOException {
+        FileInputStream inputStreamJson = new FileInputStream(new File(configurationFile));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 
         ArrayList<Station> allStations = new ArrayList<>();
         JsonArray jsonStationsArray = gson.fromJson(bufferedReader, JsonObject.class)
-                .get(JSON_ATTR_STATION).getAsJsonArray();
+        		.get(JSON_ATTR_STATION).getAsJsonArray();
         for (JsonElement elemStation : jsonStationsArray) {
             allStations.add(gson.fromJson(elemStation, Station.class));
         }
-
-        return new SystemManager(allStations);
+        return new SystemManager(allStations, simulationConfiguration);
     }
 
 
@@ -71,23 +70,24 @@ public class ConfigJsonReader {
     }
 
     private void readGlobalConfigurations(SimulationConfiguration simulationConfiguration) throws FileNotFoundException {
-        FileInputStream inputStreamJson = new FileInputStream(new File(configSimulationFileName));
+        FileInputStream inputStreamJson = new FileInputStream(new File(configurationFile));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
         JsonObject jsonConfig = gson.fromJson(bufferedReader, JsonObject.class);
-        simulationConfiguration.setReservationTime(jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt());
-        simulationConfiguration.setTotalTimeSimulation(jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt());
+        Reservation.VALID_TIME = jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt();
+        EntryPoint.TOTAL_TIME_SIMULATION = jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt();
         simulationConfiguration.setRandomSeed(jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong());
-        StaticRandom.setSeed(simulationConfiguration.getRandomSeed());
+        StaticRandom.createRandom(simulationConfiguration.getRandomSeed());
         JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
         simulationConfiguration.setBoundingBox(gson.fromJson(rectangleJson, BoundingBox.class));
-        simulationConfiguration.setConfigStationPath(stationsFileName);
-        simulationConfiguration.setConfigEntryPath(entryPointsFileName);
-        simulationConfiguration.setConfigSimulationPath(configSimulationFileName);
-
+        simulationConfiguration.setMapDirectory(jsonConfig.get(JSON_ATTR_MAP_DIRECTORY).getAsString());
+        simulationConfiguration.setGraphHopperLocale(jsonConfig.get(JSON_ATTR_GRAPHHOPPER_LOCALE).getAsString());
+        simulationConfiguration.setConfigurationFile(configurationFile);
+        
+        
     }
 
     private void readEntryPoints(SimulationConfiguration simulationConfiguration) throws FileNotFoundException {
-        FileInputStream inputStreamJson = new FileInputStream(new File(entryPointsFileName));
+        FileInputStream inputStreamJson = new FileInputStream(new File(configurationFile));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamJson));
 
         ArrayList<EntryPoint> allEntryPoints = new ArrayList<>();
@@ -98,7 +98,7 @@ public class ConfigJsonReader {
             allEntryPoints.add(newEntryPoint);
         }
         for (EntryPoint entryPoint : allEntryPoints) {
-            simulationConfiguration.setEventUserAppears(entryPoint.generateEvents(simulationConfiguration));
+            simulationConfiguration.setEventUserAppears(entryPoint.generateEvents());
         }
     }
 

@@ -1,13 +1,10 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.JsonAdapter;
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.history.IdReferenceAdapter;
-import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
+import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
@@ -28,22 +25,11 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 
 	private static IdGenerator idGenerator = new IdGenerator();
 
-	@Expose
     private int id;
-
-	@Expose
     private GeoPoint position;
-
-	@Expose @JsonAdapter(IdReferenceAdapter.class)
     private Bike bike;
-
-	@Expose @JsonAdapter(IdReferenceAdapter.class)
     private Station destinationStation;
-
-	@Expose
     private double walkingVelocity;  // meters/second
-
-    @Expose
     private double cyclingVelocity;  // meters/second
     
     private boolean reservedBike;
@@ -51,15 +37,17 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     
     protected SystemManager systemManager;
    
-    public User(GeoPoint position) {
+    public User() {
+    	StaticRandom random = StaticRandom.createRandom();
+    	
         this.id = idGenerator.next();
 
-        this.position = position;
+        this.position = null;
         this.bike = null;
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = StaticRandom.nextInt(3, 8) / 3.6;
+        this.walkingVelocity = random.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = StaticRandom.nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = random.nextInt(10, 21) / 3.6;
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
@@ -89,7 +77,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     }
 
     public void setPosition(Double latitude, Double longitude) {
-        this.position.setLatitude(latitude);
+    	this.position.setLatitude(latitude);
         this.position.setLongitude(longitude);
     }
 
@@ -241,7 +229,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 
     /**
      * User decides if he'll leave the system when bike reservation timeout happens 
-     * @param instan: itt is the time instant when h'll make this decision
+     * @param instant: itt is the time instant when h'll make this decision
      * @return true if he decides to leave the system and false in other case (he decides to continue at system)
      */
     
@@ -249,7 +237,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     
     /**
     * User decides if he'll leave the system after not being able to make a bike reservation  
-    * @param instan: itt is the time instant when h'll make this decision
+    * @param instant: itt is the time instant when h'll make this decision
     * @return true if he decides to leave the system and false in other case (he decides to continue at system)
     */
     
@@ -257,7 +245,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     
     /**
      * User decides if he'll leave the system when there're no avalable bikes at station    
-     * @param instan: itt is the time instant when h'll make this decision
+     * @param instant: itt is the time instant when h'll make this decision
      * @return true if he decides to leave the system and false in other case (he decides to continue at system)
      */
     

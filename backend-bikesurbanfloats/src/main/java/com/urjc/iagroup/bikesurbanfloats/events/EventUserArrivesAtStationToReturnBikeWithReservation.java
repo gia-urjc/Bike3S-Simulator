@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
@@ -14,8 +13,8 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
     private Reservation reservation;
 
 
-    public EventUserArrivesAtStationToReturnBikeWithReservation(int instant, User user, Station station, Reservation reservation, SimulationConfiguration simulationConfiguration) {
-        super(instant, user, simulationConfiguration);
+    public EventUserArrivesAtStationToReturnBikeWithReservation(int instant, User user, Station station, Reservation reservation) {
+        super(instant, user);
         this.station = station;
         this.reservation = reservation;
     }

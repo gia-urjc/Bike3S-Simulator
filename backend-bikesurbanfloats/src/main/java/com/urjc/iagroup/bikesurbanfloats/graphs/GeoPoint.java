@@ -1,7 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.graphs;
 
-import java.math.BigDecimal;
-
 public class GeoPoint {
 
     /**
@@ -119,8 +117,8 @@ public class GeoPoint {
 
     @Override
     public String toString() {
-    	String result = "Latitude: " + Double.parseDouble(String.format("%.6f", latitude));
-    	result += "| Longitude: " + Double.parseDouble(String.format("%.6f", longitude)) + " \n";
+    	String result = "Latitude: " + latitude;
+    	result += "| Longitude: " + longitude + " \n";
     	return result;
     }
 }

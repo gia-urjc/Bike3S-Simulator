@@ -19,17 +19,19 @@ import com.graphhopper.util.shapes.GHPoint3D;
 
 public class GraphHopperImpl implements GraphManager {
 
+	private final String GRAPHHOPPER_DIR = "graphhopper_files";
+	
 	private GraphHopper hopper;
 	private String locale;
 	private GHResponse rsp;
 	
-	public GraphHopperImpl(String mapDir, String graphhopperDir, String encodingManager, String locale) throws IOException {
-		FileUtils.deleteDirectory(new File(graphhopperDir));
+	public GraphHopperImpl(String mapDir, String locale) throws IOException {
+		FileUtils.deleteDirectory(new File(GRAPHHOPPER_DIR));
 		this.hopper = new GraphHopperOSM().forServer();
 		this.locale = locale;
 		hopper.setDataReaderFile(mapDir);
-		hopper.setGraphHopperLocation(graphhopperDir);
-		hopper.setEncodingManager(new EncodingManager(encodingManager));
+		hopper.setGraphHopperLocation(GRAPHHOPPER_DIR);
+		hopper.setEncodingManager(new EncodingManager("foot"));
 		hopper.importOrLoad();
 		
 	}

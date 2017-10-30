@@ -1,9 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.history;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
-import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 
 import java.lang.reflect.Constructor;
@@ -12,8 +10,13 @@ import java.util.*;
 
 public class History {
 
-    static Gson gson = new Gson();
+    static Gson gson = new GsonBuilder()
+            .serializeNulls()
+            .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
+            .setPrettyPrinting()
+            .create();
 
+    private static ChangeEntry entitiesEntry;
     private static ChangeEntry lastEntry;
     private static ChangeEntry nextEntry;
 
@@ -21,23 +24,28 @@ public class History {
 
     private static Set<Class<? extends HistoricEntity>> historicClasses = new HashSet<>();
 
-    public static void init(SimulationConfiguration simulationConfiguration, SystemManager systemManager) {
+    public static void init(SimulationConfiguration simulationConfiguration) {
+        entitiesEntry = new ChangeEntry(0);
         lastEntry = new ChangeEntry(0);
         nextEntry = new ChangeEntry(0);
 
-        // TODO: write file
+        // TODO: save history output path
     }
 
-    public static void close() {}
-
-    public static void registerNewEntity(Entity entity) {
-        Class<? extends Entity> entityClass = entity.getClass();
-        Class<? extends HistoricEntity> historicClass = getReferenceClass(entityClass);
-        nextEntry.getMapFor(historicClass).put(entity.getId(), instantiateHistoric(entity));
-        // TODO: add to initial file
+    public static void close() {
+        // TODO: write entitiesEntry to file
     }
 
-    public static void registerForChange(int timeInstant, Entity entity) {
+    public static void registerNewEntity(Entity... entities) {
+        for (Entity entity : entities) {
+            Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
+            HistoricEntity historicEntity = instantiateHistoric(entity);
+            nextEntry.addToMapFor(historicClass, historicEntity);
+            entitiesEntry.addToMapFor(historicClass, historicEntity);
+        }
+    }
+
+    public static void registerForChange(int timeInstant, Entity... entities) {
         if (timeInstant > nextEntry.getTimeInstant()) {
             JsonObject changes = serializeChanges();
 
@@ -52,9 +60,11 @@ public class History {
             nextEntry = new ChangeEntry(timeInstant);
         }
 
-        Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
-        historicClasses.add(historicClass);
-        nextEntry.addToMapFor(historicClass, instantiateHistoric(entity));
+        for (Entity entity : entities) {
+            Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
+            historicClasses.add(historicClass);
+            nextEntry.addToMapFor(historicClass, instantiateHistoric(entity));
+        }
     }
 
     private static JsonObject serializeChanges() {
@@ -74,8 +84,34 @@ public class History {
             }
 
             for (HistoricEntity entity : nextEntry.getMapFor(historicClass).values()) {
-                JsonObject changes = entity.makeChangeEntryFrom(lastEntry.getMapFor(historicClass).get(entity.getId()));
-                if (changes != null) subTree.add(changes);
+                HistoricEntity oldEntity = lastEntry.getMapFor(historicClass).get(entity.getId());
+
+                JsonObject changes = new JsonObject();
+
+                // TODO: maybe read private fields instead of methods for consistency with gson
+                for (Method getter : historicClass.getMethods()) {
+                    if (getter.getName().equals("getId")) continue;
+
+                    JsonObject property;
+
+                    if (HistoricEntity.class.isAssignableFrom(getter.getReturnType())) {
+                        property = HistoricEntity.idReferenceChange(oldEntity, entity);
+                    } else try {
+                        property = HistoricEntity.propertyChange(getter.invoke(oldEntity), getter.invoke(entity));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new IllegalStateException("Error invoking getter on " + historicClass);
+                    }
+
+                    if (!property.entrySet().isEmpty()) {
+                        changes.add(getFieldName(getter.getName()), property);
+                    }
+                }
+
+                if (!changes.entrySet().isEmpty()) {
+                    changes.add("id", new JsonPrimitive(entity.getId()));
+                    subTree.add(changes);
+                }
             }
 
             if (!subTree.isEmpty()) {
@@ -120,6 +156,19 @@ public class History {
             e.printStackTrace();
             throw new IllegalStateException("Error trying to instantiate " + historicClass);
         }
+    }
+
+    /**
+     * Converts the name of a getter method to its field equivalent.
+     * For example getAverageWalkingVelocity -> averageWalkingVelocity
+     * @param methodName
+     * @return
+     */
+    private static String getFieldName(String methodName) {
+        String[] nameParts = methodName.split("(?=\\p{Lu})");
+        nameParts = Arrays.copyOfRange(nameParts, 1, nameParts.length);
+        nameParts[0] = nameParts[0].toLowerCase();
+        return String.join("", nameParts);
     }
 
 }
