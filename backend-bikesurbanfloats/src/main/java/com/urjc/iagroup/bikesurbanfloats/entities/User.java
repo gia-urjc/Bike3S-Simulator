@@ -85,6 +85,7 @@ public abstract class User implements Entity {
         this.reservedSlot = false;
         this.destinationStation = null;
         this.systemManager = null;
+        this.reservation = null;
     }
 
     @Override
@@ -129,10 +130,11 @@ public abstract class User implements Entity {
     public boolean hasReservedSlot() {
         return reservedSlot;
     }
-    
-    public Reservation getReservation() {
+
+    // TODO: getter possibly unnecessary
+    /*public Reservation getReservation() {
     	return this.reservation;
-    }
+    }*/
 
     public Station getDestinationStation() {
 		return destinationStation;
