@@ -18,13 +18,15 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
         return station;
     }
 
-    public List<Event> execute() {
+    public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         user.setPosition(station.getPosition());
-        user.returnBikeTo(station);
+        if(!user.returnBikeWithoutReservationTo(station)) {
+        	newEvents = manageSlotReservationDecisionAtOtherStation();
+        }      
         return newEvents;
     }
-    
+
     public String toString() {
         String str = super.toString();
         return str+"Station: "+station.toString();
