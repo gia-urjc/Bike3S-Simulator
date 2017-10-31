@@ -11,9 +11,10 @@ import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * This class represents several users that appears at system with a Poisson distribution, taking as a reference to generate them the same entry point  
+ * This class represents several users that appears at system with a Poisson distribution, taking as a reference to generate them the same entry point
+ * It provides a method which generates a variable set of users
+ * Number of users that are generated depends on the value of parameter of followed distribution  
  * @author IAgroup
  *
  */
@@ -28,12 +29,17 @@ public class EntryPointPoisson extends EntryPoint {
 	/**
 	 * It is the radius of circle is going to be used to delimit area where users appears  
 	 */
-	private double radius;  
+	private double radius;
+	/**
+	 * Type of distribution that users generation will follow
+	 */
 	private DistributionPoisson distribution;
+	/**
+	 * Type of users that will be generated  
+	 */
 	private UserType userType;
 	/**
 	 * It is the range of time within which users can appears, i. e., 
-	 * within which events of users apparearances 
 	 */
 	private TimeRange timeRange;  
 	
