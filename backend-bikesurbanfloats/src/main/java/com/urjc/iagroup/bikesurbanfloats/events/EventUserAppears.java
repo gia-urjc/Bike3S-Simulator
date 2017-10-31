@@ -14,7 +14,7 @@ public class EventUserAppears extends EventUser {
         this.position = position;
     }
     
-    public List<Event> execute() {
+    public List<Event> execute() throws Exception {
     	user.setPosition(position);
         return manageBikeReservationDecisionAtOtherStation();
     }

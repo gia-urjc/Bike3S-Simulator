@@ -22,7 +22,7 @@ public class SimulationEngine {
 		simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(user -> user.setSystemManager(systemManager));
 	}
 	
-	public void run() {
+	public void run() throws Exception {
 
 	    History.init(simulationConfiguration);
 

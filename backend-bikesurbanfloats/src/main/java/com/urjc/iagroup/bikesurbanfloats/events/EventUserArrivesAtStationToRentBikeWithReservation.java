@@ -26,7 +26,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         return reservation;
     }
 
-    public List<Event> execute() {
+    public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();;
         user.setPosition(station.getPosition());
         	reservation.resolve(instant);
@@ -35,7 +35,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
             newEvents = manageSlotReservationDecisionAtOtherStation();
         } else {   // user rides his bike to a point which is not a station
-            user.decidesNextPoint();
+            GeoPoint point = user.decidesNextPoint();
             int arrivalTime = user.timeToReach();
             newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
         }

@@ -30,11 +30,11 @@ public abstract class EventUser implements Event {
     	return "Event: "+getClass().getSimpleName()+"\nInstant: "+instant+"\n"+"User: "+user.toString()+"\n";
     }
     
-    public abstract List<Event> execute();
+    public abstract List<Event> execute() throws Exception;
     
-    public List<Event> manageBikeReservation(Station destination){
+    public List<Event> manageBikeReservation(Station destination) throws Exception{
         List<Event> newEvents = new ArrayList<>();
-        int arrivalTime = user.timeToReach(destination.getPosition());
+        int arrivalTime = user.timeToReach();
         Bike bike = user.reservesBike(destination);
         if (bike != null) {  // user has been able to reserve a bike  
             Reservation reservation = new Reservation(instant, ReservationType.BIKE, user, destination, bike);
@@ -54,17 +54,17 @@ public abstract class EventUser implements Event {
                 	newEvents.add(new EventUserArrivesAtStationToRentBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
                 }
                 else {
-                        newEvents = manageBikeReservationDecisionAtOtherStation();
+                    newEvents = manageBikeReservationDecisionAtOtherStation();
                 }   
             }
         }
         return newEvents;
     }
     
-    public List<Event> manageBikeReservationDecisionAtSameStationAfterTimeout() {
+    public List<Event> manageBikeReservationDecisionAtSameStationAfterTimeout() throws Exception {
     	List<Event> newEvents = new ArrayList<>();
     	Station destination = user.getDestinationStation();
-    	int arrivalTime = user.timeToReach(destination.getPosition());
+    	int arrivalTime = user.timeToReach();
     	System.out.println("manageBikeReservationDecisionAtSameStationAfterTimeout");
     	System.out.println("Destination before user arrival: "+	destination.toString() + " " + user.toString());
 		
@@ -77,10 +77,10 @@ public abstract class EventUser implements Event {
         return newEvents;
     }
     
-    public List<Event> manageBikeReservationDecisionAtOtherStation() {
+    public List<Event> manageBikeReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.determineStationToRentBike(instant);
-        int arrivalTime = user.timeToReach(destination.getPosition());
+        int arrivalTime = user.timeToReach();
         user.setDestinationStation(destination);
         System.out.println("manageBikeReservationDecisionAtOtherStation");
         System.out.println("Destination before user arrival: "+	destination.toString() + " " + user.toString());
@@ -94,9 +94,9 @@ public abstract class EventUser implements Event {
         return newEvents;
     }
     
-    public List<Event> manageSlotReservation(Station destination){
+    public List<Event> manageSlotReservation(Station destination) throws Exception{
     	List<Event> newEvents = new ArrayList<>();
-    	int arrivalTime = user.timeToReach(destination.getPosition());
+    	int arrivalTime = user.timeToReach();
     	if (user.reservesSlot(destination)) {  // User has been able to reserve
        	 Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination, user.getBike());
            	if (Reservation.VALID_TIME < arrivalTime) {
@@ -120,10 +120,10 @@ public abstract class EventUser implements Event {
     	return newEvents;
     }
 
-    public List<Event> manageSlotReservationDecisionAtSameStationAfterTimeout() {
+    public List<Event> manageSlotReservationDecisionAtSameStationAfterTimeout() throws Exception {
     	List<Event> newEvents = new ArrayList<>();
     			Station destination = user.getDestinationStation(); 
-    			int arrivalTime = user.timeToReach(destination.getPosition());
+    			int arrivalTime = user.timeToReach();
     			System.out.println("manageSlotReservationDecisionAtSameStationAfterTimeout");
     			System.out.println("Destination before user arrival: "+	destination.toString() + " " + user.toString());
         
@@ -136,11 +136,11 @@ public abstract class EventUser implements Event {
         return newEvents;
     }
     
-    public List<Event> manageSlotReservationDecisionAtOtherStation() {
+    public List<Event> manageSlotReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.determineStationToReturnBike(instant);
         user.setDestinationStation(destination);
-        int arrivalTime = user.timeToReach(destination.getPosition());
+        int arrivalTime = user.timeToReach();
         System.out.println("manageSlotReservationDecisionAtOtherStation");
         System.out.println("Destination before user arrival: "+	destination.toString() + " " + user.toString());
         

@@ -18,7 +18,7 @@ public class EventSlotReservationTimeout extends EventUser {
         return reservation;
     }
 
-    public List<Event> execute() {
+    public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         user.updatePosition(Reservation.VALID_TIME);
         reservation.expire();

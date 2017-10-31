@@ -3,6 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 import com.graphhopper.storage.index.QueryResult.Position;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 import java.util.List;
@@ -95,10 +96,11 @@ public class UserTest extends User {
     }
 	
 	@Override
-	public void decidesNextPoint() throws Exception {
+	public GeoPoint decidesNextPoint() throws Exception {
 		GeoPoint destination = systemManager.generateBoundingBoxRandomPoint();
 		systemManager.getGraphManager().calculateRoutes(getPosition(), destination);
 		this.actualRoute = this.determineRoute(systemManager.getGraphManager().getAllRoutes());
+		return destination;
 	}
 	
 	@Override
@@ -108,7 +110,7 @@ public class UserTest extends User {
 
 	// TODO: moving it to user class?
 	@Override
-	public void updatePosition(int time) throws Exception {
+	public void updatePosition(int time) {
 		double distance = time * getPosition().distanceTo(getDestinationStation().getPosition()) / timeToReach();
  		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
 		setPosition(newPoint);
@@ -125,7 +127,11 @@ public class UserTest extends User {
 	}
 
 	@Override
-	public GeoRoute determineRoute(List<GeoRoute> routes) {
+	public GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException {
+		if(routes.isEmpty()) {
+			throw new GeoRouteException("Route is not valid");
+		}
+		//get best
 		return routes.get(0);
 	}
 

@@ -16,6 +16,8 @@ import com.graphhopper.reader.osm.GraphHopperOSM;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.shapes.GHPoint3D;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperImplException;
 
 public class GraphHopperImpl implements GraphManager {
 
@@ -36,7 +38,7 @@ public class GraphHopperImpl implements GraphManager {
 		
 	}
 	
-	private GeoRoute responseGHToRoute(PathWrapper path) throws IllegalStateException {
+	private GeoRoute responseGHToRoute(PathWrapper path) throws GeoRouteCreationException{
 		List<GeoPoint> geoPointList = new ArrayList<>();
     	PointList ghPointList = path.getPoints();
     	for(GHPoint3D p: ghPointList) {
@@ -46,7 +48,7 @@ public class GraphHopperImpl implements GraphManager {
     	return route;
 	}
 	
-	public void calculateRoutes(GeoPoint startPosition, GeoPoint endPosition) throws Exception {
+	public void calculateRoutes(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperImplException  {
 		GHRequest req = new GHRequest(
 				startPosition.getLatitude(), startPosition.getLongitude(),
 				endPosition.getLatitude(), endPosition.getLongitude()).
@@ -57,25 +59,25 @@ public class GraphHopperImpl implements GraphManager {
     	
     	if(rsp.hasErrors()) {
      	   for(Throwable exception: rsp.getErrors()) {
-     		  throw new Exception(exception.getMessage());
+     		  throw new GraphHopperImplException(exception.getMessage());
      	   }
      	}
     	this.rsp = rsp;
 	}
 	
 	@Override
-	public GeoRoute getBestRoute() throws Exception {
+	public GeoRoute getBestRoute() throws GraphHopperImplException, GeoRouteCreationException {
 		if(rsp == null){
-			throw new Exception("Route is not calculated");
+			throw new GraphHopperImplException("Route is not calculated");
 		}
     	PathWrapper path = rsp.getBest();
     	return responseGHToRoute(path);
 	}
 
 	@Override
-	public List<GeoRoute> getAllRoutes() throws Exception {
+	public List<GeoRoute> getAllRoutes() throws GraphHopperImplException, GeoRouteCreationException {
 		if(rsp == null){
-			throw new Exception("Route is not calculated");
+			throw new GraphHopperImplException("Route is not calculated");
 		}
 		List<GeoRoute> routes = new ArrayList<>();
 		for(PathWrapper p: rsp.getAll()) {
@@ -85,9 +87,9 @@ public class GraphHopperImpl implements GraphManager {
 	}
 
 	@Override
-	public boolean hasAlternativesPath() throws Exception {
+	public boolean hasAlternativesPath() throws GraphHopperImplException {
 		if(rsp == null){
-			throw new Exception("Route is not calculated");
+			throw new GraphHopperImplException("Route is not calculated");
 		}
 		return rsp.hasAlternatives();
 	}

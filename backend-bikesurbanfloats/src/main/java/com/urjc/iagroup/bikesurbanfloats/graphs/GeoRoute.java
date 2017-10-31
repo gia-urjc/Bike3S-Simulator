@@ -3,15 +3,18 @@ package com.urjc.iagroup.bikesurbanfloats.graphs;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
+
 public class GeoRoute {
 	
 	private List<GeoPoint> pointList;
 	private double distance;
 	private List<Double> distancesBetweenPointsList;
 	
-	public GeoRoute(List<GeoPoint> geoPointList) throws IllegalStateException {
+	public GeoRoute(List<GeoPoint> geoPointList) throws GeoRouteCreationException {
 		if(geoPointList.size() < 2) {
-			throw new IllegalStateException("Routes should have more than two points");
+			throw new GeoRouteCreationException("Routes should have more than two points");
 		}
 		this.pointList = geoPointList;
 		this.distancesBetweenPointsList = new ArrayList<>();
@@ -35,7 +38,7 @@ public class GeoRoute {
 		distance = totalDistance;
 	}
 
-	public GeoRoute calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws Exception {
+	public GeoRoute calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws GeoRouteException, GeoRouteCreationException {
 		double totalDistance = 0.0;
 		double currentTime = 0.0;
 		double currentDistance = 0.0;
@@ -53,7 +56,7 @@ public class GeoRoute {
 			i++;
 		}
 		if(currentTime < finalTime) {
-			throw new Exception("Can't create soubroute");
+			throw new GeoRouteException("Can't create soubroute");
 		}
 		double x = totalDistance - finalTime*velocity;
 		double intermedDistance = currentDistance - x;

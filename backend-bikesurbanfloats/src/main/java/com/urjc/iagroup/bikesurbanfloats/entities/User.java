@@ -1,14 +1,14 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.logging.log4j.core.appender.routing.Route;
 
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.entities.models.UserModel;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperImplException;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
@@ -110,7 +110,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 		return destinationStation;
 	}
 
-	public void setDestinationStation(Station destinationStation) throws Exception {
+	public void setDestinationStation(Station destinationStation) throws GraphHopperImplException, GeoRouteCreationException, GeoRouteException{
 		this.destinationStation = destinationStation;
 		this.systemManager.getGraphManager().calculateRoutes(position, this.destinationStation.getPosition());
 		List<GeoRoute> routes = this.systemManager.getGraphManager().getAllRoutes();
@@ -235,7 +235,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      * @throws Exception 
      */
     
-    public int timeToReach() throws Exception {
+    public int timeToReach() {
 		return (int) (actualRoute.getDistance()*getAverageVelocity());
     }
 
@@ -314,7 +314,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      * @throws Exception 
      */
 
-    public abstract void decidesNextPoint() throws Exception;
+    public abstract GeoPoint decidesNextPoint() throws Exception;
 
     /**
      * User decides if he'll ride the bike to a station, just after removing it, in order to return it 
@@ -331,7 +331,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      * @throws Exception 
      */
 
-    public abstract void updatePosition(int time) throws Exception;
+    public abstract void updatePosition(int time);
 
     /**
      * When timeout happens, he decides to continue going to that chosen station or to go to another one
@@ -340,7 +340,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 
     public abstract boolean decidesToDetermineOtherStationAfterTimeout();
     
-    public abstract GeoRoute determineRoute(List<GeoRoute> routes);
+    public abstract GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException;
         
 /**
  * When user hasn't been able to make a reservation at the destination station, he decides if he wants to choose another destination station

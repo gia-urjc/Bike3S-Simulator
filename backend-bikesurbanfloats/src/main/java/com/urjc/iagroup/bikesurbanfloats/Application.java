@@ -22,7 +22,11 @@ public class Application {
 			SimulationConfiguration simulationConfiguration = jsonReader.createSystemConfiguration();
 			SystemManager systemManager = jsonReader.createSystemManager(simulationConfiguration);
 			SimulationEngine simulation = new SimulationEngine(simulationConfiguration, systemManager);
-			simulation.run();
+			try {
+				simulation.run();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
