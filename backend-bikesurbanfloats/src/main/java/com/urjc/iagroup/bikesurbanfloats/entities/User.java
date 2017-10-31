@@ -15,10 +15,10 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 /**
- * This is the main entity of the the system
- * It represents the basic behaviour of all users type which can apper in the system
- * It provides an implementation for basic methods which manage common information for all kind of users
- * It provides a behaviour pattern (make decissions) which depends on specific user type properties  
+ * This is the main entity of the the system.
+ * It represents the basic behaviour of all users type that can appear at the system.
+ * It provides an implementation for basic methods which manage common information for all kind of users.
+ * It provides a behaviour pattern (make decissions) which depends on specific user type properties.  
  * @author IAgroup
   */
 
@@ -33,37 +33,37 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 
     private int id;
     /**
-     * Current user position
+     * Current user position.
      */
     private GeoPoint position;
     /**
-     * Before user removes a bike or after returns it, this attribute is null
-     * While user is cycling, this attribute contains the bike tha user has removed
+     * Before user removes a bike or after returns it, this attribute is null.
+     * While user is cycling, this attribute contains the bike the user has rented.
      */
     private Bike bike;
     /**
-     * It is the station to which user has decided to go at this moment
+     * It is the station to which user has decided to go at this moment.
      */
     private Station destinationStation;
     /**
-     * Speed at which user walks in meters per second
+     * Speed in meters per second at which user walks.
      */
     private double walkingVelocity;
     /**
-     * Speed at which user cycles in meters per second
+     * Speed in meters per second at which user cycles. 
      */
     private double cyclingVelocity;  
     /**
-     * It indicates if user has a reserved bike currently
+     * It indicates if user has a reserved bike currently.
      */
     private boolean reservedBike;
     /**
-     * It indicates if user has a reserved slot currently
+     * It indicates if user has a reserved slot currently.
      */
     private boolean reservedSlot;
     /**
-     * It is the user current (bike or slot) reservation, i. e., the last reservation user has made
-     * If user hasn't made a reservation, this attribute is null
+     * It is the user current (bike or slot) reservation, i. e., the last reservation user has made.
+     * If user hasn't made a reservation, this attribute is null.
      */
     private Reservation reservation;
     
@@ -146,6 +146,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 		this.destinationStation = destinationStation;
 	}
 	
+
 	public GeoRoute getRoute() {
 		return this.currentRoute;
 	}
@@ -154,11 +155,27 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 		this.currentRoute = route;
 	} 
 
+    public double getWalkingVelocity() {
+        return walkingVelocity;
+    }
+
+    public double getCyclingVelocity() {
+        return cyclingVelocity;
+    }
+    
     /**
-     *  User tries to reserve a bike at the specified station
-     * @param station: it is the station for which user wants to make a bike reservation
-     * @return the reserved bike if user is able to reserve one at 
-     * that station (there're available bikes) and false in other case
+     * The user's average velocity in m/s
+     * @return user walking velocity if he hasn't a bike at that moment and cycling velocity in other case
+     */
+    public double getAverageVelocity() {
+        return !hasBike() ? walkingVelocity : cyclingVelocity;
+    }
+
+    /**
+     *  User tries to reserve a bike at the specified station.
+     * @param station: it is the station for which user wants to make a bike reservation.
+     * @return the reserved bike if user has been able to reserve one at 
+     * that station (there're available bikes) and false in other case.
      */
 
     public Bike reservesBike(Station station) {
@@ -171,10 +188,10 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     }
 
     /**
-     * User tries to reserve a slot at the specified station
-     * @param station: it is the station for which user wants to make a slot reservation
-     * @return true if user is able to reserve a slot at 
-     * that station (there're available slots) and false in other case
+     * User tries to reserve a slot at the specified station.
+     * @param station: it is the station for which user wants to make a slot reservation.
+     * @return true if user has been able to reserve a slot at 
+     * that station (there're available slots) and false in other case.
      */
 
     public boolean reservesSlot(Station station) {
@@ -186,8 +203,8 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     }
     
     /**
-     * User cancels his bike reservation at the specified station
-     * @param station: it is station for which user wants to cancel his bike reservation  
+     * User cancels his bike reservation at the specified station.
+     * @param station: it is station for which user wants to cancel his bike reservation.  
      */
 
     public void cancelsBikeReservation(Station station) {
@@ -196,8 +213,8 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     }
 
     /**
-     * User cancels his slot reservation at the specified station
-     * @param station: it is station for which user wants to cancel his slot reservation
+     * User cancels his slot reservation at the specified station.
+     * @param station: it is station for which user wants to cancel his slot reservation.
      */
 
     public void cancelsSlotReservation(Station station) {
@@ -206,10 +223,10 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     }
 
     /**
-     * User tries to remove a bike from specified station
-     * @param station: it is the station where he wnats to remove (rent) a bike
+     * User tries to remove a bike from specified station.
+     * @param station: it is the station where he wnats to remove (rent) a bike.
      * @return true if user has been able to remove a bike (there are available bikes 
-     * or he has a bike reservation) and false in other case
+     * or he has a bike reservation) and false in other case.
      */
     
 	public boolean removeBikeWithoutReservationFrom(Station station) {
@@ -221,8 +238,8 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     }
 	
 	/**
-	 * User removes the reserved bike from the specified station
-	 * @param station: it is the station where user goes to rent a bike
+	 * User removes the reserved bike from the specified station.
+	 * @param station: it is the station where user goes to rent a bike.
 	 */
 	
 	public boolean removeBikeWithReservationFrom(Station station) {
@@ -238,10 +255,10 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 	}
 
 	/**
-	 * User tries to return his rented bike to the specified station
-	 * @param station: it is the station where user wants to return his bike
+	 * User tries to return his rented bike to the specified station.
+	 * @param station: it is the station where user wants to return his bike.
 	 * @return true if user has been ablo to return his bike (there available slots
-	 *  or he has a slot reservation) and false in other case
+	 *  or he has a slot reservation) and false in other case.
 	 */
 
     public boolean returnBikeWithoutReservationTo(Station station) {
@@ -257,26 +274,14 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
         return returned;
     }
     
+    /**
+     * User returns his bike to specified station.
+     * @param station: it is the station at which user arrives in order to return his bike.
+     */
     public void returnBikeWithReservationTo(Station station) {
     	if (hasReservedSlot()) {
     		cancelsSlotReservation(station);
     	}
-    }
-
-    public double getWalkingVelocity() {
-        return walkingVelocity;
-    }
-
-    public double getCyclingVelocity() {
-        return cyclingVelocity;
-    }
-
-    /**
-     * The user's average velocity in m/s
-     * @return user walking velocity if he hasn't a bike at that moment and cycling velocity in other case
-     */
-    public double getAverageVelocity() {
-        return !hasBike() ? walkingVelocity : cyclingVelocity;
     }
     
     public List<GeoRoute> calculateRouteStation(Station station) throws GeoRouteCreationException, GraphHopperImplException {
@@ -315,94 +320,95 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     }
 
     /**
-     * User decides if he'll leave the system when bike reservation timeout happens 
-     * @param instant: itt is the time instant when h'll make this decision
-     * @return true if he decides to leave the system and false in other case (he decides to continue at system)
+     * User decides if he'll leave the system when bike reservation timeout happens. 
+     * @param instant: itt is the time instant when h'll make this decision.
+     * @return true if he decides to leave the system and false in other case (he decides to continue at system).
      */
     
     public abstract boolean decidesToLeaveSystemAfterTimeout(int instant);
     
     /**
-    * User decides if he'll leave the system after not being able to make a bike reservation  
-    * @param instant: itt is the time instant when h'll make this decision
-    * @return true if he decides to leave the system and false in other case (he decides to continue at system)
+    * User decides if he'll leave the system after not being able to make a bike reservation.  
+    * @param instant: itt is the time instant when h'll make this decision.
+    * @return true if he decides to leave the system and false in other case (he decides to continue at system).
     */
     
     public abstract boolean decidesToLeaveSystemAffterFailedReservation(int instant);
     
     /**
-     * User decides if he'll leave the system when there're no avalable bikes at station    
-     * @param instant: itt is the time instant when h'll make this decision
-     * @return true if he decides to leave the system and false in other case (he decides to continue at system)
+     * User decides if he'll leave the system when there're no avalable bikes at station.    
+     * @param instant: itt is the time instant when h'll make this decision.
+     * @return true if he decides to leave the system and false in other case (he decides to continue at system).
      */
     
     public abstract boolean decidesToLeaveSystemWhenBikesUnavailable(int instant);
 
     /**
-     * User decides to which station he wnats to go next to rent a bike
-     * @param instant: it is the time instant when he needs to make this decision
-     * @return station where user has decided to go
+     * User decides to which station he wants to go to rent a bike.
+     * @param instant: it is the time instant when he needs to make this decision.
+     * @return station where user has decided to go.
      */
 
     public abstract Station determineStationToRentBike(int instant);
 
     /**
-     * User decides to which station he wnats to go next to return his bike
-     * @param instant is the time instant when he needs to make this decision
-     * @return station where user has decided to go
+     * User decides to which station he wants to go to return his bike.
+     * @param instant is the time instant when he needs to make this decision.
+     * @return station where user has decided to go.
      */
 
     public abstract Station determineStationToReturnBike(int instant);
     
     /**
-     * User decides if he'll try to make again a bike reservation at the previosly chosen station after timeout happens 
-     * @return true if user decides to reserve a bike at the initially chosen station
+     * User decides if he'll try to make again a bike reservation at the previosly 
+     * chosen station after timeout happens. 
+     * @return true if user decides to reserve a bike at the initially chosen station.
      */
     
     public abstract boolean decidesToReserveBikeAtSameStationAfterTimeout();
     
     /**
-     * User decides if he'll try to make a bike reservation at a new chosen station
-
-     * @return true if user decides to reserve a bike at that new station and false in other case
+     * User decides if he'll try to make a bike reservation at a new chosen station.
+     * @return true if user decides to reserve a bike at that new station and false in other case.
      */
         
     public abstract boolean decidesToReserveBikeAtNewDecidedStation();
     
     /**
-     * User decides if he'll try to make again a slot reservation at the previosly chosen station 
-     * @return true if user decides to reserve a slot at the initially chosen station
+     * User decides if he'll try to make again a slot reservation at the previosly 
+     * chosen station after timeout happens.
+     * @return true if user decides to reserve a slot at the initially chosen station.
      */
     
     public abstract boolean decidesToReserveSlotAtSameStationAfterTimeout();
     
     /**
-     * User decides if he'll try to make a slot reservation at a new chosen station
-     * @return true if user decides to reserve a slot at that new station and false in other case
+     * User decides if he'll try to make a slot reservation at a new chosen station.
+     * @return true if user decides to reserve a slot at that new station and false in other case.
      */
     
     public abstract boolean decidesToReserveSlotAtNewDecidedStation();
 
     /**
-     * User decides the point (it is not a station) to which he wants to cycle the rented bike just after removing it from station
-     * @return the point where he wants to go after making his decision
-     * @throws Exception 
+     * User decides the point (it is not a station) to which he wants to ride the rented bike 
+     * after removing it from station.
+     * @return the point where he wants to go after making his decision.
      */
 
     public abstract GeoPoint decidesNextPoint();
 
     /**
-     * User decides if he'll ride the bike to a station, just after removing it, in order to return it 
+     * Just after removing the bike, user decides if he'll ride it directly to a station,  
+     * in order to return it. 
      * @return true if user decides to cycle directly to a station in order to return 
-     * his bike and false in other case (he decides to ride it to another point before returning it)
+     * his bike and false in other case (he decides to ride it to another point before returning it).
      */
 
     public abstract boolean decidesToReturnBike(); 
-    
 
     /**
-     * When timeout happens, he decides to continue going to that chosen station or to go to another one
-     * @return true if user chooses a new station to go and false if he continues to the previously chosen one
+     * When timeout happens, he decides to continue going to that chosen station or to go to another one.
+     * @return true if user chooses a new station to go and false if he continues to the previously chosen one.
      */
 
     public abstract boolean decidesToDetermineOtherStationAfterTimeout();
@@ -410,11 +416,14 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     public abstract GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException;
         
 /**
- * When user hasn't been able to make a reservation at the destination station, he decides if he wants to choose another destination station
- * @return true if he decides to determine another destination station and false in other case (he keeps his previously decision) 
+ * When user hasn't been able to make a reservation at the destination station, 
+ * he decides if he wants to choose another station to which go.
+ * @return true if he decides to determine another destination station and false in 
+ * other case (he keeps his previously decision). 
  */
         
         public abstract boolean decidesToDetermineOtherStationAfterFailedReservation();
+        
     @Override
     public String toString() {
         String result = "| Id: " + getId();

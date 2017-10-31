@@ -10,8 +10,23 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents all events which are related to a user, i. e., posible 
+ * actions that a user can do at the sytem and facts derived from his actions.
+ * It provides methods to manage reservation decisions and reservations themselves
+ * at any event which involves a user and, of course, a method to execute and process the events.
+ * @author IAgroup
+ *
+ */
+
 public abstract class EventUser implements Event {
+	/**
+	 * It is the time instant when event happens.
+	 */
 	protected int instant;
+	/**
+	 * It is the user who is involved in the event.
+	 */
 	protected User user;
 
     public EventUser(int instant, User user) {
@@ -31,7 +46,23 @@ public abstract class EventUser implements Event {
     	return "Event: "+getClass().getSimpleName()+ "\nInstant: "+instant+"\n"+"User: "+user.toString()+"\n";
     }
     
+    /**
+     * It processes the event so that the relevant changes at the system occur  
+     */
     public abstract List<Event> execute() throws Exception;
+    
+    /**
+     * It tries to make the bike reservation:
+     * 	<ul>
+     *  <li>If it is possible, user may have time to reach the station  while reservation is active or may not.
+     * 	<li>If it isn't possible, in case of the user decides not to leave the system,
+     * 	he makes a decision: to arrive at chosen station without reservation or 
+     * 	to repeat all the process after deciding to reserve at a new chosen station.
+     *  </ul>  
+     * @param destination: it is the station for which user wants to make a bike reservation.
+     *  This parameter can be the previous chosen station or a new decided destination station. 
+     * @return a list of events (actually, it returns a unique event) that will occur as a consequence of executing the current event.
+     */
     
     public List<Event> manageBikeReservation(Station destination) throws Exception{
         List<Event> newEvents = new ArrayList<>();
@@ -61,6 +92,11 @@ public abstract class EventUser implements Event {
         }
         return newEvents;
     }
+    /**
+     * It is a recursive method
+     * At this method, user decides to try to make again the bike reservation (or not) at previous chosen station  
+     * @return
+     */
     
     public List<Event> manageBikeReservationDecisionAtSameStationAfterTimeout() throws Exception {
     	List<Event> newEvents = new ArrayList<>();
