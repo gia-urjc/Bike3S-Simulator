@@ -8,6 +8,13 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This is the second main entity of the system
+ * It represents station state: how many bikes and slots contains and which of them are reserved
+ * It provides all actions a user can carry out with bikes (to remove, return or reserve them) and slots (to reserve)  
+ * @author IAgroup
+ *
+ */
 @HistoryReference(HistoricStation.class)
 public class Station implements Entity {
 
@@ -64,64 +71,112 @@ public class Station implements Entity {
     }
     
     private Bike getFirstAvailableBike() {
-    	int i = 0;
     	Bike bike = null;
-    	while (bike == null && i < (bikes.size() -1) ) {
-    		bike = bikes.get(i);
+    	for (Bike currentBike: bikes) {
+    		if (currentBike != null &&	!currentBike.isReserved()) {
+    			bike = currentBike;
+    			break;
+    		}
     	}
     	return bike;
     }
+    
+    /**
+     * Station locks a bike for a user if there're available bikes
+     * @return bike which has been reserved or bike with null value if there're no available bikes
+     */
 
     public Bike reservesBike() {
-        this.reservedBikes++;
-        Bike bike = getFirstAvailableBike();
+    	Bike bike = null;
+    	if (availableBikes() > 0) {
+        bike = getFirstAvailableBike();
         bike.setReserved(true);
+        this.reservedBikes++;
+    	}
         return bike;
     }
+    
+    /**
+     * Station unlocks a bike to make it available for other users 
+     */
 
-    public void cancelsBikeReservation() {
+    public void cancelsBikeReservation(Reservation reservation) {
         this.reservedBikes--;
+        reservation.getBike().setReserved(false);
     }
     
+    /**
+     * Station locks a slot for a user if there're available slots 
+     */
+    
     public void reservesSlot() {
+    	if (availableSlots() > 0)
         this.reservedSlots++;
     }
+    
+    /**
+     * Station unlocks a slot to make it available for other users
+     */
 
     public void cancelsSlotReservation() {
         this.reservedSlots--;
     }
     
-        public Bike removeBike() {
+    /**
+     * If there's one available bike at station, user can remove it leaving an available slot at station     
+     * @return a bike if there's one available or null in other case 
+     */
+    
+        public Bike removeBikeWithoutReservation() {
         Bike bike = null;
     	if (this.availableBikes() == 0) {
            return null;
         }
         for (int i = 0; i < bikes.size(); i++) {
             bike = bikes.get(i);
-            if (bike != null) {
+            if (bike != null && !bike.isReserved()) {
                 bikes.set(i, null);
                 break;       
             }
         }
-
         return bike;
     }
+        
+        /**
+         * Station let the user remove his reserved bike 
+         * @param reservation: it is the bike reservation which user has made previously
+         * @return the bike user has reserved
+         */
+        
+        public Bike removeBikeWithReservation(Reservation reservation) {
+	        Bike bike = reservation.getBike();
+	        int i = bikes.indexOf(bike);
+	        bikes.set(i, null);
+	        bike.setReserved(false);
+	        return bike;
+        }
+        
+        /**
+         * If there's available slots at station, it places a bike (which a user has returned) on a slot  
+         * @param bike: it is the bike which user wants to return
+         * @return true if returning the bike to station has been possible and false in other case (there's no available slots)
+         */
 
     public boolean returnBike(Bike bike) {
-        boolean result = false;
+        boolean returned = false;
     	if (this.availableSlots() == 0) {
             return false;
         }
         for (int i = 0; i < bikes.size(); i++) {
             if (bikes.get(i) == null) {
                 bikes.set(i, bike);
-                result = true;
+                returned = true;
                 break;
             }
         }
-		return result;
+		return returned;
     }
-
+    
     @Override
     public String toString() {
         String result = "Id: " + getId();

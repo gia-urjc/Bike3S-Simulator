@@ -27,12 +27,14 @@ public class BoundingCircle {
 	 */
 	private GeoPoint randomPointByDistance(double distance) {
 		
+		StaticRandom random = StaticRandom.createRandom();
+		
 		double latitudeRadians = position.getLatitude() * GeoPoint.DEG_TO_RAD;
 		double longitudeRadians = position.getLongitude() * GeoPoint.DEG_TO_RAD;
 		double senLatitude = Math.sin(latitudeRadians);
 		double cosLatitude = Math.cos(latitudeRadians);
 		
-		double bearing = StaticRandom.nextDouble() * 2 * Math.PI;
+		double bearing = random.nextDouble() * 2 * Math.PI;
 		double theta = distance / GeoPoint.EARTH_RADIUS;
 		double senBearing = Math.sin(bearing);
 		double cosBearing = Math.cos(bearing);
@@ -51,7 +53,8 @@ public class BoundingCircle {
 	}
 
 	public GeoPoint randomPointInCircle() {
-		double randomDistance = Math.pow(StaticRandom.nextDouble(), 0.5) * radio;
+		StaticRandom random = StaticRandom.createRandom();
+		double randomDistance = Math.pow(random.nextDouble(), 0.5) * radio;
 		return randomPointByDistance(randomDistance);
 	}
 	

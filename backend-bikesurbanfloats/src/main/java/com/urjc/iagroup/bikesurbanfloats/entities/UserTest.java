@@ -1,7 +1,8 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 
 import java.util.List;
 
@@ -12,22 +13,25 @@ public class UserTest extends User {
 	}
 
 	@Override
-	public boolean decidesToLeaveSystemWhenTimeout(int instant) {
+	public boolean decidesToLeaveSystemAfterTimeout(int instant) {
 		return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
 }
 	
-	   @Override
-	    public boolean decidesToLeaveSystemWhenFailedReservation(int instant) {
-	        return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
-	    }
 
-	    @Override
-	    public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-	        return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
-	    }
+   @Override
+    public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
+        return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
+    }
+
+
+    @Override
+    public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
+        return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
+    }
 	
 	@Override
 	public Station determineStationToRentBike(int instant) {
+		
 		List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
@@ -42,7 +46,7 @@ public class UserTest extends User {
 		}
 		if(destination == null) {
 			int numberStations = systemManager.consultStations().size();
-			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
+			int indexStation = systemManager.getRandom().nextInt(0,  numberStations - 1);
 			destination = systemManager.consultStations().get(indexStation);
 		}
 		return destination;
@@ -64,7 +68,7 @@ public class UserTest extends User {
 		}
 		if(destination == null) {
 			int numberStations = systemManager.consultStations().size();
-			int indexStation = StaticRandom.nextInt(0,  numberStations - 1);
+			int indexStation = systemManager.getRandom().nextInt(0,  numberStations - 1);
 			destination = systemManager.consultStations().get(indexStation);
 		}
 				return destination;
@@ -72,51 +76,49 @@ public class UserTest extends User {
 	
 	@Override
 	public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-		return StaticRandom.nextBoolean();
+		return systemManager.getRandom().nextBoolean();
 	}
 	
-	   public boolean decidesToReserveBikeAtNewDecidedStation() {
-	        return StaticRandom.nextBoolean();
-	    }
+   public boolean decidesToReserveBikeAtNewDecidedStation() {
+        return systemManager.getRandom().nextBoolean();
+    }
 
 	@Override
 	public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-		return StaticRandom.nextBoolean();
+		return systemManager.getRandom().nextBoolean();
 	}
 	
-	   @Override
-	    public boolean decidesToReserveSlotAtNewDecidedStation() {
-	        return StaticRandom.nextBoolean();
-	    }
+   @Override
+    public boolean decidesToReserveSlotAtNewDecidedStation() {
+        return systemManager.getRandom().nextBoolean();
+    }
 	
 	@Override
 	public GeoPoint decidesNextPoint() {
-		//return systemManager.getBoundingBox().randomPoint();
-        // TODO:
-        return new GeoPoint();
+		return systemManager.generateBoundingBoxRandomPoint();
 	}
 	
 	@Override
 		public boolean decidesToReturnBike() {
-		return StaticRandom.nextBoolean();
-	}
-
-	// TODO: moving it to user class?
-	@Override
-	public void updatePosition(int time) {
-		double distance = time * getPosition().distanceTo(getDestinationStation().getPosition()) / timeToReach(getDestinationStation().getPosition());
- 		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
-		setPosition(newPoint);
+		return systemManager.getRandom().nextBoolean();
 	}
 
 	@Override
-	public boolean decidesToDetermineOtherStationWhenFailedReservation() {
-		return StaticRandom.nextBoolean();
+	public boolean decidesToDetermineOtherStationAfterTimeout() {
+		return systemManager.getRandom().nextBoolean();
 	}
-	
-	   @Override
-	    public boolean decidesToDetermineOtherStationWhenTimeout() {
-	        return StaticRandom.nextBoolean();
-	    }
+
+	@Override
+	public boolean decidesToDetermineOtherStationAfterFailedReservation() {
+		return systemManager.getRandom().nextBoolean();
+	}
+
+	@Override
+	public GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException {
+		if(routes.isEmpty()) {
+			throw new GeoRouteException("Route is not valid");
+		}
+		return routes.get(0);
+	}
 
 }

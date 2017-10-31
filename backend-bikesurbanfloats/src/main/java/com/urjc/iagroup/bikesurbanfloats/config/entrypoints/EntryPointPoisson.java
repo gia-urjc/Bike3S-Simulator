@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 
-import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.config.distributions.DistributionPoisson;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.User.UserType;
@@ -12,20 +11,44 @@ import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntryPointPoisson implements EntryPoint {
+/**
+ * This class represents several users that appears at system with a Poisson distribution, taking as a reference to generate them the same entry point
+ * It provides a method which generates a variable set of users
+ * Number of users that are generated depends on the value of parameter of followed distribution  
+ * @author IAgroup
+ *
+ */
+
+public class EntryPointPoisson extends EntryPoint {
 	
+	/**
+ * If a radius is given, position is the center of circle
+ * In other case, position is the specific point where user appears
+	 */
 	private GeoPoint position;
-	private double radio; //meters
+	/**
+	 * It is the radius of circle is going to be used to delimit area where users appears  
+	 */
+	private double radius;
+	/**
+	 * Type of distribution that users generation will follow
+	 */
 	private DistributionPoisson distribution;
+	/**
+	 * Type of users that will be generated  
+	 */
 	private UserType userType;
-	private TimeRange timeRange;
+	/**
+	 * It is the range of time within which users can appears, i. e., 
+	 */
+	private TimeRange timeRange;  
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, UserType userType) {
 		this.position = position;
 		this.distribution = distribution;
 		this.userType = userType;
 		this.timeRange = null;
-		this.radio = 0;
+		this.radius = 0;
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
@@ -33,7 +56,7 @@ public class EntryPointPoisson implements EntryPoint {
 		this.position = position;
 		this.distribution = distribution;
 		this.userType = userType;
-		this.radio = radio;
+		this.radius = radio;
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
@@ -42,7 +65,7 @@ public class EntryPointPoisson implements EntryPoint {
 		this.distribution = distribution;
 		this.userType = userType;
 		this.timeRange = timeRange;
-		this.radio = 0;
+		this.radius = 0;
 	}
 	
 	public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, 
@@ -51,18 +74,17 @@ public class EntryPointPoisson implements EntryPoint {
 		this.distribution = distribution;
 		this.userType = userType;
 		this.timeRange = timeRange;
-		this.radio = radio;
+		this.radius = radio;
 	}
 
 	@Override
-	public List<EventUserAppears> generateEvents(SimulationConfiguration simulationConfiguration) {
-		
+	public List<EventUserAppears> generateEvents() {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		UserFactory userFactory = new UserFactory();
 		int actualTime, endTime;
 		if(timeRange == null) {
 			actualTime = 0;
-			endTime = simulationConfiguration.getTotalTimeSimulation();
+			endTime = TOTAL_TIME_SIMULATION;
 		}
 		else {
 			actualTime = timeRange.getStart();
@@ -71,8 +93,8 @@ public class EntryPointPoisson implements EntryPoint {
 		while(actualTime < endTime) {
 			User user = userFactory.createUser(userType);
 			GeoPoint userPosition;
-			if(radio > 0) {
-				BoundingCircle boundingCircle = new BoundingCircle(position, radio);
+			if(radius > 0) {
+				BoundingCircle boundingCircle = new BoundingCircle(position, radius);
 				userPosition = boundingCircle.randomPointInCircle();
 			}
 			else {
@@ -80,7 +102,7 @@ public class EntryPointPoisson implements EntryPoint {
 			}
 			int timeEvent = distribution.randomInterarrivalDelay();
 			actualTime += timeEvent;
-			EventUserAppears newEvent = new EventUserAppears(actualTime, user, userPosition, simulationConfiguration);
+			EventUserAppears newEvent = new EventUserAppears(actualTime, user, userPosition);
 			generatedEvents.add(newEvent);
 		}
 		return generatedEvents;

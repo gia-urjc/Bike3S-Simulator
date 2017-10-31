@@ -13,28 +13,17 @@ public class SimulationConfiguration {
 	//System Information
 	private List<EventUserAppears> eventUserAppears = new ArrayList<>();
 
-	//Configuration information
-	private int reservationTime = 0;
 	private int totalTimeSimulation = 0;
 	private long randomSeed = 0;
 	
 	//GrapHopper Properties
 	private String mapDirectory;
-	private String graphhopperDirectory;
 	private String GraphHopperLocale;
 	
 	//Utils
 	private BoundingBox boundingBox = null;
 
 	SimulationConfiguration() {}
-
-	public int getReservationTime() {
-		return reservationTime;
-	}
-
-	public void setReservationTime(int reservationTime) {
-		this.reservationTime = reservationTime;
-	}
 
 	public int getTotalTimeSimulation() {
 		return totalTimeSimulation;
@@ -91,18 +80,13 @@ public class SimulationConfiguration {
 	public void setGraphHopperLocale(String graphHopperLocale) {
 		GraphHopperLocale = graphHopperLocale;
 	}
-
-	public String getGraphhopperDirectory() {
-		return graphhopperDirectory;
-	}
-
-	public void setGraphhopperDirectory(String graphhopperDirectory) {
-		this.graphhopperDirectory = graphhopperDirectory;
+	
+	public void addAllEventUserAppears(List<EventUserAppears> events) {
+		eventUserAppears.addAll(events);
 	}
 	
 	public void resetInfo() {
 		eventUserAppears = new ArrayList<>();
-		reservationTime = 0;
 		totalTimeSimulation = 0;
 		randomSeed = 0;
 		boundingBox = null;
@@ -114,7 +98,6 @@ public class SimulationConfiguration {
 		for(EventUserAppears e: eventUserAppears) {
 			result += e.toString() + "\n";
 		}
-		result += "Reservation time: " + reservationTime + "\n";
 		result += "Total time simulation: " + totalTimeSimulation + "\n";
 		result += "Random seed: " + randomSeed + "\n";
 		return result;
