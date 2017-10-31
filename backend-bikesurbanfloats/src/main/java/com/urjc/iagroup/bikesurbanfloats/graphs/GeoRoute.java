@@ -21,6 +21,10 @@ public class GeoRoute {
 		calculateDistances();
 	}
 	
+	public List<GeoPoint> getPointList() {
+		return pointList;
+	}
+	
 	public double getDistance() {
 		return distance;
 	}

@@ -20,9 +20,10 @@ public class EventBikeReservationTimeout extends EventUser {
     
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        user.updatePosition(Reservation.VALID_TIME);
+        user.updatePositionAfterTimeOut();
         reservation.expire();
         user.addReservation(reservation);
+        user.cancelsBikeReservation(user.getDestinationStation());
 
         if (!user.decidesToLeaveSystemAfterTimeout(instant)) {
             if (!user.decidesToDetermineOtherStationAfterTimeout()){

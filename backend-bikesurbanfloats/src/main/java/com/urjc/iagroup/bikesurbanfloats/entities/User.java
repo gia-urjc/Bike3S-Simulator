@@ -67,7 +67,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      */
     private Reservation reservation;
     
-    protected GeoRoute actualRoute;
+    protected GeoRoute currentRoute;
     
     protected SystemManager systemManager;
    
@@ -142,12 +142,17 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 		return destinationStation;
 	}
 
-	public void setDestinationStation(Station destinationStation) throws GraphHopperImplException, GeoRouteCreationException, GeoRouteException{
+	public void setDestinationStation(Station destinationStation) {
 		this.destinationStation = destinationStation;
-		this.systemManager.getGraphManager().calculateRoutes(position, this.destinationStation.getPosition());
-		List<GeoRoute> routes = this.systemManager.getGraphManager().getAllRoutes();
-		this.actualRoute = determineRoute(routes);
 	}
+	
+	public GeoRoute getRoute() {
+		return this.currentRoute;
+	}
+	
+	public void setRoute(GeoRoute route) {
+		this.currentRoute = route;
+	} 
 
     /**
      *  User tries to reserve a bike at the specified station
@@ -206,7 +211,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      * @return true if user has been able to remove a bike (there are available bikes 
      * or he has a bike reservation) and false in other case
      */
-	
+    
 	public boolean removeBikeWithoutReservationFrom(Station station) {
         if (hasBike()) {
             return false;
@@ -273,6 +278,31 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
     public double getAverageVelocity() {
         return !hasBike() ? walkingVelocity : cyclingVelocity;
     }
+    
+    public List<GeoRoute> calculateRouteStation(Station station) throws GeoRouteCreationException, GraphHopperImplException {
+    	this.systemManager.getGraphManager().calculateRoutes(position, station.getPosition());
+		return this.systemManager.getGraphManager().getAllRoutes();
+    }
+    
+    public List<GeoRoute> calculateRouteByPosition(GeoPoint finalPosition) throws GeoRouteCreationException, GraphHopperImplException{
+    	this.systemManager.getGraphManager().calculateRoutes(position, finalPosition);
+    	return this.systemManager.getGraphManager().getAllRoutes();
+    }
+    
+    public GeoRoute reachedRouteUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
+    	return currentRoute.calculateRouteByTimeAndVelocity(Reservation.VALID_TIME, this.getAverageVelocity());
+    }
+    
+    /**
+     * When user is going to a station and timeout happens, it calculates how far 
+     * he has gotten in order to update his position.
+     * This position is currently at the last position of the current route
+     */
+    
+    public void updatePositionAfterTimeOut() {
+    	List<GeoPoint> pointList = currentRoute.getPointList();
+    	position = pointList.get(pointList.size() - 1);
+    }
 
     /**
      * Time in seconds that user takes in arriving to a GeoPoint
@@ -281,7 +311,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      */
     
     public int timeToReach() {
-		return (int) (actualRoute.getDistance()*getAverageVelocity());
+		return (int) (currentRoute.getDistance()*getAverageVelocity());
     }
 
     /**
@@ -359,7 +389,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      * @throws Exception 
      */
 
-    public abstract GeoPoint decidesNextPoint() throws Exception;
+    public abstract GeoPoint decidesNextPoint();
 
     /**
      * User decides if he'll ride the bike to a station, just after removing it, in order to return it 
@@ -369,14 +399,6 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 
     public abstract boolean decidesToReturnBike(); 
     
-    /**
-     * When user is going to a station and timeout happens, it calculates how far 
-     * he has gotten in order to update his position
-     * @param time: it is the period while user is walking or cycling to the destination station before timeout happens
-     * @throws Exception 
-     */
-
-    public abstract void updatePosition(int time);
 
     /**
      * When timeout happens, he decides to continue going to that chosen station or to go to another one

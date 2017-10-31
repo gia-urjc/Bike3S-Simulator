@@ -4,6 +4,9 @@ import com.urjc.iagroup.bikesurbanfloats.config.ConfigJsonReader;
 import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.core.SimulationEngine;
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GraphManager;
 
 import java.io.IOException;
 
@@ -23,7 +26,8 @@ public class Application {
 			SystemManager systemManager = jsonReader.createSystemManager(simulationConfiguration);
 			SimulationEngine simulation = new SimulationEngine(simulationConfiguration, systemManager);
 			try {
-				simulation.run();
+			simulation.run();
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

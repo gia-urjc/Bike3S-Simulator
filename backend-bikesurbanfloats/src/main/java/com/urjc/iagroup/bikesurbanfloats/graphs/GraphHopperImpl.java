@@ -27,6 +27,9 @@ public class GraphHopperImpl implements GraphManager {
 	private String locale;
 	private GHResponse rsp;
 	
+	private GeoPoint startPosition;
+	private GeoPoint endPosition;
+	
 	public GraphHopperImpl(String mapDir, String locale) throws IOException {
 		FileUtils.deleteDirectory(new File(GRAPHHOPPER_DIR));
 		this.hopper = new GraphHopperOSM().forServer();
@@ -41,9 +44,11 @@ public class GraphHopperImpl implements GraphManager {
 	private GeoRoute responseGHToRoute(PathWrapper path) throws GeoRouteCreationException{
 		List<GeoPoint> geoPointList = new ArrayList<>();
     	PointList ghPointList = path.getPoints();
+    	geoPointList.add(startPosition);
     	for(GHPoint3D p: ghPointList) {
     		geoPointList.add(new GeoPoint(p.getLat(), p.getLon()));
     	}
+    	geoPointList.add(endPosition);
     	GeoRoute route = new GeoRoute(geoPointList);
     	return route;
 	}
@@ -63,6 +68,8 @@ public class GraphHopperImpl implements GraphManager {
      	   }
      	}
     	this.rsp = rsp;
+    	this.startPosition = startPosition;
+    	this.endPosition = endPosition;
 	}
 	
 	@Override

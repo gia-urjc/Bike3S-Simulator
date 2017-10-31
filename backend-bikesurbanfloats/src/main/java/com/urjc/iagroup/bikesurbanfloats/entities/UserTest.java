@@ -94,24 +94,13 @@ public class UserTest extends User {
     }
 	
 	@Override
-	public GeoPoint decidesNextPoint() throws Exception {
-		GeoPoint destination = systemManager.generateBoundingBoxRandomPoint();
-		systemManager.getGraphManager().calculateRoutes(getPosition(), destination);
-		this.actualRoute = this.determineRoute(systemManager.getGraphManager().getAllRoutes());
-		return destination;
+	public GeoPoint decidesNextPoint() {
+		return systemManager.generateBoundingBoxRandomPoint();
 	}
 	
 	@Override
 		public boolean decidesToReturnBike() {
 		return systemManager.getRandom().nextBoolean();
-	}
-
-	// TODO: moving it to user class?
-	@Override
-	public void updatePosition(int time) {
-		double distance = time * getPosition().distanceTo(getDestinationStation().getPosition()) / timeToReach();
- 		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
-		setPosition(newPoint);
 	}
 
 	@Override
@@ -129,7 +118,6 @@ public class UserTest extends User {
 		if(routes.isEmpty()) {
 			throw new GeoRouteException("Route is not valid");
 		}
-		//get best
 		return routes.get(0);
 	}
 
