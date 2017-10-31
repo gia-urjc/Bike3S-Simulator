@@ -22,7 +22,6 @@ public class ConfigJsonReader {
     private final static String JSON_ATTR_RANDOM_SEED = "randomSeed";
     private final static String JSON_ATTR_RECTANGLE_SIMULATION = "bbox";
     private final static String JSON_ATTR_MAP_DIRECTORY = "mapDirectory";
-    private final static String JSON_ATTR_GRAPHHOPPER_DIRECORY = "graphhopperDirectory";
     private final static String JSON_ATTR_GRAPHHOPPER_LOCALE = "graphHopperLocale";
 
     private String configurationFile;
@@ -98,7 +97,7 @@ public class ConfigJsonReader {
             allEntryPoints.add(newEntryPoint);
         }
         for (EntryPoint entryPoint : allEntryPoints) {
-            simulationConfiguration.setEventUserAppears(entryPoint.generateEvents());
+            simulationConfiguration.addAllEventUserAppears(entryPoint.generateEvents());
         }
     }
 

@@ -311,7 +311,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      */
     
     public int timeToReach() {
-		return (int) (currentRoute.getDistance()*getAverageVelocity());
+		return (int) (currentRoute.getDistance()/getAverageVelocity());
     }
 
     /**

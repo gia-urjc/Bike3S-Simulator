@@ -1,4 +1,4 @@
-package com.urjc.iagroup.bikesurbanfloats.config.distributions;
+	package com.urjc.iagroup.bikesurbanfloats.config.distributions;
 
 public class Distribution {
 	
