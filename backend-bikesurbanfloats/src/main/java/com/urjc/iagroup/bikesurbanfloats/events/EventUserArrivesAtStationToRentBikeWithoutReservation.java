@@ -23,7 +23,7 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
         List<Event> newEvents = new ArrayList<>();;
         user.setPosition(station.getPosition());
         
-        if (user.removeBikeFrom(station)) {
+        if (user.removeBikeWithoutReservationFrom(station)) {
             if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
                 newEvents = manageSlotReservationDecisionAtOtherStation();
             } else {   // user rides his bike to a point which is not a station

@@ -1,8 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
-import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
-
 import java.util.List;
 
 public class UserTest extends User {

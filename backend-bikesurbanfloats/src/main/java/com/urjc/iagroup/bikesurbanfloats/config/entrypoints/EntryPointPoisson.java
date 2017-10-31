@@ -32,7 +32,7 @@ public class EntryPointPoisson extends EntryPoint {
 	private DistributionPoisson distribution;
 	private UserType userType;
 	/**
-	 * It is the range of time within  which users can appears, i. e., 
+	 * It is the range of time within which users can appears, i. e., 
 	 * within which events of users apparearances 
 	 */
 	private TimeRange timeRange;  

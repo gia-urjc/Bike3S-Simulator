@@ -26,16 +26,13 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
     public Reservation getReservation() {
         return reservation;
     }
-
+    
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
         user.setPosition(station.getPosition());
-       	reservation.resolve(instant);
-       user.addReservation(reservation);
-
-       if(!user.returnBikeTo(station)) {
-        	newEvents = manageSlotReservationDecisionAtOtherStation();
-        }      
+        reservation.resolve(instant);
+        user.addReservation(reservation);
+        user.returnBikeWithReservationTo(station);
         return newEvents;
     }
     

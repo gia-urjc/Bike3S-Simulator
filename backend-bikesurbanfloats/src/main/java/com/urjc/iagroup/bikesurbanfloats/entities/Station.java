@@ -97,9 +97,9 @@ public class Station implements Entity, StationModel<Bike> {
     public Bike reservesBike() {
     	Bike bike = null;
     	if (availableBikes() > 0) {
-        this.reservedBikes++;
         bike = getFirstAvailableBike();
         bike.setReserved(true);
+        this.reservedBikes++;
     	}
         return bike;
     }
@@ -108,8 +108,9 @@ public class Station implements Entity, StationModel<Bike> {
      * Station unlocks a bike to make it available for other users 
      */
 
-    public void cancelsBikeReservation() {
+    public void cancelsBikeReservation(Reservation reservation) {
         this.reservedBikes--;
+        reservation.getBike().setReserved(false);
     }
     
     /**
@@ -125,14 +126,13 @@ public class Station implements Entity, StationModel<Bike> {
      * Station unlocks a slot to make it available for other users
      */
 
-    public void cancelsSlotReservation(Reservation reservation) {
+    public void cancelsSlotReservation() {
         this.reservedSlots--;
-        reservation.getBike().setReserved(false);
     }
     
     /**
      * If there's one available bike at station, user can remove it leaving an available slot at station     
-     * @return a bike if there's one available or null if there's no available bikes 
+     * @return a bike if there's one available or null in other case 
      */
     
         public Bike removeBikeWithoutReservation() {
@@ -147,16 +147,21 @@ public class Station implements Entity, StationModel<Bike> {
                 break;       
             }
         }
-
         return bike;
     }
         
-        public Bike removeBikeWithReservation(Reservation  reservation) {
-        int i = bikes.indexOf(reservation.getBike());
-        bikes.set(i, null);
-        Bike bike = reservation.getBike();
-        bike.setReserved(false);
-        return bike;
+        /**
+         * Station let the user remove his reserved bike 
+         * @param reservation: it is the bike reservation which user has made previously
+         * @return the bike user has reserved
+         */
+        
+        public Bike removeBikeWithReservation(Reservation reservation) {
+	        Bike bike = reservation.getBike();
+	        int i = bikes.indexOf(bike);
+	        bikes.set(i, null);
+	        bike.setReserved(false);
+	        return bike;
         }
         
         /**
@@ -180,8 +185,6 @@ public class Station implements Entity, StationModel<Bike> {
 		return returned;
     }
     
-    
-
     @Override
     public String toString() {
         String result = "Id: " + getId();

@@ -56,7 +56,8 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      */
     private boolean reservedSlot;
     /**
-     * It is the user current (bike or slot), i. e.,  the last reservation user has made
+     * It is the user current (bike or slot) reservation, i. e., the last reservation user has made
+     * If user hasn't made a reservation, this attribute is null
      */
     private Reservation reservation;
     
@@ -125,6 +126,10 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
         return reservedSlot;
     }
     
+    public Reservation getReservation() {
+    	return this.reservation;
+    }
+    
     public Station getDestinationStation() {
 		return destinationStation;
 	}
@@ -171,7 +176,7 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 
     public void cancelsBikeReservation(Station station) {
         this.reservedBike = false;
-        station.cancelsBikeReservation();
+        station.cancelsBikeReservation(reservation);
     }
 
     /**
@@ -191,18 +196,30 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
      * or he has a bike reservation) and false in other case
      */
 	
-	public boolean removeBikeFrom(Station station) {
+	public boolean removeBikeWithoutReservationFrom(Station station) {
         if (hasBike()) {
             return false;
         }
-
-        if (hasReservedBike())
-            // first, reservation is cancelled to let a bike available at station to make sure one bike is available for take away
-            cancelsBikeReservation(station);
-
-        this.bike = station.removeBike();
+        this.bike = station.removeBikeWithoutReservation();
         return hasBike();
     }
+	
+	/**
+	 * User removes the reserved bike from the specified station
+	 * @param station: it is the station where user goes to rent a bike
+	 */
+	
+	public boolean removeBikeWithReservationFrom(Station station) {
+		if (hasBike()) {
+			return false;
+		}
+		if (hasReservedBike()) {
+            // first, reservation is cancelled to let a bike available at station to make sure one bike is available for take away
+            cancelsBikeReservation(station);
+		}
+		this.bike = station.removeBikeWithReservation(reservation);
+		return true;
+	}
 
 	/**
 	 * User tries to return his rented bike to the specified station
@@ -211,22 +228,23 @@ public abstract class User implements Entity, UserModel<Bike, Station> {
 	 *  or he has a slot reservation) and false in other case
 	 */
 
-    public boolean returnBikeTo(Station station) {
+    public boolean returnBikeWithoutReservationTo(Station station) {
         boolean returned = false;
     	if (!hasBike()) {
             // TODO: log warning (or throw error?)
             return false;
         }
-    	
-    	if (hasReservedSlot())
-    		cancelsSlotReservation(station);
-    	
-        if(station.returnBike(this.bike)){
+        if(station.returnBike(this.bike)) {
         	this.bike = null;
         returned = true;
         }
-        
         return returned;
+    }
+    
+    public void returnBikeWithReservationTo(Station station) {
+    	if (hasReservedSlot()) {
+    		cancelsSlotReservation(station);
+    	}
     }
 
     public double getWalkingVelocity() {
