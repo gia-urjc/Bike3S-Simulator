@@ -8,10 +8,4 @@ module.exports = {
     SNull: require('./null'),
     SEnum: require('./enum'),
     SConst: require('./const'),
-    SAll: require('./all'),
-    SAny: require('./any'),
-    SOne: require('./one'),
-    SNot: require('./not'),
-    SMerge: require('./merge'),
-    Schema: require('./schema')
 };

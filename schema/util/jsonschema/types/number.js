@@ -1,4 +1,4 @@
-const { Min, Max, XMin, XMax, Multiple } = require('./constraints');
+const { Min, Max, XMin, XMax, Multiple } = require('../constraints');
 
 module.exports = (...constraints) => Object.assign({
     type: 'number'

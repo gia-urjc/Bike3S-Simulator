@@ -1,6 +1,6 @@
-const { SInteger, SObject, SArray } = require('../util/jsonschema');
+const { SInteger, SObject, SArray } = require('../util/jsonschema/types');
 const { Min, RequireAll } = require('../util/jsonschema/constraints');
-const GeoPoint = require('../util/customtypes/geopoint');
+const { GeoPoint } = require('../util/customtypes');
 
 const Bike = SObject({});
 

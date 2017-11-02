@@ -1,4 +1,5 @@
-const { SNumber, SObject, SConst, SAny, SMerge } = require('../util/jsonschema');
+const { SNumber, SObject, SConst } = require('../util/jsonschema/types');
+const { SOr, SUnion } = require('../util/jsonschema/operators');
 const { XMin, Require, RequireAll } = require('../util/jsonschema/constraints');
 const { UInt, GeoPoint, UserType } = require('../util/customtypes');
 
@@ -18,13 +19,13 @@ const ItemBase = SObject({
 }, RequireAll());
 
 const Items = [
-    SMerge(ItemBase, SObject({
+    SUnion(ItemBase, SObject({
         timeInstant: UInt
     }, RequireAll())),
-    SMerge(ItemBase, SObject({
-        distribution: SAny(...Distributions),
+    SUnion(ItemBase, SObject({
+        distribution: SOr(...Distributions),
         radius: SNumber(XMin(0))
     }, Require('distribution'))),
 ];
 
-module.exports = SAny(...Items);
+module.exports = SOr(...Items);

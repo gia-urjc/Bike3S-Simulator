@@ -1,4 +1,6 @@
-const { SBoolean, SInteger, SString, SArray, SObject, SNull, SAny, Schema } = require('../util/jsonschema');
+const { Schema } = require('../util/jsonschema/core');
+const { SBoolean, SInteger, SString, SArray, SObject, SNull } = require('../util/jsonschema/types');
+const { SOr } = require('../util/jsonschema/operators');
 const { Min, Require, RequireAll } = require('../util/jsonschema/constraints');
 const { UInt, GeoPoint, ReservationState, IdReference } = require('../util/customtypes');
 
@@ -9,7 +11,7 @@ const PropertyChange = (type) => SObject({
 
 const User = SObject({
     id: UInt,
-    position: PropertyChange(SAny(GeoPoint, SNull())),
+    position: PropertyChange(SOr(GeoPoint, SNull())),
     bike: PropertyChange(IdReference),
     destinationStation: PropertyChange(IdReference)
 }, Require('id'), Min(2));

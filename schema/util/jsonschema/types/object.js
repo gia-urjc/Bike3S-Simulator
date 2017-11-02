@@ -1,4 +1,4 @@
-const { Min, Max, Require, RequireAll } = require('./constraints');
+const { Min, Max, Require, RequireAll } = require('../constraints');
 
 module.exports = (properties, ...constraints) => Object.assign({
     type: 'object',

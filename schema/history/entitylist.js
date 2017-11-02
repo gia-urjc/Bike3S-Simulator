@@ -1,4 +1,5 @@
-const { SNumber, SObject, SArray, Schema } = require('../util/jsonschema');
+const { Schema } = require('../util/jsonschema/core');
+const { SNumber, SObject, SArray } = require('../util/jsonschema/types');
 const { XMin, RequireAll } = require('../util/jsonschema/constraints');
 const { UInt, GeoPoint, UserType, ReservationState, ReservationType, IdReference } = require('../util/customtypes');
 

@@ -1,4 +1,4 @@
-const { Min, Max, Pattern } = require('./constraints');
+const { Min, Max, Pattern } = require('../constraints');
 
 module.exports = (...constraints) => Object.assign({
     type: 'string'
