@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 
@@ -19,11 +18,12 @@ public class EventBikeReservationTimeout extends EventUser {
         return reservation;
     }
     
-    public List<Event> execute() {
+    public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        user.updatePosition(Reservation.VALID_TIME);
+        user.updatePositionAfterTimeOut();	
         reservation.expire();
         user.addReservation(reservation);
+        user.cancelsBikeReservation(user.getDestinationStation());
 
         if (!user.decidesToLeaveSystemAfterTimeout(instant)) {
             if (!user.decidesToDetermineOtherStationAfterTimeout()){

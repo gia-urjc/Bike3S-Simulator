@@ -1,15 +1,13 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
-import com.urjc.iagroup.bikesurbanfloats.entities.models.BikeModel;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
 @JsonIdentifier("bikes")
-public class HistoricBike implements HistoricEntity, BikeModel {
+public class HistoricBike implements HistoricEntity {
 
-	private int id;
-
+    private int id;
 	private boolean reserved;
 
 	public HistoricBike(Bike bike) {
@@ -17,14 +15,8 @@ public class HistoricBike implements HistoricEntity, BikeModel {
 		this.reserved = bike.isReserved();
 	}
 
-	@Override
-	public int getId() {
-		return id;
-	}
-
-	@Override
-	public boolean isReserved() {
-		return reserved;
-	}
-
+    @Override
+    public int getId() {
+        return id;
+    }
 }

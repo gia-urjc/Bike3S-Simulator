@@ -3,9 +3,11 @@ package com.urjc.iagroup.bikesurbanfloats.history;
 import com.google.gson.*;
 import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
+import com.urjc.iagroup.bikesurbanfloats.events.Event;
 
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class History {
@@ -16,58 +18,65 @@ public class History {
             .setPrettyPrinting()
             .create();
 
-    private static ChangeEntry entitiesEntry;
-    private static ChangeEntry lastEntry;
-    private static ChangeEntry nextEntry;
+    private static EntityCollection initialEntities;
+    private static EntityCollection updatedEntities;
 
-    private static ArrayList<JsonObject> serializedEntries = new ArrayList<>();
+    private static Map<Integer, List<JsonObject>> serializedEntries = new HashMap<>();
 
     private static Set<Class<? extends HistoricEntity>> historicClasses = new HashSet<>();
 
     public static void init(SimulationConfiguration simulationConfiguration) {
-        entitiesEntry = new ChangeEntry(0);
-        lastEntry = new ChangeEntry(0);
-        nextEntry = new ChangeEntry(0);
+        initialEntities = new EntityCollection();
+        updatedEntities = new EntityCollection();
 
         // TODO: save history output path
     }
 
     public static void close() {
-        // TODO: write entitiesEntry to file
+        // TODO: write initialEntities to file
     }
 
-    public static void registerNewEntity(Entity... entities) {
+    public static void registerEntity(Entity... entities) {
         for (Entity entity : entities) {
             Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
             HistoricEntity historicEntity = instantiateHistoric(entity);
-            nextEntry.addToMapFor(historicClass, historicEntity);
-            entitiesEntry.addToMapFor(historicClass, historicEntity);
+            initialEntities.addToMapFor(historicClass, historicEntity);
+            updatedEntities.addToMapFor(historicClass, historicEntity);
         }
     }
 
-    public static void registerForChange(int timeInstant, Entity... entities) {
-        if (timeInstant > nextEntry.getTimeInstant()) {
-            JsonObject changes = serializeChanges();
+    public static void registerEvent(Event event, Entity... entities) {
+        JsonObject entry = new JsonObject();
 
-            if (changes != null) {
-                serializedEntries.add(changes);
-            }
+        entry.add("event", new JsonPrimitive(event.getClass().getSimpleName()));
 
-            // TODO: write serializedEntries to file and clear list
-
-            lastEntry = nextEntry;
-
-            nextEntry = new ChangeEntry(timeInstant);
-        }
+        List<HistoricEntity> historicEntities = new ArrayList<>();
 
         for (Entity entity : entities) {
-            Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
-            historicClasses.add(historicClass);
-            nextEntry.addToMapFor(historicClass, instantiateHistoric(entity));
+            historicClasses.add(getReferenceClass(entity.getClass()));
+            historicEntities.add(instantiateHistoric(entity));
+        }
+
+        JsonObject changes = serializeChanges(historicEntities);
+
+        if (changes != null) {
+            entry.add("changes", changes);
+        }
+
+        if (!serializedEntries.containsKey(event.getInstant())) {
+            serializedEntries.put(event.getInstant(), new ArrayList<>());
+        }
+
+        serializedEntries.get(event.getInstant()).add(entry);
+
+        // TODO: write fixed number of entries to file and clear list
+
+        for (HistoricEntity entity : historicEntities) {
+            updatedEntities.addToMapFor(entity.getClass(), entity);
         }
     }
 
-    private static JsonObject serializeChanges() {
+    private static JsonObject serializeChanges(List<HistoricEntity> entities) {
         JsonObject entry = new JsonObject();
 
         for (Class<? extends HistoricEntity> historicClass : historicClasses) {
@@ -83,34 +92,34 @@ public class History {
                 throw new IllegalStateException("Found more than one @JsonIdentifier annotation in inheritance chain for " + historicClass);
             }
 
-            for (HistoricEntity entity : nextEntry.getMapFor(historicClass).values()) {
-                HistoricEntity oldEntity = lastEntry.getMapFor(historicClass).get(entity.getId());
+            for (HistoricEntity entity : entities) {
+                HistoricEntity oldEntity = updatedEntities.getMapFor(historicClass).get(entity.getId());
 
-                JsonObject changes = new JsonObject();
+                JsonObject jsonEntity = new JsonObject();
 
                 // TODO: maybe read private fields instead of methods for consistency with gson
-                for (Method getter : historicClass.getMethods()) {
-                    if (getter.getName().equals("getId")) continue;
+                for (Field field : historicClass.getDeclaredFields()) {
+                    if (field.getName().equals("id")) continue;
 
-                    JsonObject property;
+                    JsonElement property;
 
-                    if (HistoricEntity.class.isAssignableFrom(getter.getReturnType())) {
-                        property = HistoricEntity.idReferenceChange(oldEntity, entity);
-                    } else try {
-                        property = HistoricEntity.propertyChange(getter.invoke(oldEntity), getter.invoke(entity));
+                    field.setAccessible(true);
+
+                    try {
+                        property = propertyChange(field.get(oldEntity), field.get(entity));
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new IllegalStateException("Error invoking getter on " + historicClass);
+                        throw new IllegalStateException("Error reading field " + field + " from " + historicClass);
                     }
 
-                    if (!property.entrySet().isEmpty()) {
-                        changes.add(getFieldName(getter.getName()), property);
+                    if (property != null) {
+                        jsonEntity.add(field.getName(), property);
                     }
                 }
 
-                if (!changes.entrySet().isEmpty()) {
-                    changes.add("id", new JsonPrimitive(entity.getId()));
-                    subTree.add(changes);
+                if (!jsonEntity.entrySet().isEmpty()) {
+                    jsonEntity.add("id", new JsonPrimitive(entity.getId()));
+                    subTree.add(jsonEntity);
                 }
             }
 
@@ -158,17 +167,14 @@ public class History {
         }
     }
 
-    /**
-     * Converts the name of a getter method to its field equivalent.
-     * For example getAverageWalkingVelocity -> averageWalkingVelocity
-     * @param methodName
-     * @return
-     */
-    private static String getFieldName(String methodName) {
-        String[] nameParts = methodName.split("(?=\\p{Lu})");
-        nameParts = Arrays.copyOfRange(nameParts, 1, nameParts.length);
-        nameParts[0] = nameParts[0].toLowerCase();
-        return String.join("", nameParts);
+    private static JsonObject propertyChange(@NotNull Object oldProperty, @NotNull Object newProperty) {
+        if (oldProperty.equals(newProperty)) return null;
+
+        JsonObject property = new JsonObject();
+        property.add("old", History.gson.toJsonTree(oldProperty));
+        property.add("new", History.gson.toJsonTree(newProperty));
+
+        return property;
     }
 
 }

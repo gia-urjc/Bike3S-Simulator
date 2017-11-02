@@ -81,6 +81,10 @@ public class SimulationConfiguration {
 		GraphHopperLocale = graphHopperLocale;
 	}
 	
+	public void addAllEventUserAppears(List<EventUserAppears> events) {
+		eventUserAppears.addAll(events);
+	}
+	
 	public void resetInfo() {
 		eventUserAppears = new ArrayList<>();
 		totalTimeSimulation = 0;

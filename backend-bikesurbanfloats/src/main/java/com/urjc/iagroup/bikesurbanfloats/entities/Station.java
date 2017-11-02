@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import com.urjc.iagroup.bikesurbanfloats.entities.models.StationModel;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricStation;
@@ -17,7 +16,7 @@ import java.util.Objects;
  *
  */
 @HistoryReference(HistoricStation.class)
-public class Station implements Entity, StationModel<Bike> {
+public class Station implements Entity {
 
     private static IdGenerator idGenerator = new IdGenerator();
 
@@ -42,38 +41,31 @@ public class Station implements Entity, StationModel<Bike> {
     public int getId() {
         return id;
     }
-    
-    @Override
+
     public GeoPoint getPosition() {
         return position;
     }
-    
-    @Override
+
     public int getCapacity() {
         return this.capacity;
     }
-    
-    @Override
+
     public List<Bike> getBikes() {
         return bikes;
     }
-    
-    @Override
+
     public int getReservedBikes() {
         return reservedBikes;
     }
-    
-    @Override
+
     public int getReservedSlots() {
         return reservedSlots;
     }
-    
-    @Override
+
     public int availableBikes() {
         return (int)bikes.stream().filter(Objects::nonNull).count() - reservedBikes;
     }
-    
-    @Override
+
     public int availableSlots() {
         return this.capacity - (int)bikes.stream().filter(Objects::nonNull).count() - reservedSlots;
     }

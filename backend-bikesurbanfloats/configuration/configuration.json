@@ -1,16 +1,16 @@
 {
-  "reservationTime": 3000,
-	"totalTimeSimulation": 18000,
+  "reservationTime": 150,
+	"totalTimeSimulation": 1000,
 	"randomSeed": 200,
 	
 	"bbox": {
 		"northWest": {
-			"latitude": 40.329103,
-			"longitude": -3.881946
+			"latitude": 40.297595783347,
+			"longitude": -3.8987731933594
 		},
 		"southEast": {
-			"latitude": 40.321065,
-			"longitude": -3.851462
+			"latitude": 40.349422329852,
+			"longitude": -3.8314819335938
 		}
 	},
 	
@@ -19,8 +19,6 @@
   	
   	"entryPoints": [
     {
-<<<<<<< HEAD
-=======
       "userType": "USER_TEST",
       "instant": 0,
       "position": {
@@ -30,19 +28,14 @@
     },
     {
     	"userType": "USER_TEST",
->>>>>>> documentation
 		"position": {
 			"latitude": 40.32246,
 			"longitude": -3.87982 
 		},
-		"radius": 5000.0,
+		"radius": 100.0,
 		"distribution": {
 			"type": "POISSON",
 			"lambda": 0.0033333
-		},      
-		"timeRange": {
-			"start": 0,
-			"end": 36000
 		}
   	}
   ],

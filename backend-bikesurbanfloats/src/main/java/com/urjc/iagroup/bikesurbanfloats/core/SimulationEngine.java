@@ -25,6 +25,7 @@ public class SimulationEngine {
 		simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(user -> user.setSystemManager(systemManager));
 	}
 	
+<<<<<<< HEAD
 	/**
 	 * It executes, in the corresponding order, all the events are generated through the entire simulation,	i. e., 
 	 * it executes all the initial events of the quee, as well as thouse that these executions generate.
@@ -35,6 +36,15 @@ public class SimulationEngine {
 	    simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(History::registerNewEntity);
 	    systemManager.consultStations().forEach(History::registerNewEntity);
 	    systemManager.consultBikes().forEach(History::registerNewEntity);
+=======
+	public void run() throws Exception {
+
+	    History.init(simulationConfiguration);
+
+	    simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(History::registerEntity);
+	    systemManager.consultStations().forEach(History::registerEntity);
+	    systemManager.consultBikes().forEach(History::registerEntity);
+>>>>>>> 1ec91a77605e3c3a3f367f3eeec34cc0a901afa8
 
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element

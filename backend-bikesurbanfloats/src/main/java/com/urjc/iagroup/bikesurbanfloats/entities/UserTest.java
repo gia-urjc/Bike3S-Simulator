@@ -1,6 +1,9 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
+
 import java.util.List;
 
 /**
@@ -114,14 +117,6 @@ public class UserTest extends User {
 		return systemManager.getRandom().nextBoolean();
 	}
 
-	// TODO: moving it to user class?
-	@Override
-	public void updatePosition(int time) {
-		double distance = time * getPosition().distanceTo(getDestinationStation().getPosition()) / timeToReach(getDestinationStation().getPosition());
- 		GeoPoint newPoint = getPosition().reachedPoint(distance, getDestinationStation().getPosition());
-		setPosition(newPoint);
-	}
-
 	@Override
 	public boolean decidesToDetermineOtherStationAfterTimeout() {
 		return systemManager.getRandom().nextBoolean();
@@ -130,6 +125,14 @@ public class UserTest extends User {
 	@Override
 	public boolean decidesToDetermineOtherStationAfterFailedReservation() {
 		return systemManager.getRandom().nextBoolean();
+	}
+
+	@Override
+	public GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException {
+		if(routes.isEmpty()) {
+			throw new GeoRouteException("Route is not valid");
+		}
+		return routes.get(0);
 	}
 
 }

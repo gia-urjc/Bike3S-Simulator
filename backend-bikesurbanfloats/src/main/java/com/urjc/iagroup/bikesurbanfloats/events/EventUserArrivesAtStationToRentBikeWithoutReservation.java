@@ -19,7 +19,7 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
         return station;
     }
 
-    public List<Event> execute() {
+    public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();;
         user.setPosition(station.getPosition());
         
@@ -28,7 +28,7 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
                 newEvents = manageSlotReservationDecisionAtOtherStation();
             } else {   // user rides his bike to a point which is not a station
                 GeoPoint point = user.decidesNextPoint();
-                int arrivalTime = user.timeToReach(point);
+                int arrivalTime = user.timeToReach();
                 newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
             }
         } else {   // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation

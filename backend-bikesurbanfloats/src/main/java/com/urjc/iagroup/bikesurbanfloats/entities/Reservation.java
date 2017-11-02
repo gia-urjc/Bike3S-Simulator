@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import com.urjc.iagroup.bikesurbanfloats.entities.models.ReservationModel;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricReservation;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
@@ -17,7 +16,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
  */
 
 @HistoryReference(HistoricReservation.class)
-public class Reservation implements Entity, ReservationModel<Bike, Station, User> {
+public class Reservation implements Entity {
 
     public enum ReservationType {
         SLOT, BIKE
@@ -65,6 +64,7 @@ public class Reservation implements Entity, ReservationModel<Bike, Station, User
         this.state = ReservationState.FAILED;
     }
 
+    @Override
     public int getId() {
         return id;
     }
