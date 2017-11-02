@@ -15,6 +15,9 @@ public class SimulationEngine {
 	private SimulationConfiguration simulationConfiguration;
 	private SystemManager systemManager;
 	
+	/**
+	 * It creates an event quee where its events are sorted by the time instant when they'll ocur.   
+		 */
 	public SimulationEngine(SimulationConfiguration simulationConfiguration, SystemManager systemManager) {
 		eventsQueue = new PriorityQueue<>(simulationConfiguration.getEventUserAppears());
 		this.simulationConfiguration = simulationConfiguration;
@@ -22,10 +25,13 @@ public class SimulationEngine {
 		simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(user -> user.setSystemManager(systemManager));
 	}
 	
+	/**
+	 * It executes, in the corresponding order, all the events are generated through the entire simulation,	i. e., 
+	 * it executes all the initial events of the quee, as well as thouse that these executions generate.
+	 * Moreover, this method initialize history class and registers all the system entities in that class.   
+	 */
 	public void run() {
-
 	    History.init(simulationConfiguration);
-
 	    simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(History::registerNewEntity);
 	    systemManager.consultStations().forEach(History::registerNewEntity);
 	    systemManager.consultBikes().forEach(History::registerNewEntity);

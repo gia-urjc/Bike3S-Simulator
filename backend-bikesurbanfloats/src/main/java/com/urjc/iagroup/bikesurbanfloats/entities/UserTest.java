@@ -3,6 +3,13 @@ package com.urjc.iagroup.bikesurbanfloats.entities;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import java.util.List;
 
+/**
+ * This user serves to test the system. 
+ * Most of his decisions are random.
+ * @author IAgroup
+ *
+ */
+
 public class UserTest extends User {
 	
 	public UserTest() {
@@ -13,22 +20,22 @@ public class UserTest extends User {
 	public boolean decidesToLeaveSystemAfterTimeout(int instant) {
 		return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
 }
-	
 
    @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
         return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
     }
 
-
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
         return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
     }
-	
+    
+    /**
+     * User chooses to go to the closest station for which he hasn't tried to make a bike reservation at that time instant he is making the decision. 
+     */
 	@Override
 	public Station determineStationToRentBike(int instant) {
-		
 		List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
 		double minDistance = Double.MAX_VALUE;
 		Station destination = null;
@@ -49,7 +56,10 @@ public class UserTest extends User {
 		return destination;
 	}
 	
-	@Override
+ /**
+ * User chooses to go to the closest station for which he hasn't tried to make a slot reservation at that time instant he is making the decision. 
+ */
+@Override
 	public Station determineStationToReturnBike(int instant) {
 		List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
 		double minDistance = Double.MAX_VALUE;
@@ -76,7 +86,8 @@ public class UserTest extends User {
 		return systemManager.getRandom().nextBoolean();
 	}
 	
-   public boolean decidesToReserveBikeAtNewDecidedStation() {
+	@Override   
+	public boolean decidesToReserveBikeAtNewDecidedStation() {
         return systemManager.getRandom().nextBoolean();
     }
 
@@ -90,6 +101,9 @@ public class UserTest extends User {
         return systemManager.getRandom().nextBoolean();
     }
 	
+   /**
+    * User chooses a random point to which he'll ride.     
+    */
 	@Override
 	public GeoPoint decidesNextPoint() {
 		return systemManager.generateBoundingBoxRandomPoint();
