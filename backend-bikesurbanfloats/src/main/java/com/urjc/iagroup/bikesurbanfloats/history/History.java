@@ -12,7 +12,7 @@ import java.util.*;
 
 public class History {
 
-    static Gson gson = new GsonBuilder()
+    private static Gson gson = new GsonBuilder()
             .serializeNulls()
             .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
             .setPrettyPrinting()

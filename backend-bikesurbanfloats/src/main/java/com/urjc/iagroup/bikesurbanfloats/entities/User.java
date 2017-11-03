@@ -24,10 +24,6 @@ import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 @HistoryReference(HistoricUser.class)
 public abstract class User implements Entity {
 
-	public enum UserType {
-        USER_TEST
-	}
-
 	private static IdGenerator idGenerator = new IdGenerator();
 
     private int id;
