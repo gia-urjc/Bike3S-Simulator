@@ -1,7 +1,7 @@
 const { Schema } = require('../util/jsonschema/core');
 const { SNumber, SObject, SArray } = require('../util/jsonschema/types');
 const { XMin, RequireAll } = require('../util/jsonschema/constraints');
-const { UInt, GeoPoint, UserType, ReservationState, ReservationType, IdReference } = require('../util/customtypes');
+const { UInt, GeoPoint, UserType, ReservationState, ReservationType, IdReference } = require('../util/commontypes');
 
 const User = SObject({
     id: UInt,

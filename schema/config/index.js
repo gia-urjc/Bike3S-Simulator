@@ -1,7 +1,7 @@
 const { Schema } = require('../util/jsonschema/core');
-const { SInteger, SString, SObject, SArray, SEnum } = require('../util/jsonschema/types');
+const { SInteger, SString, SObject, SArray } = require('../util/jsonschema/types');
 const { RequireAll, Pattern } = require('../util/jsonschema/constraints');
-const { UInt, GeoPoint } = require('../util/customtypes');
+const { UInt, GeoPoint } = require('../util/commontypes');
 
 const EntryPoint = require('./entrypoint');
 const Station = require('./station');

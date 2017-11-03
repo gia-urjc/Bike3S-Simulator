@@ -2,7 +2,7 @@ const { Schema } = require('../util/jsonschema/core');
 const { SBoolean, SInteger, SString, SArray, SObject, SNull } = require('../util/jsonschema/types');
 const { SOr } = require('../util/jsonschema/operators');
 const { Min, Require, RequireAll } = require('../util/jsonschema/constraints');
-const { UInt, GeoPoint, ReservationState, IdReference } = require('../util/customtypes');
+const { UInt, GeoPoint, ReservationState, IdReference } = require('../util/commontypes');
 
 const PropertyChange = (type) => SObject({
     old: type,
