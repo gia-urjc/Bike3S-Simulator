@@ -1,5 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.graphs;
 
+import com.google.gson.annotations.Expose;
+
 public class GeoPoint {
 
     /**
@@ -8,8 +10,11 @@ public class GeoPoint {
     public final static double EARTH_RADIUS = 6371e3;
     public final static double DEG_TO_RAD = Math.PI / 180.0;
 
-    private Double latitude;
-    private Double longitude;
+    @Expose
+    private double latitude;
+
+    @Expose
+    private double longitude;
 
     public GeoPoint(double latitude, double longitude) {
         this.latitude = latitude;

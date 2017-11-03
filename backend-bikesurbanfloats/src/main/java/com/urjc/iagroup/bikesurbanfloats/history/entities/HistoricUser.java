@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
+import com.google.gson.annotations.Expose;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
@@ -10,15 +11,20 @@ import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 @JsonIdentifier("users")
 public class HistoricUser implements HistoricEntity {
 
+    @Expose
     private int id;
-    private GeoPoint position;
 
+    @Expose
     private double walkingVelocity;
+
+    @Expose
     private double cyclingVelocity;
 
+    private GeoPoint position;
     private Integer bike;
     private Integer destinationStation;
 
+    @Expose
     private UserType type;
 
     public HistoricUser(User user) {

@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
+import com.google.gson.annotations.Expose;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
@@ -7,7 +8,9 @@ import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 @JsonIdentifier("bikes")
 public class HistoricBike implements HistoricEntity {
 
+    @Expose
     private int id;
+
 	private boolean reserved;
 
 	public HistoricBike(Bike bike) {

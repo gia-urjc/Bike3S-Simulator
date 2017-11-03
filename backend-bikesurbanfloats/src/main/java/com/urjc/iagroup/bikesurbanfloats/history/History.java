@@ -6,6 +6,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.events.Event;
 
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -15,6 +16,7 @@ import java.util.*;
 public class History {
 
     private static Gson gson = new GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
             .serializeNulls()
             .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
             .setPrettyPrinting()
@@ -34,9 +36,13 @@ public class History {
         // TODO: save history output path
     }
 
-    public static void close() {
+    public static void close() throws IOException {
         // TODO: change hardcoded file path to configurable path
-        try (FileWriter writer = new FileWriter("history/entities.json")) {
+
+        File entitiesJson = new File("history/entities.json");
+        entitiesJson.getParentFile().mkdirs();
+
+        try (FileWriter writer = new FileWriter(entitiesJson)) {
             Map<String, Collection<HistoricEntity>> entries = new HashMap<>();
             initialEntities.getEntityMaps().forEach((historicClass, entities) -> {
                 String jsonIdentifier = getJsonIdentifier(historicClass);
@@ -44,9 +50,6 @@ public class History {
             });
 
             gson.toJson(entries, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error writing entities.json");
         }
 
         // TODO: copy configuration file

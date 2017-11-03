@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
+import com.google.gson.annotations.Expose;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
@@ -15,12 +16,16 @@ public class HistoricStation implements HistoricEntity {
 
     private static Function<Bike, Integer> bikeIdConverter = bike -> bike == null ? null : bike.getId();
 
+    @Expose
     private int id;
 
+    @Expose
     private GeoPoint position;
 
+    @Expose
     private int capacity;
 
+    @Expose
     private List<Integer> bikes;
 
     private int reservedBikes;

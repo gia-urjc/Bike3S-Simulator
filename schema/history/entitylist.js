@@ -1,6 +1,6 @@
 const { Schema } = require('../util/jsonschema/core');
 const { SNumber, SObject, SArray } = require('../util/jsonschema/types');
-const { XMin, RequireAll } = require('../util/jsonschema/constraints');
+const { XMin, Require, RequireAll } = require('../util/jsonschema/constraints');
 const { UInt, GeoPoint, UserType, ReservationState, ReservationType, IdReference } = require('../util/commontypes');
 
 const User = SObject({
@@ -24,7 +24,7 @@ const Station = SObject({
 const Reservation = SObject({
     id: UInt,
     startTime: UInt,
-    endTime: UInt,
+    // endTime: UInt, TODO: make sure this is not necessary
     user: UInt,
     station: UInt,
     bike: IdReference,
@@ -37,4 +37,5 @@ module.exports = Schema(SObject({
     bikes: SArray(Bike),
     stations: SArray(Station),
     reservations: SArray(Reservation)
-}, RequireAll()));
+    // it is technically possible that no reservations were made, so they are not required in the schema
+}, Require('users', 'bikes', 'stations')));
