@@ -2,12 +2,12 @@ package com.urjc.iagroup.bikesurbanfloats.util;
 
 import java.util.Random;
 
-public class StaticRandom {
+public class SimulationRandom {
 	
-	private static StaticRandom instance = null;
+	private static SimulationRandom instance = null;
 	private Random random;
 	
-	private StaticRandom(long seed) {
+	private SimulationRandom(long seed) {
 		this.random = new Random(seed);
 	}
 	
@@ -35,15 +35,15 @@ public class StaticRandom {
 		return random.nextBoolean();
 	}
 	
-	public static StaticRandom createRandom(long seed) {
+	public static SimulationRandom createRandom(long seed) {
 		if(instance == null) {
-			instance = new StaticRandom(seed);
+			instance = new SimulationRandom(seed);
 			return instance;
 		}
 		return instance;
 	}
 	
-	public static StaticRandom createRandom() {
+	public static SimulationRandom createRandom() {
 		if(instance == null) {
 			throw new IllegalStateException("You should call first createRandom(seed)");
 		}

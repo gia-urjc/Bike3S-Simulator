@@ -1,7 +1,7 @@
 const { SNumber, SObject, SConst } = require('../util/jsonschema/types');
 const { SOr, SUnion } = require('../util/jsonschema/operators');
 const { XMin, Require, RequireAll } = require('../util/jsonschema/constraints');
-const { UInt, GeoPoint, UserType } = require('../util/customtypes');
+const { UInt, GeoPoint, UserType } = require('../util/commontypes');
 
 const Distributions = [
     SObject({

@@ -1,7 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.config.distributions;
 
 
-import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
+import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 public class DistributionPoisson extends Distribution {
 	private double lambda;
@@ -26,7 +26,7 @@ public class DistributionPoisson extends Distribution {
      * @see <a href="https://en.wikipedia.org/wiki/Exponential_distribution#Generating_exponential_variates">Generating exponential variates</a>
      */
 	public int randomInterarrivalDelay() {
-		StaticRandom random = StaticRandom.createRandom();
+		SimulationRandom random = SimulationRandom.createRandom();
 	    double randomValue = Math.log(1.0 - random.nextDouble(Double.MIN_VALUE, 1));
 	    Double result = (double) -randomValue/lambda;
 	    Long longResult = Math.round(result);

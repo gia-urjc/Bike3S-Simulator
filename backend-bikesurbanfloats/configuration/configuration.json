@@ -1,68 +1,65 @@
 {
-  "reservationTime": 150,
-	"totalTimeSimulation": 1000,
-	"randomSeed": 200,
-	
-	"bbox": {
-		"northWest": {
-			"latitude": 40.297595783347,
-			"longitude": -3.8987731933594
-		},
-		"southEast": {
-			"latitude": 40.349422329852,
-			"longitude": -3.8314819335938
-		}
-	},
-	
-	"mapDirectory": "maps/mostoles.osm",
-  	"graphHopperLocale": "ES",
-  	
-  	"entryPoints": [
-    {
-      "userType": "USER_TEST",
-      "instant": 0,
-      "position": {
-        "latitude": 40.32246,
-        "longitude": -3.87982
-      }
+    "reservationTime": 150,
+    "totalTimeSimulation": 1000,
+    "randomSeed": 200,
+    "bbox": {
+        "northWest": {
+            "latitude": 40.297595783347,
+            "longitude": -3.8987731933594
+        },
+        "southEast": {
+            "latitude": 40.349422329852,
+            "longitude": -3.8314819335938
+        }
     },
-    {
-    	"userType": "USER_TEST",
-		"position": {
-			"latitude": 40.32246,
-			"longitude": -3.87982 
-		},
-		"radius": 100.0,
-		"distribution": {
-			"type": "POISSON",
-			"lambda": 0.0033333
-		}
-  	}
-  ],
-  
-  "stations": [
-  {
-    "bikes": 3,
-    "position": {
-      "latitude" : 40.32159,
-      "longitude" : -3.86469
-    },
-    "capacity" : 10
-  },
-  {
-    "bikes": 6,
-    "position": {
-      "latitude" : 40.32724,
-      "longitude" : -3.87516
-    },
-    "capacity" : 10
-  },
-  {
-    "bikes": 4,
-    "position": {
-      "latitude" : 40.32709,
-      "longitude" : -3.85465
-    },
-    "capacity" : 10
-  }]
+    "mapDirectory": "maps/mostoles.osm",
+    "graphHopperLocale": "ES",
+    "entryPoints": [
+        {
+            "userType": "USER_TEST",
+            "instant": 0,
+            "position": {
+                "latitude": 40.32246,
+                "longitude": -3.87982
+            }
+        },
+        {
+            "userType": "USER_TEST",
+            "position": {
+                "latitude": 40.32246,
+                "longitude": -3.87982
+            },
+            "radius": 100.0,
+            "distribution": {
+                "type": "POISSON",
+                "lambda": 0.0033333
+            }
+        }
+    ],
+    "stations": [
+        {
+            "bikes": 3,
+            "position": {
+                "latitude": 40.32159,
+                "longitude": -3.86469
+            },
+            "capacity": 10
+        },
+        {
+            "bikes": 6,
+            "position": {
+                "latitude": 40.32724,
+                "longitude": -3.87516
+            },
+            "capacity": 10
+        },
+        {
+            "bikes": 4,
+            "position": {
+                "latitude": 40.32709,
+                "longitude": -3.85465
+            },
+            "capacity": 10
+        }
+    ]
 }

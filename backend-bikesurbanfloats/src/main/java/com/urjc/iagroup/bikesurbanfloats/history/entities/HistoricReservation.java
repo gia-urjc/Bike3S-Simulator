@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
+import com.google.gson.annotations.Expose;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationState;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
@@ -9,15 +10,27 @@ import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 @JsonIdentifier("reservations")
 public class HistoricReservation implements HistoricEntity {
 
+    @Expose
     private int id;
+
+    @Expose
     private int startTime;
+
     private int endTime;
 
+    @Expose
     private ReservationType type;
+
+    @Expose
     private ReservationState state;
 
+    @Expose
     private Integer user;
+
+    @Expose
     private Integer station;
+
+    @Expose
     private Integer bike;
 
     public HistoricReservation(Reservation reservation) {

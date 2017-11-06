@@ -19,7 +19,7 @@ import com.graphhopper.util.shapes.GHPoint3D;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperImplException;
 
-public class GraphHopperImpl implements GraphManager {
+public class GraphHopperIntegration implements GraphManager {
 
 	private final String GRAPHHOPPER_DIR = "graphhopper_files";
 	
@@ -30,7 +30,7 @@ public class GraphHopperImpl implements GraphManager {
 	private GeoPoint startPosition;
 	private GeoPoint endPosition;
 	
-	public GraphHopperImpl(String mapDir, String locale) throws IOException {
+	public GraphHopperIntegration(String mapDir, String locale) throws IOException {
 		FileUtils.deleteDirectory(new File(GRAPHHOPPER_DIR));
 		this.hopper = new GraphHopperOSM().forServer();
 		this.locale = locale;

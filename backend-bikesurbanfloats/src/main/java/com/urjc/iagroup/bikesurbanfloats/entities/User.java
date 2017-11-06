@@ -11,7 +11,7 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperImplExcept
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
-import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
+import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 /**
  * This is the main entity of the the system.
@@ -23,10 +23,6 @@ import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 @HistoryReference(HistoricUser.class)
 public abstract class User implements Entity {
-
-	public enum UserType {
-        USER_TEST
-	}
 
 	private static IdGenerator idGenerator = new IdGenerator();
 
@@ -71,7 +67,7 @@ public abstract class User implements Entity {
     protected SystemManager systemManager;
    
     public User() {
-    	StaticRandom random = StaticRandom.createRandom();
+    	SimulationRandom random = SimulationRandom.createRandom();
 
         this.id = idGenerator.next();
 

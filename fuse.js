@@ -60,12 +60,10 @@ Sparky.task('build:schema', () => new Promise((resolve, reject) => {
         spaces: 4
     };
 
-    // add schemas here
-    // one entry has the schema subdirectory as key and an array of file names without extension as value
-    const schemas = ['config', 'history'];
+    const exclude = ['examples', 'util'];
 
-    schemas.forEach((entry) => {
-        const collection = require(`./schema/${entry}`);
+    fs.readdirSync(projectRoot.schema()).filter((x) => !exclude.includes(x)).forEach((entry) => {
+        const collection = require(path.join(projectRoot.schema(), entry));
 
         Object.keys(collection).forEach((schema) => {
             const out = path.join(projectRoot.build.schema(), entry, `${schema}.json`);
@@ -80,19 +78,6 @@ Sparky.task('build:schema', () => new Promise((resolve, reject) => {
             }
         })
     });
-
-    /*Object.keys(schemas).forEach((type) => schemas[type].forEach((schema) => {
-        const out = path.join(projectRoot.build.schema(), type, `${schema}.json`);
-
-        log.time().green(`Writing schema to: ${out}`).echo();
-
-        try {
-            fs.outputJsonSync(out, require(`./schema/${type}/${schema}`), jsonOptions);
-        } catch (error) {
-            log.time().red(`Error while writing json schema: ${error}`).echo();
-            reject();
-        }
-    }));*/
 
     resolve();
 }));
@@ -180,3 +165,11 @@ Sparky.task('build:dev', ['clean:build', 'clean:cache', 'build:backend', 'build:
 Sparky.task('set:production', () => production = true);
 
 Sparky.task('build:dist', ['set:production', 'build:dev'], () => {});
+
+
+Sparky.task('test', () => {
+    const exclude = ['examples', 'util'];
+    fs.readdirSync(projectRoot.schema()).filter((x) => !exclude.includes(x)).forEach((entry) => {
+        console.log(path.join(projectRoot.schema(), entry));
+    });
+});

@@ -11,6 +11,10 @@ class EntityCollection {
         this.entityMaps = new HashMap<>();
     }
 
+    Map<Class<? extends HistoricEntity>, Map<Integer, HistoricEntity>> getEntityMaps() {
+        return entityMaps;
+    }
+
     Map<Integer, HistoricEntity> getMapFor(Class<? extends HistoricEntity> entityClass) {
         return entityMaps.get(entityClass);
     }

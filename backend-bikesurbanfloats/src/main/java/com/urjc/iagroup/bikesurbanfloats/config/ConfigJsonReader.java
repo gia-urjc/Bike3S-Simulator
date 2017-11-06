@@ -8,7 +8,7 @@ import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingBox;
-import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
+import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class ConfigJsonReader {
         Reservation.VALID_TIME = jsonConfig.get(JSON_ATTR_TIME_RESERVE).getAsInt();
         EntryPoint.TOTAL_TIME_SIMULATION = jsonConfig.get(JSON_ATTR_TIME_SIMULATION).getAsInt();
         simulationConfiguration.setRandomSeed(jsonConfig.get(JSON_ATTR_RANDOM_SEED).getAsLong());
-        StaticRandom.createRandom(simulationConfiguration.getRandomSeed());
+        SimulationRandom.createRandom(simulationConfiguration.getRandomSeed());
         JsonElement rectangleJson = jsonConfig.get(JSON_ATTR_RECTANGLE_SIMULATION).getAsJsonObject();
         simulationConfiguration.setBoundingBox(gson.fromJson(rectangleJson, BoundingBox.class));
         simulationConfiguration.setMapDirectory(jsonConfig.get(JSON_ATTR_MAP_DIRECTORY).getAsString());

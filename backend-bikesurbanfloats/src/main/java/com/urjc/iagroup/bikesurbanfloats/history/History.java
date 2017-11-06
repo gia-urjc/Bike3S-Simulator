@@ -6,13 +6,17 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.events.Event;
 
 import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
 
 public class History {
 
-    static Gson gson = new GsonBuilder()
+    private static Gson gson = new GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
             .serializeNulls()
             .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
             .setPrettyPrinting()
@@ -32,8 +36,23 @@ public class History {
         // TODO: save history output path
     }
 
-    public static void close() {
-        // TODO: write initialEntities to file
+    public static void close() throws IOException {
+        // TODO: change hardcoded file path to configurable path
+
+        File entitiesJson = new File("history/entities.json");
+        entitiesJson.getParentFile().mkdirs();
+
+        try (FileWriter writer = new FileWriter(entitiesJson)) {
+            Map<String, Collection<HistoricEntity>> entries = new HashMap<>();
+            initialEntities.getEntityMaps().forEach((historicClass, entities) -> {
+                String jsonIdentifier = getJsonIdentifier(historicClass);
+                entries.put(jsonIdentifier, entities.values());
+            });
+
+            gson.toJson(entries, writer);
+        }
+
+        // TODO: copy configuration file
     }
 
     public static void registerEntity(Entity... entities) {
@@ -82,15 +101,7 @@ public class History {
         for (Class<? extends HistoricEntity> historicClass : historicClasses) {
             List<JsonObject> subTree = new ArrayList<>();
 
-            JsonIdentifier[] jsonIdentifiers = historicClass.getAnnotationsByType(JsonIdentifier.class);
-
-            if (jsonIdentifiers.length == 0) {
-                throw new IllegalStateException("No annotation @JsonIdentifier found for " + historicClass);
-            }
-
-            if (jsonIdentifiers.length > 1) {
-                throw new IllegalStateException("Found more than one @JsonIdentifier annotation in inheritance chain for " + historicClass);
-            }
+            String jsonIdentifier = getJsonIdentifier(historicClass);
 
             for (HistoricEntity entity : entities) {
                 HistoricEntity oldEntity = updatedEntities.getMapFor(historicClass).get(entity.getId());
@@ -124,7 +135,7 @@ public class History {
             }
 
             if (!subTree.isEmpty()) {
-                entry.add(jsonIdentifiers[0].value(), gson.toJsonTree(subTree));
+                entry.add(jsonIdentifier, gson.toJsonTree(subTree));
             }
         }
 
@@ -145,6 +156,21 @@ public class History {
         return referenceClasses[0].value();
     }
 
+    private static String getJsonIdentifier(Class<? extends HistoricEntity> historicClass) {
+        JsonIdentifier[] jsonIdentifiers = historicClass.getAnnotationsByType(JsonIdentifier.class);
+
+        if (jsonIdentifiers.length == 0) {
+            throw new IllegalStateException("No annotation @JsonIdentifier found for " + historicClass);
+        }
+
+        if (jsonIdentifiers.length > 1) {
+            throw new IllegalStateException("Found more than one @JsonIdentifier annotation in inheritance chain for " + historicClass);
+        }
+
+        return jsonIdentifiers[0].value();
+    }
+
+    @SuppressWarnings("unchecked")
     private static HistoricEntity instantiateHistoric(Entity entity) {
         Class<? extends Entity> entityClass = entity.getClass();
         Class<? extends HistoricEntity> historicClass = getReferenceClass(entityClass);
