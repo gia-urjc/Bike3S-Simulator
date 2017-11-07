@@ -3,7 +3,6 @@ package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import java.util.List;
 
-
 /**
  * It is an event generator for user appearances
  * It represents an entry point at system geographic map where a unique user or several users appear and start interacting with the system 
@@ -12,7 +11,7 @@ import java.util.List;
  */
 public abstract class EntryPoint {
 	
-	public static int TOTAL_TIME_SIMULATION;
+	public static int TOTAL_SIMULATION_TIME;
 	
 	public abstract List<EventUserAppears> generateEvents();
 	

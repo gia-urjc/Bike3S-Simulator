@@ -8,9 +8,9 @@ public class BoundingBox {
 	private GeoPoint southEast;
 
 	
-	public BoundingBox(GeoPoint point1, GeoPoint point2) {
-		this.northWest = point1;
-		this.southEast = point2;
+	public BoundingBox(GeoPoint northWest, GeoPoint southEast) {
+		this.northWest = northWest;
+		this.southEast = southEast;
 	}
 	
 	public BoundingBox(double lat1, double lon1, double lat2, double lon2) {

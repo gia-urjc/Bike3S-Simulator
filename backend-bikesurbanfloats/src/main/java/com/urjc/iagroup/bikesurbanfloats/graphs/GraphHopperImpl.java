@@ -30,10 +30,10 @@ public class GraphHopperImpl implements GraphManager {
 	private GeoPoint startPosition;
 	private GeoPoint endPosition;
 	
-	public GraphHopperImpl(String mapDir, String locale) throws IOException {
+	public GraphHopperImpl(String mapDir) throws IOException {
 		FileUtils.deleteDirectory(new File(GRAPHHOPPER_DIR));
 		this.hopper = new GraphHopperOSM().forServer();
-		this.locale = locale;
+		//this.locale = locale;
 		hopper.setDataReaderFile(mapDir);
 		hopper.setGraphHopperLocation(GRAPHHOPPER_DIR);
 		hopper.setEncodingManager(new EncodingManager("foot"));
@@ -56,10 +56,10 @@ public class GraphHopperImpl implements GraphManager {
 	public void calculateRoutes(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperImplException  {
 		GHRequest req = new GHRequest(
 				startPosition.getLatitude(), startPosition.getLongitude(),
-				endPosition.getLatitude(), endPosition.getLongitude()).
-			setWeighting("fastest").
-    	    setVehicle("foot").
-    	    setLocale(Locale.forLanguageTag(locale));
+				endPosition.getLatitude(), endPosition.getLongitude())
+				.setWeighting("fastest")
+				.setVehicle("foot");
+				//.setLocale(Locale.forLanguageTag(locale));
     	GHResponse rsp = hopper.route(req);
     	
     	if(rsp.hasErrors()) {

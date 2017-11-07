@@ -1,4 +1,4 @@
-package com.urjc.iagroup.bikesurbanfloats.entities.factories;
+package com.urjc.iagroup.bikesurbanfloats.entities.users;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;

@@ -28,19 +28,17 @@ public class SystemManager {
     private StaticRandom random;
     private BoundingBox bbox;
 
-    public SystemManager(List<Station> stations, SimulationConfiguration systemConfiguration) throws IOException {
-        this.stations = new ArrayList<>(stations);
+    public SystemManager(SimulationConfiguration simulationConfiguration) throws IOException {
+        this.stations = new ArrayList<>(simulationConfiguration.getStations());
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         this.reservations = new ArrayList<>();
-        this.graphManager = createGraphManager(systemConfiguration);
+        this.graphManager = createGraphManager(simulationConfiguration);
         this.random = StaticRandom.createRandom();
-        this.bbox = systemConfiguration.getBoundingBox();
+        this.bbox = simulationConfiguration.getBoundingBox();
     }
     
-    private GraphHopperImpl createGraphManager(SimulationConfiguration systemConfiguration) throws IOException {
-    	String mapDirectory = systemConfiguration.getMapDirectory();
-    	String graphhopperLocale = systemConfiguration.getGraphHopperLocale();
-    	return new GraphHopperImpl(mapDirectory, graphhopperLocale);
+    private GraphHopperImpl createGraphManager(SimulationConfiguration simulationConfiguration) throws IOException {
+    	return new GraphHopperImpl(simulationConfiguration.getMapPath());
     }
 
     public void addReservation(Reservation reservation) {
@@ -53,10 +51,6 @@ public class SystemManager {
 
     public List<Station> consultStations() {
         return stations;
-    }
-
-    public List<Bike> consultBikes() {
-        return bikes;
     }
     
     public GraphManager getGraphManager() {
