@@ -27,9 +27,7 @@ public class History {
     private static EntityCollection initialEntities = new EntityCollection();
     private static EntityCollection updatedEntities = new EntityCollection();
 
-    private static TreeMap<Integer, List<EventEntry>> serializedEntries = new TreeMap<>();
-
-    private static Set<Class<? extends HistoricEntity>> historicClasses = new HashSet<>();
+    private static TreeMap<Integer, List<EventEntry>> serializedEvents = new TreeMap<>();
 
     private static Path outputPath = Paths.get("history");
 
@@ -67,22 +65,21 @@ public class History {
         List<HistoricEntity> historicEntities = new ArrayList<>();
 
         for (Entity entity : event.getEntities()) {
-            historicClasses.add(getReferenceClass(entity.getClass()));
             historicEntities.add(instantiateHistoric(entity));
         }
 
         Map<String, List<JsonObject>> changes = serializeChanges(historicEntities);
 
-        if (!serializedEntries.containsKey(event.getInstant())) {
-            if (serializedEntries.size() == 100) {
+        if (!serializedEvents.containsKey(event.getInstant())) {
+            if (serializedEvents.size() == 100) {
                 writeTimeEntries();
-                serializedEntries.clear();
+                serializedEvents.clear();
             }
 
-            serializedEntries.put(event.getInstant(), new ArrayList<>());
+            serializedEvents.put(event.getInstant(), new ArrayList<>());
         }
 
-        serializedEntries.get(event.getInstant()).add(new EventEntry(event.getClass().getSimpleName(), changes));
+        serializedEvents.get(event.getInstant()).add(new EventEntry(event.getClass().getSimpleName(), changes));
 
         for (HistoricEntity entity : historicEntities) {
             updatedEntities.addToMapFor(entity.getClass(), entity);
@@ -100,14 +97,14 @@ public class History {
     private static void writeTimeEntries() throws IOException {
         List<TimeEntry> timeEntries = new ArrayList<>();
 
-        serializedEntries.forEach((time, eventEntries) -> {
+        serializedEvents.forEach((time, eventEntries) -> {
             timeEntries.add(new TimeEntry(time, eventEntries));
         });
 
         String fileName = new StringBuilder()
-                .append(serializedEntries.firstKey()).append("_")
-                .append(serializedEntries.lastKey()).append("_")
-                .append(serializedEntries.size()).append(".json").toString();
+                .append(serializedEvents.firstKey()).append("_")
+                .append(serializedEvents.lastKey()).append("_")
+                .append(serializedEvents.size()).append(".json").toString();
 
         writeJson(fileName, timeEntries);
     }
