@@ -26,20 +26,12 @@ public class SimulationEngine {
 
 	    History.init(simulationConfiguration);
 
-	    simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(History::registerEntity);
-	    systemManager.consultStations().forEach(History::registerEntity);
-	    systemManager.consultBikes().forEach(History::registerEntity);
-
 		while (!eventsQueue.isEmpty()) {
 			Event event = eventsQueue.poll();  // retrieves and removes first element
 			List<Event> newEvents = event.execute();
 			System.out.println(event.toString());
-
-			if (!newEvents.isEmpty()) {
-				for(Event newEvent: newEvents) {
-					eventsQueue.add(newEvent);
-				}
-			}
+			eventsQueue.addAll(newEvents);
+			History.registerEvent(event);
 		}
 
 		History.close();

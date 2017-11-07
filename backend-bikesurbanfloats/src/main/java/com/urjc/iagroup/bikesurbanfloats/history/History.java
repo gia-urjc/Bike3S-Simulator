@@ -1,16 +1,18 @@
 package com.urjc.iagroup.bikesurbanfloats.history;
 
 import com.google.gson.*;
+import com.google.gson.annotations.Expose;
 import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.events.Event;
 
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class History {
@@ -22,124 +24,134 @@ public class History {
             .setPrettyPrinting()
             .create();
 
-    private static EntityCollection initialEntities;
-    private static EntityCollection updatedEntities;
+    private static EntityCollection initialEntities = new EntityCollection();
+    private static EntityCollection updatedEntities = new EntityCollection();
 
-    private static Map<Integer, List<JsonObject>> serializedEntries = new HashMap<>();
+    private static TreeMap<Integer, List<EventEntry>> serializedEntries = new TreeMap<>();
 
     private static Set<Class<? extends HistoricEntity>> historicClasses = new HashSet<>();
 
+    private static Path outputPath = Paths.get("history");
+
     public static void init(SimulationConfiguration simulationConfiguration) {
-        initialEntities = new EntityCollection();
-        updatedEntities = new EntityCollection();
+        /*initialEntities = new EntityCollection();
+        updatedEntities = new EntityCollection();*/
 
         // TODO: save history output path
     }
 
     public static void close() throws IOException {
-        // TODO: change hardcoded file path to configurable path
 
-        File entitiesJson = new File("history/entities.json");
-        entitiesJson.getParentFile().mkdirs();
+        // TODO: maybe split entities.json into multiple files, e.g. entities/users.json
 
-        try (FileWriter writer = new FileWriter(entitiesJson)) {
-            Map<String, Collection<HistoricEntity>> entries = new HashMap<>();
-            initialEntities.getEntityMaps().forEach((historicClass, entities) -> {
-                String jsonIdentifier = getJsonIdentifier(historicClass);
-                entries.put(jsonIdentifier, entities.values());
-            });
+        Map<String, Collection<HistoricEntity>> entries = new HashMap<>();
+        initialEntities.getEntityMaps().forEach((historicClass, entities) -> {
+            String jsonIdentifier = getJsonIdentifier(historicClass);
+            entries.put(jsonIdentifier, entities.values());
+        });
 
-            gson.toJson(entries, writer);
-        }
+        writeJson("entities.json", entries);
+        writeTimeEntries();
 
         // TODO: copy configuration file
     }
 
-    public static void registerEntity(Entity... entities) {
-        for (Entity entity : entities) {
-            Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
-            HistoricEntity historicEntity = instantiateHistoric(entity);
-            initialEntities.addToMapFor(historicClass, historicEntity);
-            updatedEntities.addToMapFor(historicClass, historicEntity);
-        }
+    public static void registerEntity(Entity entity) {
+        Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
+        HistoricEntity historicEntity = instantiateHistoric(entity);
+        initialEntities.addToMapFor(historicClass, historicEntity);
+        updatedEntities.addToMapFor(historicClass, historicEntity);
     }
 
-    public static void registerEvent(Event event, Entity... entities) {
-        JsonObject entry = new JsonObject();
-
-        entry.add("event", new JsonPrimitive(event.getClass().getSimpleName()));
-
+    public static void registerEvent(Event event) throws IOException {
         List<HistoricEntity> historicEntities = new ArrayList<>();
 
-        for (Entity entity : entities) {
+        for (Entity entity : event.getEntities()) {
             historicClasses.add(getReferenceClass(entity.getClass()));
             historicEntities.add(instantiateHistoric(entity));
         }
 
-        JsonObject changes = serializeChanges(historicEntities);
-
-        if (changes != null) {
-            entry.add("changes", changes);
-        }
+        Map<String, List<JsonObject>> changes = serializeChanges(historicEntities);
 
         if (!serializedEntries.containsKey(event.getInstant())) {
+            if (serializedEntries.size() == 100) {
+                writeTimeEntries();
+                serializedEntries.clear();
+            }
+
             serializedEntries.put(event.getInstant(), new ArrayList<>());
         }
 
-        serializedEntries.get(event.getInstant()).add(entry);
-
-        // TODO: write fixed number of entries to file and clear list
+        serializedEntries.get(event.getInstant()).add(new EventEntry(event.getClass().getSimpleName(), changes));
 
         for (HistoricEntity entity : historicEntities) {
             updatedEntities.addToMapFor(entity.getClass(), entity);
         }
     }
 
-    private static JsonObject serializeChanges(List<HistoricEntity> entities) {
-        JsonObject entry = new JsonObject();
+    private static void writeJson(String name, Object content) throws IOException {
+        File json = outputPath.resolve(name).toFile();
+        json.getParentFile().mkdirs();
+        try (FileWriter writer = new FileWriter(json)) {
+            gson.toJson(content, writer);
+        }
+    }
 
-        for (Class<? extends HistoricEntity> historicClass : historicClasses) {
-            List<JsonObject> subTree = new ArrayList<>();
+    private static void writeTimeEntries() throws IOException {
+        List<TimeEntry> timeEntries = new ArrayList<>();
 
+        serializedEntries.forEach((time, eventEntries) -> {
+            timeEntries.add(new TimeEntry(time, eventEntries));
+        });
+
+        String fileName = new StringBuilder()
+                .append(serializedEntries.firstKey()).append("_")
+                .append(serializedEntries.lastKey()).append("_")
+                .append(serializedEntries.size()).append(".json").toString();
+
+        writeJson(fileName, timeEntries);
+    }
+
+    private static Map<String, List<JsonObject>> serializeChanges(List<HistoricEntity> entities) {
+        Map<String, List<JsonObject>> changes = new HashMap<>();
+
+        for (HistoricEntity entity : entities) {
+            Class<? extends HistoricEntity> historicClass = entity.getClass();
+            HistoricEntity oldEntity = updatedEntities.getMapFor(historicClass).get(entity.getId());
             String jsonIdentifier = getJsonIdentifier(historicClass);
+            JsonObject jsonEntity = new JsonObject();
 
-            for (HistoricEntity entity : entities) {
-                HistoricEntity oldEntity = updatedEntities.getMapFor(historicClass).get(entity.getId());
+            // TODO: maybe read private fields instead of methods for consistency with gson
+            for (Field field : historicClass.getDeclaredFields()) {
+                if (field.getName().equals("id")) continue;
 
-                JsonObject jsonEntity = new JsonObject();
+                JsonElement property;
 
-                // TODO: maybe read private fields instead of methods for consistency with gson
-                for (Field field : historicClass.getDeclaredFields()) {
-                    if (field.getName().equals("id")) continue;
+                field.setAccessible(true);
 
-                    JsonElement property;
-
-                    field.setAccessible(true);
-
-                    try {
-                        property = propertyChange(field.get(oldEntity), field.get(entity));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new IllegalStateException("Error reading field " + field + " from " + historicClass);
-                    }
-
-                    if (property != null) {
-                        jsonEntity.add(field.getName(), property);
-                    }
+                try {
+                    property = propertyChange(field.get(oldEntity), field.get(entity));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new IllegalStateException("Error reading field " + field + " from " + historicClass);
                 }
 
-                if (!jsonEntity.entrySet().isEmpty()) {
-                    jsonEntity.add("id", new JsonPrimitive(entity.getId()));
-                    subTree.add(jsonEntity);
+                if (property != null) {
+                    jsonEntity.add(field.getName(), property);
                 }
             }
 
-            if (!subTree.isEmpty()) {
-                entry.add(jsonIdentifier, gson.toJsonTree(subTree));
+            if (!changes.containsKey(jsonIdentifier)) {
+                changes.put(jsonIdentifier, new ArrayList<>());
+            }
+
+            if (!jsonEntity.entrySet().isEmpty()) {
+                jsonEntity.add("id", new JsonPrimitive(entity.getId()));
+                changes.get(jsonIdentifier).add(jsonEntity);
             }
         }
 
-        return entry.entrySet().isEmpty() ? null : entry;
+        return changes;
     }
 
     private static Class<? extends HistoricEntity> getReferenceClass(Class<? extends Entity> entityClass) {
@@ -193,14 +205,40 @@ public class History {
         }
     }
 
-    private static JsonObject propertyChange(@NotNull Object oldProperty, @NotNull Object newProperty) {
-        if (oldProperty.equals(newProperty)) return null;
+    private static JsonObject propertyChange(Object oldProperty, Object newProperty) {
+        if (Objects.equals(oldProperty, newProperty)) return null;
 
         JsonObject property = new JsonObject();
-        property.add("old", History.gson.toJsonTree(oldProperty));
-        property.add("new", History.gson.toJsonTree(newProperty));
+        property.add("old", gson.toJsonTree(oldProperty));
+        property.add("new", gson.toJsonTree(newProperty));
 
         return property;
+    }
+
+    private static class EventEntry {
+        @Expose
+        private String name;
+
+        @Expose
+        private Map<String, List<JsonObject>> changes;
+
+        EventEntry(String name, Map<String, List<JsonObject>> changes) {
+            this.name = name;
+            this.changes = changes;
+        }
+    }
+
+    private static class TimeEntry {
+        @Expose
+        private int time;
+
+        @Expose
+        private List<EventEntry> events;
+
+        TimeEntry(int time, List<EventEntry> events) {
+            this.time = time;
+            this.events = events;
+        }
     }
 
 }

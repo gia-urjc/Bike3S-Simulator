@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
+import com.urjc.iagroup.bikesurbanfloats.history.History;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class UserTest extends User {
 
     public UserTest() {
         super();
+        History.registerEntity(this);
     }
 
     @Override

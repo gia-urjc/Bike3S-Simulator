@@ -16,7 +16,7 @@ public class HistoricReservation implements HistoricEntity {
     @Expose
     private int startTime;
 
-    private int endTime;
+    private Integer endTime;
 
     @Expose
     private ReservationType type;
@@ -36,7 +36,7 @@ public class HistoricReservation implements HistoricEntity {
     public HistoricReservation(Reservation reservation) {
         this.id = reservation.getId();
         this.startTime = reservation.getStartInstant();
-        this.endTime = reservation.getEndInstant();
+        this.endTime = reservation.getEndInstant() == -1 ? null : reservation.getEndInstant();
         this.type = reservation.getType();
         this.state = reservation.getState();
         this.user = reservation.getUser().getId();

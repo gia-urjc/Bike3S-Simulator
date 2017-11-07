@@ -1,19 +1,24 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
+import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUser {
+
+    private List<Entity> entities;
     private Station station;
     private Reservation reservation;
 
     public EventUserArrivesAtStationToRentBikeWithReservation(int instant, User user, Station station, Reservation reservation) {
         super(instant, user);
+        this.entities = Arrays.asList(user, station, reservation);
         this.station = station;
         this.reservation = reservation;
     }
@@ -26,6 +31,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         return reservation;
     }
 
+    @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();;
         user.setPosition(station.getPosition());
@@ -41,10 +47,9 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         }
         return newEvents;
     }
-    
-    public String toString() {
-    	String str = super.toString();
-    	return str+"Station: "+station.toString()+"\n";
+
+    @Override
+    public List<Entity> getEntities() {
+        return entities;
     }
-    
 }

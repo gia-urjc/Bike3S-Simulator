@@ -28,20 +28,11 @@ public class HistoricStation implements HistoricEntity {
     @Expose
     private List<Integer> bikes;
 
-    private int reservedBikes;
-    private int reservedSlots;
-    private int bikesAvailable;
-    private int slotsAvailable;
-
     public HistoricStation(Station station) {
         this.id = station.getId();
         this.position = new GeoPoint(station.getPosition());
         this.capacity = station.getCapacity();
         this.bikes = station.getBikes().stream().map(bikeIdConverter).collect(Collectors.toList());
-        this.reservedBikes = station.getReservedBikes();
-        this.reservedSlots = station.getReservedSlots();
-        this.bikesAvailable = station.availableBikes();
-        this.slotsAvailable = station.availableSlots();
     }
 
     @Override
