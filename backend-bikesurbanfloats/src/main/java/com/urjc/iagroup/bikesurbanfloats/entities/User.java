@@ -8,6 +8,7 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperImplException;
+import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
@@ -82,6 +83,8 @@ public abstract class User implements Entity {
         this.destinationStation = null;
         this.systemManager = null;
         this.reservation = null;
+
+        History.registerEntity(this);
     }
 
     @Override
