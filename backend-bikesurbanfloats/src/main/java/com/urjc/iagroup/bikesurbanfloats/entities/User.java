@@ -63,7 +63,7 @@ public abstract class User implements Entity {
      */
     private Reservation reservation;
 
-    protected GeoRoute currentRoute;
+    private GeoRoute currentRoute;
 
     protected SystemManager systemManager;
    
@@ -144,11 +144,11 @@ public abstract class User implements Entity {
 	}
 
 
-	public GeoRoute getRoute() {
+	public GeoRoute getCurrentRoute() {
 		return this.currentRoute;
 	}
 
-	public void setRoute(GeoRoute route) {
+	public void setCurrentRoute(GeoRoute route) {
 		this.currentRoute = route;
 	}
 
