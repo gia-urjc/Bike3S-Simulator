@@ -1,4 +1,4 @@
-const { Min, Max, Require, RequireAll } = require('../constraints');
+const { Min, Max, Require, RequireBut, RequireAll } = require('../constraints');
 
 module.exports = (properties, ...constraints) => Object.assign({
     type: 'object',
@@ -14,6 +14,9 @@ module.exports = (properties, ...constraints) => Object.assign({
         };
         case Require: return {
             required: constraint.argument
+        };
+        case RequireBut: return {
+            required: Object.keys(properties).filter((x) => !constraint.argument.includes(x))
         };
         case RequireAll: return {
             required: Object.keys(properties)
