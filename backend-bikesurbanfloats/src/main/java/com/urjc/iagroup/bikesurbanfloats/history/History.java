@@ -102,7 +102,7 @@ public class History {
         });
 
         String fileName = new StringBuilder()
-                .append(serializedEvents.firstKey()).append("_")
+                .append(serializedEvents.firstKey()).append("-")
                 .append(serializedEvents.lastKey()).append("_")
                 .append(serializedEvents.size()).append(".json").toString();
 
