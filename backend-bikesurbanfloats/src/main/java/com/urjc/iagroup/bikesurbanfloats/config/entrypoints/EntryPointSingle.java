@@ -10,22 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents a unic user who appears at a specific position
+ * This class represents a unic user who appears at a specific position.
  * @author IAgroup
  *
  */
-
 public class EntryPointSingle extends EntryPoint {
 	/**
-	 * It is the point where user appears, i. e., where user is located after being generated)
+	 * It is the point where user appears, i. e., where user is located after being generated.
 	 */
 	private GeoPoint position;
+	
 	/**
-	 * Type of user that will be generated
+	 * Type of user that will be generated.
 	 */
 	private UserType userType;
+	
 	/**
-	 * It is the time instant when user appears at the system
+	 * It is the time instant when user appears at the system.
 	 */
 	private int instant; 
 	

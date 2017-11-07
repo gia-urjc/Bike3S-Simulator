@@ -8,7 +8,12 @@ import com.urjc.iagroup.bikesurbanfloats.history.History;
 import java.util.List;
 import java.util.PriorityQueue;
 
-
+/**
+ * This is the most important class which makes the simulation possible.
+ * 
+ * @author IAgropu
+ *
+ */
 public class SimulationEngine {
 
 	private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
@@ -24,7 +29,6 @@ public class SimulationEngine {
 		this.systemManager = systemManager;
 		simulationConfiguration.getEventUserAppears().stream().map(EventUser::getUser).forEach(user -> user.setSystemManager(systemManager));
 	}
-	
 
 	/**
 	 * It executes, in the corresponding order, all the events are generated through the entire simulation,	i. e., 

@@ -60,20 +60,33 @@ public class SystemManager {
         this.bbox = systemConfiguration.getBoundingBox();
     }
     
+    /**
+     * It creates a graph manager instance from the system configuration information. 
+     * @param systemConfiguration: it is the configuration information of the system.
+     * @return an instance of GraphHopperIntegration.
+     * @throws IOException
+     */
     private GraphHopperIntegration createGraphManager(SimulationConfiguration systemConfiguration) throws IOException {
     	String mapDirectory = systemConfiguration.getMapDirectory();
     	String graphhopperLocale = systemConfiguration.getGraphHopperLocale();
     	return new GraphHopperIntegration(mapDirectory, graphhopperLocale);
     }
-
+    
+    /**
+     * It registers a user bike or slot reservation, in any state, in system reservation information. 
+     * @param reservation: it is the reservation which we want to save.
+     */
     public void addReservation(Reservation reservation) {
         this.reservations.add(reservation);
     }
 
-    /**
-     * It allow consulting all the reservations 
+    /** 
+     * It obtains all the bike and slot reservations user has gotten to make, including 
+     * those that have expired because of reservation timeout, and reservations which 
+     * user has tried to make but he hasn't been able because there weren't available bikes or slots. 
      * @param user: it is the user whose reservations want to be consulted
-     * @return a list of all the bike and slot reservations which the specified user has makde.
+     * @return a list of all the bike and slot reservations which the specified user 
+     * has makde and has tried to made.
      */
     public List<Reservation> consultReservations(User user) {
         return reservations.stream().filter(reservation -> reservation.getUser() == user).collect(Collectors.toList());
@@ -94,7 +107,14 @@ public class SystemManager {
 	public SimulationRandom getRandom() {
 		return random;
 	}
-
+	
+	/**
+	 * It obtains the stations for which a user has tried to make a bike reservation in an specific moment.
+	 * @param user it is the user who has tried to reserve a bike.
+	 * @param timeInstant it is the moment at which he has decided he wants to reserve a bike 
+	 * and he has been trying it.
+	 * @return a list of stations for which the bike reservation has failed because of unavailable bikes.
+	 */
     public List<Station> consultStationsWithBikeReservationAttempt(User user, int timeInstant) {
         return consultReservations(user).stream()
                 .filter(reservation -> reservation.getType() == ReservationType.BIKE)
@@ -104,6 +124,14 @@ public class SystemManager {
                 .collect(Collectors.toList());
     }
 
+	/**
+	 * It obtains the stations for which a user hasn't tried to make a bike reservation in an specific moment.
+	 * @param user it is used to find out for which stations this user hasn't tried to
+	 * reserve a bike.  
+	 * @param timeInstant it is the moment at which he has decided he wants to reserve a bike 
+	 * and he has been tring it.
+	 * @return a list of stations for which user hasn't still tried to reserve a bike at that specific moment.
+	 */
     public List<Station> consultStationsWithoutBikeReservationAttempt(User user, int timeInstant) {
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(consultStationsWithBikeReservationAttempt(user, timeInstant));
