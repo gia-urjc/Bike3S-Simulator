@@ -14,7 +14,7 @@ public class SimulationConfiguration {
 	private int reservationTime;
 	private int totalSimulationTime;
 	private long randomSeed;
-	private String mapPath;
+	private String map;
 	private BoundingBox boundingBox;
 
 	@JsonAdapter(EntryPointDeserializer.class)
@@ -35,8 +35,8 @@ public class SimulationConfiguration {
         return randomSeed;
     }
 
-    public String getMapPath() {
-        return mapPath;
+    public String getMap() {
+        return map;
     }
 
     public BoundingBox getBoundingBox() {

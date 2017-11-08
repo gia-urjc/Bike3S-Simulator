@@ -11,7 +11,7 @@ module.exports = {
         totalSimulationTime: UInt,
         reservationTime: UInt,
         randomSeed: SInteger(),
-        bbox: SObject({
+        boundingBox: SObject({
             northWest: GeoPoint,
             southEast: GeoPoint,
         }, RequireAll()),

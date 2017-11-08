@@ -38,7 +38,7 @@ public class SystemManager {
     }
     
     private GraphHopperImpl createGraphManager(SimulationConfiguration simulationConfiguration) throws IOException {
-    	return new GraphHopperImpl(simulationConfiguration.getMapPath());
+    	return new GraphHopperImpl(simulationConfiguration.getMap());
     }
 
     public void addReservation(Reservation reservation) {
