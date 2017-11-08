@@ -1,5 +1,14 @@
 	package com.urjc.iagroup.bikesurbanfloats.config.entrypoints.distributions;
 
+	/**
+	 * This class represents the math distribution concept.
+	 * It forces all distribution instances to have a property which indicates what 
+	 * type of distribution they represent.
+	 * It provides an enum type which serves to represent all kind of distributions 
+	 * used at the system.  
+	 * @author IAgroup
+	 *
+	 */
 public class Distribution {
 	
 	public enum DistributionType {

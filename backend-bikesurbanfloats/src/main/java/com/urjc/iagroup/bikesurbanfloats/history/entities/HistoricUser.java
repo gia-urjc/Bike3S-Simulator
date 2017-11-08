@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
@@ -23,6 +24,7 @@ public class HistoricUser implements HistoricEntity {
     private GeoPoint position;
     private Integer bike;
     private Integer destinationStation;
+    private GeoRoute currentRoute;
 
     @Expose
     private UserType type;
@@ -34,6 +36,7 @@ public class HistoricUser implements HistoricEntity {
         this.walkingVelocity = user.getWalkingVelocity();
         this.cyclingVelocity = user.getCyclingVelocity();
         this.destinationStation = user.getDestinationStation() == null ? null : user.getDestinationStation().getId();
+        this.currentRoute = user.getCurrentRoute() == null ? null : user.getCurrentRoute();
         this.type = user.getClass().getAnnotation(AssociatedType.class).value();
     }
 

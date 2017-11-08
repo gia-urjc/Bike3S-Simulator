@@ -1,7 +1,8 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 /**
- * It forces all components of the system to have an identifier
+ * This interface represents all the objects at the simulation problem domain.  
+ * It forces all entity type components of the system to have an identifier.
  * @author IAgroup
  *
  */

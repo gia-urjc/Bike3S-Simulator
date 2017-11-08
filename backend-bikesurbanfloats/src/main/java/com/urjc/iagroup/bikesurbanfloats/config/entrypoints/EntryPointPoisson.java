@@ -7,16 +7,15 @@ import com.urjc.iagroup.bikesurbanfloats.entities.users.UserFactory;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
-import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
+import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents several users that appears at system with a Poisson distribution, taking as a reference to generate them the same entry point
- * It provides a method which generates a variable set of users
- * Number of users that are generated depends on the value of parameter of followed distribution
- *
+ * This class represents several users that appears at system with a Poisson distribution, taking as a reference to generate them the same entry point.
+ * It provides a method which generates a variable set of users.
+ * Number of users that are generated depends on the value of parameter of followed distribution.
  * @author IAgroup
  */
 
@@ -95,7 +94,7 @@ public class EntryPointPoisson extends EntryPoint {
             GeoPoint userPosition;
             if (radius > 0) {
                 BoundingCircle boundingCircle = new BoundingCircle(position, radius);
-                userPosition = boundingCircle.randomPointInCircle(StaticRandom.getUserCreationInstance());
+                userPosition = boundingCircle.randomPointInCircle(SimulationRandom.getUserCreationInstance());
             } else {
                 userPosition = position;
             }

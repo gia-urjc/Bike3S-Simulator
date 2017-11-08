@@ -1,9 +1,18 @@
 package com.urjc.iagroup.bikesurbanfloats.config.entrypoints.distributions;
 
 
-import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
+import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
+/**
+ * This class represents a Poisson math distribution.
+ * It contains the typical parameter that characterizes a Poisson math distribution.
+ * @author IAgroup
+ */
 public class DistributionPoisson extends Distribution {
+	/**
+	 * This is the Poisson distribution characteristic parameter.
+	 * It represents the number of users that appear per second.
+	 */
 	private double lambda;
 	
 	public DistributionPoisson(DistributionType distribution, double lambda) {
@@ -18,15 +27,16 @@ public class DistributionPoisson extends Distribution {
 	public void setLambda(double lambda) {
 		this.lambda = lambda;
 	}
-	
-	
+
 	/**
-     * Calculates an exponential instant given a lambda parameter
-     * @return A realistic exponential value given a lambda parameter
+	 * It calculates, according to the distribution formula, the time between a user
+	 * appearance and the next user appearance.
+     * It calculates an exponential instant given a lambda parameter.
+     * @return a realistic exponential value given a lambda parameter.
      * @see <a href="https://en.wikipedia.org/wiki/Exponential_distribution#Generating_exponential_variates">Generating exponential variates</a>
      */
 	public int randomInterarrivalDelay() {
-		StaticRandom random = StaticRandom.getUserCreationInstance();
+		SimulationRandom random = SimulationRandom.getUserCreationInstance();
 	    double randomValue = Math.log(1.0 - random.nextDouble(Double.MIN_VALUE, 1));
 	    Double result = (double) -randomValue/lambda;
 	    Long longResult = Math.round(result);

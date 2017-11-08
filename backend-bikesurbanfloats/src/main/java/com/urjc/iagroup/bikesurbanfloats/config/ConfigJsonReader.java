@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
-import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
+import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class ConfigJsonReader {
         try (FileReader reader = new FileReader(configurationFile)) {
             SimulationConfiguration simulationConfiguration = gson.fromJson(reader, SimulationConfiguration.class);
 
-            StaticRandom.init(simulationConfiguration.getRandomSeed());
+            SimulationRandom.init(simulationConfiguration.getRandomSeed());
             EntryPoint.TOTAL_SIMULATION_TIME = simulationConfiguration.getTotalSimulationTime();
             Reservation.VALID_TIME = simulationConfiguration.getReservationTime();
 

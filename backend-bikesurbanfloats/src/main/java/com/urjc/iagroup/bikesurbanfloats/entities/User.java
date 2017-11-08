@@ -12,7 +12,7 @@ import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
-import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
+import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 /**
  * This is the main entity of the the system.
@@ -63,7 +63,7 @@ public abstract class User implements Entity {
      */
     private Reservation reservation;
 
-    protected GeoRoute currentRoute;
+    private GeoRoute currentRoute;
 
     protected SystemManager systemManager;
    
@@ -74,9 +74,9 @@ public abstract class User implements Entity {
         this.bike = null;
 
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = StaticRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
+        this.walkingVelocity = SimulationRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = StaticRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = SimulationRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
 
         this.reservedBike = false;
         this.reservedSlot = false;
@@ -144,11 +144,11 @@ public abstract class User implements Entity {
 	}
 
 
-	public GeoRoute getRoute() {
+	public GeoRoute getCurrentRoute() {
 		return this.currentRoute;
 	}
 
-	public void setRoute(GeoRoute route) {
+	public void setCurrentRoute(GeoRoute route) {
 		this.currentRoute = route;
 	}
 

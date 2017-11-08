@@ -3,13 +3,19 @@ package com.urjc.iagroup.bikesurbanfloats.graphs;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.annotations.Expose;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 
 public class GeoRoute {
 	
+	@Expose
 	private List<GeoPoint> pointList;
+	
+	@Expose
 	private double distance;
+	
+	@Expose
 	private List<Double> distancesBetweenPointsList;
 	
 	public GeoRoute(List<GeoPoint> geoPointList) throws GeoRouteCreationException {
@@ -68,6 +74,25 @@ public class GeoRoute {
 		newGeoPointList.add(newPoint);
 		GeoRoute newRoute = new GeoRoute(newGeoPointList);
 		return newRoute;	
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GeoRoute other = (GeoRoute) obj;
+		if (Double.doubleToLongBits(distance) != Double.doubleToLongBits(other.distance))
+			return false;
+		if (pointList == null) {
+			if (other.pointList != null)
+				return false;
+		} else if (!pointList.equals(other.pointList))
+			return false;
+		return true;
 	}
 	
 	@Override

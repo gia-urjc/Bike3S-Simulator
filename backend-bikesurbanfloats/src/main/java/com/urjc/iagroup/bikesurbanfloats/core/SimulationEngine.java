@@ -11,13 +11,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 
-
+/**
+ * This is the most important class which makes the simulation possible.
+ * It uses a queue to manage the events proccessing.
+ * @author IAgroup
+ *
+ */
 public class SimulationEngine {
 
 	private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
 	private SimulationConfiguration simulationConfiguration;
 	private SystemManager systemManager;
 	
+	/**
+	 * It creates an event queue where its events are sorted by the time instant when they'll occur.
+		 */
 	public SimulationEngine(SimulationConfiguration simulationConfiguration, SystemManager systemManager) {
 		this.simulationConfiguration = simulationConfiguration;
 		this.systemManager = systemManager;
@@ -38,7 +46,7 @@ public class SimulationEngine {
 
 	    return eventUserAppearsList;
     }
-	
+
 	public void run() throws Exception {
 
 	    History.init(simulationConfiguration);

@@ -25,7 +25,7 @@ public class BoundingCircle {
 	 * @param distance to point of the new random GeoPoint
 	 * @return random GeoPoint
 	 */
-	private GeoPoint randomPointByDistance(double distance, StaticRandom random) {
+	private GeoPoint randomPointByDistance(double distance, SimulationRandom random) {
 		
 		double latitudeRadians = position.getLatitude() * GeoPoint.DEG_TO_RAD;
 		double longitudeRadians = position.getLongitude() * GeoPoint.DEG_TO_RAD;
@@ -50,7 +50,7 @@ public class BoundingCircle {
 		return new GeoPoint(resLatitude, resLongitude);
 	}
 
-	public GeoPoint randomPointInCircle(StaticRandom random) {
+	public GeoPoint randomPointInCircle(SimulationRandom random) {
 		double randomDistance = Math.pow(random.nextDouble(), 0.5) * radio;
 		return randomPointByDistance(randomDistance, random);
 	}
