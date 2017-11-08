@@ -1,6 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
+import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricStation;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
@@ -35,6 +36,7 @@ public class Station implements Entity {
         this.bikes = bikes;
         this.reservedBikes = 0;
         this.reservedSlots = 0;
+        History.registerEntity(this);
     }
 
     @Override

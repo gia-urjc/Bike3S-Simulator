@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricBike;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
@@ -21,6 +22,7 @@ public class Bike implements Entity {
     public Bike() {
         this.id  = idGenerator.next();
         this.reserved = false;
+        History.registerEntity(this);
     }
 
     @Override

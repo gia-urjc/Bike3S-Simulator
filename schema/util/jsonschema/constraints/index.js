@@ -10,6 +10,7 @@ module.exports = {
     XMax: (value) => Constraint(module.exports.XMax, value),
     Multiple: (value) => Constraint(module.exports.Multiple, value),
     Require: (...properties) => Constraint(module.exports.Require, properties),
+    RequireBut: (...properties) => Constraint(module.exports.RequireBut, properties),
     RequireAll: () => Constraint(module.exports.RequireAll),
     Pattern: (regex) => Constraint(module.exports.Pattern, regex),
 };

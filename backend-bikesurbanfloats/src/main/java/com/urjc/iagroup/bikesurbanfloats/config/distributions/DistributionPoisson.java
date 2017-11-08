@@ -11,6 +11,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 public class DistributionPoisson extends Distribution {
 	/**
 	 * This is the Poisson distribution characteristic parameter.
+	 * It represents the number of users that appear per second.
 	 */
 	private double lambda;
 	

@@ -43,7 +43,7 @@ public abstract class EventUser implements Event {
     }
     
     public String toString() {
-    	return "Event: "+getClass().getSimpleName()+ "\nInstant: "+instant+"\n"+"User: "+user.toString()+"\n";
+    	return print();
     }
     
     /**

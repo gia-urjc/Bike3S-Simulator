@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricReservation;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
@@ -52,6 +53,7 @@ public class Reservation implements Entity {
         this.user = user;
         this.station = station;
         this.bike = bike;
+        History.registerEntity(this);
     }
     
     /**
