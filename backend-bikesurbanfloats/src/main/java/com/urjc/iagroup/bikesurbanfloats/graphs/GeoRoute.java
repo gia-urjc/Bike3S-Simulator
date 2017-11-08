@@ -10,42 +10,42 @@ import java.util.List;
 public class GeoRoute {
 	
 	@Expose
-	private List<GeoPoint> pointList;
+	private List<GeoPoint> points;
 	
 	@Expose
-	private double distance;
+	private double totalDistance;
 	
 	@Expose
-	private List<Double> distancesBetweenPointsList;
+	private List<Double> intermediateDistances;
 	
 	public GeoRoute(List<GeoPoint> geoPointList) throws GeoRouteCreationException {
 		if(geoPointList.size() < 2) {
 			throw new GeoRouteCreationException("Routes should have more than two points");
 		}
-		this.pointList = geoPointList;
-		this.distancesBetweenPointsList = new ArrayList<>();
+		this.points = geoPointList;
+		this.intermediateDistances = new ArrayList<>();
 		calculateDistances();
 	}
 	
-	public List<GeoPoint> getPointList() {
-		return pointList;
+	public List<GeoPoint> getPoints() {
+		return points;
 	}
 	
-	public double getDistance() {
-		return distance;
+	public double getTotalDistance() {
+		return totalDistance;
 	}
 
 	
 	private void calculateDistances() {
 		Double totalDistance = 0.0;
-		for(int i = 0; i < pointList.size()-1; i++) {
-			GeoPoint currentPoint = pointList.get(i);
-			GeoPoint nextPoint = pointList.get(i+1);
+		for(int i = 0; i < points.size()-1; i++) {
+			GeoPoint currentPoint = points.get(i);
+			GeoPoint nextPoint = points.get(i+1);
 			Double currentDistance = currentPoint.distanceTo(nextPoint);
-			distancesBetweenPointsList.add(currentDistance);
+			intermediateDistances.add(currentDistance);
 			totalDistance += currentDistance;
 		}
-		distance = totalDistance;
+		this.totalDistance = totalDistance;
 	}
 
 	public GeoRoute calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws GeoRouteException, GeoRouteCreationException {
@@ -56,13 +56,13 @@ public class GeoRoute {
 		GeoPoint nextPoint = null;
 		List<GeoPoint> newGeoPointList = new ArrayList<>();
 		int i = 0;
-		while(i < pointList.size()-1 && currentTime < finalTime) {
-			currentPoint = pointList.get(i);
-			nextPoint = pointList.get(i+1);
-			currentDistance = distancesBetweenPointsList.get(i);
+		while(i < points.size()-1 && currentTime < finalTime) {
+			currentPoint = points.get(i);
+			nextPoint = points.get(i+1);
+			currentDistance = intermediateDistances.get(i);
 			totalDistance += currentDistance;
 			currentTime += currentDistance/velocity;	
-			newGeoPointList.add(pointList.get(i));
+			newGeoPointList.add(points.get(i));
 			i++;
 		}
 		if(currentTime < finalTime) {
@@ -85,12 +85,12 @@ public class GeoRoute {
 		if (getClass() != obj.getClass())
 			return false;
 		GeoRoute other = (GeoRoute) obj;
-		if (Double.doubleToLongBits(distance) != Double.doubleToLongBits(other.distance))
+		if (Double.doubleToLongBits(totalDistance) != Double.doubleToLongBits(other.totalDistance))
 			return false;
-		if (pointList == null) {
-			if (other.pointList != null)
+		if (points == null) {
+			if (other.points != null)
 				return false;
-		} else if (!pointList.equals(other.pointList))
+		} else if (!points.equals(other.points))
 			return false;
 		return true;
 	}
@@ -98,12 +98,12 @@ public class GeoRoute {
 	@Override
 	public String toString() {
 		String result = "Points: \n";
-		for(GeoPoint p: pointList) {
+		for(GeoPoint p: points) {
 			result += p.getLatitude() + "," + p.getLongitude() + "\n";
 		}
-		result += "Distance: " + distance + " meters \n";
+		result += "Distance: " + totalDistance + " meters \n";
 		result += "Distances between points: ";
-		for(Double d: distancesBetweenPointsList) {
+		for(Double d: intermediateDistances) {
 			result += d + "\n";
 		}
 		return result;

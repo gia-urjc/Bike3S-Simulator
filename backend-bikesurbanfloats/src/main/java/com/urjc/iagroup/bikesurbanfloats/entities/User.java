@@ -302,7 +302,7 @@ public abstract class User implements Entity {
      */
 
     public void updatePositionAfterTimeOut() {
-    	List<GeoPoint> pointList = currentRoute.getPointList();
+    	List<GeoPoint> pointList = currentRoute.getPoints();
     	position = pointList.get(pointList.size() - 1);
     }
 
@@ -313,7 +313,7 @@ public abstract class User implements Entity {
      */
     
     public int timeToReach() {
-		return (int) (currentRoute.getDistance()/getAverageVelocity());
+		return (int) (currentRoute.getTotalDistance()/getAverageVelocity());
     }
 
     /**

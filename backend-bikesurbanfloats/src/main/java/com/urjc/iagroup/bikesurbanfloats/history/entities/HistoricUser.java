@@ -24,7 +24,7 @@ public class HistoricUser implements HistoricEntity {
     private GeoPoint position;
     private Integer bike;
     private Integer destinationStation;
-    private GeoRoute currentRoute;
+    private GeoRoute route;
 
     @Expose
     private UserType type;
@@ -36,7 +36,7 @@ public class HistoricUser implements HistoricEntity {
         this.walkingVelocity = user.getWalkingVelocity();
         this.cyclingVelocity = user.getCyclingVelocity();
         this.destinationStation = user.getDestinationStation() == null ? null : user.getDestinationStation().getId();
-        this.currentRoute = user.getCurrentRoute();
+        this.route = user.getCurrentRoute();
         this.type = user.getClass().getAnnotation(AssociatedType.class).value();
     }
 
