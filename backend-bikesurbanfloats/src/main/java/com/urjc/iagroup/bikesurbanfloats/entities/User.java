@@ -68,16 +68,16 @@ public abstract class User implements Entity {
     protected SystemManager systemManager;
    
     public User() {
-    	StaticRandom random = StaticRandom.createRandom();
-
         this.id = idGenerator.next();
 
         this.position = null;
         this.bike = null;
+
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = random.nextInt(3, 8) / 3.6;
+        this.walkingVelocity = StaticRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = random.nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = StaticRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
+
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;

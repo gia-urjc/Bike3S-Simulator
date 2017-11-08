@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
+import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 import java.util.List;
 
@@ -98,7 +99,7 @@ public class UserTest extends User {
 
     @Override
     public GeoPoint decidesNextPoint() {
-        return systemManager.generateBoundingBoxRandomPoint();
+        return systemManager.generateBoundingBoxRandomPoint(StaticRandom.getGeneralInstance());
     }
 
     @Override

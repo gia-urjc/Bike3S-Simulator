@@ -24,7 +24,7 @@ public class ConfigJsonReader {
         try (FileReader reader = new FileReader(configurationFile)) {
             SimulationConfiguration simulationConfiguration = gson.fromJson(reader, SimulationConfiguration.class);
 
-            StaticRandom.createRandom(simulationConfiguration.getRandomSeed());
+            StaticRandom.init(simulationConfiguration.getRandomSeed());
             EntryPoint.TOTAL_SIMULATION_TIME = simulationConfiguration.getTotalSimulationTime();
             Reservation.VALID_TIME = simulationConfiguration.getReservationTime();
 

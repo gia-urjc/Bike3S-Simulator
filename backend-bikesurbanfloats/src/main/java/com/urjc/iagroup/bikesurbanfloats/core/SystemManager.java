@@ -33,7 +33,7 @@ public class SystemManager {
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         this.reservations = new ArrayList<>();
         this.graphManager = createGraphManager(simulationConfiguration);
-        this.random = StaticRandom.createRandom();
+        this.random = StaticRandom.getGeneralInstance();
         this.bbox = simulationConfiguration.getBoundingBox();
     }
     
@@ -91,8 +91,8 @@ public class SystemManager {
         return filteredStations;
     }
     
-    public GeoPoint generateBoundingBoxRandomPoint() {
-    	return bbox.randomPoint();
+    public GeoPoint generateBoundingBoxRandomPoint(StaticRandom random) {
+    	return bbox.randomPoint(random);
     }
     
 }

@@ -36,8 +36,7 @@ public class BoundingBox {
 		return northWest.distanceTo(auxGeoPoint);
 	}
 	 
-	public GeoPoint randomPoint() {
-		StaticRandom random = StaticRandom.createRandom();
+	public GeoPoint randomPoint(StaticRandom random) {
 		double newLatitude = random.nextDouble(northWest.getLatitude(), southEast.getLatitude());
 		double newLongitude = random.nextDouble(northWest.getLongitude(), southEast.getLongitude());
 		return new GeoPoint(newLatitude, newLongitude);

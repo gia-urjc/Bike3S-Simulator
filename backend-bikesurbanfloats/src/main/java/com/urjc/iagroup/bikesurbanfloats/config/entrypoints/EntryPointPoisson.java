@@ -7,6 +7,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.users.UserFactory;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
+import com.urjc.iagroup.bikesurbanfloats.util.StaticRandom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +95,7 @@ public class EntryPointPoisson extends EntryPoint {
             GeoPoint userPosition;
             if (radius > 0) {
                 BoundingCircle boundingCircle = new BoundingCircle(position, radius);
-                userPosition = boundingCircle.randomPointInCircle();
+                userPosition = boundingCircle.randomPointInCircle(StaticRandom.getUserCreationInstance());
             } else {
                 userPosition = position;
             }
