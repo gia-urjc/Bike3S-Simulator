@@ -24,7 +24,11 @@ const Items = [
     }, RequireAll())),
     SUnion(ItemBase, SObject({
         distribution: SOr(...Distributions),
-        radius: SNumber(XMin(0))
+        radius: SNumber(XMin(0)),
+        timeRange: SObject({
+            start: UInt,
+            end: UInt,
+        }),
     }, Require('distribution'))),
 ];
 
