@@ -37,6 +37,22 @@ VS Code. The following steps show the recommended setup in IDEA Ultimate.
    `\backend-bikesurbanfloats` to the working directory. That's it.
 9. Lastly, open the Terminal Tool Window and run `npm install` to download all the JavaScript dependencies.
 
+## Eclipse
+An alternative way to develop the Java part `backend-bikesurbanfloats` is to use the Eclipse IDE. Other technologies, 
+`frontend-bikesurbanfloats`, might be developed in a webdevelopment-tailored editor like Atom or VS Code. The following
+steps show how to configure the project in Eclipse.
+
+1. You can clone the project from Eclipse but we recommend clone it directly from terminal using git `git clone repository-url` 
+at the folder you want.
+2. Go to  `File` &rarr; `Import` &rarr; `Maven` &rarr; `Existing Maven Project`.
+3. Click on `Browse` and select in your project directory, the folder `backend-bikesurbanfloats`
+4. Then, the import wizard should detect a `pom.xml`. Select the `/pom.xml` checkbox and click on Finish.
+5. All dependencies shoulb be downloaded now to your Eclipse project and Git repository is automatically synchronized to the remote
+repository.
+6. To run and debug the project correctly, go to `Run` &rarr; `Run Configurations`. Now go to the `Arguments` section and add into 
+`Program arguments` the absolute path to `configuration/configuration.json`.
+7. Click on `Apply` and `Run`,
+
 # Distribute
 To create a distributable package of the software run `npm run distribute` from the project root. It will compile and
 bundle all the parts together.

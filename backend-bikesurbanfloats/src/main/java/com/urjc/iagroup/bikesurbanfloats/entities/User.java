@@ -8,6 +8,7 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperImplException;
+import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
@@ -62,7 +63,7 @@ public abstract class User implements Entity {
      */
     private Reservation reservation;
 
-    protected GeoRoute currentRoute;
+    private GeoRoute currentRoute;
 
     protected SystemManager systemManager;
    
@@ -82,6 +83,8 @@ public abstract class User implements Entity {
         this.destinationStation = null;
         this.systemManager = null;
         this.reservation = null;
+
+        History.registerEntity(this);
     }
 
     @Override
@@ -141,11 +144,11 @@ public abstract class User implements Entity {
 	}
 
 
-	public GeoRoute getRoute() {
+	public GeoRoute getCurrentRoute() {
 		return this.currentRoute;
 	}
 
-	public void setRoute(GeoRoute route) {
+	public void setCurrentRoute(GeoRoute route) {
 		this.currentRoute = route;
 	}
 
