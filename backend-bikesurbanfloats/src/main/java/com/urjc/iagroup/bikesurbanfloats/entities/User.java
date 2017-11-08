@@ -1,7 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import java.util.List;
-
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
@@ -13,6 +11,8 @@ import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
+
+import java.util.List;
 
 /**
  * This is the main entity of the the system.

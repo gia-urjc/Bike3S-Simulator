@@ -1,6 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
+
 import java.util.List;
 
 /**

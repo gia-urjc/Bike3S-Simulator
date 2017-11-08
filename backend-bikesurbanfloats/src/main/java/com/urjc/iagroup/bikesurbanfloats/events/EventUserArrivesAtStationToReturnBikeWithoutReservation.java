@@ -1,12 +1,12 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends EventUser {
 

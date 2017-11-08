@@ -3,10 +3,9 @@ package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
-import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPointPoisson;
-import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPointSingle;
-import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.distributions.Distribution.DistributionType;;
+import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.distributions.Distribution.DistributionType;
+
+;
 
 /**
  * This class serves to create, in a generic way, entry point instances. 

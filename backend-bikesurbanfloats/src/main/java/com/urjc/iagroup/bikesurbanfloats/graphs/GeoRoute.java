@@ -1,11 +1,11 @@
 package com.urjc.iagroup.bikesurbanfloats.graphs;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GeoRoute {
 	

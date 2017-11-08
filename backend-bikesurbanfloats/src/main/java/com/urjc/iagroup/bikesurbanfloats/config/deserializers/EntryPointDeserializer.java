@@ -1,13 +1,13 @@
 package com.urjc.iagroup.bikesurbanfloats.config.deserializers;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.*;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPoint;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.EntryPointFactory;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.distributions.Distribution.DistributionType;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>>  {
 

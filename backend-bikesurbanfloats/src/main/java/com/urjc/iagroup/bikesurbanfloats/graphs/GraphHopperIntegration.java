@@ -1,13 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.graphs;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.commons.io.FileUtils;
-
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
@@ -18,6 +10,12 @@ import com.graphhopper.util.PointList;
 import com.graphhopper.util.shapes.GHPoint3D;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperImplException;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GraphHopperIntegration implements GraphManager {
 
