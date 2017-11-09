@@ -22,10 +22,10 @@ public class EntryPointFactory {
 	}
 	
 	/**
-	 * It creates an entry point of an specific type. 
-	 * @param json it conatins the entry point information. 
-	 * @param distribution it is the distribution type which determines the entry point type to create.
-	 * @return an specific entry point instance.  
+	 * It creates an entry point of a specific type. 
+	 * @param json it contains the entry point information. 
+	 * @param distribution It is the distribution type which determines the entry point type to create.
+	 * @return an instance of specific entry point type.  
 	 */
 	public EntryPoint createEntryPoint(JsonObject json, DistributionType distribution) {
 		switch(distribution) {

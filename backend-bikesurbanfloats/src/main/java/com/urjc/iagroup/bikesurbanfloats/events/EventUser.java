@@ -14,16 +14,16 @@ import java.util.List;
  * This class represents all events which are related to a user, i. e., posible 
  * actions that a user can do at the sytem and facts derived from his actions.
  * It provides methods to manage reservation decisions and reservations themselves
- * at any event which involves a user and, of course, a method to execute and process the events.
+ * at any event which involves a user.
  * @author IAgroup
  *
  */
-
 public abstract class EventUser implements Event {
 	/**
 	 * It is the time instant when event happens.
 	 */
 	protected int instant;
+	
 	/**
 	 * It is the user who is involved in the event.
 	 */
@@ -47,7 +47,7 @@ public abstract class EventUser implements Event {
     }
     
     /**
-     * It processes the event so that the relevant changes at the system occur  
+     * It proccesses the event so that the relevant changes at the system occur.  
      */
     public abstract List<Event> execute() throws Exception;
     
