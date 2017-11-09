@@ -1,12 +1,12 @@
-package com.urjc.iagroup.bikesurbanfloats.entities.factories;
+package com.urjc.iagroup.bikesurbanfloats.entities.users;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserTest;
+
 /**
  * This class serves to create, in a generic way, user instances.
  * @author IAgroup
- *
  */
 public class UserFactory {
     /**

@@ -1,8 +1,8 @@
 package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.UserFactory;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
-import com.urjc.iagroup.bikesurbanfloats.entities.factories.UserFactory;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 

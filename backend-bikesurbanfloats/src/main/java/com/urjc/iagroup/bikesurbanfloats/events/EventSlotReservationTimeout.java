@@ -6,7 +6,6 @@ import com.urjc.iagroup.bikesurbanfloats.entities.User;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 
 public class EventSlotReservationTimeout extends EventUser {
     private List<Entity> entities;

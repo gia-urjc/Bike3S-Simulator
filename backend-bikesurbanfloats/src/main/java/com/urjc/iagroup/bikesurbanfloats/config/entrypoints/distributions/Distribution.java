@@ -1,4 +1,4 @@
-	package com.urjc.iagroup.bikesurbanfloats.config.distributions;
+	package com.urjc.iagroup.bikesurbanfloats.config.entrypoints.distributions;
 
 	/**
 	 * This class represents the math distribution concept.

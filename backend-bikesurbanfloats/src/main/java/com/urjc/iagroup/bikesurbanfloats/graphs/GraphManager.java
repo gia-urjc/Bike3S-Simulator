@@ -1,9 +1,9 @@
 package com.urjc.iagroup.bikesurbanfloats.graphs;
 
-import java.util.List;
-
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperImplException;
+
+import java.util.List;
 
 public interface GraphManager {
 	

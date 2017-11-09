@@ -2,7 +2,7 @@ const { Schema } = require('../util/jsonschema/core');
 const { SBoolean, SInteger, SString, SArray, SObject, SNull } = require('../util/jsonschema/types');
 const { SOr } = require('../util/jsonschema/operators');
 const { Min, Require, RequireAll } = require('../util/jsonschema/constraints');
-const { UInt, GeoPoint, ReservationState } = require('../util/commontypes');
+const { UInt, GeoPoint, Route, ReservationState } = require('../util/commontypes');
 
 const PropertyChange = (type) => SObject({
     old: type,
@@ -13,7 +13,8 @@ const User = SObject({
     id: UInt,
     position: PropertyChange(SOr(GeoPoint, SNull())),
     bike: PropertyChange(SOr(UInt, SNull())),
-    destinationStation: PropertyChange(SOr(UInt, SNull()))
+    destinationStation: PropertyChange(SOr(UInt, SNull())),
+    route: PropertyChange(SOr(Route, SNull())),
 }, Require('id'), Min(2));
 
 const Station = SObject({

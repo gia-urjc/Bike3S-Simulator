@@ -4,17 +4,34 @@ import java.util.Random;
 
 public class SimulationRandom {
 	
-	private static SimulationRandom instance = null;
+	private static SimulationRandom generalInstance = null;
+	private static SimulationRandom userCreationInstance = null;
+
+    public static void init(long seed) {
+        if (generalInstance != null || userCreationInstance != null) {
+            throw new IllegalStateException("Instances have already been initialized.");
+        }
+
+        generalInstance = new SimulationRandom(seed);
+        userCreationInstance = new SimulationRandom(seed);
+    }
+
+    public static SimulationRandom getGeneralInstance() {
+        if (generalInstance != null) return generalInstance;
+        throw new IllegalStateException("You should first call init(seed)");
+    }
+
+    public static SimulationRandom getUserCreationInstance() {
+        if (userCreationInstance != null) return userCreationInstance;
+        throw new IllegalStateException("You should first call init(seed)");
+    }
+
 	private Random random;
 	
 	private SimulationRandom(long seed) {
 		this.random = new Random(seed);
 	}
-	
-	public void setSeed(long seed) {
-		random = new Random(seed);
-	}
-	
+
 	public int nextInt(int min, int max) {	
 		return min + random.nextInt((max - min) + 1);
 	}
@@ -33,21 +50,6 @@ public class SimulationRandom {
 	
 	public boolean nextBoolean() {
 		return random.nextBoolean();
-	}
-	
-	public static SimulationRandom createRandom(long seed) {
-		if(instance == null) {
-			instance = new SimulationRandom(seed);
-			return instance;
-		}
-		return instance;
-	}
-	
-	public static SimulationRandom createRandom() {
-		if(instance == null) {
-			throw new IllegalStateException("You should call first createRandom(seed)");
-		}
-		return instance;
 	}
 
 }

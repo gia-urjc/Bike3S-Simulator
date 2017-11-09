@@ -21,17 +21,17 @@ import java.util.stream.Collectors;
 
 /**
  * This class contains all the information of all the entities at the system.
- * It provides all the usable methods by the user at the system. 
+ * It provides all the usable methods by the user at the system.
  * @author IAgroup
  */
 public class SystemManager {
-	
+
 	/**
 	 * All the stations at the system.
 	 */
     private List<Station> stations;
     /**
-     * All the bikes from all stations at the system. 
+     * All the bikes from all stations at the system.
      */
     private List<Bike> bikes;
     /**
@@ -39,7 +39,7 @@ public class SystemManager {
      */
     private List<Reservation> reservations;
     /**
-     * It provides the neccesary methods to manage a graph. 
+     * It provides the neccesary methods to manage a graph.
      */
     private GraphManager graphManager;
     /**
@@ -47,45 +47,37 @@ public class SystemManager {
      */
     private SimulationRandom random;
     /**
-     * It represents the map area where simulation is taking place. 
+     * It represents the map area where simulation is taking place.
      */
     private BoundingBox bbox;
 
-    public SystemManager(List<Station> stations, SimulationConfiguration systemConfiguration) throws IOException {
-        this.stations = new ArrayList<>(stations);
+    public SystemManager(SimulationConfiguration simulationConfiguration) throws IOException {
+        this.stations = new ArrayList<>(simulationConfiguration.getStations());
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         this.reservations = new ArrayList<>();
-        this.graphManager = createGraphManager(systemConfiguration);
-        this.random = SimulationRandom.createRandom();
-        this.bbox = systemConfiguration.getBoundingBox();
+        this.graphManager = createGraphManager(simulationConfiguration);
+        this.random = SimulationRandom.getGeneralInstance();
+        this.bbox = simulationConfiguration.getBoundingBox();
     }
     
-    /**
-     * It creates a graph manager instance from the system configuration information. 
-     * @param systemConfiguration: it is the configuration information of the system.
-     * @return an instance of GraphHopperIntegration.
-     * @throws IOException
-     */
-    private GraphHopperIntegration createGraphManager(SimulationConfiguration systemConfiguration) throws IOException {
-    	String mapDirectory = systemConfiguration.getMapDirectory();
-    	String graphhopperLocale = systemConfiguration.getGraphHopperLocale();
-    	return new GraphHopperIntegration(mapDirectory, graphhopperLocale);
+    private GraphHopperIntegration createGraphManager(SimulationConfiguration simulationConfiguration) throws IOException {
+    	return new GraphHopperIntegration(simulationConfiguration.getMap());
     }
-    
+
     /**
-     * It registers a user bike or slot reservation, in any state, in system reservation information. 
+     * It registers a user bike or slot reservation, in any state, in system reservation information.
      * @param reservation: it is the reservation which we want to save.
      */
     public void addReservation(Reservation reservation) {
         this.reservations.add(reservation);
     }
 
-    /** 
-     * It obtains all the bike and slot reservations user has gotten to make, including 
-     * those that have expired because of reservation timeout, and reservations which 
-     * user has tried to make but he hasn't been able because there weren't available bikes or slots. 
+    /**
+     * It obtains all the bike and slot reservations user has gotten to make, including
+     * those that have expired because of reservation timeout, and reservations which
+     * user has tried to make but he hasn't been able because there weren't available bikes or slots.
      * @param user: it is the user whose reservations want to be consulted
-     * @return a list of all the bike and slot reservations which the specified user 
+     * @return a list of all the bike and slot reservations which the specified user
      * has makde and has tried to made.
      */
     public List<Reservation> consultReservations(User user) {
@@ -95,10 +87,6 @@ public class SystemManager {
     public List<Station> consultStations() {
         return stations;
     }
-
-    public List<Bike> consultBikes() {
-        return bikes;
-    }
     
     public GraphManager getGraphManager() {
 		return graphManager;
@@ -107,11 +95,11 @@ public class SystemManager {
 	public SimulationRandom getRandom() {
 		return random;
 	}
-	
+
 	/**
 	 * It obtains the stations for which a user has tried to make a bike reservation in an specific moment.
 	 * @param user it is the user who has tried to reserve a bike.
-	 * @param timeInstant it is the moment at which he has decided he wants to reserve a bike 
+	 * @param timeInstant it is the moment at which he has decided he wants to reserve a bike
 	 * and he has been trying it.
 	 * @return a list of stations for which the bike reservation has failed because of unavailable bikes.
 	 */
@@ -127,8 +115,8 @@ public class SystemManager {
 	/**
 	 * It obtains the stations for which a user hasn't tried to make a bike reservation in an specific moment.
 	 * @param user it is used to find out for which stations this user hasn't tried to
-	 * reserve a bike.  
-	 * @param timeInstant it is the moment at which he has decided he wants to reserve a bike 
+	 * reserve a bike.
+	 * @param timeInstant it is the moment at which he has decided he wants to reserve a bike
 	 * and he has been tring it.
 	 * @return a list of stations for which user hasn't still tried to reserve a bike at that specific moment.
 	 */
@@ -153,8 +141,8 @@ public class SystemManager {
         return filteredStations;
     }
     
-    public GeoPoint generateBoundingBoxRandomPoint() {
-    	return bbox.randomPoint();
+    public GeoPoint generateBoundingBoxRandomPoint(SimulationRandom random) {
+    	return bbox.randomPoint(random);
     }
     
 }

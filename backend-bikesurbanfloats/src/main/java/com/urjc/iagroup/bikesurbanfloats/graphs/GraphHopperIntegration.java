@@ -1,13 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.graphs;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.commons.io.FileUtils;
-
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
@@ -18,6 +10,12 @@ import com.graphhopper.util.PointList;
 import com.graphhopper.util.shapes.GHPoint3D;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperImplException;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GraphHopperIntegration implements GraphManager {
 
@@ -30,10 +28,10 @@ public class GraphHopperIntegration implements GraphManager {
 	private GeoPoint startPosition;
 	private GeoPoint endPosition;
 	
-	public GraphHopperIntegration(String mapDir, String locale) throws IOException {
+	public GraphHopperIntegration(String mapDir) throws IOException {
 		FileUtils.deleteDirectory(new File(GRAPHHOPPER_DIR));
 		this.hopper = new GraphHopperOSM().forServer();
-		this.locale = locale;
+		//this.locale = locale;
 		hopper.setDataReaderFile(mapDir);
 		hopper.setGraphHopperLocation(GRAPHHOPPER_DIR);
 		hopper.setEncodingManager(new EncodingManager("foot"));
@@ -56,10 +54,10 @@ public class GraphHopperIntegration implements GraphManager {
 	public void calculateRoutes(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperImplException  {
 		GHRequest req = new GHRequest(
 				startPosition.getLatitude(), startPosition.getLongitude(),
-				endPosition.getLatitude(), endPosition.getLongitude()).
-			setWeighting("fastest").
-    	    setVehicle("foot").
-    	    setLocale(Locale.forLanguageTag(locale));
+				endPosition.getLatitude(), endPosition.getLongitude())
+				.setWeighting("fastest")
+				.setVehicle("foot");
+				//.setLocale(Locale.forLanguageTag(locale));
     	GHResponse rsp = hopper.route(req);
     	
     	if(rsp.hasErrors()) {

@@ -1,7 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
-import java.util.List;
-
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
@@ -13,6 +11,8 @@ import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
+
+import java.util.List;
 
 /**
  * This is the main entity of the the system.
@@ -68,16 +68,16 @@ public abstract class User implements Entity {
     protected SystemManager systemManager;
    
     public User() {
-    	SimulationRandom random = SimulationRandom.createRandom();
-
         this.id = idGenerator.next();
 
         this.position = null;
         this.bike = null;
+
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = random.nextInt(3, 8) / 3.6;
+        this.walkingVelocity = SimulationRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = random.nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = SimulationRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
+
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
@@ -302,7 +302,7 @@ public abstract class User implements Entity {
      */
 
     public void updatePositionAfterTimeOut() {
-    	List<GeoPoint> pointList = currentRoute.getPointList();
+    	List<GeoPoint> pointList = currentRoute.getPoints();
     	position = pointList.get(pointList.size() - 1);
     }
 
@@ -313,7 +313,7 @@ public abstract class User implements Entity {
      */
     
     public int timeToReach() {
-		return (int) (currentRoute.getDistance()/getAverageVelocity());
+		return (int) (currentRoute.getTotalDistance()/getAverageVelocity());
     }
 
     /**

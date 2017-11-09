@@ -16,7 +16,7 @@ public interface Event extends Comparable<Event> {
 	int getInstant();
 	
 	/**
-	 * It proccesses an event.
+	 * It proccesses the event so that the relevant changes at the system occur.
 	 * @return a list of generated events as a consequence of event execution.
 	 * @throws Exception
 	 */

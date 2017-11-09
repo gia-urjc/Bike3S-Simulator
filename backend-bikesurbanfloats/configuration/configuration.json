@@ -1,8 +1,8 @@
 {
     "reservationTime": 150,
-    "totalTimeSimulation": 1000,
+    "totalSimulationTime": 1000,
     "randomSeed": 200,
-    "bbox": {
+    "boundingBox": {
         "northWest": {
             "latitude": 40.297595783347,
             "longitude": -3.8987731933594
@@ -12,7 +12,7 @@
             "longitude": -3.8314819335938
         }
     },
-    "mapDirectory": "maps/mostoles.osm",
+    "map": "maps/mostoles.osm",
     "graphHopperLocale": "ES",
     "entryPoints": [
         {

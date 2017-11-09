@@ -8,9 +8,9 @@ public class BoundingBox {
 	private GeoPoint southEast;
 
 	
-	public BoundingBox(GeoPoint point1, GeoPoint point2) {
-		this.northWest = point1;
-		this.southEast = point2;
+	public BoundingBox(GeoPoint northWest, GeoPoint southEast) {
+		this.northWest = northWest;
+		this.southEast = southEast;
 	}
 	
 	public BoundingBox(double lat1, double lon1, double lat2, double lon2) {
@@ -36,8 +36,7 @@ public class BoundingBox {
 		return northWest.distanceTo(auxGeoPoint);
 	}
 	 
-	public GeoPoint randomPoint() {
-		SimulationRandom random = SimulationRandom.createRandom();
+	public GeoPoint randomPoint(SimulationRandom random) {
 		double newLatitude = random.nextDouble(northWest.getLatitude(), southEast.getLatitude());
 		double newLongitude = random.nextDouble(northWest.getLongitude(), southEast.getLongitude());
 		return new GeoPoint(newLatitude, newLongitude);

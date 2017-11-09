@@ -24,6 +24,8 @@ projectRoot.cache = () => path.join(projectRoot(), '.fusebox');
 
 let production = false;
 
+let schemaBuildPath = projectRoot.build.schema();
+
 Sparky.task('build:backend', () => new Promise((resolve, reject) => {
     const maven = spawn('mvn', ['clean', 'package'], {
         cwd: projectRoot.backend(),
@@ -66,7 +68,7 @@ Sparky.task('build:schema', () => new Promise((resolve, reject) => {
         const collection = require(path.join(projectRoot.schema(), entry));
 
         Object.keys(collection).forEach((schema) => {
-            const out = path.join(projectRoot.build.schema(), entry, `${schema}.json`);
+            const out = path.join(schemaBuildPath, entry, `${schema}.json`);
 
             log.time().green(`Writing schema to: ${out}`).echo();
 
@@ -76,7 +78,7 @@ Sparky.task('build:schema', () => new Promise((resolve, reject) => {
                 log.time().red(`Error while writing json schema: ${error}`).echo();
                 reject();
             }
-        })
+        });
     });
 
     resolve();
@@ -162,14 +164,12 @@ Sparky.task('build:frontend', ['build:frontend:renderer', 'build:frontend:main']
 
 Sparky.task('build:dev', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:frontend'], () => {});
 
-Sparky.task('set:production', () => production = true);
+Sparky.task('build:dist', () => {
+    production = true;
+    return Sparky.start('build:dev');
+});
 
-Sparky.task('build:dist', ['set:production', 'build:dev'], () => {});
-
-
-Sparky.task('test', () => {
-    const exclude = ['examples', 'util'];
-    fs.readdirSync(projectRoot.schema()).filter((x) => !exclude.includes(x)).forEach((entry) => {
-        console.log(path.join(projectRoot.schema(), entry));
-    });
+Sparky.task('build:schema:forBackend', () => {
+    schemaBuildPath = path.join(projectRoot.backend(), 'schema');
+    return Sparky.start('build:schema');
 });

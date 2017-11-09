@@ -61,9 +61,8 @@ public abstract class EventUser implements Event {
      *  </ul>  
      * @param destination: it is the station for which user wants to make a bike reservation.
      *  This parameter can be the previous chosen station or a new decided destination station. 
-     * @return a list of events (actually, it returns a unique event) that will occur as a consequence of executing the current event.
+     * @return a list of generated events that will occur as a consequence of trying to reserve a bike.
      */
-    
     public List<Event> manageBikeReservation(Station destination) throws Exception{
         List<Event> newEvents = new ArrayList<>();
         int arrivalTime = user.timeToReach();
@@ -92,12 +91,12 @@ public abstract class EventUser implements Event {
         }
         return newEvents;
     }
-    /**
-     * It is a recursive method
-     * At this method, user decides to try to make again the bike reservation (or not) at previous chosen station  
-     * @return
-     */
     
+    /**
+     * It is a recursive method.
+     * At this method, user decides if he'll try to make again the bike reservation at previous chosen station.  
+     * @return a list of generated events that will ocurr as a consequence of making the decision.
+     */
     public List<Event> manageBikeReservationDecisionAtSameStationAfterTimeout() throws Exception {
     	List<Event> newEvents = new ArrayList<>();
     	Station destination = user.getDestinationStation();
@@ -113,6 +112,12 @@ public abstract class EventUser implements Event {
         return newEvents;
     }
     
+    /**
+     * This is a recursive method.
+     * At this method, user decides if he'll try to make a bike reservation at a new chosen station. 
+     * @return a list of generated events as a consequence of making the decision. 
+     * @throws Exception
+     */
     public List<Event> manageBikeReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.determineStationToRentBike(instant);
@@ -134,6 +139,12 @@ public abstract class EventUser implements Event {
         return newEvents;
     }
     
+    /**
+     * 
+     * @param destination
+     * @return
+     * @throws Exception
+     */
     public List<Event> manageSlotReservation(Station destination) throws Exception{
     	List<Event> newEvents = new ArrayList<>();
     	int arrivalTime = user.timeToReach();

@@ -18,7 +18,7 @@ public class Application {
     	String configurationFile = args[0];
         ConfigJsonReader jsonReader = new ConfigJsonReader(configurationFile);
         try {
-			SimulationConfiguration simulationConfiguration = jsonReader.createSystemConfiguration();
+			SimulationConfiguration simulationConfiguration = jsonReader.createSimulationConfiguration();
 			SystemManager systemManager = jsonReader.createSystemManager(simulationConfiguration);
 			SimulationEngine simulation = new SimulationEngine(simulationConfiguration, systemManager);
 			simulation.run();
