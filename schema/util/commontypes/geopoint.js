@@ -1,7 +1,7 @@
-const { SObject, SNumber } = require('../jsonschema/types');
-const { RequireAll } = require('../jsonschema/constraints');
+const { sObject, sNumber } = require('../jsonschema/types');
+const { requireAll } = require('../jsonschema/constraints');
 
-module.exports = SObject({
-    latitude: SNumber(),
-    longitude: SNumber(),
-}, RequireAll());
+module.exports = sObject({
+    latitude: sNumber(),
+    longitude: sNumber(),
+}, requireAll());

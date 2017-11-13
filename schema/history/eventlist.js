@@ -1,52 +1,52 @@
 const { Schema } = require('../util/jsonschema/core');
-const { SBoolean, SInteger, SString, SArray, SObject, SNull } = require('../util/jsonschema/types');
-const { SOr } = require('../util/jsonschema/operators');
-const { Min, Require, RequireAll } = require('../util/jsonschema/constraints');
+const { sBoolean, sInteger, sString, sArray, sObject, sNull } = require('../util/jsonschema/types');
+const { sOr } = require('../util/jsonschema/operators');
+const { min, required, requireAll } = require('../util/jsonschema/constraints');
 const { UInt, GeoPoint, Route, ReservationState } = require('../util/commontypes');
 
-const PropertyChange = (type) => SObject({
+const propertyChange = (type) => sObject({
     old: type,
     new: type,
-}, RequireAll());
+}, requireAll());
 
-const User = SObject({
+const User = sObject({
     id: UInt,
-    position: PropertyChange(SOr(GeoPoint, SNull())),
-    bike: PropertyChange(SOr(UInt, SNull())),
-    destinationStation: PropertyChange(SOr(UInt, SNull())),
-    route: PropertyChange(SOr(Route, SNull())),
-}, Require('id'), Min(2));
+    position: propertyChange(sOr(GeoPoint, sNull())),
+    bike: propertyChange(sOr(UInt, sNull())),
+    destinationStation: propertyChange(sOr(UInt, sNull())),
+    route: propertyChange(sOr(Route, sNull())),
+}, required('id'), min(2));
 
-const Station = SObject({
+const Station = sObject({
     id: UInt,
-    bikes: PropertyChange(SArray(SOr(UInt, SNull())))
+    bikes: propertyChange(sArray(sOr(UInt, sNull())))
     // TODO: check other attributes of station
-}, Require('id'), Min(2));
+}, required('id'), min(2));
 
-const Bike = SObject({
+const Bike = sObject({
     id: UInt,
-    reserved: PropertyChange(SBoolean()),
-}, Require('id'), Min(2));
+    reserved: propertyChange(sBoolean()),
+}, required('id'), min(2));
 
-const Reservation = SObject({
+const Reservation = sObject({
     id: UInt,
-    endTime: PropertyChange(SOr(UInt, SNull())),
-    state: PropertyChange(ReservationState)
-}, Require('id'), Min(2));
+    endTime: propertyChange(sOr(UInt, sNull())),
+    state: propertyChange(ReservationState)
+}, required('id'), min(2));
 
-const Event = SObject({
-    name: SString(),
-    changes: SObject({
-        users: SArray(User),
-        stations: SArray(Station),
-        bikes: SArray(Bike),
-        reservations: SArray(Reservation)
+const Event = sObject({
+    name: sString(),
+    changes: sObject({
+        users: sArray(User),
+        stations: sArray(Station),
+        bikes: sArray(Bike),
+        reservations: sArray(Reservation)
     })
-}, RequireAll());
+}, requireAll());
 
-const Entry = SObject({
-    time: SInteger(),
-    events: SArray(Event),
-}, RequireAll());
+const Entry = sObject({
+    time: sInteger(),
+    events: sArray(Event),
+}, requireAll());
 
-module.exports = Schema(SArray(Entry));
+module.exports = Schema(sArray(Entry));

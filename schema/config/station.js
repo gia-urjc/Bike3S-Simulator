@@ -1,13 +1,13 @@
-const { SInteger, SObject, SArray } = require('../util/jsonschema/types');
-const { Min, RequireAll } = require('../util/jsonschema/constraints');
+const { sInteger, sObject, sArray } = require('../util/jsonschema/types');
+const { min, requireAll } = require('../util/jsonschema/constraints');
 const { GeoPoint } = require('../util/commontypes');
 
-const Bike = SObject({});
+const Bike = sObject({});
 
-module.exports = SObject({
+module.exports = sObject({
     position: GeoPoint,
-    capacity: SInteger(Min(0)),
+    capacity: sInteger(min(0)),
     bikes: {
-        oneOf: [SInteger(Min(0)), SArray(Bike)]
+        oneOf: [sInteger(min(0)), sArray(Bike)]
     }
-}, RequireAll());
+}, requireAll());

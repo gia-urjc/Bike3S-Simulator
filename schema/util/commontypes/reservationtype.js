@@ -1,3 +1,3 @@
-const { SEnum } = require('../jsonschema/types');
+const { sEnum } = require('../jsonschema/types');
 
-module.exports = SEnum('SLOT', 'BIKE');
+module.exports = sEnum('SLOT', 'BIKE');

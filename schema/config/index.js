@@ -1,22 +1,22 @@
 const { Schema } = require('../util/jsonschema/core');
-const { SInteger, SString, SObject, SArray } = require('../util/jsonschema/types');
-const { RequireAll, Pattern } = require('../util/jsonschema/constraints');
+const { sInteger, sString, sObject, sArray } = require('../util/jsonschema/types');
+const { requireAll, pattern } = require('../util/jsonschema/constraints');
 const { UInt, GeoPoint } = require('../util/commontypes');
 
 const EntryPoint = require('./entrypoint');
 const Station = require('./station');
 
 module.exports = {
-    config: Schema(SObject({
+    config: Schema(sObject({
         totalSimulationTime: UInt,
         reservationTime: UInt,
-        randomSeed: SInteger(),
-        boundingBox: SObject({
+        randomSeed: sInteger(),
+        boundingBox: sObject({
             northWest: GeoPoint,
             southEast: GeoPoint,
-        }, RequireAll()),
-        map: SString(Pattern(/.+\.osm^/)),
-        entryPoints: SArray(EntryPoint),
-        stations: SArray(Station),
-    }, RequireAll()))
+        }, requireAll()),
+        map: sString(pattern(/.+\.osm^/)),
+        entryPoints: sArray(EntryPoint),
+        stations: sArray(Station),
+    }, requireAll()))
 };

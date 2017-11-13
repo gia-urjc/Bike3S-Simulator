@@ -1,28 +1,28 @@
 const { Schema } = require('../util/jsonschema/core');
-const { SNumber, SObject, SArray, SNull } = require('../util/jsonschema/types');
-const { SOr } = require('../util/jsonschema/operators');
-const { XMin, RequireBut, RequireAll } = require('../util/jsonschema/constraints');
+const { sNumber, sObject, sArray, sNull } = require('../util/jsonschema/types');
+const { sOr } = require('../util/jsonschema/operators');
+const { xMin, requireBut, requireAll } = require('../util/jsonschema/constraints');
 const { UInt, GeoPoint, UserType, ReservationState, ReservationType } = require('../util/commontypes');
 
-const User = SObject({
+const User = sObject({
     id: UInt,
     type: UserType,
-    walkingVelocity: SNumber(XMin(0)),
-    cyclingVelocity: SNumber(XMin(0)),
-}, RequireAll());
+    walkingVelocity: sNumber(xMin(0)),
+    cyclingVelocity: sNumber(xMin(0)),
+}, requireAll());
 
-const Bike = SObject({
+const Bike = sObject({
     id: UInt,
-}, RequireAll());
+}, requireAll());
 
-const Station = SObject({
+const Station = sObject({
     id: UInt,
     position: GeoPoint,
     capacity: UInt,
-    bikes: SArray(SOr(UInt, SNull()))
-}, RequireAll());
+    bikes: sArray(sOr(UInt, sNull()))
+}, requireAll());
 
-const Reservation = SObject({
+const Reservation = sObject({
     id: UInt,
     startTime: UInt,
     // endTime: UInt, TODO: make sure this is not necessary
@@ -31,12 +31,12 @@ const Reservation = SObject({
     bike: UInt,
     type: ReservationType,
     state: ReservationState
-}, RequireBut('bike'));
+}, requireBut('bike'));
 
-module.exports = Schema(SObject({
-    users: SArray(User),
-    bikes: SArray(Bike),
-    stations: SArray(Station),
-    reservations: SArray(Reservation)
+module.exports = Schema(sObject({
+    users: sArray(User),
+    bikes: sArray(Bike),
+    stations: sArray(Station),
+    reservations: sArray(Reservation)
     // it is technically possible that no reservations were made, so they are not required in the schema
-}, RequireBut('reservations')));
+}, requireBut('reservations')));

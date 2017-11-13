@@ -1,16 +1,16 @@
-const { Min, Max, Pattern } = require('../constraints');
+const { min, max, pattern } = require('../constraints');
 
 module.exports = (...constraints) => Object.assign({
     type: 'string'
 }, ...constraints.map((constraint) => {
     switch (constraint.type) {
-        case Min: return {
+        case min: return {
             minLength: constraint.argument
         };
-        case Max: return {
+        case max: return {
             maxLength: constraint.argument
         };
-        case Pattern: return {
+        case pattern: return {
             pattern: new RegExp(constraint.argument).source
         };
         default: {

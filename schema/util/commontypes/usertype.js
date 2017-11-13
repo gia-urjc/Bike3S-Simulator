@@ -1,5 +1,5 @@
-const { SEnum } = require('../jsonschema/types');
+const { sEnum } = require('../jsonschema/types');
 
-module.exports = SEnum(
+module.exports = sEnum(
     'USER_TEST',
 );

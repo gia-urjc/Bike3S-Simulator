@@ -1,22 +1,22 @@
-const { Min, Max, XMin, XMax, Multiple } = require('../constraints');
+const { min, max, xMin, xMax, multipleOf } = require('../constraints');
 
 module.exports = (...constraints) => Object.assign({
     type: 'number'
 }, ...constraints.map((constraint) => {
     switch (constraint.type) {
-        case Min: return {
+        case min: return {
             minimum: constraint.argument
         };
-        case Max: return {
+        case max: return {
             maximum: constraint.argument
         };
-        case XMin: return {
+        case xMin: return {
             exclusiveMinimum: constraint.argument
         };
-        case XMax: return {
+        case xMax: return {
             exclusiveMaximum: constraint.argument
         };
-        case Multiple: return {
+        case multipleOf: return {
             multipleOf: constraint.argument
         };
         default: {

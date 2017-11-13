@@ -1,4 +1,4 @@
-const { Min, Max, Require, RequireBut, RequireAll } = require('../constraints');
+const { min, max, required, requireBut, requireAll } = require('../constraints');
 
 module.exports = (properties, ...constraints) => Object.assign({
     type: 'object',
@@ -6,19 +6,19 @@ module.exports = (properties, ...constraints) => Object.assign({
     properties: properties
 }, ...constraints.map((constraint) => {
     switch (constraint.type) {
-        case Min: return {
+        case min: return {
             minProperties: constraint.argument
         };
-        case Max: return {
+        case max: return {
             maxProperties: constraint.argument
         };
-        case Require: return {
+        case required: return {
             required: constraint.argument
         };
-        case RequireBut: return {
+        case requireBut: return {
             required: Object.keys(properties).filter((x) => !constraint.argument.includes(x))
         };
-        case RequireAll: return {
+        case requireAll: return {
             required: Object.keys(properties)
         };
         default: {

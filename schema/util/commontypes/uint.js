@@ -1,4 +1,4 @@
-const { SInteger } = require('../jsonschema/types');
-const { Min } = require('../jsonschema/constraints');
+const { sInteger } = require('../jsonschema/types');
+const { min } = require('../jsonschema/constraints');
 
-module.exports = SInteger(Min(0));
+module.exports = sInteger(min(0));

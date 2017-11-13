@@ -1,5 +1,5 @@
-const JSNumber = require('./number');
+const sNumber = require('./number');
 
-module.exports = (...constraints) => Object.assign(JSNumber(...constraints), {
+module.exports = (...constraints) => Object.assign(sNumber(...constraints), {
     type: 'integer'
 });

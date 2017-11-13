@@ -1,35 +1,35 @@
-const { SNumber, SObject, SConst } = require('../util/jsonschema/types');
-const { SOr, SUnion } = require('../util/jsonschema/operators');
-const { XMin, Require, RequireAll } = require('../util/jsonschema/constraints');
+const { sNumber, sObject, sConst } = require('../util/jsonschema/types');
+const { sOr, sUnion } = require('../util/jsonschema/operators');
+const { xMin, required, requireAll } = require('../util/jsonschema/constraints');
 const { UInt, GeoPoint, UserType } = require('../util/commontypes');
 
 const Distributions = [
-    SObject({
-        type: SConst('RANDOM')
-    }, RequireAll()),
-    SObject({
-        type: SConst('POISSON'),
-        lambda: SNumber()
-    }, RequireAll()),
+    sObject({
+        type: sConst('RANDOM')
+    }, requireAll()),
+    sObject({
+        type: sConst('POISSON'),
+        lambda: sNumber()
+    }, requireAll()),
 ];
 
-const ItemBase = SObject({
+const ItemBase = sObject({
     userType: UserType,
     position: GeoPoint,
-}, RequireAll());
+}, requireAll());
 
 const Items = [
-    SUnion(ItemBase, SObject({
+    sUnion(ItemBase, sObject({
         timeInstant: UInt
-    }, RequireAll())),
-    SUnion(ItemBase, SObject({
-        distribution: SOr(...Distributions),
-        radius: SNumber(XMin(0)),
-        timeRange: SObject({
+    }, requireAll())),
+    sUnion(ItemBase, sObject({
+        distribution: sOr(...Distributions),
+        radius: sNumber(xMin(0)),
+        timeRange: sObject({
             start: UInt,
             end: UInt,
         }),
-    }, Require('distribution'))),
+    }, required('distribution'))),
 ];
 
-module.exports = SOr(...Items);
+module.exports = sOr(...Items);

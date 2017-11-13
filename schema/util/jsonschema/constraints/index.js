@@ -1,16 +1,16 @@
-const Constraint = (type, argument) => ({
+const constraint = (type, argument) => ({
     type: type,
     argument: argument
 });
 
 module.exports = {
-    Min: (value) => Constraint(module.exports.Min, value),
-    Max: (value) => Constraint(module.exports.Max, value),
-    XMin: (value) => Constraint(module.exports.XMin, value),
-    XMax: (value) => Constraint(module.exports.XMax, value),
-    Multiple: (value) => Constraint(module.exports.Multiple, value),
-    Require: (...properties) => Constraint(module.exports.Require, properties),
-    RequireBut: (...properties) => Constraint(module.exports.RequireBut, properties),
-    RequireAll: () => Constraint(module.exports.RequireAll),
-    Pattern: (regex) => Constraint(module.exports.Pattern, regex),
+    min: (value) => constraint(module.exports.min, value),
+    max: (value) => constraint(module.exports.max, value),
+    xMin: (value) => constraint(module.exports.xMin, value),
+    xMax: (value) => constraint(module.exports.xMax, value),
+    multipleOf: (value) => constraint(module.exports.multipleOf, value),
+    required: (...properties) => constraint(module.exports.required, properties),
+    requireBut: (...properties) => constraint(module.exports.requireBut, properties),
+    requireAll: () => constraint(module.exports.requireAll),
+    pattern: (regex) => constraint(module.exports.pattern, regex),
 };
