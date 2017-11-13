@@ -25,7 +25,7 @@ public class SimulationEngine {
 	
 	/**
 	 * It creates an event queue where its events are sorted by the time instant when they'll occur.
-		 */
+	 */
 	public SimulationEngine(SimulationConfiguration simulationConfiguration, SystemManager systemManager) {
 		this.simulationConfiguration = simulationConfiguration;
 		this.systemManager = systemManager;
