@@ -5,10 +5,14 @@ import com.google.gson.annotations.Expose;
 public class GeoPoint {
 
     /**
-     * Earth radius in meters
-     */
+     * It is the earth radius in meters.
+    */
     public final static double EARTH_RADIUS = 6371e3;
-    public final static double DEG_TO_RAD = Math.PI / 180.0;
+    
+    /**
+     * It represents how many radians is a degree.
+     */
+    public final static double DEGREES_TO_RADIANS = Math.PI / 180.0;
 
     @Expose
     private double latitude;
@@ -45,9 +49,8 @@ public class GeoPoint {
         this.longitude = longitude;
     }
 
-
     /**
-     * Calculates the distance to another point using the haversine formula.
+     * It calculates the distance to another point using the haversine formula.
      * @return The distance in meters.
      * @see <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula on Wikipedia</a>
      */
@@ -62,6 +65,11 @@ public class GeoPoint {
         return Math.pow(Math.sin(value / 2), 2);
     }
     
+    /**
+     * It calculates the angle formed by two points with respect an axis.
+     * @param point2 It is the other point which determines the angle.
+     * @return an angle in radians.
+     */
     public double bearing(GeoPoint point2) {
 		double latPos1Rad = Math.toRadians(latitude);
 		double lonPos1Rad = Math.toRadians(longitude);

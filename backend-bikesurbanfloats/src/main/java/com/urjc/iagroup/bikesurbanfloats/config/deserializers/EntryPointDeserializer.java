@@ -9,10 +9,15 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is used to obtain the entry points in the system's own format.    
+ * @author IAgroup
+ *
+ */
 public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>>  {
 
-	private final static String JSON_ATR_DISTRIBUTION = "distribution";
-	private final static String JSON_ATR_DISTR_TYPE = "type";
+	private final static String JSON_ATTR_DISTRIBUTION = "distribution";
+	private final static String JSON_ATTR_DISTR_TYPE = "type";
 	
 	private EntryPointFactory entryPointFactory;
 	
@@ -22,7 +27,6 @@ public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>
 	
 	@Override
 	public List<EntryPoint> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-
 		List<EntryPoint> entryPoints = new ArrayList<>();
 
         for (JsonElement element : json.getAsJsonArray()) {
@@ -30,9 +34,9 @@ public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>
             DistributionType distributionType;
 
             // if entryPoint does'nt contain a distribution attribute, it's of type single (one user)
-            if (jsonEntryPoint.has(JSON_ATR_DISTRIBUTION)) {
-                String distributionStr = jsonEntryPoint.get(JSON_ATR_DISTRIBUTION)
-                        .getAsJsonObject().get(JSON_ATR_DISTR_TYPE).getAsString();
+            if (jsonEntryPoint.has(JSON_ATTR_DISTRIBUTION)) {
+                String distributionStr = jsonEntryPoint.get(JSON_ATTR_DISTRIBUTION)
+                        .getAsJsonObject().get(JSON_ATTR_DISTR_TYPE).getAsString();
                 distributionType = DistributionType.valueOf(distributionStr);
             }
             else {
@@ -43,7 +47,6 @@ public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>
         }
 		
 		return entryPoints;
-		
 	}
 
 }
