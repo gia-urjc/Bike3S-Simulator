@@ -5,7 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
-import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperImplException;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperIntegrationException;
 import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
@@ -281,12 +281,12 @@ public abstract class User implements Entity {
     	}
     }
 
-    public List<GeoRoute> calculateRouteStation(Station station) throws GeoRouteCreationException, GraphHopperImplException {
+    public List<GeoRoute> calculateRouteStation(Station station) throws GeoRouteCreationException, GraphHopperIntegrationException {
     	this.systemManager.getGraphManager().calculateRoutes(position, station.getPosition());
 		return this.systemManager.getGraphManager().getAllRoutes();
     }
 
-    public List<GeoRoute> calculateRouteByPosition(GeoPoint finalPosition) throws GeoRouteCreationException, GraphHopperImplException{
+    public List<GeoRoute> calculateRouteByPosition(GeoPoint finalPosition) throws GeoRouteCreationException, GraphHopperIntegrationException{
     	this.systemManager.getGraphManager().calculateRoutes(position, finalPosition);
     	return this.systemManager.getGraphManager().getAllRoutes();
     }

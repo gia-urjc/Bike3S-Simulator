@@ -2,6 +2,14 @@ package com.urjc.iagroup.bikesurbanfloats.util;
 
 import java.util.Random;
 
+/**
+ * This class is a random type initialized with a specific seed.
+ * It contains two unique instances: one to use it in the user creation and another to 
+ * the rest of cases.
+ * It provides methods to randomly generate data primitive types. 
+ * @author IAgroup
+ *
+ */
 public class SimulationRandom {
 	
 	private static SimulationRandom generalInstance = null;

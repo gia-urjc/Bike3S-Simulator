@@ -9,6 +9,12 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * This class is used to create, from configuration file, the system's internal classes 
+ * necessary to manage the system configuration. 
+ * @author IAgroup
+ *
+ */
 public class ConfigJsonReader {
 
     private String configurationFile;
@@ -19,7 +25,11 @@ public class ConfigJsonReader {
     	this.configurationFile = configurationFile;
         this.gson = new Gson();
     }
-
+    
+    /**
+     * It creates a simulation configuration object from json configuration file.
+     * @return the created simulationo configuration object.
+     */
     public SimulationConfiguration createSimulationConfiguration() throws IOException {
         try (FileReader reader = new FileReader(configurationFile)) {
             SimulationConfiguration simulationConfiguration = gson.fromJson(reader, SimulationConfiguration.class);
@@ -31,7 +41,11 @@ public class ConfigJsonReader {
             return simulationConfiguration;
         }
     }
-
+    
+    /**
+     * It creates a system manager object from the simulation configuration object.
+     * @return the created system manager object.
+     */
     public SystemManager createSystemManager(SimulationConfiguration simulationConfiguration) throws IOException {
         return new SystemManager(simulationConfiguration);
     }

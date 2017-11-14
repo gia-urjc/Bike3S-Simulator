@@ -27,25 +27,30 @@ import java.util.stream.Collectors;
 public class SystemManager {
 
 	/**
-	 * All the stations at the system.
+	 * These are all the stations at the system.
 	 */
     private List<Station> stations;
+    
     /**
-     * All the bikes from all stations at the system.
+     * These are all the bikes from all stations at the system.
      */
     private List<Bike> bikes;
+    
     /**
-     * All the bike and slot reservations (and reservation attempts) of all the users at the system.
+     * These are all the bike and slot reservations (and reservation attempts) of all the users at the system.
      */
     private List<Reservation> reservations;
+    
     /**
      * It provides the neccesary methods to manage a graph.
      */
     private GraphManager graphManager;
+    
     /**
      * It is a global random instance with an specific seed.
      */
     private SimulationRandom random;
+    
     /**
      * It represents the map area where simulation is taking place.
      */

@@ -9,6 +9,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is used to obtain the stations in the system's own format. 
+ * @author IAgroup
+ *
+ */
 public class StationDeserializer implements JsonDeserializer<List<Station>>  {
 
 	private static final String JSON_ATTR_BIKES = "bikes";
