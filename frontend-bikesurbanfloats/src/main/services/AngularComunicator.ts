@@ -1,17 +1,17 @@
-import {ipcMain} from "electron";
+import {ipcMain, Event} from 'electron';
 
-module AngularComunicator{
+module AngularComunicator {
 
-    export enum RequestType{
-        Send,
-        Receive
-    }
 
-    export function request(message:string, method:RequestType, data, funct){
-        if(method === RequestType.Receive)
-        ipcMain.on(message, (event, arg) => {
+    export function receiveToRenderer(syncMessage: string, data: any, funct: Function) {
+        ipcMain.on(syncMessage, (event: Event) => {
             return funct(data);
-        });
+        })
     }
 
+    export function sendToRenderer(asyncMessage: string, asyncReply: string, data: any) {
+        ipcMain.on(asyncMessage, (event: Event) => {
+            event.sender.send(asyncReply, data);
+        })
+    }
 }
