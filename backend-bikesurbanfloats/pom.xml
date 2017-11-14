@@ -6,7 +6,7 @@
 	<groupId>com.urjc.iagroup</groupId>
 	<artifactId>bikesurbanfloats</artifactId>
 	<version>0.0.1</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>bikesurbanfloats</name>
 
@@ -53,65 +53,28 @@
 	
 
 	<build>
-		<plugins>
-		
-			<!-- Set a compiler level -->
+		<plugins>  
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-		
-			<!-- Set a compiler level -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-			
-			<!-- Make this jar executable -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.urjc.iagroup.bikesurbanfloats.Application</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			
-			<!-- Copy project dependency -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.0.2</version>
-				<executions>
-				  <execution>
-					<id>copy-dependencies</id>
-					<phase>package</phase>
-					<goals>
-						<goal>copy-dependencies</goal>
-					</goals>
-					<configuration>
-					  <!-- exclude junit, we need runtime dependency only -->
-					  <includeScope>runtime</includeScope>
-					  <outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
-					</configuration>
-				  </execution>
-				</executions>
-			</plugin>
-			
+  				<artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.urjc.iagroup.bikesurbanfloats.Application</mainClass>
+                        </manifest>
+                    </archive>  
+                </configuration>
+			</plugin>	
 		</plugins>
 	</build>
 	
