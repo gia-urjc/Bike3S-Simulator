@@ -7,17 +7,35 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents a geographic route.
+ * @author IAgroup
+ *
+ */
 public class GeoRoute {
-	
+	/**
+	 * These are the points which forms the route.
+	 */
 	@Expose
 	private List<GeoPoint> points;
 	
+	/**
+	 * This is the distance of the entire route.
+	 */
 	@Expose
 	private double totalDistance;
 	
+	/**
+	 * These are the distances between the diferent pairs of geographic points of the route.
+	 * The number of subroutes is the number of points of the route minus one. 
+	 */
 	@Expose
 	private List<Double> intermediateDistances;
 	
+	/**
+	 * It creates a route which has at least 2 points.
+	 * @param geoPointList It is the list of points which form the route.
+	 */
 	public GeoRoute(List<GeoPoint> geoPointList) throws GeoRouteCreationException {
 		if(geoPointList.size() < 2) {
 			throw new GeoRouteCreationException("Routes should have more than two points");
@@ -35,7 +53,9 @@ public class GeoRoute {
 		return totalDistance;
 	}
 
-	
+	/**
+	 * It calculates the distances of the different sections of the route and its total distance.
+	 */
 	private void calculateDistances() {
 		Double totalDistance = 0.0;
 		for(int i = 0; i < points.size()-1; i++) {
@@ -48,6 +68,13 @@ public class GeoRoute {
 		this.totalDistance = totalDistance;
 	}
 
+	/**
+	 * Given the speed at which the route is travelled and the time during which the entity 
+	 * has been travelling, it calculates the section of the route that the entity has travelled.
+	 * @param finalTime It is the time during which the entity has been travelling.
+	 * @param velocity It is the speed at which the entity travels.
+	 * @return the travelled subroute.
+	 */
 	public GeoRoute calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws GeoRouteException, GeoRouteCreationException {
 		double totalDistance = 0.0;
 		double currentTime = 0.0;
@@ -108,8 +135,4 @@ public class GeoRoute {
 		}
 		return result;
 	}
-	
-	
-	
-
 }

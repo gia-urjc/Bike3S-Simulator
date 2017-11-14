@@ -3,7 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats.util;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
 /**
- * This class represents a rectangle and is used to delimit the simulation area.
+ * This class represents a rectangle which is used to delimit geographic areas.
  * @author IAgroup
  *
  */
@@ -48,9 +48,9 @@ public class BoundingBox {
 	}
 	
 	/**
-	 * It calculates a random point inside the simulation area delimited by the boundingBox object. 
+	 * It calculates a random point inside the geographic area delimited by boundingBox object. 
 	 * @param random It is the general random instance of the system. 
-	 * @return a random point which belongs to thhe bounding box object. 
+	 * @return a random point which belongs to thhe boundingBox object. 
 	 */
 	public GeoPoint randomPoint(SimulationRandom random) {
 		double newLatitude = random.nextDouble(northWest.getLatitude(), southEast.getLatitude());

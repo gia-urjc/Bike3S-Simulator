@@ -2,6 +2,11 @@ package com.urjc.iagroup.bikesurbanfloats.graphs;
 
 import com.google.gson.annotations.Expose;
 
+/**
+ * This class represents a geographic point.
+ * @author IAgroup
+ *
+ */
 public class GeoPoint {
 
     /**
@@ -67,29 +72,40 @@ public class GeoPoint {
     
     /**
      * It calculates the angle formed by two points with respect an axis.
-     * @param point2 It is the other point which determines the angle.
+     * @param point2 It is the second point which determines the angle.
      * @return an angle in radians.
      */
     public double bearing(GeoPoint point2) {
-		double latPos1Rad = Math.toRadians(latitude);
-		double lonPos1Rad = Math.toRadians(longitude);
-		double latPos2Rad = Math.toRadians(point2.getLatitude());
-		double lonPos2Rad = Math.toRadians(point2.getLongitude());
+    	// the latitudes and longitudes of these points are in radians
+		double latitudePoint1 = Math.toRadians(latitude);
+		double longitudePoint1 = Math.toRadians(longitude);
+		double latitudePoint2 = Math.toRadians(point2.getLatitude());
+		double longitudePoint2 = Math.toRadians(point2.getLongitude());
 		
-		double y = Math.sin(lonPos2Rad - lonPos1Rad) * Math.cos(latPos2Rad);
-		double x = Math.cos(latPos1Rad)*Math.sin(latPos2Rad) 
-				- Math.sin(latPos1Rad)*Math.cos(latPos2Rad)*Math.cos(lonPos2Rad - lonPos1Rad);
+		double y = Math.sin(longitudePoint2 - longitudePoint1) * Math.cos(latitudePoint2);
+		double x = Math.cos(latitudePoint1)*Math.sin(latitudePoint2) 
+				- Math.sin(latitudePoint1)*Math.cos(latitudePoint2)*Math.cos(longitudePoint2 - longitudePoint1);
 		
 		double bearing = Math.toDegrees(Math.atan2(y, x));
 		
 		return bearing;
     }
     
+    /**
+     * A........*----B
+     * A is the origin point; B is the destination point; the line formed by dots is the ddistance parameter. 
+     * Given a distance, it calculates a point between two points. 
+     * @param distance It is the distance between the origin point and the reached point.
+     * @param destination It is the destination point.
+     * @return the reached point between the origin and the destination points.
+     */
     public GeoPoint reachedPoint(double distance, GeoPoint destination) {
-    	double latPosRad = Math.toRadians(latitude);
-		double lonPosRad = Math.toRadians(longitude);
-		double senLatitude = Math.sin(latPosRad);
-		double cosLatitude = Math.cos(latPosRad);
+    	// these 2 variables are in radians
+    	double latitudePoint = Math.toRadians(latitude);
+		double longitudePoint = Math.toRadians(longitude);
+		
+		double senLatitude = Math.sin(latitudePoint);
+		double cosLatitude = Math.cos(latitudePoint);
 		double bearing = Math.toRadians(this.bearing(destination));
 		double theta = distance / GeoPoint.EARTH_RADIUS;
 		double senBearing = Math.sin(bearing);
@@ -98,14 +114,12 @@ public class GeoPoint {
 		double cosTheta = Math.cos(theta);
 		
 		double resLatRadians = Math.asin(senLatitude*cosTheta+cosLatitude*senTheta*cosBearing);
-		double resLonRadians = lonPosRad + Math.atan2(senBearing*senTheta*cosLatitude, 
+		double resLonRadians = longitudePoint + Math.atan2(senBearing*senTheta*cosLatitude, 
 				cosTheta-senLatitude*Math.sin(resLatRadians));
 		resLonRadians = ((resLonRadians+(Math.PI*3))%(Math.PI*2))-Math.PI;
     	
     	return new GeoPoint(Math.toDegrees(resLatRadians), Math.toDegrees(resLonRadians)); 
     }
-
-    
 
     @Override
     public boolean equals(Object o) {
@@ -115,17 +129,6 @@ public class GeoPoint {
         GeoPoint geoPoint = (GeoPoint) o;
 
         return (geoPoint.latitude == this.latitude && geoPoint.longitude == this.longitude);
-    }
-
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(latitude);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(longitude);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
     }
 
     @Override
