@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ipcRenderer, Event} from 'electron'
+const {ipcRenderer, Event} = (window as any).require('electron'); // https://github.com/electron/electron/issues/7300#issuecomment-274269710
 import { Observable } from 'rxjs/Observable';
 import * as Rx from 'rxjs';
 
