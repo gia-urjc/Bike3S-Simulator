@@ -9,6 +9,11 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
+/**
+ * It contains the relevant information of a specific user, e. g., its history.
+ * @author IAgroup
+ *
+ */
 @JsonIdentifier("users")
 public class HistoricUser implements HistoricEntity {
 

@@ -11,9 +11,17 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * It contains the rlevant information of a specific station, e. g., its history.
+ * @author IAgroup
+ *
+ */
 @JsonIdentifier("stations")
 public class HistoricStation implements HistoricEntity {
-
+    /**
+     * This lambda function returns the bike id if the bike instance isn't null 
+     * or null in other case.
+     */
     private static Function<Bike, Integer> bikeIdConverter = bike -> bike == null ? null : bike.getId();
 
     @Expose

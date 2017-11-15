@@ -5,6 +5,11 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
+/**
+ * It contains the rlevant information of a specific bike, e. g, its history.
+ * @author IAgroup
+ *
+ */
 @JsonIdentifier("bikes")
 public class HistoricBike implements HistoricEntity {
 

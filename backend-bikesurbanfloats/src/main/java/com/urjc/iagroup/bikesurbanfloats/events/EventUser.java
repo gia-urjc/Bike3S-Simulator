@@ -80,13 +80,12 @@ public abstract class EventUser implements Event {
         else {  // user hasn't been able to reserve a bike
             Reservation reservation = new Reservation(instant, ReservationType.BIKE, user, destination);
             user.addReservation(reservation);
-            if (!user.decidesToLeaveSystemAffterFailedReservation(instant)) {
-                if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user walks to the initially chosen station
-                	newEvents.add(new EventUserArrivesAtStationToRentBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
-                }
-                else {
-                    newEvents = manageBikeReservationDecisionAtOtherStation();
-                }   
+            if (user.decidesToLeaveSystemAffterFailedReservation(instant)) {
+                user.setPosition(null);
+            } else if (user.decidesToDetermineOtherStationAfterFailedReservation()) {
+                newEvents = manageBikeReservationDecisionAtOtherStation();
+            } else {  // user walks to the initially chosen station
+                newEvents.add(new EventUserArrivesAtStationToRentBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
             }
         }
         return newEvents;
