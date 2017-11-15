@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MainComunicator } from './services/MainComunicator';
 
 @Component({
     selector: 'my-app',
@@ -7,7 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit {
 
+    test: string[];
+
+    constructor(private mainComunicatorService: MainComunicator) {
+        mainComunicatorService.init();
+    }
+    
     ngOnInit() {
-        console.log("Hello from console!");
+        this.mainComunicatorService.getDataTest(0).subscribe((data) => {
+            this.test = data;
+        })
     }
 }

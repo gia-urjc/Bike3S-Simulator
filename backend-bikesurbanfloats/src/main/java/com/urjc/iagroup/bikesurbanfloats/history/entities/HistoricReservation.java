@@ -7,6 +7,11 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
+/**
+ * It contains the relevant information of a specific reservation, e. g, its history.
+ * @author IAgroup
+ *
+ */
 @JsonIdentifier("reservations")
 public class HistoricReservation implements HistoricEntity {
 
