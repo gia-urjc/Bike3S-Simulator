@@ -35,7 +35,7 @@ public class History {
         /*initialEntities = new EntityCollection();
         updatedEntities = new EntityCollection();*/
 
-        // TODO: save history output path
+        // TODO: save history output path in the indicated path in configuration file
     }
 
     public static void close() throws IOException {
@@ -151,6 +151,11 @@ public class History {
         return changes;
     }
 
+    /**
+     * It finds out, from an entity class, the corresponding history class.
+     * @param entityClass It is the entity class whose corresponding history class musts be found out.
+     * @return the corresponding history class to the entity class.
+     */
     private static Class<? extends HistoricEntity> getReferenceClass(Class<? extends Entity> entityClass) {
         HistoryReference[] referenceClasses = entityClass.getAnnotationsByType(HistoryReference.class);
 
@@ -179,6 +184,11 @@ public class History {
         return jsonIdentifiers[0].value();
     }
 
+    /**
+     * It creates, from a specific entity, the corresponding concrete history. 
+     * @param entity It is the entity whose history must be created.
+     * @return the concrete history corresponding to the entity.
+     */
     @SuppressWarnings("unchecked")
     private static HistoricEntity instantiateHistoric(Entity entity) {
         Class<? extends Entity> entityClass = entity.getClass();
@@ -214,6 +224,7 @@ public class History {
 
     private static class EventEntry {
         @Expose
+        // tao: qué es name
         private String name;
 
         @Expose

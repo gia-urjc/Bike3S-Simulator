@@ -4,13 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class is used to save all the entity historics of the system.
- * It provides methods to save a new entity historic and to consult them.
+ * This class is used to save the histories of all the entities of the system.
+ * It provides methods to save a new entity history and to consult one.
  * @author IAgroup
  *
  */
 class EntityCollection {
-
+    /**
+     * It is a map whose key is the class of the historic entity and whose value is another map 
+     * with the entity identifier as the key and the history of the entity as the value.
+     */
     private Map<Class<? extends HistoricEntity>, Map<Integer, HistoricEntity>> entityMaps;
 
     EntityCollection() {
@@ -20,6 +23,7 @@ class EntityCollection {
     Map<Class<? extends HistoricEntity>, Map<Integer, HistoricEntity>> getEntityMaps() {
         return entityMaps;
     }
+    
     /**
      * 
      * @param entityClass It is the map key.
