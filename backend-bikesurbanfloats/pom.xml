@@ -6,7 +6,7 @@
 	<groupId>com.urjc.iagroup</groupId>
 	<artifactId>bikesurbanfloats</artifactId>
 	<version>0.0.1</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
 	<name>bikesurbanfloats</name>
 
@@ -53,7 +53,7 @@
 	
 
 	<build>
-		<plugins>  
+		<plugins>
 			<plugin>
   				<artifactId>maven-assembly-plugin</artifactId>
                 <executions>
@@ -72,9 +72,9 @@
                         <manifest>
                             <mainClass>com.urjc.iagroup.bikesurbanfloats.Application</mainClass>
                         </manifest>
-                    </archive>  
+                    </archive>
                 </configuration>
-			</plugin>	
+			</plugin>
 		</plugins>
 	</build>
 	
