@@ -8,6 +8,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgFontAwesomeModule } from '../ng-font-awesome/ngfa.module';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
+import  {MainComunicator} from './services/MainComunicator'
+
 @NgModule({
     imports: [
         NgbModule.forRoot(),
@@ -19,6 +21,7 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
     declarations: [
         AppComponent
     ],
-    bootstrap: [ AppComponent ]
+    bootstrap: [ AppComponent ],
+    providers: [ MainComunicator ]
 })
 export class AppModule {}
