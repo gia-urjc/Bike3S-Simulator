@@ -11,12 +11,12 @@ export class AppComponent implements OnInit {
     test: string[];
 
     constructor(private mainComunicatorService: MainComunicator) {
-        mainComunicatorService.init();
     }
-    
+
     ngOnInit() {
         this.mainComunicatorService.getDataTest(0).subscribe((data) => {
             this.test = data;
+            console.log(data);
         })
     }
 }

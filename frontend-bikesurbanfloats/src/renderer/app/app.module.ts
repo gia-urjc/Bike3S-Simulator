@@ -24,4 +24,6 @@ import  {MainComunicator} from './services/MainComunicator'
     bootstrap: [ AppComponent ],
     providers: [ MainComunicator ]
 })
-export class AppModule {}
+export class AppModule {
+
+}

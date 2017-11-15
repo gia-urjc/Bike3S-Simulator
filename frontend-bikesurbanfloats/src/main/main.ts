@@ -1,9 +1,11 @@
 import { app, BrowserWindow, shell } from 'electron';
 import * as url from 'url';
 import * as path from 'path';
+import { AngularComunicator } from './comunicator/AngularComunicator';
 
 namespace Main {
     let window: Electron.BrowserWindow | null;
+    let angularComunicator: AngularComunicator = new AngularComunicator();
 
     function createWindow() {
         window = new BrowserWindow({ width: 800, height: 600 });
@@ -36,8 +38,11 @@ namespace Main {
         app.on('activate', () => {
             if (window === null) createWindow();
         });
+
+        angularComunicator.init();
     }
 }
 
 Main.init();
+
 
