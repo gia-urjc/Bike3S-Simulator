@@ -1,4 +1,4 @@
-import * as path from 'path';
+import * as paths from 'path';
 import * as fs from 'fs-extra';
 import * as AJV from 'ajv';
 
@@ -6,24 +6,24 @@ import { app } from 'electron';
 
 export class HistoryReader {
 
-    private readPath: string;
+    private historyPath: string;
     private schemaPath: string;
     private ajv: AJV.Ajv;
 
-    constructor(readPath: string) {
-        this.readPath = path.join(app.getAppPath(), readPath);
-        this.schemaPath = path.join(app.getAppPath(), 'schema');
+    constructor(path: string) {
+        this.historyPath = paths.join(app.getAppPath(), path);
+        this.schemaPath = paths.join(app.getAppPath(), 'schema');
         this.ajv = new AJV();
     }
 
     async readEntities(): Promise<any> {
-        const schema = await fs.readJson(path.join(this.schemaPath, 'history/entitylist.json'));
-        const json = await fs.readJson(path.join(this.readPath, 'entities.json'));
+        const schema = await fs.readJson(paths.join(this.schemaPath, 'history/entitylist.json'));
+        const entities = await fs.readJson(paths.join(this.historyPath, 'entities.json'));
 
-        if (!this.ajv.validate(schema, json)) {
+        if (!this.ajv.validate(schema, entities)) {
             throw new Error(this.ajv.errorsText());
         }
 
-        return json;
+        return entities;
     }
 }
