@@ -3,25 +3,29 @@ import * as fs from 'fs-extra';
 import * as AJV from 'ajv';
 
 import { app } from 'electron';
+import { without } from 'lodash';
 
 export class HistoryReader {
 
-    private historyPath: string;
-    private schemaPath: string;
-    private ajv: AJV.Ajv;
+    private static historyPath: string;
+    private static schemaPath: string;
+    private static ajv: AJV.Ajv;
+    private static changeFiles: Array<string>;
 
-    constructor(path: string) {
-        this.historyPath = paths.join(app.getAppPath(), path);
-        this.schemaPath = paths.join(app.getAppPath(), 'schema');
-        this.ajv = new AJV();
+    static async init(path: string): Promise<void> {
+        HistoryReader.historyPath = paths.join(app.getAppPath(), path);
+        HistoryReader.schemaPath = paths.join(app.getAppPath(), 'schema');
+        HistoryReader.ajv = new AJV();
+        HistoryReader.changeFiles = without(await fs.readdir(HistoryReader.historyPath), 'entities.json');
+        console.log(HistoryReader.changeFiles);
     }
 
-    async readEntities(): Promise<any> {
-        const schema = await fs.readJson(paths.join(this.schemaPath, 'history/entitylist.json'));
-        const entities = await fs.readJson(paths.join(this.historyPath, 'entities.json'));
+    static async readEntities(): Promise<object> {
+        const schema = await fs.readJson(paths.join(HistoryReader.schemaPath, 'history/entitylist.json'));
+        const entities = await fs.readJson(paths.join(HistoryReader.historyPath, 'entities.json'));
 
-        if (!this.ajv.validate(schema, entities)) {
-            throw new Error(this.ajv.errorsText());
+        if (!HistoryReader.ajv.validate(schema, entities)) {
+            throw new Error(HistoryReader.ajv.errorsText());
         }
 
         return entities;
