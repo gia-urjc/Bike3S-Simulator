@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MainComunicator } from './services/MainComunicator';
+import { TestService } from './services/TestService';
 
 @Component({
     selector: 'my-app',
@@ -8,13 +8,13 @@ import { MainComunicator } from './services/MainComunicator';
 })
 export class AppComponent implements OnInit {
 
-    test: string[];
+    test: number;
 
-    constructor(private mainComunicatorService: MainComunicator) {
+    constructor(private testService: TestService) {
     }
 
     ngOnInit() {
-        this.mainComunicatorService.getDataTest(0).subscribe((data) => {
+        this.testService.getTest(0).then((data) => {
             this.test = data;
             console.log(data);
         })

@@ -8,7 +8,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgFontAwesomeModule } from '../ng-font-awesome/ngfa.module';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
-import  {MainComunicator} from './services/MainComunicator'
+import  {MainCommunicator} from '../app/communicator/MainCommunicator';
+import  {TestService} from '../app/services/TestService';
 
 @NgModule({
     imports: [
@@ -22,7 +23,7 @@ import  {MainComunicator} from './services/MainComunicator'
         AppComponent
     ],
     bootstrap: [ AppComponent ],
-    providers: [ MainComunicator ]
+    providers: [ MainCommunicator, TestService]
 })
 export class AppModule {
 
