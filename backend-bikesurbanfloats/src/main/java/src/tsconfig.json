@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": [ "es2015", "es2017", "dom" ],
+    "typeRoots": [ "../node_modules/@types" ]
+  },
+  "exclude": [
+    "node_modules/*",
+    "**/*-aot.ts"
+  ]
+}
