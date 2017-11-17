@@ -1,1 +1,5 @@
-export { HistoryReader } from './historyreader';
+import HistoryReader from './HistoryReader';
+
+export {
+    HistoryReader,
+};

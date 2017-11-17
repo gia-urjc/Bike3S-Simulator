@@ -1,12 +1,10 @@
-import { app, BrowserWindow, shell } from 'electron';
 import * as url from 'url';
 import * as path from 'path';
-import {TestController} from './controllers/TestController'
+import { app, BrowserWindow, shell, ipcMain, Event } from 'electron';
+import { HistoryReader } from "./util";
 
 namespace Main {
     let window: Electron.BrowserWindow | null;
-
-    let testController: TestController;
 
     function createWindow() {
         window = new BrowserWindow({ width: 800, height: 600 });
@@ -40,10 +38,17 @@ namespace Main {
             if (window === null) createWindow();
         });
 
-        testController = new TestController();
+        ipcMain.on('history-init', (event: Event, historyPath: string) => {
+            HistoryReader.init(historyPath).then(() => {
+                event.sender.send('history-init', 'success');
+                ipcMain.removeAllListeners('history-init');
+
+                // TODO: open channels for communication with history reader
+            }).catch((error) => {
+                event.sender.send('history-init', error);
+            });
+        });
     }
 }
 
 Main.init();
-
-
