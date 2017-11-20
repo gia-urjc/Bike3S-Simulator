@@ -1,12 +1,9 @@
 import { app, BrowserWindow, shell } from 'electron';
 import * as url from 'url';
 import * as path from 'path';
-import {TestController} from './controllers/TestController'
 
 namespace Main {
     let window: Electron.BrowserWindow | null;
-
-    let testController: TestController;
 
     function createWindow() {
         window = new BrowserWindow({ width: 800, height: 600 });
@@ -40,7 +37,6 @@ namespace Main {
             if (window === null) createWindow();
         });
 
-        testController = new TestController();
     }
 }
 

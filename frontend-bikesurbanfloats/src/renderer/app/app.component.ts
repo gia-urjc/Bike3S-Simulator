@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TestService } from './services/TestService';
 
 @Component({
     selector: 'my-app',
@@ -10,13 +9,9 @@ export class AppComponent implements OnInit {
 
     test: number;
 
-    constructor(private testService: TestService) {
+    constructor() {
     }
 
     ngOnInit() {
-        this.testService.getTest(0).then((data) => {
-            this.test = data;
-            console.log(data);
-        })
     }
 }
