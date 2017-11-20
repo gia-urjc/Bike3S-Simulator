@@ -12,6 +12,12 @@ export class AppComponent implements OnInit {
 
     constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
 
-    ngOnInit() {
+    async ngOnInit() {
+        try {
+            await this.ajax.history.init('history');
+            console.log(await this.ajax.history.entities());
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
