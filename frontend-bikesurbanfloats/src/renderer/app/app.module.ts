@@ -8,8 +8,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgFontAwesomeModule } from '../ng-font-awesome/ngfa.module';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
-import  {MainCommunicator} from '../app/communicator/MainCommunicator';
-import  {TestService} from '../app/services/TestService';
+import  {MainCommunicator} from './communicator/MainCommunicator';
+import  {TestService} from './services/TestService';
 
 @NgModule({
     imports: [

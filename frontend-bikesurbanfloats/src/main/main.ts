@@ -1,7 +1,7 @@
 import * as url from 'url';
 import * as path from 'path';
 import { app, BrowserWindow, shell, ipcMain, Event } from 'electron';
-import { HistoryReader } from "./util";
+import { HistoryReader } from './util';
 
 namespace Main {
     let window: Electron.BrowserWindow | null;
