@@ -1,5 +1,5 @@
-import * as url from 'url';
 import * as path from 'path';
+import { format as urlFormat } from 'url';
 import { app, BrowserWindow, shell, ipcMain, Event } from 'electron';
 import { HistoryReader } from './util';
 
@@ -9,7 +9,7 @@ namespace Main {
     function createWindow() {
         window = new BrowserWindow({ width: 800, height: 600 });
 
-        window.loadURL(url.format({
+        window.loadURL(urlFormat({
             pathname: path.join(app.getAppPath(), 'frontend', 'index.html'),
             protocol: 'file',
             slashes: true
