@@ -44,13 +44,11 @@ export default class HistoryReader {
             });
 
             IpcUtil.closeChannel('history-init');
-
-            return 'success';
         });
     }
 
     private constructor(path: string) {
-        this.currentIndex = 0;
+        this.currentIndex = -1;
         this.historyPath = paths.join(app.getAppPath(), path);
     }
 
@@ -65,11 +63,11 @@ export default class HistoryReader {
     }
 
     async previousChangeFile(): Promise<object> {
-        if (this.currentIndex === 0) {
+        if (this.currentIndex <= 0) {
             throw new Error(`No previous change file available!`);
         }
 
-        const file = await fs.readJson(paths.join(this.historyPath, this.changeFiles[this.currentIndex--]));
+        const file = await fs.readJson(paths.join(this.historyPath, this.changeFiles[--this.currentIndex]));
 
         if (!HistoryReader.ajv.validate(HistoryReader.changeFileSchema, file)) {
             throw new Error(HistoryReader.ajv.errorsText());
@@ -83,7 +81,7 @@ export default class HistoryReader {
             throw new Error(`No next change file available!`);
         }
 
-        const file = await fs.readJson(paths.join(this.historyPath, this.changeFiles[this.currentIndex++]));
+        const file = await fs.readJson(paths.join(this.historyPath, this.changeFiles[++this.currentIndex]));
 
         if (!HistoryReader.ajv.validate(HistoryReader.changeFileSchema, file)) {
             throw new Error(HistoryReader.ajv.errorsText());
