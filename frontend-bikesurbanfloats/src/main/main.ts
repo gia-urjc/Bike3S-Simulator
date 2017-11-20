@@ -38,16 +38,7 @@ namespace Main {
             if (window === null) createWindow();
         });
 
-        ipcMain.on('history-init', (event: Event, historyPath: string) => {
-            HistoryReader.init(historyPath).then(() => {
-                event.sender.send('history-init', 'success');
-                ipcMain.removeAllListeners('history-init');
-
-                // TODO: open channels for communication with history reader
-            }).catch((error) => {
-                event.sender.send('history-init', error);
-            });
-        });
+        HistoryReader.enableIpc();
     }
 }
 

@@ -1,9 +1,8 @@
-import {AngularCommunicator} from '../communicator/AngularCommunicator'
+import { IpcUtil } from '../util'
 
 export class TestController {
 
     private test = ['One', 'Two', 'Three'];
-    private ac: AngularCommunicator = new AngularCommunicator();
 
     constructor() {
         this.init();
@@ -11,7 +10,7 @@ export class TestController {
 
     // Get methods
     public getTest() {
-        this.ac.createGetDataService('test', (arg: number) => {
+        IpcUtil.openChannel('test', async (arg: number) => {
             return this.test[arg];
         })
     }
