@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
     async ngOnInit() {
         try {
             await this.ajax.history.init('history');
-            console.log(await this.ajax.history.entities());
+            console.log(await this.ajax.history.readEntities());
         } catch (error) {
             console.log(error);
         }

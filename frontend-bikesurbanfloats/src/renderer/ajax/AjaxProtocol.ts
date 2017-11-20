@@ -1,9 +1,9 @@
 export interface AjaxHistory {
     init(path: string): Promise<void>,
-    entities(): Promise<object>,
-    nChanges(): Promise<number>,
-    previousChange(): Promise<object>,
-    nextChange(): Promise<object>,
+    readEntities(): Promise<object>,
+    numberOFChangeFiles(): Promise<number>,
+    previousChangeFile(): Promise<object>,
+    nextChangeFile(): Promise<object>,
 }
 
 export interface AjaxProtocol {

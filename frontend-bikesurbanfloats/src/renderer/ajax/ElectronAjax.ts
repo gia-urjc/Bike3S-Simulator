@@ -23,19 +23,19 @@ class ElectronHistory implements AjaxHistory {
         return readIpc('history-init', path);
     }
 
-    entities(): Promise<object> {
+    readEntities(): Promise<object> {
         return readIpc('history-entities');
     }
 
-    nChanges(): Promise<number> {
+    numberOFChangeFiles(): Promise<number> {
         return readIpc('history-nchanges');
     }
 
-    previousChange(): Promise<object> {
+    previousChangeFile(): Promise<object> {
         return readIpc('history-previous');
     }
 
-    nextChange(): Promise<object> {
+    nextChangeFile(): Promise<object> {
         return readIpc('history-next');
     }
 }
