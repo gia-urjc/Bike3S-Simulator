@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { AjaxProtocol } from '../ajax/AjaxProtocol';
 
 @Component({
     selector: 'my-app',
@@ -9,7 +10,7 @@ export class AppComponent implements OnInit {
 
     test: number;
 
-    constructor() {}
+    constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
 
     ngOnInit() {
     }

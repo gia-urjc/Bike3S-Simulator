@@ -21,7 +21,10 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
         AppComponent
     ],
     bootstrap: [ AppComponent ],
-    providers: [ElectronAjax]
+    providers: [{
+        provide: 'AjaxProtocol',
+        useClass: ElectronAjax
+    }]
 })
 export class AppModule {
 
