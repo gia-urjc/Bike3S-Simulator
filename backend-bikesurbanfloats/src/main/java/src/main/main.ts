@@ -1,15 +1,17 @@
+import { app, BrowserWindow, shell } from 'electron';
+import * as url from 'url';
 import * as path from 'path';
-import { format as urlFormat } from 'url';
-import { app, BrowserWindow, shell, ipcMain, Event } from 'electron';
-import { HistoryReader } from './util';
+import {TestController} from './controllers/TestController'
 
 namespace Main {
     let window: Electron.BrowserWindow | null;
 
+    let testController: TestController;
+
     function createWindow() {
         window = new BrowserWindow({ width: 800, height: 600 });
 
-        window.loadURL(urlFormat({
+        window.loadURL(url.format({
             pathname: path.join(app.getAppPath(), 'frontend', 'index.html'),
             protocol: 'file',
             slashes: true
@@ -38,8 +40,10 @@ namespace Main {
             if (window === null) createWindow();
         });
 
-        HistoryReader.enableIpc();
+        testController = new TestController();
     }
 }
 
 Main.init();
+
+
