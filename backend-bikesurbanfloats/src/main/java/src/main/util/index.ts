@@ -1,1 +1,0 @@
-export { HistoryReader } from './historyreader';
