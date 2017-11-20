@@ -4,22 +4,17 @@ import { Observable } from 'rxjs/Observable';
 const Rx = (window as any).require('rxjs/Rx');
 
 @Injectable()
-export class MainCommunicator {
+export class IpcUtilRenderer {
 
     private dataMap = new Map<string, any>();
 
     public getData(messageId: string, args: any): Promise<any> {
         let promise = new Promise((resolve: any, reject: any) => {
-            ipcRenderer.on(messageId.concat('-reply'), (event: Event, arg: any) => {
-                this.dataMap.set(messageId, arg);
-                return resolve(this.dataMap.get(messageId));
+            ipcRenderer.once(messageId, (event: Event, data: any) => {
+                return resolve(data);
             })
-            ipcRenderer.send(messageId.concat('-get'), args);
-        })
-        promise.then((data: any) => {
-            ipcRenderer.removeAllListeners(messageId.concat('-reply'));
+            ipcRenderer.send(messageId, args);
         })
         return promise;
     }
-
 }

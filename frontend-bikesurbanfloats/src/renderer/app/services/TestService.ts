@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { MainCommunicator } from '../communicator/MainCommunicator';
+import { IpcUtilRenderer } from '../../util/IpcUtilRenderer';
 
 @Injectable()
 export class TestService {
 
-    constructor(private mainComunicator: MainCommunicator) {}
+    constructor(private ipc: IpcUtilRenderer) {}
 
     public getTest(id: number): Promise<number> {
-        return this.mainComunicator.getData('test', 0);
+        return this.ipc.getData('test', 0);
     }
 }
