@@ -2,7 +2,7 @@ import { ipcMain, Event } from 'electron';
 
 export default class IpcUtil {
 
-    static async openChannel(channel: string, onSuccess: (data?: any) => Promise<any>, onError?: (error?: Error) => void): Promise<void> {
+    static openChannel(channel: string, onSuccess: (data?: any) => Promise<any>, onError?: (error?: Error) => void): void {
         ipcMain.on(channel, async (event: Event, data?: any) => {
             try {
                 event.sender.send(channel, await onSuccess(data));
