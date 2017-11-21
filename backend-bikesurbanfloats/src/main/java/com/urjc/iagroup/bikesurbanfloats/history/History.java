@@ -30,7 +30,7 @@ public class History {
             .create();
     
     /**
-     * It is the initial states of the entities in the system.
+     * It is the initial state of the entities in the system.
      */
     private static EntityCollection initialEntities = new EntityCollection();
     
@@ -40,13 +40,20 @@ public class History {
     private static EntityCollection updatedEntities = new EntityCollection();
     
    /**
-    * This map stores, for each momento of the simulation, the changes of the entities of 
-    * all the events ocurred in a specific time instant.  
+    * This map stores, for each moment of the simulation, the changes of the entities of 
+    * all the events occurred in a specific time instant.  
     */
     private static TreeMap<Integer, List<EventEntry>> serializedEvents = new TreeMap<>();
-
+    
+    /**
+     * This is the path where historic files will be saved.  
+     */
     private static Path outputPath = Paths.get("history");
-
+    /**
+     * It prepares the history instance to be used. Specifically, it initializes the path 
+     * of the directory where historic files will be stored.
+     * @param simulationConfiguration It contains all the configuration properties.
+     */
     public static void init(SimulationConfiguration simulationConfiguration) {
         /*initialEntities = new EntityCollection();
         updatedEntities = new EntityCollection();*/
@@ -55,8 +62,8 @@ public class History {
     }
     
     /**
-     * It saves in a file the initial states of all entities in the system and, in other,
-     * the changes that the entities have been suffering throught the entire simulation.
+     * It saves in a file the initial states of all entities in the system and, in other files,
+     * the changes that the entities have been passing throught the entire simulation.
      */
     public static void close() throws IOException {
 
@@ -64,7 +71,7 @@ public class History {
     	
     	/*
     	 * It is a map with the names of the entities'  history classes as the key and
-    	 * a list of history classes of a concrete entity as the vallue.
+    	 * a list of historic classes of a concrete entity as the value.
     	 */
         Map<String, Collection<HistoricEntity>> entries = new HashMap<>();
         initialEntities.getEntityMaps().forEach((historicClass, entities) -> {
@@ -79,10 +86,10 @@ public class History {
     }
     
     /**
-     * It registers a new entity in the map of initial entities and in the map of updated entities.
+     * It registers a new entity in the entity collection of initial entities and in the 
+     * entity collection of updated entities.
      * @param entity It is the entity to register.
      */
-
     public static void registerEntity(Entity entity) {
         Class<? extends HistoricEntity> historicClass = getReferenceClass(entity.getClass());
         HistoricEntity historicEntity = instantiateHistoric(entity);
@@ -92,13 +99,13 @@ public class History {
     
     /**
      * It creates an event entry (in the map of serialized events) to register all the 
-     * changes detected in the entities involved in the event and creates and saves 
-     * the corresponding created historical entities into the entity collection of updated entities. 
+     * changes detected in the entities involved in the event and saves its entities 
+     * into the entity collection of updated entities. 
      * @param event It is the event to register.
      */
     public static void registerEvent(Event event) throws IOException {
         
-        /* It creates the historical entities instances coreesponding to all the 
+        /* It creates the historic entities instances coreesponding to all the 
          * entities involved in an evet. 
          */
         List<HistoricEntity> historicEntities = new ArrayList<>();
@@ -106,7 +113,7 @@ public class History {
             historicEntities.add(instantiateHistoric(entity));
         }
         
-        /* It obtains the changes that the created historical entities have suffered 
+        /* It obtains the changes that the created historic entities have passed 
          * with respect to previous ones. 
          */
         Map<String, List<JsonObject>> changes = serializeChanges(historicEntities);
@@ -116,7 +123,7 @@ public class History {
          */
         if (!serializedEvents.containsKey(event.getInstant())) {
         	/* A file which contains serialized events can only save 100 time instants
-        	 * So, if the map of serialized events already contains 100 entries, it muts be written in a file  
+        	 * So, if the map of serialized events already contains 100 entries, it musts be written in a file  
         	 */
             if (serializedEvents.size() == 100) {
                 writeTimeEntries();
@@ -126,10 +133,10 @@ public class History {
             serializedEvents.put(event.getInstant(), new ArrayList<>());
         }
         
-        // It creates a new event entry and adds it to the map of serialized events
+        // It adds the event to the current time instant
         serializedEvents.get(event.getInstant()).add(new EventEntry(event.getClass().getSimpleName(), changes));
         
-        /* It adds all the historical entities created from the event to the entity 
+        /* It adds all the historic entities created from the event to the entity 
          * collection of updated entities 
          */
         for (HistoricEntity entity : historicEntities) {
@@ -155,7 +162,7 @@ public class History {
     
     /**
      * It transforms the map of serialized events into a list of time entries and writes it 
-     * into a file whose name is created with a format which follows a concrete pattern. 
+     * into a file whose name is set with a format which follows a concrete pattern. 
      */
     private static void writeTimeEntries() throws IOException {
         List<TimeEntry> timeEntries = new ArrayList<>();
@@ -178,25 +185,29 @@ public class History {
     }
     
     /**
-     * FALTA: 
-     * @param entities
-     * @return
+     * It detects if several entities have changed their states.   
+     * @param entities It is a list of historic entities instances. 
+     * @return a map whose key is the historic entity name and whose value is a Json object 
+     * which contains the changes.   
      */
     private static Map<String, List<JsonObject>> serializeChanges(List<HistoricEntity> entities) {
         Map<String, List<JsonObject>> changes = new HashMap<>();
 
         for (HistoricEntity entity : entities) {
             Class<? extends HistoricEntity> historicClass = entity.getClass();
+            // It obtains the previous state of the current entity, its history 
             HistoricEntity oldEntity = updatedEntities.getMapFor(historicClass).get(entity.getId());
             String jsonIdentifier = getJsonIdentifier(historicClass);
             JsonObject jsonEntity = new JsonObject();
-
-            // TODO: maybe read private fields instead of methods for consistency with gson
+            
+            // The field type represents an attribute  
             for (Field field : historicClass.getDeclaredFields()) {
+            	// TAO: why is it neccessary to compare id?
                 if (field.getName().equals("id")) continue;
 
                 JsonElement property;
 
+                // It changes the attribute visibility to public
                 field.setAccessible(true);
 
                 try {
@@ -210,11 +221,13 @@ public class History {
                     jsonEntity.add(field.getName(), property);
                 }
             }
-
+            
+            // TODO: maybe it is an error to create an entry if the property hasn't changed
             if (!changes.containsKey(jsonIdentifier)) {
                 changes.put(jsonIdentifier, new ArrayList<>());
             }
-
+            
+            // TAO: why this condition?
             if (!jsonEntity.entrySet().isEmpty()) {
                 jsonEntity.add("id", new JsonPrimitive(entity.getId()));
                 changes.get(jsonIdentifier).add(jsonEntity);
