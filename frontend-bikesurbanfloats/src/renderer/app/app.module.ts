@@ -3,8 +3,7 @@ import { BrowserModule }  from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
-import { IpcUtilRenderer } from '../util/IpcUtilRenderer';
-import { TestService } from './services/TestService'
+import { ElectronAjax } from '../ajax/ElectronAjax';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgFontAwesomeModule } from '../ng-font-awesome/ngfa.module';
@@ -22,7 +21,10 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
         AppComponent
     ],
     bootstrap: [ AppComponent ],
-    providers: [IpcUtilRenderer, TestService]
+    providers: [{
+        provide: 'AjaxProtocol',
+        useClass: ElectronAjax
+    }]
 })
 export class AppModule {
 

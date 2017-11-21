@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { TestService } from './services/TestService';
+import { Component, Inject, OnInit } from '@angular/core';
+import { AjaxProtocol } from '../ajax/AjaxProtocol';
 
 @Component({
     selector: 'my-app',
@@ -10,13 +10,14 @@ export class AppComponent implements OnInit {
 
     test: number;
 
-    constructor(private testService: TestService) {
-    }
+    constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
 
-    ngOnInit() {
-        this.testService.getTest(0).then((data) => {
-            this.test = data;
-            console.log(data);
-        })
+    async ngOnInit() {
+        try {
+            await this.ajax.history.init('history');
+            console.log(await this.ajax.history.readEntities());
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
