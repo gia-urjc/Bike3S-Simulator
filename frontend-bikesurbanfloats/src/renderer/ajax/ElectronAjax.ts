@@ -19,24 +19,42 @@ function readIpc(channel: string, ...requestArgs: Array<any>): Promise<any> {
 }
 
 class ElectronHistory implements AjaxHistory {
-    init(path: string): Promise<void> {
-        return readIpc('history-init', path);
+
+    private static readonly IS_READY = new Error(`HistoryReady has already been initialized!`);
+    private static readonly NOT_READY = new Error(`HistoryReader hasn't been initialized yet!`);
+
+    private ready = false;
+
+    async init(path: string): Promise<void> {
+        if (this.ready) throw ElectronHistory.IS_READY;
+        await readIpc('history-init', path);
+        this.ready = true;
     }
 
-    readEntities(): Promise<object> {
-        return readIpc('history-entities');
+    async close(): Promise<void> {
+        if (!this.ready) throw ElectronHistory.NOT_READY;
+        await readIpc('history-close');
+        this.ready = false;
     }
 
-    numberOFChangeFiles(): Promise<number> {
-        return readIpc('history-nchanges');
+    async readEntities(): Promise<object> {
+        if (!this.ready) throw ElectronHistory.NOT_READY;
+        return await readIpc('history-entities');
     }
 
-    previousChangeFile(): Promise<object> {
-        return readIpc('history-previous');
+    async numberOFChangeFiles(): Promise<number> {
+        if (!this.ready) throw ElectronHistory.NOT_READY;
+        return await readIpc('history-nchanges');
     }
 
-    nextChangeFile(): Promise<object> {
-        return readIpc('history-next');
+    async previousChangeFile(): Promise<object> {
+        if (!this.ready) throw ElectronHistory.NOT_READY;
+        return await readIpc('history-previous');
+    }
+
+    async nextChangeFile(): Promise<object> {
+        if (!this.ready) throw ElectronHistory.NOT_READY;
+        return await readIpc('history-next');
     }
 }
 

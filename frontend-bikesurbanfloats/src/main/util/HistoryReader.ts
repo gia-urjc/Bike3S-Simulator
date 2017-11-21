@@ -41,6 +41,7 @@ export default class HistoryReader {
 
             IpcUtil.openChannel('history-close', async () => {
                 IpcUtil.closeChannels('history-entities', 'history-previous', 'history-next', 'history-nchanges', 'history-close');
+                this.enableIpc();
             });
 
             IpcUtil.closeChannel('history-init');
