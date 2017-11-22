@@ -4,7 +4,7 @@ import * as AJV from 'ajv';
 
 import { app, ipcMain } from 'electron';
 import { without } from 'lodash';
-import { IpcUtil } from './index';
+import { AnyObject, IpcUtil } from './index';
 
 export default class HistoryReader {
 
@@ -53,7 +53,7 @@ export default class HistoryReader {
         this.historyPath = paths.join(app.getAppPath(), path);
     }
 
-    async readEntities(): Promise<object> {
+    async readEntities(): Promise<AnyObject> {
         const entities = await fs.readJson(paths.join(this.historyPath, 'entities.json'));
 
         if (!HistoryReader.ajv.validate(HistoryReader.entityFileSchema, entities)) {
@@ -63,7 +63,7 @@ export default class HistoryReader {
         return entities;
     }
 
-    async previousChangeFile(): Promise<object> {
+    async previousChangeFile(): Promise<Array<AnyObject>> {
         if (this.currentIndex <= 0) {
             throw new Error(`No previous change file available!`);
         }
@@ -77,7 +77,7 @@ export default class HistoryReader {
         return file;
     }
 
-    async nextChangeFile(): Promise<object> {
+    async nextChangeFile(): Promise<Array<AnyObject>> {
         if (this.currentIndex === this.changeFiles.length - 1) {
             throw new Error(`No next change file available!`);
         }
