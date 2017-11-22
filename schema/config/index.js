@@ -16,6 +16,7 @@ module.exports = {
             southEast: GeoPoint,
         }, requireAll()),
         map: sString(pattern(/.+\.osm^/)),
+        historyOutputPath: sString(),
         entryPoints: sArray(EntryPoint),
         stations: sArray(Station),
     }, requireAll()))

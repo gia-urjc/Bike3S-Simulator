@@ -21,6 +21,8 @@ import java.util.*;
  * @author IAgroup
  */
 public class History {
+	
+	private static String DEFAULT_HISTORY_OUTPUT_PATH = "history";
 
     private static Gson gson = new GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()
@@ -45,13 +47,10 @@ public class History {
      */
     private static TreeMap<Integer, List<EventEntry>> serializedEvents = new TreeMap<>();
 
-    private static Path outputPath = Paths.get("history");
+    private static Path outputPath = Paths.get(DEFAULT_HISTORY_OUTPUT_PATH);
 
     public static void init(SimulationConfiguration simulationConfiguration) {
-        /*initialEntities = new EntityCollection();
-        updatedEntities = new EntityCollection();*/
-
-        // TODO: save history output path in the indicated path in configuration file
+    	outputPath = Paths.get(simulationConfiguration.getOutputPath());
     }
 
     /**
@@ -74,7 +73,7 @@ public class History {
 
         writeJson("entities.json", entries);
         writeTimeEntries();
-
+        
         // TODO: copy configuration file
     }
 

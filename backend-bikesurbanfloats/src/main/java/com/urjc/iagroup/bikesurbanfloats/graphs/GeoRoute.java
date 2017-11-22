@@ -29,7 +29,6 @@ public class GeoRoute {
 	 * These are the distances between the diferent pairs of geographic points of the route.
 	 * The number of subroutes is the number of points of the route minus one. 
 	 */
-	@Expose
 	private List<Double> intermediateDistances;
 	
 	/**
