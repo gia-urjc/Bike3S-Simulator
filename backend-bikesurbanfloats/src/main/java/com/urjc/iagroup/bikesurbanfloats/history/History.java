@@ -16,9 +16,9 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * This class finds out the changes which have happened through the entire simulation and registers them.  
- * @author IAgroup
+ * This class finds out the changes which have happened through the entire simulation and registers them.
  *
+ * @author IAgroup
  */
 public class History {
 
@@ -28,21 +28,21 @@ public class History {
             .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
             .setPrettyPrinting()
             .create();
-    
+
     /**
      * It is the initial states of the entities in the system.
      */
     private static EntityCollection initialEntities = new EntityCollection();
-    
+
     /**
      * It is the current state of the entities in the system.
      */
     private static EntityCollection updatedEntities = new EntityCollection();
-    
-   /**
-    * This map stores, for each momento of the simulation, the changes of the entities of 
-    * all the events ocurred in a specific time instant.  
-    */
+
+    /**
+     * This map stores, for each momento of the simulation, the changes of the entities of
+     * all the events ocurred in a specific time instant.
+     */
     private static TreeMap<Integer, List<EventEntry>> serializedEvents = new TreeMap<>();
 
     private static Path outputPath = Paths.get("history");
@@ -53,7 +53,7 @@ public class History {
 
         // TODO: save history output path in the indicated path in configuration file
     }
-    
+
     /**
      * It saves in a file the initial states of all entities in the system and, in other,
      * the changes that the entities have been suffering throught the entire simulation.
@@ -61,7 +61,7 @@ public class History {
     public static void close() throws IOException {
 
         // TODO: maybe split entities.json into multiple files, e.g. entities/users.json
-    	
+
     	/*
     	 * It is a map with the names of the entities'  history classes as the key and
     	 * a list of history classes of a concrete entity as the vallue.
@@ -77,9 +77,10 @@ public class History {
 
         // TODO: copy configuration file
     }
-    
+
     /**
      * It registers a new entity in the map of initial entities and in the map of updated entities.
+     *
      * @param entity It is the entity to register.
      */
 
@@ -89,11 +90,12 @@ public class History {
         initialEntities.addToMapFor(historicClass, historicEntity);
         updatedEntities.addToMapFor(historicClass, historicEntity);
     }
-    
+
     /**
-     * It creates an event entry (in the map of serialized events) to register all the 
-     * changes detected in the entities involved in the event and creates and saves 
-     * the corresponding created historical entities into the entity collection of updated entities. 
+     * It creates an event entry (in the map of serialized events) to register all the
+     * changes detected in the entities involved in the event and creates and saves
+     * the corresponding created historical entities into the entity collection of updated entities.
+     *
      * @param event It is the event to register.
      */
     public static void registerEvent(Event event) throws IOException {
@@ -125,7 +127,7 @@ public class History {
 
             serializedEvents.put(event.getInstant(), new ArrayList<>());
         }
-        
+
         // It creates a new event entry and adds it to the map of serialized events
         serializedEvents.get(event.getInstant()).add(new EventEntry(event.getClass().getSimpleName(), changes));
         
@@ -136,26 +138,27 @@ public class History {
             updatedEntities.addToMapFor(entity.getClass(), entity);
         }
     }
-    
+
     /**
      * It creates a file and writes the specified information inside it.
-     * @param name It is the name of the file which is created.
-     * @param content It is the information which is written in the file. 
+     *
+     * @param name    It is the name of the file which is created.
+     * @param content It is the information which is written in the file.
      */
     private static void writeJson(String name, Object content) throws IOException {
-    	// it creates a file with the specified name in the history directory
+        // it creates a file with the specified name in the history directory
         File json = outputPath.resolve(name).toFile();
         json.getParentFile().mkdirs();
-        
+
         // it writes the specified content in the created file
         try (FileWriter writer = new FileWriter(json)) {
             gson.toJson(content, writer);
         }
     }
-    
+
     /**
-     * It transforms the map of serialized events into a list of time entries and writes it 
-     * into a file whose name is created with a format which follows a concrete pattern. 
+     * It transforms the map of serialized events into a list of time entries and writes it
+     * into a file whose name is created with a format which follows a concrete pattern.
      */
     private static void writeTimeEntries() throws IOException {
         List<TimeEntry> timeEntries = new ArrayList<>();
@@ -176,9 +179,10 @@ public class History {
 
         writeJson(fileName, timeEntries);
     }
-    
+
     /**
-     * FALTA: 
+     * FALTA:
+     *
      * @param entities
      * @return
      */
@@ -211,12 +215,13 @@ public class History {
                 }
             }
 
-            if (!changes.containsKey(jsonIdentifier)) {
-                changes.put(jsonIdentifier, new ArrayList<>());
-            }
-
             if (!jsonEntity.entrySet().isEmpty()) {
                 jsonEntity.add("id", new JsonPrimitive(entity.getId()));
+
+                if (!changes.containsKey(jsonIdentifier)) {
+                    changes.put(jsonIdentifier, new ArrayList<>());
+                }
+
                 changes.get(jsonIdentifier).add(jsonEntity);
             }
         }
@@ -226,6 +231,7 @@ public class History {
 
     /**
      * It finds out, from an entity class, the corresponding historical class.
+     *
      * @param entityClass It is the entity class whose corresponding history class musts be found out.
      * @return the corresponding history class to the entity class.
      */
@@ -242,11 +248,12 @@ public class History {
 
         return referenceClasses[0].value();
     }
-    
+
     /**
      * It obtains the Json identifier string of a specific historical class.
+     *
      * @param historicClass It is the history class whose identifier wants to be found out.
-     * @return the string of a Json identifier corresponding to the specified histry class. 
+     * @return the string of a Json identifier corresponding to the specified histry class.
      */
     private static String getJsonIdentifier(Class<? extends HistoricEntity> historicClass) {
         JsonIdentifier[] jsonIdentifiers = historicClass.getAnnotationsByType(JsonIdentifier.class);
@@ -263,7 +270,8 @@ public class History {
     }
 
     /**
-     * It creates, from a specific entity, the instance of the corresponding historical class. 
+     * It creates, from a specific entity, the instance of the corresponding historical class.
+     *
      * @param entity It is the entity whose history must be created.
      * @return the concrete history corresponding to the entity.
      */
@@ -290,9 +298,10 @@ public class History {
             throw new IllegalStateException("Error trying to instantiate " + historicClass);
         }
     }
-    
+
     /**
      * It creates a Json object which contains the previous and current states of specific property..
+     *
      * @param oldProperty It is the previous state of the property.
      * @param newProperty It is the current state of the property.
      * @return a Json object which conatins the previous and curent states of the property.
@@ -306,19 +315,19 @@ public class History {
 
         return property;
     }
-    
-    
+
+
     /**
      * This class is used to save the histories of all the entities of the system.
      * It provides methods to save a new entity history and to consult one.
-     * @author IAgroup
      *
+     * @author IAgroup
      */
     private static class EntityCollection {
-       /**
-        * It is a map whose key is the class of the historic entity and whose value is another map 
-        * with the entity identifier as the key and the history of the entity as the value.
-        */
+        /**
+         * It is a map whose key is the class of the historic entity and whose value is another map
+         * with the entity identifier as the key and the history of the entity as the value.
+         */
         private Map<Class<? extends HistoricEntity>, Map<Integer, HistoricEntity>> entityMaps;
 
         EntityCollection() {
@@ -328,9 +337,8 @@ public class History {
         Map<Class<? extends HistoricEntity>, Map<Integer, HistoricEntity>> getEntityMaps() {
             return entityMaps;
         }
-        
+
         /**
-         * 
          * @param entityClass It is the map key.
          * @return a map with all the instances of the given class type.
          */
@@ -340,8 +348,9 @@ public class History {
 
         /**
          * It adds a new instance of entity historic to the map.
+         *
          * @param entityClass It is the key of the amp.
-         * @param entity It is the instance to add to the map.
+         * @param entity      It is the instance to add to the map.
          */
         void addToMapFor(Class<? extends HistoricEntity> entityClass, HistoricEntity entity) {
             if (!entityMaps.containsKey(entityClass)) {
@@ -352,8 +361,9 @@ public class History {
     }
 
     /**
-     * This class represents an event and contains the changes which have occurred 
+     * This class represents an event and contains the changes which have occurred
      * with respect to the previus event.
+     *
      * @author IAgroup
      */
     private static class EventEntry {
@@ -363,7 +373,7 @@ public class History {
          */
         @Expose
         private String name;
-        
+
         /**
          * They are the differences between an event and the next one.
          */
@@ -375,20 +385,20 @@ public class History {
             this.changes = changes;
         }
     }
-    
+
     /**
-     * This class rpresents a time instant of the simulation and contains all the events 
-     * which happen at this moment. 
-     * @author IAgroup
+     * This class rpresents a time instant of the simulation and contains all the events
+     * which happen at this moment.
      *
+     * @author IAgroup
      */
     private static class TimeEntry {
-    	  /**
-       	* It is the moment when the events happen. 
-    	   */
+        /**
+         * It is the moment when the events happen.
+         */
         @Expose
         private int time;
-        
+
         /**
          * They are the vents which happen at the specific moment.
          */
