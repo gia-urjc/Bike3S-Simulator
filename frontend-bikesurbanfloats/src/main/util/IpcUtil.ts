@@ -5,7 +5,7 @@ type ErrorCallback = (error?: Error) => void;
 
 export default class IpcUtil {
 
-    static openChannel(channel: string, onSuccess: SuccessCallback, onError?: ErrorCallback): void {
+    static openChannel(channel: string, onSuccess: SuccessCallback, onError?: ErrorCallback) {
         ipcMain.on(channel, async (event: Event, data?: any) => {
             try {
                 event.sender.send(channel, {
