@@ -17,25 +17,17 @@ class Channel {
 
 export default class HistoryReader {
 
-    private static schemaPath: string;
-    private static entityFileSchema: object;
-    private static changeFileSchema: object;
-    private static ajv: AJV.Ajv;
+    private static ajv = new AJV();
+    private static entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/history/entitylist.json'))
+    private static changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/history/eventlist.json'));
 
     private historyPath: string;
     private changeFiles: Array<string>;
     private currentIndex: number;
 
     static async create(path: string): Promise<HistoryReader> {
-        this.schemaPath = this.schemaPath || paths.join(app.getAppPath(), 'schema');
-        this.ajv = this.ajv || new AJV();
-        this.changeFileSchema = this.changeFileSchema || await fs.readJson(paths.join(this.schemaPath, 'history/eventlist.json'));
-        this.entityFileSchema = this.entityFileSchema || await fs.readJson(paths.join(this.schemaPath, 'history/entitylist.json'));
-
         let reader = new HistoryReader(path);
-
         reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities.json');
-
         return reader;
     }
 
