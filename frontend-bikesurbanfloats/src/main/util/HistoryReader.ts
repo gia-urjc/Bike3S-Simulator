@@ -6,6 +6,15 @@ import { app, ipcMain } from 'electron';
 import { without } from 'lodash';
 import { AnyObject, IpcUtil } from './index';
 
+interface TimeRange {
+    start: number,
+    end: number
+}
+
+class Channel {
+    constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
+}
+
 export default class HistoryReader {
 
     private static schemaPath: string;
@@ -34,13 +43,18 @@ export default class HistoryReader {
         IpcUtil.openChannel('history-init', async (historyPath: string) => {
             const reader = await this.create(historyPath);
 
-            IpcUtil.openChannel('history-entities', async () => await reader.readEntities());
-            IpcUtil.openChannel('history-previous', async () => await reader.previousChangeFile());
-            IpcUtil.openChannel('history-next', async () => await reader.nextChangeFile());
-            IpcUtil.openChannel('history-nchanges', async () => await reader.numberOfChangeFiles());
+            const channels = [
+                new Channel('history-entities', async () => await reader.readEntities()),
+                new Channel('history-previous', async () => await reader.previousChangeFile()),
+                new Channel('history-next', async () => await reader.nextChangeFile()),
+                new Channel('history-nchanges', async () => reader.numberOfChangeFiles),
+                new Channel('history-range', async () => reader.timeRange),
+            ];
+
+            channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
 
             IpcUtil.openChannel('history-close', async () => {
-                IpcUtil.closeChannels('history-entities', 'history-previous', 'history-next', 'history-nchanges', 'history-close');
+                IpcUtil.closeChannels('history-close', ...channels.map((channel) => channel.name));
                 this.enableIpc();
             });
 
@@ -51,6 +65,25 @@ export default class HistoryReader {
     private constructor(path: string) {
         this.currentIndex = -1;
         this.historyPath = paths.join(app.getAppPath(), path);
+    }
+
+    clipToRange(start: number, end: number = this.timeRange.end): void {
+        if (this.currentIndex !== -1) {
+            throw new Error(`Clipping is only allowed before reading any change file!`);
+        }
+
+        if (start < this.timeRange.start) {
+            throw new Error(`start may not be lower than current range`);
+        }
+
+        if (end > this.timeRange.end) {
+            throw new Error(`end may not be higher than current range`);
+        }
+
+        this.changeFiles = this.changeFiles.filter((file) => {
+            const [fileStart, fileEnd] = file.split('_')[0].split('-').map(parseInt);
+            return end >= fileStart && start <= fileEnd;
+        });
     }
 
     async readEntities(): Promise<AnyObject> {
@@ -91,7 +124,19 @@ export default class HistoryReader {
         return file;
     }
 
-    numberOfChangeFiles(): number {
+    get numberOfChangeFiles(): number {
         return this.changeFiles.length;
+    }
+
+    get timeRange(): TimeRange {
+        const range = [
+            this.changeFiles[0],
+            this.changeFiles[this.changeFiles.length - 1]
+        ].map((file, index) => parseInt(file.split('_')[0].split('-')[index]));
+
+        return {
+            start: range[0],
+            end: range[1]
+        }
     }
 }
