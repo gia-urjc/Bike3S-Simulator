@@ -84,7 +84,7 @@ public abstract class User implements Entity {
      * It contains counters about the number of attempts that the user has made after an 
      * unsuccessful event in order to carry out an action. 
      */
-    private Attempts attempts;
+    private FactsCounter attempts;
 
     protected SystemManager systemManager;
    

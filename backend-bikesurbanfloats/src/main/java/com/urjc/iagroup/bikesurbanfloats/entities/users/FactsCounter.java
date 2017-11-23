@@ -6,25 +6,25 @@ package com.urjc.iagroup.bikesurbanfloats.entities.users;
  * @author IAgroup
  *
  */
-public class Attempts {
+public class FactsCounter {
 	
-	public enum AttemptCause {
+	public enum FactType {
 		TIMEOUT, FAILED_RESERVATION, BIKES_UNAVAILABLE
 	}
 	
 	private int counterReservationAttempts;
-	private int counterAttemptsAfterReservationTimeout;
+	private int counterReservationTimeoutEvents;
 	private int counterAttemptsWhenBikesUnavailable;
 	
-	public Attempts() {
+	public FactsCounter() {
         this.counterReservationAttempts = 0; 
-        this.counterAttemptsAfterReservationTimeout = 0;
+        this.counterReservationTimeoutEvents = 0;
         this.counterAttemptsWhenBikesUnavailable = 0;
 	}
 	
-	public void update(AttemptCause cause) throws IllegalArgumentException {
+	public void update(FactType cause) throws IllegalArgumentException {
 		switch(cause) {
-			case TIMEOUT: counterAttemptsAfterReservationTimeout++;
+			case TIMEOUT: counterReservationTimeoutEvents++;
 			case FAILED_RESERVATION: counterReservationAttempts++;
 			case BIKES_UNAVAILABLE: counterAttemptsWhenBikesUnavailable++;
 			default: throw new IllegalArgumentException(cause.toString() + "is not defined in update method");

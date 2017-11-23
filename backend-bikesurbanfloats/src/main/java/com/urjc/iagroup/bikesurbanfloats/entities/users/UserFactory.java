@@ -17,6 +17,8 @@ public class UserFactory {
         switch (type) {
             case USER_TEST:
                 return new UserTest();
+            case USER_TEST2:
+            	return new UserTest2();
         }
         throw new IllegalArgumentException("The type" + type + "doesn't exists");
     }

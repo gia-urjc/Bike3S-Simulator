@@ -10,15 +10,18 @@ import java.util.List;
 
 @AssociatedType(UserType.USER_TEST2)
 public class UserTest2 extends User {
-	private int maxReservationAttempts;
-	private int maxReservationTimeoutAttempts;
-	private int maxAttemptsWhenBikesUnavailable;
+	private static int maxReservationAttempts;
+	private static int maxReservationTimeouts;
+	private static int maxRentingAttemptsWhenBikesUnavailable;
 	
-    public UserTest2(int maxReservationAttempts, int maxReservationTimeoutAttempts, int maxAttemptsWhenBikesUnavailable) {
+    public UserTest2() {
         super();
-        this.maxReservationAttempts = maxReservationAttempts; 
-        this.maxReservationTimeoutAttempts = maxReservationTimeoutAttempts;
-        this.maxAttemptsWhenBikesUnavailable = maxAttemptsWhenBikesUnavailable;
+    }
+    
+    public static setMaximums(int reservationAttempts, int reservationTimeouts, int rentingAttemptsWhnBikesUnavailable) {
+    	maxReservationAttempts = reservationAttempts;
+    	maxReservationTimeouts = reservationTimeouts;
+    	maxRentingAttemptsWhenBikesUnavailable = rentingAttemptsWhenBikesUnavailable;
     }
 
     @Override
