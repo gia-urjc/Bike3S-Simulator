@@ -1,7 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;

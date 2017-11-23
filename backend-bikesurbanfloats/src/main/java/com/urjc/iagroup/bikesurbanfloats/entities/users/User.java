@@ -1,6 +1,10 @@
-package com.urjc.iagroup.bikesurbanfloats.entities;
+package com.urjc.iagroup.bikesurbanfloats.entities.users;
 
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
+import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
+import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
+import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
+import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
@@ -28,42 +32,59 @@ public abstract class User implements Entity {
 	private static IdGenerator idGenerator = new IdGenerator();
 
     private int id;
+    
     /**
      * Current user position.
      */
     private GeoPoint position;
+    
     /**
      * Before user removes a bike or after returns it, this attribute is null.
      * While user is cycling, this attribute contains the bike the user has rented.
      */
     private Bike bike;
+    
     /**
      * It is the station to which user has decided to go at this moment.
      */
     private Station destinationStation;
+    
     /**
      * Speed in meters per second at which user walks.
      */
     private double walkingVelocity;
+    
     /**
      * Speed in meters per second at which user cycles.
      */
     private double cyclingVelocity;
+    
     /**
      * It indicates if user has a reserved bike currently.
      */
     private boolean reservedBike;
+    
     /**
      * It indicates if user has a reserved slot currently.
      */
     private boolean reservedSlot;
+    
     /**
      * It is the user current (bike or slot) reservation, i. e., the last reservation user has made.
      * If user hasn't made a reservation, this attribute is null.
      */
     private Reservation reservation;
-
-    private GeoRoute currentRoute;
+    
+    /**
+     * It is the route that the user is currently travelling through.
+     */
+    private GeoRoute route;
+    
+    /**
+     * It contains counters about the number of attempts that the user has made after an 
+     * unsuccessful event in order to carry out an action. 
+     */
+    private Attempts attempts;
 
     protected SystemManager systemManager;
    
@@ -145,11 +166,11 @@ public abstract class User implements Entity {
 
 
 	public GeoRoute getCurrentRoute() {
-		return this.currentRoute;
+		return this.route;
 	}
 
 	public void setCurrentRoute(GeoRoute route) {
-		this.currentRoute = route;
+		this.route = route;
 	}
 
     public double getWalkingVelocity() {
@@ -292,7 +313,7 @@ public abstract class User implements Entity {
     }
 
     public GeoRoute reachedRouteUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
-    	return currentRoute.calculateRouteByTimeAndVelocity(Reservation.VALID_TIME, this.getAverageVelocity());
+    	return route.calculateRouteByTimeAndVelocity(Reservation.VALID_TIME, this.getAverageVelocity());
     }
 
     /**
@@ -302,7 +323,7 @@ public abstract class User implements Entity {
      */
 
     public void updatePositionAfterTimeOut() {
-    	List<GeoPoint> pointList = currentRoute.getPoints();
+    	List<GeoPoint> pointList = route.getPoints();
     	position = pointList.get(pointList.size() - 1);
     }
 
@@ -313,7 +334,7 @@ public abstract class User implements Entity {
      */
     
     public int timeToReach() {
-		return (int) (currentRoute.getTotalDistance()/getAverageVelocity());
+		return (int) (route.getTotalDistance()/getAverageVelocity());
     }
 
     /**

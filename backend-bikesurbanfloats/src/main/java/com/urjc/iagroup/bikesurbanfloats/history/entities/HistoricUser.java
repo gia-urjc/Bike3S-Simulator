@@ -1,8 +1,8 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
 import com.google.gson.annotations.Expose;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;

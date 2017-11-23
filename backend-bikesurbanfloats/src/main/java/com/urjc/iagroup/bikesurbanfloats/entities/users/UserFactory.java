@@ -1,6 +1,5 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users;
 
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserTest;
 

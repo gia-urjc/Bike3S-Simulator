@@ -1,7 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
@@ -13,8 +12,8 @@ import java.util.List;
 public class UserTest2 extends User {
 	private int maxReservationAttempts;
 	private int maxReservationTimeoutAttempts;
-	private maxAttemptsWhenBikesUnavailable;
-
+	private int maxAttemptsWhenBikesUnavailable;
+	
     public UserTest2(int maxReservationAttempts, int maxReservationTimeoutAttempts, int maxAttemptsWhenBikesUnavailable) {
         super();
         this.maxReservationAttempts = maxReservationAttempts; 

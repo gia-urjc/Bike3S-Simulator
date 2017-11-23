@@ -1,5 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities;
 
+import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
 import com.urjc.iagroup.bikesurbanfloats.history.History;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricReservation;

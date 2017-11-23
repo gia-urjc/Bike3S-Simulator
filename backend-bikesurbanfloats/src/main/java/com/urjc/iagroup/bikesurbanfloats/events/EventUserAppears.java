@@ -1,7 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.events;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
 import java.util.Arrays;
