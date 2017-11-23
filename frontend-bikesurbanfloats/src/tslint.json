@@ -58,6 +58,7 @@
       "check-else",
       "check-whitespace"
     ],
+    "ordered-imports": true,
     "quotemark": [
       true,
       "single"
@@ -86,7 +87,8 @@
       "check-decl",
       "check-operator",
       "check-separator",
-      "check-type"
+      "check-type",
+      "check-module"
     ]
   }
 }
