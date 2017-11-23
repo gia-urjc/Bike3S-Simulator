@@ -202,7 +202,7 @@ public class History {
             
             // The field type represents an attribute  
             for (Field field : historicClass.getDeclaredFields()) {
-            	// TAO: why is it neccessary to compare id?
+
                 if (field.getName().equals("id")) continue;
 
                 JsonElement property;
@@ -222,12 +222,10 @@ public class History {
                 }
             }
             
-            // TODO: maybe it is an error to create an entry if the property hasn't changed
             if (!changes.containsKey(jsonIdentifier)) {
                 changes.put(jsonIdentifier, new ArrayList<>());
-            }
-            
-            // TAO: why this condition?
+             }
+           
             if (!jsonEntity.entrySet().isEmpty()) {
                 jsonEntity.add("id", new JsonPrimitive(entity.getId()));
                 changes.get(jsonIdentifier).add(jsonEntity);
