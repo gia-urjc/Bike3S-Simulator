@@ -22,7 +22,6 @@ public class GraphHopperIntegration implements GraphManager {
 	private final String GRAPHHOPPER_DIR = "graphhopper_files";
 	
 	private GraphHopper hopper;
-	private String locale;
 	private GHResponse rsp;
 	
 	private GeoPoint startPosition;
@@ -31,10 +30,9 @@ public class GraphHopperIntegration implements GraphManager {
 	public GraphHopperIntegration(String mapDir) throws IOException {
 		FileUtils.deleteDirectory(new File(GRAPHHOPPER_DIR));
 		this.hopper = new GraphHopperOSM().forServer();
-		//this.locale = locale;
 		hopper.setDataReaderFile(mapDir);
 		hopper.setGraphHopperLocation(GRAPHHOPPER_DIR);
-		hopper.setEncodingManager(new EncodingManager("foot"));
+		hopper.setEncodingManager(new EncodingManager("bike"));
 		hopper.importOrLoad();
 		
 	}
@@ -56,8 +54,7 @@ public class GraphHopperIntegration implements GraphManager {
 				startPosition.getLatitude(), startPosition.getLongitude(),
 				endPosition.getLatitude(), endPosition.getLongitude())
 				.setWeighting("fastest")
-				.setVehicle("foot");
-				//.setLocale(Locale.forLanguageTag(locale));
+				.setVehicle("bike");
     	GHResponse rsp = hopper.route(req);
     	
     	if(rsp.hasErrors()) {

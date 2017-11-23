@@ -13,12 +13,11 @@
         }
     },
     "map": "maps/mostoles.osm",
-    "graphHopperLocale": "ES",
     "historyOutputPath": "history",
     "entryPoints": [
         {
             "userType": "USER_TEST",
-            "instant": 0,
+            "timeInstant": 0,
             "position": {
                 "latitude": 40.32246,
                 "longitude": -3.87982

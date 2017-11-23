@@ -28,12 +28,12 @@ public class EntryPointSingle extends EntryPoint {
 	/**
 	 * It is the time instant when user appears at the system.
 	 */
-	private int instant; 
+	private int timeInstant; 
 	
 	public EntryPointSingle(GeoPoint position, UserType userType, int instant) {
 		this.position = position;
 		this.userType = userType;
-		this.instant = instant;
+		this.timeInstant = instant;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class EntryPointSingle extends EntryPoint {
 		List<EventUserAppears> generatedEvents = new ArrayList<>();
 		UserFactory userFactory = new UserFactory();
 		User user = userFactory.createUser(userType);
-		EventUserAppears event = new EventUserAppears(instant, user, position);
+		EventUserAppears event = new EventUserAppears(timeInstant, user, position);
 		generatedEvents.add(event);
 		return generatedEvents;
 	}
@@ -50,7 +50,7 @@ public class EntryPointSingle extends EntryPoint {
 		String result = position.toString();
 		result += "| SINGLE user \n";
 		result += "user Type: " + userType + "\n";
-		result += "Instant: " + instant + "\n";
+		result += "Instant: " + timeInstant + "\n";
 		return result;
 	}
 }
