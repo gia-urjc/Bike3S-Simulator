@@ -21,6 +21,8 @@ import java.util.*;
  *
  */
 public class History {
+	
+	private static String DEFAULT_HISTORY_OUTPUT_PATH = "history";
 
     private static Gson gson = new GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()
@@ -48,17 +50,16 @@ public class History {
     /**
      * This is the path where historic files will be saved.  
      */
-    private static Path outputPath = Paths.get("history");
-    /**
-     * It prepares the history instance to be used. Specifically, it initializes the path 
-     * of the directory where historic files will be stored.
-     * @param simulationConfiguration It contains all the configuration properties.
-     */
-    public static void init(SimulationConfiguration simulationConfiguration) {
-        /*initialEntities = new EntityCollection();
-        updatedEntities = new EntityCollection();*/
+    private static Path outputPath = Paths.get(DEFAULT_HISTORY_OUTPUT_PATH);
 
-        // TODO: save history output path in the indicated path in configuration file
+
+	/**
+	 * It prepares the history instance to be used. Specifically, it initializes the path 
+	 * of the directory where historic files will be stored.
+	 * @param simulationConfiguration It contains all the configuration properties.
+	 */
+	public static void init(SimulationConfiguration simulationConfiguration) {
+    	outputPath = Paths.get(simulationConfiguration.getOutputPath());
     }
     
     /**
@@ -81,7 +82,7 @@ public class History {
 
         writeJson("entities.json", entries);
         writeTimeEntries();
-
+        
         // TODO: copy configuration file
     }
     

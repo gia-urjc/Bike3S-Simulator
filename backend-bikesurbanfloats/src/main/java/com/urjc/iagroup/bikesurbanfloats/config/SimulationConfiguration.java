@@ -40,6 +40,11 @@ public class SimulationConfiguration {
 	 */
 	private BoundingBox boundingBox;
 	
+	/*
+	 * Path  where history files stored
+	 */
+	private String historyOutputPath;
+	
  /**
   * They are all the entry points of the system obtained from the configuration file.
   */
@@ -51,7 +56,7 @@ public class SimulationConfiguration {
 	 */
 	@JsonAdapter(StationDeserializer.class)
 	private List<Station> stations;
-
+	
     public int getReservationTime() {
         return reservationTime;
     }
@@ -79,4 +84,9 @@ public class SimulationConfiguration {
     public List<Station> getStations() {
         return stations;
     }
+    
+    public String getOutputPath() {
+    	return historyOutputPath;
+    }
+    
 }

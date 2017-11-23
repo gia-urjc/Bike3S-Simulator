@@ -14,6 +14,7 @@
     },
     "map": "maps/mostoles.osm",
     "graphHopperLocale": "ES",
+    "historyOutputPath": "history",
     "entryPoints": [
         {
             "userType": "USER_TEST",

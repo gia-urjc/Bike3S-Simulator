@@ -58,11 +58,11 @@
       "check-else",
       "check-whitespace"
     ],
+    "ordered-imports": true,
     "quotemark": [
       true,
       "single"
     ],
-    "radix": true,
     "semicolon": [
       "always"
     ],
@@ -87,7 +87,8 @@
       "check-decl",
       "check-operator",
       "check-separator",
-      "check-type"
+      "check-type",
+      "check-module"
     ]
   }
 }
