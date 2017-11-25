@@ -4,6 +4,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.UserMemory;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 
@@ -70,7 +71,7 @@ public abstract class EventUser implements Event {
         if (bike != null) {  // user has been able to reserve a bike  
             Reservation reservation = new Reservation(instant, ReservationType.BIKE, user, destination, bike);
             if (Reservation.VALID_TIME < arrivalTime) {
-            	user.setCurrentRoute(user.reachedRouteUntilTimeOut());
+            	user.setRoute(user.reachedRouteUntilTimeOut());
             	newEvents.add(new EventBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME , user, reservation));
             }
             else {
@@ -80,6 +81,7 @@ public abstract class EventUser implements Event {
         else {  // user hasn't been able to reserve a bike
             Reservation reservation = new Reservation(instant, ReservationType.BIKE, user, destination);
             user.addReservation(reservation);
+            user.getMemory().update(UserMemory.FactType.BIKE_FAILED_RESERVATION);
             if (user.decidesToLeaveSystemAffterFailedReservation(instant)) {
                 user.setPosition(null);
             } else if (user.decidesToDetermineOtherStationAfterFailedReservation()) {
@@ -124,7 +126,7 @@ public abstract class EventUser implements Event {
         user.setDestinationStation(destination);
         List<GeoRoute> allRoutes = user.calculateRouteStation(destination);
         GeoRoute chosenRoute = user.determineRoute(allRoutes);
-        user.setCurrentRoute(chosenRoute);
+        user.setRoute(chosenRoute);
         
         int arrivalTime = user.timeToReach();
         System.out.println("Destination before user arrival: "+	destination.toString() + " " + user.toString());
@@ -150,7 +152,7 @@ public abstract class EventUser implements Event {
     	if (user.reservesSlot(destination)) {  // User has been able to reserve
        	 Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination, user.getBike());
            	if (Reservation.VALID_TIME < arrivalTime) {
-           		user.setCurrentRoute(user.reachedRouteUntilTimeOut());
+           		user.setRoute(user.reachedRouteUntilTimeOut());
            		newEvents.add(new EventSlotReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation));
            	}
            	else {
@@ -192,7 +194,7 @@ public abstract class EventUser implements Event {
         user.setDestinationStation(destination);
         List<GeoRoute> allRoutes = user.calculateRouteStation(destination);
         GeoRoute chosenRoute = user.determineRoute(allRoutes);
-        user.setCurrentRoute(chosenRoute);
+        user.setRoute(chosenRoute);
 
         int arrivalTime = user.timeToReach();
         System.out.println("Destination before user arrival: "+	destination.toString() + " " + user.toString());

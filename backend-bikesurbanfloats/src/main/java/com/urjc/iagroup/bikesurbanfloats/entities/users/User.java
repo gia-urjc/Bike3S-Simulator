@@ -81,10 +81,9 @@ public abstract class User implements Entity {
     private GeoRoute route;
     
     /**
-     * It contains counters about the number of attempts that the user has made after an 
-     * unsuccessful event in order to carry out an action. 
+     * It saves the unsuccessful facts that have happened to the user during the entire simulation.  
      */
-    private FactsCounter attempts;
+    private UserMemory memory;
 
     protected SystemManager systemManager;
    
@@ -104,6 +103,7 @@ public abstract class User implements Entity {
         this.destinationStation = null;
         this.systemManager = null;
         this.reservation = null;
+        this.memory = new UserMemory();
 
         History.registerEntity(this);
     }
@@ -165,11 +165,11 @@ public abstract class User implements Entity {
 	}
 
 
-	public GeoRoute getCurrentRoute() {
+	public GeoRoute getRoute() {
 		return this.route;
 	}
 
-	public void setCurrentRoute(GeoRoute route) {
+	public void setRoute(GeoRoute route) {
 		this.route = route;
 	}
 
@@ -179,6 +179,10 @@ public abstract class User implements Entity {
 
     public double getCyclingVelocity() {
         return cyclingVelocity;
+    }
+    
+    public UserMemory getMemory() {
+    	return this.memory;
     }
 
     /**
