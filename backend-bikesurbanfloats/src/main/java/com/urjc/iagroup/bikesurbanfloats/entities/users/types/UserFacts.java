@@ -53,16 +53,18 @@ public class UserFacts extends User {
 
         for(int i = 0; i < SELECTION_STATIONS_SET; i++) {
             double minDistance = Double.MAX_VALUE;
+            Sation nearestStation = null;
         	for (Station currentStation: stations) {
             GeoPoint stationPosition = currentStation.getPosition();
             GeoPoint userPosition = getPosition();
             double distance = userPosition.distanceTo(stationPosition);
             if (!userPosition.equals(stationPosition) && distance < minDistance) {
                 minDistance = distance;
-                nearestStations.add(currentStation);
-                stations.remove(currentStation);
+                nearestStation = currentStation;
             }
         	}
+        	nearestStations.add(nearestStation);
+         stations.remove(nearestStation);
         }
         int index = systemManager.getRandom().nextInt(0, SELECTION_STATIONS_SET - 1);
         return nearestStations.get(index);
@@ -75,16 +77,18 @@ public class UserFacts extends User {
 
         for(int i = 0; i < SELECTION_STATIONS_SET; i++) {
             double minDistance = Double.MAX_VALUE;
+            Sation nearestStation = null;
         	for (Station currentStation: stations) {
             GeoPoint stationPosition = currentStation.getPosition();
             GeoPoint userPosition = getPosition();
             double distance = userPosition.distanceTo(stationPosition);
             if (!userPosition.equals(stationPosition) && distance < minDistance) {
                 minDistance = distance;
-                nearestStations.add(currentStation);
-                stations.remove(currentStation);
+                nearestStation = currentStation;
             }
         	}
+        	nearestStations.add(nearestStation);
+         stations.remove(nearestStation);
         }
         int index = systemManager.getRandom().nextInt(0, SELECTION_STATIONS_SET - 1);
         return nearestStations.get(index);
