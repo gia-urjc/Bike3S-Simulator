@@ -1,0 +1,11 @@
+{
+  "name": "jsonschema-validator",
+  "version": "1.0.0",
+  "description": "Command Line Program to validate json with a given JSONschema",
+  "main": "index.js",
+  "author": "IAGroup",
+  "dependencies": {
+    "ajv": "^5.5.0",
+    "commander": "^2.12.1"
+  }
+}
