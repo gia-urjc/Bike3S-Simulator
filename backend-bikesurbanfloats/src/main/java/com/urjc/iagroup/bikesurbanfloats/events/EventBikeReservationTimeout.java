@@ -2,7 +2,8 @@ package com.urjc.iagroup.bikesurbanfloats.events;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
-import com.urjc.iagroup.bikesurbanfloats.entities.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.UserMemory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ public class EventBikeReservationTimeout extends EventUser {
         reservation.expire();
         user.addReservation(reservation);
         user.cancelsBikeReservation(user.getDestinationStation());
+        user.getMemory().update(UserMemory.FactType.BIKE_RESERVATION_TIMEOUT);
 
         if (user.decidesToLeaveSystemAfterTimeout(instant)) {
             user.setPosition(null);
