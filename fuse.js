@@ -17,9 +17,11 @@ projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfloats
 projectRoot.frontend.main = () => path.join(projectRoot.frontend(), 'src/main');
 projectRoot.frontend.renderer = () => path.join(projectRoot.frontend(), 'src/renderer');
 projectRoot.schema = () => path.join(projectRoot(), 'schema');
+projectRoot.jsonschemaValidator = () => path.join(projectRoot(), 'jsonschema-validator/src');
 projectRoot.build = () => path.join(projectRoot(), 'build');
 projectRoot.build.schema = () => path.join(projectRoot.build(), 'schema');
 projectRoot.build.frontend = () => path.join(projectRoot.build(), 'frontend');
+projectRoot.build.jsonschemaValidator = () => path.join(projectRoot.build(), 'jsonschema-validator');
 projectRoot.cache = () => path.join(projectRoot(), '.fusebox');
 
 let production = false;
@@ -84,6 +86,16 @@ Sparky.task('build:schema', () => new Promise((resolve, reject) => {
     resolve();
 }));
 
+Sparky.task('build:jsonschema-validator', () => {
+    const fuse = FuseBox.init({
+        homeDir: projectRoot.jsonschemaValidator(),
+        output: path.join(projectRoot.build.jsonschemaValidator(), '$name.js')
+    });
+    
+    fuse.bundle("jsonschema-validator.js").instructions(`>index.ts`);
+    
+    fuse.run();
+})
 Sparky.task('build:frontend:main', () => {
     const fuse = FuseBox.init({
         homeDir: projectRoot.frontend.main(),
@@ -162,7 +174,7 @@ Sparky.task('build:frontend', ['build:frontend:renderer', 'build:frontend:main']
     return Sparky.src(path.join(projectRoot(), 'package.json')).dest(projectRoot.build());
 });
 
-Sparky.task('build:dev', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:frontend'], () => {});
+Sparky.task('build:dev', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:frontend', 'build:jsonschema-validator'], () => {});
 
 Sparky.task('build:dist', () => {
     production = true;

@@ -1,6 +1,7 @@
-import * as paths from 'path';
-import * as fs from 'fs-extra';
 import * as AJV from 'ajv';
+import * as fs from 'fs-extra';
+import * as paths from 'path';
+
 
 import { app, ipcMain } from 'electron';
 import { without } from 'lodash';
