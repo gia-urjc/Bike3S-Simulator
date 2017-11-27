@@ -7,7 +7,7 @@ const validate = async (dirInput: string, dirSchema: string) => {
         let jsonInput = await fs.readJson(dirInput);
         let jsonSchema = await fs.readJson(dirSchema);
         let ajv = new Ajv();
-        var valid = ajv.validate(jsonSchema, jsonInput);
+        let valid = ajv.validate(jsonSchema, jsonInput);
         if(!valid) return ajv.errors;
         return true;
     }
