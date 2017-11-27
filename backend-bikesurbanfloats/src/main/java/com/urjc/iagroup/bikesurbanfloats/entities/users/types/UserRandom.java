@@ -1,27 +1,21 @@
-package com.urjc.iagroup.bikesurbanfloats.entities.users;
+package com.urjc.iagroup.bikesurbanfloats.entities.users.types;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 import java.util.List;
+// TODO: add lost documentation
+@AssociatedType(UserType.USER_RANDOM)
+public class UserRandom extends User {
 
-@AssociatedType(UserType.USER_TEST2)
-public class UserTest2 extends User {
-	private static int maxReservationAttempts;
-	private static int maxReservationTimeouts;
-	private static int maxRentingAttemptsWhenBikesUnavailable;
-	
-    public UserTest2() {
+    public UserRandom() {
         super();
-    }
-    
-    public static setMaximums(int reservationAttempts, int reservationTimeouts, int rentingAttemptsWhnBikesUnavailable) {
-    	maxReservationAttempts = reservationAttempts;
-    	maxReservationTimeouts = reservationTimeouts;
-    	maxRentingAttemptsWhenBikesUnavailable = rentingAttemptsWhenBikesUnavailable;
     }
 
     @Override
@@ -47,15 +41,16 @@ public class UserTest2 extends User {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
         double minDistance = Double.MAX_VALUE;
         Station destination = null;
-        for (Station currentStation : stations) {
-            GeoPoint stationGeoPoint = currentStation.getPosition();
-            GeoPoint userGeoPoint = getPosition();
-            double distance = stationGeoPoint.distanceTo(userGeoPoint);
-            if (!userGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
+        for (Station currentStation: stations) {
+            GeoPoint stationPosition = currentStation.getPosition();
+            GeoPoint userPosition = getPosition();
+            double distance = userPosition.distanceTo(stationPosition);
+            if (!userPosition.equals(stationPosition) && distance < minDistance) {
                 minDistance = distance;
                 destination = currentStation;
             }
         }
+        // TODO: is it necessary?
         if (destination == null) {
             int numberStations = systemManager.consultStations().size();
             int indexStation = systemManager.getRandom().nextInt(0, numberStations - 1);

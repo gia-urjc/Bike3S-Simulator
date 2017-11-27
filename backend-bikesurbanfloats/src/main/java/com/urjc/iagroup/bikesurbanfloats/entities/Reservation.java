@@ -27,8 +27,11 @@ public class Reservation implements Entity {
     public enum ReservationState {
         ACTIVE, FAILED, EXPIRED, SUCCESSFUL
     }
-
-    public static int VALID_TIME;  // valid time for a reservation (time which a reservation is active)
+    
+    /**
+     * It is the time during which a reservation is active.
+     */
+    public static int VALID_TIME;  
 
     private static IdGenerator idGenerator = new IdGenerator();
 
@@ -39,7 +42,10 @@ public class Reservation implements Entity {
     private ReservationState state;
     private User user;
     private Station station;
-    private Bike bike;  // bike which user has reserved or wants to return
+    /**
+     * It is the bike which the user reserves or the rented bike which the user wants to return.
+     */
+    private Bike bike;  
 
     /**
      * As it receives a bike param, it creates an active reservation 

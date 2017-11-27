@@ -41,7 +41,7 @@ public class HistoricUser implements HistoricEntity {
         this.walkingVelocity = user.getWalkingVelocity();
         this.cyclingVelocity = user.getCyclingVelocity();
         this.destinationStation = user.getDestinationStation() == null ? null : user.getDestinationStation().getId();
-        this.route = user.getCurrentRoute();
+        this.route = user.getRoute();
         this.type = user.getClass().getAnnotation(AssociatedType.class).value();
     }
 

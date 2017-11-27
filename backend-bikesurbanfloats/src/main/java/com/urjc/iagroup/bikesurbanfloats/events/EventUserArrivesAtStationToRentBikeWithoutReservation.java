@@ -3,6 +3,7 @@ package com.urjc.iagroup.bikesurbanfloats.events;
 import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.UserMemory;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
                 newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
             }
         } else {   // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation
+        	user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE);
             if (user.decidesToLeaveSystemWhenBikesUnavailable(instant)) {
                 user.setPosition(null);
             } else {

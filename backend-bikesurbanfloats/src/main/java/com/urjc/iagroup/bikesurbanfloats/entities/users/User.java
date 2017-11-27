@@ -81,7 +81,7 @@ public abstract class User implements Entity {
     private GeoRoute route;
     
     /**
-     * It saves the facts that have happend to the user during the entire simulation.  
+     * It saves the unsuccessful facts that have happened to the user during the entire simulation.  
      */
     private UserMemory memory;
 
@@ -103,6 +103,7 @@ public abstract class User implements Entity {
         this.destinationStation = null;
         this.systemManager = null;
         this.reservation = null;
+        this.memory = new UserMemory();
 
         History.registerEntity(this);
         this.memory = new UserMemory();
@@ -168,11 +169,11 @@ public abstract class User implements Entity {
 		this.destinationStation = destinationStation;
 	}
 
-	public GeoRoute getCurrentRoute() {
+	public GeoRoute getRoute() {
 		return this.route;
 	}
 
-	public void setCurrentRoute(GeoRoute route) {
+	public void setRoute(GeoRoute route) {
 		this.route = route;
 	}
 
@@ -182,6 +183,10 @@ public abstract class User implements Entity {
 
     public double getCyclingVelocity() {
         return cyclingVelocity;
+    }
+    
+    public UserMemory getMemory() {
+    	return this.memory;
     }
 
     /**
