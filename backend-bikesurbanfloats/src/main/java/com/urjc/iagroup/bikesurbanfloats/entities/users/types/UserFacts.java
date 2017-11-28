@@ -15,35 +15,35 @@ import java.util.ArrayList;
 @AssociatedType(UserType.USER_FACTS)
 public class UserFacts extends User {
 	private final int SELECTION_STATIONS_SET = 3;
-	private static int maxReservationAttempts;
-	private static int maxReservationTimeouts;
-	private static int maxRentingAttempts;
+	private static int minReservationAttempts;
+	private static int minReservationTimeouts;
+	private static int minRentingAttempts;
 	
     public UserFacts() {
         super();
     }
     
     public static void setMaximums(int reservationAttempts, int reservationTimeouts, int rentingAttempts) {
-    	maxReservationAttempts = reservationAttempts;
-    	maxReservationTimeouts = reservationTimeouts;
-    	maxRentingAttempts = rentingAttempts;
+    	minReservationAttempts = reservationAttempts;
+    	minReservationTimeouts = reservationTimeouts;
+    	minRentingAttempts = rentingAttempts;
     }
 
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return getMemory().getCounterReservationTimeouts() == maxReservationTimeouts ? true : false;
+        return getMemory().getCounterReservationTimeouts() == minReservationTimeouts ? true : false;
     }
 
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return getMemory().getCounterReservationAttempts() == maxReservationAttempts ? true : false;
+        return getMemory().getCounterReservationAttempts() == minReservationAttempts ? true : false;
     }
 
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == maxRentingAttempts ? true : false;
+        return getMemory().getCounterRentingAttempts() == minRentingAttempts ? true : false;
     }
 
     @Override
