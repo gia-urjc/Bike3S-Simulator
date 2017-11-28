@@ -1,4 +1,4 @@
-import { ipcMain, Event } from 'electron';
+import { Event, ipcMain } from 'electron';
 
 type SuccessCallback = (data?: any) => Promise<any>;
 type ErrorCallback = (error?: Error) => void;
