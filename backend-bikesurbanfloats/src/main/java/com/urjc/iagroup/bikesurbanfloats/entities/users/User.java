@@ -340,7 +340,6 @@ public abstract class User implements Entity {
      * time = distance/velocity
      * @throws Exception
      */
-    
     public int timeToReach() {
 		return (int) (route.getTotalDistance()/getAverageVelocity());
     }
