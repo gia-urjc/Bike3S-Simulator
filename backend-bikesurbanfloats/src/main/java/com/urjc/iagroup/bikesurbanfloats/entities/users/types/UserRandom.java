@@ -125,7 +125,8 @@ public class UserRandom extends User {
         if (routes.isEmpty()) {
             throw new GeoRouteException("Route is not valid");
         }
-        return routes.get(0);
+        int index = systemManager.getRandom().nextInt(0, routes.size());
+        return routes.get(index);
     }
 
 }

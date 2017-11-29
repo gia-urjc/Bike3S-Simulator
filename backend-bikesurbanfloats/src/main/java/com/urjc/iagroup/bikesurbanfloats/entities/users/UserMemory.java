@@ -38,13 +38,8 @@ public class UserMemory {
 		switch(fact) {
 			case BIKE_RESERVATION_TIMEOUT: counterReservationTimeouts++;
 			case BIKE_FAILED_RESERVATION: counterReservationAttempts++;
-<<<<<<< HEAD
-			case BIKES_UNAVAILABLE: counterAttemptsWhenBikesUnavailable++;
-			default: throw new IllegalArgumentException(cause.toString() + "is not defined in update method");
-=======
 			case BIKES_UNAVAILABLE: counterRentingAttempts++;
 			default: throw new IllegalArgumentException(fact.toString() + "is not defined in update method");
->>>>>>> b27b18e58a28d7c63eca0be06ac2ed270efb2077
 		}
 	}
 
