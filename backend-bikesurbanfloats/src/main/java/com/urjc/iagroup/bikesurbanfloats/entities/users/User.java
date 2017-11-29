@@ -76,7 +76,7 @@ public abstract class User implements Entity {
     private Reservation reservation;
     
     /**
-     * It is the route that the user is currently travelling through.
+     * It is the route that the user is currently traveling through.
      */
     private GeoRoute route;
     
@@ -106,6 +106,7 @@ public abstract class User implements Entity {
         this.memory = new UserMemory();
 
         History.registerEntity(this);
+        this.memory = new UserMemory();
     }
 
     @Override
@@ -134,7 +135,7 @@ public abstract class User implements Entity {
     	this.position.setLatitude(latitude);
         this.position.setLongitude(longitude);
     }
-
+    
     public Bike getBike() {
         return bike;
     }
@@ -163,7 +164,6 @@ public abstract class User implements Entity {
 	public void setDestinationStation(Station destinationStation) {
 		this.destinationStation = destinationStation;
 	}
-
 
 	public GeoRoute getRoute() {
 		return this.route;
@@ -336,7 +336,6 @@ public abstract class User implements Entity {
      * time = distance/velocity
      * @throws Exception
      */
-    
     public int timeToReach() {
 		return (int) (route.getTotalDistance()/getAverageVelocity());
     }
