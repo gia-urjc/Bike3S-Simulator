@@ -6,10 +6,12 @@ const validate = async (dirInput: string, dirSchema: string) => {
     try {   
         let jsonInput = await fs.readJson(dirInput);
         let jsonSchema = await fs.readJson(dirSchema);
-        let ajv = new Ajv();
+        let ajv = new Ajv({
+            allErrors: true
+        });
         let valid = ajv.validate(jsonSchema, jsonInput);
         if(!valid) return ajv.errors;
-        return true;
+        return 'OK';
     }
     catch(error) {
         console.log(error);
@@ -23,7 +25,7 @@ program
     .command('verify')
     .option('-i, --input [input]', 'Json to verify')
     .option('-s, --schema [schema]', 'Json schema for validations')
-    .action((options) => {
+    .action((options: any) => {
         validate(options.input, options.schema).then((data: any) =>{
             console.log(data);
         })
