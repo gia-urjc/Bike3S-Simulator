@@ -16,7 +16,7 @@
     "historyOutputPath": "history",
     "entryPoints": [
         {
-            "userType": "USER_TEST",
+            "userType": "USER_RANDOM",
             "timeInstant": 0,
             "position": {
                 "latitude": 40.32246,
@@ -24,7 +24,7 @@
             }
         },
         {
-            "userType": "USER_TEST",
+            "userType": "USER_RANDOM",
             "position": {
                 "latitude": 40.32246,
                 "longitude": -3.87982
@@ -38,28 +38,125 @@
     ],
     "stations": [
         {
-            "bikes": 3,
+            "bikes": 0,
             "position": {
-                "latitude": 40.32159,
-                "longitude": -3.86469
+                "latitude": 40.4285524, 
+                "longitude": -3.7025875 
             },
-            "capacity": 10
+            "capacity": 24
+        },
+        {
+            "bikes": 5,
+            "position": {
+                "latitude": 40.424148, 
+                "longitude": -3.698447
+            },
+            "capacity": 24
+        },
+        {
+            "bikes": 11,
+            "position": {
+                "latitude": 40.4089282, 
+                "longitude": -3.7008803
+            },
+            "capacity": 24
+        },
+        {
+            "bikes": 14,
+            "position": {
+                "latitude": 40.4074902,  
+                "longitude": -3.6901234
+            },
+            "capacity": 27
+        },
+        {
+            "bikes": 9,
+            "position": {
+                "latitude": 40.4302937,   
+                "longitude": -3.7069171
+            },
+            "capacity": 18
+        },
+        {
+            "bikes": 20,
+            "position": {
+                "latitude": 40.4192342,    
+                "longitude": -3.6954615
+            },
+            "capacity": 24
+        },
+
+        {
+            "bikes": 13,
+            "position": {
+                "latitude": 40.4205886,     
+                "longitude": -3.7058415 
+            },
+            "capacity": 24
+        },
+        {
+            "bikes": 7,
+            "position": {
+                "latitude": 40.428528,     
+                "longitude": -3.7020599
+            },
+            "capacity": 27
+        },
+        {
+            "bikes": 14,
+            "position": {
+                "latitude": 40.4197204,     
+                "longitude": -3.7015235
+            },
+            "capacity": 24
         },
         {
             "bikes": 6,
             "position": {
-                "latitude": 40.32724,
-                "longitude": -3.87516
+                "latitude": 40.4132798,     
+                "longitude": -3.6956178 
             },
-            "capacity": 10
+            "capacity": 24
+        },
+        {
+            "bikes": 24,
+            "position": {
+                "latitude": 40.4181663,     
+                "longitude": -3.69926
+            },
+            "capacity": 27
+        },
+        {
+            "bikes": 9,
+            "position": {
+                "latitude": 40.4163638,       
+                "longitude": -3.7068969  
+            },
+            "capacity": 27
+        },
+        {
+            "bikes": 2,
+            "position": {
+                "latitude": 40.4141931,      
+                "longitude": -3.7103285   
+            },
+            "capacity": 24
         },
         {
             "bikes": 4,
             "position": {
-                "latitude": 40.32709,
-                "longitude": -3.85465
+                "latitude": 40.4167281,      
+                "longitude": -3.7124038 
             },
-            "capacity": 10
+            "capacity": 24
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4122047,      
+                "longitude": -3.6991147 
+            },
+            "capacity": 21
         }
     ]
 }

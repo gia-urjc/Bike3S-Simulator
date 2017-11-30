@@ -13,8 +13,13 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * 
+ * @author IAgroup
+ *
+ */
 @AssociatedType(UserType.USER_FACTS)
-public class UserFacts extends User {
+public class UserFactsAndPercentages extends User {
 	/**
 	 * It indicates the size of the set of stations closest to the user within which the 
 	 * destination will be chossen randomly.  
@@ -28,62 +33,15 @@ public class UserFacts extends User {
 	private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
 	
 	/**
-	 * It is the number of times that the user musts try to make a bike reservation before 
-	 * deciding to leave the system.  
+	 * 
 	 */
-	private static int minReservationAttempts;
-	
-	/**
-	 * It is the number of times that a reservation timeout event musts occurs before the 
-	 * user decides to leave the system.
-	 */
-	private static int minReservationTimeouts;
-	
- /**
-  * It is the number of times that the user musts try to rent a bike (without a bike 
-  * reservation) before deciding to leave the system.	
-  */
-	private static int minRentingAttempts;
-	
-	/**
-	 * It determines the rate with which the user will reserve a bike. 
-	 */
-	private static int bikeReservationPercentage;
-	
-	/**
-	 * It determines the rate with which the user will reserve a slot.
-	 */
-	private static int slotReservationPercentage;
-	
-	/**
-	 * It determines the rate with which the user will decide to go directly to a station 
-	 * in order to return the bike he has just rented.  
-	 */
-	private static int bikeReturnPercentage;
-	
-	/**
-	 * It determines the rate with which the user will choose a new destination station 
-	 * after a  timeout event happens.
-	 */
-	private static int reservationTimeoutPercentage;
-	
-	/**
-	 * It determines the rate with which the user will choose a new destination station
-	 * after he hasn't been able to make a reservation. 
-	 */
-	private static int failedReservationPercentage;
-	
-	/**
-	 * It is the minimum distance that the user will travel since he appears in the system 
-	 * until he returns it.
-	 */
-	private static int minDistanceToTravel;
-	
 	private int traveledDistance;
 	
-    public UserFacts() {
+	private UserFactsAndPercentagesParameters parameters; 
+	
+    public UserFactsAndPercentages() {
         super();
-        traveledDistance = 0;
+        this.traveledDistance = 0;
     }
     
     public static void setMinimums(int reservationAttempts, int reservationTimeouts, int rentingAttempts) {
