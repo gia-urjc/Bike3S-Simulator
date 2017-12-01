@@ -2,7 +2,6 @@ import * as AJV from 'ajv';
 import * as fs from 'fs-extra';
 import * as paths from 'path';
 
-
 import { app, ipcMain } from 'electron';
 import { without } from 'lodash';
 import { AnyObject, IpcUtil } from './index';
@@ -124,7 +123,7 @@ export default class HistoryReader {
     get timeRange(): TimeRange {
         const range = [
             this.changeFiles[0],
-            this.changeFiles[this.changeFiles.length - 1]
+            this.changeFiles.slice(-1)[0]
         ].map((file, index) => parseInt(file.split('_')[0].split('-')[index]));
 
         return {
