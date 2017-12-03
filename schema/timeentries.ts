@@ -1,4 +1,4 @@
-import { JsonSchema, SchemaVersion } from 'json-schema-builder-ts';
+import { JsonSchema } from 'json-schema-builder-ts';
 import { SchemaBuilder } from 'json-schema-builder-ts/dist/core/builder';
 import { Schema } from 'json-schema-builder-ts/dist/core/builder/schema';
 import { sAnyOf } from 'json-schema-builder-ts/dist/operators/schematical';

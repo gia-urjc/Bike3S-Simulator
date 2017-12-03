@@ -1,4 +1,4 @@
-import { JsonSchema, SchemaVersion } from 'json-schema-builder-ts';
+import { JsonSchema } from 'json-schema-builder-ts';
 import { sAnyOf } from 'json-schema-builder-ts/dist/operators/schematical';
 import { rData } from 'json-schema-builder-ts/dist/references';
 import { sArray, sNull, sNumber, sObject } from 'json-schema-builder-ts/dist/types';
