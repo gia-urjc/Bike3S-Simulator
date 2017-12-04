@@ -22,7 +22,8 @@ projectRoot.build = () => path.join(projectRoot(), 'build');
 projectRoot.build.schema = () => path.join(projectRoot.build(), 'schema');
 projectRoot.build.frontend = () => path.join(projectRoot.build(), 'frontend');
 projectRoot.build.jsonschemaValidator = () => path.join(projectRoot.build(), 'jsonschema-validator');
-projectRoot.cache = () => path.join(projectRoot(), '.fusebox');
+projectRoot.fuseCache = () => path.join(projectRoot(), '.fusebox');
+projectRoot.schemaCache = () => path.join(projectRoot(), '.schema');
 
 let production = false;
 
@@ -59,31 +60,40 @@ Sparky.task('build:backend', () => new Promise((resolve, reject) => {
     });
 }));
 
-Sparky.task('build:schema', () => new Promise((resolve, reject) => {
-    const jsonOptions = {
-        spaces: 4
-    };
-
-    const exclude = ['examples', 'util'];
-
-    fs.readdirSync(projectRoot.schema()).filter((x) => !exclude.includes(x)).forEach((entry) => {
-        const collection = require(path.join(projectRoot.schema(), entry));
-
-        Object.keys(collection).forEach((schema) => {
-            const out = path.join(schemaBuildPath, entry, `${schema}.json`);
-
-            log.time().green(`Writing schema to: ${out}`).echo();
-
-            try {
-                fs.outputJsonSync(out, collection[schema], jsonOptions);
-            } catch (error) {
-                log.time().red(`Error while writing json schema: ${error}`).echo();
-                reject();
-            }
-        });
+Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, reject) => {
+    const tsc = spawn(path.join(projectRoot(), 'node_modules/.bin/tsc'), [], {
+        cwd: projectRoot.schema(),
+        shell: true,
+        stdio: 'inherit'
     });
 
-    resolve();
+    tsc.on('error', (error) => {
+        log.red(error).echo();
+    });
+
+    tsc.on('close', (code) => {
+        if (code === 0) {
+            log.time().green('compiling schemas').echo();
+
+            fs.readdirSync(projectRoot.schemaCache()).filter((file) => file.endsWith('.js')).forEach((file) => {
+                const schema = require(path.join(projectRoot.schemaCache(), file)).default;
+                const out = path.join(schemaBuildPath, `${file.slice(0, -3)}.json`);
+
+                schema.errors.forEach((error) => {
+                    log.red(error).echo();
+                });
+
+                schema.write(out);
+
+                log.time().green(`written schema to ${out}`).echo();
+            });
+
+            resolve();
+        } else {
+            log.time().red(`tsc finished with error code ${code}`).echo();
+            reject();
+        }
+    });
 }));
 
 Sparky.task('build:jsonschema-validator', () => {
@@ -95,7 +105,8 @@ Sparky.task('build:jsonschema-validator', () => {
     fuse.bundle("jsonschema-validator.js").instructions(`>index.ts`);
     
     fuse.run();
-})
+});
+
 Sparky.task('build:frontend:main', () => {
     const fuse = FuseBox.init({
         homeDir: projectRoot.frontend.main(),
@@ -168,7 +179,10 @@ Sparky.task('build:frontend:renderer', () => {
 
 Sparky.task('clean:build', () => Sparky.src(projectRoot.build()).clean(projectRoot.build()));
 
-Sparky.task('clean:cache', () => Sparky.src(projectRoot.cache()).clean(projectRoot.cache()));
+Sparky.task('clean:cache:fuse', () => Sparky.src(projectRoot.fuseCache()).clean(projectRoot.fuseCache()));
+Sparky.task('clean:cache:schema', () => Sparky.src(projectRoot.schemaCache()).clean(projectRoot.schemaCache()));
+
+Sparky.task('clean:cache', ['clean:cache:fuse', 'clean:cache:schema'], () => {});
 
 Sparky.task('build:frontend', ['build:frontend:renderer', 'build:frontend:main'], () => {
     return Sparky.src(path.join(projectRoot(), 'package.json')).dest(projectRoot.build());

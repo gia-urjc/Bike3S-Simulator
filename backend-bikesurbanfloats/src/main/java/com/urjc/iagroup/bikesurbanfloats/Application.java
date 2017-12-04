@@ -21,6 +21,11 @@ import org.apache.commons.cli.ParseException;
 
 public class Application {
 	
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_GREEN = "\u001B[32m";
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+	
 	
 	private static CommandLine commandParser(String[] args) throws ParseException {
     	
@@ -65,26 +70,36 @@ public class Application {
 	}
 
 	private static boolean checkParams(String schema, String config, String validator) {
+		boolean result = false;
 		if(validator != null && schema != null && config != null) {
     		try {
 				String output = JsonValidation.validate(schema, config, validator);
-				if(!output.equals("OK")) {
-					System.out.println("JSON has errors");
+				if(!output.equals("OK") && !output.equals("NODE_NOT_INSTALLED")) {
+					System.out.println(ANSI_RED +"JSON has errors" + ANSI_RESET);
 					System.out.println(output);
+					result = true;
 					return false;
+				} else if(output.equals("NODE_NOT_INSALLED")) {
+					System.out.println(ANSI_RED + "Node is necessary to execute validator:" + validator + ". \n"
+							+ "Verify if node is installed or install node" + ANSI_RESET);
 				} else {
-					System.out.println("JSON is OK");
+					System.out.println(ANSI_GREEN + "JSON is OK" + ANSI_RESET);
 				}	
 			} catch (IOException | InterruptedException e) {
-				System.out.println("Fail executing validation");
+				System.out.println(ANSI_RED + "Fail executing validation" + ANSI_RESET);
 				e.printStackTrace();
 			}
     	}
     	else if(config == null) {
-    		System.out.println("You should specify a configuration file");
-    		return false;
+    		System.out.println(ANSI_RED + "You should specify a configuration file" + ANSI_RESET);
+    		result = false;
     	}
-		return true;
+    	else if(config != null && validator == null ) {
+    		System.out.println(ANSI_YELLOW + "Warning, you don't specify a validator, congiguration file will not be validated"
+    				+ "on backend" + ANSI_RESET);
+    		result = true;
+    	}
+		return result;
 	}
     
 }
