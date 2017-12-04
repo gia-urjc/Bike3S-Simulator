@@ -1,7 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
-import com.urjc.iagroup.bikesurbanfloats.entities.users.types.UserFacts;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.types.UserTourist;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.types.UserRandom;
 
 /**
@@ -18,8 +18,8 @@ public class UserFactory {
         switch (type) {
             case USER_RANDOM:
                 return new UserRandom();
-            case USER_FACTS:
-            	return new UserFacts();
+            case USER_FACTS_AND_PERCENTAGES:
+            	return new UserTourist();
         }
         throw new IllegalArgumentException("The type" + type + "doesn't exists");
     }

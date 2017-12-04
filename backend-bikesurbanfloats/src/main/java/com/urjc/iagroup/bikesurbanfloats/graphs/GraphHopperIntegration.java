@@ -96,5 +96,10 @@ public class GraphHopperIntegration implements GraphManager {
 		return rsp.hasAlternatives();
 	}
 	
+public	GeoPoint getCoordinatePoints(String street) {
+		// TODO: implement this method 
+		return null;
+	}
+	
 
 }

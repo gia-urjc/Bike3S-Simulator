@@ -21,7 +21,7 @@ public class UserMemory {
         this.counterReservationTimeouts = 0;
         this.counterRentingAttempts = 0;
 	}
-	
+
 	public int getCounterReservationAttempts() {
 		return counterReservationAttempts;
 	}

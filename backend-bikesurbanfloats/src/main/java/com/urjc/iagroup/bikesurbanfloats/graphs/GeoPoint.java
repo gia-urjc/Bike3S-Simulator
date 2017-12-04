@@ -60,10 +60,14 @@ public class GeoPoint {
      * @see <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula on Wikipedia</a>
      */
     public double distanceTo(GeoPoint point) {
+    	// TODO: we must consider possible routes between 2 points to calculate real distance
+    	
         double[] f = {Math.toRadians(this.latitude), Math.toRadians(point.latitude)};
         double[] l = {Math.toRadians(this.longitude), Math.toRadians(point.longitude)};
         double h = haversine(f[1] - f[0]) + Math.cos(f[0]) * Math.cos(f[1]) * haversine(l[1] - l[0]);
         return 2 * EARTH_RADIUS * Math.asin(Math.sqrt(h));
+        
+    	 
     }
     
     private double haversine(double value) {

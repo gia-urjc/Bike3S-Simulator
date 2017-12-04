@@ -50,12 +50,6 @@ public class UserRandom extends User {
                 destination = currentStation;
             }
         }
-        // TODO: is it necessary?
-        if (destination == null) {
-            int numberStations = systemManager.consultStations().size();
-            int indexStation = systemManager.getRandom().nextInt(0, numberStations - 1);
-            destination = systemManager.consultStations().get(indexStation);
-        }
         return destination;
     }
 
@@ -72,11 +66,6 @@ public class UserRandom extends User {
                 minDistance = distance;
                 destination = currentStation;
             }
-        }
-        if (destination == null) {
-            int numberStations = systemManager.consultStations().size();
-            int indexStation = systemManager.getRandom().nextInt(0, numberStations - 1);
-            destination = systemManager.consultStations().get(indexStation);
         }
         return destination;
     }
@@ -125,7 +114,8 @@ public class UserRandom extends User {
         if (routes.isEmpty()) {
             throw new GeoRouteException("Route is not valid");
         }
-        return routes.get(0);
+        int index = systemManager.getRandom().nextInt(0, routes.size());
+        return routes.get(index);
     }
 
 }

@@ -68,11 +68,11 @@ public class GeoRoute {
 	}
 
 	/**
-	 * Given the speed at which the route is travelled and the time during which the entity 
-	 * has been travelling, it calculates the section of the route that the entity has travelled.
-	 * @param finalTime It is the time during which the entity has been travelling.
+	 * Given the speed at which the route is traveled and the time during which the entity 
+	 * has been traveling, it calculates the section of the route that the entity has traveled.
+	 * @param finalTime It is the time during which the entity has been traveling.
 	 * @param velocity It is the speed at which the entity travels.
-	 * @return the travelled subroute.
+	 * @return the traveled subroute.
 	 */
 	public GeoRoute calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws GeoRouteException, GeoRouteCreationException {
 		double totalDistance = 0.0;
