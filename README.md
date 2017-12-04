@@ -54,7 +54,7 @@ repository.
 ```
 -schema "SCHEMA_CONFIGURATION_PATH" -config "CONFIG_JSON_PATH" -validator "VALIDATOR_JSON_PATH"
 ``` 
-7. Click on `Apply` and `Run`,
+7. Click on `Apply` and `Run`.
 
 # Distribute
 To create a distributable package of the software run `npm run distribute` from the project root. It will compile and
