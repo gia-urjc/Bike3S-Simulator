@@ -50,7 +50,10 @@ at the folder you want.
 5. All dependencies shoulb be downloaded now to your Eclipse project and Git repository is automatically synchronized to the remote
 repository.
 6. To run and debug the project correctly, go to `Run` &rarr; `Run Configurations`. Now go to the `Arguments` section and add into 
-`Program arguments` the absolute path to `configuration/configuration.json`.
+`Program arguments` the next arguments:
+```
+-schema "SCHEMA_CONFIGURATION_PATH" -config "CONFIG_JSON_PATH" -validator "VALIDATOR_JSON_PATH"
+``` 
 7. Click on `Apply` and `Run`,
 
 # Distribute

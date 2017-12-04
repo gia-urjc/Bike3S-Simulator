@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 public class JsonValidation {
@@ -15,11 +17,12 @@ public class JsonValidation {
 	
 	public static String validate(String schemaDir, String jsonDir, String jsValidatorDir) throws IOException, InterruptedException {
 		
-		Gson gson = new Gson();
-		JsonParser parser = new JsonParser();
-		
+		if(!checkNode()) {
+			return "NODE_NOT_INSTALLED";
+		}
 		ArrayList<String> command = new ArrayList<>();
-		command.addAll(Arrays.asList("node", jsValidatorDir, "-i", jsonDir, "-s", schemaDir));
+		command.addAll(Arrays.asList("node", jsValidatorDir, "verify", "-i", jsonDir, "-s", schemaDir));
+		System.out.println("node " + jsValidatorDir + " -i " + jsonDir + " -s " + schemaDir);
 		ProcessBuilder pb = new ProcessBuilder(command);
 		Process validationProcess = pb.start();
 		BufferedReader in = new BufferedReader(new InputStreamReader(validationProcess.getInputStream()));
@@ -30,6 +33,13 @@ public class JsonValidation {
 		}
 		validationProcess.waitFor();
 		return output;
+	}
+	
+	private static boolean checkNode() throws IOException, InterruptedException {
+		ProcessBuilder pb = new ProcessBuilder(new ArrayList<>(Arrays.asList("node", "-help")));
+		Process p = pb.start();
+		int exitValue = p.waitFor();
+		return exitValue == 0;
 	}
 
 }
