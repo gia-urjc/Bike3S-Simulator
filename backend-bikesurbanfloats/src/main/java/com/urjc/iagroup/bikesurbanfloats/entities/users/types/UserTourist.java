@@ -19,7 +19,8 @@ import java.util.ArrayList;
  *
  */
 @AssociatedType(UserType.USER_FACTS)
-public class UserFactsAndPercentages extends User {
+public class UserTourist extends User {
+	
 	/**
 	 * It indicates the size of the set of stations closest to the user within which the 
 	 * destination will be chossen randomly.  
@@ -33,53 +34,32 @@ public class UserFactsAndPercentages extends User {
 	private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
 	
 	/**
-	 * 
+	 * It is the place the tourist wants to visit.
 	 */
-	private int traveledDistance;
+	private String touristDestination;
 	
-	private UserFactsAndPercentagesParameters parameters; 
+	/**
+	 * It contains the attributes which characterizes the typical behaviour of this user type. 
+	 */
+	private UserTypeParameters parameters; 
 	
-    public UserFactsAndPercentages() {
+    public UserTourist() {
         super();
-        this.traveledDistance = 0;
     }
     
-    public static void setMinimums(int reservationAttempts, int reservationTimeouts, int rentingAttempts) {
-    	minReservationAttempts = reservationAttempts;
-    	minReservationTimeouts = reservationTimeouts;
-    	minRentingAttempts = rentingAttempts;
-    }
-    
-    public static void setPercentages(int bikeReservation, int slotReservation, int reservationTimeout, int failedReservation) {
-    	bikeReservationPercentage = bikeReservation;
-    	slotReservationPercentage = slotReservation;
-    	reservationTimeoutPercentage = reservationTimeout;
-    	failedReservationPercentage = failedReservation;
-    }
-    
-    public static void setMinDistance(int distance) {
-    	minDistanceToTravel = distance;
-    }
-    
-    @Override
-    public void setRoute(GeoRoute route) {
-    	super.setRoute(route);
-    	traveledDistance += route.getTotalDistance(); 
-    }
-
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return getMemory().getCounterReservationTimeouts() == minReservationTimeouts ? true : false;
+        return getMemory().getCounterReservationTimeouts() == parameters.getMinReservationTimeouts() ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return getMemory().getCounterReservationAttempts() == minReservationAttempts ? true : false;
+        return getMemory().getCounterReservationAttempts() == parameters.getMinReservationAttempts() ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == minRentingAttempts ? true : false;
+        return getMemory().getCounterRentingAttempts() == parameters.getMinRentingAttempts() ? true : false;
     }
     
     /**
@@ -111,40 +91,26 @@ public class UserFactsAndPercentages extends User {
 
     @Override
     public Station determineStationToReturnBike(int instant) {
-        List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
-        Station destination = null;
-        boolean found = false;
-        int index = 0;
-        GraphManager graph = systemManager.getGraphManager();
-        List<GeoRoute> routes = null;
-        
-        while (!stations.isEmpty()) {
-        	index = systemManager.getRandom().nextInt(0, stations.size());
-        	destination = stations.get(index);
-        	try {
-        		graph.calculateRoutes(this.getPosition(), destination.getPosition());
-        		routes = graph.getAllRoutes();
+        List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        List<Station> nearestStations = new ArrayList<>();
+
+        for(int i = 0; i < SELECTION_STATIONS_SET; i++) {
+            double minDistance = Double.MAX_VALUE;
+            Station nearestStation = null;
+        	for (Station currentStation: stations) {
+            GeoPoint stationPosition = currentStation.getPosition();
+            GeoPoint userPosition = getPosition();
+            double distance = userPosition.distanceTo(stationPosition);
+            if (!userPosition.equals(stationPosition) && distance < minDistance) {
+                minDistance = distance;
+                nearestStation = currentStation;
+            }
         	}
-        	catch(Exception e) {
-        		System.out.println("Routes not found: "+e.getMessage());
-        		continue;
-        	}
-        	
-        	for(GeoRoute route: routes) {
-        		if(route.getTotalDistance() >= minDistanceToTravel - traveledDistance)
-        			return destination;
-        	}
-        	stations.remove(destination);
-        	destination = null;
+        	nearestStations.add(nearestStation);
+         stations.remove(nearestStation);
         }
-        
-        if (destination == null) {
-        	stations = systemManager.consultStations();
-        	index = systemManager.getRandom().nextInt(0, stations.size());
-        	destination = stations.get(index); 
-        }
-        
-        return destination;
+        int index = systemManager.getRandom().nextInt(0, SELECTION_STATIONS_SET - 1);
+        return nearestStations.get(index);
     }
 
     @Override
@@ -154,8 +120,8 @@ public class UserFactsAndPercentages extends User {
     }
 
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-    	int percentage = systemManager.getRandom().nextInt(0, 101);
-    	return percentage <= bikeReservationPercentage ? true : false;
+    	int percentage = systemManager.getRandom().nextInt(0, 100);
+    	return percentage < parameters.getBikeReservationPercentage() ? true : false;
     }
 
     @Override
@@ -166,40 +132,43 @@ public class UserFactsAndPercentages extends User {
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-    	int percentage = systemManager.getRandom().nextInt(0, 101);
-    	return percentage <= slotReservationPercentage ? true : false;
+    	int percentage = systemManager.getRandom().nextInt(0, 100);
+    	return percentage < parameters.getSlotReservationPercentage() ? true : false;
     }
 
     @Override
     public GeoPoint decidesNextPoint() {
-        return systemManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
+    	GeoPoint destination = systemManager.getGraphManager().getCoordinatePoints(touristDestination);
+        return destination;
     }
 
     @Override
     public boolean decidesToReturnBike() {
-    	int percentage = systemManager.getRandom().nextInt(0, 101);
-    	return percentage <= bikeReturnPercentage ? true : false;
+    	return false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
     	int percentage = systemManager.getRandom().nextInt(0, 101);
-    	return percentage <= reservationTimeoutPercentage ? true : false;
+    	return percentage <= parameters.getReservationTimeoutPercentage() ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
         int percentage = systemManager.getRandom().nextInt(0, 101);
-        return percentage <= failedReservationPercentage ? true : false;
+        return percentage <= parameters.getFailedReservationPercentage() ? true : false;
     }
-
+    
+    /**
+     * The user chooses the longest route because he wants to make a touristic travel as long as possible.
+     */
     @Override
     public GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException {
         if (routes.isEmpty()) {
             throw new GeoRouteException("Route is not valid");
         }
         // The route in first list position is the shortest.
-        return routes.get(0);
+        return routes.get(routes.size() - 1);
     }
 
 }
