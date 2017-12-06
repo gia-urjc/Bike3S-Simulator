@@ -25,7 +25,6 @@ import java.util.List;
  * It provides a behaviour pattern (make decissions) which depends on specific user type properties.
  * @author IAgroup
   */
-
 @HistoryReference(HistoricUser.class)
 public abstract class User implements Entity {
 
@@ -345,7 +344,6 @@ public abstract class User implements Entity {
      * @param instant: itt is the time instant when h'll make this decision.
      * @return true if he decides to leave the system and false in other case (he decides to continue at system).
      */
-    
     public abstract boolean decidesToLeaveSystemAfterTimeout(int instant);
     
     /**
@@ -353,7 +351,6 @@ public abstract class User implements Entity {
     * @param instant: itt is the time instant when h'll make this decision.
     * @return true if he decides to leave the system and false in other case (he decides to continue at system).
     */
-    
     public abstract boolean decidesToLeaveSystemAffterFailedReservation(int instant);
     
     /**
@@ -361,7 +358,6 @@ public abstract class User implements Entity {
      * @param instant: itt is the time instant when h'll make this decision.
      * @return true if he decides to leave the system and false in other case (he decides to continue at system).
      */
-    
     public abstract boolean decidesToLeaveSystemWhenBikesUnavailable(int instant);
 
     /**
@@ -369,7 +365,6 @@ public abstract class User implements Entity {
      * @param instant: it is the time instant when he needs to make this decision.
      * @return station where user has decided to go.
      */
-
     public abstract Station determineStationToRentBike(int instant);
 
     /**
@@ -377,7 +372,6 @@ public abstract class User implements Entity {
      * @param instant is the time instant when he needs to make this decision.
      * @return station where user has decided to go.
      */
-
     public abstract Station determineStationToReturnBike(int instant);
     
     /**
@@ -385,14 +379,12 @@ public abstract class User implements Entity {
      * chosen station after timeout happens.
      * @return true if user decides to reserve a bike at the initially chosen station.
      */
-    
     public abstract boolean decidesToReserveBikeAtSameStationAfterTimeout();
     
     /**
      * User decides if he'll try to make a bike reservation at a new chosen station.
      * @return true if user decides to reserve a bike at that new station and false in other case.
      */
-        
     public abstract boolean decidesToReserveBikeAtNewDecidedStation();
     
     /**
@@ -400,14 +392,13 @@ public abstract class User implements Entity {
      * chosen station after timeout happens.
      * @return true if user decides to reserve a slot at the initially chosen station.
      */
-    
+
     public abstract boolean decidesToReserveSlotAtSameStationAfterTimeout();
     
     /**
      * User decides if he'll try to make a slot reservation at a new chosen station.
      * @return true if user decides to reserve a slot at that new station and false in other case.
      */
-    
     public abstract boolean decidesToReserveSlotAtNewDecidedStation();
 
     /**
@@ -415,7 +406,6 @@ public abstract class User implements Entity {
      * after removing it from station.
      * @return the point where he wants to go after making his decision.
      */
-
     public abstract GeoPoint decidesNextPoint();
 
     /**
@@ -424,16 +414,19 @@ public abstract class User implements Entity {
      * @return true if user decides to cycle directly to a station in order to return
      * his bike and false in other case (he decides to ride it to another point before returning it).
      */
-
     public abstract boolean decidesToReturnBike(); 
 
     /**
      * When timeout happens, he decides to continue going to that chosen station or to go to another one.
      * @return true if user chooses a new station to go and false if he continues to the previously chosen one.
      */
-
     public abstract boolean decidesToDetermineOtherStationAfterTimeout();
-
+    
+    /**
+     * The user chooses the route which he'll travel to arrive at  selected destination.
+     * @param routes It's a list of possible routes to the chosen destination.
+     * @return the route which the user will follow.
+     */
     public abstract GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException;
         
 /**
@@ -442,7 +435,6 @@ public abstract class User implements Entity {
  * @return true if he decides to determine another destination station and false in
  * other case (he keeps his previously decision).
  */
-        
         public abstract boolean decidesToDetermineOtherStationAfterFailedReservation();
 
     @Override

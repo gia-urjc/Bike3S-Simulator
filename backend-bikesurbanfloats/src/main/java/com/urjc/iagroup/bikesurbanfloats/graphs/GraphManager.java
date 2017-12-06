@@ -31,5 +31,4 @@ public interface GraphManager {
 	 * @return true if there're several possible routes between 2 points or false in other case. 
 	 */
 	boolean hasAlternativesRoute() throws GraphHopperIntegrationException;
-	
 }

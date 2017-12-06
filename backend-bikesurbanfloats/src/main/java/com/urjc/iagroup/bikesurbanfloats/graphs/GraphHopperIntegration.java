@@ -95,6 +95,4 @@ public class GraphHopperIntegration implements GraphManager {
 		}
 		return rsp.hasAlternatives();
 	}
-	
-
 }
