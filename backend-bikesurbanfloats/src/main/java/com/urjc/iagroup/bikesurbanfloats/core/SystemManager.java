@@ -77,8 +77,7 @@ public class SystemManager {
     }
     
     private RecommendationSystem createRecommendationSystem() {
-    	StationComparator comparator = new StationComparator();
-    	return new RecommendationSystem(stations, graphManager, comparator);
+    	return new RecommendationSystem(stations, graphManager);
     }
 
     /**
@@ -111,6 +110,10 @@ public class SystemManager {
 	
 	public SimulationRandom getRandom() {
 		return random;
+	}
+	
+	public RecommendationSystem getRecommendationSystem() {
+		return recommendationSystem;
 	}
 
 	/**

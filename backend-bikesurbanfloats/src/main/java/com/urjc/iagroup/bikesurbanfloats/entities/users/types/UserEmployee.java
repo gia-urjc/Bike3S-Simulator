@@ -71,8 +71,8 @@ public class UserEmployee extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-        List<Station> nearestStations = new ArrayList<>();
-
+        			List<Station> nearestStations = new ArrayList<>();
+        
         for(int i = 0; i < SELECTION_STATIONS_SET; i++) {
             double minDistance = Double.MAX_VALUE;
             Station nearestStation = null;

@@ -37,7 +37,9 @@ public class UserRandom extends User {
 
     @Override
     public Station determineStationToRentBike(int instant) {
-
+    	return systemManager.getRecommendationSystem().recommendByLinearDistance(this).get(0);
+    	
+/* TODO: delete this code after debuging the method
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
         double minDistance = Double.MAX_VALUE;
         Station destination = null;
@@ -50,11 +52,14 @@ public class UserRandom extends User {
                 destination = currentStation;
             }
         }
-        return destination;
+        return destination; */
     }
 
     @Override
     public Station determineStationToReturnBike(int instant) {
+    	return systemManager.getRecommendationSystem().recommendByLinearDistance(this).get(0);
+
+/* TODO: delete this code after debuging it 
         List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
         double minDistance = Double.MAX_VALUE;
         Station destination = null;
@@ -67,7 +72,7 @@ public class UserRandom extends User {
                 destination = currentStation;
             }
         }
-        return destination;
+        return destination; */
     }
 
     @Override
