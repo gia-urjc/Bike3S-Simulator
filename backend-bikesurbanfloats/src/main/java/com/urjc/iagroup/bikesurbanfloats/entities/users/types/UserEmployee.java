@@ -6,16 +6,16 @@ import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
-import com.urjc.iagroup.bikesurbanfloats.graphs.GraphManager;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
-import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 import java.util.List;
 import java.util.ArrayList;
 
 /**
- * This class represents a employee, i.e., a user who uses the bike as a vehicle in order to arrive at work.
- * Then, this user always decides the destination station just after renting the bike in order to arrive at work as soon as possible.
+ * This class represents a employee, i.e., a user who uses the bike as a public transport 
+ * in order to arrive at work.
+ * Then, this user always decides the destination station just after renting the bike 
+ * in order to arrive at work as soon as possible.
  * This type of user always chooses the shortest routes. 
  * @author IAgroup
  *
@@ -30,15 +30,16 @@ public class UserEmployee extends User {
 	private final int SELECTION_STATIONS_SET = 3;
 	
 	/**
-	 * It is the maximum time in seconds until which the user will decide to continue walking 
-	 * or cycling towards the previously chosen station after a reservation timeout event.  
+	 * It is the time in seconds until which the user will decide to continue walking 
+	 * or cycling towards the previously chosen station without making a new reservation 
+	 * after a reservation timeout event has happened.  
 	 */
 	private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
 	
 	/**
 	 * It is the street of the company where the user works.
 	 */
-	private String companyStreet;
+	private GeoPoint companyStreet;
 
 	/**
 	 * It contains the attributes which characterizes the typical behaviour of this user type. 
@@ -93,13 +94,12 @@ public class UserEmployee extends User {
 
     @Override
      public Station determineStationToReturnBike(int instant) {
-        GeoPoint companyPosition = systemManager.getGraphManager().getCoordinatePoints(companyStreet);
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
         double minDistance = Double.MAX_VALUE;
         Station destination = null;
         for (Station currentStation: stations) {
             GeoPoint stationPosition = currentStation.getPosition();
-            double distance = companyPosition.distanceTo(stationPosition);
+            double distance = companyStreet.distanceTo(stationPosition);
             if (distance < minDistance) {
                 minDistance = distance;
                 destination = currentStation;
@@ -111,7 +111,7 @@ public class UserEmployee extends User {
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
     	int arrivalTime = timeToReach();
-     return arrivalTime <= MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : systemManager.getRandom().nextBoolean();
+     return arrivalTime < MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : systemManager.getRandom().nextBoolean();
     }
 
     public boolean decidesToReserveBikeAtNewDecidedStation() {
@@ -122,7 +122,7 @@ public class UserEmployee extends User {
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
     	int arrivalTime = timeToReach();
-    	return arrivalTime <= MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+    	return arrivalTime < MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
     }
 
     @Override
@@ -144,14 +144,14 @@ public class UserEmployee extends User {
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
-    	int percentage = systemManager.getRandom().nextInt(0, 101);
-    	return percentage <= parameters.getReservationTimeoutPercentage() ? true : false;
+    	int percentage = systemManager.getRandom().nextInt(0, 100);
+    	return percentage < parameters.getReservationTimeoutPercentage() ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        int percentage = systemManager.getRandom().nextInt(0, 101);
-        return percentage <= parameters.getFailedReservationPercentage() ? true : false;
+        int percentage = systemManager.getRandom().nextInt(0, 100);
+        return percentage < parameters.getFailedReservationPercentage() ? true : false;
     }
     
     /**

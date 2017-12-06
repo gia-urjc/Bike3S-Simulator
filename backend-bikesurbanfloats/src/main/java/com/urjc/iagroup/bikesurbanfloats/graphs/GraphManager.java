@@ -31,12 +31,4 @@ public interface GraphManager {
 	 * @return true if there're several possible routes between 2 points or false in other case. 
 	 */
 	boolean hasAlternativesRoute() throws GraphHopperIntegrationException;
-	
-	/**
-	 * It finds out the coordinate points corresponding to a street.
-	 * @param street It is the name of the street.
-	 * @return the coordinate points where the street is located.
-	 */
-	GeoPoint getCoordinatePoints(String street);
-	
 }
