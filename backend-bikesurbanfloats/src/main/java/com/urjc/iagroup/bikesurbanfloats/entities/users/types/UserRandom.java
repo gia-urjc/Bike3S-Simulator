@@ -37,49 +37,25 @@ public class UserRandom extends User {
 
     @Override
     public Station determineStationToRentBike(int instant) {
-    	return systemManager.getRecommendationSystem().recommendByLinearDistance(this).get(0);
-    	
-/* TODO: delete this code after debuging the method
-        List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-        double minDistance = Double.MAX_VALUE;
-        Station destination = null;
-        for (Station currentStation: stations) {
-            GeoPoint stationPosition = currentStation.getPosition();
-            GeoPoint userPosition = getPosition();
-            double distance = userPosition.distanceTo(stationPosition);
-            if (!userPosition.equals(stationPosition) && distance < minDistance) {
-                minDistance = distance;
-                destination = currentStation;
-            }
-        }
-        return destination; */
+    	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+    	return systemManager.getRecommendationSystem()
+    			.recommendByLinearDistance(this.getPosition(), stations).get(0);
+
     }
 
     @Override
     public Station determineStationToReturnBike(int instant) {
-    	return systemManager.getRecommendationSystem().recommendByLinearDistance(this).get(0);
-
-/* TODO: delete this code after debuging it 
-        List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
-        double minDistance = Double.MAX_VALUE;
-        Station destination = null;
-        for (Station currentStation : stations) {
-            GeoPoint stationGeoPoint = currentStation.getPosition();
-            GeoPoint userGeoPoint = getPosition();
-            double distance = stationGeoPoint.distanceTo(userGeoPoint);
-            if (!userGeoPoint.equals(stationGeoPoint) && distance < minDistance) {
-                minDistance = distance;
-                destination = currentStation;
-            }
-        }
-        return destination; */
+    	List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
+    	return systemManager.getRecommendationSystem()
+    			.recommendByLinearDistance(this.getPosition(), stations).get(0);
     }
-
+    
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
         return systemManager.getRandom().nextBoolean();
     }
-
+    
+    @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
         return systemManager.getRandom().nextBoolean();
     }

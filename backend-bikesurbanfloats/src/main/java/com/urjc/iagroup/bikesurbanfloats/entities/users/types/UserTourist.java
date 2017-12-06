@@ -73,23 +73,14 @@ public class UserTourist extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        List<Station> recommendedStations = systemManager.getRecommendationSystem()
+        		.recommendByLinearDistance(this.getPosition(), stations);
         List<Station> nearestStations = new ArrayList<>();
 
         for(int i = 0; i < SELECTION_STATIONS_SET; i++) {
-            double minDistance = Double.MAX_VALUE;
-            Station nearestStation = null;
-        	for (Station currentStation: stations) {
-            GeoPoint stationPosition = currentStation.getPosition();
-            GeoPoint userPosition = getPosition();
-            double distance = userPosition.distanceTo(stationPosition);
-            if (!userPosition.equals(stationPosition) && distance < minDistance) {
-                minDistance = distance;
-                nearestStation = currentStation;
-            }
-        	}
-        	nearestStations.add(nearestStation);
-         stations.remove(nearestStation);
+        	nearestStations.add(recommendedStations.get(i));
         }
+         
         int index = systemManager.getRandom().nextInt(0, SELECTION_STATIONS_SET - 1);
         return nearestStations.get(index);
     }
@@ -97,23 +88,14 @@ public class UserTourist extends User {
     @Override
     public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        List<Station> recommendedStations = systemManager.getRecommendationSystem()
+        		.recommendByLinearDistance(this.getPosition(), stations);
         List<Station> nearestStations = new ArrayList<>();
-
+        
         for(int i = 0; i < SELECTION_STATIONS_SET; i++) {
-            double minDistance = Double.MAX_VALUE;
-            Station nearestStation = null;
-        	for (Station currentStation: stations) {
-            GeoPoint stationPosition = currentStation.getPosition();
-            GeoPoint userPosition = getPosition();
-            double distance = userPosition.distanceTo(stationPosition);
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearestStation = currentStation;
-            }
-        	}
-        	nearestStations.add(nearestStation);
-         stations.remove(nearestStation);
+        	nearestStations.add(recommendedStations.get(i));
         }
+         
         int index = systemManager.getRandom().nextInt(0, SELECTION_STATIONS_SET - 1);
         return nearestStations.get(index);
     }

@@ -77,7 +77,7 @@ public class SystemManager {
     }
     
     private RecommendationSystem createRecommendationSystem() {
-    	return new RecommendationSystem(stations, graphManager);
+    	return new RecommendationSystem();
     }
 
     /**
@@ -160,7 +160,8 @@ public class SystemManager {
         filteredStations.removeAll(consultStationsWithSlotReservationAttempt(user, timeInstant));
         return filteredStations;
     }
-    
+
+
     public GeoPoint generateBoundingBoxRandomPoint(SimulationRandom random) {
     	return bbox.randomPoint(random);
     }
