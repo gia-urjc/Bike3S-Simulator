@@ -34,12 +34,12 @@ public class RecommendationSystem {
 	}
 
 	public List<Station> recommendByNumberOfBikes(User user) {
-		return validStations().stream().sorted(comparator.byNumberOfBikes).collect(Collectors.toList());
+		return validStations(user).stream().sorted(comparator.byNumberOfBikes).collect(Collectors.toList());
 	}
 	
 	public List<Station> recommendByNumberOfSlots(User user) {
 		List<Station> recommendedStations = validStations(user);
-		return validStations().stream().sorted(comparator.byNumberOfSlots).collect(Collectors.toList());
+		return validStations(user).stream().sorted(comparator.byNumberOfSlots).collect(Collectors.toList());
 	}
 
 public List<Station> recommendByLinearDistance() {
