@@ -69,6 +69,7 @@ public class SystemManager {
         this.graphManager = createGraphManager(simulationConfiguration);
         this.random = SimulationRandom.getGeneralInstance();
         this.bbox = simulationConfiguration.getBoundingBox();
+        this.recommendationSystem = createRecommendationSystem();	
     }
     
     private GraphHopperIntegration createGraphManager(SimulationConfiguration simulationConfiguration) throws IOException {
