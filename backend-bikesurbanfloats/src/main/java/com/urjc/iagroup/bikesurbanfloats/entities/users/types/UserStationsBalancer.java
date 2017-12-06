@@ -1,30 +1,27 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users.types;
 
+import java.util.List;
+
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
-import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
-
-import java.util.List;
+import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 /**
- * This class represents a employee, i.e., a user who uses the bike as a public transport 
- * in order to arrive at work.
- * Then, this user always decides the destination station just after renting the bike 
- * in order to arrive at work as soon as possible.
- * Moreover, he always chooses both the closest origin station to himself and the closest destination 
- * station to his work. Also, he always chooses the shortest routes to get the stations.
- * And, of course, this type of user always determines a new destination station after 
- * a reservation failed attempt and always decides to continue to the previously chosen 
- * station after a timeout event with the intention of losing as little time as possible.  
+ * This class represents a user who always follows the system recommendations about 
+ * renting a bike at the station which has more available bikes and about returning 
+ * the bike at the station which has more available slots. 
+ * This user always reserves bikes and slots at destination stations as he knows that the 
+ * system is recommending him that station because it is the station which has more available 
+ * bikes or slot there and, then, he knows he'll be able to make a reservation in order to ensure his service. 
+ * Moreover, he always chooses the shortest routes to get his destination.
+ * 
  * @author IAgroup
  *
  */
-@AssociatedType(UserType.USER_EMPLOYEE)
-public class UserEmployee extends User {
+public class UserStationsBalancer extends User {
 	
 	/**
 	 * It indicates the size of the set of stations closest to the user within which the 
@@ -40,16 +37,11 @@ public class UserEmployee extends User {
 	private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
 	
 	/**
-	 * It is the street of the company where the user works.
-	 */
-	private GeoPoint companyStreet;
-
-	/**
 	 * It contains the attributes which characterizes the typical behaviour of this user type. 
 	 */
 	private UserTypeParameters parameters; 
 	
-    public UserEmployee() {
+    public UserStationsBalancer() {
         super();
     }
     
@@ -60,12 +52,12 @@ public class UserEmployee extends User {
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return getMemory().getCounterReservationAttempts() == parameters.getMinReservationAttempts() ? true : false;
+        return false;
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == parameters.getMinRentingAttempts() ? true : false;
+        return false;
     }
     
     /**
@@ -73,28 +65,28 @@ public class UserEmployee extends User {
      */
     @Override
     public Station determineStationToRentBike(int instant) {
-        List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-        return systemManager.getRecommendationSystem()
-        		.recommendByLinearDistance(companyStreet, stations).get(0);
+    	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+    	return systemManager.getRecommendationSystem()
+    			.recommendByNumberOfBikes(this.getPosition(), stations).get(0);
     }
 
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
         return systemManager.getRecommendationSystem()
-        		.recommendByLinearDistance(companyStreet, stations).get(0);
-    }
-
-    @Override
-    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-    	int arrivalTime = timeToReach();
-     return arrivalTime < MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+        		.recommendByNumberOfSlots(this.getPosition(), stations).get(0);
     }
     
     @Override
+    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
+    	int arrivalTime = timeToReach();
+    	return arrivalTime < MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+    }
+
+    
+    @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-    	int percentage = systemManager.getRandom().nextInt(0, 100);
-    	return percentage < parameters.getBikeReservationPercentage() ? true : false;
+    	return true;
     }
 
     @Override
@@ -105,30 +97,31 @@ public class UserEmployee extends User {
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-    	int percentage = systemManager.getRandom().nextInt(0, 100);
-    	return percentage < parameters.getSlotReservationPercentage() ? true : false;
-    }
-
-    @Override
-    public GeoPoint decidesNextPoint() {
-    	// TODO: how to throw the exception
-    	return null;
-    }
-
-    @Override
-    public boolean decidesToReturnBike() {
     	return true;
     }
 
     @Override
+    public GeoPoint decidesNextPoint() {
+        return systemManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
+    }
+
+    @Override
+    public boolean decidesToReturnBike() {
+    	int percentage = systemManager.getRandom().nextInt(0, 100);
+    	return percentage < parameters.getBikeReturnPercentage() ? true : false;
+    }
+
+    @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
-    	return false;
+    	int percentage = systemManager.getRandom().nextInt(0, 100);
+    	return percentage < parameters.getReservationTimeoutPercentage() ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-    		return true;
-    	}
+    	int percentage = systemManager.getRandom().nextInt(0, 100);
+    	return percentage < parameters.getFailedReservationPercentage() ? true : false;
+    }
     
     /**
      * The user chooses the shortest route because he wants to arrive at work as fast as possible.
@@ -141,5 +134,6 @@ public class UserEmployee extends User {
         // The route in first list position is the shortest.
         return routes.get(0);
     }
+	
 
 }

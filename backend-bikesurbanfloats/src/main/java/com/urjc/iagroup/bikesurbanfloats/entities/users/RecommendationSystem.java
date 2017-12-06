@@ -1,4 +1,4 @@
-package com.urjc.iagroup.bikesurbanfloats.entities.users.recommendations;
+package com.urjc.iagroup.bikesurbanfloats.entities.users;
 
 import java.util.List;
 import java.util.Comparator;
