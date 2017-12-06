@@ -6,6 +6,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationState;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.recommendations.*;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GraphHopperIntegration;
@@ -55,7 +56,12 @@ public class SystemManager {
      * It represents the map area where simulation is taking place.
      */
     private BoundingBox bbox;
-
+    
+    /**
+     * It provides methods to recommend a user a set of destination stantions. 
+     */
+    private RecommendationSystem recommendationSystem;
+    
     public SystemManager(SimulationConfiguration simulationConfiguration) throws IOException {
         this.stations = new ArrayList<>(simulationConfiguration.getStations());
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
@@ -67,6 +73,11 @@ public class SystemManager {
     
     private GraphHopperIntegration createGraphManager(SimulationConfiguration simulationConfiguration) throws IOException {
     	return new GraphHopperIntegration(simulationConfiguration.getMap());
+    }
+    
+    private RecommendationSystem createRecommendationSystem() {
+    	StationComparator comparator = new StationComparator();
+    	return new RecommendationSystem(stations, graphManager, comparator);
     }
 
     /**
