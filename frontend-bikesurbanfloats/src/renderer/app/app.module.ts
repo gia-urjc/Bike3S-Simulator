@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule }  from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { BrowserModule }  from '@angular/platform-browser';
 
-import { AppComponent } from './app.component';
-import { ElectronAjax } from '../ajax/ElectronAjax';
-
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgFontAwesomeModule } from '../ng-font-awesome/ngfa.module';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgFontAwesomeModule } from 'ng-font-awesome';
+
+import { ElectronAjax } from '../ajax/ElectronAjax';
+import { AppComponent } from './app.component';
 
 @NgModule({
     imports: [
@@ -26,6 +26,4 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
         useClass: ElectronAjax
     }]
 })
-export class AppModule {
-
-}
+export class AppModule {}

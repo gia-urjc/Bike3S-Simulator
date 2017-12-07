@@ -14,8 +14,9 @@ const projectRoot = () => process.cwd();
 projectRoot.backend = () => path.join(projectRoot(), 'backend-bikesurbanfloats');
 projectRoot.backend.mavenTarget = () => path.join(projectRoot.backend(), 'target');
 projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfloats');
-projectRoot.frontend.main = () => path.join(projectRoot.frontend(), 'src/main');
-projectRoot.frontend.renderer = () => path.join(projectRoot.frontend(), 'src/renderer');
+projectRoot.frontend.src = () => path.join(projectRoot.frontend(), 'src');
+projectRoot.frontend.main = () => path.join(projectRoot.frontend.src(), 'main');
+projectRoot.frontend.renderer = () => path.join(projectRoot.frontend.src(), 'renderer');
 projectRoot.schema = () => path.join(projectRoot(), 'schema');
 projectRoot.jsonschemaValidator = () => path.join(projectRoot(), 'jsonschema-validator/src');
 projectRoot.build = () => path.join(projectRoot(), 'build');
@@ -109,7 +110,7 @@ Sparky.task('build:jsonschema-validator', () => {
 
 Sparky.task('build:frontend:main', () => {
     const fuse = FuseBox.init({
-        homeDir: projectRoot.frontend.main(),
+        homeDir: projectRoot.frontend.src(),
         output: path.join(projectRoot.build.frontend(), '$name.js'),
         target: 'server',
         experimentalFeatures: true,
@@ -119,7 +120,7 @@ Sparky.task('build:frontend:main', () => {
         ]
     });
 
-    const main = fuse.bundle('main').instructions('> [main.ts]');
+    const main = fuse.bundle('main').instructions('> [main/main.ts]');
 
     if (!production) {
         main.watch();
@@ -137,7 +138,7 @@ Sparky.task('build:frontend:main', () => {
 
 Sparky.task('build:frontend:renderer', () => {
     const fuse = FuseBox.init({
-        homeDir: projectRoot.frontend.renderer(),
+        homeDir: projectRoot.frontend.src(),
         output: path.join(projectRoot.build.frontend(), '$name.js'),
         sourceMaps: {
             project: !production,
@@ -158,8 +159,8 @@ Sparky.task('build:frontend:renderer', () => {
         ]
     });
 
-    const vendor = fuse.bundle('vendor').instructions('~ renderer.ts');
-    const renderer = fuse.bundle('renderer').instructions('!> [renderer.ts]');
+    const vendor = fuse.bundle('vendor').instructions('~ renderer/renderer.ts');
+    const renderer = fuse.bundle('renderer').instructions('!> [renderer/renderer.ts]');
 
     if (!production) {
         fuse.dev({ root: false }, (server) => {
