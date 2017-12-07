@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AjaxProtocol, AjaxHistory } from './AjaxProtocol';
+import { JsonValue, PlainObject } from '../../shared/util';
+import { AjaxProtocol, HistoryAjax, SettingsAjax } from './AjaxProtocol';
 
 // https://github.com/electron/electron/issues/7300#issuecomment-274269710
 const { ipcRenderer, Event } = (window as any).require('electron');
@@ -18,7 +19,7 @@ function readIpc(channel: string, ...requestArgs: Array<any>): Promise<any> {
     });
 }
 
-class ElectronHistory implements AjaxHistory {
+class ElectronHistory implements HistoryAjax {
 
     private static readonly IS_READY = new Error(`HistoryReady has already been initialized!`);
     private static readonly NOT_READY = new Error(`HistoryReader hasn't been initialized yet!`);
@@ -37,7 +38,7 @@ class ElectronHistory implements AjaxHistory {
         this.ready = false;
     }
 
-    async readEntities(): Promise<object> {
+    async readEntities(): Promise<PlainObject> {
         if (!this.ready) throw ElectronHistory.NOT_READY;
         return await readIpc('history-entities');
     }
@@ -47,23 +48,35 @@ class ElectronHistory implements AjaxHistory {
         return await readIpc('history-nchanges');
     }
 
-    async previousChangeFile(): Promise<object> {
+    async previousChangeFile(): Promise<PlainObject> {
         if (!this.ready) throw ElectronHistory.NOT_READY;
         return await readIpc('history-previous');
     }
 
-    async nextChangeFile(): Promise<object> {
+    async nextChangeFile(): Promise<PlainObject> {
         if (!this.ready) throw ElectronHistory.NOT_READY;
         return await readIpc('history-next');
+    }
+}
+
+class ElectronSettings implements SettingsAjax {
+    async get(property: string): Promise<any> {
+        return await readIpc('settings-get', property);
+    }
+
+    async set(property: string, value: JsonValue): Promise<void> {
+        await readIpc('settings-set', property, value);
     }
 }
 
 @Injectable()
 export class ElectronAjax implements AjaxProtocol {
 
-    history: AjaxHistory;
+    history: HistoryAjax;
+    settings: SettingsAjax;
 
     constructor() {
         this.history = new ElectronHistory();
+        this.settings = new ElectronSettings();
     }
 }

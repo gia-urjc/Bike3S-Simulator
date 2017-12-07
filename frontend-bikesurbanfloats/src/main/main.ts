@@ -1,13 +1,11 @@
+import { app, BrowserWindow, shell } from 'electron';
 import * as path from 'path';
 import { format as urlFormat } from 'url';
-import { app, BrowserWindow, shell, ipcMain, Event } from 'electron';
+import { Settings } from './settings';
 import { HistoryReader } from './util';
-import { TestController } from './controllers/TestController';
 
 namespace Main {
     let window: Electron.BrowserWindow | null;
-
-    let testService: TestController;
 
     function createWindow() {
         window = new BrowserWindow({ width: 800, height: 600 });
@@ -31,7 +29,11 @@ namespace Main {
     }
 
     export function init() {
-        app.on('ready', createWindow);
+        app.on('ready', async () => {
+            HistoryReader.enableIpc();
+            Settings.enableIpc();
+            createWindow();
+        });
 
         app.on('window-all-closed', () => {
             if (process.platform !== 'darwin') app.quit();
@@ -41,8 +43,6 @@ namespace Main {
             if (window === null) createWindow();
         });
 
-        HistoryReader.enableIpc();
-        testService = new TestController();
     }
 }
 

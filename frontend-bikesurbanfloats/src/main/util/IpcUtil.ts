@@ -1,16 +1,16 @@
 import { Event, ipcMain } from 'electron';
 
-type SuccessCallback = (data?: any) => Promise<any>;
+type SuccessCallback = (...data: Array<any>) => Promise<any>;
 type ErrorCallback = (error?: Error) => void;
 
 export default class IpcUtil {
 
     static openChannel(channel: string, onSuccess: SuccessCallback, onError?: ErrorCallback) {
-        ipcMain.on(channel, async (event: Event, data?: any) => {
+        ipcMain.on(channel, async (event: Event, ...data: Array<any>) => {
             try {
                 event.sender.send(channel, {
                     status: 200,
-                    data: await onSuccess(data)
+                    data: await onSuccess(...data)
                 });
             } catch (error) {
                 event.sender.send(channel, {

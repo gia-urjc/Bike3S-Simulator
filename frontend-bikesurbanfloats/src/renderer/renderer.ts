@@ -2,8 +2,10 @@ import 'core-js/es6';
 import 'core-js/es7/reflect';
 import 'zone.js/dist/zone'; // if any issues arise use zone-mix instead
 
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import 'leaflet/dist/leaflet.css';
+
 import { enableProdMode } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 
