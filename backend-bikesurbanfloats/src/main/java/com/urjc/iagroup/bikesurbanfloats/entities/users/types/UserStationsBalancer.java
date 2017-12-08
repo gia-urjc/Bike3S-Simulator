@@ -3,7 +3,9 @@ package com.urjc.iagroup.bikesurbanfloats.entities.users.types;
 import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
@@ -20,6 +22,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
  * 
  * @author IAgroup
  */
+@AssociatedType(UserType.USER_STATIONS_BALANCER)
 public class UserStationsBalancer extends User {
 	
 	/**
@@ -36,9 +39,27 @@ public class UserStationsBalancer extends User {
 	private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
 	
 	/**
-	 * It contains the attributes which characterizes the typical behaviour of this user type. 
+	 * It contains the minum number of times that a fact must occur in order to decide to leave the system.  
 	 */
-	private UserTypeParameters parameters; 
+	private MinParameters minParameters;
+	
+	/**
+	 * It determines the rate with which the user will decide to go directly to a station 
+	 * in order to return the bike he has just rented.  
+	 */
+	private int bikeReturnPercentage;
+	
+	/**
+	 * It determines the rate with which the user will choose a new destination station 
+	 * after a  timeout event happens.
+	 */
+	private int reservationTimeoutPercentage;
+	
+	/**
+	 * It determines the rate with which the user will choose a new destination station
+	 * after he hasn't been able to make a reservation. 
+	 */
+	private int failedReservationPercentage;
 	
     public UserStationsBalancer() {
         super();
@@ -46,17 +67,17 @@ public class UserStationsBalancer extends User {
     
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return getMemory().getCounterReservationTimeouts() == parameters.getMinReservationTimeouts() ? true : false;
+        return getMemory().getCounterReservationTimeouts() == minParameters.getMinReservationTimeouts() ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return false;
+    	return getMemory().getCounterReservationAttempts() == minParameters.getMinReservationAttempts() ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return false;
+    	return getMemory().getCounterRentingAttempts() == minParameters.getMinRentingAttempts() ? true : false;
     }
     
     @Override
@@ -104,19 +125,19 @@ public class UserStationsBalancer extends User {
     @Override
     public boolean decidesToReturnBike() {
     	int percentage = systemManager.getRandom().nextInt(0, 100);
-    	return percentage < parameters.getBikeReturnPercentage() ? true : false;
+    	return percentage < bikeReturnPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
     	int percentage = systemManager.getRandom().nextInt(0, 100);
-    	return percentage < parameters.getReservationTimeoutPercentage() ? true : false;
+    	return percentage < reservationTimeoutPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
     	int percentage = systemManager.getRandom().nextInt(0, 100);
-    	return percentage < parameters.getFailedReservationPercentage() ? true : false;
+    	return percentage < failedReservationPercentage ? true : false;
     }
     
     /**

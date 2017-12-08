@@ -1,6 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users.types;
 
-public class UserTypeParameters {
+public class MinParameters {
 	
 	/**
 	 * It is the number of times that the user musts try to make a bike reservation before 
@@ -60,25 +60,4 @@ public class UserTypeParameters {
 		return minRentingAttempts;
 	}
 
-	public int getBikeReservationPercentage() {
-		return bikeReservationPercentage;
-	}
-
-	public int getSlotReservationPercentage() {
-		return slotReservationPercentage;
-	}
-
-	public int getBikeReturnPercentage() {
-		return bikeReturnPercentage;
-	}
-
-	public int getReservationTimeoutPercentage() {
-		return reservationTimeoutPercentage;
-	}
-
-	public int getFailedReservationPercentage() {
-		return failedReservationPercentage;
-	}
-	
-	
 }

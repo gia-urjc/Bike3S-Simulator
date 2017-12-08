@@ -17,12 +17,13 @@ import java.util.List;
  * in order to arrive at work as soon as possible.
  * Moreover, he always chooses both the closest origin station to himself and the closest destination 
  * station to his work. Also, he always chooses the shortest routes to get the stations.
- * And, of course, this type of user always determines a new destination station after 
+ * Also, this type of user always determines a new destination station after 
  * a reservation failed attempt and always decides to continue to the previously chosen 
- * station after a timeout event with the intention of losing as little time as possible.  
+ * station after a timeout event with the intention of losing as little time as possible.
+ * And, of course, he never leaves the system as he needs to ride on bike in order to arrive at work. 
+ *   
  * @author IAgroup
- *
- */
+  */
 @AssociatedType(UserType.USER_EMPLOYEE)
 public class UserEmployee extends User {
 	
@@ -43,11 +44,16 @@ public class UserEmployee extends User {
 	 * It is the street of the company where the user works.
 	 */
 	private GeoPoint companyStreet;
-
+	
 	/**
-	 * It contains the attributes which characterizes the typical behaviour of this user type. 
+	 * It determines the rate with which the user will reserve a bike. 
 	 */
-	private UserTypeParameters parameters; 
+	private int bikeReservationPercentage;
+	
+	/**
+	 * It determines the rate with which the user will reserve a slot.
+	 */
+	private int slotReservationPercentage;
 	
     public UserEmployee() {
         super();
@@ -55,17 +61,17 @@ public class UserEmployee extends User {
     
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return getMemory().getCounterReservationTimeouts() == parameters.getMinReservationTimeouts() ? true : false;
+        return false;
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return getMemory().getCounterReservationAttempts() == parameters.getMinReservationAttempts() ? true : false;
+        return false;
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == parameters.getMinRentingAttempts() ? true : false;
+        return false;
     }
     
     /**
@@ -94,7 +100,7 @@ public class UserEmployee extends User {
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
     	int percentage = systemManager.getRandom().nextInt(0, 100);
-    	return percentage < parameters.getBikeReservationPercentage() ? true : false;
+    	return percentage < bikeReservationPercentage ? true : false;
     }
 
     @Override
@@ -106,7 +112,7 @@ public class UserEmployee extends User {
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
     	int percentage = systemManager.getRandom().nextInt(0, 100);
-    	return percentage < parameters.getSlotReservationPercentage() ? true : false;
+    	return percentage < slotReservationPercentage ? true : false;
     }
 
     @Override

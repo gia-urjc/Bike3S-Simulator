@@ -44,27 +44,49 @@ public class UserTourist extends User {
 	private GeoPoint touristDestination;
 	
 	/**
-	 * It contains the attributes which characterizes the typical behaviour of this user type. 
+	 * It contains the minum number of times that a fact must occur in order to decide to leave the system.  
 	 */
-	private UserTypeParameters parameters; 
+	private MinParameters minParameters;
 	
+	/**
+	 * It determines the rate with which the user will reserve a bike. 
+	 */
+	private int bikeReservationPercentage;
+	
+	/**
+	 * It determines the rate with which the user will reserve a slot.
+	 */
+	private int slotReservationPercentage;
+	
+	/**
+	 * It determines the rate with which the user will choose a new destination station 
+	 * after a  timeout event happens.
+	 */
+	private int reservationTimeoutPercentage;
+	
+	/**
+	 * It determines the rate with which the user will choose a new destination station
+	 * after he hasn't been able to make a reservation. 
+	 */
+	private int failedReservationPercentage;
+
     public UserTourist() {
         super();
     }
     
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return getMemory().getCounterReservationTimeouts() == parameters.getMinReservationTimeouts() ? true : false;
+        return getMemory().getCounterReservationTimeouts() == minParameters.getMinReservationTimeouts() ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return getMemory().getCounterReservationAttempts() == parameters.getMinReservationAttempts() ? true : false;
+        return getMemory().getCounterReservationAttempts() == minParameters.getMinReservationAttempts() ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == parameters.getMinRentingAttempts() ? true : false;
+        return getMemory().getCounterRentingAttempts() == minParameters.getMinRentingAttempts() ? true : false;
     }
     
     /**
@@ -105,10 +127,11 @@ public class UserTourist extends User {
     	int arrivalTime = timeToReach();
      return arrivalTime < MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : systemManager.getRandom().nextBoolean();
     }
-
+    
+    @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
     	int percentage = systemManager.getRandom().nextInt(0, 100);
-    	return percentage < parameters.getBikeReservationPercentage() ? true : false;
+    	return percentage < bikeReservationPercentage ? true : false;
     }
 
     @Override
@@ -120,7 +143,7 @@ public class UserTourist extends User {
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
     	int percentage = systemManager.getRandom().nextInt(0, 100);
-    	return percentage < parameters.getSlotReservationPercentage() ? true : false;
+    	return percentage < slotReservationPercentage ? true : false;
     }
 
     @Override
@@ -136,13 +159,13 @@ public class UserTourist extends User {
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
     	int percentage = systemManager.getRandom().nextInt(0, 100);
-    	return percentage < parameters.getReservationTimeoutPercentage() ? true : false;
+    	return percentage < reservationTimeoutPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
         int percentage = systemManager.getRandom().nextInt(0, 100);
-        return percentage < parameters.getFailedReservationPercentage() ? true : false;
+        return percentage < failedReservationPercentage ? true : false;
     }
     
     /**

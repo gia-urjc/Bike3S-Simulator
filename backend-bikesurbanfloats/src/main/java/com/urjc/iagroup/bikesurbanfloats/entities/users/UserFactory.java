@@ -22,6 +22,11 @@ public class UserFactory {
             	return new UserTourist();
         case USER_EMPLOYEE:
         	return new UserEmployee();
+        case USER_STATIONS_BALANCER:
+        	return new UserStationsBalancer();
+        case USER_WEIGHER: 
+        	return new UserWeigher();
+        	
         }
         throw new IllegalArgumentException("The type" + type + "doesn't exists");
     }
