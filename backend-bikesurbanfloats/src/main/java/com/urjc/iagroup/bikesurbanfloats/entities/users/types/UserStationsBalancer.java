@@ -10,16 +10,15 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 /**
- * This class represents a user who always follows the system recommendations about 
- * renting a bike at the station which has more available bikes and about returning 
+ * This class represents a user who always follows the first system recommendations i. e., that 
+ * which consist of renting a bike at the station which has more available bikes and returning 
  * the bike at the station which has more available slots. 
- * This user always reserves bikes and slots at destination stations as he knows that the 
+ * This user never reserves neither bikes nor slots at destination stations as he knows that the 
  * system is recommending him that station because it is the station which has more available 
- * bikes or slot there and, then, he knows he'll be able to make a reservation in order to ensure his service. 
- * Moreover, he always chooses the shortest routes to get his destination.
+ * bikes or slots, so he knows that, almost certainly, he'll be able to rent or to return a bike. 
+  * Moreover, he always chooses the shortest routes to get his destination.
  * 
  * @author IAgroup
- *
  */
 public class UserStationsBalancer extends User {
 	
@@ -60,9 +59,6 @@ public class UserStationsBalancer extends User {
         return false;
     }
     
-    /**
-     * It randomly chooses a station among the pre-established number of nearest stations.
-     */
     @Override
     public Station determineStationToRentBike(int instant) {
     	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
@@ -86,7 +82,7 @@ public class UserStationsBalancer extends User {
     
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-    	return true;
+    	return false;
     }
 
     @Override
@@ -97,7 +93,7 @@ public class UserStationsBalancer extends User {
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-    	return true;
+    	return false;
     }
 
     @Override
