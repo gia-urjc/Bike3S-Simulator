@@ -8,9 +8,35 @@ import java.util.stream.Collectors;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
+
+/** 
+ * This class is a system which recommends the user the stations that, with respect to a 
+ * geographical point, are less than a certain preset distance.
+ * The geographical point may be the user position, if he wants to rent or to return a bike 
+ * in the closest station to himself, or a place he is going to reach, if he wants to return 
+ * the bike in the closest station to that place.    
+ * Then, this system gives the user a list of stations ordered ascending or descending (depending 
+ *    
+ * @author IAgroup
+ *
+ */
 public class RecommendationSystem {
+	
+	/**
+	 * It is the maximum distance in meters between the recommended stations and the indicated 
+	 * geographical point.
+	 */
 	private final int MAX_DISTANCE = 1500;
 	
+	/**
+	 * It verifies which stations are less than MAX_DISTANCE meters from the indicated 
+	 * geographical point. 
+	 * @param point It's the user current position or the geographical coordinates of a 
+	 * place the user wants to reach.
+	 * @param stations It's the initial list of stations within it has to filter those 
+	 * that don't exceed the preset maximum distance.      
+	 * @return an unordered list of stations from which the system will prepare its recommendations.
+	 */
 	private List<Station> validStations(GeoPoint point, List<Station> stations) {
 		return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= MAX_DISTANCE)
 				.collect(Collectors.toList());
