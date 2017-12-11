@@ -80,13 +80,23 @@ public class UserEmployee extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        
+        if (!stations.isEmpty()) {
+        	stations = new ArrayList<>(systemManager.consultStations());
+        }
+        
         return systemManager.getRecommendationSystem()
-        		.recommendByLinearDistance(companyStreet, stations).get(0);
+        		.recommendByLinearDistance(this.getPosition(), stations).get(0);
     }
 
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        
+        if (!stations.isEmpty()) {
+        	stations = new ArrayList<>(systemManager.consultStations());
+        }
+        
         return systemManager.getRecommendationSystem()
         		.recommendByLinearDistance(companyStreet, stations).get(0);
     }

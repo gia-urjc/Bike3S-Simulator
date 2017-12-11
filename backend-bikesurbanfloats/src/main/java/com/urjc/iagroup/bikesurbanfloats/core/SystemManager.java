@@ -69,17 +69,13 @@ public class SystemManager {
         this.graphManager = createGraphManager(simulationConfiguration);
         this.random = SimulationRandom.getGeneralInstance();
         this.bbox = simulationConfiguration.getBoundingBox();
-        this.recommendationSystem = createRecommendationSystem();	
+        this.recommendationSystem = new RecommendationSystem();;	
     }
     
     private GraphHopperIntegration createGraphManager(SimulationConfiguration simulationConfiguration) throws IOException {
     	return new GraphHopperIntegration(simulationConfiguration.getMap());
     }
     
-    private RecommendationSystem createRecommendationSystem() {
-    	return new RecommendationSystem();
-    }
-
     /**
      * It registers a user bike or slot reservation, in any state, in system reservation information.
      * @param reservation: it is the reservation which we want to save.

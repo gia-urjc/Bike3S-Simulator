@@ -86,7 +86,7 @@ public class UserWeigher extends User {
     public Station determineStationToRentBike(int instant) {
     	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
     	return systemManager.getRecommendationSystem()
-    			.recommendByProportionBikesDistance(this.getPosition(), stations).get(0);
+    			.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations).get(0);
     }
 
     @Override
