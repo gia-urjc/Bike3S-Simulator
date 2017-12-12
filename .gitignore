@@ -1,9 +1,11 @@
-/.idea/
-**/*.iml
-**/.project
-**/.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.vscode/
+.settings/
+node_modules/
 /dist/
 /build/
 /.fusebox/
 /.schema/
-/node_modules/

@@ -1,4 +1,4 @@
-import SettingsDefaults from './defaults';
+import defaultSettings from './defaults';
 
 interface PathCall {
     (): string,
@@ -14,15 +14,15 @@ function settingsPath() {
         const path = parts.join('.');
         parts = [];
         return path;
-    }, SettingsDefaults as SettingsPath<typeof SettingsDefaults>), {
+    }, defaultSettings as SettingsPath<typeof defaultSettings>), {
         get(_, key, proxy) {
             parts.push(key);
             return proxy;
         }
-    })
+    });
 }
 
 export {
-    SettingsDefaults,
+    defaultSettings,
     settingsPath,
 }
