@@ -2,7 +2,7 @@ import * as AJV from 'ajv';
 import * as fs from 'fs-extra';
 import * as paths from 'path';
 
-import { app, ipcMain } from 'electron';
+import { app } from 'electron';
 import { without } from 'lodash';
 
 import { PlainObject } from '../../shared/util';

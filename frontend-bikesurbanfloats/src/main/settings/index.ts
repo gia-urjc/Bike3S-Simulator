@@ -2,7 +2,7 @@ import { app } from 'electron';
 import { outputJson, readJson } from 'fs-extra';
 import { isEqual } from 'lodash';
 import * as osPath from 'path';
-import { SettingsDefaults } from '../../shared/settings';
+import { defaultSettings } from '../../shared/settings';
 import { JsonObject, JsonValue, Tree } from '../../shared/util';
 import IpcUtil from '../util/IpcUtil';
 
@@ -15,7 +15,7 @@ export namespace Settings {
         try {
             data = await readJson(file);
         } catch {
-            data = SettingsDefaults;
+            data = defaultSettings;
         }
     }
 
