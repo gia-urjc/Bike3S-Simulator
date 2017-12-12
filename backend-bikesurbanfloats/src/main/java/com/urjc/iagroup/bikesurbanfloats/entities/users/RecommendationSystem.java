@@ -10,7 +10,6 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GraphManager;
 
-
 /** 
  * This class is a system which recommends the user the stations that, with respect to a 
  * geographical point, are less than a certain preset distance.
@@ -66,8 +65,16 @@ public class RecommendationSystem {
 		List<Station> validStations = new ArrayList<>();
 		
 		for(Station station: stations) {
+			List<GeoRoute> routes;
+			
+			try {
 			graph.calculateRoutes(station.getPosition(), point);
-			List<GeoRoute> routes = graph.getAllRoutes();
+			routes = graph.getAllRoutes();
+			}
+			catch(Exception e) {
+				continue;
+			}
+			
 			List<GeoRoute> validRoutes =	routes.stream().filter(route -> route.getTotalDistance() <= MAX_DISTANCE)
 					.collect(Collectors.toList());
 			

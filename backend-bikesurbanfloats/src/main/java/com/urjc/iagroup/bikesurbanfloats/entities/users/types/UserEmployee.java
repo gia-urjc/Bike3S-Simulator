@@ -56,23 +56,28 @@ public class UserEmployee extends User {
 	 */
 	private int slotReservationPercentage;
 	
+	/**
+	 * It contains the minum number of times that a fact must occur in order to decide to leave the system.
+	 */
+	private MinParameters minParameters;
+	
     public UserEmployee() {
         super();
     }
     
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return false;
+        return getMemory().getCounterReservationTimeouts() == minParameters.getMinReservationTimeouts() ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return false;
+    	return getMemory().getCounterReservationAttempts() == minParameters.getMinReservationAttempts() ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return false;
+    	return getMemory().getCounterRentingAttempts() == minParameters.getMinRentingAttempts() ? true : false;
     }
     
     /**

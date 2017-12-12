@@ -8,7 +8,7 @@ package com.urjc.iagroup.bikesurbanfloats.entities.users.types;
  *
  */
 public class MinParameters {
-	
+// TODO: evaluate if it is better to randomly set these values for users within a range.	
 	/**
 	 * It is the number of times that the user musts try to make a bike reservation before 
 	 * deciding to leave the system.  
