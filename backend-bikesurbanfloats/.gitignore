@@ -1,7 +1,4 @@
 /target/
-/.settings/
-.project
-.classpath
 /graphhopper_files/
 /logs/
 /history/
