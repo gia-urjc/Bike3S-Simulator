@@ -9,6 +9,7 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This class represents a employee, i.e., a user who uses the bike as a public transport 
@@ -81,7 +82,7 @@ public class UserEmployee extends User {
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
         
-        if (!stations.isEmpty()) {
+        if (stations.isEmpty()) {
         	stations = new ArrayList<>(systemManager.consultStations());
         }
         
@@ -93,7 +94,7 @@ public class UserEmployee extends User {
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
         
-        if (!stations.isEmpty()) {
+        if (stations.isEmpty()) {
         	stations = new ArrayList<>(systemManager.consultStations());
         }
         

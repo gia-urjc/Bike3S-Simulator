@@ -29,6 +29,7 @@ export default class HistoryReader {
 
     static async create(path: string): Promise<HistoryReader> {
         let reader = new HistoryReader(path);
+        // aq: without
         reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities.json');
         return reader;
     }

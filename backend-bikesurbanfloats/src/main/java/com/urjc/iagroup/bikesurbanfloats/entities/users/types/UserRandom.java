@@ -10,6 +10,8 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 import java.util.List;
+import java.util.ArrayList;
+
 // TODO: add lost documentation
 @AssociatedType(UserType.USER_RANDOM)
 public class UserRandom extends User {
@@ -38,6 +40,11 @@ public class UserRandom extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
     	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+    	
+     if (stations.isEmpty()) {
+     	stations = new ArrayList<>(systemManager.consultStations());
+     }
+
     	return systemManager.getRecommendationSystem()
     			.recommendByLinearDistance(this.getPosition(), stations).get(0);
 
@@ -46,6 +53,11 @@ public class UserRandom extends User {
     @Override
     public Station determineStationToReturnBike(int instant) {
     	List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
+    	
+     if (stations.isEmpty()) {
+     	stations = new ArrayList<>(systemManager.consultStations());
+     }
+
     	return systemManager.getRecommendationSystem()
     			.recommendByLinearDistance(this.getPosition(), stations).get(0);
     }

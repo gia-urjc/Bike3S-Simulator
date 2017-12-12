@@ -25,7 +25,7 @@ public class UserFactory {
         case USER_STATIONS_BALANCER:
         	return new UserStationsBalancer();
         case USER_WEIGHER: 
-        	return new UserWeigher();
+        	return new UserReasonable();
         	
         }
         throw new IllegalArgumentException("The type" + type + "doesn't exists");

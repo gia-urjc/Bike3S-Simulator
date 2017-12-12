@@ -1,6 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users.types;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
@@ -24,7 +25,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
  *
  */
 @AssociatedType(UserType.USER_WEIGHER)
-public class UserWeigher extends User {
+public class UserReasonable extends User {
 	
 	/**
 	 * It indicates the size of the set of stations closest to the user within which the 
@@ -63,7 +64,7 @@ public class UserWeigher extends User {
 	private int failedReservationPercentage;
 
 	
-    public UserWeigher() {
+    public UserReasonable() {
         super();
     }
     
@@ -85,6 +86,11 @@ public class UserWeigher extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
     	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+    	
+     if (stations.isEmpty()) {
+     	stations = new ArrayList<>(systemManager.consultStations());
+     }
+
     	return systemManager.getRecommendationSystem()
     			.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations).get(0);
     }
@@ -92,8 +98,13 @@ public class UserWeigher extends User {
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        
+        if (stations.isEmpty()) {
+        	stations = new ArrayList<>(systemManager.consultStations());
+        }
+
         return systemManager.getRecommendationSystem()
-        		.recommendByProportionSlotsDistance(this.getPosition(), stations).get(0);
+        		.recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations).get(0);
     }
     
     @Override

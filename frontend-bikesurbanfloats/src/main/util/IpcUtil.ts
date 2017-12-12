@@ -1,5 +1,6 @@
 import { Event, ipcMain } from 'electron';
 
+// aq: ...
 type SuccessCallback = (...data: Array<any>) => Promise<any>;
 type ErrorCallback = (error?: Error) => void;
 

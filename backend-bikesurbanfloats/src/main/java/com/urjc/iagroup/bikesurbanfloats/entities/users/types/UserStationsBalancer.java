@@ -1,6 +1,7 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users.types;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
@@ -83,6 +84,11 @@ public class UserStationsBalancer extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
     	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+    	
+     if (stations.isEmpty()) {
+     	stations = new ArrayList<>(systemManager.consultStations());
+     }
+
     	return systemManager.getRecommendationSystem()
     			.recommendByNumberOfBikes(this.getPosition(), stations).get(0);
     }
@@ -90,6 +96,11 @@ public class UserStationsBalancer extends User {
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        
+        if (stations.isEmpty()) {
+        	stations = new ArrayList<>(systemManager.consultStations());
+        }
+
         return systemManager.getRecommendationSystem()
         		.recommendByNumberOfSlots(this.getPosition(), stations).get(0);
     }
