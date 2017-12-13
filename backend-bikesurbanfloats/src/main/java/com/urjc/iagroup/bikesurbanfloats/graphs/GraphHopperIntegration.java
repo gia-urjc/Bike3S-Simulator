@@ -49,6 +49,7 @@ public class GraphHopperIntegration implements GraphManager {
     	return route;
 	}
 	
+	@Override
 	public void calculateRoutes(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperIntegrationException  {
 		GHRequest req = new GHRequest(
 				startPosition.getLatitude(), startPosition.getLongitude(),
@@ -94,5 +95,11 @@ public class GraphHopperIntegration implements GraphManager {
 			throw new GraphHopperIntegrationException("Route is not calculated");
 		}
 		return rsp.hasAlternatives();
+	}
+	
+	@Override
+	public List<GeoRoute> obtainRoutesBetween(GeoPoint point1, GeoPoint point2) throws GeoRouteCreationException, GraphHopperIntegrationException {
+		calculateRoutes(point1, point2);
+		return getAllRoutes();
 	}
 }

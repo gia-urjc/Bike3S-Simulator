@@ -305,14 +305,12 @@ public abstract class User implements Entity {
     	}
     }
 
-    public List<GeoRoute> calculateRouteStation(Station station) throws GeoRouteCreationException, GraphHopperIntegrationException {
-    	this.systemManager.getGraphManager().calculateRoutes(position, station.getPosition());
-		return this.systemManager.getGraphManager().getAllRoutes();
+    public List<GeoRoute> calculateRoutesToStation(GeoPoint stationPosition) throws GeoRouteCreationException, GraphHopperIntegrationException {
+    	return this.systemManager.getGraphManager().obtainRoutesBetween(this.getPosition(), stationPosition);
     }
 
-    public List<GeoRoute> calculateRouteByPosition(GeoPoint finalPosition) throws GeoRouteCreationException, GraphHopperIntegrationException{
-    	this.systemManager.getGraphManager().calculateRoutes(position, finalPosition);
-    	return this.systemManager.getGraphManager().getAllRoutes();
+    public List<GeoRoute> calculateRoutesToDestinationPlace(GeoPoint point) throws GeoRouteCreationException, GraphHopperIntegrationException{
+    	return this.systemManager.getGraphManager().obtainRoutesBetween(this.getPosition(), point);
     }
 
     public GeoRoute reachedRouteUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {

@@ -28,12 +28,6 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 public class UserReasonable extends User {
 	
 	/**
-	 * It indicates the size of the set of stations closest to the user within which the 
-	 * destination will be chossen randomly.  
-	 */
-	private final int SELECTION_STATIONS_SET = 3;
-	
-	/**
 	 * It is the time in seconds until which the user will decide to continue walking 
 	 * or cycling towards the previously chosen station without making a new reservation 
 	 * after a reservation timeout event has happened.  
@@ -86,7 +80,7 @@ public class UserReasonable extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
     	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-    	
+    // TODO: is it neccessary or is there other way?	
      if (stations.isEmpty()) {
      	stations = new ArrayList<>(systemManager.consultStations());
      }

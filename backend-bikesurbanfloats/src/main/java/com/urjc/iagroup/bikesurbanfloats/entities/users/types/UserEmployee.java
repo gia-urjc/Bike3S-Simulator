@@ -29,12 +29,6 @@ import java.util.ArrayList;
 public class UserEmployee extends User {
 	
 	/**
-	 * It indicates the size of the set of stations closest to the user within which the 
-	 * destination will be chossen randomly.  
-	 */
-	private final int SELECTION_STATIONS_SET = 3;
-	
-	/**
 	 * It is the time in seconds until which the user will decide to continue walking 
 	 * or cycling towards the previously chosen station without making a new reservation 
 	 * after a reservation timeout event has happened.  

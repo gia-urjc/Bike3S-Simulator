@@ -1,31 +1,28 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users.types;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
-import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
-import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
-
 /**
- * This class represents a user who always follows the first system recommendations i. e., that 
- * which consist of renting a bike at the station which has more available bikes and returning 
- * the bike at the station which has more available slots. 
- * This user never reserves neither bikes nor slots at destination stations as he knows that the 
- * system is recommending him that station because it is the station which has more available 
- * bikes or slots, so he knows that, almost certainly, he'll be able to rent or to return a bike. 
-  * Moreover, he always chooses the shortest routes to get his destination.
+ * This class represents a user whose behaviour is the same of UserReasonable with the 
+ * exception that this user doesn't accept recommended stations which are farer that a 
+ * certain distance. 
+ * Then, if there are no stations to rent a bike which are nearer than the specified 
+ * distance, he'll leave the system.
+ * If there aren't any stations to return the bike nearer than the restrictive distance,
+ * the user will go to the closest station.  
  * 
  * @author IAgroup
+ *
  */
-@AssociatedType(UserType.USER_STATIONS_BALANCER)
-public class UserStationsBalancer extends User {
-
+public class UserDistanceRestriction extends User {
+	
 	/**
 	 * It is the time in seconds until which the user will decide to continue walking 
 	 * or cycling towards the previously chosen station without making a new reservation 
@@ -56,7 +53,13 @@ public class UserStationsBalancer extends User {
 	 */
 	private int failedReservationPercentage;
 	
-    public UserStationsBalancer() {
+	/**
+	 * It is a distance restriction: this user dosn't go to destination stations which are 
+	 * farer than this distance.  
+	 */
+	private double maxDistance;  
+
+    public UserDistanceRestriction() {
         super();
     }
     
@@ -67,12 +70,12 @@ public class UserStationsBalancer extends User {
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-    	return getMemory().getCounterReservationAttempts() == minParameters.getMinReservationAttempts() ? true : false;
+    	return getMemory().getCounterReservationAttempts() == minParameters.getMinReservationAttempts() ? true : false; 
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-    	return getMemory().getCounterRentingAttempts() == minParameters.getMinRentingAttempts() ? true : false;
+        return getMemory().getCounterRentingAttempts() == minParameters.getMinRentingAttempts() ? true : false;
     }
     
     @Override
@@ -83,8 +86,20 @@ public class UserStationsBalancer extends User {
      	stations = new ArrayList<>(systemManager.consultStations());
      }
 
-    	return systemManager.getRecommendationSystem()
-    			.recommendByNumberOfBikes(this.getPosition(), stations).get(0);
+     List<Station> recommendedStations = systemManager.getRecommendationSystem()
+     		.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations);
+     
+     // TODO: revise this code
+     Station destination;
+     try {
+     destination = recommendedStations.stream().filter(station -> station
+    		 .getPosition().distanceTo(this.getPosition()) <= maxDistance).findFirst().get();
+     }
+     catch (NullPointerException e) {
+    	destination = null;
+     }
+     
+     return destination;
     }
 
     @Override
@@ -95,8 +110,19 @@ public class UserStationsBalancer extends User {
         	stations = new ArrayList<>(systemManager.consultStations());
         }
 
-        return systemManager.getRecommendationSystem()
-        		.recommendByNumberOfSlots(this.getPosition(), stations).get(0);
+        List<Station> recommendedStations = systemManager.getRecommendationSystem()
+        		.recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
+        
+        Station destination;
+        try {
+        destination = recommendedStations.stream().filter(station -> station.getPosition()
+        		.distanceTo(this.getPosition()) <= maxDistance).findFirst().get();
+        }
+        catch (NullPointerException e) {
+        	destination = systemManager.getRecommendationSystem()
+        			.recommendByLinearDistance(this.getPosition(), stations).get(0);
+        }
+        return destination;
     }
     
     @Override
@@ -105,10 +131,9 @@ public class UserStationsBalancer extends User {
     	return arrivalTime < MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
     }
 
-    
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-    	return false;
+    	return true;
     }
 
     @Override
@@ -119,7 +144,7 @@ public class UserStationsBalancer extends User {
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-    	return false;
+    	return true;
     }
 
     @Override
