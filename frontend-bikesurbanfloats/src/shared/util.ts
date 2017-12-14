@@ -59,3 +59,13 @@ export namespace Tree {
         return traverseInternal(tree, atLeaf, []);
     }
 }
+
+export interface GeoPoint {
+    latitude: number,
+    longitude: number,
+}
+
+export interface Route {
+    totalDistance: number,
+    points: Array<GeoPoint>,
+}

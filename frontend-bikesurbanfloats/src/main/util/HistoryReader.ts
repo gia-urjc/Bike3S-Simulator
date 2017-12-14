@@ -19,7 +19,7 @@ class Channel {
 
 export default class HistoryReader {
 
-    private static ajv = new AJV();
+    private static ajv = new AJV({ $data: true });
     private static entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'))
     private static changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));
 
@@ -29,7 +29,6 @@ export default class HistoryReader {
 
     static async create(path: string): Promise<HistoryReader> {
         let reader = new HistoryReader(path);
-        // aq: without
         reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities.json');
         return reader;
     }
