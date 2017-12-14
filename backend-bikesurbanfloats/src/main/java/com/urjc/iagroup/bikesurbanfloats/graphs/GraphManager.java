@@ -26,15 +26,9 @@ public interface GraphManager {
 	
 	List<GeoRoute> getAllRoutes() throws GraphHopperIntegrationException, GeoRouteCreationException;
 
-/**
- * It finds the available routes between two geographical points.
- * @param point1  It is the origin geographical point.
- * @param point2 It is the destination geographical point.
- * @return a list of available routes between the two specified geographical points.
- */
-	List<GeoRoute> obtainRoutesBetween(GeoPoint point1, GeoPoint point2) throws GeoRouteCreationException, GraphHopperIntegrationException;
-
-	// TODO: is this method used? is this interface neccessary?
+	List<GeoRoute> obtainAllRoutesBetween(GeoPoint originPoint, GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException;
+	
+	GeoRoute obtainShortestRoute(GeoPoint originPoint, GeoPoint destinationPoint);
 	/**
 	 * It indicates if there are more than one possible route between two points.
 	 * @return true if there're several possible routes between 2 points or false in other case. 

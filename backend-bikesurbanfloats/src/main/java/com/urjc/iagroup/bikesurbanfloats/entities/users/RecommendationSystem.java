@@ -68,7 +68,7 @@ public class RecommendationSystem {
 			List<GeoRoute> routes;
 			
 			try {
-			routes = graph.obtainRoutesBetween(station.getPosition(), point);
+			routes = graph.obtainAllRoutesBetween(station.getPosition(), point);
 			}
 			catch(Exception e) {
 				continue;
@@ -166,8 +166,8 @@ public class RecommendationSystem {
 	
 	public List<Station> recommendByRealRouteDistance(GeoPoint point, List<Station> stations) {
 		Comparator<Station> byRealRouteDistance = (s1, s2) -> Double.compare(graph
-		.obtainRoutesBetween(s1.getPosition(), point).get(0).getTotalDistance(), graph
-		.obtainRoutesBetween(s2.getPosition(), point).get(0).getTotalDistance());
+		.obtainAllRoutesBetween(s1.getPosition(), point).get(0).getTotalDistance(), graph
+		.obtainAllRoutesBetween(s2.getPosition(), point).get(0).getTotalDistance());
 		return validStationsByRealRouteDistance(point, stations).stream().sorted(byRealRouteDistance)
 				.collect(Collectors.toList());
 	}

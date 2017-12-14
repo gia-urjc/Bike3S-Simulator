@@ -24,7 +24,7 @@ public class UserFactory {
         	return new UserEmployee();
         case USER_STATIONS_BALANCER:
         	return new UserStationsBalancer();
-        case USER_WEIGHER: 
+        case USER_REASONABLE: 
         	return new UserReasonable();
         	
         }

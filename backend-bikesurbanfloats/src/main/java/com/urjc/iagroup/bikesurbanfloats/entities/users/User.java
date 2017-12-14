@@ -183,6 +183,16 @@ public abstract class User implements Entity {
     public UserMemory getMemory() {
     	return this.memory;
     }
+    
+    /**
+     * It considers that the real distance is the one of the sortest available 
+     * route between the user position and his destination station.  
+     * @param stationPosition It is the geographical coordinates of the user destination station.
+     * @return the real distance to reach the destination station. 
+     */
+    public double minRealDistanceTo(GeoPoint stationPosition) {
+    	return systemManager.getGraphManager().obtainShortestRoute(this.getPosition(), stationPosition).getTotalDistance();
+    }
 
     /**
      * The user's average velocity in m/s
@@ -306,11 +316,11 @@ public abstract class User implements Entity {
     }
 
     public List<GeoRoute> calculateRoutesToStation(GeoPoint stationPosition) throws GeoRouteCreationException, GraphHopperIntegrationException {
-    	return this.systemManager.getGraphManager().obtainRoutesBetween(this.getPosition(), stationPosition);
+    	return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), stationPosition);
     }
 
     public List<GeoRoute> calculateRoutesToDestinationPlace(GeoPoint point) throws GeoRouteCreationException, GraphHopperIntegrationException{
-    	return this.systemManager.getGraphManager().obtainRoutesBetween(this.getPosition(), point);
+    	return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), point);
     }
 
     public GeoRoute reachedRouteUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {

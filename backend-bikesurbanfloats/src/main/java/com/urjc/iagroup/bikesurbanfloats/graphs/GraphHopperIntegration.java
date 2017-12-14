@@ -98,8 +98,20 @@ public class GraphHopperIntegration implements GraphManager {
 	}
 	
 	@Override
-	public List<GeoRoute> obtainRoutesBetween(GeoPoint point1, GeoPoint point2) throws GeoRouteCreationException, GraphHopperIntegrationException {
-		calculateRoutes(point1, point2);
+	public List<GeoRoute> obtainAllRoutesBetween(GeoPoint originPoint, GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
+		if(rsp == null) {
+			calculateRoutes(originPoint, destinationPoint);
+		}
+
 		return getAllRoutes();
+	}
+	
+	@Override
+	public GeoRoute obtainShortestRoute(GeoPoint originPoint, GeoPoint destinationPoint) {
+		if(rsp == null) {
+			calculateRoutes(originPoint, destinationPoint);
+		}
+		
+		return getAllRoutes().get(0);
 	}
 }
