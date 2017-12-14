@@ -1,5 +1,9 @@
 import { isPlainObject } from 'lodash';
 
+export type ArrayType<T extends Array<any>> = T[0];
+
+export type Extract<T, K extends keyof T> = T[K];
+
 export interface PlainObject {
     [key: string]: any,
     [key: number]: any,

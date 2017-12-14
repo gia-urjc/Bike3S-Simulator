@@ -5,7 +5,8 @@ import * as paths from 'path';
 import { app } from 'electron';
 import { without } from 'lodash';
 
-import { JsonArray, JsonObject } from '../../shared/util';
+import { EntitiesJson } from '../../shared/generated/EntitiesJson';
+import { TimeentriesJson } from '../../shared/generated/TimeentriesJson';
 import { IpcUtil } from './index';
 
 interface TimeRange {
@@ -80,7 +81,7 @@ export default class HistoryReader {
         });
     }
 
-    async readEntities(): Promise<JsonObject> {
+    async readEntities(): Promise<EntitiesJson> {
         const entities = await fs.readJson(paths.join(this.historyPath, 'entities.json'));
 
         if (!HistoryReader.ajv.validate(HistoryReader.entityFileSchema, entities)) {
@@ -90,7 +91,7 @@ export default class HistoryReader {
         return entities;
     }
 
-    async previousChangeFile(): Promise<JsonArray> {
+    async previousChangeFile(): Promise<TimeentriesJson> {
         if (this.currentIndex <= 0) {
             throw new Error(`No previous change file available!`);
         }
@@ -104,7 +105,7 @@ export default class HistoryReader {
         return file;
     }
 
-    async nextChangeFile(): Promise<JsonArray> {
+    async nextChangeFile(): Promise<TimeentriesJson> {
         if (this.currentIndex === this.changeFiles.length - 1) {
             throw new Error(`No next change file available!`);
         }

@@ -1,13 +1,9 @@
-import { GeoPoint, JsonObject, Route } from '../../../../shared/util';
+import { EntitiesJson } from '../../../../shared/generated/EntitiesJson';
+import { ArrayType, Extract, GeoPoint, Route } from '../../../../shared/util';
 import { Bike } from './Bike';
 import { Entity, VisualEntity } from './Entity';
 
-interface JsonUser extends JsonObject {
-    id: number,
-    type: string,
-    walkingVelocity: number,
-    cyclingVelocity: number,
-}
+type JsonUser = ArrayType<Extract<EntitiesJson, 'users'>>
 
 @VisualEntity<JsonUser>({
     fromJson: 'users'

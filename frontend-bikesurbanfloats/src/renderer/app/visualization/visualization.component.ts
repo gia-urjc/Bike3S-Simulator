@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { JsonArray } from '../../../shared/util';
+import { JsonObject } from '../../../shared/util';
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
 import * as entities from './entities';
 import { Entity, EntityMetaKey, VisualOptions } from './entities/Entity';
@@ -22,7 +22,7 @@ export class VisualizationComponent {
 
     async createEntities(): Promise<void> {
         await this.ajax.history.init('history');
-        const entitySource = await this.ajax.history.readEntities() as { [key: string]: JsonArray };
+        const entitySource = await this.ajax.history.readEntities();
 
         this.entities = new Map();
 
@@ -38,7 +38,7 @@ export class VisualizationComponent {
 
             this.entities.set(EntityCostructor, {});
 
-            entitySource[meta.fromJson].forEach((json) => {
+            (entitySource as any)[meta.fromJson].forEach((json: JsonObject) => {
                 const entity: Entity = Reflect.construct(EntityCostructor, [json]);
                 this.entities.get(EntityCostructor)![entity.id] = entity;
             });
