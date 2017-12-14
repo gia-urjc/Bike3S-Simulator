@@ -9,6 +9,7 @@ import { NgFontAwesomeModule } from 'ng-font-awesome';
 import { ElectronAjax } from '../ajax/ElectronAjax';
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
+import { VisualizationComponent } from './visualization/visualization.component';
 
 @NgModule({
     imports: [
@@ -20,7 +21,8 @@ import { MapComponent } from './map/map.component';
     ],
     declarations: [
         AppComponent,
-        MapComponent
+        MapComponent,
+        VisualizationComponent,
     ],
     bootstrap: [ AppComponent ],
     providers: [{
