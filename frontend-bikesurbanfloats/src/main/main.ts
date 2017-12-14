@@ -35,7 +35,8 @@ namespace Main {
             createWindow();
         });
 
-        app.on('window-all-closed', () => {
+        app.on('window-all-closed', async () => {
+            await Settings.write();
             if (process.platform !== 'darwin') app.quit();
         });
 

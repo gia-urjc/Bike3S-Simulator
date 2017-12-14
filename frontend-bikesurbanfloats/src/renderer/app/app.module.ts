@@ -8,6 +8,7 @@ import { NgFontAwesomeModule } from 'ng-font-awesome';
 
 import { ElectronAjax } from '../ajax/ElectronAjax';
 import { AppComponent } from './app.component';
+import { MapComponent } from './map/map.component';
 
 @NgModule({
     imports: [
@@ -18,7 +19,8 @@ import { AppComponent } from './app.component';
         LeafletModule.forRoot()
     ],
     declarations: [
-        AppComponent
+        AppComponent,
+        MapComponent
     ],
     bootstrap: [ AppComponent ],
     providers: [{
