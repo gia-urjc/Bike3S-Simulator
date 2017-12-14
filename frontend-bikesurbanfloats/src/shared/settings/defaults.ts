@@ -1,12 +1,17 @@
-export default {
+import { SettingsTree } from './definitions';
+
+
+const defaultSettings: SettingsTree = {
     layers: {
         thunderforest: {
-            apikey: '',
+            key: '',
             enabled: false,
         },
         mapbox: {
-            accessToken: '',
+            key: '',
             enabled: false,
         }
     },
 };
+
+export default defaultSettings;

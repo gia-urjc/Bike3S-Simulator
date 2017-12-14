@@ -169,7 +169,7 @@ Sparky.task('build:frontend:renderer', () => {
             app.get('*', (request, response) => {
                 response.send(path.join(projectRoot.build.frontend(), 'index.html'));
             });
-            // TODO: make the server close on electron window close
+            // TODO: make the server close on electron window close (note: apparently not possible)
         });
 
         renderer.hmr().watch();
