@@ -7,12 +7,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class JsonValidation {
+	
+	private final static String NODE_ERROR = "NODE_NOT_INSTALLED";
+	private final static String OK_VALIDATION = "OK";
 
 	
 	public static String validate(String schemaDir, String jsonDir, String jsValidatorDir) throws IOException, InterruptedException {
 		
 		if(!checkNode()) {
-			return "NODE_NOT_INSTALLED";
+			return NODE_ERROR;
 		}
 		ArrayList<String> command = new ArrayList<>();
 		command.addAll(Arrays.asList("node", jsValidatorDir, "verify", "-i", jsonDir, "-s", schemaDir));
@@ -23,7 +26,10 @@ public class JsonValidation {
 		String line;
 		String output = "";
 		while ((line = in.readLine()) != null) {
-			output += line;
+			if(line.equals(OK_VALIDATION)) {
+				output += line;
+			}
+			output += line + "\n";
 		}
 		validationProcess.waitFor();
 		return output;
