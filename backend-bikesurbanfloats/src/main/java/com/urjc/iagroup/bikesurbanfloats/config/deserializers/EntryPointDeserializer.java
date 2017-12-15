@@ -33,7 +33,7 @@ public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>
             JsonObject jsonEntryPoint = element.getAsJsonObject();
             DistributionType distributionType;
 
-            // if entryPoint does'nt contain a distribution attribute, it's of single type (one user)
+            // if entryPoint doesn't contain a distribution attribute, it's of single type (one user)
             if (jsonEntryPoint.has(JSON_ATTR_DISTRIBUTION)) {
                 String distributionStr = jsonEntryPoint.get(JSON_ATTR_DISTRIBUTION)
                         .getAsJsonObject().get(JSON_ATTR_DISTR_TYPE).getAsString();
@@ -42,7 +42,7 @@ public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>
             else {
                 distributionType = DistributionType.NONEDISTRIBUTION;
             }
-
+            
             entryPoints.add(entryPointFactory.createEntryPoint(jsonEntryPoint, distributionType));
         }
 		

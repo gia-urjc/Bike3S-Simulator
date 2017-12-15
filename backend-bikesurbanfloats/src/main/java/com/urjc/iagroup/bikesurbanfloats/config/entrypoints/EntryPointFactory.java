@@ -13,6 +13,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.distributions.Distri
  *
  */
 public class EntryPointFactory {
+
 	
 	private Gson gson;
 	

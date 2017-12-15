@@ -92,6 +92,8 @@ public class EntryPointPoisson extends EntryPoint {
         while (actualTime < endTime) {
             User user = userFactory.createUser(userType);
             GeoPoint userPosition;
+            
+            //If not radius is specified, user just appears in the position submitted.
             if (radius > 0) {
                 BoundingCircle boundingCircle = new BoundingCircle(position, radius);
                 userPosition = boundingCircle.randomPointInCircle(SimulationRandom.getUserCreationInstance());
