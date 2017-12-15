@@ -24,7 +24,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
  * @author IAgroup
  *
  */
-@AssociatedType(UserType.USER_WEIGHER)
+@AssociatedType(UserType.USER_REASONABLE)
 public class UserReasonable extends User {
 	
 	/**
@@ -80,13 +80,13 @@ public class UserReasonable extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
     	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-    // TODO: is it neccessary or is there other way?	
-     if (stations.isEmpty()) {
-     	stations = new ArrayList<>(systemManager.consultStations());
+    	Station destination = null;
+    	
+     if (!stations.isEmpty()) {
+     	destination = systemManager.getRecommendationSystem()
+    			.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations).get(0); 
      }
-
-    	return systemManager.getRecommendationSystem()
-    			.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations).get(0);
+     return destination;
     }
 
     @Override

@@ -107,7 +107,7 @@ public class GraphHopperIntegration implements GraphManager {
 	}
 	
 	@Override
-	public GeoRoute obtainShortestRoute(GeoPoint originPoint, GeoPoint destinationPoint) {
+	public GeoRoute obtainShortestRouteBetween(GeoPoint originPoint, GeoPoint destinationPoint) {
 		if(rsp == null) {
 			calculateRoutes(originPoint, destinationPoint);
 		}

@@ -90,14 +90,15 @@ public class UserStationsBalancer extends User {
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        Station destination = null;
         
-        if (stations.isEmpty()) {
-        	stations = new ArrayList<>(systemManager.consultStations());
+        if (!stations.isEmpty()) {
+        	destination = systemManager.getRecommendationSystem()
+            		.recommendByNumberOfSlots(this.getPosition(), stations).get(0);
         }
 
-        return systemManager.getRecommendationSystem()
-        		.recommendByNumberOfSlots(this.getPosition(), stations).get(0);
-    }
+        return destination;
+        }
     
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {

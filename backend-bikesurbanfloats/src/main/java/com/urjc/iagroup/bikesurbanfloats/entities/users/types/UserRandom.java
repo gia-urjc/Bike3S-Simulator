@@ -12,7 +12,15 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 import java.util.List;
 import java.util.ArrayList;
 
-// TODO: add lost documentation
+/**
+ * This class represents a user who makes most of his decissions randomly.
+ * This user always chooses the closest destination station and the shortest route to reach it.
+ * Moreover, this type of user only leaves the system when he has tried to make a bike 
+ * reservation in all the system's stations and he hasn't been able.
+ *   
+ * @author IAgroup
+ *
+ */
 @AssociatedType(UserType.USER_RANDOM)
 public class UserRandom extends User {
 

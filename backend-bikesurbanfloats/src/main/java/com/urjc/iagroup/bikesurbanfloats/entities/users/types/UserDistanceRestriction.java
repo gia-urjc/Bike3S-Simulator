@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
+import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
+
 /**
  * This class represents a user whose behaviour is the same of UserReasonable with the 
  * exception that this user doesn't accept recommended stations which are farer that a 
@@ -21,6 +24,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
  * @author IAgroup
  *
  */
+@AssociatedType(UserType.USER_DISTANCE_RESTRICTION)
 public class UserDistanceRestriction extends User {
 	
 	/**

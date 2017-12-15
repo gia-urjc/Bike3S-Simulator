@@ -1,7 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
-
 import com.urjc.iagroup.bikesurbanfloats.entities.users.types.*;
 
 /**
@@ -26,6 +25,8 @@ public class UserFactory {
         	return new UserStationsBalancer();
         case USER_REASONABLE: 
         	return new UserReasonable();
+        case USER_DISTANCE_RESTRICTION:
+        	return new UserDistanceRestriction();
         	
         }
         throw new IllegalArgumentException("The type" + type + "doesn't exists");

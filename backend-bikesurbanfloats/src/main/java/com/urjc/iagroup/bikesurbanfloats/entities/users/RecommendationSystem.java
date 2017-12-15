@@ -166,8 +166,8 @@ public class RecommendationSystem {
 	
 	public List<Station> recommendByRealRouteDistance(GeoPoint point, List<Station> stations) {
 		Comparator<Station> byRealRouteDistance = (s1, s2) -> Double.compare(graph
-		.obtainAllRoutesBetween(s1.getPosition(), point).get(0).getTotalDistance(), graph
-		.obtainAllRoutesBetween(s2.getPosition(), point).get(0).getTotalDistance());
+		.obtainShortestRouteBetween(s1.getPosition(), point).getTotalDistance(), graph
+		.obtainShortestRouteBetween(s2.getPosition(), point).getTotalDistance());
 		return validStationsByRealRouteDistance(point, stations).stream().sorted(byRealRouteDistance)
 				.collect(Collectors.toList());
 	}

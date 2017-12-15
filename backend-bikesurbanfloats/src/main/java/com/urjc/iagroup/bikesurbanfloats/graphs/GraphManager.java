@@ -28,7 +28,8 @@ public interface GraphManager {
 
 	List<GeoRoute> obtainAllRoutesBetween(GeoPoint originPoint, GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException;
 	
-	GeoRoute obtainShortestRoute(GeoPoint originPoint, GeoPoint destinationPoint);
+	GeoRoute obtainShortestRouteBetween(GeoPoint originPoint, GeoPoint destinationPoint);
+	
 	/**
 	 * It indicates if there are more than one possible route between two points.
 	 * @return true if there're several possible routes between 2 points or false in other case. 

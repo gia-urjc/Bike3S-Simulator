@@ -191,7 +191,7 @@ public abstract class User implements Entity {
      * @return the real distance to reach the destination station. 
      */
     public double minRealDistanceTo(GeoPoint stationPosition) {
-    	return systemManager.getGraphManager().obtainShortestRoute(this.getPosition(), stationPosition).getTotalDistance();
+    	return systemManager.getGraphManager().obtainShortestRouteBetween(this.getPosition(), stationPosition).getTotalDistance();
     }
 
     /**
