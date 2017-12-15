@@ -1,19 +1,19 @@
 import { isPlainObject } from 'lodash';
 
-interface PlainObject {
+export interface PlainObject {
     [key: string]: any,
     [key: number]: any,
 }
 
-interface JsonObject {
+export interface JsonObject {
     [key: string]: JsonValue
 }
 
-interface JsonArray extends Array<JsonValue> {}
+export interface JsonArray extends Array<JsonValue> {}
 
-type JsonValue = null | string | number | boolean | JsonArray | JsonObject;
+export type JsonValue = null | string | number | boolean | JsonArray | JsonObject;
 
-namespace Tree {
+export namespace Tree {
 
     interface TreeNode {
         parent: PlainObject,
@@ -60,10 +60,12 @@ namespace Tree {
     }
 }
 
-export {
-    PlainObject,
-    JsonValue,
-    JsonObject,
-    JsonArray,
-    Tree,
+export interface GeoPoint {
+    latitude: number,
+    longitude: number,
+}
+
+export interface Route {
+    totalDistance: number,
+    points: Array<GeoPoint>,
 }

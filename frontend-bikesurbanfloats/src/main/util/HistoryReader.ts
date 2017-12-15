@@ -5,7 +5,7 @@ import * as paths from 'path';
 import { app } from 'electron';
 import { without } from 'lodash';
 
-import { PlainObject } from '../../shared/util';
+import { JsonArray, JsonObject } from '../../shared/util';
 import { IpcUtil } from './index';
 
 interface TimeRange {
@@ -19,7 +19,7 @@ class Channel {
 
 export default class HistoryReader {
 
-    private static ajv = new AJV();
+    private static ajv = new AJV({ $data: true });
     private static entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'))
     private static changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));
 
@@ -29,7 +29,6 @@ export default class HistoryReader {
 
     static async create(path: string): Promise<HistoryReader> {
         let reader = new HistoryReader(path);
-        // aq: without
         reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities.json');
         return reader;
     }
@@ -81,7 +80,7 @@ export default class HistoryReader {
         });
     }
 
-    async readEntities(): Promise<PlainObject> {
+    async readEntities(): Promise<JsonObject> {
         const entities = await fs.readJson(paths.join(this.historyPath, 'entities.json'));
 
         if (!HistoryReader.ajv.validate(HistoryReader.entityFileSchema, entities)) {
@@ -91,7 +90,7 @@ export default class HistoryReader {
         return entities;
     }
 
-    async previousChangeFile(): Promise<Array<PlainObject>> {
+    async previousChangeFile(): Promise<JsonArray> {
         if (this.currentIndex <= 0) {
             throw new Error(`No previous change file available!`);
         }
@@ -105,7 +104,7 @@ export default class HistoryReader {
         return file;
     }
 
-    async nextChangeFile(): Promise<Array<PlainObject>> {
+    async nextChangeFile(): Promise<JsonArray> {
         if (this.currentIndex === this.changeFiles.length - 1) {
             throw new Error(`No next change file available!`);
         }

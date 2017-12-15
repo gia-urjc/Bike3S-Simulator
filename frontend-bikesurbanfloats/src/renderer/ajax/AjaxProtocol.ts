@@ -1,11 +1,11 @@
-import { JsonValue, PlainObject } from '../../shared/util';
+import { JsonArray, JsonObject, JsonValue } from '../../shared/util';
 
 export interface HistoryAjax {
     init(path: string): Promise<void>,
-    readEntities(): Promise<PlainObject>,
+    readEntities(): Promise<JsonObject>,
     numberOFChangeFiles(): Promise<number>,
-    previousChangeFile(): Promise<PlainObject>,
-    nextChangeFile(): Promise<PlainObject>,
+    previousChangeFile(): Promise<JsonArray>,
+    nextChangeFile(): Promise<JsonArray>,
 }
 
 export interface SettingsAjax {

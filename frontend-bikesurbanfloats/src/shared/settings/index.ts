@@ -1,14 +1,12 @@
 import defaultSettings from './defaults';
 
-interface PathCall {
-    (): string,
-}
+type PathCall = () => string;
 
 type SettingsPath<T> = {
     [P in keyof T]: PathCall & SettingsPath<T[P]>
 }
 
-function settingsPath() {
+function settingsPathGenerator() {
     let parts: Array<PropertyKey> = [];
     return new Proxy(Object.assign(function () {
         const path = parts.join('.');
@@ -24,5 +22,5 @@ function settingsPath() {
 
 export {
     defaultSettings,
-    settingsPath,
+    settingsPathGenerator,
 }

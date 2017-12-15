@@ -9,14 +9,19 @@ export default class IpcUtil {
     static openChannel(channel: string, onSuccess: SuccessCallback, onError?: ErrorCallback) {
         ipcMain.on(channel, async (event: Event, ...data: Array<any>) => {
             try {
+                const responseData = await onSuccess(...data);
                 event.sender.send(channel, {
                     status: 200,
-                    data: await onSuccess(...data)
+                    data: responseData,
                 });
             } catch (error) {
+                console.log('Error', error);
                 event.sender.send(channel, {
                     status: 500,
-                    data: error
+                    data: {
+                        message: error.message,
+                        stack: error.stack
+                    }
                 });
                 onError && onError(error);
             }

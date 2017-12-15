@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { JsonValue, PlainObject } from '../../shared/util';
+import { Event } from 'electron';
+import { JsonArray, JsonObject, JsonValue } from '../../shared/util';
 import { AjaxProtocol, HistoryAjax, SettingsAjax } from './AjaxProtocol';
 
 // https://github.com/electron/electron/issues/7300#issuecomment-274269710
-const { ipcRenderer, Event } = (window as any).require('electron');
+const { ipcRenderer } = (window as any).require('electron');
 
 function readIpc(channel: string, ...requestArgs: Array<any>): Promise<any> {
     ipcRenderer.send(channel, ...requestArgs);
@@ -38,7 +39,7 @@ class ElectronHistory implements HistoryAjax {
         this.ready = false;
     }
 
-    async readEntities(): Promise<PlainObject> {
+    async readEntities(): Promise<JsonObject> {
         if (!this.ready) throw ElectronHistory.NOT_READY;
         return await readIpc('history-entities');
     }
@@ -48,12 +49,12 @@ class ElectronHistory implements HistoryAjax {
         return await readIpc('history-nchanges');
     }
 
-    async previousChangeFile(): Promise<PlainObject> {
+    async previousChangeFile(): Promise<JsonArray> {
         if (!this.ready) throw ElectronHistory.NOT_READY;
         return await readIpc('history-previous');
     }
 
-    async nextChangeFile(): Promise<PlainObject> {
+    async nextChangeFile(): Promise<JsonArray> {
         if (!this.ready) throw ElectronHistory.NOT_READY;
         return await readIpc('history-next');
     }
