@@ -23,7 +23,7 @@ public class HistoricStation implements HistoricEntity {
      * This lambda function returns the bike id if the bike instance isn't null 
      * or null in other case.
      */
-    private static Function<Bike, IdReference> bikeIdConverter = bike -> new IdReference(HistoricBike.class, bike == null ? null : bike.getId());
+    private static Function<Bike, Integer> bikeIdConverter = bike -> bike == null ? null : bike.getId();
 
     @Expose
     private int id;
@@ -35,13 +35,13 @@ public class HistoricStation implements HistoricEntity {
     private int capacity;
 
     @Expose
-    private List<IdReference> bikes;
+    private IdReference bikes;
 
     public HistoricStation(Station station) {
         this.id = station.getId();
         this.position = new GeoPoint(station.getPosition());
         this.capacity = station.getCapacity();
-        this.bikes = station.getBikes().stream().map(bikeIdConverter).collect(Collectors.toList());
+        this.bikes = new IdReference(HistoricBike.class, station.getBikes().stream().map(bikeIdConverter).collect(Collectors.toList()));
     }
 
     @Override

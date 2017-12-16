@@ -418,11 +418,19 @@ public class History {
         private String type;
 
         @Expose
-        private Integer id;
+        private Object id;
 
-        public IdReference(Class<? extends HistoricEntity> type, Integer id) {
+        private IdReference(Class<? extends HistoricEntity> type, Object id) {
             this.type = getJsonIdentifier(type);
             this.id = id;
+        }
+
+        public IdReference(Class<? extends HistoricEntity> type, Integer id) {
+            this(type, (Object)id);
+        }
+
+        public IdReference(Class<? extends HistoricEntity> type, List<Integer> idList) {
+            this(type, (Object)idList);
         }
     }
 

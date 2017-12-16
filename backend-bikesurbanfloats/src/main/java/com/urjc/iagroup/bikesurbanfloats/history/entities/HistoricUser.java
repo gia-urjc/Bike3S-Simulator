@@ -43,10 +43,10 @@ public class HistoricUser implements HistoricEntity {
 
         this.id = user.getId();
         this.position = user.getPosition() == null ? null : new GeoPoint(user.getPosition());
-        this.bike = new IdReference(HistoricBike.class, bike == null ? null : bike.getId());
+        this.bike = bike == null ? null : new IdReference(HistoricBike.class, bike.getId());
         this.walkingVelocity = user.getWalkingVelocity();
         this.cyclingVelocity = user.getCyclingVelocity();
-        this.destinationStation = new IdReference(HistoricStation.class, station == null ? null : station.getId());
+        this.destinationStation = station == null ? null : new IdReference(HistoricStation.class, station.getId());
         this.route = user.getRoute();
         this.type = user.getClass().getAnnotation(AssociatedType.class).value();
     }
