@@ -49,39 +49,37 @@ public class GraphHopperIntegration implements GraphManager {
     	return route;
 	}
 	
-	@Override
-	public void calculateRoutes(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperIntegrationException  {
-		GHRequest req = new GHRequest(
-				startPosition.getLatitude(), startPosition.getLongitude(),
-				endPosition.getLatitude(), endPosition.getLongitude())
-				.setWeighting("fastest")
-				.setVehicle("bike");
-    	GHResponse rsp = hopper.route(req);
-    	
-    	if(rsp.hasErrors()) {
-     	   for(Throwable exception: rsp.getErrors()) {
-     		  throw new GraphHopperIntegrationException(exception.getMessage());
-     	   }
-     	}
-    	this.rsp = rsp;
-    	this.startPosition = startPosition;
-    	this.endPosition = endPosition;
+
+	 private void calculateRoutes(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperIntegrationException  {
+		 if(!startPosition.equals(this.startPosition) || !endPosition.equals(this.endPosition)) {
+			 GHRequest req = new GHRequest(
+					startPosition.getLatitude(), startPosition.getLongitude(),
+					endPosition.getLatitude(), endPosition.getLongitude())
+					.setWeighting("fastest")
+					.setVehicle("bike");
+	    	GHResponse rsp = hopper.route(req);
+	    	
+	    	if(rsp.hasErrors()) {
+	     	   for(Throwable exception: rsp.getErrors()) {
+	     		  throw new GraphHopperIntegrationException(exception.getMessage());
+	     	   }
+	     	}
+	    	this.rsp = rsp;
+	    	this.startPosition = startPosition;
+	    	this.endPosition = endPosition; 
+		 }
 	}
 	
 	@Override
-	public GeoRoute getBestRoute() throws GraphHopperIntegrationException, GeoRouteCreationException {
-		if(rsp == null){
-			throw new GraphHopperIntegrationException("Route is not calculated");
-		}
+	public GeoRoute obtainShortestRouteBetween(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperIntegrationException, GeoRouteCreationException {
+		calculateRoutes(startPosition, endPosition);
     	PathWrapper path = rsp.getBest();
     	return responseGHToRoute(path);
 	}
 
 	@Override
-	public List<GeoRoute> getAllRoutes() throws GraphHopperIntegrationException, GeoRouteCreationException {
-		if(rsp == null){
-			throw new GraphHopperIntegrationException("Route is not calculated");
-		}
+	public List<GeoRoute> obtainAllRoutesBetween(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperIntegrationException, GeoRouteCreationException {
+		calculateRoutes(startPosition, endPosition);
 		List<GeoRoute> routes = new ArrayList<>();
 		for(PathWrapper p: rsp.getAll()) {
 			routes.add(responseGHToRoute(p));
@@ -90,28 +88,9 @@ public class GraphHopperIntegration implements GraphManager {
 	}
 
 	@Override
-	public boolean hasAlternativesRoute() throws GraphHopperIntegrationException {
-		if(rsp == null){
-			throw new GraphHopperIntegrationException("Route is not calculated");
-		}
+	public boolean hasAlternativesRoutes(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperIntegrationException {
+		calculateRoutes(startPosition, endPosition);
 		return rsp.hasAlternatives();
 	}
-	
-	@Override
-	public List<GeoRoute> obtainAllRoutesBetween(GeoPoint originPoint, GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
-		if(rsp == null) {
-			calculateRoutes(originPoint, destinationPoint);
-		}
 
-		return getAllRoutes();
-	}
-	
-	@Override
-	public GeoRoute obtainShortestRouteBetween(GeoPoint originPoint, GeoPoint destinationPoint) {
-		if(rsp == null) {
-			calculateRoutes(originPoint, destinationPoint);
-		}
-		
-		return getAllRoutes().get(0);
-	}
 }

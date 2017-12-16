@@ -189,8 +189,10 @@ public abstract class User implements Entity {
      * route between the user position and his destination station.  
      * @param stationPosition It is the geographical coordinates of the user destination station.
      * @return the real distance to reach the destination station. 
+     * @throws GeoRouteCreationException 
+     * @throws GraphHopperIntegrationException 
      */
-    public double minRealDistanceTo(GeoPoint stationPosition) {
+    public double minRealDistanceTo(GeoPoint stationPosition) throws GraphHopperIntegrationException, GeoRouteCreationException {
     	return systemManager.getGraphManager().obtainShortestRouteBetween(this.getPosition(), stationPosition).getTotalDistance();
     }
 

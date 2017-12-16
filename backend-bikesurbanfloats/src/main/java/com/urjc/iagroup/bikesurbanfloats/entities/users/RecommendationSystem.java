@@ -9,6 +9,8 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GraphManager;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperIntegrationException;
 
 /** 
  * This class is a system which recommends the user the stations that, with respect to a 
@@ -35,7 +37,7 @@ public class RecommendationSystem {
 	private GraphManager graph;
 	
 	public RecommendationSystem(GraphManager graph) {
-				this.graph = graph;
+		this.graph = graph;
 	}
 
 	/**
@@ -165,9 +167,17 @@ public class RecommendationSystem {
 	}
 	
 	public List<Station> recommendByRealRouteDistance(GeoPoint point, List<Station> stations) {
-		Comparator<Station> byRealRouteDistance = (s1, s2) -> Double.compare(graph
-		.obtainShortestRouteBetween(s1.getPosition(), point).getTotalDistance(), graph
-		.obtainShortestRouteBetween(s2.getPosition(), point).getTotalDistance());
+		Comparator<Station> byRealRouteDistance = (s1, s2) -> {
+			double shortestRouteS1 = Double.MAX_VALUE;
+			double shortestRouteS2 = Double.MIN_VALUE;
+			try {
+				shortestRouteS1 = graph.obtainShortestRouteBetween(s1.getPosition(), point).getTotalDistance();
+				shortestRouteS2 = graph.obtainShortestRouteBetween(s2.getPosition(), point).getTotalDistance();
+			} catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
+				e.printStackTrace();
+			}
+			return Double.compare(shortestRouteS1, shortestRouteS2);
+		};
 		return validStationsByRealRouteDistance(point, stations).stream().sorted(byRealRouteDistance)
 				.collect(Collectors.toList());
 	}
