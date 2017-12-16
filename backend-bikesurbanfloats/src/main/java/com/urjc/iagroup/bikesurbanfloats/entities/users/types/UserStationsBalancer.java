@@ -25,13 +25,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
  */
 @AssociatedType(UserType.USER_STATIONS_BALANCER)
 public class UserStationsBalancer extends User {
-	
-	/**
-	 * It indicates the size of the set of stations closest to the user within which the 
-	 * destination will be chossen randomly.  
-	 */
-	private final int SELECTION_STATIONS_SET = 3;
-	
+
 	/**
 	 * It is the time in seconds until which the user will decide to continue walking 
 	 * or cycling towards the previously chosen station without making a new reservation 
@@ -96,14 +90,15 @@ public class UserStationsBalancer extends User {
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        Station destination = null;
         
-        if (stations.isEmpty()) {
-        	stations = new ArrayList<>(systemManager.consultStations());
+        if (!stations.isEmpty()) {
+        	destination = systemManager.getRecommendationSystem()
+            		.recommendByNumberOfSlots(this.getPosition(), stations).get(0);
         }
 
-        return systemManager.getRecommendationSystem()
-        		.recommendByNumberOfSlots(this.getPosition(), stations).get(0);
-    }
+        return destination;
+        }
     
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {

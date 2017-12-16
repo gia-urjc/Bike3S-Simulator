@@ -1,33 +1,33 @@
 {
     "reservationTime": 150,
-    "totalSimulationTime": 1000,
+    "totalSimulationTime": 10000,
     "randomSeed": 200,
     "boundingBox": {
         "northWest": {
-            "latitude": 40.297595783347,
-            "longitude": -3.8987731933594
+            "latitude": 40.359102675792,
+            "longitude": -3.8005828857422
         },
         "southEast": {
-            "latitude": 40.349422329852,
-            "longitude": -3.8314819335938
+            "latitude": 40.519019171083,
+            "longitude": -3.5561370849609
         }
     },
-    "map": "maps/mostoles.osm",
+    "map": "maps/madrid.osm",
     "historyOutputPath": "history",
     "entryPoints": [
         {
             "userType": "USER_RANDOM",
             "timeInstant": 0,
             "position": {
-                "latitude": 40.32246,
-                "longitude": -3.87982
+                "latitude": 40.42750,
+                "longitude": -3.71384
             }
         },
         {
             "userType": "USER_RANDOM",
             "position": {
-                "latitude": 40.32246,
-                "longitude": -3.87982
+                "latitude": 40.42750,
+                "longitude": -3.71384
             },
             "radius": 100.0,
             "distribution": {

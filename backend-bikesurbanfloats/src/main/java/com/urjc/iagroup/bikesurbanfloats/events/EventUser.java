@@ -66,6 +66,7 @@ public abstract class EventUser implements Event {
      */
     public List<Event> manageBikeReservation(Station destination) throws Exception{
         List<Event> newEvents = new ArrayList<>();
+    
         int arrivalTime = user.timeToReach();
         Bike bike = user.reservesBike(destination);
         if (bike != null) {  // user has been able to reserve a bike  
@@ -90,6 +91,7 @@ public abstract class EventUser implements Event {
                 newEvents.add(new EventUserArrivesAtStationToRentBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
             }
         }
+
         return newEvents;
     }
     
@@ -123,8 +125,9 @@ public abstract class EventUser implements Event {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.determineStationToRentBike(instant);
         
+        if (destination != null) {     		
         user.setDestinationStation(destination);
-        List<GeoRoute> allRoutes = user.calculateRouteStation(destination);
+        List<GeoRoute> allRoutes = user.calculateRoutesToStation(destination.getPosition());
         GeoRoute chosenRoute = user.determineRoute(allRoutes);
         user.setRoute(chosenRoute);
         
@@ -136,6 +139,7 @@ public abstract class EventUser implements Event {
         }
         else {   // user decides not to reserve
             newEvents.add(new EventUserArrivesAtStationToRentBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
+        }
         }
         return newEvents;
     }
@@ -190,9 +194,8 @@ public abstract class EventUser implements Event {
     public List<Event> manageSlotReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.determineStationToReturnBike(instant);
-        
         user.setDestinationStation(destination);
-        List<GeoRoute> allRoutes = user.calculateRouteStation(destination);
+        List<GeoRoute> allRoutes = user.calculateRoutesToStation(destination.getPosition());
         GeoRoute chosenRoute = user.determineRoute(allRoutes);
         user.setRoute(chosenRoute);
 

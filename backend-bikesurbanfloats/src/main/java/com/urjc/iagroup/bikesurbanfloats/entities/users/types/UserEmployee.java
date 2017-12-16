@@ -29,12 +29,6 @@ import java.util.ArrayList;
 public class UserEmployee extends User {
 	
 	/**
-	 * It indicates the size of the set of stations closest to the user within which the 
-	 * destination will be chossen randomly.  
-	 */
-	private final int SELECTION_STATIONS_SET = 3;
-	
-	/**
 	 * It is the time in seconds until which the user will decide to continue walking 
 	 * or cycling towards the previously chosen station without making a new reservation 
 	 * after a reservation timeout event has happened.  
@@ -86,25 +80,26 @@ public class UserEmployee extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        Station destination = null;
         
-        if (stations.isEmpty()) {
-        	stations = new ArrayList<>(systemManager.consultStations());
+        if (!stations.isEmpty()) {
+        	destination = systemManager.getRecommendationSystem().recommendByLinearDistance(this
+        			.getPosition(), stations).get(0);
         }
         
-        return systemManager.getRecommendationSystem()
-        		.recommendByLinearDistance(this.getPosition(), stations).get(0);
+        return destination; 
     }
 
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-        
+
         if (stations.isEmpty()) {
-        	stations = new ArrayList<>(systemManager.consultStations());
+        	stations = systemManager.consultStations();  
         }
         
-        return systemManager.getRecommendationSystem()
-        		.recommendByLinearDistance(companyStreet, stations).get(0);
+        return systemManager.getRecommendationSystem().recommendByLinearDistance(this
+    			.getPosition(), stations).get(0); 
     }
 
     @Override
@@ -133,7 +128,8 @@ public class UserEmployee extends User {
 
     @Override
     public GeoPoint decidesNextPoint() {
-    	// TODO: how to throw the exception
+    	// TODO: check it
+    	System.out.println("This user mustn't cycle to a place which isn't a station");
     	return null;
     }
 

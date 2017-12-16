@@ -1,7 +1,6 @@
 package com.urjc.iagroup.bikesurbanfloats.entities.users;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
-
 import com.urjc.iagroup.bikesurbanfloats.entities.users.types.*;
 
 /**
@@ -20,12 +19,14 @@ public class UserFactory {
                 return new UserRandom();
             case USER_TOURIST:
             	return new UserTourist();
-        case USER_EMPLOYEE:
-        	return new UserEmployee();
-        case USER_STATIONS_BALANCER:
-        	return new UserStationsBalancer();
-        case USER_WEIGHER: 
-        	return new UserReasonable();
+	        case USER_EMPLOYEE:
+	        	return new UserEmployee();
+	        case USER_STATIONS_BALANCER:
+	        	return new UserStationsBalancer();
+	        case USER_REASONABLE: 
+	        	return new UserReasonable();
+	        case USER_DISTANCE_RESTRICTION:
+	        	return new UserDistanceRestriction();
         	
         }
         throw new IllegalArgumentException("The type" + type + "doesn't exists");

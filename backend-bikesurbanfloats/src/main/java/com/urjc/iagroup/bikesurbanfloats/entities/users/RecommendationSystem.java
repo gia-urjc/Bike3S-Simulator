@@ -9,6 +9,8 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GraphManager;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteCreationException;
+import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GraphHopperIntegrationException;
 
 /** 
  * This class is a system which recommends the user the stations that, with respect to a 
@@ -27,7 +29,7 @@ public class RecommendationSystem {
 	 * It is the maximum distance in meters between the recommended stations and the indicated 
 	 * geographical point.
 	 */
-	private final int MAX_DISTANCE = 1500;
+	private final int MAX_DISTANCE = 25000;
 	
 	/**
 	 * It alloows to manage routes. 
@@ -35,7 +37,7 @@ public class RecommendationSystem {
 	private GraphManager graph;
 	
 	public RecommendationSystem(GraphManager graph) {
-				this.graph = graph;
+		this.graph = graph;
 	}
 
 	/**
@@ -68,14 +70,13 @@ public class RecommendationSystem {
 			List<GeoRoute> routes;
 			
 			try {
-			graph.calculateRoutes(station.getPosition(), point);
-			routes = graph.getAllRoutes();
+			routes = graph.obtainAllRoutesBetween(station.getPosition(), point);
 			}
 			catch(Exception e) {
 				continue;
 			}
 			
-			List<GeoRoute> validRoutes =	routes.stream().filter(route -> route.getTotalDistance() <= MAX_DISTANCE)
+			List<GeoRoute> validRoutes = routes.stream().filter(route -> route.getTotalDistance() <= MAX_DISTANCE)
 					.collect(Collectors.toList());
 			
 			if (!validRoutes.isEmpty()) {
@@ -165,15 +166,20 @@ public class RecommendationSystem {
 				.collect(Collectors.toList());
 	}
 	
-/*
- * TODO: fix compilation  errors
 	public List<Station> recommendByRealRouteDistance(GeoPoint point, List<Station> stations) {
-		Comparator<Station> byRealRouteDistance = (s1, s2) -> Double.compare((graph.calculateRoutes(s1
-				.getPosition(), point)).getBestRoute().getTotalDistance(), (graph.calculateRoutes(s2
-						.getPosition(), point)).getBestRoute().getTotalDistance());
+		Comparator<Station> byRealRouteDistance = (s1, s2) -> {
+			double shortestRouteS1 = Double.MAX_VALUE;
+			double shortestRouteS2 = Double.MIN_VALUE;
+			try {
+				shortestRouteS1 = graph.obtainShortestRouteBetween(s1.getPosition(), point).getTotalDistance();
+				shortestRouteS2 = graph.obtainShortestRouteBetween(s2.getPosition(), point).getTotalDistance();
+			} catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
+				e.printStackTrace();
+			}
+			return Double.compare(shortestRouteS1, shortestRouteS2);
+		};
 		return validStationsByRealRouteDistance(point, stations).stream().sorted(byRealRouteDistance)
 				.collect(Collectors.toList());
 	}
-	*/
 
 }

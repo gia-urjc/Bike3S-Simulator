@@ -183,6 +183,18 @@ public abstract class User implements Entity {
     public UserMemory getMemory() {
     	return this.memory;
     }
+    
+    /**
+     * It considers that the real distance is the one of the sortest available 
+     * route between the user position and his destination station.  
+     * @param stationPosition It is the geographical coordinates of the user destination station.
+     * @return the real distance to reach the destination station. 
+     * @throws GeoRouteCreationException 
+     * @throws GraphHopperIntegrationException 
+     */
+    public double minRealDistanceTo(GeoPoint stationPosition) throws GraphHopperIntegrationException, GeoRouteCreationException {
+    	return systemManager.getGraphManager().obtainShortestRouteBetween(this.getPosition(), stationPosition).getTotalDistance();
+    }
 
     /**
      * The user's average velocity in m/s
@@ -305,14 +317,12 @@ public abstract class User implements Entity {
     	}
     }
 
-    public List<GeoRoute> calculateRouteStation(Station station) throws GeoRouteCreationException, GraphHopperIntegrationException {
-    	this.systemManager.getGraphManager().calculateRoutes(position, station.getPosition());
-		return this.systemManager.getGraphManager().getAllRoutes();
+    public List<GeoRoute> calculateRoutesToStation(GeoPoint stationPosition) throws GeoRouteCreationException, GraphHopperIntegrationException {
+    	return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), stationPosition);
     }
 
-    public List<GeoRoute> calculateRouteByPosition(GeoPoint finalPosition) throws GeoRouteCreationException, GraphHopperIntegrationException{
-    	this.systemManager.getGraphManager().calculateRoutes(position, finalPosition);
-    	return this.systemManager.getGraphManager().getAllRoutes();
+    public List<GeoRoute> calculateRoutesToDestinationPlace(GeoPoint point) throws GeoRouteCreationException, GraphHopperIntegrationException{
+    	return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), point);
     }
 
     public GeoRoute reachedRouteUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
@@ -429,18 +439,23 @@ public abstract class User implements Entity {
      */
     public abstract GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException;
         
-/**
- * When user hasn't been able to make a reservation at the destination station,
- * he decides if he wants to choose another station to which go.
- * @return true if he decides to determine another destination station and false in
- * other case (he keeps his previously decision).
- */
-        public abstract boolean decidesToDetermineOtherStationAfterFailedReservation();
+	/**
+	 * When user hasn't been able to make a reservation at the destination station,
+	 * he decides if he wants to choose another station to which go.
+	 * @return true if he decides to determine another destination station and false in
+	 * other case (he keeps his previously decision).
+	 */
+    public abstract boolean decidesToDetermineOtherStationAfterFailedReservation();
 
     @Override
     public String toString() {
         String result = "| Id: " + getId();
-        result += "| Actual Position: " + position.toString();
+        if(position != null) {
+        	result += "| Actual Position: " + position.toString();
+        }
+        else {
+        	result += "| Actual Position: null";
+        }
         result += " | Has Bike: " + hasBike();
         result += " | Actual velocity: " + getAverageVelocity();
         result += 	" | Has reserved bike: "+hasReservedBike();

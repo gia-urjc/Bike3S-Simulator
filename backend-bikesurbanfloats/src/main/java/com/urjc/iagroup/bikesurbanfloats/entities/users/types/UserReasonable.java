@@ -24,14 +24,8 @@ import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
  * @author IAgroup
  *
  */
-@AssociatedType(UserType.USER_WEIGHER)
+@AssociatedType(UserType.USER_REASONABLE)
 public class UserReasonable extends User {
-	
-	/**
-	 * It indicates the size of the set of stations closest to the user within which the 
-	 * destination will be chossen randomly.  
-	 */
-	private final int SELECTION_STATIONS_SET = 3;
 	
 	/**
 	 * It is the time in seconds until which the user will decide to continue walking 
@@ -86,13 +80,13 @@ public class UserReasonable extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
     	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+    	Station destination = null;
     	
-     if (stations.isEmpty()) {
-     	stations = new ArrayList<>(systemManager.consultStations());
+     if (!stations.isEmpty()) {
+     	destination = systemManager.getRecommendationSystem()
+    			.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations).get(0); 
      }
-
-    	return systemManager.getRecommendationSystem()
-    			.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations).get(0);
+     return destination;
     }
 
     @Override

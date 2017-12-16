@@ -95,21 +95,27 @@ public class UserTourist extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        Station destination = null;
         
-        if (stations.isEmpty()) {
-        	stations = new ArrayList<>(systemManager.consultStations());
-        }
-
-        List<Station> recommendedStations = systemManager.getRecommendationSystem()
+        if (!stations.isEmpty()) {
+        		List<Station> recommendedStations = systemManager.getRecommendationSystem()
         		.recommendByLinearDistance(this.getPosition(), stations);
-        List<Station> nearestStations = new ArrayList<>();
+        		List<Station> nearestStations = new ArrayList<>();
+        		
+        		int end = SELECTION_STATIONS_SET;
+        		if (SELECTION_STATIONS_SET > recommendedStations.size()) {
+        			end = recommendedStations.size();
+        		}
 
-        for(int i = 0; i < SELECTION_STATIONS_SET; i++) {
-        	nearestStations.add(recommendedStations.get(i));
-        }
+        		for(int i = 0; i < end; i++) {
+        			nearestStations.add(recommendedStations.get(i));
+        		}
          
-        int index = systemManager.getRandom().nextInt(0, SELECTION_STATIONS_SET - 1);
-        return nearestStations.get(index);
+        		int index = systemManager.getRandom().nextInt(0, SELECTION_STATIONS_SET - 1);
+        		destination = nearestStations.get(index);
+        }
+        
+        return destination;
     }
 
     @Override

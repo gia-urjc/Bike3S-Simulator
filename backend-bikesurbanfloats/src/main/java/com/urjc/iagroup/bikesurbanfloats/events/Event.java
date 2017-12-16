@@ -27,16 +27,16 @@ public interface Event extends Comparable<Event> {
 	 */
 	List<Entity> getEntities();
 	
-/**
- * It allows to compare 2 events by the time instant they'll occur. 
- */
+	/**
+	 * It allows to compare 2 events by the time instant they'll occur. 
+	 */
 	default int compareTo(Event event) {
 	    return Integer.compare(this.getInstant(), event.getInstant());
     }
 	
-/**
- * @return a string with the event information.
- */
+	/**
+	 * @return a string with the event information.
+	 */
     default String print() {
 	    StringBuilder sb = new StringBuilder()
                 .append("Event: ").append(getClass().getSimpleName()).append('\n')
