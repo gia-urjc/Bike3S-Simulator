@@ -413,4 +413,17 @@ public class History {
         }
     }
 
+    public static class IdReference {
+        @Expose
+        private String type;
+
+        @Expose
+        private Integer id;
+
+        public IdReference(Class<? extends HistoricEntity> type, Integer id) {
+            this.type = getJsonIdentifier(type);
+            this.id = id;
+        }
+    }
+
 }

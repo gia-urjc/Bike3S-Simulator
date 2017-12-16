@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
+import com.urjc.iagroup.bikesurbanfloats.history.History.IdReference;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class HistoricStation implements HistoricEntity {
      * This lambda function returns the bike id if the bike instance isn't null 
      * or null in other case.
      */
-    private static Function<Bike, Integer> bikeIdConverter = bike -> bike == null ? null : bike.getId();
+    private static Function<Bike, IdReference> bikeIdConverter = bike -> new IdReference(HistoricBike.class, bike == null ? null : bike.getId());
 
     @Expose
     private int id;
@@ -34,7 +35,7 @@ public class HistoricStation implements HistoricEntity {
     private int capacity;
 
     @Expose
-    private List<Integer> bikes;
+    private List<IdReference> bikes;
 
     public HistoricStation(Station station) {
         this.id = station.getId();

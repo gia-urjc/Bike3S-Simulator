@@ -1,12 +1,15 @@
 package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
 import com.google.gson.annotations.Expose;
+import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
+import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
+import com.urjc.iagroup.bikesurbanfloats.history.History.IdReference;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
 /**
@@ -27,20 +30,23 @@ public class HistoricUser implements HistoricEntity {
     private double cyclingVelocity;
 
     private GeoPoint position;
-    private Integer bike;
-    private Integer destinationStation;
     private GeoRoute route;
+    private IdReference bike;
+    private IdReference destinationStation;
 
     @Expose
     private UserType type;
 
     public HistoricUser(User user) {
+        Bike bike = user.getBike();
+        Station station = user.getDestinationStation();
+
         this.id = user.getId();
         this.position = user.getPosition() == null ? null : new GeoPoint(user.getPosition());
-        this.bike = user.getBike() == null ? null : user.getBike().getId();
+        this.bike = new IdReference(HistoricBike.class, bike == null ? null : bike.getId());
         this.walkingVelocity = user.getWalkingVelocity();
         this.cyclingVelocity = user.getCyclingVelocity();
-        this.destinationStation = user.getDestinationStation() == null ? null : user.getDestinationStation().getId();
+        this.destinationStation = new IdReference(HistoricStation.class, station == null ? null : station.getId());
         this.route = user.getRoute();
         this.type = user.getClass().getAnnotation(AssociatedType.class).value();
     }

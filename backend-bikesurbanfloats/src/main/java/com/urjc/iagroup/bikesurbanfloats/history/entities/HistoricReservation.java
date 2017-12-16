@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationState;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
+import com.urjc.iagroup.bikesurbanfloats.history.History.IdReference;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
 /**
@@ -30,13 +31,13 @@ public class HistoricReservation implements HistoricEntity {
     private ReservationState state;
 
     @Expose
-    private Integer user;
+    private IdReference user;
 
     @Expose
-    private Integer station;
+    private IdReference station;
 
     @Expose
-    private Integer bike;
+    private IdReference bike;
 
     public HistoricReservation(Reservation reservation) {
         this.id = reservation.getId();
@@ -44,9 +45,9 @@ public class HistoricReservation implements HistoricEntity {
         this.endTime = reservation.getEndInstant() == -1 ? null : reservation.getEndInstant();
         this.type = reservation.getType();
         this.state = reservation.getState();
-        this.user = reservation.getUser().getId();
-        this.station = reservation.getStation().getId();
-        this.bike = reservation.getBike() == null ? null : reservation.getBike().getId();
+        this.user = new IdReference(HistoricUser.class, reservation.getUser().getId());
+        this.station = new IdReference(HistoricStation.class, reservation.getStation().getId());
+        this.bike = new IdReference(HistoricBike.class, reservation.getBike() == null ? null : reservation.getBike().getId());
     }
 
     @Override
