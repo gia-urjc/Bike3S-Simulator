@@ -37,8 +37,11 @@ public class UserMemory {
 	public void update(FactType fact) throws IllegalArgumentException {
 		switch(fact) {
 			case BIKE_RESERVATION_TIMEOUT: counterReservationTimeouts++;
+			break;
 			case BIKE_FAILED_RESERVATION: counterReservationAttempts++;
+			break;
 			case BIKES_UNAVAILABLE: counterRentingAttempts++;
+			break;
 			default: throw new IllegalArgumentException(fact.toString() + "is not defined in update method");
 		}
 	}

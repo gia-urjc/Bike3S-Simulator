@@ -29,7 +29,7 @@ public class RecommendationSystem {
 	 * It is the maximum distance in meters between the recommended stations and the indicated 
 	 * geographical point.
 	 */
-	private final int MAX_DISTANCE = 1500;
+	private final int MAX_DISTANCE = 25000;
 	
 	/**
 	 * It alloows to manage routes. 
@@ -76,7 +76,7 @@ public class RecommendationSystem {
 				continue;
 			}
 			
-			List<GeoRoute> validRoutes =	routes.stream().filter(route -> route.getTotalDistance() <= MAX_DISTANCE)
+			List<GeoRoute> validRoutes = routes.stream().filter(route -> route.getTotalDistance() <= MAX_DISTANCE)
 					.collect(Collectors.toList());
 			
 			if (!validRoutes.isEmpty()) {

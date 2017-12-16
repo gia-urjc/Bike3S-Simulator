@@ -41,7 +41,7 @@ public class SimulationRandom {
 	}
 
 	public int nextInt(int min, int max) {	
-		return min + random.nextInt((max - min) + 1);
+		return min + random.nextInt((max - min));
 	}
 	
 	public int nextInt() {

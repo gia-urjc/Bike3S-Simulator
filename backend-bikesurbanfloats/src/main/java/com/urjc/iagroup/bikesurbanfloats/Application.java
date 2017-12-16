@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.config.JsonValidation;
 import com.urjc.iagroup.bikesurbanfloats.config.SimulationConfiguration;
 import com.urjc.iagroup.bikesurbanfloats.core.SimulationEngine;
 import com.urjc.iagroup.bikesurbanfloats.core.SystemManager;
+import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
 import java.io.IOException;
 

@@ -62,9 +62,9 @@ public class UserRandom extends User {
     public Station determineStationToReturnBike(int instant) {
     	List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
     	
-     if (stations.isEmpty()) {
-     	stations = new ArrayList<>(systemManager.consultStations());
-     }
+	    if (stations.isEmpty()) {
+	     	stations = new ArrayList<>(systemManager.consultStations());
+	    }
 
     	return systemManager.getRecommendationSystem()
     			.recommendByLinearDistance(this.getPosition(), stations).get(0);

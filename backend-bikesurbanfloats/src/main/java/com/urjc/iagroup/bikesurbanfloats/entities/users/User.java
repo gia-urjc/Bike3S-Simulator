@@ -439,18 +439,23 @@ public abstract class User implements Entity {
      */
     public abstract GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException;
         
-/**
- * When user hasn't been able to make a reservation at the destination station,
- * he decides if he wants to choose another station to which go.
- * @return true if he decides to determine another destination station and false in
- * other case (he keeps his previously decision).
- */
-        public abstract boolean decidesToDetermineOtherStationAfterFailedReservation();
+	/**
+	 * When user hasn't been able to make a reservation at the destination station,
+	 * he decides if he wants to choose another station to which go.
+	 * @return true if he decides to determine another destination station and false in
+	 * other case (he keeps his previously decision).
+	 */
+    public abstract boolean decidesToDetermineOtherStationAfterFailedReservation();
 
     @Override
     public String toString() {
         String result = "| Id: " + getId();
-        result += "| Actual Position: " + position.toString();
+        if(position != null) {
+        	result += "| Actual Position: " + position.toString();
+        }
+        else {
+        	result += "| Actual Position: null";
+        }
         result += " | Has Bike: " + hasBike();
         result += " | Actual velocity: " + getAverageVelocity();
         result += 	" | Has reserved bike: "+hasReservedBike();
