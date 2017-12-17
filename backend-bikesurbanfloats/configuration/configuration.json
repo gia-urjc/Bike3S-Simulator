@@ -4,12 +4,12 @@
     "randomSeed": 201,
     "boundingBox": {
         "northWest": {
-            "latitude": 40.359102675792,
-            "longitude": -3.8005828857422
+            "latitude": 40.362241948999,
+            "longitude": -3.8400650024414
         },
         "southEast": {
-            "latitude": 40.519019171083,
-            "longitude": -3.5561370849609
+            "latitude": 40.484037303555,
+            "longitude": -3.5327911376953
         }
     },
     "map": "maps/madrid.osm",

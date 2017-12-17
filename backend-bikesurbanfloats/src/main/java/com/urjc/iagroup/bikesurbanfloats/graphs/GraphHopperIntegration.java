@@ -32,7 +32,7 @@ public class GraphHopperIntegration implements GraphManager {
         this.hopper = new GraphHopperOSM().forServer();
         hopper.setDataReaderFile(mapDir);
         hopper.setGraphHopperLocation(GRAPHHOPPER_DIR);
-        hopper.setEncodingManager(new EncodingManager("bike"));
+        hopper.setEncodingManager(new EncodingManager("foot"));
         hopper.importOrLoad();
         
     }
@@ -56,7 +56,7 @@ public class GraphHopperIntegration implements GraphManager {
                     startPosition.getLatitude(), startPosition.getLongitude(),
                     endPosition.getLatitude(), endPosition.getLongitude())
                     .setWeighting("fastest")
-                    .setVehicle("bike");
+                    .setVehicle("foot");
             GHResponse rsp = hopper.route(req);
             
             if(rsp.hasErrors()) {

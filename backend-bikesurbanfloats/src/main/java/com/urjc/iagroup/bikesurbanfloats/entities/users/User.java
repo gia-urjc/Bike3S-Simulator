@@ -315,6 +315,9 @@ public abstract class User implements Entity {
         if (hasReservedSlot()) {
             cancelsSlotReservation(station);
         }
+        if(station.returnBike(this.bike)){
+            this.bike = null;
+        }
     }
 
     public List<GeoRoute> calculateRoutesToStation(GeoPoint stationPosition) throws GeoRouteCreationException, GraphHopperIntegrationException {

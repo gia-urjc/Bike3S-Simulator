@@ -1,4 +1,6 @@
 import {Entity} from './Entity'
+import {GeoPoint} from "../../shared/util";
+import {Bike} from "./Bike";
 
 export class Station extends Entity {
 
@@ -16,29 +18,29 @@ export class Station extends Entity {
         this.reservedSlots = reservedSlots;
         this.bikes = bikes;
     }
-    
+
     getCapacity() {
         return this.capacity;
     }
-    
+
     getPosition() {
         return this.position;
     }
-    
+
     getReservedBikes() {
         return this.reservedBikes;
     }
-    
+
     getReservedSlots() {
         return this.reservedSlots;
     }
-    
+
     getBikes() {
         return this.bikes;
     }
-    
+
     availableBikes() {}
-    
+
     availableSlots() {}
 
 }

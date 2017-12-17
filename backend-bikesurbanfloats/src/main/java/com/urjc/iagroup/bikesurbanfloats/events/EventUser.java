@@ -54,7 +54,7 @@ public abstract class EventUser implements Event {
     
     /**
      * It tries to make the bike reservation:
-     *     <ul>
+     *  <ul>
      *  <li>If it is possible, user may have time to reach the station  while reservation is active or may not.
      *     <li>If it isn't possible, in case of the user decides not to leave the system,
      *     he makes a decision: to arrive at chosen station without reservation or 

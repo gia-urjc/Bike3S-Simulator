@@ -14,7 +14,6 @@ public class GeoRouteCreationException extends Exception {
           super(); 
       }
 
-
     public GeoRouteCreationException(String message) {
         super(message);
     }
