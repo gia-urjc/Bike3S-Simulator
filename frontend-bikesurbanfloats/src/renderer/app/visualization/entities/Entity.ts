@@ -1,6 +1,3 @@
-import { JsonObject } from '../../../../shared/util';
-import { VisualizationComponent } from '../visualization.component';
-
 export abstract class Entity {
     constructor(private $id: number) {}
 
@@ -15,7 +12,7 @@ export interface VisualOptions {
 
 export const EntityMetaKey = Symbol('entity-meta-key');
 
-export function VisualEntity<J extends JsonObject>(options: VisualOptions) {
+export function VisualEntity<J>(options: VisualOptions) {
     return function <E extends Entity> (Target: { new(json: J): E }) {
         Reflect.defineMetadata(EntityMetaKey, options, Target);
         return Target;

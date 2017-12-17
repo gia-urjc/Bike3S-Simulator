@@ -413,4 +413,39 @@ public class History {
         }
     }
 
+    public static class IdReference {
+        @Expose
+        private String type;
+
+        @Expose
+        private Object id;
+
+        private IdReference(Class<? extends HistoricEntity> type, Object id) {
+            this.type = getJsonIdentifier(type);
+            this.id = id;
+        }
+
+        public IdReference(Class<? extends HistoricEntity> type, Integer id) {
+            this(type, (Object)id);
+        }
+
+        public IdReference(Class<? extends HistoricEntity> type, List<Integer> idList) {
+            this(type, (Object)idList);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            IdReference that = (IdReference) o;
+            return Objects.equals(type, that.type) &&
+                    Objects.equals(id, that.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(type, id);
+        }
+    }
+
 }

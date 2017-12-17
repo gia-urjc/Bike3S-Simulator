@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
+import com.urjc.iagroup.bikesurbanfloats.history.History.IdReference;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
 import java.util.List;
@@ -34,13 +35,13 @@ public class HistoricStation implements HistoricEntity {
     private int capacity;
 
     @Expose
-    private List<Integer> bikes;
+    private IdReference bikes;
 
     public HistoricStation(Station station) {
         this.id = station.getId();
         this.position = new GeoPoint(station.getPosition());
         this.capacity = station.getCapacity();
-        this.bikes = station.getBikes().stream().map(bikeIdConverter).collect(Collectors.toList());
+        this.bikes = new IdReference(HistoricBike.class, station.getBikes().stream().map(bikeIdConverter).collect(Collectors.toList()));
     }
 
     @Override

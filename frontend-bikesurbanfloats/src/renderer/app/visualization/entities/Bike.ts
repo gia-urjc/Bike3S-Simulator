@@ -1,9 +1,8 @@
-import { JsonObject } from '../../../../shared/util';
+import { EntitiesJson } from '../../../../shared/generated/EntitiesJson';
+import { ArrayType, Extract } from '../../../../shared/util';
 import { Entity, VisualEntity } from './Entity';
 
-interface JsonBike extends JsonObject {
-    id: number,
-}
+type JsonBike = ArrayType<Extract<EntitiesJson, 'bikes'>>;
 
 @VisualEntity<JsonBike>({
     fromJson: 'bikes',
