@@ -8,36 +8,36 @@ package com.urjc.iagroup.bikesurbanfloats.entities.users.types;
  *
  */
 public class MinParameters {
-// TODO: evaluate if it is better to randomly set these values for users within a range.	
-	/**
-	 * It is the number of times that the user musts try to make a bike reservation before 
-	 * deciding to leave the system.  
-	 */
-	private int minReservationAttempts;
-	
-	/**
-	 * It is the number of times that a reservation timeout event musts occurs before the 
-	 * user decides to leave the system.
-	 */
-	private int minReservationTimeouts;
-	
+// TODO: evaluate if it is better to randomly set these values for users within a range.    
+    /**
+     * It is the number of times that the user musts try to make a bike reservation before 
+     * deciding to leave the system.  
+     */
+    private int minReservationAttempts;
+    
+    /**
+     * It is the number of times that a reservation timeout event musts occurs before the 
+     * user decides to leave the system.
+     */
+    private int minReservationTimeouts;
+    
  /**
   * It is the number of times that the user musts try to rent a bike (without a bike 
-  * reservation) before deciding to leave the system.	
+  * reservation) before deciding to leave the system.    
   */
-	private int minRentingAttempts;
-	
-	
-	public int getMinReservationAttempts() {
-		return minReservationAttempts;
-	}
+    private int minRentingAttempts;
+    
+    
+    public int getMinReservationAttempts() {
+        return minReservationAttempts;
+    }
 
-	public int getMinReservationTimeouts() {
-		return minReservationTimeouts;
-	}
+    public int getMinReservationTimeouts() {
+        return minReservationTimeouts;
+    }
 
-	public int getMinRentingAttempts() {
-		return minRentingAttempts;
-	}
+    public int getMinRentingAttempts() {
+        return minRentingAttempts;
+    }
 
 }

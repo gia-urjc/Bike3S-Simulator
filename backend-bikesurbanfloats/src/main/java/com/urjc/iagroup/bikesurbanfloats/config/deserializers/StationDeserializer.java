@@ -16,17 +16,17 @@ import java.util.List;
  */
 public class StationDeserializer implements JsonDeserializer<List<Station>>  {
 
-	private static final String JSON_ATTR_BIKES = "bikes";
-	private static final String JSON_ATTR_CAPACITY = "capacity";
-	private static final String JSON_ATTR_POSITION = "position";
-	
-	@Override
-	public List<Station> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    private static final String JSON_ATTR_BIKES = "bikes";
+    private static final String JSON_ATTR_CAPACITY = "capacity";
+    private static final String JSON_ATTR_POSITION = "position";
+    
+    @Override
+    public List<Station> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
-		List<Station> stations = new ArrayList<>();
+        List<Station> stations = new ArrayList<>();
 
-		for (JsonElement element : json.getAsJsonArray()) {
-		    JsonObject station = element.getAsJsonObject();
+        for (JsonElement element : json.getAsJsonArray()) {
+            JsonObject station = element.getAsJsonObject();
             JsonElement jsonElementBikes = station.get(JSON_ATTR_BIKES);
             int capacity = station.get(JSON_ATTR_CAPACITY).getAsInt();
             List<Bike> bikes = new ArrayList<>();
@@ -48,8 +48,8 @@ public class StationDeserializer implements JsonDeserializer<List<Station>>  {
             GeoPoint position = context.deserialize(jsonElemGeoP, GeoPoint.class);
             stations.add(new Station(position, capacity, bikes));
         }
-		
-		return stations;
-	}
-	
+        
+        return stations;
+    }
+    
 }

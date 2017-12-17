@@ -6,24 +6,24 @@ package com.urjc.iagroup.bikesurbanfloats.graphs.exceptions;
  *
  */
 public class GraphHopperIntegrationException extends Exception {
-	
+    
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public GraphHopperIntegrationException() { 
-		  super(); 
-	  }
-	  
-	  public GraphHopperIntegrationException(String message) {
-		  super(message); 
-	  }
-	  
-	  public GraphHopperIntegrationException(String message, Throwable cause) {
-		  super(message, cause); 
-	  }
-	  
-	  public GraphHopperIntegrationException(Throwable cause) {
-		  super(cause);   
-	  }
-	
+    public GraphHopperIntegrationException() { 
+        super();
+    }
+      
+    public GraphHopperIntegrationException(String message) {
+          super(message); 
+      }
+      
+    public GraphHopperIntegrationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+      
+    public GraphHopperIntegrationException(Throwable cause) {
+        super(cause);
+    }
+    
 }

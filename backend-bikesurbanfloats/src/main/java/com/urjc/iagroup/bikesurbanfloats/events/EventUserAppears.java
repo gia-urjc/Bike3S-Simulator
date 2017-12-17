@@ -11,8 +11,8 @@ public class EventUserAppears extends EventUser {
 
     private List<Entity> entities;
     private GeoPoint position;
-	
-	public EventUserAppears(int instant, User user, GeoPoint position) {
+    
+    public EventUserAppears(int instant, User user, GeoPoint position) {
         super(instant, user);
         this.entities = Arrays.asList(user);
         this.position = position;
@@ -20,7 +20,7 @@ public class EventUserAppears extends EventUser {
 
     @Override
     public List<Event> execute() throws Exception {
-    	user.setPosition(position);
+        user.setPosition(position);
         return manageBikeReservationDecisionAtOtherStation();
     }
 

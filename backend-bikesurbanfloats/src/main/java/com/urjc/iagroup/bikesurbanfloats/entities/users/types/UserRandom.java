@@ -47,27 +47,27 @@ public class UserRandom extends User {
 
     @Override
     public Station determineStationToRentBike(int instant) {
-    	List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-    	
+        List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        
      if (stations.isEmpty()) {
-     	stations = new ArrayList<>(systemManager.consultStations());
+         stations = new ArrayList<>(systemManager.consultStations());
      }
 
-    	return systemManager.getRecommendationSystem()
-    			.recommendByLinearDistance(this.getPosition(), stations).get(0);
+        return systemManager.getRecommendationSystem()
+                .recommendByLinearDistance(this.getPosition(), stations).get(0);
 
     }
 
     @Override
     public Station determineStationToReturnBike(int instant) {
-    	List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
-    	
-	    if (stations.isEmpty()) {
-	     	stations = new ArrayList<>(systemManager.consultStations());
-	    }
+        List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
+        
+        if (stations.isEmpty()) {
+             stations = new ArrayList<>(systemManager.consultStations());
+        }
 
-    	return systemManager.getRecommendationSystem()
-    			.recommendByLinearDistance(this.getPosition(), stations).get(0);
+        return systemManager.getRecommendationSystem()
+                .recommendByLinearDistance(this.getPosition(), stations).get(0);
     }
     
     @Override

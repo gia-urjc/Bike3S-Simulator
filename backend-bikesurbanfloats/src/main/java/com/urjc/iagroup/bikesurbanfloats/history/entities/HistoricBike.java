@@ -16,12 +16,12 @@ public class HistoricBike implements HistoricEntity {
     @Expose
     private int id;
 
-	private boolean reserved;
+    private boolean reserved;
 
-	public HistoricBike(Bike bike) {
-		this.id = bike.getId();
-		this.reserved = bike.isReserved();
-	}
+    public HistoricBike(Bike bike) {
+        this.id = bike.getId();
+        this.reserved = bike.isReserved();
+    }
 
     @Override
     public int getId() {

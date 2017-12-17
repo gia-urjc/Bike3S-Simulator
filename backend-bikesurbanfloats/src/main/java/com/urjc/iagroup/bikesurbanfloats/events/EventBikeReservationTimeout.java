@@ -11,7 +11,7 @@ import java.util.List;
 
 public class EventBikeReservationTimeout extends EventUser {
     private List<Entity> entities;
-	private Reservation reservation;
+    private Reservation reservation;
     
     public EventBikeReservationTimeout(int instant, User user, Reservation reservation) {
         super(instant, user);
@@ -26,7 +26,7 @@ public class EventBikeReservationTimeout extends EventUser {
     @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        user.updatePositionAfterTimeOut();	
+        user.updatePositionAfterTimeOut();    
         reservation.expire();
         user.addReservation(reservation);
         user.cancelsBikeReservation(user.getDestinationStation());

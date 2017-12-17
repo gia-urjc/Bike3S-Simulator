@@ -1,7 +1,7 @@
 {
     "reservationTime": 150,
-    "totalSimulationTime": 10000,
-    "randomSeed": 200,
+    "totalSimulationTime": 25000,
+    "randomSeed": 201,
     "boundingBox": {
         "northWest": {
             "latitude": 40.359102675792,

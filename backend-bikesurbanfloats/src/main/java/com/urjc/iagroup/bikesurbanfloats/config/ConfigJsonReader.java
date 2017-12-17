@@ -22,7 +22,7 @@ public class ConfigJsonReader {
     private Gson gson;
 
     public ConfigJsonReader(String configurationFile) {
-    	this.configurationFile = configurationFile;
+        this.configurationFile = configurationFile;
         this.gson = new Gson();
     }
     

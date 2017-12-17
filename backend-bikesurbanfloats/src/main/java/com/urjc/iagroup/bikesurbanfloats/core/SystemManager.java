@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
  */
 public class SystemManager {
 
-	/**
-	 * These are all the stations at the system.
-	 */
+    /**
+     * These are all the stations at the system.
+     */
     private List<Station> stations;
     
     /**
@@ -69,11 +69,11 @@ public class SystemManager {
         this.graphManager = createGraphManager(simulationConfiguration);
         this.random = SimulationRandom.getGeneralInstance();
         this.bbox = simulationConfiguration.getBoundingBox();
-        this.recommendationSystem = new RecommendationSystem(graphManager);	
+        this.recommendationSystem = new RecommendationSystem(graphManager);    
     }
     
     private GraphHopperIntegration createGraphManager(SimulationConfiguration simulationConfiguration) throws IOException {
-    	return new GraphHopperIntegration(simulationConfiguration.getMap());
+        return new GraphHopperIntegration(simulationConfiguration.getMap());
     }
     
     /**
@@ -101,24 +101,24 @@ public class SystemManager {
     }
     
     public GraphManager getGraphManager() {
-		return graphManager;
-	}
-	
-	public SimulationRandom getRandom() {
-		return random;
-	}
-	
-	public RecommendationSystem getRecommendationSystem() {
-		return recommendationSystem;
-	}
+        return graphManager;
+    }
+    
+    public SimulationRandom getRandom() {
+        return random;
+    }
+    
+    public RecommendationSystem getRecommendationSystem() {
+        return recommendationSystem;
+    }
 
-	/**
-	 * It obtains the stations for which a user has tried to make a bike reservation in an specific moment.
-	 * @param user it is the user who has tried to reserve a bike.
-	 * @param timeInstant it is the moment at which he has decided he wants to reserve a bike
-	 * and he has been trying it.
-	 * @return a list of stations for which the bike reservation has failed because of unavailable bikes.
-	 */
+    /**
+     * It obtains the stations for which a user has tried to make a bike reservation in an specific moment.
+     * @param user it is the user who has tried to reserve a bike.
+     * @param timeInstant it is the moment at which he has decided he wants to reserve a bike
+     * and he has been trying it.
+     * @return a list of stations for which the bike reservation has failed because of unavailable bikes.
+     */
     public List<Station> consultStationsWithBikeReservationAttempt(User user, int timeInstant) {
         return consultReservations(user).stream()
                 .filter(reservation -> reservation.getType() == ReservationType.BIKE)
@@ -128,14 +128,14 @@ public class SystemManager {
                 .collect(Collectors.toList());
     }
 
-	/**
-	 * It obtains the stations for which a user hasn't tried to make a bike reservation in an specific moment.
-	 * @param user it is used to find out for which stations this user hasn't tried to
-	 * reserve a bike.
-	 * @param timeInstant it is the moment at which he has decided he wants to reserve a bike
-	 * and he has been tring it.
-	 * @return a list of stations for which user hasn't still tried to reserve a bike at that specific moment.
-	 */
+    /**
+     * It obtains the stations for which a user hasn't tried to make a bike reservation in an specific moment.
+     * @param user it is used to find out for which stations this user hasn't tried to
+     * reserve a bike.
+     * @param timeInstant it is the moment at which he has decided he wants to reserve a bike
+     * and he has been tring it.
+     * @return a list of stations for which user hasn't still tried to reserve a bike at that specific moment.
+     */
     public List<Station> consultStationsWithoutBikeReservationAttempt(User user, int timeInstant) {
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(consultStationsWithBikeReservationAttempt(user, timeInstant));
@@ -159,7 +159,7 @@ public class SystemManager {
 
 
     public GeoPoint generateBoundingBoxRandomPoint(SimulationRandom random) {
-    	return bbox.randomPoint(random);
+        return bbox.randomPoint(random);
     }
     
 }

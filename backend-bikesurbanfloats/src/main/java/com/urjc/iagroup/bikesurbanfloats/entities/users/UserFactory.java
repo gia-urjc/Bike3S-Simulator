@@ -18,16 +18,16 @@ public class UserFactory {
             case USER_RANDOM:
                 return new UserRandom();
             case USER_TOURIST:
-            	return new UserTourist();
-	        case USER_EMPLOYEE:
-	        	return new UserEmployee();
-	        case USER_STATIONS_BALANCER:
-	        	return new UserStationsBalancer();
-	        case USER_REASONABLE: 
-	        	return new UserReasonable();
-	        case USER_DISTANCE_RESTRICTION:
-	        	return new UserDistanceRestriction();
-        	
+                return new UserTourist();
+            case USER_EMPLOYEE:
+                return new UserEmployee();
+            case USER_STATIONS_BALANCER:
+                return new UserStationsBalancer();
+            case USER_REASONABLE: 
+                return new UserReasonable();
+            case USER_DISTANCE_RESTRICTION:
+                return new UserDistanceRestriction();
+            
         }
         throw new IllegalArgumentException("The type" + type + "doesn't exists");
     }

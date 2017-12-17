@@ -28,7 +28,7 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
         List<Event> newEvents = new ArrayList<>();
         user.setPosition(station.getPosition());
         if(!user.returnBikeWithoutReservationTo(station)) {
-        	newEvents = manageSlotReservationDecisionAtOtherStation();
+            newEvents = manageSlotReservationDecisionAtOtherStation();
         }      
         return newEvents;
     }

@@ -28,7 +28,7 @@ import java.util.List;
 @HistoryReference(HistoricUser.class)
 public abstract class User implements Entity {
 
-	private static IdGenerator idGenerator = new IdGenerator();
+    private static IdGenerator idGenerator = new IdGenerator();
 
     private int id;
     
@@ -114,8 +114,8 @@ public abstract class User implements Entity {
     }
 
     public void addReservation(Reservation reservation) {
-    	systemManager.addReservation(reservation);
-    	this.reservation = reservation;
+        systemManager.addReservation(reservation);
+        this.reservation = reservation;
     }
 
     public void setSystemManager(SystemManager systemManager) {
@@ -131,7 +131,7 @@ public abstract class User implements Entity {
     }
 
     public void setPosition(Double latitude, Double longitude) {
-    	this.position.setLatitude(latitude);
+        this.position.setLatitude(latitude);
         this.position.setLongitude(longitude);
     }
     
@@ -153,24 +153,24 @@ public abstract class User implements Entity {
 
     // TODO: getter possibly unnecessary
     /*public Reservation getReservation() {
-    	return this.reservation;
+        return this.reservation;
     }*/
 
     public Station getDestinationStation() {
-		return destinationStation;
-	}
+        return destinationStation;
+    }
 
-	public void setDestinationStation(Station destinationStation) {
-		this.destinationStation = destinationStation;
-	}
+    public void setDestinationStation(Station destinationStation) {
+        this.destinationStation = destinationStation;
+    }
 
-	public GeoRoute getRoute() {
-		return this.route;
-	}
+    public GeoRoute getRoute() {
+        return this.route;
+    }
 
-	public void setRoute(GeoRoute route) {
-		this.route = route;
-	}
+    public void setRoute(GeoRoute route) {
+        this.route = route;
+    }
 
     public double getWalkingVelocity() {
         return walkingVelocity;
@@ -181,7 +181,7 @@ public abstract class User implements Entity {
     }
     
     public UserMemory getMemory() {
-    	return this.memory;
+        return this.memory;
     }
     
     /**
@@ -193,7 +193,7 @@ public abstract class User implements Entity {
      * @throws GraphHopperIntegrationException 
      */
     public double minRealDistanceTo(GeoPoint stationPosition) throws GraphHopperIntegrationException, GeoRouteCreationException {
-    	return systemManager.getGraphManager().obtainShortestRouteBetween(this.getPosition(), stationPosition).getTotalDistance();
+        return systemManager.getGraphManager().obtainShortestRouteBetween(this.getPosition(), stationPosition).getTotalDistance();
     }
 
     /**
@@ -212,12 +212,12 @@ public abstract class User implements Entity {
      */
 
     public Bike reservesBike(Station station) {
-    	Bike bike = null;
-    	if (station.availableBikes() > 0) {
-    		this.reservedBike = true;
-    		bike = station.reservesBike();
-    	}
-    	return bike;
+        Bike bike = null;
+        if (station.availableBikes() > 0) {
+            this.reservedBike = true;
+            bike = station.reservesBike();
+        }
+        return bike;
     }
 
     /**
@@ -228,11 +228,11 @@ public abstract class User implements Entity {
      */
 
     public boolean reservesSlot(Station station) {
-    	if (station.availableSlots() > 0) {
-    		this.reservedSlot = true;
-    		station.reservesSlot();
-    	}
-    	return reservedSlot;
+        if (station.availableSlots() > 0) {
+            this.reservedSlot = true;
+            station.reservesSlot();
+        }
+        return reservedSlot;
     }
     
     /**
@@ -262,7 +262,7 @@ public abstract class User implements Entity {
      * or he has a bike reservation) and false in other case.
      */
 
-	public boolean removeBikeWithoutReservationFrom(Station station) {
+    public boolean removeBikeWithoutReservationFrom(Station station) {
         if (hasBike()) {
             return false;
         }
@@ -270,38 +270,38 @@ public abstract class User implements Entity {
         return hasBike();
     }
 
-	/**
-	 * User removes the reserved bike from the specified station.
-	 * @param station: it is the station where user goes to rent a bike.
-	 */
+    /**
+     * User removes the reserved bike from the specified station.
+     * @param station: it is the station where user goes to rent a bike.
+     */
 
-	public boolean removeBikeWithReservationFrom(Station station) {
-		if (hasBike()) {
-			return false;
-		}
-		if (hasReservedBike()) {
+    public boolean removeBikeWithReservationFrom(Station station) {
+        if (hasBike()) {
+            return false;
+        }
+        if (hasReservedBike()) {
             // first, reservation is cancelled to let a bike available at station to make sure one bike is available for take away
             cancelsBikeReservation(station);
-		}
-		this.bike = station.removeBikeWithReservation(reservation);
-		return true;
-	}
+        }
+        this.bike = station.removeBikeWithReservation(reservation);
+        return true;
+    }
 
-	/**
-	 * User tries to return his rented bike to the specified station.
-	 * @param station: it is the station where user wants to return his bike.
-	 * @return true if user has been ablo to return his bike (there available slots
-	 *  or he has a slot reservation) and false in other case.
-	 */
+    /**
+     * User tries to return his rented bike to the specified station.
+     * @param station: it is the station where user wants to return his bike.
+     * @return true if user has been ablo to return his bike (there available slots
+     *  or he has a slot reservation) and false in other case.
+     */
 
     public boolean returnBikeWithoutReservationTo(Station station) {
         boolean returned = false;
-    	if (!hasBike()) {
+        if (!hasBike()) {
             // TODO: log warning (or throw error?)
             return false;
         }
         if(station.returnBike(this.bike)) {
-        	this.bike = null;
+            this.bike = null;
         returned = true;
         }
         return returned;
@@ -312,21 +312,21 @@ public abstract class User implements Entity {
      * @param station: it is the station at which user arrives in order to return his bike.
      */
     public void returnBikeWithReservationTo(Station station) {
-    	if (hasReservedSlot()) {
-    		cancelsSlotReservation(station);
-    	}
+        if (hasReservedSlot()) {
+            cancelsSlotReservation(station);
+        }
     }
 
     public List<GeoRoute> calculateRoutesToStation(GeoPoint stationPosition) throws GeoRouteCreationException, GraphHopperIntegrationException {
-    	return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), stationPosition);
+        return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), stationPosition);
     }
 
     public List<GeoRoute> calculateRoutesToDestinationPlace(GeoPoint point) throws GeoRouteCreationException, GraphHopperIntegrationException{
-    	return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), point);
+        return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), point);
     }
 
     public GeoRoute reachedRouteUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
-    	return route.calculateRouteByTimeAndVelocity(Reservation.VALID_TIME, this.getAverageVelocity());
+        return route.calculateRouteByTimeAndVelocity(Reservation.VALID_TIME, this.getAverageVelocity());
     }
 
     /**
@@ -336,8 +336,8 @@ public abstract class User implements Entity {
      */
 
     public void updatePositionAfterTimeOut() {
-    	List<GeoPoint> pointList = route.getPoints();
-    	position = pointList.get(pointList.size() - 1);
+        List<GeoPoint> pointList = route.getPoints();
+        position = pointList.get(pointList.size() - 1);
     }
 
     /**
@@ -346,7 +346,7 @@ public abstract class User implements Entity {
      * @throws Exception
      */
     public int timeToReach() {
-		return (int) (route.getTotalDistance()/getAverageVelocity());
+        return (int) (route.getTotalDistance()/getAverageVelocity());
     }
 
     /**
@@ -439,26 +439,26 @@ public abstract class User implements Entity {
      */
     public abstract GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException;
         
-	/**
-	 * When user hasn't been able to make a reservation at the destination station,
-	 * he decides if he wants to choose another station to which go.
-	 * @return true if he decides to determine another destination station and false in
-	 * other case (he keeps his previously decision).
-	 */
+    /**
+     * When user hasn't been able to make a reservation at the destination station,
+     * he decides if he wants to choose another station to which go.
+     * @return true if he decides to determine another destination station and false in
+     * other case (he keeps his previously decision).
+     */
     public abstract boolean decidesToDetermineOtherStationAfterFailedReservation();
 
     @Override
     public String toString() {
         String result = "| Id: " + getId();
         if(position != null) {
-        	result += "| Actual Position: " + position.toString();
+            result += "| Actual Position: " + position.toString();
         }
         else {
-        	result += "| Actual Position: null";
+            result += "| Actual Position: null";
         }
         result += " | Has Bike: " + hasBike();
         result += " | Actual velocity: " + getAverageVelocity();
-        result += 	" | Has reserved bike: "+hasReservedBike();
+        result +=     " | Has reserved bike: "+hasReservedBike();
         result += " | Has reserved slot: "+hasReservedSlot()+"\n";
         return result;
     }

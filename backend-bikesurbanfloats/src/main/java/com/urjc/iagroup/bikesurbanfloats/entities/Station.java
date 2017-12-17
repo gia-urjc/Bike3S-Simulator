@@ -73,14 +73,14 @@ public class Station implements Entity {
     }
     
     private Bike getFirstAvailableBike() {
-    	Bike bike = null;
-    	for (Bike currentBike: bikes) {
-    		if (currentBike != null &&	!currentBike.isReserved()) {
-    			bike = currentBike;
-    			break;
-    		}
-    	}
-    	return bike;
+        Bike bike = null;
+        for (Bike currentBike: bikes) {
+            if (currentBike != null &&    !currentBike.isReserved()) {
+                bike = currentBike;
+                break;
+            }
+        }
+        return bike;
     }
     
     /**
@@ -89,12 +89,12 @@ public class Station implements Entity {
      */
 
     public Bike reservesBike() {
-    	Bike bike = null;
-    	if (availableBikes() > 0) {
+        Bike bike = null;
+        if (availableBikes() > 0) {
         bike = getFirstAvailableBike();
         bike.setReserved(true);
         this.reservedBikes++;
-    	}
+        }
         return bike;
     }
     
@@ -112,7 +112,7 @@ public class Station implements Entity {
      */
     
     public void reservesSlot() {
-    	if (availableSlots() > 0)
+        if (availableSlots() > 0)
         this.reservedSlots++;
     }
     
@@ -131,7 +131,7 @@ public class Station implements Entity {
     
         public Bike removeBikeWithoutReservation() {
         Bike bike = null;
-    	if (this.availableBikes() == 0) {
+        if (this.availableBikes() == 0) {
            return null;
         }
         for (int i = 0; i < bikes.size(); i++) {
@@ -151,11 +151,11 @@ public class Station implements Entity {
          */
         
         public Bike removeBikeWithReservation(Reservation reservation) {
-	        Bike bike = reservation.getBike();
-	        int i = bikes.indexOf(bike);
-	        bikes.set(i, null);
-	        bike.setReserved(false);
-	        return bike;
+            Bike bike = reservation.getBike();
+            int i = bikes.indexOf(bike);
+            bikes.set(i, null);
+            bike.setReserved(false);
+            return bike;
         }
         
         /**
@@ -166,7 +166,7 @@ public class Station implements Entity {
 
     public boolean returnBike(Bike bike) {
         boolean returned = false;
-    	if (this.availableSlots() == 0) {
+        if (this.availableSlots() == 0) {
             return false;
         }
         for (int i = 0; i < bikes.size(); i++) {
@@ -176,13 +176,13 @@ public class Station implements Entity {
                 break;
             }
         }
-		return returned;
+        return returned;
     }
     
     @Override
     public String toString() {
         String result = "Id: " + getId();
-    	result += " | Position " + position.toString();
+        result += " | Position " + position.toString();
         result += " | Capacity: " + capacity;
         result += " | Number of available bikes: " + availableBikes() + "\n";
         result += " | Number of available slots: " + availableSlots() + "\n";

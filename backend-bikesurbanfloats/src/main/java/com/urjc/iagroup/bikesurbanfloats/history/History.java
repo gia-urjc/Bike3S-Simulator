@@ -21,8 +21,8 @@ import java.util.*;
  *
  */
 public class History {
-	
-	private static String DEFAULT_HISTORY_OUTPUT_PATH = "history";
+    
+    private static String DEFAULT_HISTORY_OUTPUT_PATH = "history";
 
     private static Gson gson = new GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()
@@ -53,13 +53,13 @@ public class History {
     private static Path outputPath = Paths.get(DEFAULT_HISTORY_OUTPUT_PATH);
 
 
-	/**
-	 * It prepares the history instance to be used. Specifically, it initializes the path 
-	 * of the directory where historic files will be stored.
-	 * @param simulationConfiguration It contains all the configuration properties.
-	 */
-	public static void init(SimulationConfiguration simulationConfiguration) {
-    	outputPath = Paths.get(simulationConfiguration.getOutputPath());
+    /**
+     * It prepares the history instance to be used. Specifically, it initializes the path 
+     * of the directory where historic files will be stored.
+     * @param simulationConfiguration It contains all the configuration properties.
+     */
+    public static void init(SimulationConfiguration simulationConfiguration) {
+        outputPath = Paths.get(simulationConfiguration.getOutputPath());
     }
     
     /**
@@ -69,11 +69,11 @@ public class History {
     public static void close() throws IOException {
 
         // TODO: maybe split entities.json into multiple files, e.g. entities/users.json
-    	
-    	/*
-    	 * It is a map with the names of the entities'  history classes as the key and
-    	 * a list of historic classes of a concrete entity as the value.
-    	 */
+        
+        /*
+         * It is a map with the names of the entities'  history classes as the key and
+         * a list of historic classes of a concrete entity as the value.
+         */
         Map<String, Collection<HistoricEntity>> entries = new HashMap<>();
         initialEntities.getEntityMaps().forEach((historicClass, entities) -> {
             String jsonIdentifier = getJsonIdentifier(historicClass);
@@ -123,9 +123,9 @@ public class History {
          * instance of this event, it creates it.
          */
         if (!serializedEvents.containsKey(event.getInstant())) {
-        	/* A file which contains serialized events can only save 100 time instants
-        	 * So, if the map of serialized events already contains 100 entries, it musts be written in a file  
-        	 */
+            /* A file which contains serialized events can only save 100 time instants
+             * So, if the map of serialized events already contains 100 entries, it musts be written in a file  
+             */
             if (serializedEvents.size() == 100) {
                 writeTimeEntries();
                 serializedEvents.clear();
@@ -151,7 +151,7 @@ public class History {
      * @param content It is the information which is written in the file. 
      */
     private static void writeJson(String name, Object content) throws IOException {
-    	// it creates a file with the specified name in the history directory
+        // it creates a file with the specified name in the history directory
         File json = outputPath.resolve(name).toFile();
         json.getParentFile().mkdirs();
         
@@ -395,9 +395,9 @@ public class History {
      *
      */
     private static class TimeEntry {
-    	  /**
-       	* It is the moment when the events happen. 
-    	   */
+          /**
+           * It is the moment when the events happen. 
+           */
         @Expose
         private int time;
         

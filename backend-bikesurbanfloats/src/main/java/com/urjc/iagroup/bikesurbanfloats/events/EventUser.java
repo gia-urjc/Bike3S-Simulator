@@ -20,15 +20,15 @@ import java.util.List;
  *
  */
 public abstract class EventUser implements Event {
-	/**
-	 * It is the time instant when event happens.
-	 */
-	protected int instant;
-	
-	/**
-	 * It is the user who is involved in the event.
-	 */
-	protected User user;
+    /**
+     * It is the time instant when event happens.
+     */
+    protected int instant;
+    
+    /**
+     * It is the user who is involved in the event.
+     */
+    protected User user;
 
     public EventUser(int instant, User user) {
         this.instant = instant;
@@ -36,15 +36,15 @@ public abstract class EventUser implements Event {
     }
     
     public int getInstant() {
-    	return instant;
+        return instant;
     }
     
     public User getUser() {
-    	return user;
+        return user;
     }
     
     public String toString() {
-    	return print();
+        return print();
     }
     
     /**
@@ -54,11 +54,11 @@ public abstract class EventUser implements Event {
     
     /**
      * It tries to make the bike reservation:
-     * 	<ul>
+     *     <ul>
      *  <li>If it is possible, user may have time to reach the station  while reservation is active or may not.
-     * 	<li>If it isn't possible, in case of the user decides not to leave the system,
-     * 	he makes a decision: to arrive at chosen station without reservation or 
-     * 	to repeat all the process after deciding to reserve at a new chosen station.
+     *     <li>If it isn't possible, in case of the user decides not to leave the system,
+     *     he makes a decision: to arrive at chosen station without reservation or 
+     *     to repeat all the process after deciding to reserve at a new chosen station.
      *  </ul>  
      * @param destination: it is the station for which user wants to make a bike reservation.
      *  This parameter can be the previous chosen station or a new decided destination station. 
@@ -72,8 +72,8 @@ public abstract class EventUser implements Event {
         if (bike != null) {  // user has been able to reserve a bike  
             Reservation reservation = new Reservation(instant, ReservationType.BIKE, user, destination, bike);
             if (Reservation.VALID_TIME < arrivalTime) {
-            	user.setRoute(user.reachedRouteUntilTimeOut());
-            	newEvents.add(new EventBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME , user, reservation));
+                user.setRoute(user.reachedRouteUntilTimeOut());
+                newEvents.add(new EventBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME , user, reservation));
             }
             else {
                 newEvents.add(new EventUserArrivesAtStationToRentBikeWithReservation(this.getInstant() + arrivalTime, user, destination, reservation));
@@ -101,11 +101,11 @@ public abstract class EventUser implements Event {
      * @return a list of generated events that will ocurr as a consequence of making the decision.
      */
     public List<Event> manageBikeReservationDecisionAtSameStationAfterTimeout() throws Exception {
-    	List<Event> newEvents = new ArrayList<>();
-    	Station destination = user.getDestinationStation();
-    	int arrivalTime = user.timeToReach();
-    	System.out.println("Destination before user arrival: "+	destination.toString() + " " + user.toString());
-		
+        List<Event> newEvents = new ArrayList<>();
+        Station destination = user.getDestinationStation();
+        int arrivalTime = user.timeToReach();
+        System.out.println("Destination before user arrival: "+    destination.toString() + " " + user.toString());
+        
         if (user.decidesToReserveBikeAtSameStationAfterTimeout()) {
             newEvents = manageBikeReservation(destination);
         }
@@ -125,14 +125,14 @@ public abstract class EventUser implements Event {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.determineStationToRentBike(instant);
         
-        if (destination != null) {     		
+        if (destination != null) {             
         user.setDestinationStation(destination);
         List<GeoRoute> allRoutes = user.calculateRoutesToStation(destination.getPosition());
         GeoRoute chosenRoute = user.determineRoute(allRoutes);
         user.setRoute(chosenRoute);
         
         int arrivalTime = user.timeToReach();
-        System.out.println("Destination before user arrival: "+	destination.toString() + " " + user.toString());
+        System.out.println("Destination before user arrival: "+    destination.toString() + " " + user.toString());
         
         if (user.decidesToReserveBikeAtNewDecidedStation()) {
             newEvents = manageBikeReservation(destination);
@@ -151,43 +151,43 @@ public abstract class EventUser implements Event {
      * @throws Exception
      */
     public List<Event> manageSlotReservation(Station destination) throws Exception{
-    	List<Event> newEvents = new ArrayList<>();
-    	int arrivalTime = user.timeToReach();
-    	if (user.reservesSlot(destination)) {  // User has been able to reserve
-       	 Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination, user.getBike());
-           	if (Reservation.VALID_TIME < arrivalTime) {
-           		user.setRoute(user.reachedRouteUntilTimeOut());
-           		newEvents.add(new EventSlotReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation));
-           	}
-           	else {
-           	    newEvents.add(new EventUserArrivesAtStationToReturnBikeWithReservation(this.getInstant() + arrivalTime, user, destination, reservation));
-           	}
+        List<Event> newEvents = new ArrayList<>();
+        int arrivalTime = user.timeToReach();
+        if (user.reservesSlot(destination)) {  // User has been able to reserve
+            Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination, user.getBike());
+               if (Reservation.VALID_TIME < arrivalTime) {
+                   user.setRoute(user.reachedRouteUntilTimeOut());
+                   newEvents.add(new EventSlotReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation));
+               }
+               else {
+                   newEvents.add(new EventUserArrivesAtStationToReturnBikeWithReservation(this.getInstant() + arrivalTime, user, destination, reservation));
+               }
            }
            else {  // user hasn't been able to reserve a slot
-	           	Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);	
-	           	user.addReservation(reservation);
-	       		if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user waljs to the initially chosen station 
-	       			newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
-	       		}
-	       		else {
-	       			newEvents = manageSlotReservationDecisionAtOtherStation();
-	       		}	
-       	}
-    	return newEvents;
+                   Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);    
+                   user.addReservation(reservation);
+                   if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user waljs to the initially chosen station 
+                       newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
+                   }
+                   else {
+                       newEvents = manageSlotReservationDecisionAtOtherStation();
+                   }    
+           }
+        return newEvents;
     }
 
     public List<Event> manageSlotReservationDecisionAtSameStationAfterTimeout() throws Exception {
-    	List<Event> newEvents = new ArrayList<>();
-		Station destination = user.getDestinationStation(); 
-		int arrivalTime = user.timeToReach();
-		System.out.println("Destination before user arrival: "+	destination.toString() + " " + user.toString());
+        List<Event> newEvents = new ArrayList<>();
+        Station destination = user.getDestinationStation(); 
+        int arrivalTime = user.timeToReach();
+        System.out.println("Destination before user arrival: "+    destination.toString() + " " + user.toString());
         
         if (user.decidesToReserveSlotAtSameStationAfterTimeout()) {
             newEvents = manageSlotReservation(destination);
         }
         else {   // user decides not to reserve
             newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
-	    }
+        }
         return newEvents;
     }
     
@@ -200,7 +200,7 @@ public abstract class EventUser implements Event {
         user.setRoute(chosenRoute);
 
         int arrivalTime = user.timeToReach();
-        System.out.println("Destination before user arrival: "+	destination.toString() + " " + user.toString());
+        System.out.println("Destination before user arrival: "+    destination.toString() + " " + user.toString());
         
         if (user.decidesToReserveSlotAtNewDecidedStation()) {
             newEvents = manageSlotReservation(destination);

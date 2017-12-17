@@ -9,7 +9,7 @@ import java.util.List;
 
 public class EventSlotReservationTimeout extends EventUser {
     private List<Entity> entities;
-	private Reservation reservation;
+    private Reservation reservation;
 
     public EventSlotReservationTimeout(int instant, User user, Reservation reservation) {
         super(instant, user);

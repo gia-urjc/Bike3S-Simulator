@@ -1,33 +1,33 @@
-	package com.urjc.iagroup.bikesurbanfloats.config.entrypoints.distributions;
+    package com.urjc.iagroup.bikesurbanfloats.config.entrypoints.distributions;
 
-	/**
-	 * This class represents the math distribution concept.
-	 * It forces all distribution instances to have a property which indicates what 
-	 * type of distribution they represent.
-	 * It provides an enum type which serves to represent all kind of distributions 
-	 * used at the system.  
-	 * @author IAgroup
-	 *
-	 */
+    /**
+     * This class represents the math distribution concept.
+     * It forces all distribution instances to have a property which indicates what 
+     * type of distribution they represent.
+     * It provides an enum type which serves to represent all kind of distributions 
+     * used at the system.  
+     * @author IAgroup
+     *
+     */
 public class Distribution {
-	
-	public enum DistributionType {
-		POISSON, RANDOM, NONEDISTRIBUTION
-	}
+    
+    public enum DistributionType {
+        POISSON, RANDOM, NONEDISTRIBUTION
+    }
 
-	private DistributionType type;
+    private DistributionType type;
 
-	public Distribution(DistributionType type) {
-		this.type = type;
-	}
+    public Distribution(DistributionType type) {
+        this.type = type;
+    }
 
-	public DistributionType getDistribution() {
-		return type;
-	}
+    public DistributionType getDistribution() {
+        return type;
+    }
 
-	public void setDistribution(DistributionType distribution) {
-		this.type = distribution;
-	}
+    public void setDistribution(DistributionType distribution) {
+        this.type = distribution;
+    }
 
 
 }

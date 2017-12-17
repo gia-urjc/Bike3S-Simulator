@@ -15,42 +15,42 @@ import java.util.List;
  *
  */
 public class EntryPointSingle extends EntryPoint {
-	/**
-	 * It is the point where user appears, i. e., where user is located after being generated.
-	 */
-	private GeoPoint position;
-	
-	/**
-	 * Type of user that will be generated.
-	 */
-	private UserType userType;
-	
-	/**
-	 * It is the time instant when user appears at the system.
-	 */
-	private int timeInstant; 
-	
-	public EntryPointSingle(GeoPoint position, UserType userType, int instant) {
-		this.position = position;
-		this.userType = userType;
-		this.timeInstant = instant;
-	}
+    /**
+     * It is the point where user appears, i. e., where user is located after being generated.
+     */
+    private GeoPoint position;
+    
+    /**
+     * Type of user that will be generated.
+     */
+    private UserType userType;
+    
+    /**
+     * It is the time instant when user appears at the system.
+     */
+    private int timeInstant; 
+    
+    public EntryPointSingle(GeoPoint position, UserType userType, int instant) {
+        this.position = position;
+        this.userType = userType;
+        this.timeInstant = instant;
+    }
 
-	@Override
-	public List<EventUserAppears> generateEvents() {
-		List<EventUserAppears> generatedEvents = new ArrayList<>();
-		UserFactory userFactory = new UserFactory();
-		User user = userFactory.createUser(userType);
-		EventUserAppears event = new EventUserAppears(timeInstant, user, position);
-		generatedEvents.add(event);
-		return generatedEvents;
-	}
-	
-	public String toString() {
-		String result = position.toString();
-		result += "| SINGLE user \n";
-		result += "user Type: " + userType + "\n";
-		result += "Instant: " + timeInstant + "\n";
-		return result;
-	}
+    @Override
+    public List<EventUserAppears> generateEvents() {
+        List<EventUserAppears> generatedEvents = new ArrayList<>();
+        UserFactory userFactory = new UserFactory();
+        User user = userFactory.createUser(userType);
+        EventUserAppears event = new EventUserAppears(timeInstant, user, position);
+        generatedEvents.add(event);
+        return generatedEvents;
+    }
+    
+    public String toString() {
+        String result = position.toString();
+        result += "| SINGLE user \n";
+        result += "user Type: " + userType + "\n";
+        result += "Instant: " + timeInstant + "\n";
+        return result;
+    }
 }

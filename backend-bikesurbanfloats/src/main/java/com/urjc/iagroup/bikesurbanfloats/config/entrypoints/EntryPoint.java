@@ -12,13 +12,13 @@ import java.util.List;
  *
  */
 public abstract class EntryPoint {
-	
-	public static int TOTAL_SIMULATION_TIME;
-	
-	/**
-	 * It generates user appearance events, which are the main events that starts the simulation execution.
-	 * @return
-	 */
-	public abstract List<EventUserAppears> generateEvents();
-	
-	}
+    
+    public static int TOTAL_SIMULATION_TIME;
+    
+    /**
+     * It generates user appearance events, which are the main events that starts the simulation execution.
+     * @return
+     */
+    public abstract List<EventUserAppears> generateEvents();
+    
+    }

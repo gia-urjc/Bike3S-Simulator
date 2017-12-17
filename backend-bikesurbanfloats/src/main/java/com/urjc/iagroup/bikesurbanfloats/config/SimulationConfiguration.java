@@ -16,47 +16,47 @@ import java.util.List;
  */
 public class SimulationConfiguration {
  /**
-  * It is the time period during a reservation is valid or active. 	
+  * It is the time period during a reservation is valid or active.     
   */
-	private int reservationTime;
-	
-	/**
-	 * It is the moment when the system stops creating entry points for the simulation, so it ends.   
-	 */
-	private int totalSimulationTime;
-	
-	/**
-	 * It is the seed which initializes the random instance. 
-	 */
-	private long randomSeed;
-	
-	/**
-	 * It is the absolute route of the used map.  
-	 */
-	private String map;
-	
-	/**
-	 * It delimits the simulation area.
-	 */
-	private BoundingBox boundingBox;
-	
-	/*
-	 * Path  where history files stored
-	 */
-	private String historyOutputPath;
-	
+    private int reservationTime;
+    
+    /**
+     * It is the moment when the system stops creating entry points for the simulation, so it ends.   
+     */
+    private int totalSimulationTime;
+    
+    /**
+     * It is the seed which initializes the random instance. 
+     */
+    private long randomSeed;
+    
+    /**
+     * It is the absolute route of the used map.  
+     */
+    private String map;
+    
+    /**
+     * It delimits the simulation area.
+     */
+    private BoundingBox boundingBox;
+    
+    /*
+     * Path  where history files stored
+     */
+    private String historyOutputPath;
+    
  /**
   * They are all the entry points of the system obtained from the configuration file.
   */
-	@JsonAdapter(EntryPointDeserializer.class)
-	private List<EntryPoint> entryPoints;
+    @JsonAdapter(EntryPointDeserializer.class)
+    private List<EntryPoint> entryPoints;
 
-	/**
-	 * They are all the stations of the system obtained from the configuration file. 
-	 */
-	@JsonAdapter(StationDeserializer.class)
-	private List<Station> stations;
-	
+    /**
+     * They are all the stations of the system obtained from the configuration file. 
+     */
+    @JsonAdapter(StationDeserializer.class)
+    private List<Station> stations;
+    
     public int getReservationTime() {
         return reservationTime;
     }
@@ -86,7 +86,7 @@ public class SimulationConfiguration {
     }
     
     public String getOutputPath() {
-    	return historyOutputPath;
+        return historyOutputPath;
     }
     
 }

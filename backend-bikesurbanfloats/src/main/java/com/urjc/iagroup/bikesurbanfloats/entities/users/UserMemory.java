@@ -7,43 +7,43 @@ package com.urjc.iagroup.bikesurbanfloats.entities.users;
  *
  */
 public class UserMemory {
-	
-	public enum FactType {
-		BIKE_RESERVATION_TIMEOUT, BIKE_FAILED_RESERVATION, BIKES_UNAVAILABLE
-	}
-	
-	private int counterReservationAttempts;
-	private int counterReservationTimeouts;
-	private int counterRentingAttempts;
-	
-	public UserMemory() {
+    
+    public enum FactType {
+        BIKE_RESERVATION_TIMEOUT, BIKE_FAILED_RESERVATION, BIKES_UNAVAILABLE
+    }
+    
+    private int counterReservationAttempts;
+    private int counterReservationTimeouts;
+    private int counterRentingAttempts;
+    
+    public UserMemory() {
         this.counterReservationAttempts = 0; 
         this.counterReservationTimeouts = 0;
         this.counterRentingAttempts = 0;
-	}
+    }
 
-	public int getCounterReservationAttempts() {
-		return counterReservationAttempts;
-	}
+    public int getCounterReservationAttempts() {
+        return counterReservationAttempts;
+    }
 
-	public int getCounterReservationTimeouts() {
-		return counterReservationTimeouts;
-	}
+    public int getCounterReservationTimeouts() {
+        return counterReservationTimeouts;
+    }
 
-	public int getCounterRentingAttempts() {
-		return counterRentingAttempts;
-	}
+    public int getCounterRentingAttempts() {
+        return counterRentingAttempts;
+    }
 
-	public void update(FactType fact) throws IllegalArgumentException {
-		switch(fact) {
-			case BIKE_RESERVATION_TIMEOUT: counterReservationTimeouts++;
-			break;
-			case BIKE_FAILED_RESERVATION: counterReservationAttempts++;
-			break;
-			case BIKES_UNAVAILABLE: counterRentingAttempts++;
-			break;
-			default: throw new IllegalArgumentException(fact.toString() + "is not defined in update method");
-		}
-	}
+    public void update(FactType fact) throws IllegalArgumentException {
+        switch(fact) {
+            case BIKE_RESERVATION_TIMEOUT: counterReservationTimeouts++;
+            break;
+            case BIKE_FAILED_RESERVATION: counterReservationAttempts++;
+            break;
+            case BIKES_UNAVAILABLE: counterRentingAttempts++;
+            break;
+            default: throw new IllegalArgumentException(fact.toString() + "is not defined in update method");
+        }
+    }
 
 }

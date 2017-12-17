@@ -9,7 +9,7 @@ import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 /**
  * It can be a bike or slot reservation depending on its type property
  * It can represents a reservations at all its possible states:
- * 	 ACTIVE: the reservation is valid at that moment
+ *      ACTIVE: the reservation is valid at that moment
  *   FAILED: user has tried to make a reservation and it hasn't been possible (there're no available bikes or solts)
  *   EXPIRED: reservation has been made but timeout has happend
  *   SUCCESSFUL: user has removed or returned his bike, so reservation has been resolved succesfully (the reservation ceases to exist)  

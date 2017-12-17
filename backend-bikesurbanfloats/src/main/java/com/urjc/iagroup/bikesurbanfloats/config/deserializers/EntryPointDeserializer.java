@@ -16,18 +16,18 @@ import java.util.List;
  */
 public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>>  {
 
-	private final static String JSON_ATTR_DISTRIBUTION = "distribution";
-	private final static String JSON_ATTR_DISTR_TYPE = "type";
-	
-	private EntryPointFactory entryPointFactory;
-	
-	public EntryPointDeserializer() {
-		this.entryPointFactory = new EntryPointFactory();
-	}
-	
-	@Override
-	public List<EntryPoint> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-		List<EntryPoint> entryPoints = new ArrayList<>();
+    private final static String JSON_ATTR_DISTRIBUTION = "distribution";
+    private final static String JSON_ATTR_DISTR_TYPE = "type";
+    
+    private EntryPointFactory entryPointFactory;
+    
+    public EntryPointDeserializer() {
+        this.entryPointFactory = new EntryPointFactory();
+    }
+    
+    @Override
+    public List<EntryPoint> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        List<EntryPoint> entryPoints = new ArrayList<>();
 
         for (JsonElement element : json.getAsJsonArray()) {
             JsonObject jsonEntryPoint = element.getAsJsonObject();
@@ -45,8 +45,8 @@ public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>
             
             entryPoints.add(entryPointFactory.createEntryPoint(jsonEntryPoint, distributionType));
         }
-		
-		return entryPoints;
-	}
+        
+        return entryPoints;
+    }
 
 }

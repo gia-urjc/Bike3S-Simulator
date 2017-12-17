@@ -19,11 +19,11 @@ public class EventUserWantsToReturnBike extends EventUser {
     }
 
     public GeoPoint getActualPosition() {
-		return actualPosition;
-	}
+        return actualPosition;
+    }
 
-	@Override
-	public List<Event> execute() throws Exception {
+    @Override
+    public List<Event> execute() throws Exception {
         user.setPosition(actualPosition);
         return manageSlotReservationDecisionAtOtherStation();
     }
