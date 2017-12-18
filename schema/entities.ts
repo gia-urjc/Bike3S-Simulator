@@ -2,8 +2,7 @@ import { JsonSchema } from 'json-schema-builder-ts';
 import { sAnyOf } from 'json-schema-builder-ts/dist/operators/schematical';
 import { rData } from 'json-schema-builder-ts/dist/references';
 import { sArray, sNull, sNumber, sObject } from 'json-schema-builder-ts/dist/types';
-import { GeoPoint, options, ReservationState, ReservationType, UInt, UserType } from './common';
-import idreference from './common/idreference';
+import { GeoPoint, idReference, options, ReservationState, ReservationType, UInt, UserType } from './common';
 
 const User = sObject({
     id: UInt,
@@ -20,20 +19,23 @@ const Station = sObject({
     id: UInt,
     position: GeoPoint,
     capacity: UInt,
-    bikes: sArray(sAnyOf(idreference('bikes'), sNull()))
-        .minItems(rData('1/capacity'))
-        .maxItems(rData('1/capacity')),
+    bikes: idReference(
+        'bikes',
+        sArray(sAnyOf(UInt, sNull()))
+            .minItems(rData('2/capacity'))
+            .maxItems(rData('2/capacity'))
+    ),
 }).require.all().restrict();
 
 const Reservation = sObject({
     id: UInt,
     startTime: UInt,
-    user: idreference('users'),
-    station: idreference('stations'),
-    bike: idreference('bikes'),
+    user: idReference('users'),
+    station: idReference('stations'),
+    bike: sAnyOf(idReference('bikes'), sNull()),
     type: ReservationType,
     state: ReservationState,
-}).require.but('bike').restrict();
+}).require.all().restrict();
 
 export default new JsonSchema(options, sObject({
     users: sArray(User),

@@ -1,13 +1,15 @@
-import { EntitiesJson } from '../../../../shared/generated/EntitiesJson';
-import { ArrayType, Extract } from '../../../../shared/util';
 import { Entity, VisualEntity } from './Entity';
 
-type JsonBike = ArrayType<Extract<EntitiesJson, 'bikes'>>;
+interface JsonBike {
+    id: number,
+}
 
-@VisualEntity<JsonBike>({
+@VisualEntity({
     fromJson: 'bikes',
 })
 export class Bike extends Entity {
+    reserved: boolean;
+
     constructor(json: JsonBike) {
         super(json.id);
     }

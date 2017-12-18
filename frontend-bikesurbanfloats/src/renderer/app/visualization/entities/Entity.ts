@@ -1,3 +1,5 @@
+import { HistoryEntity } from '../../../../shared/history';
+
 export abstract class Entity {
     constructor(private $id: number) {}
 
@@ -6,14 +8,14 @@ export abstract class Entity {
     }
 }
 
+export const EntityMetaKey = Symbol('entity-meta-key');
+
 export interface VisualOptions {
     fromJson: string,
 }
 
-export const EntityMetaKey = Symbol('entity-meta-key');
-
-export function VisualEntity<J>(options: VisualOptions) {
-    return function <E extends Entity> (Target: { new(json: J): E }) {
+export function VisualEntity(options: VisualOptions) {
+    return function <E extends Entity, J extends HistoryEntity> (Target: { new(json: J): E }) {
         Reflect.defineMetadata(EntityMetaKey, options, Target);
         return Target;
     }
