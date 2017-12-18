@@ -18,7 +18,6 @@ import java.util.List;
  * Number of users that are generated depends on the value of parameter of followed distribution.
  * @author IAgroup
  */
-
 public class EntryPointPoisson extends EntryPoint {
 
     /**
@@ -26,37 +25,47 @@ public class EntryPointPoisson extends EntryPoint {
      * In other case, position is the specific point where user appears
      */
     private GeoPoint position;
+    
     /**
      * It is the radius of circle is going to be used to delimit area where users appears
      */
     private double radius;
+    
     /**
      * Type of distribution that users generation will follow
      */
     private DistributionPoisson distribution;
+    
     /**
      * Type of users that will be generated
      */
     private UserType userType;
+    
     /**
      * It is the range of time within which users can appears, i. e.,
      */
     private TimeRange timeRange;
-
+    
+    /**
+     * It is the number of users that will be generated.
+     */
+    private int totalUsers;
+    
     public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, UserType userType) {
         this.position = position;
         this.distribution = distribution;
         this.userType = userType;
-        this.timeRange = null;
+        this.timeRange = new TimeRange(0, TOTAL_SIMULATION_TIME);
         this.radius = 0;
     }
 
     public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution,
-                             UserType userType, double radio) {
+                             UserType userType, double radius) {
         this.position = position;
         this.distribution = distribution;
         this.userType = userType;
-        this.radius = radio;
+        this.timeRange = new TimeRange(0, TOTAL_SIMULATION_TIME);
+        this.radius = radius;
     }
 
     public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution,
@@ -69,28 +78,41 @@ public class EntryPointPoisson extends EntryPoint {
     }
 
     public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution,
-                             UserType userType, TimeRange timeRange, double radio) {
+                             UserType userType, TimeRange timeRange, double radius) {
         this.position = position;
         this.distribution = distribution;
         this.userType = userType;
         this.timeRange = timeRange;
-        this.radius = radio;
+        this.radius = radius;
     }
 
     @Override
     public List<EventUserAppears> generateEvents() {
         List<EventUserAppears> generatedEvents = new ArrayList<>();
         UserFactory userFactory = new UserFactory();
-        int actualTime, endTime;
+        int currentTime, endTime;
+        int usersCounter = 0;
+        int maximumUsers;
+        
         if (timeRange == null) {
-            actualTime = 0;
-            endTime = TOTAL_SIMULATION_TIME;
-        } else {
-            actualTime = timeRange.getStart();
-            endTime = timeRange.getEnd();
+        	currentTime = 0;
+        	endTime = TOTAL_SIMULATION_TIME;
         }
-        while (actualTime < endTime) {
+        else {
+        	currentTime = timeRange.getStart();
+        	endTime = timeRange.getEnd();
+        }
+        
+        if (totalUsers == 0) {   // the number of users to create hasn't been specified
+        	maximumUsers = Integer.MAX_VALUE;  // thus, it won't a stop condition in while 
+        }
+        else {
+        	maximumUsers = totalUsers;
+        }
+        
+        while (currentTime < endTime && usersCounter < maximumUsers) {
             User user = userFactory.createUser(userType);
+            usersCounter++;
             GeoPoint userPosition;
             
             //If not radius is specified, user just appears in the position submitted.
@@ -101,8 +123,8 @@ public class EntryPointPoisson extends EntryPoint {
                 userPosition = position;
             }
             int timeEvent = distribution.randomInterarrivalDelay();
-            actualTime += timeEvent;
-            EventUserAppears newEvent = new EventUserAppears(actualTime, user, userPosition);
+            currentTime += timeEvent;
+            EventUserAppears newEvent = new EventUserAppears(currentTime, user, userPosition);
             generatedEvents.add(newEvent);
         }
         return generatedEvents;

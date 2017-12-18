@@ -9,7 +9,6 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.graphs.exceptions.GeoRouteException;
 
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * This class represents a employee, i.e., a user who uses the bike as a public transport 
