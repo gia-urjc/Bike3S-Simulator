@@ -51,32 +51,42 @@ public class UserEmployee extends User {
     private int slotReservationPercentage;
     
     /**
-     * It contains the minum number of times that a fact must occur in order to decide to leave the system.
+     * It is the number of times that the user musts try to make a bike reservation before 
+     * deciding to leave the system.  
      */
-    private MinParameters minParameters;
+    private int minReservationAttempts;
     
+    /**
+     * It is the number of times that a reservation timeout event musts occurs before the 
+     * user decides to leave the system.
+     */
+    private int minReservationTimeouts;
+    
+ /**
+  * It is the number of times that the user musts try to rent a bike (without a bike 
+  * reservation) before deciding to leave the system.    
+  */
+    private int minRentingAttempts;
+
     public UserEmployee() {
         super();
     }
     
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return getMemory().getCounterReservationTimeouts() == minParameters.getMinReservationTimeouts() ? true : false;
+        return getMemory().getCounterReservationTimeouts() == minReservationTimeouts ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return getMemory().getCounterReservationAttempts() == minParameters.getMinReservationAttempts() ? true : false;
+        return getMemory().getCounterReservationAttempts() == minReservationAttempts ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == minParameters.getMinRentingAttempts() ? true : false;
+        return getMemory().getCounterRentingAttempts() == minRentingAttempts ? true : false;
     }
     
-    /**
-     * It randomly chooses a station among the pre-established number of nearest stations.
-     */
     @Override
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
@@ -148,9 +158,6 @@ public class UserEmployee extends User {
             return true;
         }
     
-    /**
-     * The user chooses the shortest route because he wants to arrive at work as fast as possible.
-     */
     @Override
     public GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException {
         if (routes.isEmpty()) {

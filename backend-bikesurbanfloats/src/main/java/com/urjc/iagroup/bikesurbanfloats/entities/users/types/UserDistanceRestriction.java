@@ -35,9 +35,22 @@ public class UserDistanceRestriction extends User {
     private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
     
     /**
-     * It contains the minum number of times that a fact must occur in order to decide to leave the system.  
+     * It is the number of times that the user musts try to make a bike reservation before 
+     * deciding to leave the system.  
      */
-    private MinParameters minParameters;
+    private int minReservationAttempts;
+    
+    /**
+     * It is the number of times that a reservation timeout event musts occurs before the 
+     * user decides to leave the system.
+     */
+    private int minReservationTimeouts;
+    
+ /**
+  * It is the number of times that the user musts try to rent a bike (without a bike 
+  * reservation) before deciding to leave the system.    
+  */
+    private int minRentingAttempts;
     
     /**
      * It determines the rate with which the user will decide to go directly to a station 
@@ -69,17 +82,17 @@ public class UserDistanceRestriction extends User {
     
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return getMemory().getCounterReservationTimeouts() == minParameters.getMinReservationTimeouts() ? true : false;
+        return getMemory().getCounterReservationTimeouts() == minReservationTimeouts ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return getMemory().getCounterReservationAttempts() == minParameters.getMinReservationAttempts() ? true : false; 
+        return getMemory().getCounterReservationAttempts() == minReservationAttempts ? true : false; 
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == minParameters.getMinRentingAttempts() ? true : false;
+        return getMemory().getCounterRentingAttempts() == minRentingAttempts ? true : false;
     }
     
     @Override
