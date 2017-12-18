@@ -3,7 +3,7 @@ import { SchemaBuilder } from 'json-schema-builder-ts/dist/core/builder';
 import { Schema } from 'json-schema-builder-ts/dist/core/builder/schema';
 import { sAnyOf } from 'json-schema-builder-ts/dist/operators/schematical';
 import { sArray, sBoolean, sInteger, sNull, sObject, sString } from 'json-schema-builder-ts/dist/types';
-import { GeoPoint, options, ReservationState, Route, UInt } from './common';
+import { GeoPoint, idReference, options, ReservationState, Route, UInt } from './common';
 
 function propertyChange(schema: Schema | SchemaBuilder) {
     return sObject({
@@ -15,14 +15,14 @@ function propertyChange(schema: Schema | SchemaBuilder) {
 const User = sObject({
     id: UInt,
     position: propertyChange(sAnyOf(GeoPoint, sNull())),
-    bike: propertyChange(sAnyOf(UInt, sNull())),
-    destinationStation: propertyChange(sAnyOf(UInt, sNull())),
+    bike: propertyChange(sAnyOf(idReference('bikes'), sNull())),
+    destinationStation: propertyChange(sAnyOf(idReference('stations'), sNull())),
     route: propertyChange(sAnyOf(Route, sNull())),
 }).require('id').minProperties(2).restrict();
 
 const Station = sObject({
     id: UInt,
-    bikes: propertyChange(sArray(sAnyOf(UInt, sNull()))),
+    bikes: propertyChange(idReference('bikes', sArray(sAnyOf(UInt, sNull())))),
 }).require('id').minProperties(2).restrict();
 
 const Bike = sObject({

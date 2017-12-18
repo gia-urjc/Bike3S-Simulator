@@ -3,6 +3,7 @@ import { sAnyOf } from 'json-schema-builder-ts/dist/operators/schematical';
 import { rData } from 'json-schema-builder-ts/dist/references';
 import { sArray, sNull, sNumber, sObject } from 'json-schema-builder-ts/dist/types';
 import { GeoPoint, options, ReservationState, ReservationType, UInt, UserType } from './common';
+import idreference from './common/idreference';
 
 const User = sObject({
     id: UInt,
@@ -19,7 +20,7 @@ const Station = sObject({
     id: UInt,
     position: GeoPoint,
     capacity: UInt,
-    bikes: sArray(sAnyOf(UInt, sNull()))
+    bikes: sArray(sAnyOf(idreference('bikes'), sNull()))
         .minItems(rData('1/capacity'))
         .maxItems(rData('1/capacity')),
 }).require.all().restrict();
@@ -27,9 +28,9 @@ const Station = sObject({
 const Reservation = sObject({
     id: UInt,
     startTime: UInt,
-    user: UInt,
-    station: UInt,
-    bike: UInt,
+    user: idreference('users'),
+    station: idreference('stations'),
+    bike: idreference('bikes'),
     type: ReservationType,
     state: ReservationState,
 }).require.but('bike').restrict();

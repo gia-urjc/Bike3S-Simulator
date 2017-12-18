@@ -1,5 +1,6 @@
 import { BuilderOptions, SchemaVersion } from 'json-schema-builder-ts';
 import GeoPoint from './geopoint';
+import idReference from './idreference';
 import ReservationState from './reservationstate';
 import ReservationType from './reservationtype';
 import Route from './route';
@@ -13,6 +14,7 @@ const options: BuilderOptions = {
 
 export {
     options,
+    idReference,
     GeoPoint,
     ReservationState,
     ReservationType,
