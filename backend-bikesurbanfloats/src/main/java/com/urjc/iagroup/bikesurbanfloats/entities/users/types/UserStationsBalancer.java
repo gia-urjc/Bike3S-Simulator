@@ -37,19 +37,19 @@ public class UserStationsBalancer extends User {
      * It is the number of times that the user musts try to make a bike reservation before 
      * deciding to leave the system.  
      */
-    private int minReservationAttempts;
+    private int minReservationAttempts = systemManager.getRandom().nextInt(3, 7);
     
     /**
      * It is the number of times that a reservation timeout event musts occurs before the 
      * user decides to leave the system.
      */
-    private int minReservationTimeouts;
+    private int minReservationTimeouts = systemManager.getRandom().nextInt(2, 5);
     
  /**
   * It is the number of times that the user musts try to rent a bike (without a bike 
   * reservation) before deciding to leave the system.    
   */
-    private int minRentingAttempts;
+    private int minRentingAttempts = systemManager.getRandom().nextInt(4, 8);
 
     /**
      * It determines the rate with which the user will decide to go directly to a station 
