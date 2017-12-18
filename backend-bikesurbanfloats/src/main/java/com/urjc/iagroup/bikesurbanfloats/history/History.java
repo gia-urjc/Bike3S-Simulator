@@ -126,7 +126,7 @@ public class History {
             /* A file which contains serialized events can only save 100 time instants
              * So, if the map of serialized events already contains 100 entries, it musts be written in a file  
              */
-            if (serializedEvents.size() == 100) {
+            if (serializedEvents.size() == 1000) {
                 writeTimeEntries();
                 serializedEvents.clear();
             }
