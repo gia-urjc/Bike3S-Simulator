@@ -35,7 +35,7 @@ export default class ConfigurationIO {
 
     public enableIpc(): void {
         IpcUtil.openChannel('configuration-init', async (path: string) => {
-            const confIO = create();
+            const confIO = this.create();
 
             const channels = [
                 new IpcChannel('configuration-read', confIO.read()),
