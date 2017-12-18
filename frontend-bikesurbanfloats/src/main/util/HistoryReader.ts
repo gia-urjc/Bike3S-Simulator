@@ -21,7 +21,7 @@ class Channel {
 export default class HistoryReader {
 
     private static ajv = new AJV({ $data: true });
-    private static entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'))
+    private static entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
     private static changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));
 
     private historyPath: string;

@@ -22,12 +22,32 @@ export type TimeentriesJson = {
           } | null;
         };
         bike?: {
-          old: number | null;
-          new: number | null;
+          old: {
+            type: {
+              [k: string]: any;
+            };
+            id: number;
+          } | null;
+          new: {
+            type: {
+              [k: string]: any;
+            };
+            id: number;
+          } | null;
         };
         destinationStation?: {
-          old: number | null;
-          new: number | null;
+          old: {
+            type: {
+              [k: string]: any;
+            };
+            id: number;
+          } | null;
+          new: {
+            type: {
+              [k: string]: any;
+            };
+            id: number;
+          } | null;
         };
         route?: {
           old: {
@@ -49,8 +69,18 @@ export type TimeentriesJson = {
       stations?: {
         id: number;
         bikes?: {
-          old: (number | null)[];
-          new: (number | null)[];
+          old: {
+            type: {
+              [k: string]: any;
+            };
+            id: (number | null)[];
+          };
+          new: {
+            type: {
+              [k: string]: any;
+            };
+            id: (number | null)[];
+          };
         };
       }[];
       bikes?: {

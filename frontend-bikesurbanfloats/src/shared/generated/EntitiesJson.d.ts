@@ -21,14 +21,34 @@ export interface EntitiesJson {
       longitude: number;
     };
     capacity: number;
-    bikes: (number | null)[];
+    bikes: ({
+      type: {
+        [k: string]: any;
+      };
+      id: number;
+    } | null)[];
   }[];
   reservations?: {
     id: number;
     startTime: number;
-    user: number;
-    station: number;
-    bike?: number;
+    user: {
+      type: {
+        [k: string]: any;
+      };
+      id: number;
+    };
+    station: {
+      type: {
+        [k: string]: any;
+      };
+      id: number;
+    };
+    bike?: {
+      type: {
+        [k: string]: any;
+      };
+      id: number;
+    };
     type: 'SLOT' | 'BIKE';
     state: 'FAILED' | 'ACTIVE' | 'EXPIRED' | 'SUCCESSFUL';
   }[];

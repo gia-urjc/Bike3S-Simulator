@@ -1,10 +1,30 @@
-export class ConfigurationWriter {
+import ajv = require('ajv');
+import * as fs from 'fs-extra';
+import * as AJV from 'ajv';
+import { app } from 'electron';
+import * as paths from 'path';
 
-    private configurationPath: string;
+export default class ConfigurationWriter {
 
-    constructor() {
+    private static ajv = new AJV({ allErrors: true });
+    private static entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/config.json'));
 
+    private configJson: any;
+
+    static async create(path: string): Promise<ConfigurationWriter> {
+        let writer = new ConfigurationWriter();
+        writer.configJson = await fs.readJSON(path);
+        return writer;
     }
+
+    public readAndValidate() {
+        let valid = ConfigurationWriter.ajv.validate(ConfigurationWriter.entityFileSchema, this.configJson);
+        if (!valid) {
+            throw new Error(ConfigurationWriter.ajv.errorsText());
+        }
+        
+    }
+
 
 
 
