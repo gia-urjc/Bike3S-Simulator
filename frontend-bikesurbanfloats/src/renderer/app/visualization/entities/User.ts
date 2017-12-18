@@ -1,16 +1,20 @@
+import { HistoryEntity } from '../../../../shared/history';
 import { GeoPoint, Route } from '../../../../shared/util';
 import { Bike } from './Bike';
-import { Entity, VisualEntity } from './Entity';
+import { JsonIdentifier, VisualEntity } from './decorators';
+import { Entity } from './Entity';
 
-interface JsonUser {
-    id: number,
+interface JsonUser extends HistoryEntity {
     type: string,
     walkingVelocity: number,
     cyclingVelocity: number,
 }
 
+@JsonIdentifier('users')
 @VisualEntity({
-    fromJson: 'users'
+    show: (user: User) => user.position !== null,
+    moveAlong: (user: User) => user.route,
+    speed: (user: User) => user.bike === null ? user.walkingVelocity : user.cyclingVelocity,
 })
 export class User extends Entity {
     type: string;

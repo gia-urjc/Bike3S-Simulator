@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { Control, latLng, MapOptions } from 'leaflet';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Control, latLng, MapOptions, Marker } from 'leaflet';
 import { SettingsLayerEntry } from '../../../shared/settings/definitions';
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
 import * as layers from './layers';
@@ -12,6 +12,8 @@ import { LayerEntry } from './util';
 export class MapComponent implements OnInit {
     layerControl: { baseLayers: Control.LayersObject };
     options: MapOptions;
+
+    @Input() markers: Array<Marker> = [];
 
     constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
 
