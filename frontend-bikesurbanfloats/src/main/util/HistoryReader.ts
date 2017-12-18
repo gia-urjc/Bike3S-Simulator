@@ -6,11 +6,15 @@ import { app } from 'electron';
 import { without } from 'lodash';
 
 import { HistoryEntities, HistoryTimeEntries } from '../../shared/history';
-import { IpcChannel, IpcUtil } from './index';
+import { IpcUtil } from './index';
 
 interface TimeRange {
     start: number,
     end: number
+}
+
+class Channel {
+    constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
 }
 
 export default class HistoryReader {
@@ -39,11 +43,11 @@ export default class HistoryReader {
             const reader = await this.create(historyPath);
 
             const channels = [
-                new IpcChannel('history-entities', async () => await reader.readEntities()),
-                new IpcChannel('history-previous', async () => await reader.previousChangeFile()),
-                new IpcChannel('history-next', async () => await reader.nextChangeFile()),
-                new IpcChannel('history-nchanges', async () => reader.numberOfChangeFiles),
-                new IpcChannel('history-range', async () => reader.timeRange),
+                new Channel('history-entities', async () => await reader.readEntities()),
+                new Channel('history-previous', async () => await reader.previousChangeFile()),
+                new Channel('history-next', async () => await reader.nextChangeFile()),
+                new Channel('history-nchanges', async () => reader.numberOfChangeFiles),
+                new Channel('history-range', async () => reader.timeRange),
             ];
 
             channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));

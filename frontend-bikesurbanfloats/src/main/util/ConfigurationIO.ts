@@ -3,7 +3,11 @@ import { app } from 'electron';
 import * as fs from 'fs-extra';
 import * as paths from 'path';
 import { BaseConfiguration } from '../../shared/configuration';
-import { IpcChannel, IpcUtil } from './IpcUtil';
+import { IpcUtil } from './index';
+
+class Channel {
+    constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
+}
 
 export default class ConfigurationIO {
 
@@ -35,21 +39,21 @@ export default class ConfigurationIO {
 
     public enableIpc(): void {
         IpcUtil.openChannel('configuration-init', async (path: string) => {
-            const confIO = this.create();
+            const confIO = ConfigurationIO.create();
 
             const channels = [
-                new IpcChannel('configuration-read', confIO.read()),
-                new IpcChannel('configuration-write', confIO.write(path))
+                new Channel('configuration-read', async () => await confIO.read(path)),
+                new Channel('configuration-write', async (configuration) => await confIO.write(configuration)),
             ];
 
             channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
 
-            IpcUtil.openChannel('configuration-close', () => {
-                IpcUtil.closeChannels('history-close', ...channels.map((channel) => channel.name));
+            IpcUtil.openChannel('configuration-close', async () => {
+                IpcUtil.closeChannels('configuration-close', ...channels.map((channel) => channel.name));
                 this.enableIpc();
-            })
+            });
 
-            IpcUtil.closeChannels('configuration-init');
+            IpcUtil.closeChannel('configuration-init');
         })
     }
 
