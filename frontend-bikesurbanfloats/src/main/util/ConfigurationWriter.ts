@@ -3,6 +3,7 @@ import * as fs from 'fs-extra';
 import * as AJV from 'ajv';
 import { app } from 'electron';
 import * as paths from 'path';
+import { BaseConfiguration } from '../../shared/configuration';
 
 export default class ConfigurationWriter {
 
@@ -17,12 +18,13 @@ export default class ConfigurationWriter {
         return writer;
     }
 
-    public readAndValidate() {
+    public readAndValidate(): BaseConfiguration {
         let valid = ConfigurationWriter.ajv.validate(ConfigurationWriter.entityFileSchema, this.configJson);
         if (!valid) {
             throw new Error(ConfigurationWriter.ajv.errorsText());
         }
-        
+        let baseConfiguration: BaseConfiguration = this.configJson;
+        return baseConfiguration;
     }
 
 

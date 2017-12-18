@@ -10,9 +10,6 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra');
 
-const { compile } = require('json-schema-to-typescript');
-const { upperFirst } = require('lodash');
-
 const projectRoot = () => process.cwd();
 projectRoot.backend = () => path.join(projectRoot(), 'backend-bikesurbanfloats');
 projectRoot.backend.mavenTarget = () => path.join(projectRoot.backend(), 'target');
@@ -86,14 +83,6 @@ Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, 
                 schema.errors.forEach((error) => {
                     log.red(error).echo();
                 });
-
-                const name = `${upperFirst(file.slice(0, -3))}Json`;
-                compile(schema.data, name).then((ts) => {
-                    const tsOut = path.join(projectRoot.frontend.src(), `shared/generated/${name}.d.ts`);
-                    ts = ts.replace(/"/g, `'`);
-                    fs.outputFileSync(tsOut, ts);
-                    log.time().green(`written TypeScript interface to ${tsOut}`).echo();
-                }).catch(console.error);
 
                 schema.write(out);
 

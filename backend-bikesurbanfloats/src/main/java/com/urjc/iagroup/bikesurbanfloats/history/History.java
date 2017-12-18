@@ -123,10 +123,8 @@ public class History {
          * instance of this event, it creates it.
          */
         if (!serializedEvents.containsKey(event.getInstant())) {
-            /* A file which contains serialized events can only save 100 time instants
-             * So, if the map of serialized events already contains 100 entries, it musts be written in a file  
-             */
-            if (serializedEvents.size() == 100) {
+            // TODO: test entry limit with more real world examples to not generate too large jsons
+            if (serializedEvents.size() == 1000) {
                 writeTimeEntries();
                 serializedEvents.clear();
             }

@@ -1,17 +1,21 @@
-import { EntitiesJson } from '../../../../shared/generated/EntitiesJson';
-import { ArrayType, Extract, GeoPoint, Route } from '../../../../shared/util';
+import { GeoPoint, Route } from '../../../../shared/util';
 import { Bike } from './Bike';
 import { Entity, VisualEntity } from './Entity';
 
-type JsonUser = ArrayType<Extract<EntitiesJson, 'users'>>
+interface JsonUser {
+    id: number,
+    type: string,
+    walkingVelocity: number,
+    cyclingVelocity: number,
+}
 
-@VisualEntity<JsonUser>({
+@VisualEntity({
     fromJson: 'users'
 })
 export class User extends Entity {
-    private $type: string;
-    private $walkingVelocity: number;
-    private $cyclingVelocity: number;
+    type: string;
+    walkingVelocity: number;
+    cyclingVelocity: number;
 
     position: GeoPoint | null;
     route: Route | null;
@@ -20,20 +24,8 @@ export class User extends Entity {
 
     constructor(json: JsonUser) {
         super(json.id);
-        this.$type = json.type;
-        this.$walkingVelocity = json.walkingVelocity;
-        this.$cyclingVelocity = json.cyclingVelocity;
-    }
-
-    get type() {
-        return this.$type;
-    }
-
-    get walkingVelocity() {
-        return this.$walkingVelocity;
-    }
-
-    get cyclingVelocity() {
-        return this.$cyclingVelocity;
+        this.type = json.type;
+        this.walkingVelocity = json.walkingVelocity;
+        this.cyclingVelocity = json.cyclingVelocity;
     }
 }
