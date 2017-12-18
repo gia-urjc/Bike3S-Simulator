@@ -1,9 +1,9 @@
-import ajv = require('ajv');
-import * as fs from 'fs-extra';
 import * as AJV from 'ajv';
 import { app } from 'electron';
+import * as fs from 'fs-extra';
 import * as paths from 'path';
 import { BaseConfiguration } from '../../shared/configuration';
+import { IpcChannel, IpcUtil } from './IpcUtil';
 
 export default class ConfigurationIO {
 
@@ -31,6 +31,26 @@ export default class ConfigurationIO {
             throw new Error(ConfigurationIO.ajv.errorsText());
         }
         return true;
+    }
+
+    public enableIpc(): void {
+        IpcUtil.openChannel('configuration-init', async (path: string) => {
+            const confIO = this.create();
+
+            const channels = [
+                new IpcChannel('configuration-read', confIO.read()),
+                new IpcChannel('configuration-write', confIO.write(path))
+            ];
+
+            channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
+
+            IpcUtil.openChannel('configuration-close', () => {
+                IpcUtil.closeChannels('history-close', ...channels.map((channel) => channel.name));
+                this.enableIpc();
+            })
+
+            IpcUtil.closeChannels('configuration-init');
+        })
     }
 
 

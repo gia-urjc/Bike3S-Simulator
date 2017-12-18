@@ -3,7 +3,11 @@ import { Event, ipcMain } from 'electron';
 type SuccessCallback = (...data: Array<any>) => Promise<any>;
 type ErrorCallback = (error?: Error) => void;
 
-export default class IpcUtil {
+export class IpcChannel {
+    constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
+}
+
+export class IpcUtil {
 
     static openChannel(channel: string, onSuccess: SuccessCallback, onError?: ErrorCallback) {
         ipcMain.on(channel, async (event: Event, ...data: Array<any>) => {
