@@ -22,66 +22,72 @@ import java.util.ArrayList;
 @AssociatedType(UserType.USER_TOURIST)
 public class UserTourist extends User {
     
-    /**
-     * It indicates the size of the set of stations closest to the user within which the 
-     * destination will be chossen randomly.  
-     */
-    private final int SELECTION_STATIONS_SET = 3;
+    public class UserTouristParameters {
+        /**
+         * It indicates the size of the set of stations closest to the user within which the
+         * destination will be chossen randomly.
+         */
+        private final int SELECTION_STATIONS_SET = 3;
 
-    /**
-     * It is the maximum time in seconds until which the user will decide to continue walking 
-     * or cycling towards the previously chosen station witohout making a new reservation 
-     * after a reservation timeout event has happened.  
-     */
-    private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
-    
-    /**
-     * It is the place the tourist wants to visit after 
-     * renting 
-     * a b
-     * ike.
-     */
-    private GeoPoint touristDestination;
-    
-    /**
-     * It is the number of times that the user musts try to make a bike reservation before 
-     * deciding to leave the system.  
-     */
-    private int minReservationAttempts = systemManager.getRandom().nextInt(2, 4);
-    
-    /**
-     * It is the number of times that a reservation timeout event musts occurs before the 
-     * user decides to leave the system.
-     */
-    private int minReservationTimeouts = systemManager.getRandom().nextInt(1, 3);
-    
- /**
-  * It is the number of times that the user musts try to rent a bike (without a bike 
-  * reservation) before deciding to leave the system.    
-  */
-    private int minRentingAttempts = systemManager.getRandom().nextInt(3, 6);
+        /**
+         * It is the maximum time in seconds until which the user will decide to continue walking
+         * or cycling towards the previously chosen station witohout making a new reservation
+         * after a reservation timeout event has happened.
+         */
+        private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
 
-    /**
-     * It determines the rate with which the user will reserve a bike. 
-     */
-    private int bikeReservationPercentage;
-    
-    /**
-     * It determines the rate with which the user will reserve a slot.
-     */
-    private int slotReservationPercentage;
-    
-    /**
-     * It determines the rate with which the user will choose a new destination station 
-     * after a  timeout event happens.
-     */
-    private int reservationTimeoutPercentage;
-    
-    /**
-     * It determines the rate with which the user will choose a new destination station
-     * after he hasn't been able to make a reservation. 
-     */
-    private int failedReservationPercentage;
+        /**
+         * It is the place the tourist wants to visit after
+         * renting
+         * a b
+         * ike.
+         */
+        private GeoPoint touristDestination;
+
+        /**
+         * It is the number of times that the user musts try to make a bike reservation before
+         * deciding to leave the system.
+         */
+        private int minReservationAttempts = systemManager.getRandom().nextInt(2, 4);
+
+        /**
+         * It is the number of times that a reservation timeout event musts occurs before the
+         * user decides to leave the system.
+         */
+        private int minReservationTimeouts = systemManager.getRandom().nextInt(1, 3);
+
+        /**
+         * It is the number of times that the user musts try to rent a bike (without a bike
+         * reservation) before deciding to leave the system.
+         */
+        private int minRentingAttempts = systemManager.getRandom().nextInt(3, 6);
+
+        /**
+         * It determines the rate with which the user will reserve a bike.
+         */
+        private int bikeReservationPercentage;
+
+        /**
+         * It determines the rate with which the user will reserve a slot.
+         */
+        private int slotReservationPercentage;
+
+        /**
+         * It determines the rate with which the user will choose a new destination station
+         * after a  timeout event happens.
+         */
+        private int reservationTimeoutPercentage;
+
+        /**
+         * It determines the rate with which the user will choose a new destination station
+         * after he hasn't been able to make a reservation.
+         */
+        private int failedReservationPercentage;
+
+        private UserTouristParameters() {}
+    }
+
+    private UserTouristParameters parameters;
 
     public UserTourist() {
         super();
@@ -89,17 +95,17 @@ public class UserTourist extends User {
     
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return getMemory().getCounterReservationTimeouts() == minReservationTimeouts ? true : false;
+        return getMemory().getCounterReservationTimeouts() == parameters.minReservationTimeouts ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return getMemory().getCounterReservationAttempts() == minReservationAttempts ? true : false;
+        return getMemory().getCounterReservationAttempts() == parameters.minReservationAttempts ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == minRentingAttempts ? true : false;
+        return getMemory().getCounterRentingAttempts() == parameters.minRentingAttempts ? true : false;
     }
     
     /**
@@ -115,8 +121,8 @@ public class UserTourist extends User {
                 .recommendByLinearDistance(this.getPosition(), stations);
                 List<Station> nearestStations = new ArrayList<>();
                 
-                int end = SELECTION_STATIONS_SET;
-                if (SELECTION_STATIONS_SET > recommendedStations.size()) {
+                int end = parameters.SELECTION_STATIONS_SET;
+                if (parameters.SELECTION_STATIONS_SET > recommendedStations.size()) {
                     end = recommendedStations.size();
                 }
 
@@ -124,7 +130,7 @@ public class UserTourist extends User {
                     nearestStations.add(recommendedStations.get(i));
                 }
          
-                int index = systemManager.getRandom().nextInt(0, SELECTION_STATIONS_SET - 1);
+                int index = systemManager.getRandom().nextInt(0, parameters.SELECTION_STATIONS_SET - 1);
                 destination = nearestStations.get(index);
         }
         
@@ -146,41 +152,41 @@ public class UserTourist extends User {
                 .recommendByLinearDistance(this.getPosition(), stations);
         List<Station> nearestStations = new ArrayList<>();
         
-        for(int i = 0; i < SELECTION_STATIONS_SET; i++) {
+        for(int i = 0; i < parameters.SELECTION_STATIONS_SET; i++) {
             nearestStations.add(recommendedStations.get(i));
         }
          
-        int index = systemManager.getRandom().nextInt(0, SELECTION_STATIONS_SET - 1);
+        int index = systemManager.getRandom().nextInt(0, parameters.SELECTION_STATIONS_SET - 1);
         return nearestStations.get(index);
     }
 
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-     return arrivalTime < MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : systemManager.getRandom().nextBoolean();
+     return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : systemManager.getRandom().nextBoolean();
     }
     
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
         int percentage = systemManager.getRandom().nextInt(0, 100);
-        return percentage < bikeReservationPercentage ? true : false;
+        return percentage < parameters.bikeReservationPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-        return arrivalTime < MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
     }
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
         int percentage = systemManager.getRandom().nextInt(0, 100);
-        return percentage < slotReservationPercentage ? true : false;
+        return percentage < parameters.slotReservationPercentage ? true : false;
     }
 
     @Override
     public GeoPoint decidesNextPoint() {
-        return touristDestination;
+        return parameters.touristDestination;
     }
 
     @Override
@@ -191,13 +197,13 @@ public class UserTourist extends User {
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
         int percentage = systemManager.getRandom().nextInt(0, 100);
-        return percentage < reservationTimeoutPercentage ? true : false;
+        return percentage < parameters.reservationTimeoutPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
         int percentage = systemManager.getRandom().nextInt(0, 100);
-        return percentage < failedReservationPercentage ? true : false;
+        return percentage < parameters.failedReservationPercentage ? true : false;
     }
     
     @Override
