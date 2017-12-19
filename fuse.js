@@ -10,9 +10,6 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra');
 
-const { compile } = require('json-schema-to-typescript');
-const { upperFirst } = require('lodash');
-
 const projectRoot = () => process.cwd();
 projectRoot.backend = () => path.join(projectRoot(), 'backend-bikesurbanfloats');
 projectRoot.backend.mavenTarget = () => path.join(projectRoot.backend(), 'target');
@@ -86,14 +83,6 @@ Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, 
                 schema.errors.forEach((error) => {
                     log.red(error).echo();
                 });
-
-                const name = `${upperFirst(file.slice(0, -3))}Json`;
-                compile(schema.data, name).then((ts) => {
-                    const tsOut = path.join(projectRoot.frontend.src(), `shared/generated/${name}.d.ts`);
-                    ts = ts.replace(/"/g, `'`);
-                    fs.outputFileSync(tsOut, ts);
-                    log.time().green(`written TypeScript interface to ${tsOut}`).echo();
-                }).catch(console.error);
 
                 schema.write(out);
 
@@ -189,6 +178,10 @@ Sparky.task('build:frontend:renderer', () => {
     return fuse.run();
 });
 
+Sparky.task('copy:assets', async () => {
+    await fs.copy(path.join(projectRoot.frontend(), 'assets'), path.join(projectRoot.build.frontend(), 'assets'));
+});
+
 Sparky.task('clean:build', () => Sparky.src(projectRoot.build()).clean(projectRoot.build()));
 
 Sparky.task('clean:cache:fuse', () => Sparky.src(projectRoot.fuseCache()).clean(projectRoot.fuseCache()));
@@ -196,7 +189,7 @@ Sparky.task('clean:cache:schema', () => Sparky.src(projectRoot.schemaCache()).cl
 
 Sparky.task('clean:cache', ['clean:cache:fuse', 'clean:cache:schema'], () => {});
 
-Sparky.task('build:frontend', ['build:frontend:renderer', 'build:frontend:main'], () => {
+Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:frontend:main'], () => {
     return Sparky.src(path.join(projectRoot(), 'package.json')).dest(projectRoot.build());
 });
 

@@ -1,13 +1,12 @@
-import { EntitiesJson } from '../../shared/generated/EntitiesJson';
-import { TimeentriesJson } from '../../shared/generated/TimeentriesJson';
+import { HistoryEntities, HistoryTimeEntries } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
 
 export interface HistoryAjax {
     init(path: string): Promise<void>,
-    readEntities(): Promise<EntitiesJson>,
+    readEntities(): Promise<HistoryEntities>,
     numberOFChangeFiles(): Promise<number>,
-    previousChangeFile(): Promise<TimeentriesJson>,
-    nextChangeFile(): Promise<TimeentriesJson>,
+    previousChangeFile(): Promise<HistoryTimeEntries>,
+    nextChangeFile(): Promise<HistoryTimeEntries>,
 }
 
 export interface SettingsAjax {
