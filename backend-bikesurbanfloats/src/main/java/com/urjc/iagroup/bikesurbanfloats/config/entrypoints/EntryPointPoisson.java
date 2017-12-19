@@ -50,41 +50,6 @@ public class EntryPointPoisson extends EntryPoint {
      * It is the number of users that will be generated.
      */
     private int totalUsers;
-    
-    public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution, UserType userType) {
-        this.position = position;
-        this.distribution = distribution;
-        this.userType = userType;
-        this.timeRange = new TimeRange(0, TOTAL_SIMULATION_TIME);
-        this.radius = 0;
-    }
-
-    public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution,
-                             UserType userType, double radius) {
-        this.position = position;
-        this.distribution = distribution;
-        this.userType = userType;
-        this.timeRange = new TimeRange(0, TOTAL_SIMULATION_TIME);
-        this.radius = radius;
-    }
-
-    public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution,
-                             UserType userType, TimeRange timeRange) {
-        this.position = position;
-        this.distribution = distribution;
-        this.userType = userType;
-        this.timeRange = timeRange;
-        this.radius = 0;
-    }
-
-    public EntryPointPoisson(GeoPoint position, DistributionPoisson distribution,
-                             UserType userType, TimeRange timeRange, double radius) {
-        this.position = position;
-        this.distribution = distribution;
-        this.userType = userType;
-        this.timeRange = timeRange;
-        this.radius = radius;
-    }
 
     @Override
     public List<EventUserAppears> generateEvents() {
@@ -102,13 +67,8 @@ public class EntryPointPoisson extends EntryPoint {
         	currentTime = timeRange.getStart();
         	endTime = timeRange.getEnd();
         }
-        
-        if (totalUsers == 0) {   // the number of users to create hasn't been specified
-        	maximumUsers = Integer.MAX_VALUE;  // thus, it won't a stop condition in while 
-        }
-        else {
-        	maximumUsers = totalUsers;
-        }
+
+        maximumUsers = totalUsers == 0 ? Integer.MAX_VALUE : totalUsers;
         
         while (currentTime < endTime && usersCounter < maximumUsers) {
             User user = userFactory.createUser(userType);
