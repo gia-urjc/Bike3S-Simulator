@@ -8,7 +8,6 @@ import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
 import com.urjc.iagroup.bikesurbanfloats.history.History.IdReference;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

@@ -30,6 +30,7 @@ const EntryPoint = sAnyOf(
             start: UInt,
             end: UInt,
         }).require.all().restrict(),
+        totalUsers: sNumber().xMin(0)
     }).require('distribution').restrict()),
 );
 

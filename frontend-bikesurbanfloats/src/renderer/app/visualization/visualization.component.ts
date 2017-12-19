@@ -1,8 +1,11 @@
 import { Component, Inject } from '@angular/core';
+import { marker } from 'leaflet';
 import { isArray, without } from 'lodash';
+import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
 import * as entities from './entities';
-import { Entity, EntityMetaKey, VisualOptions } from './entities/Entity';
+import { JsonIdentifier, VisualEntity, VisualOptions } from './entities/decorators';
+import { Entity } from './entities/Entity';
 
 @Component({
     selector: 'visualization',
@@ -22,34 +25,36 @@ export class VisualizationComponent {
         this.createEntities().catch((error) => console.error(error));
     }
 
-    getMetadata(EntityConstructor: Function): VisualOptions {
-        if (!Reflect.hasOwnMetadata(EntityMetaKey, EntityConstructor)) {
-            throw new Error(`No metadata found on ${EntityConstructor}`);
+    getJsonIdentifier(EntityConstructor: Function): string {
+        if (!Reflect.hasOwnMetadata(JsonIdentifier, EntityConstructor)) {
+            throw new Error(`No json identifier found on ${EntityConstructor.name}`);
         }
-
-        return Reflect.getOwnMetadata(EntityMetaKey, EntityConstructor);
+        return Reflect.getOwnMetadata(JsonIdentifier, EntityConstructor);
     }
 
     async createEntities(): Promise<void> {
         await this.ajax.history.init('history');
-        const entitySource: { [key: string]: Array<any> } = await this.ajax.history.readEntities() as any;
+        const entitySource = await this.ajax.history.readEntities();
 
         this.entities = {};
 
         Object.values(entities).forEach((EntityConstructor) => {
-            const meta = this.getMetadata(EntityConstructor);
+            const jsonIdentifier = this.getJsonIdentifier(EntityConstructor);
+            const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, EntityConstructor);
 
-            if (!(meta.fromJson in entitySource)) return;
+            if (!(jsonIdentifier in entitySource)) return;
 
-            this.entities[meta.fromJson] = {};
+            this.entities[jsonIdentifier] = {};
 
-            entitySource[meta.fromJson].forEach((json) => {
-                const entity: Entity = Reflect.construct(EntityConstructor, [json]);
-                this.entities[meta.fromJson][entity.id] = entity;
+            entitySource[jsonIdentifier].forEach((jsonEntity) => {
+                const entity: Entity = Reflect.construct(EntityConstructor, [jsonEntity]);
+                this.entities[jsonIdentifier][entity.id] = entity;
+
+                if (visualOptions) {
+                    Reflect.defineMetadata(VisualEntity, marker([0, 0]), entity);
+                }
             });
         });
-
-        console.log(this.entities);
     }
 
     applyChange(entity: any, data: any, from: 'old' | 'new') {

@@ -30,6 +30,7 @@
                 "longitude": -3.71384
             },
             "radius": 100.0,
+            "totalUsers": 50,
             "distribution": {
                 "type": "POISSON",
                 "lambda": 0.0033333

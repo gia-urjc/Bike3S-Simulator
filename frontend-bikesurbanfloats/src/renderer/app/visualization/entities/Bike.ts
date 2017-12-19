@@ -1,12 +1,11 @@
-import { Entity, VisualEntity } from './Entity';
+import { JsonIdentifier } from './decorators';
+import { Entity } from './Entity';
 
 interface JsonBike {
     id: number,
 }
 
-@VisualEntity({
-    fromJson: 'bikes',
-})
+@JsonIdentifier('bikes')
 export class Bike extends Entity {
     reserved: boolean;
 

@@ -178,6 +178,10 @@ Sparky.task('build:frontend:renderer', () => {
     return fuse.run();
 });
 
+Sparky.task('copy:assets', async () => {
+    await fs.copy(path.join(projectRoot.frontend(), 'assets'), path.join(projectRoot.build.frontend(), 'assets'));
+});
+
 Sparky.task('clean:build', () => Sparky.src(projectRoot.build()).clean(projectRoot.build()));
 
 Sparky.task('clean:cache:fuse', () => Sparky.src(projectRoot.fuseCache()).clean(projectRoot.fuseCache()));
@@ -185,7 +189,7 @@ Sparky.task('clean:cache:schema', () => Sparky.src(projectRoot.schemaCache()).cl
 
 Sparky.task('clean:cache', ['clean:cache:fuse', 'clean:cache:schema'], () => {});
 
-Sparky.task('build:frontend', ['build:frontend:renderer', 'build:frontend:main'], () => {
+Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:frontend:main'], () => {
     return Sparky.src(path.join(projectRoot(), 'package.json')).dest(projectRoot.build());
 });
 
