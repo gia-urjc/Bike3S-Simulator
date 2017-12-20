@@ -72,7 +72,7 @@ public class UserEmployee extends User {
   * It is the number of times that the user musts try to rent a bike (without a bike 
   * reservation) before deciding to leave the system.    
   */
-    private int minRentingAttempts = systemManager.getRandom().nextInt(4, 7);
+    private int minRentalAttempts = systemManager.getRandom().nextInt(4, 7);
 
     public UserEmployee() {
         super();
@@ -90,7 +90,7 @@ public class UserEmployee extends User {
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == minRentingAttempts ? true : false;
+        return getMemory().getCounterRentingAttempts() == minRentalAttempts ? true : false;
     }
     
     @Override

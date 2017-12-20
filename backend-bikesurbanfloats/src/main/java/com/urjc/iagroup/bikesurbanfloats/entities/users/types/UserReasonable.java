@@ -51,7 +51,7 @@ public class UserReasonable extends User {
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentingAttempts = systemManager.getRandom().nextInt(3, 5);
+        private int minRentalAttempts = systemManager.getRandom().nextInt(3, 5);
 
         /**
          * It determines the rate with which the user will decide to go directly to a station
@@ -92,7 +92,7 @@ public class UserReasonable extends User {
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == parameters.minRentingAttempts ? true : false;
+        return getMemory().getCounterRentingAttempts() == parameters.minRentalAttempts ? true : false;
     }
     
     @Override
