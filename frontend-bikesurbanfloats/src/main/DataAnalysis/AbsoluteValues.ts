@@ -10,7 +10,7 @@ export class AbsoluteValues {
     
     public async init() {
         
-    }
+   }
  
         
 }

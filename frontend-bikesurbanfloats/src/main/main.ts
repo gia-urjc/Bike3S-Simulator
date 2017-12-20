@@ -47,9 +47,10 @@ namespace Main {
 
     }
   export function helloWorld() {
-    console.log("Hello World");
+    nextChangeFIle();
+      nextChangeFIle();
   }
 }
 
 Main.init();
-Main.helloWorld();
+
