@@ -92,8 +92,8 @@ public class Application {
             result = false;
         }
         else if(validator == null) {
-            System.out.println(ANSI_YELLOW + "Warning, you don't specify a validator, congiguration file will not be validated"
-                    + "on backend" + ANSI_RESET);
+            System.out.println(ANSI_YELLOW + "Warning, you don't specify a validator, configuration file will not be validated"
+                    + " on backend" + ANSI_RESET);
             result = true;
         }
         return result;
