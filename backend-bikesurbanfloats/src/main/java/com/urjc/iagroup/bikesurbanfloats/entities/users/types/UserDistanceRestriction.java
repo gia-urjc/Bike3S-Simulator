@@ -76,12 +76,27 @@ public class UserDistanceRestriction extends User {
          * farer than this distance.
          */
         private double maxDistance;
+
+        @Override
+        public String toString() {
+            return "UserDistanceRestrictionParameters{" +
+                    "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
+                    ", minReservationAttempts=" + minReservationAttempts +
+                    ", minReservationTimeouts=" + minReservationTimeouts +
+                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", bikeReturnPercentage=" + bikeReturnPercentage +
+                    ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
+                    ", failedReservationPercentage=" + failedReservationPercentage +
+                    ", maxDistance=" + maxDistance +
+                    '}';
+        }
     }
 
     private UserDistanceRestrictionParameters parameters;
 
-    public UserDistanceRestriction() {
+    public UserDistanceRestriction(UserDistanceRestrictionParameters parameters) {
         super();
+        this.parameters = parameters;
     }
     
     @Override
@@ -202,6 +217,11 @@ public class UserDistanceRestriction extends User {
         // The route in first list position is the shortest.
         return routes.get(0);
     }
-    
 
+    @Override
+    public String toString() {
+        return super.toString() + "UserDistanceRestriction{" +
+                "parameters=" + parameters +
+                '}';
+    }
 }

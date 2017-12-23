@@ -71,12 +71,26 @@ public class UserStationsBalancer extends User {
         private int failedReservationPercentage;
 
         private UserStationsBalancerParameters() {}
+
+        @Override
+        public String toString() {
+            return "UserStationsBalancerParameters{" +
+                    "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
+                    ", minReservationAttempts=" + minReservationAttempts +
+                    ", minReservationTimeouts=" + minReservationTimeouts +
+                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", bikeReturnPercentage=" + bikeReturnPercentage +
+                    ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
+                    ", failedReservationPercentage=" + failedReservationPercentage +
+                    '}';
+        }
     }
 
     private UserStationsBalancerParameters parameters;
     
-    public UserStationsBalancer() {
+    public UserStationsBalancer(UserStationsBalancerParameters parameters) {
         super();
+        this.parameters = parameters;
     }
     
     @Override
@@ -173,6 +187,12 @@ public class UserStationsBalancer extends User {
         // The route in first list position is the shortest.
         return routes.get(0);
     }
-    
+
+    @Override
+    public String toString() {
+        return super.toString() + "UserDistanceRestriction{" +
+                "parameters=" + parameters +
+                '}';
+    }
 
 }

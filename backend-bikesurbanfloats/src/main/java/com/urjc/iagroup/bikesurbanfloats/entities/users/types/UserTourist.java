@@ -85,12 +85,29 @@ public class UserTourist extends User {
         private int failedReservationPercentage;
 
         private UserTouristParameters() {}
+
+        @Override
+        public String toString() {
+            return "UserTouristParameters{" +
+                    "SELECTION_STATIONS_SET=" + SELECTION_STATIONS_SET +
+                    ", MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
+                    ", touristDestination=" + touristDestination +
+                    ", minReservationAttempts=" + minReservationAttempts +
+                    ", minReservationTimeouts=" + minReservationTimeouts +
+                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", bikeReservationPercentage=" + bikeReservationPercentage +
+                    ", slotReservationPercentage=" + slotReservationPercentage +
+                    ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
+                    ", failedReservationPercentage=" + failedReservationPercentage +
+                    '}';
+        }
     }
 
     private UserTouristParameters parameters;
 
-    public UserTourist() {
+    public UserTourist(UserTouristParameters parameters) {
         super();
+        this.parameters = parameters;
     }
     
     @Override
@@ -217,6 +234,13 @@ public class UserTourist extends User {
         else {
             return routes.get(routes.size() - 1);
         }
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "UserDistanceRestriction{" +
+                "parameters=" + parameters +
+                '}';
     }
 
 }

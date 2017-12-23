@@ -64,18 +64,32 @@ public class UserEmployee extends User {
          */
         private int minReservationTimeouts = systemManager.getRandom().nextInt(3, 6);
 
+        /**
+         * It is the number of times that the user musts try to rent a bike (without a bike
+         * reservation) before deciding to leave the system.
+         */
+        private int minRentingAttempts = systemManager.getRandom().nextInt(4, 7);
+
+        @Override
+        public String toString() {
+            return "UserEmployeeParameters{" +
+                    "companyStreet=" + companyStreet +
+                    ", bikeReservationPercentage=" + bikeReservationPercentage +
+                    ", slotReservationPercentage=" + slotReservationPercentage +
+                    ", MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
+                    ", minReservationAttempts=" + minReservationAttempts +
+                    ", minReservationTimeouts=" + minReservationTimeouts +
+                    ", minRentingAttempts=" + minRentingAttempts +
+                    '}';
+        }
+
         private UserEmployeeParameters() {}
     }
     private UserEmployeeParameters parameters;
-    
- /**
-  * It is the number of times that the user musts try to rent a bike (without a bike 
-  * reservation) before deciding to leave the system.    
-  */
-    private int minRentingAttempts = systemManager.getRandom().nextInt(4, 7);
 
-    public UserEmployee() {
+    public UserEmployee(UserEmployeeParameters parameters) {
         super();
+        this.parameters = parameters;
     }
     
     @Override
@@ -90,7 +104,7 @@ public class UserEmployee extends User {
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == minRentingAttempts ? true : false;
+        return getMemory().getCounterRentingAttempts() == parameters.minRentingAttempts ? true : false;
     }
     
     @Override
@@ -173,4 +187,10 @@ public class UserEmployee extends User {
         return routes.get(0);
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "UserDistanceRestriction{" +
+                "parameters=" + parameters +
+                '}';
+    }
 }

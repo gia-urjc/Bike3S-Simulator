@@ -2,7 +2,7 @@ import { JsonSchema } from 'json-schema-builder-ts';
 import { sAnyOf, sMerge } from 'json-schema-builder-ts/dist/operators/schematical';
 import { rData } from 'json-schema-builder-ts/dist/references';
 import { sArray, sConst, sInteger, sNull, sNumber, sObject, sString } from 'json-schema-builder-ts/dist/types';
-import { GeoPoint, options, UInt, UserType } from './common';
+import { GeoPoint, options, UInt, UserProperties } from './common';
 
 const distributions = [
     sObject({
@@ -15,7 +15,7 @@ const distributions = [
 ];
 
 const EntryPointBase = sObject({
-    userType: UserType,
+    userProperties: UserProperties,
     position: GeoPoint,
 }).require.all().restrict();
 

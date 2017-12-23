@@ -5,7 +5,7 @@ import ReservationState from './reservationstate';
 import ReservationType from './reservationtype';
 import Route from './route';
 import UInt from './uint';
-import UserType from './usertype';
+import UserProperties from './userProperties';
 
 const options: BuilderOptions = {
     version: SchemaVersion.DRAFT_6,
@@ -20,5 +20,5 @@ export {
     ReservationType,
     Route,
     UInt,
-    UserType
+    UserProperties
 }

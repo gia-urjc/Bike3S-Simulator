@@ -16,7 +16,9 @@
     "historyOutputPath": "history",
     "entryPoints": [
         {
-            "userType": "USER_RANDOM",
+            "userType": {
+                "typeName": "USER_RANDOM"
+            },
             "timeInstant": 0,
             "position": {
                 "latitude": 40.42750,
@@ -24,7 +26,9 @@
             }
         },
         {
-            "userType": "USER_RANDOM",
+            "userType": {
+                "typeName": "USER_RANDOM"
+            },
             "position": {
                 "latitude": 40.42750,
                 "longitude": -3.71384

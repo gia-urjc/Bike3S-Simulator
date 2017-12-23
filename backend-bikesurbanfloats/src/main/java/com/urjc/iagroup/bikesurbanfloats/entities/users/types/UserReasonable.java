@@ -72,12 +72,26 @@ public class UserReasonable extends User {
         private int failedReservationPercentage;
 
         private UserReasonableParameters() {}
+
+        @Override
+        public String toString() {
+            return "UserReasonableParameters{" +
+                    "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
+                    ", minReservationAttempts=" + minReservationAttempts +
+                    ", minReservationTimeouts=" + minReservationTimeouts +
+                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", bikeReturnPercentage=" + bikeReturnPercentage +
+                    ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
+                    ", failedReservationPercentage=" + failedReservationPercentage +
+                    '}';
+        }
     }
 
     private UserReasonableParameters parameters;
 
-    public UserReasonable() {
+    public UserReasonable(UserReasonableParameters parameters) {
         super();
+        this.parameters = parameters;
     }
     
     @Override
@@ -172,6 +186,11 @@ public class UserReasonable extends User {
         // The route in first list position is the shortest.
         return routes.get(0);
     }
-    
 
+    @Override
+    public String toString() {
+        return super.toString() + "UserDistanceRestriction{" +
+                "parameters=" + parameters +
+                '}';
+    }
 }
