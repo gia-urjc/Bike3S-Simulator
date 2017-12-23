@@ -12,12 +12,13 @@ export function JsonIdentifier(identifier: string) {
 type EntityCallback<T> = (entity: any) => T;
 
 export interface VisualOptions {
-    show?: boolean | EntityCallback<boolean>,
+    show: boolean | EntityCallback<boolean>,
     moveAlong?: EntityCallback<Route | null>,
     speed?: EntityCallback<number>,
 }
 
-export function VisualEntity(options: VisualOptions) {
+export function VisualEntity(options?: VisualOptions) {
+    options = options || { show: true };
     return function <E extends Entity, J extends HistoryEntity> (Target: { new(json: J): E }) {
         Reflect.defineMetadata(VisualEntity, options, Target);
         return Target;

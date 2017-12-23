@@ -1,0 +1,7 @@
+:host .center-control {
+    width: 6rem;
+}
+
+:host .decrease-speed {
+    z-index: 3;
+}

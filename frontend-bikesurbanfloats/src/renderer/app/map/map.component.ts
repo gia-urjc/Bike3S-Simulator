@@ -22,8 +22,8 @@ export class MapComponent implements OnInit {
 
         this.options = {
             layers: [osm.layer],
-            zoom: 15,
-            center: latLng(40.72, -74.04), // TODO: make customizable
+            zoom: 14,
+            center: latLng(40.42, -3.69), // TODO: make customizable
         };
 
         this.layerControl = {

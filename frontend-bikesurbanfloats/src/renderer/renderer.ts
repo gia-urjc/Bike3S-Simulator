@@ -7,7 +7,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 
-import './leaflet';
+import './css';
 
 if (process.env.target === 'development') {
     enableProdMode();
