@@ -228,21 +228,51 @@ export class VisualizationComponent {
         this.speedControl.setValue(this.speed, this.NO_EMIT);
     }
 
+    forwardTimeEntry(timeEntry: HistoryTimeEntries[0]) {
+        for (let i = 0; i < timeEntry.events.length; i++) {
+            const event = timeEntry.events[i];
+            console.log(timeEntry.time, event.name);
+            Object.keys(event.changes).forEach((jsonIdentifier) => {
+                event.changes[jsonIdentifier].forEach((changes) => {
+                    const entity = this.entities[jsonIdentifier][changes.id];
+                    this.applyChange(entity, changes, 'new');
+                });
+            });
+        }
+    }
+
+    rewindTimeEntry(timeEntry: HistoryTimeEntries[0]) {
+        for (let i = timeEntry.events.length - 1; i >= 0; i--) {
+            const event = timeEntry.events[i];
+            console.log(timeEntry.time, event.name);
+            Object.keys(event.changes).forEach((jsonIdentifier) => {
+                event.changes[jsonIdentifier].forEach((changes) => {
+                    const entity = this.entities[jsonIdentifier][changes.id];
+                    this.applyChange(entity, changes, 'old');
+                });
+            });
+        }
+    }
+
+    stepForward() {
+        const timeEntry = this.timeEntries.current[this.timeEntryIndex++];
+        this.forwardTimeEntry(timeEntry);
+        this.time = timeEntry.time;
+    }
+
+    stepRewind() {
+        const timeEntry = this.timeEntries.current[this.timeEntryIndex--];
+        this.rewindTimeEntry(timeEntry);
+        this.time = timeEntry.time;
+    }
+
     onTickForward() {
         const nextTime = this.time + this.speed * this.TICK / 1000;
 
         let timeEntry = this.timeEntries.current[this.timeEntryIndex];
 
         while (timeEntry && timeEntry.time < nextTime) {
-            timeEntry.events.forEach((event) => {
-                console.log(timeEntry.time, event.name);
-                Object.keys(event.changes).forEach((jsonIdentifier) => {
-                    event.changes[jsonIdentifier].forEach((changes) => {
-                        const entity = this.entities[jsonIdentifier][changes.id];
-                        this.applyChange(entity, changes, 'new');
-                    });
-                });
-            });
+            this.forwardTimeEntry(timeEntry);
 
             timeEntry = this.timeEntries.current[++this.timeEntryIndex];
 
@@ -270,18 +300,7 @@ export class VisualizationComponent {
         let timeEntry = this.timeEntries.current[this.timeEntryIndex];
 
         while (timeEntry && timeEntry.time > nextTime) {
-            for (let i = timeEntry.events.length - 1; i >= 0; i--) {
-                const event = timeEntry.events[i];
-
-                console.log(timeEntry.time, event.name);
-
-                Object.keys(event.changes).forEach((jsonIdentifier) => {
-                    event.changes[jsonIdentifier].forEach((changes) => {
-                        const entity = this.entities[jsonIdentifier][changes.id];
-                        this.applyChange(entity, changes, 'old');
-                    });
-                });
-            }
+            this.rewindTimeEntry(timeEntry);
 
             timeEntry = this.timeEntries.current[--this.timeEntryIndex];
 

@@ -1,6 +1,7 @@
 <div class="btn-toolbar p-2">
     <div class="btn-group mr-2">
         <button class="btn btn-outline-secondary"
+                (click)="stepRewind()"
                 [disabled]="is(STATE.LOADING, STATE.START, STATE.RUNNING)">
             <fa [icon]="'step-backward'" [fixed]="true"></fa>
         </button>
@@ -10,6 +11,7 @@
             <fa [icon]="mainActionIcon"></fa>
         </button>
         <button class="btn btn-outline-secondary"
+                (click)="stepForward()"
                 [disabled]="is(STATE.LOADING, STATE.END, STATE.RUNNING)">
             <fa [icon]="'step-forward'" [fixed]="true"></fa>
         </button>
