@@ -26,6 +26,12 @@ enum STATE {
     RUNNING = 16 | 32,
 }
 
+enum STEP {
+    NONE,
+    FORWARD,
+    BACKWARD
+}
+
 @Component({
     selector: 'visualization',
     template: require('./visualization.component.html'),
@@ -46,6 +52,9 @@ export class VisualizationComponent {
     private speed: number;
     private time: number;
     private timeEntryIndex: number;
+    private nChangeFiles: number;
+    private changeFileIndex: number;
+    private lastStep: STEP;
 
     private entities: {
         [key: string]: {
@@ -88,17 +97,21 @@ export class VisualizationComponent {
     }
 
     async load(): Promise<void> {
+        await this.ajax.history.init('history');
         await this.createEntities();
+
+        this.nChangeFiles = await this.ajax.history.numberOFChangeFiles();
+
+        this.changeFileIndex = 0;
 
         this.timeEntries = {
             previous: null,
-            current: await this.ajax.history.nextChangeFile(),
-            next: null,
+            current: await this.ajax.history.getChangeFile(this.changeFileIndex),
+            next: await this.ajax.history.getChangeFile(this.changeFileIndex + 1),
         };
     }
 
     async createEntities(): Promise<void> {
-        await this.ajax.history.init('history');
         const entitySource = await this.ajax.history.readEntities();
 
         this.entities = {};
@@ -185,34 +198,41 @@ export class VisualizationComponent {
             IntervalObservable
                 .create(this.TICK)
                 .pipe(takeWhile(() => this.state === STATE.FORWARD))
-                .subscribe(() => this.onTickForward());
+                .subscribe(() => this.onTick());
         }
 
         if (this.is(STATE.REWIND)) {
             IntervalObservable
                 .create(this.TICK)
                 .pipe(takeWhile(() => this.state === STATE.REWIND))
-                .subscribe(() => this.onTickRewind());
+                .subscribe(() => this.onTick());
         }
 
         if (this.is(STATE.START)) {
             this.timeEntryIndex = 0;
             this.time = 0;
-            this.state = STATE.LOADING;
-            this.ajax.history.nextChangeFile().then((entry) => {
-                this.timeEntries.next = entry;
-                this.state = STATE.START;
-            });
+            this.lastStep = STEP.NONE;
+            /*if (this.changeFileIndex === 0) {
+                this.state = STATE.LOADING;
+                this.ajax.history.nextChangeFile().then((entry) => {
+                    this.timeEntries.next = entry;
+                    this.changeFileIndex++;
+                    this.state = STATE.START;
+                });
+            }*/
         }
 
         if (this.is(STATE.END)) {
             this.timeEntryIndex = this.timeEntries.current.length - 1;
             this.time = this.timeEntries.current[this.timeEntryIndex].time;
-            this.state = STATE.LOADING;
-            this.ajax.history.previousChangeFile().then((entry) => {
-                this.timeEntries.previous = entry;
-                this.state = STATE.END;
-            });
+            this.lastStep = STEP.NONE;
+            /*if (this.changeFileIndex === this.nChangeFiles - 1) {
+                this.state = STATE.LOADING;
+                this.ajax.history.previousChangeFile().then((entry) => {
+                    this.timeEntries.previous = entry;
+                    this.state = STATE.END;
+                });
+            }*/
         }
     }
 
@@ -228,10 +248,73 @@ export class VisualizationComponent {
         this.speedControl.setValue(this.speed, this.NO_EMIT);
     }
 
-    forwardTimeEntry(timeEntry: HistoryTimeEntries[0]) {
+    stepForward() {
+        if (this.is(STATE.START)) this.updateState(STATE.PAUSED);
+        const timeEntry = this.next();
+        this.time = timeEntry.time;
+        this.forwardEntry(timeEntry);
+        this.increaseIndex();
+    }
+
+    stepBackward() {
+        if (this.is(STATE.END)) this.updateState(STATE.PAUSED);
+        const timeEntry = this.previous();
+        this.time = timeEntry.time;
+        this.rewindEntry(timeEntry);
+        this.decreaseIndex();
+    }
+
+    increaseIndex() {
+        if (++this.timeEntryIndex === this.timeEntries.current.length) {
+            if (this.timeEntries.next) {
+                this.timeEntries.previous = this.timeEntries.current;
+                this.timeEntries.current = this.timeEntries.next;
+                this.timeEntryIndex = 0;
+                if (++this.changeFileIndex < this.nChangeFiles - 1) {
+                    this.ajax.history.getChangeFile(this.changeFileIndex + 1).then((entry) => this.timeEntries.next = entry);
+                } else {
+                    this.timeEntries.next = null;
+                }
+            } else {
+                this.updateState(STATE.END);
+            }
+        }
+    }
+
+    decreaseIndex() {
+        if (--this.timeEntryIndex === -1) {
+            if (this.timeEntries.previous) {
+                this.timeEntries.next = this.timeEntries.current;
+                this.timeEntries.current = this.timeEntries.previous;
+                this.timeEntryIndex = this.timeEntries.current.length - 1;
+                if (--this.changeFileIndex > 0) {
+                    this.ajax.history
+                        .getChangeFile(this.changeFileIndex - 1)
+                        .then((entry) => this.timeEntries.previous = entry);
+                } else {
+                    this.timeEntries.previous = null;
+                }
+            } else {
+                this.updateState(STATE.START);
+            }
+        }
+    }
+
+    next(): HistoryTimeEntries[0] {
+        if (this.lastStep === STEP.BACKWARD) this.increaseIndex();
+        this.lastStep = STEP.FORWARD;
+        return this.timeEntries.current[this.timeEntryIndex];
+    }
+
+    previous(): HistoryTimeEntries[0] {
+        if (this.lastStep === STEP.FORWARD) this.decreaseIndex();
+        this.lastStep = STEP.BACKWARD;
+        return this.timeEntries.current[this.timeEntryIndex];
+    }
+
+    forwardEntry(timeEntry: HistoryTimeEntries[0]) {
         for (let i = 0; i < timeEntry.events.length; i++) {
             const event = timeEntry.events[i];
-            console.log(timeEntry.time, event.name);
             Object.keys(event.changes).forEach((jsonIdentifier) => {
                 event.changes[jsonIdentifier].forEach((changes) => {
                     const entity = this.entities[jsonIdentifier][changes.id];
@@ -241,10 +324,9 @@ export class VisualizationComponent {
         }
     }
 
-    rewindTimeEntry(timeEntry: HistoryTimeEntries[0]) {
+    rewindEntry(timeEntry: HistoryTimeEntries[0]) {
         for (let i = timeEntry.events.length - 1; i >= 0; i--) {
             const event = timeEntry.events[i];
-            console.log(timeEntry.time, event.name);
             Object.keys(event.changes).forEach((jsonIdentifier) => {
                 event.changes[jsonIdentifier].forEach((changes) => {
                     const entity = this.entities[jsonIdentifier][changes.id];
@@ -254,68 +336,26 @@ export class VisualizationComponent {
         }
     }
 
-    stepForward() {
-        const timeEntry = this.timeEntries.current[this.timeEntryIndex++];
-        this.forwardTimeEntry(timeEntry);
-        this.time = timeEntry.time;
-    }
-
-    stepRewind() {
-        const timeEntry = this.timeEntries.current[this.timeEntryIndex--];
-        this.rewindTimeEntry(timeEntry);
-        this.time = timeEntry.time;
-    }
-
-    onTickForward() {
+    onTick() {
         const nextTime = this.time + this.speed * this.TICK / 1000;
 
-        let timeEntry = this.timeEntries.current[this.timeEntryIndex];
+        let timeEntry: HistoryTimeEntries[0];
 
-        while (timeEntry && timeEntry.time < nextTime) {
-            this.forwardTimeEntry(timeEntry);
-
-            timeEntry = this.timeEntries.current[++this.timeEntryIndex];
-
-            if (timeEntry) continue;
-
-            if (this.timeEntries.next) {
-                this.timeEntries.previous = this.timeEntries.current;
-                this.timeEntries.current = this.timeEntries.next;
-                this.ajax.history.nextChangeFile()
-                    .then((entry) => this.timeEntries.next = entry)
-                    .catch(() => this.timeEntries.next = null);
-                this.timeEntryIndex = 0;
-                timeEntry = this.timeEntries.current[this.timeEntryIndex];
-            } else {
-                return this.updateState(STATE.END);
+        if (this.speed > 0) {
+            timeEntry = this.next();
+            while (timeEntry.time < nextTime) {
+                this.forwardEntry(timeEntry);
+                this.increaseIndex();
+                if (this.state !== STATE.FORWARD) return;
+                timeEntry = this.next();
             }
-        }
-
-        this.time = nextTime;
-    }
-
-    onTickRewind() {
-        const nextTime = this.time + this.speed * this.TICK / 1000;
-
-        let timeEntry = this.timeEntries.current[this.timeEntryIndex];
-
-        while (timeEntry && timeEntry.time > nextTime) {
-            this.rewindTimeEntry(timeEntry);
-
-            timeEntry = this.timeEntries.current[--this.timeEntryIndex];
-
-            if (timeEntry) continue;
-
-            if (this.timeEntries.previous) {
-                this.timeEntries.next = this.timeEntries.current;
-                this.timeEntries.current = this.timeEntries.previous;
-                this.ajax.history.previousChangeFile()
-                    .then((entry) => this.timeEntries.previous = entry)
-                    .catch(() => this.timeEntries.previous = null);
-                this.timeEntryIndex = this.timeEntries.current.length ? this.timeEntries.current.length - 1 : 0;
-                timeEntry = this.timeEntries.current[this.timeEntryIndex];
-            } else {
-                return this.updateState(STATE.START);
+        } else {
+            timeEntry = this.previous();
+            while (timeEntry.time > nextTime) {
+                this.rewindEntry(timeEntry);
+                this.decreaseIndex();
+                if (this.state !== STATE.REWIND) return;
+                timeEntry = this.previous();
             }
         }
 

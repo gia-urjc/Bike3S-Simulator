@@ -7,6 +7,7 @@ export interface HistoryAjax {
     numberOFChangeFiles(): Promise<number>,
     previousChangeFile(): Promise<HistoryTimeEntries>,
     nextChangeFile(): Promise<HistoryTimeEntries>,
+    getChangeFile(n: number): Promise<HistoryTimeEntries>,
 }
 
 export interface SettingsAjax {

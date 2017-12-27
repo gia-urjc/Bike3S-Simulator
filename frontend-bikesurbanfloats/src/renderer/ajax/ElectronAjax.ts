@@ -59,6 +59,11 @@ class ElectronHistory implements HistoryAjax {
         if (!this.ready) throw ElectronHistory.NOT_READY;
         return await readIpc('history-next');
     }
+
+    async getChangeFile(n: number): Promise<HistoryTimeEntries> {
+        if (!this.ready) throw ElectronHistory.NOT_READY;
+        return await readIpc('history-get', n);
+    }
 }
 
 class ElectronSettings implements SettingsAjax {

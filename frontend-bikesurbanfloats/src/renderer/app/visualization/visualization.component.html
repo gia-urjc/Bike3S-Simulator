@@ -1,7 +1,7 @@
 <div class="btn-toolbar p-2">
     <div class="btn-group mr-2">
         <button class="btn btn-outline-secondary"
-                (click)="stepRewind()"
+                (click)="stepBackward()"
                 [disabled]="is(STATE.LOADING, STATE.START, STATE.RUNNING)">
             <fa [icon]="'step-backward'" [fixed]="true"></fa>
         </button>
@@ -16,7 +16,7 @@
             <fa [icon]="'step-forward'" [fixed]="true"></fa>
         </button>
     </div>
-    <div class="input-group">
+    <div class="input-group mr-2">
         <span class="input-group-btn decrease-speed">
             <button class="btn btn-outline-secondary"
                     (click)="changeSpeed(-10)"
@@ -35,6 +35,7 @@
             </button>
         </span>
     </div>
+    <input class="fom-control" [ngModel]="time" readonly>
 </div>
 
 <map-view></map-view>

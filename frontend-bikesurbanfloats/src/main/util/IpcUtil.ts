@@ -14,7 +14,6 @@ export default class IpcUtil {
                     data: responseData,
                 });
             } catch (error) {
-                console.log('Error', error);
                 event.sender.send(channel, {
                     status: 500,
                     data: {
