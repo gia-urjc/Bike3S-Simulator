@@ -35,7 +35,9 @@
             </button>
         </span>
     </div>
-    <input class="fom-control" [ngModel]="time" readonly>
+    <div class="input-group">
+        <input class="form-control" [ngModel]="formattedTime" readonly>
+    </div>
 </div>
 
 <map-view></map-view>

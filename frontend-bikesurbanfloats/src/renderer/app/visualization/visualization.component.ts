@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { marker } from 'leaflet';
 import { isArray, isPlainObject } from 'lodash';
+import * as moment from 'moment';
 
 import { EntityChanges, HistoryTimeEntries } from '../../../shared/history';
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
@@ -22,8 +23,8 @@ enum STATE {
     FORWARD = 16,
     REWIND = 32,
 
-    NOT_RUNNING = 2 | 4 | 8,
-    RUNNING = 16 | 32,
+    NOT_RUNNING = START | PAUSED | END, // don't include the loading state
+    RUNNING = FORWARD | REWIND,
 }
 
 enum STEP {
@@ -174,7 +175,7 @@ export class VisualizationComponent {
     }
 
     updateState(state: STATE) {
-        console.log(this.time, `${STATE[this.state]} -> ${STATE[state]}`, this);
+        console.log(`${STATE[this.state]} -> ${STATE[state]}`);
 
         this.state = state;
 
@@ -212,27 +213,12 @@ export class VisualizationComponent {
             this.timeEntryIndex = 0;
             this.time = 0;
             this.lastStep = STEP.NONE;
-            /*if (this.changeFileIndex === 0) {
-                this.state = STATE.LOADING;
-                this.ajax.history.nextChangeFile().then((entry) => {
-                    this.timeEntries.next = entry;
-                    this.changeFileIndex++;
-                    this.state = STATE.START;
-                });
-            }*/
         }
 
         if (this.is(STATE.END)) {
             this.timeEntryIndex = this.timeEntries.current.length - 1;
             this.time = this.timeEntries.current[this.timeEntryIndex].time;
             this.lastStep = STEP.NONE;
-            /*if (this.changeFileIndex === this.nChangeFiles - 1) {
-                this.state = STATE.LOADING;
-                this.ajax.history.previousChangeFile().then((entry) => {
-                    this.timeEntries.previous = entry;
-                    this.state = STATE.END;
-                });
-            }*/
         }
     }
 
@@ -360,5 +346,9 @@ export class VisualizationComponent {
         }
 
         this.time = nextTime;
+    }
+
+    get formattedTime() {
+        return moment.unix(this.time).utc().format('HH:mm:ss');
     }
 }
