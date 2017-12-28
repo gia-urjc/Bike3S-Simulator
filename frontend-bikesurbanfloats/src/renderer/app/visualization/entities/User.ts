@@ -12,7 +12,7 @@ interface JsonUser extends HistoryEntity {
 
 @JsonIdentifier('users')
 @VisualEntity({
-    show: (user: User) => user.position !== null,
+    showAt: (user: User) => user.position,
     moveAlong: (user: User) => user.route,
     speed: (user: User) => user.bike === null ? user.walkingVelocity : user.cyclingVelocity,
 })

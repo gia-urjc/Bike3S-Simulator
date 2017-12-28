@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { marker } from 'leaflet';
+import { Marker } from 'leaflet';
 import { isArray, isPlainObject } from 'lodash';
 import * as moment from 'moment';
 
@@ -57,6 +57,9 @@ export class VisualizationComponent {
     private changeFileIndex: number;
     private lastStep: STEP;
 
+    private activeMarkers: Set<Marker>;
+    private visualEntities: Array<Entity>;
+
     private entities: {
         [key: string]: {
             [key: number]: Entity
@@ -72,6 +75,9 @@ export class VisualizationComponent {
     constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
 
     ngOnInit() {
+        this.activeMarkers = new Set();
+        this.visualEntities = [];
+
         this.speed = 10;
         this.speedControl = new FormControl(this.speed, [
             Validators.required,
@@ -129,11 +135,19 @@ export class VisualizationComponent {
                 const entity: Entity = Reflect.construct(EntityConstructor, [jsonEntity]);
                 this.entities[jsonIdentifier][entity.id] = entity;
 
-                if (visualOptions) {
-                    Reflect.defineMetadata(VisualEntity, marker([0, 0]), entity);
-                }
+                if (!visualOptions) return;
+
+                const p = visualOptions.showAt(entity);
+                const marker = new Marker(p ? [p.latitude, p.longitude] : [0, 0]);
+                Reflect.defineMetadata(VisualEntity, { marker }, entity);
+                this.visualEntities.push(entity);
+                if (p) this.activeMarkers.add(marker);
+
+                visualOptions.onChange && visualOptions.onChange(entity, marker);
             });
         });
+
+        console.log(this.activeMarkers);
     }
 
     applyChange(entity: any, data: EntityChanges, from: 'old' | 'new') {
@@ -151,6 +165,22 @@ export class VisualizationComponent {
 
             entity[name] = property;
         });
+
+        const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
+
+        if (!visualOptions) return;
+
+        const meta: any = Reflect.getOwnMetadata(VisualEntity, entity);
+        const p = visualOptions.showAt(entity);
+
+        if (!p) {
+            this.activeMarkers.delete(meta.marker);
+        } else if (!visualOptions.moveAlong) {
+            meta.marker.setLatLng([p.latitude, p.longitude]);
+            this.activeMarkers.add(meta.marker);
+        }
+
+        visualOptions.onChange && visualOptions.onChange(entity, meta.marker);
     }
 
     is(...states: Array<STATE>): boolean;

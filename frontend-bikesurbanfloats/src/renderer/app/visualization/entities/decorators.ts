@@ -1,5 +1,6 @@
+import { Marker } from 'leaflet';
 import { HistoryEntity } from '../../../../shared/history';
-import { Route } from '../../../../shared/util';
+import { GeoPoint, Route } from '../../../../shared/util';
 import { Entity } from './Entity';
 
 export function JsonIdentifier(identifier: string) {
@@ -12,13 +13,13 @@ export function JsonIdentifier(identifier: string) {
 type EntityCallback<T> = (entity: any) => T;
 
 export interface VisualOptions {
-    show: boolean | EntityCallback<boolean>,
+    showAt: EntityCallback<GeoPoint | null>,
     moveAlong?: EntityCallback<Route | null>,
     speed?: EntityCallback<number>,
+    onChange?: (entity: any, marker: Pick<Marker, 'setIcon'>) => void,
 }
 
-export function VisualEntity(options?: VisualOptions) {
-    options = options || { show: true };
+export function VisualEntity(options: VisualOptions) {
     return function <E extends Entity, J extends HistoryEntity> (Target: { new(json: J): E }) {
         Reflect.defineMetadata(VisualEntity, options, Target);
         return Target;

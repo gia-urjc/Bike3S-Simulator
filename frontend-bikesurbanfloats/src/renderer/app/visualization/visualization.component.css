@@ -5,3 +5,7 @@
 :host .decrease-speed {
     z-index: 3;
 }
+
+:host .time-view {
+    width: 5.5rem;
+}
