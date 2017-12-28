@@ -9,6 +9,8 @@ import { AppModule } from './app/app.module';
 
 import './css';
 
+import 'conic-gradient/conic-gradient';
+
 if (process.env.target === 'development') {
     enableProdMode();
 } else {

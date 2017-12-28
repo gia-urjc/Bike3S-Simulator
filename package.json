@@ -3,6 +3,7 @@
     "version": "0.0.1",
     "main": "frontend/main.js",
     "scripts": {
+        "install": "napa LeaVerou/conic-gradient",
         "start:electron": "electron ./build",
         "distribute": "node fuse build:dist && build",
         "debug:frontend": "node fuse build:dev"
@@ -60,6 +61,7 @@
         "fliplog": "^1.0.4",
         "fuse-box": "^2.4.0",
         "json-schema-builder-ts": "github:tao-cumplido/json-schema-builder",
+        "napa": "^3.0.0",
         "ng2-fused": "^0.5.1",
         "tslint": "^5.8.0",
         "typescript": "^2.6.2"
