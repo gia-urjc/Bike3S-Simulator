@@ -1,0 +1,38 @@
+<div class="btn-toolbar p-2">
+    <div class="btn-group mr-2">
+        <button class="btn btn-outline-secondary"
+                [disabled]="is(STATE.LOADING, STATE.START, STATE.RUNNING)">
+            <fa [icon]="'step-backward'" [fixed]="true"></fa>
+        </button>
+        <button class="btn btn-outline-secondary center-control"
+                (click)="togglePlayPause()"
+                [disabled]="is(STATE.LOADING) || is([STATE.START, speed < 0], [STATE.END, speed > 0]) || speedControl.errors">
+            <fa [icon]="mainActionIcon"></fa>
+        </button>
+        <button class="btn btn-outline-secondary"
+                [disabled]="is(STATE.LOADING, STATE.END, STATE.RUNNING)">
+            <fa [icon]="'step-forward'" [fixed]="true"></fa>
+        </button>
+    </div>
+    <div class="input-group">
+        <span class="input-group-btn decrease-speed">
+            <button class="btn btn-outline-secondary"
+                    (click)="changeSpeed(-10)"
+                    [disabled]="is(STATE.LOADING) || is([STATE.START, speed - 10 <= 0])">
+                <fa [icon]="'minus'" [fixed]="true"></fa>
+            </button>
+        </span>
+        <input type="text" class="form-control center-control"
+               [class.is-invalid]="speedControl.errors"
+               [formControl]="speedControl">
+        <span class="input-group-btn">
+            <button class="btn btn-outline-secondary"
+                    (click)="changeSpeed(+10)"
+                    [disabled]="is(STATE.LOADING) || is([STATE.END, speed + 10 >= 0])">
+                <fa [icon]="'plus'" [fixed]="true"></fa>
+            </button>
+        </span>
+    </div>
+</div>
+
+<map-view></map-view>

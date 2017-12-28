@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule }  from '@angular/platform-browser';
 
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
@@ -16,6 +16,7 @@ import { VisualizationComponent } from './visualization/visualization.component'
         NgbModule.forRoot(),
         BrowserModule,
         FormsModule,
+        ReactiveFormsModule,
         NgFontAwesomeModule,
         LeafletModule.forRoot()
     ],

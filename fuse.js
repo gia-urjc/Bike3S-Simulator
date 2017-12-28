@@ -162,18 +162,18 @@ Sparky.task('build:frontend:renderer', () => {
     const vendor = fuse.bundle('vendor').instructions('~ renderer/renderer.ts');
     const renderer = fuse.bundle('renderer').instructions('!> [renderer/renderer.ts]');
 
-    if (!production) {
+    /*if (!production) {
         fuse.dev({ root: false }, (server) => {
             const app = server.httpServer.app;
-            app.use('/frontend/', express.static(projectRoot.build.frontend()));
+            app.use('/renderer/', express.static(projectRoot.build.frontend()));
             app.get('*', (request, response) => {
                 response.send(path.join(projectRoot.build.frontend(), 'index.html'));
             });
             // TODO: make the server close on electron window close (note: apparently not possible)
         });
 
-        renderer.hmr().watch();
-    }
+        renderer.watch().hmr();
+    }*/
 
     return fuse.run();
 });

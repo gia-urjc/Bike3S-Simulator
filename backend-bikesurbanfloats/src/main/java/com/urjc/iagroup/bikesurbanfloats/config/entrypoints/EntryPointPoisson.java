@@ -3,7 +3,6 @@ package com.urjc.iagroup.bikesurbanfloats.config.entrypoints;
 import com.urjc.iagroup.bikesurbanfloats.config.entrypoints.distributions.DistributionPoisson;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserFactory;
-import com.urjc.iagroup.bikesurbanfloats.entities.users.UserType;
 import com.urjc.iagroup.bikesurbanfloats.events.EventUserAppears;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.util.BoundingCircle;
@@ -39,8 +38,8 @@ public class EntryPointPoisson extends EntryPoint {
     /**
      * Type of users that will be generated
      */
-    private UserType userType;
-    
+    private EntryPointUserProperties userType;
+
     /**
      * It is the range of time within which users can appears, i. e.,
      */

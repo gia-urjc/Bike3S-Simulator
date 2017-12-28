@@ -23,14 +23,14 @@ public class EntryPointSingle extends EntryPoint {
     /**
      * Type of user that will be generated.
      */
-    private UserType userType;
+    private EntryPointUserProperties userType;
     
     /**
      * It is the time instant when user appears at the system.
      */
     private int timeInstant; 
     
-    public EntryPointSingle(GeoPoint position, UserType userType, int instant) {
+    public EntryPointSingle(GeoPoint position, EntryPointUserProperties userType, int instant) {
         this.position = position;
         this.userType = userType;
         this.timeInstant = instant;
