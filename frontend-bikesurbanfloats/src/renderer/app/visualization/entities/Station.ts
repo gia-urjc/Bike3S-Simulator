@@ -6,16 +6,6 @@ import { Entity } from './Entity';
 
 import './station.css';
 
-interface JsonStation {
-    id: number,
-    position: GeoPoint,
-    capacity: number,
-    bikes: {
-        type: 'bikes',
-        id: Array<Bike | null>
-    },
-}
-
 @JsonIdentifier('stations')
 @VisualEntity({
     showAt: (station: Station) => station.position,
@@ -38,15 +28,7 @@ interface JsonStation {
     }
 })
 export class Station extends Entity {
-
     position: GeoPoint;
     capacity: number;
     bikes: Array<Bike | null>;
-
-    constructor(json: JsonStation) {
-        super(json.id);
-        this.position = json.position;
-        this.capacity = json.capacity;
-        this.bikes = json.bikes.id;
-    }
 }

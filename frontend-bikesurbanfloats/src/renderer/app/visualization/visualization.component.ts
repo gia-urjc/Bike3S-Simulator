@@ -4,14 +4,24 @@ import { Marker } from 'leaflet';
 import { isArray, isPlainObject } from 'lodash';
 import * as moment from 'moment';
 
+import { IntervalObservable } from '../../rxjs/observable/IntervalObservable';
+import { takeWhile } from '../../rxjs/operators';
+
 import { EntityChanges, HistoryTimeEntries } from '../../../shared/history';
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
-import * as entities from './entities';
 import { JsonIdentifier, VisualEntity, VisualOptions } from './entities/decorators';
 import { Entity } from './entities/Entity';
 
-import { IntervalObservable } from '../../rxjs/observable/IntervalObservable';
-import { takeWhile } from '../../rxjs/operators';
+import * as EntityConstructors from './entities';
+
+interface IdReference {
+    type: string,
+    id: number | Array<number | null>,
+}
+
+function isIdReference(property: any): boolean {
+    return isPlainObject(property) && 'type' in property && 'id' in property;
+}
 
 enum STATE {
     LOADING = 1,
@@ -121,33 +131,54 @@ export class VisualizationComponent {
     async createEntities(): Promise<void> {
         const entitySource = await this.ajax.history.readEntities();
 
+        const deferredReferences = new WeakMap<Entity, [string, IdReference]>();
+
         this.entities = {};
 
-        Object.values(entities).forEach((EntityConstructor) => {
-            const jsonIdentifier = this.getJsonIdentifier(EntityConstructor);
-            const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, EntityConstructor);
+        Object.values(EntityConstructors).forEach((Constructor) => {
+            const jsonIdentifier = this.getJsonIdentifier(Constructor);
 
             if (!(jsonIdentifier in entitySource)) return;
 
             this.entities[jsonIdentifier] = {};
 
             entitySource[jsonIdentifier].forEach((jsonEntity) => {
-                const entity: Entity = Reflect.construct(EntityConstructor, [jsonEntity]);
+                const entity: any = Reflect.construct(Constructor, []);
+
+                Object.entries(jsonEntity).forEach(([property, value]) => {
+                    if (isIdReference(value)) {
+                        deferredReferences.set(entity, [property, value]);
+                    } else {
+                        entity[property] = value;
+                    }
+                });
+
                 this.entities[jsonIdentifier][entity.id] = entity;
-
-                if (!visualOptions) return;
-
-                const p = visualOptions.showAt(entity);
-                const marker = new Marker(p ? [p.latitude, p.longitude] : [0, 0]);
-                Reflect.defineMetadata(VisualEntity, { marker }, entity);
-                this.visualEntities.push(entity);
-                if (p) this.activeMarkers.add(marker);
-
-                visualOptions.icon && marker.setIcon(visualOptions.icon(entity));
             });
         });
 
-        console.log(this.entities);
+        Object.values(this.entities).forEach((type) => Object.values(type).forEach((entity: any) => {
+            const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
+
+            if (deferredReferences.has(entity)) {
+                const [property, reference] = deferredReferences.get(entity)!;
+                if (isArray(reference.id)) {
+                    entity[property] = reference.id.map((v) => v === null ? v : this.entities[reference.type][v]);
+                } else {
+                    entity[property] = this.entities[reference.type][reference.id];
+                }
+            }
+
+            if (!visualOptions) return;
+
+            const p = visualOptions.showAt(entity);
+            const marker = new Marker(p ? [p.latitude, p.longitude] : [0, 0]);
+            Reflect.defineMetadata(VisualEntity, { marker }, entity);
+            this.visualEntities.push(entity);
+            if (p) this.activeMarkers.add(marker);
+
+            visualOptions.icon && marker.setIcon(visualOptions.icon(entity));
+        }));
     }
 
     applyChange(entity: any, data: EntityChanges, from: 'old' | 'new') {
@@ -155,7 +186,7 @@ export class VisualizationComponent {
         Object.keys(data).forEach((name) => {
             let property = data[name][from];
 
-            if (isPlainObject(property) && 'type' in property && 'id' in property) {
+            if (isIdReference(property)) {
                 if (isArray(property.id)) {
                     property = property.id.map((id: number) => this.entities[property.type][id] || null);
                 } else {
@@ -354,7 +385,9 @@ export class VisualizationComponent {
     }
 
     onTick() {
-        const nextTime = this.time + this.speed * this.TICK / 1000;
+        let nextTime = this.time + this.speed * this.TICK / 1000;
+
+        if (nextTime < 0) nextTime = 0;
 
         let timeEntry: HistoryTimeEntries[0];
 
@@ -380,7 +413,7 @@ export class VisualizationComponent {
     }
 
     get formattedTime() {
-        if (this.time === -1) return '--:--:--';
+        if (this.time === undefined || this.time < 0) return '--:--:--';
         return moment.unix(this.time).utc().format('HH:mm:ss');
     }
 }
