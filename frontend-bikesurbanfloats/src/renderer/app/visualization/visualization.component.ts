@@ -206,7 +206,7 @@ export class VisualizationComponent {
 
         if (!p) {
             this.activeMarkers.delete(meta.marker);
-        } else if (!visualOptions.moveAlong) {
+        } else if (!visualOptions.move) {
             meta.marker.setLatLng([p.latitude, p.longitude]);
             this.activeMarkers.add(meta.marker);
         }
