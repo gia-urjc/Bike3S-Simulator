@@ -19,21 +19,22 @@ interface JsonStation {
 @JsonIdentifier('stations')
 @VisualEntity({
     showAt: (station: Station) => station.position,
-    onChange: (station: Station, marker) => {
+    icon: (station: Station) => {
         const bikes = station.bikes.reduce((r, v) => v !== null && r + 1 || r, 0);
+        const slotRatio = (station.capacity - bikes) / station.capacity * 100;
         const circle = new ConicGradient({
-            stops: `red ${(station.capacity - bikes) / station.capacity * 100}%, green 0`,
+            stops: `tomato ${slotRatio}%, mediumseagreen 0`,
             size: 50,
         });
-        marker.setIcon(new DivIcon({
+        return new DivIcon({
+            className: 'station-marker',
+            iconSize: [50, 50],
             html: `
-            <div class="station outer" style="background: url(${circle.png}) no-repeat;">
-                <div class="station inner">${bikes}</div>
+            <div class="ratio-ring" style="background: url(${circle.png}) no-repeat;">
+                <div class="bike-counter">${bikes}</div>
             </div>
             `,
-            className: '',
-            iconSize: [50, 50],
-        }));
+        });
     }
 })
 export class Station extends Entity {

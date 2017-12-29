@@ -1,4 +1,4 @@
-import { Marker } from 'leaflet';
+import { Icon, Marker } from 'leaflet';
 import { HistoryEntity } from '../../../../shared/history';
 import { GeoPoint, Route } from '../../../../shared/util';
 import { Entity } from './Entity';
@@ -17,6 +17,7 @@ export interface VisualOptions {
     moveAlong?: EntityCallback<Route | null>,
     speed?: EntityCallback<number>,
     onChange?: (entity: any, marker: Pick<Marker, 'setIcon'>) => void,
+    icon?: EntityCallback<Icon<any>>,
 }
 
 export function VisualEntity(options: VisualOptions) {

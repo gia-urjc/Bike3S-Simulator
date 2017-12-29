@@ -143,7 +143,7 @@ export class VisualizationComponent {
                 this.visualEntities.push(entity);
                 if (p) this.activeMarkers.add(marker);
 
-                visualOptions.onChange && visualOptions.onChange(entity, marker);
+                visualOptions.icon && marker.setIcon(visualOptions.icon(entity));
             });
         });
 
@@ -180,7 +180,7 @@ export class VisualizationComponent {
             this.activeMarkers.add(meta.marker);
         }
 
-        visualOptions.onChange && visualOptions.onChange(entity, meta.marker);
+        visualOptions.icon && meta.marker.setIcon(visualOptions.icon(entity));
     }
 
     is(...states: Array<STATE>): boolean;
@@ -241,7 +241,7 @@ export class VisualizationComponent {
 
         if (this.is(STATE.START)) {
             this.timeEntryIndex = 0;
-            this.time = 0;
+            this.time = -1;
             this.lastStep = STEP.NONE;
         }
 
@@ -267,17 +267,18 @@ export class VisualizationComponent {
     stepForward() {
         if (this.is(STATE.START)) this.updateState(STATE.PAUSED);
         const timeEntry = this.next();
-        this.time = timeEntry.time;
         this.forwardEntry(timeEntry);
         this.increaseIndex();
+        this.time = timeEntry.time;
     }
 
     stepBackward() {
         if (this.is(STATE.END)) this.updateState(STATE.PAUSED);
         const timeEntry = this.previous();
-        this.time = timeEntry.time;
         this.rewindEntry(timeEntry);
         this.decreaseIndex();
+        if (this.is(STATE.START)) return;
+        this.time = this.timeEntries.current[this.timeEntryIndex].time;
     }
 
     increaseIndex() {
@@ -379,6 +380,7 @@ export class VisualizationComponent {
     }
 
     get formattedTime() {
+        if (this.time === -1) return '--:--:--';
         return moment.unix(this.time).utc().format('HH:mm:ss');
     }
 }

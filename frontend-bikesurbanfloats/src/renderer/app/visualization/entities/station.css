@@ -1,16 +1,16 @@
-.station {
+.station-marker .ratio-ring, .station-marker .bike-counter {
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
 }
 
-.station.outer {
+.ratio-ring {
     width: 50px;
     height: 50px;
 }
 
-.station.inner {
+.bike-counter {
     width: 20px;
     height: 20px;
     font-size: 10px;

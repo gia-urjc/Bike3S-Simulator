@@ -5,12 +5,7 @@ declare interface ConicGradientOptions {
 }
 
 declare class ConicGradient {
-
-    /*static ColorStop: {
-        new(): this.ColorStop
-    };*/
-
-    // stops: Array<ColorStop>;
+    stops: Array<ConicGradient.ColorStop>;
     size: number;
     repeating: boolean;
 
@@ -28,4 +23,8 @@ declare class ConicGradient {
     constructor(options: ConicGradientOptions);
 
     paint(): void;
+}
+
+declare namespace ConicGradient {
+    export class ColorStop {}
 }
