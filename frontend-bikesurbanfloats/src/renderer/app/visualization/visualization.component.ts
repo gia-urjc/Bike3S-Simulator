@@ -147,7 +147,7 @@ export class VisualizationComponent {
             });
         });
 
-        console.log(this.activeMarkers);
+        console.log(this.entities);
     }
 
     applyChange(entity: any, data: EntityChanges, from: 'old' | 'new') {

@@ -24,11 +24,11 @@ interface JsonStation {
         const slotRatio = (station.capacity - bikes) / station.capacity * 100;
         const circle = new ConicGradient({
             stops: `tomato ${slotRatio}%, mediumseagreen 0`,
-            size: 50,
+            size: 30,
         });
         return new DivIcon({
             className: 'station-marker',
-            iconSize: [50, 50],
+            iconSize: [30, 30],
             html: `
             <div class="ratio-ring" style="background: url(${circle.png}) no-repeat;">
                 <div class="bike-counter">${bikes}</div>
