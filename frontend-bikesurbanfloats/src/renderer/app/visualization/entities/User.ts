@@ -6,10 +6,10 @@ import { Station } from './Station';
 
 @JsonIdentifier('users')
 @VisualEntity({
-    showAt: (user: User) => user.position,
-    move: {
+    show: {
+        when: (user: User) => Boolean(user.position),
         route: (user: User) => user.route,
-        speed: (user: User) => user.bike === null ? user.walkingVelocity : user.cyclingVelocity,
+        speed: (user: User) => user.bike ? user.cyclingVelocity : user.walkingVelocity,
     }
 })
 export class User extends Entity {

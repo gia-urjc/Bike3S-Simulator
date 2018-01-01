@@ -8,7 +8,7 @@ import './station.css';
 
 @JsonIdentifier('stations')
 @VisualEntity({
-    showAt: (station: Station) => station.position,
+    show: (station: Station) => station.position,
     icon: (station: Station) => {
         const bikes = station.bikes.reduce((r, v) => v !== null && r + 1 || r, 0);
         const slotRatio = (station.capacity - bikes) / station.capacity * 100;

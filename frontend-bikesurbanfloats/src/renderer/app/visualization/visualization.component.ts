@@ -1,18 +1,28 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { Marker } from 'leaflet';
-import { isArray, isPlainObject } from 'lodash';
+import { LatLng, Marker, Polyline } from 'leaflet';
+import { isArray, isEqual, isPlainObject } from 'lodash';
 import * as moment from 'moment';
 
 import { IntervalObservable } from '../../rxjs/observable/IntervalObservable';
 import { takeWhile } from '../../rxjs/operators';
 
 import { EntityChanges, HistoryTimeEntries } from '../../../shared/history';
+import { GeoPoint, Route } from '../../../shared/util';
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
 import { JsonIdentifier, VisualEntity, VisualOptions } from './entities/decorators';
 import { Entity } from './entities/Entity';
 
 import * as EntityConstructors from './entities';
+
+interface VisualMetadata {
+    marker: Marker,
+    route: Route | null,
+    speed: number,
+    routeIndex: number,
+    distances: Array<number>,
+    distanceFromLastPoint: number,
+}
 
 interface IdReference {
     type: string,
@@ -21,6 +31,19 @@ interface IdReference {
 
 function isIdReference(property: any): boolean {
     return isPlainObject(property) && 'type' in property && 'id' in property;
+}
+
+function latLng(p: GeoPoint): LatLng {
+    return new LatLng(p.latitude, p.longitude);
+}
+
+function getDistances(route: Route): Array<number> {
+    const distances: Array<number> = [];
+    for (let i = 0; i < route.points.length - 1; i++) {
+        const [p1, p2] = [route.points[i], route.points[i + 1]].map(latLng);
+        distances.push(p1.distanceTo(p2));
+    }
+    return distances;
 }
 
 enum STATE {
@@ -68,7 +91,7 @@ export class VisualizationComponent {
     private lastStep: STEP;
 
     private activeMarkers: Set<Marker>;
-    private visualEntities: Array<Entity>;
+    private movingEntities: Array<Entity>;
 
     private entities: {
         [key: string]: {
@@ -86,7 +109,7 @@ export class VisualizationComponent {
 
     ngOnInit() {
         this.activeMarkers = new Set();
-        this.visualEntities = [];
+        this.movingEntities = [];
 
         this.speed = 10;
         this.speedControl = new FormControl(this.speed, [
@@ -143,7 +166,7 @@ export class VisualizationComponent {
             this.entities[jsonIdentifier] = {};
 
             entitySource[jsonIdentifier].forEach((jsonEntity) => {
-                const entity: any = Reflect.construct(Constructor, []);
+                const entity = Reflect.construct(Constructor, []);
 
                 Object.entries(jsonEntity).forEach(([property, value]) => {
                     if (isIdReference(value)) {
@@ -171,13 +194,39 @@ export class VisualizationComponent {
 
             if (!visualOptions) return;
 
-            const p = visualOptions.showAt(entity);
-            const marker = new Marker(p ? [p.latitude, p.longitude] : [0, 0]);
-            Reflect.defineMetadata(VisualEntity, { marker }, entity);
-            this.visualEntities.push(entity);
-            if (p) this.activeMarkers.add(marker);
+            const meta: VisualMetadata = {
+                marker: new Marker([0, 0], {
+                    riseOnHover: true,
+                }),
+            } as any;
 
-            visualOptions.icon && marker.setIcon(visualOptions.icon(entity));
+            if (typeof visualOptions.show === 'function') {
+                const p = visualOptions.show(entity);
+                if (p) {
+                    meta.marker.setLatLng(latLng(p));
+                    this.activeMarkers.add(meta.marker);
+                }
+            } else {
+                this.movingEntities.push(entity);
+                meta.route = visualOptions.show.route(entity);
+                meta.speed = visualOptions.show.speed(entity);
+                if (meta.route) {
+                    meta.routeIndex = 0;
+                    meta.distanceFromLastPoint = 0;
+                    meta.distances = getDistances(meta.route);
+                    if (visualOptions.show.when(entity)) {
+                        meta.marker.setLatLng(latLng(meta.route.points[0]));
+                        this.activeMarkers.add(meta.marker);
+                    }
+                }
+
+            }
+
+            if (visualOptions.icon) {
+                meta.marker.setIcon(visualOptions.icon(entity));
+            }
+
+            Reflect.defineMetadata(VisualEntity, meta, entity);
         }));
     }
 
@@ -201,17 +250,52 @@ export class VisualizationComponent {
 
         if (!visualOptions) return;
 
-        const meta: any = Reflect.getOwnMetadata(VisualEntity, entity);
-        const p = visualOptions.showAt(entity);
+        const meta: VisualMetadata = Reflect.getOwnMetadata(VisualEntity, entity);
 
-        if (!p) {
-            this.activeMarkers.delete(meta.marker);
-        } else if (!visualOptions.move) {
-            meta.marker.setLatLng([p.latitude, p.longitude]);
-            this.activeMarkers.add(meta.marker);
+        if (typeof visualOptions.show === 'function') {
+            const p = visualOptions.show(entity);
+            if (p) {
+                meta.marker.setLatLng(latLng(p));
+                this.activeMarkers.add(meta.marker);
+            } else {
+                this.activeMarkers.delete(meta.marker);
+            }
+        } else {
+            const route = visualOptions.show.route(entity);
+            meta.speed = visualOptions.show.speed(entity);
+
+            meta.marker.off();
+            meta.marker.on('click', () => console.log(entity, meta));
+
+            if (route) {
+                const routeLine: any = new Polyline(entity.route.points.map(latLng));
+                routeLine.on('click', this.activeMarkers.delete(routeLine));
+                meta.marker.on('mouseover', () => this.activeMarkers.add(routeLine));
+                meta.marker.on('mouseout', () => this.activeMarkers.delete(routeLine));
+            }
+
+            if (!isEqual(route, meta.route)) {
+                meta.route = route;
+                if (meta.route) {
+                    meta.routeIndex = 0;
+                    meta.distanceFromLastPoint = 0;
+                    meta.distances = getDistances(meta.route);
+                    meta.marker.setLatLng(latLng(meta.route.points[0]));
+                }
+            }
+
+            if (visualOptions.show.when(entity)) {
+                this.activeMarkers.add(meta.marker);
+            } else {
+                this.activeMarkers.delete(meta.marker);
+            }
         }
 
-        visualOptions.icon && meta.marker.setIcon(visualOptions.icon(entity));
+        if (visualOptions.icon) {
+            meta.marker.setIcon(visualOptions.icon(entity));
+        }
+
+        // Reflect.defineMetadata(VisualEntity, meta, entity);
     }
 
     is(...states: Array<STATE>): boolean;
@@ -300,6 +384,7 @@ export class VisualizationComponent {
         const timeEntry = this.next();
         this.forwardEntry(timeEntry);
         this.increaseIndex();
+        this.moveEntitiesForward(timeEntry.time - this.time);
         this.time = timeEntry.time;
     }
 
@@ -310,6 +395,7 @@ export class VisualizationComponent {
         this.decreaseIndex();
         if (this.is(STATE.START)) return;
         this.time = this.timeEntries.current[this.timeEntryIndex].time;
+        this.moveEntitiesBackward(timeEntry.time - this.time);
     }
 
     increaseIndex() {
@@ -385,9 +471,7 @@ export class VisualizationComponent {
     }
 
     onTick() {
-        let nextTime = this.time + this.speed * this.TICK / 1000;
-
-        if (nextTime < 0) nextTime = 0;
+        const  nextTime = (this.time === -1 ? 0 : this.time) + this.speed * this.TICK / 1000;
 
         let timeEntry: HistoryTimeEntries[0];
 
@@ -397,19 +481,99 @@ export class VisualizationComponent {
                 this.forwardEntry(timeEntry);
                 this.increaseIndex();
                 if (this.state !== STATE.FORWARD) return;
+                this.moveEntitiesForward(timeEntry.time - this.time);
+                this.time = timeEntry.time;
                 timeEntry = this.next();
             }
+            this.moveEntitiesForward(nextTime - this.time);
         } else {
             timeEntry = this.previous();
             while (timeEntry.time > nextTime) {
                 this.rewindEntry(timeEntry);
                 this.decreaseIndex();
                 if (this.state !== STATE.REWIND) return;
+                this.time = this.timeEntries.current[this.timeEntryIndex].time;
+                this.moveEntitiesBackward(timeEntry.time - this.time);
                 timeEntry = this.previous();
             }
+            this.moveEntitiesBackward(this.time - nextTime);
         }
 
         this.time = nextTime;
+    }
+
+    moveEntitiesForward(span: number) {
+        this.movingEntities.forEach((entity) => {
+            const visualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
+
+            if (visualOptions.show.when(entity)) {
+                const meta: VisualMetadata = Reflect.getOwnMetadata(VisualEntity, entity);
+
+                if (meta.route) {
+                    let distanceBetweenCurrentPoints = meta.distances[meta.routeIndex];
+                    let distance = span * meta.speed + meta.distanceFromLastPoint;
+
+                    while (distance > distanceBetweenCurrentPoints) {
+                        if (meta.routeIndex === meta.distances.length - 1) {
+                            distance = distanceBetweenCurrentPoints;
+                            break;
+                        }
+
+                        distance -= distanceBetweenCurrentPoints;
+                        distanceBetweenCurrentPoints = meta.distances[++meta.routeIndex];
+                    }
+
+                    const delta = distance / distanceBetweenCurrentPoints;
+                    const p1 = meta.route.points[meta.routeIndex];
+                    const p2 = meta.route.points[meta.routeIndex + 1];
+
+                    const p = delta === 1 ? p2 : {
+                        latitude: p1.latitude + delta * (p2.latitude - p1.latitude),
+                        longitude: p1.longitude + delta * (p2.longitude - p1.longitude),
+                    };
+
+                    meta.distanceFromLastPoint = distance;
+                    meta.marker.setLatLng(latLng(p));
+                }
+            }
+        });
+    }
+
+    moveEntitiesBackward(span: number) {
+        this.movingEntities.forEach((entity) => {
+            const visualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
+
+            if (visualOptions.show.when(entity)) {
+                const meta: VisualMetadata = Reflect.getOwnMetadata(VisualEntity, entity);
+
+                if (meta.route) {
+                    let distanceBetweenCurrentPoints = meta.distances[meta.routeIndex];
+                    let distance = span * meta.speed + distanceBetweenCurrentPoints - meta.distanceFromLastPoint;
+
+                    while (distance > distanceBetweenCurrentPoints) {
+                        if (meta.routeIndex === 0) {
+                            distance = distanceBetweenCurrentPoints;
+                            break;
+                        }
+
+                        distance -= distanceBetweenCurrentPoints;
+                        distanceBetweenCurrentPoints = meta.distances[--meta.routeIndex];
+                    }
+
+                    const delta = distance / distanceBetweenCurrentPoints;
+                    const p1 = meta.route.points[meta.routeIndex];
+                    const p2 = meta.route.points[meta.routeIndex + 1];
+
+                    const p = delta === 1 ? p1 : {
+                        latitude: p2.latitude + delta * (p1.latitude - p2.latitude),
+                        longitude: p2.longitude + delta * (p1.longitude - p2.longitude),
+                    };
+
+                    meta.distanceFromLastPoint = distanceBetweenCurrentPoints - distance;
+                    meta.marker.setLatLng(latLng(p));
+                }
+            }
+        });
     }
 
     get formattedTime() {

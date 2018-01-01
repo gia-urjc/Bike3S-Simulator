@@ -12,12 +12,12 @@ export function JsonIdentifier(identifier: string) {
 type EntityCallback<T> = (entity: any) => T;
 
 export interface VisualOptions {
-    showAt: EntityCallback<GeoPoint | null>,
     icon?: EntityCallback<Icon<any>>,
-    move?: {
+    show: EntityCallback<GeoPoint | null> | {
+        when: EntityCallback<boolean>,
         route: EntityCallback<Route | null>,
         speed: EntityCallback<number>,
-    }
+    },
 }
 
 export function VisualEntity(options: VisualOptions) {
