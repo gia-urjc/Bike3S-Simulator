@@ -41,8 +41,13 @@ public class GraphHopperIntegration implements GraphManager {
         List<GeoPoint> geoPointList = new ArrayList<>();
         PointList ghPointList = path.getPoints();
         geoPointList.add(startPosition);
+        GHPoint3D prev = null;
         for(GHPoint3D p: ghPointList) {
+            if(prev != null && p.equals(prev)){
+                continue;
+            }
             geoPointList.add(new GeoPoint(p.getLat(), p.getLon()));
+            prev = p;
         }
         geoPointList.add(endPosition);
         GeoRoute route = new GeoRoute(geoPointList);
