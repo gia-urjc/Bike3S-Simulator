@@ -41,13 +41,13 @@ const typeParameters = {
     },
     USER_TOURIST: {
         touristDestination: GeoPoint,
-        minReservationAttempts: sNumber().min(0),
-        minReservationTimeOuts: sNumber().min(0),
-        minRentingAttempts: sNumber().min(0),
-        bikeReservationPercentage: sInteger().min(0).max(100),
-        slotReservationPercentage: sInteger().min(0).max(100),
-        reservationTimeoutPercentage: sInteger().min(0).max(100),
-        failedReservationPercentage: sInteger().min(0).max(100)
+        minReservationAttempts: UInt,
+        minReservationTimeOuts: UInt,
+        minRentingAttempts: UInt,
+        bikeReservationPercentage: Percentage,
+        slotReservationPercentage: Percentage,
+        reservationTimeoutPercentage: Percentage,
+        failedReservationPercentage: Percentage
     }
 };
 

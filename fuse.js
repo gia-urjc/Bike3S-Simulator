@@ -11,9 +11,9 @@ const path = require('path');
 const fs = require('fs-extra');
 
 const projectRoot = () => process.cwd();
-projectRoot.backend = () => path.join(projectRoot(), 'backend-bikesurbanfloats');
+projectRoot.backend = () => path.join(projectRoot(), 'backend-bikesurbanfleets');
 projectRoot.backend.mavenTarget = () => path.join(projectRoot.backend(), 'target');
-projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfloats');
+projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfleets');
 projectRoot.frontend.src = () => path.join(projectRoot.frontend(), 'src');
 projectRoot.frontend.main = () => path.join(projectRoot.frontend.src(), 'main');
 projectRoot.frontend.renderer = () => path.join(projectRoot.frontend.src(), 'renderer');
