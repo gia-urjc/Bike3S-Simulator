@@ -5,3 +5,8 @@
 :host .decrease-speed {
     z-index: 3;
 }
+
+:host .time-view {
+    width: 6rem;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}

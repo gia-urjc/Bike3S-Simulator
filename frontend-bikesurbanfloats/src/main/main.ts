@@ -43,14 +43,9 @@ namespace Main {
         app.on('activate', () => {
             if (window === null) createWindow();
         });
-        console.log("Soy el init");
 
     }
-  export function helloWorld() {
-    nextChangeFIle();
-      nextChangeFIle();
   }
-}
 
 Main.init();
 

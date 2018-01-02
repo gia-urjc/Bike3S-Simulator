@@ -44,6 +44,7 @@ export default class HistoryReader {
 
             const channels = [
                 new Channel('history-entities', async () => await reader.readEntities()),
+                new Channel('history-get', async (n) => await reader.changeFile(n)),
                 new Channel('history-previous', async () => await reader.previousChangeFile()),
                 new Channel('history-next', async () => await reader.nextChangeFile()),
                 new Channel('history-nchanges', async () => reader.numberOfChangeFiles),
@@ -115,6 +116,20 @@ export default class HistoryReader {
         }
 
         const file = await fs.readJson(paths.join(this.historyPath, this.changeFiles[++this.currentIndex]));
+
+        if (!HistoryReader.ajv.validate(HistoryReader.changeFileSchema, file)) {
+            throw new Error(HistoryReader.ajv.errorsText());
+        }
+
+        return file;
+    }
+
+    async changeFile(n: number): Promise<HistoryTimeEntries> {
+        if (n < 0 || n >= this.numberOfChangeFiles) {
+            throw new Error(`Change file not available! Got ${n}, need n ∈ [0, ${this.numberOfChangeFiles})`);
+        }
+
+        const file = await fs.readJson(paths.join(this.historyPath, this.changeFiles[n]));
 
         if (!HistoryReader.ajv.validate(HistoryReader.changeFileSchema, file)) {
             throw new Error(HistoryReader.ajv.errorsText());

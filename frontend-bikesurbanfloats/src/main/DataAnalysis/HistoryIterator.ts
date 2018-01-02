@@ -2,10 +2,10 @@ import { HistoryReader } from '../util';
 import { HistoryTimeEntries } from '../../shared/history';
 
 export class HistoryIterator {
-	private currentFile: HistoryTimeEntries;
-	private pointer: number;
-    
-        
+    private history: HistoryReader;
+    private currentFile: HistoryTimeEntries;
+    private pointer: number;
+           
     public constructor() {
         this.history = undefined;
         this.currentFile = undefined;
@@ -20,7 +20,7 @@ export class HistoryIterator {
     } 
     
  public async nextTimeEntry(): Promise<any> {
-     let timeEntry = undefined;
+     let timeEntry: any = undefined;
      if (this.currentFile !== undefined) {
         this.pointer++;
         timeEntry = this.currentFile[this.pointer];
