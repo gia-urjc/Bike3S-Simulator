@@ -301,7 +301,7 @@ export class VisualizationComponent {
     is(...states: Array<STATE>): boolean;
     is(...states: Array<[STATE, boolean]>): boolean;
     is(...states: Array<STATE | [STATE, boolean]>): boolean {
-        if (Array.isArray(states[0])) {
+        if (isArray(states[0])) {
             return states.reduce((r, v) => {
                 v = v as [STATE, boolean];
                 return r || (this.is(v[0]) && v[1]);
@@ -391,11 +391,16 @@ export class VisualizationComponent {
     stepBackward() {
         if (this.is(STATE.END)) this.updateState(STATE.PAUSED);
         const timeEntry = this.previous();
-        this.rewindEntry(timeEntry);
-        this.decreaseIndex();
-        if (this.is(STATE.START)) return;
-        this.time = this.timeEntries.current[this.timeEntryIndex].time;
-        this.moveEntitiesBackward(timeEntry.time - this.time);
+        if (timeEntry.time === this.time) {
+            this.rewindEntry(timeEntry);
+            this.decreaseIndex();
+            if (this.is(STATE.START)) return;
+            this.time = this.timeEntries.current[this.timeEntryIndex].time;
+            this.moveEntitiesBackward(timeEntry.time - this.time);
+        } else {
+            this.moveEntitiesBackward(this.time - timeEntry.time);
+            this.time = timeEntry.time;
+        }
     }
 
     increaseIndex() {
