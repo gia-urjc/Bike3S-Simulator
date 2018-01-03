@@ -1,3 +1,4 @@
+import { HistoryIterator } from './DataAnalysis/HistoryIterator';
 import { app, BrowserWindow, shell } from 'electron';
 import * as path from 'path';
 import { format as urlFormat } from 'url';
@@ -45,7 +46,14 @@ namespace Main {
         });
 
     }
+   export async function testHistoryIt() { 
+        let it: HistoryIterator = await HistoryIterator.create("../backend-bikesurbanfloats/history");
+       
+        let timeEntry = await it.nextTimeEntry();
+        while (timeEntry !== undefined)
+            timeEntry = await it.nextTimeEntry();
+    }
   }
 
 Main.init();
-
+Main.testHistoryIt();

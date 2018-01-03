@@ -12,11 +12,16 @@ export class HistoryIterator {
         this.pointer = -1;
     }
     
-    public static async init(path: string) {
-        this.history = await HistoryReader.create(path);
-        
-        this.history.nextChangeFile().then((data) => this.currentFile = data) 
-        .catch((error) => console.log('There is no available files ', error));
+    public static async create(path: string): Promise<HistoryIterator> {
+        let historyIt: HistoryIterator = new HistoryIterator();
+        historyIt.history = await HistoryReader.create(path);
+        try {
+            historyIt.currentFile = await historyIt.history.nextChangeFile();
+        }
+        catch(error) {
+            console.log('There is no available files ', error);
+        }
+        return historyIt;
     } 
     
  public async nextTimeEntry(): Promise<any> {
@@ -26,20 +31,38 @@ export class HistoryIterator {
         timeEntry = this.currentFile[this.pointer];
        
        if (timeEntry === undefined) {
-           this.history.nextChangeFile().then((data) => { 
-               this.currentFile = data;
-               this.pointer = 0; 
-               timeEntry = this.currentFile[this.pointer]; 
-           })
-           .catch((error) => { 
-               console.log('There iss no more available files: ', error);
-               this.currentFile = undefined;
-           });
+           try {
+            this.currentFile = await this.history.nextChangeFile(); 
+            this.pointer = 0; 
+            timeEntry = this.currentFile[this.pointer]; 
+           }
+           catch(error) {
+            this.currentFile = undefined;
+           }
        }
      }
      return timeEntry;
  }
-
+/**    
+ public async previousTimeEntry(): Promise<any> {
+     let timeEntry: any = undefined;
+    if(this.currentFile !== undefined) {
+        if(this.pointer > 0) {
+            this.pointer--;
+            timeEntry = this.currentFile[this.pointer];
+        }
+        else {
+            try {
+                this.currentFile = await this.history.previousChangeFile();
+                this.pointer = this.currentFile.length-1;
+                timeEntry = this.currentFile[this.pointer]; 
+        }
+            catch(error) {
+                this.currentFile = undefined;
+            }
+    }    
+ }
+*/
 
     
 }
