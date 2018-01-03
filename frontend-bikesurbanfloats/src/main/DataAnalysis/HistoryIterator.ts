@@ -12,8 +12,9 @@ export class HistoryIterator {
         this.pointer = -1;
     }
     
+    
     public static async create(path: string): Promise<HistoryIterator> {
-        let historyIt: HistoryIterator = new HistoryIterator();
+        let historyIt: HistoryIterator = await HistoryIterator.create(path);
         historyIt.history = await HistoryReader.create(path);
         try {
             historyIt.currentFile = await historyIt.history.nextChangeFile();
