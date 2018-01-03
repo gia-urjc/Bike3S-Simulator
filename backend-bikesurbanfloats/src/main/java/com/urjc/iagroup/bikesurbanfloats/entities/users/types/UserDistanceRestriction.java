@@ -150,6 +150,7 @@ public class UserDistanceRestriction extends User {
                 .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
         
         Station destination;
+        //TODO fix users goes to the same station
         try {
         destination = recommendedStations.stream().filter(station -> station.getPosition()
                 .distanceTo(this.getPosition()) <= parameters.maxDistance).findFirst().get();
