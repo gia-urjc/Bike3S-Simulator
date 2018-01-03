@@ -159,8 +159,10 @@ Sparky.task('build:frontend:renderer', () => {
         ]
     });
 
-    const vendor = fuse.bundle('vendor').instructions('~ renderer/renderer.ts');
-    const renderer = fuse.bundle('renderer').instructions('!> [renderer/renderer.ts]');
+    const rendererEntrypoint = 'renderer/renderer.ts';
+
+    const vendor = fuse.bundle('vendor').instructions(`~ ${rendererEntrypoint}`);
+    const renderer = fuse.bundle('renderer').instructions(`!> [${rendererEntrypoint}]`);
 
     /*if (!production) {
         fuse.dev({ root: false }, (server) => {

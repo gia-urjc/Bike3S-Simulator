@@ -1,75 +1,28 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { LatLng, Marker, Polyline } from 'leaflet';
-import { isArray, isEqual, isPlainObject } from 'lodash';
+import { Layer, Marker, Polyline } from 'leaflet';
+import { isArray, isEqual } from 'lodash';
 import * as moment from 'moment';
 
 import { IntervalObservable } from '../../rxjs/observable/IntervalObservable';
 import { takeWhile } from '../../rxjs/operators';
 
-import { EntityChanges, HistoryTimeEntries } from '../../../shared/history';
-import { GeoPoint, Route } from '../../../shared/util';
+import { EntityChanges, HistoryTimeEntry, IdReference, isIdReference } from '../../../shared/history';
+import { Geo, safe } from '../../../shared/util';
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
 import { JsonIdentifier, VisualEntity, VisualOptions } from './entities/decorators';
 import { Entity } from './entities/Entity';
+import { breakPoint, LeafletUtil } from './util';
 
 import * as EntityConstructors from './entities';
 
 interface VisualMetadata {
     marker: Marker,
-    route: Route | null,
+    route: Geo.Route | null,
     speed: number,
     routeIndex: number,
     distances: Array<number>,
     distanceFromLastPoint: number,
-}
-
-interface IdReference {
-    type: string,
-    id: number | Array<number | null>,
-}
-
-function isIdReference(property: any): boolean {
-    return isPlainObject(property) && 'type' in property && 'id' in property;
-}
-
-function latLng(p: GeoPoint): LatLng {
-    return new LatLng(p.latitude, p.longitude);
-}
-
-function rad(v: number): number {
-    return rad.factor * v;
-}
-
-namespace rad {
-    export const factor = Math.PI / 180;
-}
-
-function haversine(v: number): number {
-    return Math.sin(v / 2) ** 2;
-}
-
-function getDistances(route: Route): Array<number> {
-    const r: Array<{ f: number, l: number }> = [];
-    const distances: Array<number> = [];
-
-    r.push({
-        f: rad(route.points[0].latitude),
-        l: rad(route.points[0].longitude),
-    });
-
-    for (let i = 1; i < route.points.length; i++) {
-        r.push({
-            f: rad(route.points[i].latitude),
-            l: rad(route.points[i].longitude),
-        });
-
-        const h = haversine(r[i].f - r[i - 1].f) + Math.cos(r[i - 1].f) * Math.cos(r[i].f) * haversine(r[i].l - r[i - 1].l);
-
-        distances.push(2 * 6371e3 * Math.asin(Math.sqrt(h)));
-    }
-
-    return distances;
 }
 
 enum STATE {
@@ -99,7 +52,9 @@ enum STEP {
 })
 export class VisualizationComponent {
 
-    readonly STATE = STATE;
+    private static activeLayers: Set<Layer>;
+
+    readonly STATE = STATE; // make STATE available in template
 
     readonly TICK = 200; // milliseconds
 
@@ -115,9 +70,8 @@ export class VisualizationComponent {
     private nChangeFiles: number;
     private changeFileIndex: number;
     private lastStep: STEP;
-
-    private activeMarkers: Set<Marker>;
     private movingEntities: Array<Entity>;
+    private activeLayers: Set<Layer>;
 
     private entities: {
         [key: string]: {
@@ -126,15 +80,27 @@ export class VisualizationComponent {
     };
 
     private timeEntries: {
-        previous: HistoryTimeEntries | null,
-        current: HistoryTimeEntries,
-        next: HistoryTimeEntries | null,
+        previous: Array<HistoryTimeEntry> | null,
+        current: Array<HistoryTimeEntry>,
+        next: Array<HistoryTimeEntry> | null,
     };
+
+    static hasLayer(layer: Layer) {
+        return this.activeLayers.has(layer);
+    }
+
+    static addLayer(layer: Layer) {
+        return this.activeLayers.add(layer);
+    }
+
+    static deleteLayer(layer: Layer) {
+        return this.activeLayers.delete(layer);
+    }
 
     constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
 
     ngOnInit() {
-        this.activeMarkers = new Set();
+        this.activeLayers = VisualizationComponent.activeLayers = new Set();
         this.movingEntities = [];
 
         this.speed = 10;
@@ -186,6 +152,7 @@ export class VisualizationComponent {
 
         Object.values(EntityConstructors).forEach((Constructor) => {
             const jsonIdentifier = this.getJsonIdentifier(Constructor);
+            const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, Constructor);
 
             if (!(jsonIdentifier in entitySource)) return;
 
@@ -198,7 +165,9 @@ export class VisualizationComponent {
                     if (isIdReference(value)) {
                         deferredReferences.set(entity, [property, value]);
                     } else {
+                        const onChange = safe(visualOptions, `onChange.${property}`);
                         entity[property] = value;
+                        onChange && onChange(entity);
                     }
                 });
 
@@ -211,11 +180,15 @@ export class VisualizationComponent {
 
             if (deferredReferences.has(entity)) {
                 const [property, reference] = deferredReferences.get(entity)!;
+                const onChange = safe(visualOptions, `onChange.${property}`);
+
                 if (isArray(reference.id)) {
                     entity[property] = reference.id.map((v) => v === null ? v : this.entities[reference.type][v]);
                 } else {
                     entity[property] = this.entities[reference.type][reference.id];
                 }
+
+                onChange && onChange(entity);
             }
 
             if (!visualOptions) return;
@@ -226,11 +199,17 @@ export class VisualizationComponent {
                 }),
             } as any;
 
+            if (visualOptions.onAction) {
+                Object.entries(visualOptions.onAction).forEach(([event, callback]) => {
+                    meta.marker.on(event, (e: any) => callback!(entity, e));
+                });
+            }
+
             if (typeof visualOptions.show === 'function') {
                 const p = visualOptions.show(entity);
                 if (p) {
-                    meta.marker.setLatLng(latLng(p));
-                    this.activeMarkers.add(meta.marker);
+                    meta.marker.setLatLng(LeafletUtil.latLng(p));
+                    this.activeLayers.add(meta.marker);
                 }
             } else {
                 this.movingEntities.push(entity);
@@ -239,13 +218,12 @@ export class VisualizationComponent {
                 if (meta.route) {
                     meta.routeIndex = 0;
                     meta.distanceFromLastPoint = 0;
-                    meta.distances = getDistances(meta.route);
+                    meta.distances = Geo.distances(meta.route);
                     if (visualOptions.show.when(entity)) {
-                        meta.marker.setLatLng(latLng(meta.route.points[0]));
-                        this.activeMarkers.add(meta.marker);
+                        meta.marker.setLatLng(LeafletUtil.latLng(meta.route.points[0]));
+                        this.activeLayers.add(meta.marker);
                     }
                 }
-
             }
 
             if (visualOptions.icon) {
@@ -257,6 +235,8 @@ export class VisualizationComponent {
     }
 
     applyChange(entity: any, data: EntityChanges, from: 'old' | 'new') {
+        const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
+
         Object.defineProperty(data, 'id', { enumerable: false });
         Object.keys(data).forEach((name) => {
             let property = data[name][from];
@@ -270,9 +250,13 @@ export class VisualizationComponent {
             }
 
             entity[name] = property;
-        });
 
-        const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
+            if (!visualOptions) return;
+
+            const onChange = safe(visualOptions, `onChange.${name}`);
+
+            onChange && onChange(entity);
+        });
 
         if (!visualOptions) return;
 
@@ -281,47 +265,45 @@ export class VisualizationComponent {
         if (typeof visualOptions.show === 'function') {
             const p = visualOptions.show(entity);
             if (p) {
-                meta.marker.setLatLng(latLng(p));
-                this.activeMarkers.add(meta.marker);
+                meta.marker.setLatLng(LeafletUtil.latLng(p));
+                this.activeLayers.add(meta.marker);
             } else {
-                this.activeMarkers.delete(meta.marker);
+                this.activeLayers.delete(meta.marker);
             }
         } else {
             const route = visualOptions.show.route(entity);
             meta.speed = visualOptions.show.speed(entity);
 
-            meta.marker.off();
+            /*meta.marker.off();
             meta.marker.on('click', () => console.log(entity, meta));
 
             if (route) {
-                const routeLine: any = new Polyline(entity.route.points.map(latLng));
-                routeLine.on('click', this.activeMarkers.delete(routeLine));
-                meta.marker.on('mouseover', () => this.activeMarkers.add(routeLine));
-                meta.marker.on('mouseout', () => this.activeMarkers.delete(routeLine));
-            }
+                const routeLine: any = new Polyline(entity.route.points.map(LeafletUtil.latLng));
+                routeLine.on('click', this.activeLayers.delete(routeLine));
+                meta.marker.on('mouseover', () => this.activeLayers.add(routeLine));
+                meta.marker.on('mouseout', () => this.activeLayers.delete(routeLine));
+            }*/
 
             if (!isEqual(route, meta.route)) {
                 meta.route = route;
                 if (meta.route) {
                     meta.routeIndex = 0;
                     meta.distanceFromLastPoint = 0;
-                    meta.distances = getDistances(meta.route);
-                    meta.marker.setLatLng(latLng(meta.route.points[0]));
+                    meta.distances = Geo.distances(meta.route);
+                    meta.marker.setLatLng(LeafletUtil.latLng(meta.route.points[0]));
                 }
             }
 
             if (visualOptions.show.when(entity)) {
-                this.activeMarkers.add(meta.marker);
+                this.activeLayers.add(meta.marker);
             } else {
-                this.activeMarkers.delete(meta.marker);
+                this.activeLayers.delete(meta.marker);
             }
         }
 
         if (visualOptions.icon) {
             meta.marker.setIcon(visualOptions.icon(entity));
         }
-
-        // Reflect.defineMetadata(VisualEntity, meta, entity);
     }
 
     is(...states: Array<STATE>): boolean;
@@ -465,21 +447,22 @@ export class VisualizationComponent {
         }
     }
 
-    next(): HistoryTimeEntries[0] {
+    next(): HistoryTimeEntry {
         if (this.lastStep === STEP.BACKWARD) this.increaseIndex();
         this.lastStep = STEP.FORWARD;
         return this.timeEntries.current[this.timeEntryIndex];
     }
 
-    previous(): HistoryTimeEntries[0] {
+    previous(): HistoryTimeEntry {
         if (this.lastStep === STEP.FORWARD) this.decreaseIndex();
         this.lastStep = STEP.BACKWARD;
         return this.timeEntries.current[this.timeEntryIndex];
     }
 
-    forwardEntry(timeEntry: HistoryTimeEntries[0]) {
+    forwardEntry(timeEntry: HistoryTimeEntry) {
         for (let i = 0; i < timeEntry.events.length; i++) {
             const event = timeEntry.events[i];
+            console.log(timeEntry.time, event);
             Object.keys(event.changes).forEach((jsonIdentifier) => {
                 event.changes[jsonIdentifier].forEach((changes) => {
                     const entity = this.entities[jsonIdentifier][changes.id];
@@ -489,9 +472,10 @@ export class VisualizationComponent {
         }
     }
 
-    rewindEntry(timeEntry: HistoryTimeEntries[0]) {
+    rewindEntry(timeEntry: HistoryTimeEntry) {
         for (let i = timeEntry.events.length - 1; i >= 0; i--) {
             const event = timeEntry.events[i];
+            console.log(timeEntry.time, event);
             Object.keys(event.changes).forEach((jsonIdentifier) => {
                 event.changes[jsonIdentifier].forEach((changes) => {
                     const entity = this.entities[jsonIdentifier][changes.id];
@@ -504,7 +488,7 @@ export class VisualizationComponent {
     onTick() {
         const  nextTime = (this.time === -1 ? 0 : this.time) + this.speed * this.TICK / 1000;
 
-        let timeEntry: HistoryTimeEntries[0];
+        let timeEntry: HistoryTimeEntry;
 
         if (this.speed > 0) {
             timeEntry = this.next();
@@ -564,7 +548,7 @@ export class VisualizationComponent {
                     };
 
                     meta.distanceFromLastPoint = distance;
-                    meta.marker.setLatLng(latLng(p));
+                    meta.marker.setLatLng(LeafletUtil.latLng(p));
                 }
             }
         });
@@ -601,7 +585,7 @@ export class VisualizationComponent {
                     };
 
                     meta.distanceFromLastPoint = distanceBetweenCurrentPoints - distance;
-                    meta.marker.setLatLng(latLng(p));
+                    meta.marker.setLatLng(LeafletUtil.latLng(p));
                 }
             }
         });

@@ -5,7 +5,7 @@ import * as paths from 'path';
 import { app } from 'electron';
 import { without } from 'lodash';
 
-import { HistoryEntities, HistoryTimeEntries } from '../../shared/history';
+import { HistoryEntities, HistoryTimeEntry } from '../../shared/history';
 import { IpcUtil } from './index';
 
 interface TimeRange {
@@ -96,7 +96,7 @@ export default class HistoryReader {
         return entities;
     }
 
-    async previousChangeFile(): Promise<HistoryTimeEntries> {
+    async previousChangeFile(): Promise<Array<HistoryTimeEntry>> {
         if (this.currentIndex <= 0) {
             throw new Error(`No previous change file available!`);
         }
@@ -110,7 +110,7 @@ export default class HistoryReader {
         return file;
     }
 
-    async nextChangeFile(): Promise<HistoryTimeEntries> {
+    async nextChangeFile(): Promise<Array<HistoryTimeEntry>> {
         if (this.currentIndex === this.changeFiles.length - 1) {
             throw new Error(`No next change file available!`);
         }
@@ -124,7 +124,7 @@ export default class HistoryReader {
         return file;
     }
 
-    async changeFile(n: number): Promise<HistoryTimeEntries> {
+    async changeFile(n: number): Promise<Array<HistoryTimeEntry>> {
         if (n < 0 || n >= this.numberOfChangeFiles) {
             throw new Error(`Change file not available! Got ${n}, need n ∈ [0, ${this.numberOfChangeFiles})`);
         }
