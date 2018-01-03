@@ -13,7 +13,7 @@
         }
     },
     "map": "maps/madrid.osm",
-    "historyOutputPath": "history",
+    "historyOutputPath": "../build/history",
     "entryPoints": [
         {
             "userType": {

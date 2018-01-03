@@ -42,6 +42,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
             newEvents = manageSlotReservationDecisionAtOtherStation();
         } else {   // user rides his bike to a point which is not a station
             GeoPoint point = user.decidesNextPoint();
+            user.setDestination(point);
             int arrivalTime = user.timeToReach();
             newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
         }
