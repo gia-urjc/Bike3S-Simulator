@@ -4,6 +4,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.UserMemory;
+import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,11 +13,13 @@ import java.util.List;
 public class EventBikeReservationTimeout extends EventUser {
     private List<Entity> entities;
     private Reservation reservation;
+    private GeoPoint positionTimeOut;
     
-    public EventBikeReservationTimeout(int instant, User user, Reservation reservation) {
+    public EventBikeReservationTimeout(int instant, User user, Reservation reservation, GeoPoint positionTimeOut) {
         super(instant, user);
         this.entities = Arrays.asList(user, reservation);
         this.reservation = reservation;
+        this.positionTimeOut = positionTimeOut;
     }
     
     public Reservation getReservation() {
@@ -26,7 +29,7 @@ public class EventBikeReservationTimeout extends EventUser {
     @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        user.updatePositionAfterTimeOut();    
+        user.setPosition(positionTimeOut);
         reservation.expire();
         user.addReservation(reservation);
         user.cancelsBikeReservation(user.getDestinationStation());

@@ -160,8 +160,18 @@ public abstract class User implements Entity {
         return destinationStation;
     }
 
-    public void setDestinationStation(Station destinationStation) {
+    public void setDestination(Station destinationStation) throws Exception {
         this.destinationStation = destinationStation;
+        List<GeoRoute> allRoutes = calculateRoutes(destinationStation.getPosition());
+        GeoRoute chosenRoute = determineRoute(allRoutes);
+        this.route = chosenRoute;
+    }
+
+    public void setDestination(GeoPoint destination) throws Exception {
+        List<GeoRoute> allRoutes = calculateRoutes(destination);
+        GeoRoute chosenRoute = determineRoute(allRoutes);
+        this.route = chosenRoute;
+
     }
 
     public GeoRoute getRoute() {
@@ -320,16 +330,12 @@ public abstract class User implements Entity {
         }
     }
 
-    public List<GeoRoute> calculateRoutesToStation(GeoPoint stationPosition) throws GeoRouteCreationException, GraphHopperIntegrationException {
-        return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), stationPosition);
+    public List<GeoRoute> calculateRoutes(GeoPoint position) throws GeoRouteCreationException, GraphHopperIntegrationException {
+        return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), position);
     }
 
-    public List<GeoRoute> calculateRoutesToDestinationPlace(GeoPoint point) throws GeoRouteCreationException, GraphHopperIntegrationException{
-        return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), point);
-    }
-
-    public GeoRoute reachedRouteUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
-        return route.calculateRouteByTimeAndVelocity(Reservation.VALID_TIME, this.getAverageVelocity());
+    public GeoPoint reachedPointUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
+        return route.calculatePositionByTimeAndVelocity(Reservation.VALID_TIME, this.getAverageVelocity());
     }
 
     /**
@@ -337,11 +343,6 @@ public abstract class User implements Entity {
      * he has gotten in order to update his position.
      * This position is currently at the last position of the current route
      */
-
-    public void updatePositionAfterTimeOut() {
-        List<GeoPoint> pointList = route.getPoints();
-        position = pointList.get(pointList.size() - 1);
-    }
 
     /**
      * Time in seconds that user takes in arriving to a GeoPoint

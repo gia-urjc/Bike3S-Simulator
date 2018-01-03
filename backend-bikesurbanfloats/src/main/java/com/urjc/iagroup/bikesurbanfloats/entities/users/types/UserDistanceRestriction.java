@@ -2,6 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.entities.users.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
@@ -151,12 +152,16 @@ public class UserDistanceRestriction extends User {
         
         Station destination;
         try {
-        destination = recommendedStations.stream().filter(station -> station.getPosition()
-                .distanceTo(this.getPosition()) <= parameters.maxDistance).findFirst().get();
+            List<Station> restrictedStations = recommendedStations.stream().filter(station -> station.getPosition()
+                    .distanceTo(this.getPosition()) <= parameters.maxDistance).collect(Collectors.toList());
+            destination = restrictedStations.get(0).getPosition().equals(this.getPosition())
+                    ? restrictedStations.get(1) : restrictedStations.get(0);
         }
         catch (NullPointerException e) {
-            destination = systemManager.getRecommendationSystem()
-                    .recommendByLinearDistance(this.getPosition(), stations).get(0);
+            List<Station> stationsByDistance = systemManager.getRecommendationSystem()
+                    .recommendByLinearDistance(this.getPosition(), stations);
+            destination = stationsByDistance.get(0).getPosition().equals(this.getPosition())
+                    ? stationsByDistance.get(1) : stationsByDistance.get(0);
         }
         return destination;
     }
