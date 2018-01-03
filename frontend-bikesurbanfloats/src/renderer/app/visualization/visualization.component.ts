@@ -37,12 +37,38 @@ function latLng(p: GeoPoint): LatLng {
     return new LatLng(p.latitude, p.longitude);
 }
 
+function rad(v: number): number {
+    return rad.factor * v;
+}
+
+namespace rad {
+    export const factor = Math.PI / 180;
+}
+
+function haversine(v: number): number {
+    return Math.sin(v / 2) ** 2;
+}
+
 function getDistances(route: Route): Array<number> {
+    const r: Array<{ f: number, l: number }> = [];
     const distances: Array<number> = [];
-    for (let i = 0; i < route.points.length - 1; i++) {
-        const [p1, p2] = [route.points[i], route.points[i + 1]].map(latLng);
-        distances.push(p1.distanceTo(p2));
+
+    r.push({
+        f: rad(route.points[0].latitude),
+        l: rad(route.points[0].longitude),
+    });
+
+    for (let i = 1; i < route.points.length; i++) {
+        r.push({
+            f: rad(route.points[i].latitude),
+            l: rad(route.points[i].longitude),
+        });
+
+        const h = haversine(r[i].f - r[i - 1].f) + Math.cos(r[i - 1].f) * Math.cos(r[i].f) * haversine(r[i].l - r[i - 1].l);
+
+        distances.push(2 * 6371e3 * Math.asin(Math.sqrt(h)));
     }
+
     return distances;
 }
 
@@ -147,7 +173,7 @@ export class VisualizationComponent {
         this.timeEntries = {
             previous: null,
             current: await this.ajax.history.getChangeFile(this.changeFileIndex),
-            next: await this.ajax.history.getChangeFile(this.changeFileIndex + 1),
+            next: this.nChangeFiles > 1 ? await this.ajax.history.getChangeFile(this.changeFileIndex + 1) : null,
         };
     }
 
