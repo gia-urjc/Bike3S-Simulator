@@ -1,7 +1,7 @@
 import { app, BrowserWindow, shell } from 'electron';
 import * as path from 'path';
 import { format as urlFormat } from 'url';
-import { HistoryIterator } from './DataAnalysis/HistoryIterator';
+import { AbsoluteValues } from './DataAnalysis/AbsoluteValues';
 import { Settings } from './settings';
 import { HistoryReader } from './util';
 
@@ -46,14 +46,15 @@ namespace Main {
         });
 
     }
-   export async function testHistoryIt() { 
-        let it: HistoryIterator = await HistoryIterator.create("../backend-bikesurbanfloats/history");
-       
-        let timeEntry = await it.nextTimeEntry();
-        while (timeEntry !== undefined)
-            timeEntry = await it.nextTimeEntry();
-    }
-  }
+    
+   export async function test() {
+       let v = new AbsoluteValues(); 
+       await v.init('../backend-bikesurbanfloats/history');
+       v.calculateReservations();
+   }
+    
+}
+  
 
 Main.init();
-Main.testHistoryIt();
+
