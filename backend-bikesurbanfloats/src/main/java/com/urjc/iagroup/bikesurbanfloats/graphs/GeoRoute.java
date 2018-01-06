@@ -74,21 +74,19 @@ public class GeoRoute {
      * @param velocity It is the speed at which the entity travels.
      * @return the traveled subroute.
      */
-    public GeoRoute calculateRouteByTimeAndVelocity(double finalTime, double velocity) throws GeoRouteException, GeoRouteCreationException {
+    public GeoPoint calculatePositionByTimeAndVelocity(double finalTime, double velocity) throws GeoRouteException, GeoRouteCreationException {
         double totalDistance = 0.0;
         double currentTime = 0.0;
         double currentDistance = 0.0;
         GeoPoint currentPoint = null;
         GeoPoint nextPoint = null;
-        List<GeoPoint> newGeoPointList = new ArrayList<>();
         int i = 0;
         while(i < points.size()-1 && currentTime < finalTime) {
             currentPoint = points.get(i);
             nextPoint = points.get(i+1);
             currentDistance = intermediateDistances.get(i);
             totalDistance += currentDistance;
-            currentTime += currentDistance/velocity;    
-            newGeoPointList.add(points.get(i));
+            currentTime += currentDistance/velocity;
             i++;
         }
         if(currentTime < finalTime) {
@@ -97,9 +95,7 @@ public class GeoRoute {
         double x = totalDistance - finalTime*velocity;
         double intermedDistance = currentDistance - x;
         GeoPoint newPoint = currentPoint.reachedPoint(intermedDistance, nextPoint);
-        newGeoPointList.add(newPoint);
-        GeoRoute newRoute = new GeoRoute(newGeoPointList);
-        return newRoute;    
+        return newPoint;
     }
     
     @Override

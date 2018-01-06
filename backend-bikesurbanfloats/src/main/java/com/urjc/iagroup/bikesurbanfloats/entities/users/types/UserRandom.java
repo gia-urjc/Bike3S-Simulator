@@ -66,8 +66,11 @@ public class UserRandom extends User {
              stations = new ArrayList<>(systemManager.consultStations());
         }
 
-        return systemManager.getRecommendationSystem()
-                .recommendByLinearDistance(this.getPosition(), stations).get(0);
+        List<Station> recommendedStations = systemManager.getRecommendationSystem()
+                .recommendByLinearDistance(this.getPosition(), stations);
+
+        return recommendedStations.get(0).getPosition().equals(this.getPosition())
+                ? recommendedStations.get(1) : recommendedStations.get(0);
     }
     
     @Override
