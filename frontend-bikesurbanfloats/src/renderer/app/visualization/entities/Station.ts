@@ -20,12 +20,21 @@ import './station.css';
             className: 'station-marker',
             iconSize: [30, 30],
             html: `
-            <div class="ratio-ring" style="background: url(${gradient.png}) no-repeat;">
-                <div class="bike-counter">${nBikes}</div>
-            </div>
+                <div class="ratio-ring" style="background: url(${gradient.png}) no-repeat;">
+                    <div class="bike-counter">${nBikes}</div>
+                </div>
             `,
         });
-    }
+    },
+    onMarkerEvent: {
+        click: (station) => console.log(station)
+    },
+    popup: (station) => `
+        <div>
+            <strong>Station #${station.id}</strong>
+        </div>
+        <div>Capacity: ${station.capacity}</div>
+    `,
 })
 export class Station extends Entity {
     position: Geo.Point;

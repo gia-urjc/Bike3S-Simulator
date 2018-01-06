@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Event } from 'electron';
-import { HistoryEntities, HistoryTimeEntry } from '../../shared/history';
+import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
 import { AjaxProtocol, HistoryAjax, SettingsAjax } from './AjaxProtocol';
 
@@ -40,9 +40,9 @@ class ElectronHistory implements HistoryAjax {
         this.ready = false;
     }
 
-    async readEntities(): Promise<HistoryEntities> {
+    async getEntities(type: string): Promise<HistoryEntitiesJson> {
         if (!this.ready) throw ElectronHistory.NOT_READY;
-        return await readIpc('history-entities');
+        return await readIpc('history-entities', type);
     }
 
     async numberOFChangeFiles(): Promise<number> {

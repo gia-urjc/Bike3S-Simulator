@@ -1,7 +1,7 @@
 import { DivIcon, Polyline } from 'leaflet';
 import { Geo } from '../../../../shared/util';
 import { LeafletUtil } from '../util';
-import { VisualizationComponent } from '../visualization.component';
+import { Visualization } from '../visualization.component';
 import { Bike } from './Bike';
 import { JsonIdentifier, VisualEntity } from './decorators';
 import { Entity } from './Entity';
@@ -23,21 +23,21 @@ import { Station } from './Station';
         </div>
         `
     }),
-    onAction: {
+    onMarkerEvent: {
         click: (user) => console.log(user),
-        mouseover: (user) => user.route && VisualizationComponent.addLayer(Reflect.getOwnMetadata(Polyline, user)),
-        mouseout: (user) => VisualizationComponent.deleteLayer(Reflect.getOwnMetadata(Polyline, user)),
+        mouseover: (user) => user.route && Visualization.addLayer(Reflect.getOwnMetadata(Polyline, user)),
+        mouseout: (user) => Visualization.deleteLayer(Reflect.getOwnMetadata(Polyline, user)),
     },
     onChange: {
         route: (user) => {
-            VisualizationComponent.deleteLayer(Reflect.getOwnMetadata(Polyline, user));
+            Visualization.deleteLayer(Reflect.getOwnMetadata(Polyline, user));
             if (user.route) {
                 Reflect.defineMetadata(Polyline, LeafletUtil.polyline(user.route), user);
             }
         },
         position: (user) => {
             if (!user.position) {
-                VisualizationComponent.deleteLayer(Reflect.getOwnMetadata(Polyline, user));
+                Visualization.deleteLayer(Reflect.getOwnMetadata(Polyline, user));
             }
         },
     }

@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { Layer, Marker, Polyline } from 'leaflet';
+import { Layer, Marker, Popup } from 'leaflet';
 import { isArray, isEqual } from 'lodash';
 import * as moment from 'moment';
 
@@ -23,6 +23,7 @@ interface VisualMetadata {
     routeIndex: number,
     distances: Array<number>,
     distanceFromLastPoint: number,
+    popup: Popup,
 }
 
 enum STATE {
@@ -50,7 +51,7 @@ enum STEP {
     template: require('./visualization.component.html'),
     styles: [require('./visualization.component.css')],
 })
-export class VisualizationComponent {
+export class Visualization {
 
     private static activeLayers: Set<Layer>;
 
@@ -100,7 +101,7 @@ export class VisualizationComponent {
     constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
 
     ngOnInit() {
-        this.activeLayers = VisualizationComponent.activeLayers = new Set();
+        this.activeLayers = Visualization.activeLayers = new Set();
         this.movingEntities = [];
 
         this.speed = 10;
@@ -144,26 +145,27 @@ export class VisualizationComponent {
     }
 
     async createEntities(): Promise<void> {
-        const entitySource = await this.ajax.history.readEntities();
-
-        const deferredReferences = new WeakMap<Entity, [string, IdReference]>();
+        const deferredReferences = new Map<Entity, Array<[string, IdReference]>>();
 
         this.entities = {};
 
-        Object.values(EntityConstructors).forEach((Constructor) => {
+        for (let Constructor of Object.values(EntityConstructors)) {
             const jsonIdentifier = this.getJsonIdentifier(Constructor);
+            const entitySource = await this.ajax.history.getEntities(jsonIdentifier);
             const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, Constructor);
-
-            if (!(jsonIdentifier in entitySource)) return;
 
             this.entities[jsonIdentifier] = {};
 
-            entitySource[jsonIdentifier].forEach((jsonEntity) => {
+            entitySource.instances.forEach((jsonEntity) => {
                 const entity = Reflect.construct(Constructor, []);
+
+                entitySource.prototype.forEach((property) => entity[property] = null);
 
                 Object.entries(jsonEntity).forEach(([property, value]) => {
                     if (isIdReference(value)) {
-                        deferredReferences.set(entity, [property, value]);
+                        const references = deferredReferences.get(entity) || [];
+                        references.push([property, value]);
+                        deferredReferences.set(entity, references);
                     } else {
                         const onChange = safe(visualOptions, `onChange.${property}`);
                         entity[property] = value;
@@ -173,22 +175,23 @@ export class VisualizationComponent {
 
                 this.entities[jsonIdentifier][entity.id] = entity;
             });
-        });
+        }
 
         Object.values(this.entities).forEach((type) => Object.values(type).forEach((entity: any) => {
             const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
 
             if (deferredReferences.has(entity)) {
-                const [property, reference] = deferredReferences.get(entity)!;
-                const onChange = safe(visualOptions, `onChange.${property}`);
+                deferredReferences.get(entity)!.forEach(([property, reference]) => {
+                    const onChange = safe(visualOptions, `onChange.${property}`);
 
-                if (isArray(reference.id)) {
-                    entity[property] = reference.id.map((v) => v === null ? v : this.entities[reference.type][v]);
-                } else {
-                    entity[property] = this.entities[reference.type][reference.id];
-                }
+                    if (isArray(reference.id)) {
+                        entity[property] = reference.id.map((v) => v === null ? v : this.entities[reference.type][v]);
+                    } else {
+                        entity[property] = this.entities[reference.type][reference.id];
+                    }
 
-                onChange && onChange(entity);
+                    onChange && onChange(entity);
+                });
             }
 
             if (!visualOptions) return;
@@ -198,12 +201,6 @@ export class VisualizationComponent {
                     riseOnHover: true,
                 }),
             } as any;
-
-            if (visualOptions.onAction) {
-                Object.entries(visualOptions.onAction).forEach(([event, callback]) => {
-                    meta.marker.on(event, (e: any) => callback!(entity, e));
-                });
-            }
 
             if (typeof visualOptions.show === 'function') {
                 const p = visualOptions.show(entity);
@@ -230,8 +227,21 @@ export class VisualizationComponent {
                 meta.marker.setIcon(visualOptions.icon(entity));
             }
 
+            if (visualOptions.onMarkerEvent) {
+                Object.entries(visualOptions.onMarkerEvent).forEach(([event, callback]) => {
+                    meta.marker.on(event, (e: any) => (callback as any)(entity, e));
+                });
+            }
+
+            if (visualOptions.popup) {
+                meta.popup = new Popup().setContent(visualOptions.popup(entity));
+                meta.marker.bindPopup(meta.popup);
+            }
+
             Reflect.defineMetadata(VisualEntity, meta, entity);
         }));
+
+        console.log(this.entities);
     }
 
     applyChange(entity: any, data: EntityChanges, from: 'old' | 'new') {
@@ -274,16 +284,6 @@ export class VisualizationComponent {
             const route = visualOptions.show.route(entity);
             meta.speed = visualOptions.show.speed(entity);
 
-            /*meta.marker.off();
-            meta.marker.on('click', () => console.log(entity, meta));
-
-            if (route) {
-                const routeLine: any = new Polyline(entity.route.points.map(LeafletUtil.latLng));
-                routeLine.on('click', this.activeLayers.delete(routeLine));
-                meta.marker.on('mouseover', () => this.activeLayers.add(routeLine));
-                meta.marker.on('mouseout', () => this.activeLayers.delete(routeLine));
-            }*/
-
             if (!isEqual(route, meta.route)) {
                 meta.route = route;
                 if (meta.route) {
@@ -303,6 +303,10 @@ export class VisualizationComponent {
 
         if (visualOptions.icon) {
             meta.marker.setIcon(visualOptions.icon(entity));
+        }
+
+        if (visualOptions.popup) {
+            meta.popup.setContent(visualOptions.popup(entity));
         }
     }
 

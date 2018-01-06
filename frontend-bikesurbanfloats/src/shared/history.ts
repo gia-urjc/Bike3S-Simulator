@@ -10,8 +10,9 @@ export interface PropertyChange<T> {
     new: T,
 }
 
-export interface HistoryEntities {
-    [key: string]: Array<HistoryEntity>
+export interface HistoryEntitiesJson {
+    prototype: Array<string>,
+    instances: Array<HistoryEntity>,
 }
 
 export type EntityChanges = {
