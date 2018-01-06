@@ -476,6 +476,20 @@ public class History {
             this.seconds = seconds;
             this.formatted = LocalTime.ofSecondOfDay(seconds).format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Timestamp timestamp = (Timestamp) o;
+            return seconds == timestamp.seconds &&
+                    Objects.equals(formatted, timestamp.formatted);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(seconds, formatted);
+        }
     }
 
 }
