@@ -12,6 +12,11 @@ const defaultSettings: SettingsTree = {
             enabled: false,
         }
     },
+    development: {
+        extensions: {
+            augury: '',
+        }
+    }
 };
 
 export default defaultSettings;

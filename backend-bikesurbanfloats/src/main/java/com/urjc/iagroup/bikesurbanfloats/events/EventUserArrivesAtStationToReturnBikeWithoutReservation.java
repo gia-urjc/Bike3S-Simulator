@@ -26,10 +26,12 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
     @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        user.setPosition(station.getPosition());
         if(!user.returnBikeWithoutReservationTo(station)) {
+            user.setPosition(station.getPosition());
             newEvents = manageSlotReservationDecisionAtOtherStation();
-        }      
+        } else {
+            user.setPosition(null);
+        }
         return newEvents;
     }
 

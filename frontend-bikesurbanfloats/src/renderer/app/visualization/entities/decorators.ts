@@ -32,6 +32,25 @@ export interface VisualOptions<T extends Entity = any> {
     },
 }
 
+interface Future<T extends Entity = any> {
+    jsonIdentifier: string,
+    show?: {
+        when: EntityCallback<T, boolean>,
+        at: EntityCallback<T, Geo.Point | null> | {
+            route: EntityCallback<T, Geo.Route | null>,
+            speed: EntityCallback<T, number>,
+        },
+        icon?: EntityCallback<T, Icon<any>>,
+        popup?: EntityCallback<T, string>,
+        onMarkerEvent?: {
+            [P in keyof AllowedEvents]?: LeafletEventCallback<T, AllowedEvents[P]>
+        },
+    },
+    onChange?: {
+        [P in keyof T]?: EntityCallback<T, void>
+    },
+}
+
 export function VisualEntity<T extends Entity>(options: VisualOptions<T>) {
     return function (Target: { new(): T }) {
         Reflect.defineMetadata(VisualEntity, options, Target);
