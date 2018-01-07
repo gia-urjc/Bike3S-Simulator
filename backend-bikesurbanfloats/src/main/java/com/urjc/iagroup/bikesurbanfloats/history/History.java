@@ -13,7 +13,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class finds out the changes which have happened through the entire simulation and registers them.  
@@ -21,6 +24,8 @@ import java.util.*;
  *
  */
 public class History {
+
+    private final static int TIMEENTRIES_PER_FILE = 100;
     
     private static String DEFAULT_HISTORY_OUTPUT_PATH = "history";
 
@@ -74,13 +79,16 @@ public class History {
          * It is a map with the names of the entities'  history classes as the key and
          * a list of historic classes of a concrete entity as the value.
          */
-        Map<String, Collection<HistoricEntity>> entries = new HashMap<>();
+        Map<String, EntitiesJson> entries = new HashMap<>();
         initialEntities.getEntityMaps().forEach((historicClass, entities) -> {
             String jsonIdentifier = getJsonIdentifier(historicClass);
-            entries.put(jsonIdentifier, entities.values());
+            entries.put(jsonIdentifier, new EntitiesJson(historicClass, entities.values()));
         });
 
-        writeJson("entities.json", entries);
+        for (Map.Entry<String, EntitiesJson> entry : entries.entrySet()) {
+            writeJson("entities/" + entry.getKey() + ".json", entry.getValue());
+        }
+
         writeTimeEntries();
         
         // TODO: copy configuration file
@@ -124,7 +132,7 @@ public class History {
          */
         if (!serializedEvents.containsKey(event.getInstant())) {
             // TODO: test entry limit with more real world examples to not generate too large jsons
-            if (serializedEvents.size() == 1000) {
+            if (serializedEvents.size() == TIMEENTRIES_PER_FILE) {
                 writeTimeEntries();
                 serializedEvents.clear();
             }
@@ -361,6 +369,19 @@ public class History {
         }
     }
 
+    private static class EntitiesJson {
+        @Expose
+        private List<String> prototype;
+
+        @Expose
+        private Collection<HistoricEntity> instances;
+
+        EntitiesJson(Class<? extends HistoricEntity> historicClass, Collection<HistoricEntity> entities) {
+            this.prototype = Arrays.stream(historicClass.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
+            this.instances = entities;
+        }
+    }
+
     /**
      * This class represents an event and contains the changes which have occurred 
      * with respect to the previus event.
@@ -443,6 +464,33 @@ public class History {
         @Override
         public int hashCode() {
             return Objects.hash(type, id);
+        }
+    }
+
+    public static class Timestamp {
+        @Expose
+        private int seconds;
+
+        @Expose
+        private String formatted;
+
+        public Timestamp(int seconds) {
+            this.seconds = seconds;
+            this.formatted = LocalTime.ofSecondOfDay(seconds).format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Timestamp timestamp = (Timestamp) o;
+            return seconds == timestamp.seconds &&
+                    Objects.equals(formatted, timestamp.formatted);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(seconds, formatted);
         }
     }
 

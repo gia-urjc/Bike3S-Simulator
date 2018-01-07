@@ -60,12 +60,49 @@ export namespace Tree {
     }
 }
 
-export interface GeoPoint {
-    latitude: number,
-    longitude: number,
+export namespace Geo {
+    export const RADIUS = 6371e3;
+
+    export interface Point {
+        latitude: number,
+        longitude: number,
+    }
+
+    export interface Route {
+        totalDistance: number,
+        points: Array<Point>,
+    }
+
+    export function toRadians(value: number) {
+        return value * toRadians.factor;
+    }
+
+    export namespace toRadians {
+        export const factor = Math.PI / 180;
+    }
+
+    export function haversine(value: number) {
+        return Math.sin(value / 2) ** 2;
+    }
+
+    export function distance(p1: Point, p2: Point) {
+        const f = [p1.latitude, p2.latitude].map(toRadians);
+        const l = [p1.longitude, p2.longitude].map(toRadians);
+        const h = haversine(f[1] - f[0]) + Math.cos(f[0]) * Math.cos(f[1]) * haversine(l[1] - l[0]);
+        return 2 * RADIUS * Math.asin(Math.sqrt(h));
+    }
+
+    export function distances(route: Route) {
+        const d: Array<number> = [];
+
+        for (let i = 1; i < route.points.length; i++) {
+            d.push(distance(route.points[i - 1], route.points[i]));
+        }
+
+        return d;
+    }
 }
 
-export interface Route {
-    totalDistance: number,
-    points: Array<GeoPoint>,
+export function safe(object: PlainObject, path: string) {
+    return path.split('.').reduce((r, v) => r && r[v], object);
 }

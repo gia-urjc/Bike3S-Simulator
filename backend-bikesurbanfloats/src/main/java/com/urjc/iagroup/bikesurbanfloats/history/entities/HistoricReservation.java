@@ -7,6 +7,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationState;
 import com.urjc.iagroup.bikesurbanfloats.entities.Reservation.ReservationType;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
 import com.urjc.iagroup.bikesurbanfloats.history.History.IdReference;
+import com.urjc.iagroup.bikesurbanfloats.history.History.Timestamp;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
 
 /**
@@ -21,9 +22,9 @@ public class HistoricReservation implements HistoricEntity {
     private int id;
 
     @Expose
-    private int startTime;
+    private Timestamp startTime;
 
-    private Integer endTime;
+    private Timestamp endTime;
 
     @Expose
     private ReservationType type;
@@ -43,8 +44,8 @@ public class HistoricReservation implements HistoricEntity {
     public HistoricReservation(Reservation reservation) {
         Bike bike = reservation.getBike();
         this.id = reservation.getId();
-        this.startTime = reservation.getStartInstant();
-        this.endTime = reservation.getEndInstant() == -1 ? null : reservation.getEndInstant();
+        this.startTime = new Timestamp(reservation.getStartInstant());
+        this.endTime = reservation.getEndInstant() == -1 ? null : new Timestamp(reservation.getEndInstant());
         this.type = reservation.getType();
         this.state = reservation.getState();
         this.user = new IdReference(HistoricUser.class, reservation.getUser().getId());

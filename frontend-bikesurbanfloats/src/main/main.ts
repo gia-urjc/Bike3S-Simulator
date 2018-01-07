@@ -1,7 +1,7 @@
 import { app, BrowserWindow, shell } from 'electron';
-import * as path from 'path';
+import { join } from 'path';
 import { format as urlFormat } from 'url';
-import { AbsoluteValuesUser } from './dataAnalysis/absoluteValues/users/userDataDefinitions/RentalsAndReturnsPerUser';
+import { settingsPathGenerator } from '../shared/settings';
 import { Settings } from './settings';
 import { HistoryReader } from './util';
 
@@ -12,7 +12,7 @@ namespace Main {
         window = new BrowserWindow({ width: 800, height: 600 });
 
         window.loadURL(urlFormat({
-            pathname: path.join(app.getAppPath(), 'frontend', 'index.html'),
+            pathname: join(app.getAppPath(), 'frontend', 'index.html'),
             protocol: 'file',
             slashes: true
         }));
@@ -33,6 +33,12 @@ namespace Main {
         app.on('ready', async () => {
             HistoryReader.enableIpc();
             Settings.enableIpc();
+
+            if (process.env.target === 'development') {
+                const extensions = await Settings.get(settingsPathGenerator().development.extensions());
+                Object.values(extensions).forEach(BrowserWindow.addDevToolsExtension);
+            }
+
             createWindow();
         });
 

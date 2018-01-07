@@ -36,6 +36,7 @@ export class ReservationsAbsoluteValues implements Observer {
     public static async create(path: string): Promise<ReservationsAbsoluteValues> {
         let reservationValues = new ReservationsAbsoluteValues();
         await reservationValues.init(path);
+
         return reservationValues;
     }
     

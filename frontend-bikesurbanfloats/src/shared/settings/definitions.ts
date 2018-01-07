@@ -9,4 +9,7 @@ export interface SettingsLayers {
 
 export interface SettingsTree {
     layers: SettingsLayers,
+    development: {
+        extensions: Record<any, string>,
+    }
 }

@@ -1,7 +1,8 @@
-import { JsonIdentifier } from './decorators';
-import { Entity } from './Entity';
+import { Entity, Visual } from './Entity';
 
-@JsonIdentifier('reservations')
+@Visual<Reservation>({
+    jsonIdentifier: 'reservations',
+})
 export class Reservation extends Entity {
     reserved: boolean;
 }

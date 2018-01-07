@@ -123,7 +123,7 @@ Sparky.task('build:frontend:main', () => {
     const main = fuse.bundle('main').instructions('> [main/main.ts]');
 
     if (!production) {
-        main.watch();
+        // main.watch('main/**');
         return fuse.run().then(() => {
             const electron = spawn('npm', ['run', 'start:electron'], {
                 cwd: projectRoot(),
@@ -159,8 +159,10 @@ Sparky.task('build:frontend:renderer', () => {
         ]
     });
 
-    const vendor = fuse.bundle('vendor').instructions('~ renderer/renderer.ts');
-    const renderer = fuse.bundle('renderer').instructions('!> [renderer/renderer.ts]');
+    const rendererEntrypoint = 'renderer/renderer.ts';
+
+    const vendor = fuse.bundle('vendor').instructions(`~ ${rendererEntrypoint}`);
+    const renderer = fuse.bundle('renderer').instructions(`!> [${rendererEntrypoint}]`);
 
     /*if (!production) {
         fuse.dev({ root: false }, (server) => {
@@ -172,7 +174,7 @@ Sparky.task('build:frontend:renderer', () => {
             // TODO: make the server close on electron window close (note: apparently not possible)
         });
 
-        renderer.watch().hmr();
+        renderer.hmr().watch('renderer/**');
     }*/
 
     return fuse.run();
