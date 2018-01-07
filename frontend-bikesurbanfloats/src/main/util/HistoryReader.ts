@@ -34,7 +34,10 @@ export default class HistoryReader {
 
     static async create(path: string): Promise<HistoryReader> {
         let reader = new HistoryReader(path);
-        reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities');
+        reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities').sort((a, b) => {
+            const [x, y] = [a, b].map((s) => parseInt(s.split('-')[0]));
+            return x - y;
+        });
         return reader;
     }
 

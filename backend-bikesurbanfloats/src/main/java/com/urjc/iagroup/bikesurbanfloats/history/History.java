@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
  *
  */
 public class History {
+
+    private final static int TIMEENTRIES_PER_FILE = 100;
     
     private static String DEFAULT_HISTORY_OUTPUT_PATH = "history";
 
@@ -130,7 +132,7 @@ public class History {
          */
         if (!serializedEvents.containsKey(event.getInstant())) {
             // TODO: test entry limit with more real world examples to not generate too large jsons
-            if (serializedEvents.size() == 1000) {
+            if (serializedEvents.size() == TIMEENTRIES_PER_FILE) {
                 writeTimeEntries();
                 serializedEvents.clear();
             }

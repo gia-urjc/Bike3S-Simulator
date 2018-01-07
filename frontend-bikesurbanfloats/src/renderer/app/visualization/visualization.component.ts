@@ -242,8 +242,6 @@ export class Visualization {
 
             Reflect.defineMetadata(VisualEntity, meta, entity);
         }));
-
-        console.log(this.entities);
     }
 
     applyChange(entity: any, data: EntityChanges, from: 'old' | 'new') {
