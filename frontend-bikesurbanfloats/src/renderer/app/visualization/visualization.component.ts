@@ -291,7 +291,8 @@ export class Visualization {
         }
 
         if (configuration.show.icon) {
-            meta.marker.setIcon(configuration.show.icon(entity));
+            const icon = configuration.show.icon(entity);
+            if (icon !== meta.marker.options.icon) meta.marker.setIcon(icon);
         }
 
         if (configuration.show.popup) {

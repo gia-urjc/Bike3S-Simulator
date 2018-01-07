@@ -1,0 +1,16 @@
+.user-marker > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -200%
+}
+
+.user-id {
+    padding-bottom: 0 !important;
+    border: 1px solid #fff;
+}
+
+.user-icon {
+    font-size: 1.5rem;
+    text-shadow: 1px 1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, -1px -1px 0 #fff;
+}
