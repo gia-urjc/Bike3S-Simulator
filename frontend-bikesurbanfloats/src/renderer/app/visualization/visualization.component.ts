@@ -10,8 +10,7 @@ import { takeWhile } from '../../rxjs/operators';
 import { EntityChanges, HistoryTimeEntry, IdReference, isIdReference } from '../../../shared/history';
 import { Geo, safe } from '../../../shared/util';
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
-import { JsonIdentifier, VisualEntity, VisualOptions } from './entities/decorators';
-import { Entity } from './entities/Entity';
+import { Entity, Visual, VisualConfiguration } from './entities/Entity';
 import { breakPoint, LeafletUtil } from './util';
 
 import * as EntityConstructors from './entities';
@@ -40,12 +39,6 @@ enum STATE {
     RUNNING = FORWARD | REWIND,
 }
 
-enum STEP {
-    NONE,
-    FORWARD,
-    BACKWARD
-}
-
 @Component({
     selector: 'visualization',
     template: require('./visualization.component.html'),
@@ -71,7 +64,6 @@ export class Visualization {
     private timeEntryIndex: number;
     private nChangeFiles: number;
     private changeFileIndex: number;
-    private lastStep: STEP;
     private movingEntities: Array<Entity>;
     private activeLayers: Set<Layer>;
 
@@ -124,13 +116,6 @@ export class Visualization {
             .catch((error) => console.error(error));
     }
 
-    getJsonIdentifier(EntityConstructor: Function): string {
-        if (!Reflect.hasOwnMetadata(JsonIdentifier, EntityConstructor)) {
-            throw new Error(`No json identifier found on ${EntityConstructor.name}`);
-        }
-        return Reflect.getOwnMetadata(JsonIdentifier, EntityConstructor);
-    }
-
     async load(): Promise<void> {
         await this.ajax.history.init('history');
         await this.createEntities();
@@ -152,11 +137,10 @@ export class Visualization {
         this.entities = {};
 
         for (let Constructor of Object.values(EntityConstructors)) {
-            const jsonIdentifier = this.getJsonIdentifier(Constructor);
-            const entitySource = await this.ajax.history.getEntities(jsonIdentifier);
-            const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, Constructor);
+            const configuration: VisualConfiguration = Reflect.getOwnMetadata(Visual, Constructor);
+            const entitySource = await this.ajax.history.getEntities(configuration.jsonIdentifier);
 
-            this.entities[jsonIdentifier] = {};
+            this.entities[configuration.jsonIdentifier] = {};
 
             entitySource.instances.forEach((jsonEntity) => {
                 const entity = Reflect.construct(Constructor, []);
@@ -169,22 +153,22 @@ export class Visualization {
                         references.push([property, value]);
                         deferredReferences.set(entity, references);
                     } else {
-                        const onChange = safe(visualOptions, `onChange.${property}`);
+                        const onChange = safe(configuration, `onChange.${property}`);
                         entity[property] = value;
                         onChange && onChange(entity);
                     }
                 });
 
-                this.entities[jsonIdentifier][entity.id] = entity;
+                this.entities[configuration.jsonIdentifier][entity.id] = entity;
             });
         }
 
         Object.values(this.entities).forEach((type) => Object.values(type).forEach((entity: any) => {
-            const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
+            const configuration: VisualConfiguration = Reflect.getOwnMetadata(Visual, entity.constructor);
 
             if (deferredReferences.has(entity)) {
                 deferredReferences.get(entity)!.forEach(([property, reference]) => {
-                    const onChange = safe(visualOptions, `onChange.${property}`);
+                    const onChange = safe(configuration, `onChange.${property}`);
 
                     if (isArray(reference.id)) {
                         entity[property] = reference.id.map((v) => v === null ? v : this.entities[reference.type][v]);
@@ -196,7 +180,7 @@ export class Visualization {
                 });
             }
 
-            if (!visualOptions) return;
+            if (!configuration.show) return;
 
             const meta: VisualMetadata = {
                 marker: new Marker([0, 0], {
@@ -204,48 +188,48 @@ export class Visualization {
                 }),
             } as any;
 
-            if (typeof visualOptions.show === 'function') {
-                const p = visualOptions.show(entity);
+            if (typeof configuration.show.at === 'function') {
+                const p = configuration.show.at(entity);
                 if (p) {
                     meta.marker.setLatLng(LeafletUtil.latLng(p));
                     this.activeLayers.add(meta.marker);
                 }
             } else {
                 this.movingEntities.push(entity);
-                meta.route = visualOptions.show.route(entity);
-                meta.speed = visualOptions.show.speed(entity);
+                meta.route = configuration.show.at.route(entity);
+                meta.speed = configuration.show.at.speed(entity);
                 if (meta.route) {
                     meta.routeIndex = 0;
                     meta.distanceFromLastPoint = 0;
                     meta.distances = Geo.distances(meta.route);
-                    if (visualOptions.show.when(entity)) {
+                    if (!configuration.show.when || configuration.show.when(entity)) {
                         meta.marker.setLatLng(LeafletUtil.latLng(meta.route.points[0]));
                         this.activeLayers.add(meta.marker);
                     }
                 }
             }
 
-            if (visualOptions.icon) {
-                meta.marker.setIcon(visualOptions.icon(entity));
+            if (configuration.show.icon) {
+                meta.marker.setIcon(configuration.show.icon(entity));
             }
 
-            if (visualOptions.onMarkerEvent) {
-                Object.entries(visualOptions.onMarkerEvent).forEach(([event, callback]) => {
+            if (configuration.show.onMarkerEvent) {
+                Object.entries(configuration.show.onMarkerEvent).forEach(([event, callback]) => {
                     meta.marker.on(event, (e: any) => (callback as any)(entity, e));
                 });
             }
 
-            if (visualOptions.popup) {
-                meta.popup = new Popup().setContent(visualOptions.popup(entity));
+            if (configuration.show.popup) {
+                meta.popup = new Popup().setContent(configuration.show.popup(entity));
                 meta.marker.bindPopup(meta.popup);
             }
 
-            Reflect.defineMetadata(VisualEntity, meta, entity);
+            Reflect.defineMetadata(Visual, meta, entity);
         }));
     }
 
     applyChange(entity: any, data: EntityChanges, from: 'old' | 'new') {
-        const visualOptions: VisualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
+        const configuration: VisualConfiguration = Reflect.getOwnMetadata(Visual, entity.constructor);
 
         Object.defineProperty(data, 'id', { enumerable: false });
         Object.keys(data).forEach((name) => {
@@ -261,19 +245,17 @@ export class Visualization {
 
             entity[name] = property;
 
-            if (!visualOptions) return;
-
-            const onChange = safe(visualOptions, `onChange.${name}`);
+            const onChange = safe(configuration, `onChange.${name}`);
 
             onChange && onChange(entity);
         });
 
-        if (!visualOptions) return;
+        if (!configuration.show) return;
 
-        const meta: VisualMetadata = Reflect.getOwnMetadata(VisualEntity, entity);
+        const meta: VisualMetadata = Reflect.getOwnMetadata(Visual, entity);
 
-        if (typeof visualOptions.show === 'function') {
-            const p = visualOptions.show(entity);
+        if (typeof configuration.show.at === 'function') {
+            const p = configuration.show.at(entity);
             if (p) {
                 meta.marker.setLatLng(LeafletUtil.latLng(p));
                 this.activeLayers.add(meta.marker);
@@ -281,8 +263,8 @@ export class Visualization {
                 this.activeLayers.delete(meta.marker);
             }
         } else {
-            const route = visualOptions.show.route(entity);
-            meta.speed = visualOptions.show.speed(entity);
+            const route = configuration.show.at.route(entity);
+            meta.speed = configuration.show.at.speed(entity);
 
             if (!isEqual(route, meta.route)) {
                 meta.route = route;
@@ -299,19 +281,21 @@ export class Visualization {
                 }
             }
 
-            if (visualOptions.show.when(entity)) {
-                this.activeLayers.add(meta.marker);
-            } else {
-                this.activeLayers.delete(meta.marker);
+            if (configuration.show.when) {
+                if (configuration.show.when(entity)) {
+                    this.activeLayers.add(meta.marker);
+                } else {
+                    this.activeLayers.delete(meta.marker);
+                }
             }
         }
 
-        if (visualOptions.icon) {
-            meta.marker.setIcon(visualOptions.icon(entity));
+        if (configuration.show.icon) {
+            meta.marker.setIcon(configuration.show.icon(entity));
         }
 
-        if (visualOptions.popup) {
-            meta.popup.setContent(visualOptions.popup(entity));
+        if (configuration.show.popup) {
+            meta.popup.setContent(configuration.show.popup(entity));
         }
     }
 
@@ -402,10 +386,12 @@ export class Visualization {
     moveEntitiesForward(span: number) {
         if (span === 0) return;
         this.movingEntities.forEach((entity) => {
-            const visualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
+            const configuration: VisualConfiguration = Reflect.getOwnMetadata(Visual, entity.constructor);
 
-            if (visualOptions.show.when(entity)) {
-                const meta: VisualMetadata = Reflect.getOwnMetadata(VisualEntity, entity);
+            if (!configuration.show) return;
+
+            if (!configuration.show.when || configuration.show.when(entity)) {
+                const meta: VisualMetadata = Reflect.getOwnMetadata(Visual, entity);
 
                 if (meta.route) {
                     let distanceBetweenCurrentPoints = meta.distances[meta.routeIndex];
@@ -440,10 +426,12 @@ export class Visualization {
     moveEntitiesBackward(span: number) {
         if (span === 0) return;
         this.movingEntities.forEach((entity) => {
-            const visualOptions = Reflect.getOwnMetadata(VisualEntity, entity.constructor);
+            const configuration: VisualConfiguration = Reflect.getOwnMetadata(Visual, entity.constructor);
 
-            if (visualOptions.show.when(entity)) {
-                const meta: VisualMetadata = Reflect.getOwnMetadata(VisualEntity, entity);
+            if (!configuration.show) return;
+
+            if (!configuration.show.when || configuration.show.when(entity)) {
+                const meta: VisualMetadata = Reflect.getOwnMetadata(Visual, entity);
 
                 if (meta.route) {
                     let distanceBetweenCurrentPoints = meta.distances[meta.routeIndex];
