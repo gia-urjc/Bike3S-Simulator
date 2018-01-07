@@ -1,7 +1,7 @@
 import { app, BrowserWindow, shell } from 'electron';
 import * as path from 'path';
 import { format as urlFormat } from 'url';
-import { AbsoluteValues } from './DataAnalysis/AbsoluteValues';
+import { AbsoluteValuesUser } from './dataAnalysis/absoluteValues/users/userDataDefinitions/RentalsAndReturnsPerUser';
 import { Settings } from './settings';
 import { HistoryReader } from './util';
 
@@ -48,9 +48,10 @@ namespace Main {
     }
     
    export async function test() {
-       let v = new AbsoluteValues(); 
+       let v = new AbsoluteValuesUser(); 
        await v.init('../backend-bikesurbanfloats/history');
        v.calculateReservations();
+       console.log('user 1:', v.getBikeSuccessfulReservations(1));
    }
     
 }
@@ -58,3 +59,4 @@ namespace Main {
 
 Main.init();
 
+Main.test();
