@@ -11,8 +11,29 @@ const path = require('path');
 const fs = require('fs-extra');
 
 const projectRoot = () => process.cwd();
-projectRoot.backend = () => path.join(projectRoot(), 'backend-bikesurbanfleets');
-projectRoot.backend.mavenTarget = () => path.join(projectRoot.backend(), 'target');
+
+
+/* ==============================
+ *
+ * PROJECT RELEASE INFORMATION - BACKEND
+ *
+ * ============================== */
+
+const groupId = 'es.urjc.ia';
+const projectName = 'bikesurbanfleets';
+const version = '1.0-SNAPSHOT';
+
+/* ==============================
+ *
+ * PROJECT RELEASE INFORMATION - BACKEND
+ *
+ * ============================== */
+
+projectRoot.backendCommon = () => path.join(projectRoot(), 'backend-bikesurbanfleets-common');
+projectRoot.backendCommon.mavenTarget = () => path.join(projectRoot.backendCommon(), 'target');
+projectRoot.backendCore = () => path.join(projectRoot(), 'backend-bikesurbanfleets-core');
+projectRoot.backendCore.mavenTarget = () => path.join(projectRoot.backendCore(), 'target');
+projectRoot.mavenLocalRepository = () => path.join(projectRoot(), 'libs/maven-local-repo');
 projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfleets');
 projectRoot.frontend.src = () => path.join(projectRoot.frontend(), 'src');
 projectRoot.frontend.main = () => path.join(projectRoot.frontend.src(), 'main');
@@ -30,14 +51,14 @@ let production = false;
 
 let schemaBuildPath = projectRoot.build.schema();
 
-Sparky.task('build:backend', () => new Promise((resolve, reject) => {
+Sparky.task('build:backend-common', ['clean:maven-local-dependency:common'], () => new Promise((resolve, reject) => {
     const maven = spawn('mvn', ['clean', 'package'], {
-        cwd: projectRoot.backend(),
+        cwd: projectRoot.backendCommon(),
         shell: true, // necessary for windows
         stdio: 'inherit' // pipe to calling process
     });
 
-    log.time().green('start packaging backend jar').echo();
+    log.time().green('start packaging backend-common jar').echo();
 
     maven.on('error', (error) => {
         log.red(error).echo();
@@ -45,9 +66,41 @@ Sparky.task('build:backend', () => new Promise((resolve, reject) => {
 
     maven.on('close', (code) => {
         if (code === 0) {
-            const jar = fs.readdirSync(projectRoot.backend.mavenTarget()).find((file) => file.endsWith('.jar'));
-            const target = path.join(projectRoot.backend.mavenTarget(), jar);
-            const destination = path.join(projectRoot.build(), 'backend.jar');
+            const jar = fs.readdirSync(projectRoot.backendCommon.mavenTarget()).find((file) => file.endsWith('.jar'));
+            const target = path.join(projectRoot.backendCommon.mavenTarget(), jar);
+            const destination = path.join(projectRoot.build(), 'backend-common.jar');
+
+            fs.copySync(target, destination);
+
+            log.time().green('finished packaging backend-common jar').echo();
+            Sparky.start('install:maven-local-dependency:common');
+
+            resolve();
+        } else {
+            log.time().red(`maven finished with error code ${code}`).echo();
+            reject();
+        }
+    });
+}));
+
+Sparky.task('build:backend-core', () => new Promise((resolve, reject) => {
+    const maven = spawn('mvn', ['clean', 'package'], {
+        cwd: projectRoot.backendCore(),
+        shell: true, // necessary for windows
+        stdio: 'inherit' // pipe to calling process
+    });
+
+    log.time().green('start packaging backend-core jar').echo();
+
+    maven.on('error', (error) => {
+        log.red(error).echo();
+    });
+
+    maven.on('close', (code) => {
+        if (code === 0) {
+            const jar = fs.readdirSync(projectRoot.backendCore.mavenTarget()).find((file) => file.endsWith('.jar'));
+            const target = path.join(projectRoot.backendCore.mavenTarget(), jar);
+            const destination = path.join(projectRoot.build(), 'backend-core.jar');
 
             fs.copySync(target, destination);
 
@@ -60,6 +113,65 @@ Sparky.task('build:backend', () => new Promise((resolve, reject) => {
         }
     });
 }));
+
+Sparky.task('clean:maven-local-dependency:common', () => new Promise((resolve, reject) => {
+    const maven = spawn('mvn', ['dependency:purge-local-repository', '-DmanualInclude=' + groupId + ':' + projectName + '-common'], {
+        cwd: projectRoot.backendCommon(),
+        shell: true, // necessary for windows
+        stdio: 'inherit' // pipe to calling process
+    });
+
+    log.time().green('cleaning maven local repository for backend-common').echo();
+
+    maven.on('error', (error) => {
+        log.red(error).echo();
+    });
+
+    maven.on('close', (code) => {
+        if (code === 0) {
+            log.time().green('finished maven local repository clean for backend-common').echo();
+            resolve();
+        } else {
+            log.time().red(`maven finished with error code ${code}`).echo();
+            reject();
+        }
+    });
+}));
+
+Sparky.task('install:maven-local-dependency:common', () => new Promise((resolve, reject) => {
+    const maven = spawn('mvn',
+        ['org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file',
+            '-Dfile=' + projectRoot.build() + '/backend-common.jar',
+            '-DgroupId=' + groupId,
+            '-DartifactId=' + projectName + '-common',
+            '-Dversion=' + version,
+            '-Dpackaging=jar',
+            '-DlocalRepositoryPath='+ projectRoot.mavenLocalRepository()], {
+            cwd: projectRoot(),
+            shell: true, // necessary for windows
+            stdio: 'inherit' // pipe to calling process
+    });
+
+    log.time().green('Installing dependency bikeurbanfleets-common in maven local repository').echo();
+
+    maven.on('error', (error) => {
+        log.red(error).echo();
+    });
+
+    maven.on('close', (code) => {
+        if (code === 0) {
+            log.time().green('finished installation of bikeurbanfleets-common in maven local repository').echo();
+            resolve();
+        } else {
+            log.time().red(`maven finished with error code ${code}`).echo();
+            reject();
+        }
+    });
+}));
+
+Sparky.task('build:backend',
+    ['build:backend-common', 'clean:maven-local-dependency:common', 'install:maven-local-dependency:common',
+    'build:backend-core'], () => {});
 
 Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, reject) => {
     const tsc = spawn(path.join(projectRoot(), 'node_modules/.bin/tsc'), [], {
@@ -193,7 +305,7 @@ Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:
     return Sparky.src(path.join(projectRoot(), 'package.json')).dest(projectRoot.build());
 });
 
-Sparky.task('build:dev', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:frontend', 'build:jsonschema-validator'], () => {});
+Sparky.task('build:dev', ['clean:build', 'clean:cache', 'build:backend-core', 'build:schema', 'build:frontend', 'build:jsonschema-validator'], () => {});
 
 Sparky.task('build:dist', () => {
     production = true;
