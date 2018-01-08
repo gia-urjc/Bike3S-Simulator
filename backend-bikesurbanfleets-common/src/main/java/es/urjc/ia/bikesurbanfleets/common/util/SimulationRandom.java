@@ -10,33 +10,33 @@ import java.util.Random;
  * @author IAgroup
  *
  */
-public class SimulationRandomm {
+public class SimulationRandom {
 
-    private static SimulationRandomm generalInstance = null;
-    private static SimulationRandomm userCreationInstance = null;
+    private static SimulationRandom generalInstance = null;
+    private static SimulationRandom userCreationInstance = null;
 
     public static void init(long seed) {
         if (generalInstance != null || userCreationInstance != null) {
             throw new IllegalStateException("Instances have already been initialized.");
         }
 
-        generalInstance = new SimulationRandomm(seed);
-        userCreationInstance = new SimulationRandomm(seed);
+        generalInstance = new SimulationRandom(seed);
+        userCreationInstance = new SimulationRandom(seed);
     }
 
-    public static SimulationRandomm getGeneralInstance() {
+    public static SimulationRandom getGeneralInstance() {
         if (generalInstance != null) return generalInstance;
         throw new IllegalStateException("You should first call init(seed)");
     }
 
-    public static SimulationRandomm getUserCreationInstance() {
+    public static SimulationRandom getUserCreationInstance() {
         if (userCreationInstance != null) return userCreationInstance;
         throw new IllegalStateException("You should first call init(seed)");
     }
 
     private Random random;
 
-    private SimulationRandomm(long seed) {
+    private SimulationRandom(long seed) {
         this.random = new Random(seed);
     }
 

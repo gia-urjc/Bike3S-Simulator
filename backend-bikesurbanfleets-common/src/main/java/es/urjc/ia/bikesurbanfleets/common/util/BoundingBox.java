@@ -52,7 +52,7 @@ public class BoundingBox {
      * @param random It is the general random instance of the system. 
      * @return a random point which belongs to thhe boundingBox object. 
      */
-    public GeoPoint randomPoint(SimulationRandomm random) {
+    public GeoPoint randomPoint(SimulationRandom random) {
         double newLatitude = random.nextDouble(northWest.getLatitude(), southEast.getLatitude());
         double newLongitude = random.nextDouble(northWest.getLongitude(), southEast.getLongitude());
         return new GeoPoint(newLatitude, newLongitude);
