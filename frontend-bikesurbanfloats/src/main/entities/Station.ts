@@ -1,16 +1,16 @@
-import {Entity} from './Entity'
-import {GeoPoint} from "../../shared/util";
-import {Bike} from "./Bike";
+import { Geo } from '../../shared/util';
+import { Bike } from './Bike';
+import { Entity } from './Entity'
 
 export class Station extends Entity {
 
     private capacity: number;
-    private position: GeoPoint;
+    private position: Geo.Point;
     private reservedBikes: number;
     private reservedSlots: number;
     private bikes: Bike[];
 
-    constructor(id: number, capacity: number, position: GeoPoint, reservedBikes: number, reservedSlots: number, bikes: Bike[]) {
+    constructor(id: number, capacity: number, position: Geo.Point, reservedBikes: number, reservedSlots: number, bikes: Bike[]) {
         super(id);
         this.capacity = capacity;
         this.position = position;

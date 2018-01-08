@@ -18,7 +18,7 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
 
     public EventUserArrivesAtStationToReturnBikeWithReservation(int instant, User user, Station station, Reservation reservation) {
         super(instant, user);
-        this.entities = Arrays.asList(user, station, reservation);
+        this.entities = new ArrayList<>(Arrays.asList(user, station, reservation));
         this.station = station;
         this.reservation = reservation;
     }
@@ -34,7 +34,7 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
     @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        user.setPosition(station.getPosition());
+        // user.setPosition(station.getPosition());
         reservation.resolve(instant);
         user.returnBikeWithReservationTo(station);
         user.setPosition(null);

@@ -23,7 +23,7 @@ public interface Event extends Comparable<Event> {
     List<Event> execute() throws Exception;
     
     /**
-     * @return a list with all the entities involved in the event.
+     * @return a list with all the entities that are updated (but not created) in the event.
      */
     List<Entity> getEntities();
     

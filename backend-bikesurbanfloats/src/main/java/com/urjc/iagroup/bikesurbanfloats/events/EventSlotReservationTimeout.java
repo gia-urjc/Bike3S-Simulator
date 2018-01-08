@@ -5,6 +5,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class EventSlotReservationTimeout extends EventUser {
 
     public EventSlotReservationTimeout(int instant, User user, Reservation reservation, GeoPoint positionTimeOut) {
         super(instant, user);
-        this.entities = Arrays.asList(user, reservation);
+        this.entities = new ArrayList<>(Arrays.asList(user, reservation));
         this.reservation = reservation;
         this.positionTimeOut = positionTimeOut;
     }

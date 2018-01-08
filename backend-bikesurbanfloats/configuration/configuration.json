@@ -19,16 +19,6 @@
             "userType": {
                 "typeName": "USER_RANDOM"
             },
-            "timeInstant": 0,
-            "position": {
-                "latitude": 40.42750,
-                "longitude": -3.71384
-            }
-        },
-        {
-            "userType": {
-                "typeName": "USER_RANDOM"
-            },
             "position": {
                 "latitude": 40.42750,
                 "longitude": -3.71384
@@ -39,21 +29,51 @@
                 "type": "POISSON",
                 "lambda": 0.0033333
             }
+        },
+        {
+            "userType": {
+                "typeName": "USER_RANDOM"
+            },
+            "position": {
+                "latitude": 40.409431,
+                "longitude": -3.692046
+            },
+            "radius": 100.0,
+            "totalUsers": 20,
+            "distribution": {
+                "type": "POISSON",
+                "lambda": 0.0033333
+            }
+        },
+        {
+            "userType": {
+                "typeName": "USER_RANDOM"
+            },
+            "position": {
+                "latitude": 40.406847,
+                "longitude": -3.708160
+            },
+            "radius": 100.0,
+            "totalUsers": 30,
+            "distribution": {
+                "type": "POISSON",
+                "lambda": 0.0033333
+            }
         }
     ],
     "stations": [
         {
             "bikes": 0,
             "position": {
-                "latitude": 40.4285524, 
-                "longitude": -3.7025875 
+                "latitude": 40.4285524,
+                "longitude": -3.7025875
             },
             "capacity": 24
         },
         {
             "bikes": 5,
             "position": {
-                "latitude": 40.424148, 
+                "latitude": 40.424148,
                 "longitude": -3.698447
             },
             "capacity": 24
@@ -61,7 +81,7 @@
         {
             "bikes": 11,
             "position": {
-                "latitude": 40.4089282, 
+                "latitude": 40.4089282,
                 "longitude": -3.7008803
             },
             "capacity": 24
@@ -69,7 +89,7 @@
         {
             "bikes": 14,
             "position": {
-                "latitude": 40.4074902,  
+                "latitude": 40.4074902,
                 "longitude": -3.6901234
             },
             "capacity": 27
@@ -77,7 +97,7 @@
         {
             "bikes": 9,
             "position": {
-                "latitude": 40.4302937,   
+                "latitude": 40.4302937,
                 "longitude": -3.7069171
             },
             "capacity": 18
@@ -85,7 +105,7 @@
         {
             "bikes": 20,
             "position": {
-                "latitude": 40.4192342,    
+                "latitude": 40.4192342,
                 "longitude": -3.6954615
             },
             "capacity": 24
@@ -94,15 +114,15 @@
         {
             "bikes": 13,
             "position": {
-                "latitude": 40.4205886,     
-                "longitude": -3.7058415 
+                "latitude": 40.4205886,
+                "longitude": -3.7058415
             },
             "capacity": 24
         },
         {
             "bikes": 7,
             "position": {
-                "latitude": 40.428528,     
+                "latitude": 40.428528,
                 "longitude": -3.7020599
             },
             "capacity": 27
@@ -110,7 +130,7 @@
         {
             "bikes": 14,
             "position": {
-                "latitude": 40.4197204,     
+                "latitude": 40.4197204,
                 "longitude": -3.7015235
             },
             "capacity": 24
@@ -118,15 +138,15 @@
         {
             "bikes": 6,
             "position": {
-                "latitude": 40.4132798,     
-                "longitude": -3.6956178 
+                "latitude": 40.4132798,
+                "longitude": -3.6956178
             },
             "capacity": 24
         },
         {
             "bikes": 24,
             "position": {
-                "latitude": 40.4181663,     
+                "latitude": 40.4181663,
                 "longitude": -3.69926
             },
             "capacity": 27
@@ -134,32 +154,32 @@
         {
             "bikes": 9,
             "position": {
-                "latitude": 40.4163638,       
-                "longitude": -3.7068969  
+                "latitude": 40.4163638,
+                "longitude": -3.7068969
             },
             "capacity": 27
         },
         {
             "bikes": 2,
             "position": {
-                "latitude": 40.4141931,      
-                "longitude": -3.7103285   
+                "latitude": 40.4141931,
+                "longitude": -3.7103285
             },
             "capacity": 24
         },
         {
             "bikes": 4,
             "position": {
-                "latitude": 40.4167281,      
-                "longitude": -3.7124038 
+                "latitude": 40.4167281,
+                "longitude": -3.7124038
             },
             "capacity": 24
         },
         {
             "bikes": 10,
             "position": {
-                "latitude": 40.4122047,      
-                "longitude": -3.6991147 
+                "latitude": 40.4122047,
+                "longitude": -3.6991147
             },
             "capacity": 21
         }
