@@ -19,11 +19,6 @@ import java.util.stream.Collectors;
  */
 @JsonIdentifier("stations")
 public class HistoricStation implements HistoricEntity {
-    /**
-     * This lambda function returns the bike id if the bike instance isn't null 
-     * or null in other case.
-     */
-    private static Function<Bike, Integer> bikeIdConverter = bike -> bike == null ? null : bike.getId();
 
     @Expose
     private int id;
@@ -43,8 +38,20 @@ public class HistoricStation implements HistoricEntity {
         this.id = station.getId();
         this.position = new GeoPoint(station.getPosition());
         this.capacity = station.getCapacity();
-        this.bikes = new IdReference(HistoricBike.class, station.getBikes().stream().map(bikeIdConverter).collect(Collectors.toList()));
-        this.reservations = new IdReference(HistoricReservation.class, station.getReservations().stream().map(Reservation::getId).collect(Collectors.toList()));
+
+        this.bikes = new IdReference(
+                HistoricBike.class,
+                station.getBikes().stream()
+                        .map(bike -> bike == null ? null : bike.getId())
+                        .collect(Collectors.toList())
+        );
+
+        this.reservations = new IdReference(
+                HistoricReservation.class,
+                station.getReservations().stream()
+                        .map(Reservation::getId)
+                        .collect(Collectors.toList())
+        );
     }
 
     @Override
