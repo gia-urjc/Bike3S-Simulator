@@ -31,7 +31,6 @@ public class EventBikeReservationTimeout extends EventUser {
         List<Event> newEvents = new ArrayList<>();
         user.setPosition(positionTimeOut);
         reservation.expire();
-        user.addReservation(reservation);
         user.cancelsBikeReservation(user.getDestinationStation());
         user.getMemory().update(UserMemory.FactType.BIKE_RESERVATION_TIMEOUT);
 

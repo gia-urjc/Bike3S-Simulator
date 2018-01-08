@@ -72,6 +72,7 @@ public abstract class EventUser implements Event {
         Bike bike = user.reservesBike(destination);
         if (bike != null) {  // user has been able to reserve a bike  
             Reservation reservation = new Reservation(instant, ReservationType.BIKE, user, destination, bike);
+            user.addReservation(reservation);
             if (Reservation.VALID_TIME < arrivalTime) {
                 GeoPoint pointTimeOut = user.reachedPointUntilTimeOut();
                 newEvents.add(new EventBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME , user, reservation, pointTimeOut));
@@ -154,23 +155,23 @@ public abstract class EventUser implements Event {
         int arrivalTime = user.timeToReach();
         if (user.reservesSlot(destination)) {  // User has been able to reserve
             Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination, user.getBike());
-               if (Reservation.VALID_TIME < arrivalTime) {
-                   GeoPoint pointTimeOut = user.reachedPointUntilTimeOut();
-                   newEvents.add(new EventSlotReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, pointTimeOut));
+            user.addReservation(reservation);
+            if (Reservation.VALID_TIME < arrivalTime) {
+               GeoPoint pointTimeOut = user.reachedPointUntilTimeOut();
+               newEvents.add(new EventSlotReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, pointTimeOut));
+            }
+            else {
+               newEvents.add(new EventUserArrivesAtStationToReturnBikeWithReservation(this.getInstant() + arrivalTime, user, destination, reservation));
+            }
+        } else {  // user hasn't been able to reserve a slot
+               Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);
+               user.addReservation(reservation);
+               if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user waljs to the initially chosen station
+                   newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
                }
                else {
-                   newEvents.add(new EventUserArrivesAtStationToReturnBikeWithReservation(this.getInstant() + arrivalTime, user, destination, reservation));
+                   newEvents = manageSlotReservationDecisionAtOtherStation();
                }
-           }
-           else {  // user hasn't been able to reserve a slot
-                   Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);    
-                   user.addReservation(reservation);
-                   if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user waljs to the initially chosen station 
-                       newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
-                   }
-                   else {
-                       newEvents = manageSlotReservationDecisionAtOtherStation();
-                   }    
            }
         return newEvents;
     }

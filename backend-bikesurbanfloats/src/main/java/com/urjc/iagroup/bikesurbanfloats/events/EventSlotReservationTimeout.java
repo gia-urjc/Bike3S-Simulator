@@ -30,7 +30,6 @@ public class EventSlotReservationTimeout extends EventUser {
 
         user.setPosition(positionTimeOut);
         reservation.expire();
-        user.addReservation(reservation);
         user.cancelsSlotReservation(user.getDestinationStation());
         
         if (!user.decidesToDetermineOtherStationAfterTimeout()){
