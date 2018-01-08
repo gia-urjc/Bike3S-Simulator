@@ -1,3 +1,4 @@
+import { PlainObject } from '../../../shared/util';
 export interface Entity {
     id: number;
 }
@@ -14,17 +15,14 @@ export interface Station extends Entity {
 }
 
 export enum ReservationType {
-    Bike, Slot
+    BIKE, SLOT
 }
 
 export enum ReservationState {
     FAILED, SUCCESSFUL
 }
 
-export interface Reservation extends Entity {
+export interface Reservation extends Entity, PlainObject {
     type: ReservationType;
     state: ReservationState;
-/*    userId: number;
-    stationId: number;
-    bikeId: number;*/
 }

@@ -13,7 +13,7 @@ export class BikeFailedReservationsPerStation {
         let key: number = reservation.user.id;
         let value: number | undefined;
         
-        if (reservation.type === "ReservationType.BIKE" && reservation.state === "ReservationState.FAILED") {
+        if (reservation.type === ReservationType.BIKE && reservation.state === ReservationState.FAILED) {
             value = this.bikeFailedReservationsPerUser.get(key);
             if (value !== undefined) {
                 this.bikeFailedReservationsPerUser.set(key, ++value);

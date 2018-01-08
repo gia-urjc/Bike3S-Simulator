@@ -2,20 +2,20 @@
   "rules": {
     "class-name": true,
     "comment-format": [
-      true,
+      false,
       "check-space"
     ],
     "curly": [true, "ignore-same-line"],
-    "eofline": true,
+    "eofline": false,
     "forin": true,
     "indent": [
-      true,
+      false,
       "spaces"
     ],
     "label-position": true,
     "label-undefined": true,
     "max-line-length": [
-      true,
+      false,
       140
     ],
     "member-access": false,
@@ -42,7 +42,7 @@
     "no-inferrable-types": true,
     "no-shadowed-variable": true,
     "no-string-literal": false,
-    "no-trailing-whitespace": true,
+    "no-trailing-whitespace": false,
     "no-unused-expression": [true, "allow-fast-null-checks"],
     "no-unused-variable": true,
     "no-unreachable": true,
@@ -50,18 +50,19 @@
     "no-var-keyword": true,
     "object-literal-sort-keys": false,
     "one-line": [
-      true,
+      false,
       "check-open-brace",
       "check-catch",
       "check-else",
       "check-whitespace"
     ],
-    "ordered-imports": true,
+    "ordered-imports": false,
     "quotemark": [
-      true,
+      false,
       "single"
     ],
     "semicolon": [
+      false,
       "always"
     ],
     "triple-equals": [
@@ -80,7 +81,7 @@
     ],
     "variable-name": false,
     "whitespace": [
-      true,
+      false,
       "check-branch",
       "check-decl",
       "check-operator",

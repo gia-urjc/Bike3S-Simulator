@@ -1,7 +1,8 @@
 import { HistoryReader } from '../../util/HistoryReader';
 import { HistoryIterator } from '../HistoryIterator';
-import { HistoryEntities } from '../../../shared/History' 
-import { ReservationsAbsoluteValues } from './users/userData/ReservationsAbsoluteValues';
+import { HistoryEntities, HistoryEntitiesJson } from '../../../shared/History' 
+import { Reservation } from '../dataTypes/Entities';
+import { ReservationsAbsoluteValues } from './users/ReservationsAbsoluteValues';
 import { Observer, Observable } from './ObserverPattern';
 
 export class AbsoluteValues implements Observable {
@@ -15,8 +16,7 @@ export class AbsoluteValues implements Observable {
     
     public async calculateReservations(): Promise<void> {
         let history: HistoryReader = await HistoryReader.create(this.path);
-        let entities: HistoryEntities = await history.readEntities();
-        let reservations: Array<any> = entities.reservations;
+        let reservations: Array<Reservation> = await history.getEntities("reservations").instances;
         
         for (let reservation of reservations) {
             this.notify(reservation);

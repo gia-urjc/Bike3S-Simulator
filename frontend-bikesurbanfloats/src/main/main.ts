@@ -52,17 +52,9 @@ namespace Main {
         });
 
     }
-    
-   export async function test() {
-       let v = new AbsoluteValuesUser(); 
-       await v.init('../backend-bikesurbanfloats/history');
-       v.calculateReservations();
-       console.log('user 1:', v.getBikeSuccessfulReservations(1));
-   }
+   
     
 }
   
-
 Main.init();
 
-Main.test();
