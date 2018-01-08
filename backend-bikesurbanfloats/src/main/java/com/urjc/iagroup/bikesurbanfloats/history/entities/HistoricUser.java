@@ -2,6 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
 import com.google.gson.annotations.Expose;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
+import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.AssociatedType;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
@@ -11,6 +12,8 @@ import com.urjc.iagroup.bikesurbanfloats.graphs.GeoRoute;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
 import com.urjc.iagroup.bikesurbanfloats.history.History.IdReference;
 import com.urjc.iagroup.bikesurbanfloats.history.JsonIdentifier;
+
+import java.util.stream.Collectors;
 
 /**
  * It contains the relevant information of a specific user, e. g., its history.
@@ -33,6 +36,7 @@ public class HistoricUser implements HistoricEntity {
     private GeoRoute route;
     private IdReference bike;
     private IdReference destinationStation;
+    private IdReference reservations;
 
     @Expose
     private UserType type;
@@ -49,6 +53,7 @@ public class HistoricUser implements HistoricEntity {
         this.destinationStation = station == null ? null : new IdReference(HistoricStation.class, station.getId());
         this.route = user.getRoute();
         this.type = user.getClass().getAnnotation(AssociatedType.class).value();
+        this.reservations = new IdReference(HistoricReservation.class, user.getReservations().stream().map(Reservation::getId).collect(Collectors.toList()));
     }
 
     @Override
