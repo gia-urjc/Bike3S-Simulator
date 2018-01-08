@@ -3,7 +3,7 @@ import { Geo } from '../../../../shared/util';
 import { LeafletUtil } from '../util';
 import { Visualization } from '../visualization.component';
 import { Bike } from './Bike';
-import { Entity, Visual } from './Entity';
+import { Entity, Historic } from './Entity';
 import { Station } from './Station';
 
 import './user.css';
@@ -22,7 +22,7 @@ function makeIcon(user: User) {
     return icon;
 }
 
-@Visual<User>({
+@Historic<User>({
     jsonIdentifier: 'users',
     show: {
         at: {

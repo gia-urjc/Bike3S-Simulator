@@ -7,7 +7,7 @@ type EntityCallback<T extends Entity, R> = (entity: T) => R;
 type LeafletEventCallback<T extends Entity, E extends LeafletEvent> = (entity: T, event: E) => void;
 type AllowedEvents = Flatten<LeafletUtil.MarkerEvents, 'Map' | 'Mouse' | 'Popup' | 'Tooltip'>;
 
-export interface VisualConfiguration<T extends Entity = any> {
+export interface HistoricConfiguration<T extends Entity = any> {
     jsonIdentifier: string,
     show?: {
         at: EntityCallback<T, Geo.Point | null> | {
@@ -26,9 +26,9 @@ export interface VisualConfiguration<T extends Entity = any> {
     },
 }
 
-export function Visual<T extends Entity>(configuration: VisualConfiguration<T>) {
+export function Historic<T extends Entity>(configuration: HistoricConfiguration<T>) {
     return function (Target: { new(): T }) {
-        Reflect.defineMetadata(Visual, configuration, Target);
+        Reflect.defineMetadata(Historic, configuration, Target);
         return Target;
     }
 }
