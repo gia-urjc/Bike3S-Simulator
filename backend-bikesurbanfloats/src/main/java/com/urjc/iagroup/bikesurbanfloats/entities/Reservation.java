@@ -45,7 +45,7 @@ public class Reservation implements Entity {
     /**
      * It is the bike which the user reserves or the rented bike which the user wants to return.
      */
-    private Bike bike;  
+    private Bike bike;
 
     /**
      * As it receives a bike param, it creates an active reservation 
@@ -53,13 +53,9 @@ public class Reservation implements Entity {
     
     public Reservation(int startInstant, ReservationType type, User user, Station station, Bike bike) {
         this.id = idGenerator.next();
-        this.startInstant = startInstant;
+        this.commonInit(startInstant, type, user, station, bike);
         this.endInstant = -1; // reservation has'nt ended
-        this.type = type;
         this.state = ReservationState.ACTIVE;
-        this.user = user;
-        this.station = station;
-        this.bike = bike;
         History.registerEntity(this);
     }
     
@@ -68,9 +64,19 @@ public class Reservation implements Entity {
      */
 
     public Reservation(int startInstant, ReservationType type, User user, Station station) {
-        this(startInstant, type, user, station, null);
+        this.id = idGenerator.next();
+        this.commonInit(startInstant, type, user, station, null);
         this.endInstant = startInstant;
         this.state = ReservationState.FAILED;
+        History.registerEntity(this);
+    }
+
+    private void commonInit(int startInstant, ReservationType type, User user, Station station, Bike bike) {
+        this.startInstant = startInstant;
+        this.type = type;
+        this.user = user;
+        this.station = station;
+        this.bike = bike;
     }
 
     @Override

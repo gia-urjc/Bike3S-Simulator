@@ -2,6 +2,7 @@ package com.urjc.iagroup.bikesurbanfloats.history.entities;
 
 import com.google.gson.annotations.Expose;
 import com.urjc.iagroup.bikesurbanfloats.entities.Bike;
+import com.urjc.iagroup.bikesurbanfloats.entities.Reservation;
 import com.urjc.iagroup.bikesurbanfloats.entities.Station;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 import com.urjc.iagroup.bikesurbanfloats.history.HistoricEntity;
@@ -36,11 +37,14 @@ public class HistoricStation implements HistoricEntity {
     @Expose
     private IdReference bikes;
 
+    private IdReference reservations;
+
     public HistoricStation(Station station) {
         this.id = station.getId();
         this.position = new GeoPoint(station.getPosition());
         this.capacity = station.getCapacity();
         this.bikes = new IdReference(HistoricBike.class, station.getBikes().stream().map(bikeIdConverter).collect(Collectors.toList()));
+        this.reservations = new IdReference(HistoricReservation.class, station.getReservations().stream().map(Reservation::getId).collect(Collectors.toList()));
     }
 
     @Override
