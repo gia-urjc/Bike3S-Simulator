@@ -1,6 +1,6 @@
-package es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints;
+package es.urjc.ia.bikesurbanfleets.usersgenerator.config.entrypoints;
 
-import es.urjc.ia.bikesurbanfleets.usersgenerator.common.SingleUser;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.SingleUser;
 
 import java.util.List;
 

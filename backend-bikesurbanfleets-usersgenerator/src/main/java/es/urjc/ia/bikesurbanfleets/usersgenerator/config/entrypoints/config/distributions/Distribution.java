@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.distributions;
+package es.urjc.ia.bikesurbanfleets.usersgenerator.config.entrypoints.config.distributions;
 
 /**
  * This class represents the math distribution concept.

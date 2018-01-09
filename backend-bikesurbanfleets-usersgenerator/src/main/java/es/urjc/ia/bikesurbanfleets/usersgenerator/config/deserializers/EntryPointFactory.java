@@ -1,11 +1,11 @@
-package es.urjc.ia.bikesurbanfleets.usersgenerator.common.deserializers;
+package es.urjc.ia.bikesurbanfleets.usersgenerator.config.deserializers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.EntryPoint;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.EntryPointPoisson;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.distributions.Distribution;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.entrypoints.EntryPoint;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.entrypoints.EntryPointPoisson;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.entrypoints.config.distributions.Distribution;
 
 /**
  * This class serves to create, in a generic way, entry point instances.

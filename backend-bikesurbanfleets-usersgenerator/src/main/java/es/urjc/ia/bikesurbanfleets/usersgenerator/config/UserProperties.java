@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.usersgenerator.common;
+package es.urjc.ia.bikesurbanfleets.usersgenerator.config;
 
 import com.google.gson.JsonElement;
 public class UserProperties {

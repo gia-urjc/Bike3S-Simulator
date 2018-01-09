@@ -3,6 +3,7 @@ package es.urjc.ia.bikesurbanfleets.core.config.entrypoints;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingCircle;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+import es.urjc.ia.bikesurbanfleets.common.util.TimeRange;
 import es.urjc.ia.bikesurbanfleets.core.config.entrypoints.distributions.DistributionPoisson;
 import es.urjc.ia.bikesurbanfleets.core.entities.users.User;
 import es.urjc.ia.bikesurbanfleets.core.entities.users.UserFactory;

@@ -1,8 +1,8 @@
-package es.urjc.ia.bikesurbanfleets.usersgenerator.common.deserializers;
+package es.urjc.ia.bikesurbanfleets.usersgenerator.config.deserializers;
 
 import com.google.gson.*;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.EntryPoint;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.distributions.Distribution;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.entrypoints.EntryPoint;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.entrypoints.config.distributions.Distribution;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

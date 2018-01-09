@@ -1,12 +1,12 @@
-package es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints;
+package es.urjc.ia.bikesurbanfleets.usersgenerator.config.entrypoints;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingCircle;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.common.util.TimeRange;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.common.SingleUser;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.common.UserProperties;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.distributions.DistributionPoisson;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.SingleUser;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.UserProperties;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.entrypoints.config.distributions.DistributionPoisson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class EntryPointPoisson extends EntryPoint {
 
     @Override
     public List<SingleUser> generateUsers() {
-        List<SingleUser> generatedEvents = new ArrayList<>();
+        List<SingleUser> users = new ArrayList<>();
         int currentTime, endTime;
         int usersCounter = 0;
         int maximumUsers;
@@ -69,7 +69,6 @@ public class EntryPointPoisson extends EntryPoint {
         maximumUsers = totalUsers == 0 ? Integer.MAX_VALUE : totalUsers;
 
         while (currentTime < endTime && usersCounter < maximumUsers) {
-            User user = userFactory.createUser(userType);
             usersCounter++;
             GeoPoint userPosition;
 
@@ -82,10 +81,10 @@ public class EntryPointPoisson extends EntryPoint {
             }
             int timeEvent = distribution.randomInterarrivalDelay();
             currentTime += timeEvent;
-            //EventUserAppears newEvent = new EventUserAppears(currentTime, user, userPosition);
-            //generatedEvents.add(newEvent);
+            SingleUser user = new SingleUser(userPosition, userType, currentTime);
+            users.add(user);
         }
-        return generatedEvents;
+        return users;
     }
 
     @Override
