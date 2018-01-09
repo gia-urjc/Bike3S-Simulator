@@ -1,8 +1,9 @@
-import { HistoryReader } from '../../../util';
-import { Observer } from '../ObserverPattern';
-import  { User, Reservation } from '../../dataTypes/Entities';
+import { HistoryReader } from '../../../../util';
+import { HistoryEntitiesJson } from '../../../../../shared/History';
+import { Observer } from '../../ObserverPattern';
+import  { User, Reservation, ReservationType, ReservationState } from '../../../systemDataTypes/Entities';
 
-export class ReservationsAbsoluteValues implements Observer {
+export class ReservationsPerUser implements Observer {
     private users: Array<User>;
     private bikeFailedReservationsPerUser: Map<number, number>; 
     private slotFailedReservationsPerUser: Map<number, number>;
@@ -18,7 +19,8 @@ export class ReservationsAbsoluteValues implements Observer {
     
     private async init(path: string): Promise<void> {
         let history: HistoryReader = await HistoryReader.create(path);
-        this.users = await history.getEntities("users").instances;
+        let entities: HistoryEntitiesJson = await history.getEntities("users");
+        this.users = entities.instances;   
         
         for(let user of this.users) {
             this.bikeFailedReservationsPerUser.set(user.id, 0);
@@ -28,8 +30,8 @@ export class ReservationsAbsoluteValues implements Observer {
         }
     }
    
-    public static async create(path: string): Promise<ReservationsAbsoluteValues> {
-        let reservationValues = new ReservationsAbsoluteValues();
+    public static async create(path: string): Promise<ReservationsPerUser> {
+        let reservationValues = new ReservationsPerUser();
         await reservationValues.init(path);
 
         return reservationValues;
@@ -55,25 +57,25 @@ export class ReservationsAbsoluteValues implements Observer {
         let key: number = reservation.user.id;
         let value: number | undefined;
         
-        if (reservation.type === "ReservationType.BIKE" && reservation.state === "ReservationState.FAILED") {
+        if (reservation.type === ReservationType.BIKE && reservation.state === ReservationState.FAILED) {
             value = this.bikeFailedReservationsPerUser.get(key);
             if (value !== undefined) {
                 this.bikeFailedReservationsPerUser.set(key, ++value);
             }
         }
-        else if (reservation.type === "ReservationType.SLOT" && reservation.state === "ReservationState.FAILED") {
+        else if (reservation.type === ReservationType.SLOT && reservation.state === ReservationState.FAILED) {
             value = this.slotFailedReservationsPerUser.get(key);
             if (value !== undefined) {                 
                 this.slotFailedReservationsPerUser.set(key, ++value);
             }
         }
-        else if (reservation.type === "ReservationType.BIKE" && reservation.state === "ReservationState.SUCCESSFUL") {
+        else if (reservation.type === ReservationType.BIKE && reservation.state === ReservationState.SUCCESSFUL) {
             value = this.bikeSuccessfulReservationsPerUser.get(key);
             if (value !== undefined) {
                 this.bikeSuccessfulReservationsPerUser.set(key, ++value);
             }
         }
-        else if (reservation.type === "ReservationType.SLOT" && reservation.state === "ReservationState.SUCCESSFUL") {
+        else if (reservation.type === ReservationType.SLOT && reservation.state === ReservationState.SUCCESSFUL) {
             value = this.slotSuccessfulReservationsPerUser.get(key);
             if (value !== undefined) {                                
                 this.slotSuccessfulReservationsPerUser.set(key, ++value);

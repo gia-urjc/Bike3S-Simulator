@@ -1,18 +1,18 @@
 import { HistoryReader } from '../util';
 import { HistoryTimeEntries } from '../../shared/history';
+import { TimeEntry } from './systemData/SystemInternalData';
 
 export class HistoryIterator {
     private history: HistoryReader;
     private currentFile: HistoryTimeEntries;
     private pointer: number;
            
-    public constructor() {
+    private constructor() {
         this.history = undefined;
         this.currentFile = undefined;
         this.pointer = -1;
     }
-    
-    
+        
     public static async create(path: string): Promise<HistoryIterator> {
         let historyIt: HistoryIterator = await HistoryIterator.create(path);
         historyIt.history = await HistoryReader.create(path);
@@ -25,8 +25,8 @@ export class HistoryIterator {
         return historyIt;
     } 
     
- public async nextTimeEntry(): Promise<any> {
-     let timeEntry: any = undefined;
+ public async nextTimeEntry(): Promise<TimeEntry> {
+     let timeEntry: TimeEntry = undefined;
      if (this.currentFile !== undefined) {
         this.pointer++;
         timeEntry = this.currentFile[this.pointer];
