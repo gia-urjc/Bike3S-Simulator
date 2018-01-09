@@ -1,4 +1,4 @@
-import { HistoryReader } from '../../../util/HistoryReader';
+import { HistoryReader } from '../../../util';
 import { HistoryIterator } from '../../HistoryIterator';
 import { TimeEntry } from '../../systemDataTypes/SystemInternalData';
 import { Observer, Observable } from '../ObserverPattern';
@@ -30,7 +30,7 @@ export class TimeEntriesIterator implements Observable {
         }
     }
     
-    public subbscribe(observer: Observer): void {
+    public subscribe(observer: Observer): void {
         this.observers.push(observer);
     }
 

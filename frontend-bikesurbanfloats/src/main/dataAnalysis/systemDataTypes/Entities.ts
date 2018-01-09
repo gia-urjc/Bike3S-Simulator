@@ -1,5 +1,6 @@
+import { HistoryEntity } from "../../../shared/history";
 import { PlainObject } from '../../../shared/util';
-export interface Entity {
+export interface Entity extends  PlainObject {
     id: number;
 }
 
@@ -22,7 +23,7 @@ export enum ReservationState {
     FAILED, SUCCESSFUL
 }
 
-export interface Reservation extends Entity, PlainObject {
+export interface Reservation extends Entity {
     type: ReservationType;
     state: ReservationState;
 }

@@ -2,6 +2,8 @@ import { app, BrowserWindow, shell } from 'electron';
 import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
+import { ReservationsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/ReservationsPerUser";
+import { ReservationsIterator } from "./dataAnalysis/absoluteValues/systemDataIterators/ReservationsIterator";
 import { Settings } from './settings';
 import { HistoryReader } from './util';
 
@@ -63,9 +65,18 @@ namespace Main {
         });
 
     }
+    
+    export async function ptm() {
+        let values = await ReservationsPerUser.create('history');
+        let it = await ReservationsIterator.create('history');
+        it.subscribe(values);
+        it.calculateReservations();
+        console.log('user 1:  ', values.getBikeSuccessfulReservationsOfUser(1));
+    } 
    
     
 }
   
 Main.init();
+Main.ptm();
 

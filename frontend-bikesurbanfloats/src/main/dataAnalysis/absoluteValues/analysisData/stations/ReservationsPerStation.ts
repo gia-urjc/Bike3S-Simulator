@@ -20,7 +20,7 @@ export class ReservationsPerStation implements Observer {
     private async init(path: string): Promise<void> {
         let history: HistoryReader = await HistoryReader.create(path);
         let entities: HistoryEntitiesJson = await history.getEntities("stations");
-        this.stations = entities.stations;
+        this.stations = <Station[]> entities.instances;
         
         for(let station of this.stations) {
             this.bikeFailedReservationsPerStation.set(station.id, 0);
