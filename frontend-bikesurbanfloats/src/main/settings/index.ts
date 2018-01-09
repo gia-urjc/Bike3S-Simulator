@@ -14,7 +14,7 @@ export namespace Settings {
 
     async function read(): Promise<void> {
         try {
-            data = await readJson(file);
+            data = Object.assign(defaultSettings, await readJson(file));
         } catch {
             data = defaultSettings;
         }
