@@ -67,11 +67,14 @@ namespace Main {
     }
     
     export async function ptm() {
+        console.log('HOLA MUNDO');
         let values = await ReservationsPerUser.create('history');
+        console.log('values created');
         let it = await ReservationsIterator.create('history');
+        console.log('iterator created');
         it.subscribe(values);
         it.calculateReservations();
-        console.log('user 1:  ', values.getBikeSuccessfulReservationsOfUser(1));
+        console.log('user 25:  ', values.getBikeFailedReservationsOfUser(25));
     } 
    
     

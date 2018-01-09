@@ -19,22 +19,34 @@ export class ReservationsPerUser implements Observer {
     
     private async init(path: string): Promise<void> {
         let history: HistoryReader = await HistoryReader.create(path);
+        try {
         let entities: HistoryEntitiesJson = await history.getEntities("users");
         this.users = entities.instances;   
         
         for(let user of this.users) {
+            console.log('user ', user.id, ' ' );
             this.bikeFailedReservationsPerUser.set(user.id, 0);
             this.slotFailedReservationsPerUser.set(user.id, 0);            
             this.bikeSuccessfulReservationsPerUser.set(user.id, 0);
             this.slotSuccessfulReservationsPerUser.set(user.id, 0);
         }
+        }
+        catch(error) {
+            console.log('error getting user:', error);
+        }
+        return;
     }
    
     public static async create(path: string): Promise<ReservationsPerUser> {
         let reservationValues = new ReservationsPerUser();
-        await reservationValues.init(path);
-
-        return reservationValues;
+        try {
+            await reservationValues.init(path);
+            return reservationValues;
+        }
+        catch {
+            console.log('error initializing reservations per user data');
+        }
+        return;
     }
     
     public getBikeFailedReservationsOfUser(userId: number): number| undefined {
@@ -61,26 +73,31 @@ export class ReservationsPerUser implements Observer {
             value = this.bikeFailedReservationsPerUser.get(key);
             if (value !== undefined) {
                 this.bikeFailedReservationsPerUser.set(key, ++value);
+                console.log('(', key, ' ', value, ') ')
             }
         }
         else if (reservation.type === ReservationType.SLOT && reservation.state === ReservationState.FAILED) {
             value = this.slotFailedReservationsPerUser.get(key);
-            if (value !== undefined) {                 
+            if (value !== undefined) {
+                console.log('(', key, ' ', value, ')')                 
                 this.slotFailedReservationsPerUser.set(key, ++value);
             }
         }
         else if (reservation.type === ReservationType.BIKE && reservation.state === ReservationState.SUCCESSFUL) {
             value = this.bikeSuccessfulReservationsPerUser.get(key);
             if (value !== undefined) {
+                console.log('(', key, ' ', value, ')')
                 this.bikeSuccessfulReservationsPerUser.set(key, ++value);
             }
         }
         else if (reservation.type === ReservationType.SLOT && reservation.state === ReservationState.SUCCESSFUL) {
             value = this.slotSuccessfulReservationsPerUser.get(key);
-            if (value !== undefined) {                                
+            if (value !== undefined) {
+                console.log('(', key, ' ', value, ')')                                
                 this.slotSuccessfulReservationsPerUser.set(key, ++value);
             }
         }
+        console.log('updated');
 
     }
 

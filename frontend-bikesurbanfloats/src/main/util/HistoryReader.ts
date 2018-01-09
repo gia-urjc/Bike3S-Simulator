@@ -93,6 +93,7 @@ export default class HistoryReader {
         const entities = await fs.readJson(paths.join(this.historyPath, `entities/${type}.json`));
 
         if (!HistoryReader.ajv.validate(HistoryReader.entityFileSchema, entities)) {
+            console.log(HistoryReader.ajv.errorsText());
             throw new Error(HistoryReader.ajv.errorsText());
         }
 
