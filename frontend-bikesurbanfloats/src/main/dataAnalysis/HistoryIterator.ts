@@ -1,10 +1,10 @@
+import { HistoryTimeEntry } from "../../shared/history";
 import { HistoryReader } from '../util';
-import { HistoryTimeEntries } from '../../shared/history';
-import { TimeEntry } from './systemData/SystemInternalData';
+import { TimeEntry } from './systemDataTypes/SystemInternalData';
 
 export class HistoryIterator {
     private history: HistoryReader;
-    private currentFile: HistoryTimeEntries;
+    private currentFile: Array<HistoryTimeEntry>;
     private pointer: number;
            
     private constructor() {

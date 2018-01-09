@@ -21,7 +21,7 @@ export class RentalsAndReturnsPerUser implements Observer {
     private async init(path: string): Promise<void> {
         let history: HistoryReader = await HistoryReader.create(path);
         let entities: HistoryEntitiesJson = await history.getEntities("users");
-        this.users = entities.users;
+        this.users = entities.instances ;
                 
         for(let user of this.users) {
             this.bikeFailedRentalsPerUser.set(user.id, 0);

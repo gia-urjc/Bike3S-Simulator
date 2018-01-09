@@ -1,4 +1,5 @@
-import { HistoryReader } from '../../../util/HistoryReader';
+import { HistoryEntitiesJson } from "../../../../shared/history";
+import { HistoryReader } from '../../../util/';
 import { HistoryIterator } from '../../HistoryIterator';
 import { Reservation } from '../../systemDataTypes/Entities';
 import { Observer, Observable } from '../ObserverPattern';
@@ -13,7 +14,8 @@ export class ReservationsIterator implements Observable {
     
     private async init(path: string): Promise<void> {
         let history: HistoryReader = await HistoryReader.create(path);
-        this.reservations = await history.getEntities("reservations").instances;
+        let entities: HistoryEntitiesJson = await history.getEntities("reservations");
+        this.reservations = <Reservation[]> entities.instances; 
     }
     
     public static async create(path: string): Promise<ReservationsIterator> {
@@ -34,7 +36,7 @@ export class ReservationsIterator implements Observable {
         }
     }
     
-    public subbscribe(observer: Observer): void {
+    public subscribe(observer: Observer): void {
         this.observers.push(observer);
     }
 
