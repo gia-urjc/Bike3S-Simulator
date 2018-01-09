@@ -1,5 +1,11 @@
 package es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints;
 
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.common.util.BoundingCircle;
+import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+import es.urjc.ia.bikesurbanfleets.common.util.TimeRange;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.common.SingleUser;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.common.UserProperties;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.distributions.DistributionPoisson;
 
 import java.util.ArrayList;
@@ -45,9 +51,8 @@ public class EntryPointPoisson extends EntryPoint {
     private int totalUsers;
 
     @Override
-    public List<EventUserAppears> generateEvents() {
-        List<EventUserAppears> generatedEvents = new ArrayList<>();
-        UserFactory userFactory = new UserFactory();
+    public List<SingleUser> generateUsers() {
+        List<SingleUser> generatedEvents = new ArrayList<>();
         int currentTime, endTime;
         int usersCounter = 0;
         int maximumUsers;
@@ -77,8 +82,8 @@ public class EntryPointPoisson extends EntryPoint {
             }
             int timeEvent = distribution.randomInterarrivalDelay();
             currentTime += timeEvent;
-            EventUserAppears newEvent = new EventUserAppears(currentTime, user, userPosition);
-            generatedEvents.add(newEvent);
+            //EventUserAppears newEvent = new EventUserAppears(currentTime, user, userPosition);
+            //generatedEvents.add(newEvent);
         }
         return generatedEvents;
     }

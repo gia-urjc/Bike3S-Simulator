@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.core.config.entrypoints;
+package es.urjc.ia.bikesurbanfleets.common.util;
 
 public class TimeRange {
     
@@ -19,6 +19,5 @@ public class TimeRange {
     public int getStart() {
         return start;
     }
-
 
 }

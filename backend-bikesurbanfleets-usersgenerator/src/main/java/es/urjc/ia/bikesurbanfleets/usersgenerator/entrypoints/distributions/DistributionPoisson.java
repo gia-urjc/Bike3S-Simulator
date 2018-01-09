@@ -1,6 +1,8 @@
 package es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.distributions;
 
 
+import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+
 /**
  * This class represents a Poisson math distribution.
  * It contains the typical parameter that characterizes a Poisson math distribution.

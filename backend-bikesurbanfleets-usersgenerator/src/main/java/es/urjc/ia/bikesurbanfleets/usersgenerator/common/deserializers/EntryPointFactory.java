@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.EntryPoint;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.EntryPointPoisson;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoints.distributions.Distribution;
 
 /**

@@ -1,17 +1,15 @@
-package es.urjc.ia.bikesurbanfleets.core.config.entrypoints;
+package es.urjc.ia.bikesurbanfleets.usersgenerator.common;
 
 import com.google.gson.JsonElement;
-import es.urjc.ia.bikesurbanfleets.core.entities.users.UserType;
-
 public class UserProperties {
 
-    private UserType typeName;
+    private String typeName;
 
     private JsonElement parameters;
 
     public UserProperties(){}
 
-    public UserType getTypeName() {
+    public String getTypeName() {
         return typeName;
     }
 
