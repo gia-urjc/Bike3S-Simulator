@@ -18,7 +18,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
 
     public EventUserArrivesAtStationToRentBikeWithReservation(int instant, User user, Station station, Reservation reservation) {
         super(instant, user);
-        this.entities = Arrays.asList(user, station, reservation);
+        this.entities = new ArrayList<>(Arrays.asList(user, station, reservation));
         this.station = station;
         this.reservation = reservation;
     }
@@ -36,7 +36,6 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         List<Event> newEvents = new ArrayList<>();;
         user.setPosition(station.getPosition());
         reservation.resolve(instant);
-        user.addReservation(reservation);
         user.removeBikeWithReservationFrom(station);
         if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
             newEvents = manageSlotReservationDecisionAtOtherStation();

@@ -1,6 +1,6 @@
-import { Entity, Visual } from './Entity';
+import { Entity, Historic } from './Entity';
 
-@Visual<Bike>({
+@Historic<Bike>({
     jsonIdentifier: 'bikes',
 })
 export class Bike extends Entity {

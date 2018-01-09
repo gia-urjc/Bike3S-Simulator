@@ -15,7 +15,7 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
 
     public EventUserArrivesAtStationToReturnBikeWithoutReservation(int instant, User user, Station station) {
         super(instant, user);
-        this.entities = Arrays.asList(user, station);
+        this.entities = new ArrayList<>(Arrays.asList(user, station));
         this.station = station;
     }
     

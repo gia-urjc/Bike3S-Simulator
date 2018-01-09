@@ -64,13 +64,18 @@ public class Reservation implements Entity {
     }
     
     /**
-     * As it doesn't receive a bike param, it creates a failed reservation 
+     * As it doesn't receive a bike parameter, it creates a failed reservation 
      */
-
     public Reservation(int startInstant, ReservationType type, User user, Station station) {
-        this(startInstant, type, user, station, null);
+        this.id = idGenerator.next();
+        this.startInstant = startInstant;
         this.endInstant = startInstant;
+        this.type = type;
         this.state = ReservationState.FAILED;
+        this.user = user;
+        this.station = station;
+        this.bike = null;
+        History.registerEntity(this);
     }
 
     @Override
@@ -109,7 +114,6 @@ public class Reservation implements Entity {
     /**
      * Set reservation state to expired and updates reservation end instant 
      */
-
     public void expire() {
         this.state = ReservationState.EXPIRED;
         this.endInstant = this.startInstant + VALID_TIME;
@@ -119,7 +123,6 @@ public class Reservation implements Entity {
      * Set reservation state to successful and updates reservation end instant
      * @param endInstant: it is the time instant when user removes or returns a bike with a previous bike or slot reservation, respectively
      */
-
     public void resolve(int endInstant) {
         this.state = ReservationState.SUCCESSFUL;
         this.endInstant = endInstant;

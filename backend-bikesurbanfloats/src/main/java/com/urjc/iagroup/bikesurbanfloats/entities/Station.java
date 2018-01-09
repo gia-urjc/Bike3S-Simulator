@@ -6,6 +6,7 @@ import com.urjc.iagroup.bikesurbanfloats.history.HistoryReference;
 import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricStation;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +26,7 @@ public class Station implements Entity {
     private final GeoPoint position;
     private int capacity;
     private List<Bike> bikes;
+    private List<Reservation> reservations;
 
     private int reservedBikes;
     private int reservedSlots;
@@ -36,6 +38,7 @@ public class Station implements Entity {
         this.bikes = bikes;
         this.reservedBikes = 0;
         this.reservedSlots = 0;
+        this.reservations = new ArrayList<>();
         History.registerEntity(this);
     }
 
@@ -54,6 +57,10 @@ public class Station implements Entity {
 
     public List<Bike> getBikes() {
         return bikes;
+    }
+
+    public List<Reservation> getReservations() {
+        return this.reservations;
     }
 
     public int getReservedBikes() {

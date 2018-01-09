@@ -17,7 +17,7 @@ public class EventBikeReservationTimeout extends EventUser {
     
     public EventBikeReservationTimeout(int instant, User user, Reservation reservation, GeoPoint positionTimeOut) {
         super(instant, user);
-        this.entities = Arrays.asList(user, reservation);
+        this.entities = new ArrayList<>(Arrays.asList(user, reservation));
         this.reservation = reservation;
         this.positionTimeOut = positionTimeOut;
     }
@@ -31,7 +31,6 @@ public class EventBikeReservationTimeout extends EventUser {
         List<Event> newEvents = new ArrayList<>();
         user.setPosition(positionTimeOut);
         reservation.expire();
-        user.addReservation(reservation);
         user.cancelsBikeReservation(user.getDestinationStation());
         user.getMemory().update(UserMemory.FactType.BIKE_RESERVATION_TIMEOUT);
 

@@ -16,6 +16,7 @@ import com.urjc.iagroup.bikesurbanfloats.history.entities.HistoricUser;
 import com.urjc.iagroup.bikesurbanfloats.util.IdGenerator;
 import com.urjc.iagroup.bikesurbanfloats.util.SimulationRandom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -188,6 +189,11 @@ public abstract class User implements Entity {
 
     public double getCyclingVelocity() {
         return cyclingVelocity;
+    }
+
+    public List<Reservation> getReservations() {
+        if (systemManager == null) return new ArrayList<>();
+        return systemManager.consultReservations(this);
     }
     
     public UserMemory getMemory() {

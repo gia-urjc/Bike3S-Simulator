@@ -1,11 +1,11 @@
 import { DivIcon } from 'leaflet';
 import { Geo } from '../../../../shared/util';
 import { Bike } from './Bike';
-import { Entity, Visual } from './Entity';
+import { Entity, Historic } from './Entity';
 
 import './station.css';
 
-@Visual<Station>({
+@Historic<Station>({
     jsonIdentifier: 'stations',
     show: {
         at: (station) => station.position,
@@ -20,10 +20,10 @@ import './station.css';
                 className: 'station-marker',
                 iconSize: [30, 30],
                 html: `
-                <div class="ratio-ring" style="background: url(${gradient.png}) no-repeat;">
-                    <div class="bike-counter">${nBikes}</div>
-                </div>
-            `,
+                    <div class="ratio-ring" style="background: url(${gradient.png}) no-repeat;">
+                        <div class="bike-counter">${nBikes}</div>
+                    </div>
+                `,
             });
         },
         onMarkerEvent: {

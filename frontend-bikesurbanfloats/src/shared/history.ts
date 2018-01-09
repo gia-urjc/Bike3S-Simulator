@@ -31,6 +31,23 @@ export type HistoryTimeEntry = {
     }>
 }
 
+export enum ReservationType {
+    SLOT = 'SLOT',
+    BIKE = 'BIKE',
+}
+
+export enum ReservationState {
+    ACTIVE = 'ACTIVE',
+    FAILED = 'FAILED',
+    EXPIRED = 'EXPIRED',
+    SUCCESSFUL = 'SUCCESSFUL',
+}
+
+export interface Timestamp {
+    seconds: number,
+    formatted: string,
+}
+
 export interface IdReference {
     type: string,
     id: number | Array<number | null>,

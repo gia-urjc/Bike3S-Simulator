@@ -4,6 +4,7 @@ import com.urjc.iagroup.bikesurbanfloats.entities.Entity;
 import com.urjc.iagroup.bikesurbanfloats.entities.users.User;
 import com.urjc.iagroup.bikesurbanfloats.graphs.GeoPoint;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class EventUserAppears extends EventUser {
     
     public EventUserAppears(int instant, User user, GeoPoint position) {
         super(instant, user);
-        this.entities = Arrays.asList(user);
+        this.entities = new ArrayList<>(Arrays.asList(user));
         this.position = position;
     }
 
