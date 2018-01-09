@@ -36,7 +36,18 @@ namespace Main {
 
             if (process.env.target === 'development') {
                 const extensions = await Settings.get(settingsPathGenerator().development.extensions());
-                Object.values(extensions).forEach(BrowserWindow.addDevToolsExtension);
+                Object.entries(extensions).forEach(([name, extensionPath]) => {
+                    if (!extensionPath) {
+                        console.log(`Empty path for browser extension ${name}`);
+                        return;
+                    }
+
+                    try {
+                        BrowserWindow.addDevToolsExtension(extensionPath);
+                    } catch (e) {
+                        console.log(`Couldn't load browser extension ${name} from path ${extensionPath}`);
+                    }
+                });
             }
 
             createWindow();
