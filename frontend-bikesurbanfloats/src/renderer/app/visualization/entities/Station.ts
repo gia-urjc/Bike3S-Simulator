@@ -7,7 +7,7 @@ import './station.css';
 
 @Historic<Station>({
     jsonIdentifier: 'stations',
-    show: {
+    marker: {
         at: (station) => station.position,
         icon: (station) => {
             const nBikes = station.bikes.reduce((r, v) => v !== null && r + 1 || r, 0);
@@ -26,7 +26,7 @@ import './station.css';
                 `,
             });
         },
-        onMarkerEvent: {
+        on: {
             click: (station) => console.log(station)
         },
         popup: (station) => `
