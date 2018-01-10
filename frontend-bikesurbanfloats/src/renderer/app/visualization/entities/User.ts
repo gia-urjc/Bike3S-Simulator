@@ -15,7 +15,7 @@ function updateIcon(user: User) {
     let margin = -250;
 
     if (user.reservations.find((reservation) => reservation.state === ReservationState.ACTIVE)) {
-        reservationBadge = `<span class="badge badge-pill badge-info">R</span>`
+        reservationBadge = `<span class="badge badge-pill badge-info">R</span>`;
         margin = -350;
     }
 
