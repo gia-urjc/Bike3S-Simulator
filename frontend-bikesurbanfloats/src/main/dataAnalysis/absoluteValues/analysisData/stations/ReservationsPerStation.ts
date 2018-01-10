@@ -13,7 +13,7 @@ export class ReservationsPerStation implements Observer {
     private constructor() {
         this.bikeFailedReservationsPerStation = new Map<number, number>(); 
         this.slotFailedReservationsPerStation = new Map<number, number>();
-        this.slotFailedReservationsPerStation = new Map<number, number>();
+        this.bikeSuccessfulReservationsPerStation = new Map<number, number>();
         this.slotSuccessfulReservationsPerStation = new Map<number, number>();
     }
     
@@ -56,31 +56,30 @@ export class ReservationsPerStation implements Observer {
         let key: number = reservation.station.id;
         let value: number | undefined;
         
-        if (reservation.type === ReservationType.BIKE && reservation.state === ReservationState.FAILED) {
+        if (reservation.type === 'BIKE' && reservation.state === 'FAILED') {
             value = this.bikeFailedReservationsPerStation.get(key);
             if (value !== undefined) {
                 this.bikeFailedReservationsPerStation.set(key, ++value);
             }
         }
-        else if (reservation.type === ReservationType.SLOT && reservation.state === ReservationState.FAILED) {
+        else if (reservation.type === 'SLOT' && reservation.state === 'FAILED') {
             value = this.slotFailedReservationsPerStation.get(key);
             if (value !== undefined) {                 
                 this.slotFailedReservationsPerStation.set(key, ++value);
             }
         }
-        else if (reservation.type === ReservationType.BIKE && reservation.state === ReservationState.SUCCESSFUL) {
+        else if (reservation.type === 'BIKE' && reservation.state === 'SUCCESSFUL') {
             value = this.bikeSuccessfulReservationsPerStation.get(key);
             if (value !== undefined) {
                 this.bikeSuccessfulReservationsPerStation.set(key, ++value);
             }
         }
-        else if (reservation.type === ReservationType.SLOT && reservation.state === ReservationState.SUCCESSFUL) {
+        else if (reservation.type === 'SLOT' && reservation.state === 'SUCCESSFUL') {
             value = this.slotSuccessfulReservationsPerStation.get(key);
             if (value !== undefined) {                                
                 this.slotSuccessfulReservationsPerStation.set(key, ++value);
             }
         }
-
     }
               
 }

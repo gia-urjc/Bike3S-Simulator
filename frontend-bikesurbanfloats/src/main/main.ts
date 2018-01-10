@@ -2,6 +2,7 @@ import { app, BrowserWindow, shell } from 'electron';
 import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
+import { ReservationsPerStation } from "./dataAnalysis/absoluteValues/analysisData/stations/ReservationsPerStation";
 import { ReservationsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/ReservationsPerUser";
 import { ReservationsIterator } from "./dataAnalysis/absoluteValues/systemDataIterators/ReservationsIterator";
 import { Settings } from './settings';
@@ -67,14 +68,11 @@ namespace Main {
     }
     
     export async function ptm() {
-        console.log('HOLA MUNDO');
-        let values = await ReservationsPerUser.create('history');
-        console.log('values created');
+        let values = await ReservationsPerStation.create('history');
         let it = await ReservationsIterator.create('history');
-        console.log('iterator created');
         it.subscribe(values);
         it.calculateReservations();
-        console.log('user 25:  ', values.getBikeFailedReservationsOfUser(25));
+        console.log('station 4: ', values.getBikeFailedReservationsOfStation(4));
     } 
    
     

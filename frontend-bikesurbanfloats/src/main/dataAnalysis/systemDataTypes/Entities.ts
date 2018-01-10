@@ -24,6 +24,6 @@ export enum ReservationState {
 }
 
 export interface Reservation extends Entity {
-    type: ReservationType;
-    state: ReservationState;
+    type: string;
+    state: string;
 }

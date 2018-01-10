@@ -33,15 +33,14 @@ export class ReservationsIterator implements Observable {
             await it.init(path);
             return it;
         }
-        catch {
-            console.log('error creating the reservations iterator');
+        catch(error) {
+            console.log('error creating the reservations iterator: ', error);
         }
         return;
     }
     
     public async calculateReservations(): Promise<void> {
         for (let reservation of this.reservations) {
-            console.log('reservation ', reservation.id, ' ');
             this.notify(reservation);
         }
     }
@@ -54,8 +53,6 @@ export class ReservationsIterator implements Observable {
     
     public subscribe(observer: Observer): void {
         this.observers.push(observer);
-        
-        console.log('number of observers: ', this.observers.length)
     }
 
 }

@@ -2,7 +2,7 @@ import { HistoryReader } from '../../../../util';
 import { HistoryEntitiesJson } from '../../../../../shared/history';
 import { Observer } from '../../ObserverPattern';
 import  { User } from '../../../systemDataTypes/Entities';
-import  { TimeEntry } from '../../../systemDataTypes/SystemInternalData';
+import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 
 export class RentalsAndReturnsPerUser implements Observer {
     private users: Array<User>;
@@ -20,21 +20,33 @@ export class RentalsAndReturnsPerUser implements Observer {
     
     private async init(path: string): Promise<void> {
         let history: HistoryReader = await HistoryReader.create(path);
-        let entities: HistoryEntitiesJson = await history.getEntities("users");
-        this.users = entities.instances ;
+        try {
+            let entities: HistoryEntitiesJson = await history.getEntities("users");
+            this.users = entities.instances ;
                 
-        for(let user of this.users) {
-            this.bikeFailedRentalsPerUser.set(user.id, 0);
-            this.bikeSuccessfulRentalsPerUser.set(user.id, 0);
-            this.bikeFailedReturnsPerUser.set(user.id, 0);            
-            this.bikeSuccessfulReturnsPerUser.set(user.id, 0);            
+            for(let user of this.users) {
+                this.bikeFailedRentalsPerUser.set(user.id, 0);
+                this.bikeSuccessfulRentalsPerUser.set(user.id, 0);
+                this.bikeFailedReturnsPerUser.set(user.id, 0);            
+                this.bikeSuccessfulReturnsPerUser.set(user.id, 0);            
+            }
         }
+        catch(error) {
+            console.log(error);
+        }
+        return;
     }
 
     public static async create(path: string): Promise<RentalsAndReturnsPerUser> {
         let rentalsAndReturnsValues = new RentalsAndReturnsPerUser();
-        await rentalsAndReturnsValues.init(path);
-        return rentalsAndReturnsValues;
+        try {
+            await rentalsAndReturnsValues.init(path);
+            return rentalsAndReturnsValues;
+        }
+        catch(error) {
+            console.log(error);
+        }
+        return;
     }
 
     public getBikeFailedRentalsOfUser(userId: number): number | undefined {
@@ -54,6 +66,12 @@ export class RentalsAndReturnsPerUser implements Observer {
     }
     
     public update(timeEntry: TimeEntry) {
+        let events: Array<Event> = timeEntry.events;
+        if ()
+    }
+    
+    public getEventByName(events: Array<Event>, name: string): Event {
+        let event: Event = undefined;
     }
     
 }
