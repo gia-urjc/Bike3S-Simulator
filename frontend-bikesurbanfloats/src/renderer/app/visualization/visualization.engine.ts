@@ -41,8 +41,6 @@ export enum STATE {
 
 export class VisualizationEngine {
 
-    readonly TICK = 200; // milliseconds
-
     readonly NO_EMIT = { emitEvent: false };
 
     mainActionIcon: string;
@@ -63,6 +61,8 @@ export class VisualizationEngine {
         }
     };
 
+    private referencedEntities: Map<Entity, Map<string, Set<Entity>>>;
+
     private timeEntries: {
         previous: Array<HistoryTimeEntry> | null,
         current: Array<HistoryTimeEntry>,
@@ -72,8 +72,10 @@ export class VisualizationEngine {
     constructor(
         private ajax: AjaxProtocol,
         private activeLayers: Set<Layer>,
+        private refreshRate: number,
     ) {
         this.movingEntities = [];
+        this.referencedEntities = new Map();
         this.fromEnd = false;
         this.speed = 10;
 
@@ -91,6 +93,17 @@ export class VisualizationEngine {
         this.load()
             .then(() => this.updateState(STATE.START))
             .catch((error) => console.error(error));
+    }
+
+    private registerReference(reference: Entity | null, host: Entity, property: string) {
+        if (reference === null) return;
+
+        const referenceMap = this.referencedEntities.get(reference) || new Map<string, Set<Entity>>();
+        const hostSet = referenceMap.get(property) || new Set<Entity>();
+
+        hostSet.add(host);
+        referenceMap.set(property, hostSet);
+        this.referencedEntities.set(reference, referenceMap);
     }
 
     private async load(): Promise<void> {
@@ -144,14 +157,14 @@ export class VisualizationEngine {
 
         if (this.is(STATE.FORWARD)) {
             IntervalObservable
-                .create(this.TICK)
+                .create(this.refreshRate)
                 .pipe(takeWhile(() => this.state === STATE.FORWARD))
                 .subscribe(() => this.onTick());
         }
 
         if (this.is(STATE.REWIND)) {
             IntervalObservable
-                .create(this.TICK)
+                .create(this.refreshRate)
                 .pipe(takeWhile(() => this.state === STATE.REWIND))
                 .subscribe(() => this.onTick());
         }
@@ -190,9 +203,7 @@ export class VisualizationEngine {
                         references.push([property, value]);
                         deferredReferences.set(entity, references);
                     } else {
-                        const onChange = safe(configuration, `onChange.${property}`);
                         entity[property] = value;
-                        onChange && onChange(entity);
                     }
                 });
 
@@ -205,19 +216,21 @@ export class VisualizationEngine {
 
             if (deferredReferences.has(entity)) {
                 deferredReferences.get(entity)!.forEach(([property, reference]) => {
-                    const onChange = safe(configuration, `onChange.${property}`);
-
                     if (isArray(reference.id)) {
                         entity[property] = reference.id.map((v) => v === null ? v : this.entities[reference.type][v]);
+                        entity[property].forEach((ref: Entity | null) => this.registerReference(ref, entity, property));
                     } else {
                         entity[property] = this.entities[reference.type][reference.id];
+                        this.registerReference(entity[property], entity, property);
                     }
-
-                    onChange && onChange(entity);
                 });
             }
 
-            if (!configuration.show) return;
+            const onInit = safe(configuration, 'on.init');
+
+            onInit && onInit(entity);
+
+            if (!configuration.marker) return;
 
             const displayData: DisplayData = {
                 marker: new Marker([0, 0], {
@@ -225,39 +238,39 @@ export class VisualizationEngine {
                 }),
             } as any;
 
-            if (typeof configuration.show.at === 'function') {
-                const p = configuration.show.at(entity);
+            if (typeof configuration.marker.at === 'function') {
+                const p = configuration.marker.at(entity);
                 if (p) {
                     displayData.marker.setLatLng(LeafletUtil.latLng(p));
                     this.activeLayers.add(displayData.marker);
                 }
             } else {
                 this.movingEntities.push(entity);
-                displayData.route = configuration.show.at.route(entity);
-                displayData.speed = configuration.show.at.speed(entity);
+                displayData.route = configuration.marker.at.route(entity);
+                displayData.speed = configuration.marker.at.speed(entity);
                 if (displayData.route) {
                     displayData.routeIndex = 0;
                     displayData.distanceFromLastPoint = 0;
                     displayData.distances = Geo.distances(displayData.route);
-                    if (!configuration.show.when || configuration.show.when(entity)) {
+                    if (!configuration.marker.when || configuration.marker.when(entity)) {
                         displayData.marker.setLatLng(LeafletUtil.latLng(displayData.route.points[0]));
                         this.activeLayers.add(displayData.marker);
                     }
                 }
             }
 
-            if (configuration.show.icon) {
-                displayData.marker.setIcon(configuration.show.icon(entity));
+            if (configuration.marker.icon) {
+                displayData.marker.setIcon(configuration.marker.icon(entity));
             }
 
-            if (configuration.show.onMarkerEvent) {
-                Object.entries(configuration.show.onMarkerEvent).forEach(([event, callback]) => {
+            if (configuration.marker.on) {
+                Object.entries(configuration.marker.on).forEach(([event, callback]) => {
                     displayData.marker.on(event, (e: any) => (callback as any)(entity, e));
                 });
             }
 
-            if (configuration.show.popup) {
-                displayData.popup = new Popup().setContent(configuration.show.popup(entity));
+            if (configuration.marker.popup) {
+                displayData.popup = new Popup().setContent(configuration.marker.popup(entity));
                 displayData.marker.bindPopup(displayData.popup);
             }
 
@@ -275,24 +288,42 @@ export class VisualizationEngine {
             if (isIdReference(property)) {
                 if (isArray(property.id)) {
                     property = property.id.map((id: number) => this.entities[property.type][id] || null);
+                    property.forEach((reference: Entity | null) => this.registerReference(reference, entity, name));
                 } else {
                     property = this.entities[property.type][property.id] || null;
+                    this.registerReference(property, entity, name);
                 }
             }
 
             entity[name] = property;
 
-            const onChange = safe(configuration, `onChange.${name}`);
+            const onProperty = safe(configuration, `on.propertyUpdate.${name}`);
 
-            onChange && onChange(entity);
+            onProperty && onProperty(entity);
         });
 
-        if (!configuration.show) return;
+        const onUpdate = safe(configuration, 'on.update');
+
+        onUpdate && onUpdate(entity);
+
+        const referenceMap = this.referencedEntities.get(entity);
+
+        if (referenceMap) {
+            referenceMap.forEach((hostSet, property) => {
+                hostSet.forEach((host) => {
+                    const hostConfiguration: HistoricConfiguration = Reflect.getOwnMetadata(Historic, host.constructor);
+                    const onRefUpdate = safe(hostConfiguration, `on.referenceUpdate.${property}`);
+                    onRefUpdate && onRefUpdate(host, entity);
+                });
+            });
+        }
+
+        if (!configuration.marker) return;
 
         const displayData: DisplayData = Reflect.getOwnMetadata(DisplayKey, entity);
 
-        if (typeof configuration.show.at === 'function') {
-            const p = configuration.show.at(entity);
+        if (typeof configuration.marker.at === 'function') {
+            const p = configuration.marker.at(entity);
             if (p) {
                 displayData.marker.setLatLng(LeafletUtil.latLng(p));
                 this.activeLayers.add(displayData.marker);
@@ -300,8 +331,8 @@ export class VisualizationEngine {
                 this.activeLayers.delete(displayData.marker);
             }
         } else {
-            const route = configuration.show.at.route(entity);
-            displayData.speed = configuration.show.at.speed(entity);
+            const route = configuration.marker.at.route(entity);
+            displayData.speed = configuration.marker.at.speed(entity);
 
             if (!isEqual(route, displayData.route)) {
                 displayData.route = route;
@@ -319,8 +350,8 @@ export class VisualizationEngine {
                 }
             }
 
-            if (configuration.show.when) {
-                if (configuration.show.when(entity)) {
+            if (configuration.marker.when) {
+                if (configuration.marker.when(entity)) {
                     this.activeLayers.add(displayData.marker);
                 } else {
                     this.activeLayers.delete(displayData.marker);
@@ -328,13 +359,13 @@ export class VisualizationEngine {
             }
         }
 
-        if (configuration.show.icon) {
-            const icon = configuration.show.icon(entity);
+        if (configuration.marker.icon) {
+            const icon = configuration.marker.icon(entity);
             if (icon !== displayData.marker.options.icon) displayData.marker.setIcon(icon);
         }
 
-        if (configuration.show.popup) {
-            displayData.popup.setContent(configuration.show.popup(entity));
+        if (configuration.marker.popup) {
+            displayData.popup.setContent(configuration.marker.popup(entity));
         }
     }
 
@@ -347,9 +378,9 @@ export class VisualizationEngine {
         this.movingEntities.forEach((entity) => {
             const configuration: HistoricConfiguration = Reflect.getOwnMetadata(Historic, entity.constructor);
 
-            if (!configuration.show) return;
+            if (!configuration.marker) return;
 
-            if (!configuration.show.when || configuration.show.when(entity)) {
+            if (!configuration.marker.when || configuration.marker.when(entity)) {
                 const displayData: DisplayData = Reflect.getOwnMetadata(DisplayKey, entity);
 
                 if (displayData.route) {
@@ -387,9 +418,9 @@ export class VisualizationEngine {
         this.movingEntities.forEach((entity) => {
             const configuration: HistoricConfiguration = Reflect.getOwnMetadata(Historic, entity.constructor);
 
-            if (!configuration.show) return;
+            if (!configuration.marker) return;
 
-            if (!configuration.show.when || configuration.show.when(entity)) {
+            if (!configuration.marker.when || configuration.marker.when(entity)) {
                 const displayData: DisplayData = Reflect.getOwnMetadata(DisplayKey, entity);
 
                 if (displayData.route) {
@@ -532,7 +563,7 @@ export class VisualizationEngine {
     }
 
     onTick() {
-        const  nextTime = (this.time === -1 ? 0 : this.time) + this.speed * this.TICK / 1000;
+        const  nextTime = (this.time === -1 ? 0 : this.time) + this.speed * this.refreshRate / 1000;
 
         let timeEntry: HistoryTimeEntry;
 

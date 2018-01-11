@@ -7,18 +7,19 @@ import './station.css';
 
 @Historic<Station>({
     jsonIdentifier: 'stations',
-    show: {
+    marker: {
         at: (station) => station.position,
         icon: (station) => {
+            const size = 30;
             const nBikes = station.bikes.reduce((r, v) => v !== null && r + 1 || r, 0);
             const slotRatio = (station.capacity - nBikes) / station.capacity * 100;
             const gradient = new ConicGradient({
                 stops: `tomato ${slotRatio}%, mediumseagreen 0`,
-                size: 30,
+                size: size,
             });
             return new DivIcon({
                 className: 'station-marker',
-                iconSize: [30, 30],
+                iconSize: [size, size],
                 html: `
                     <div class="ratio-ring" style="background: url(${gradient.png}) no-repeat;">
                         <div class="bike-counter">${nBikes}</div>
@@ -26,7 +27,7 @@ import './station.css';
                 `,
             });
         },
-        onMarkerEvent: {
+        on: {
             click: (station) => console.log(station)
         },
         popup: (station) => `
