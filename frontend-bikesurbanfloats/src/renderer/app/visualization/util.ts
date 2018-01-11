@@ -38,7 +38,7 @@ export namespace LeafletUtil {
     }
 
     export interface MarkerEvents extends InteractiveLayerEvents {
-        Map: LayerEvents['Map'] & {
+        Map: InteractiveLayerEvents['Map'] & {
             move: LeafletEvent,
         },
 

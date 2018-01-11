@@ -41,8 +41,6 @@ export enum STATE {
 
 export class VisualizationEngine {
 
-    readonly TICK = 200; // milliseconds
-
     readonly NO_EMIT = { emitEvent: false };
 
     mainActionIcon: string;
@@ -74,6 +72,7 @@ export class VisualizationEngine {
     constructor(
         private ajax: AjaxProtocol,
         private activeLayers: Set<Layer>,
+        private refreshRate: number,
     ) {
         this.movingEntities = [];
         this.referencedEntities = new Map();
@@ -158,14 +157,14 @@ export class VisualizationEngine {
 
         if (this.is(STATE.FORWARD)) {
             IntervalObservable
-                .create(this.TICK)
+                .create(this.refreshRate)
                 .pipe(takeWhile(() => this.state === STATE.FORWARD))
                 .subscribe(() => this.onTick());
         }
 
         if (this.is(STATE.REWIND)) {
             IntervalObservable
-                .create(this.TICK)
+                .create(this.refreshRate)
                 .pipe(takeWhile(() => this.state === STATE.REWIND))
                 .subscribe(() => this.onTick());
         }
@@ -564,7 +563,7 @@ export class VisualizationEngine {
     }
 
     onTick() {
-        const  nextTime = (this.time === -1 ? 0 : this.time) + this.speed * this.TICK / 1000;
+        const  nextTime = (this.time === -1 ? 0 : this.time) + this.speed * this.refreshRate / 1000;
 
         let timeEntry: HistoryTimeEntry;
 
