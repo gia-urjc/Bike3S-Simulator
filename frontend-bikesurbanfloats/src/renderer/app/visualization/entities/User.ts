@@ -1,4 +1,4 @@
-import { DivIcon, Icon, Polyline } from 'leaflet';
+import { DivIcon } from 'leaflet';
 import { ReservationState } from '../../../../shared/history';
 import { Geo } from '../../../../shared/util';
 import { LeafletUtil } from '../util';
@@ -10,26 +10,32 @@ import { Station } from './Station';
 
 import './user.css';
 
+const UserIcon = Symbol('UserIcon');
+const UserRoute = Symbol('UserRoute');
+
 function updateIcon(user: User) {
+    const maxHeight = 60;
+
     let reservationBadge = '';
-    let margin = -250;
 
     if (user.reservations.find((reservation) => reservation.state === ReservationState.ACTIVE)) {
         reservationBadge = `<span class="badge badge-pill badge-info">R</span>`;
-        margin = -350;
     }
 
     const icon = new DivIcon({
         className: 'user-marker',
+        iconSize: [20, maxHeight],
+        iconAnchor: [10, maxHeight],
         html: `
-            <div style="margin-top: ${margin}%">
+            <div>
                 ${reservationBadge}
                 <span class="badge badge-pill badge-${user.bike ? 'danger' : 'primary'}">${user.id}</span>
-                <span class="fa fa-${user.bike ? 'bicycle' : 'male'} fa-fw user-icon"></span>
+                <span class="fa fa-fw fa-${user.bike ? 'bicycle' : 'male'}"></span>
             </div>
         `
     });
-    Reflect.defineMetadata(Icon, icon, user);
+
+    Reflect.defineMetadata(UserIcon, icon, user);
 }
 
 @Historic<User>({
@@ -40,11 +46,11 @@ function updateIcon(user: User) {
             speed: (user) => user.bike ? user.cyclingVelocity : user.walkingVelocity,
         },
         when: (user) => Boolean(user.position),
-        icon: (user) => Reflect.getOwnMetadata(Icon, user),
+        icon: (user) => Reflect.getOwnMetadata(UserIcon, user),
         on: {
             click: (user) => console.log(user),
-            mouseover: (user) => user.route && Visualization.addLayer(Reflect.getOwnMetadata(Polyline, user)),
-            mouseout: (user) => Visualization.deleteLayer(Reflect.getOwnMetadata(Polyline, user)),
+            mouseover: (user) => user.route && Visualization.addLayer(Reflect.getOwnMetadata(UserRoute, user)),
+            mouseout: (user) => Visualization.deleteLayer(Reflect.getOwnMetadata(UserRoute, user)),
         },
     },
     on: {
@@ -53,14 +59,14 @@ function updateIcon(user: User) {
         },
         propertyUpdate: {
             route: (user) => {
-                Visualization.deleteLayer(Reflect.getOwnMetadata(Polyline, user));
+                Visualization.deleteLayer(Reflect.getOwnMetadata(UserRoute, user));
                 if (user.route) {
-                    Reflect.defineMetadata(Polyline, LeafletUtil.polyline(user.route), user);
+                    Reflect.defineMetadata(UserRoute, LeafletUtil.polyline(user.route), user);
                 }
             },
             position: (user) => {
                 if (!user.position) {
-                    Visualization.deleteLayer(Reflect.getOwnMetadata(Polyline, user));
+                    Visualization.deleteLayer(Reflect.getOwnMetadata(UserRoute, user));
                 }
             },
             bike: (user) => {

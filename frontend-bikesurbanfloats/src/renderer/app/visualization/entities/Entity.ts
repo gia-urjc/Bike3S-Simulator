@@ -1,5 +1,5 @@
 import { Icon, LeafletEvent } from 'leaflet';
-import { Diff, Flatten, If, Is, True, UnArray } from '../../../../shared/mappedtypes';
+import { Diff, Flatten, If, Is, UnArray } from '../../../../shared/mappedtypes';
 import { Geo } from '../../../../shared/util';
 import { LeafletUtil } from '../util';
 
@@ -53,5 +53,5 @@ type References<T extends Entity> = {
 }
 
 export interface Entity {
-    '---#!#---IS_ENTITY_TYPE---#!#---DO_NOT_USE---#!#---': True
+    '---#!#---IS_ENTITY_TYPE---#!#---DO_NOT_USE---#!#---': never
 }
