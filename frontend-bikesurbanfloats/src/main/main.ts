@@ -3,8 +3,10 @@ import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
 import { ReservationsPerStation } from "./dataAnalysis/absoluteValues/analysisData/stations/ReservationsPerStation";
+import { RentalsAndReturnsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/RentalsAndReturnsPerUser";
 import { ReservationsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/ReservationsPerUser";
 import { ReservationsIterator } from "./dataAnalysis/absoluteValues/systemDataIterators/ReservationsIterator";
+import { TimeEntriesIterator } from "./dataAnalysis/absoluteValues/systemDataIterators/TimeEntriesIterator";
 import { Settings } from './settings';
 import { HistoryReader } from './util';
 
@@ -68,11 +70,11 @@ namespace Main {
     }
     
     export async function ptm() {
-        let values = await ReservationsPerStation.create('history');
-        let it = await ReservationsIterator.create('history');
+        let values = await RentalsAndReturnsPerUser.create('history');
+        let it = await TimeEntriesIterator.create();
         it.subscribe(values);
-        it.calculateReservations();
-        console.log('station 4: ', values.getBikeFailedReservationsOfStation(4));
+        it.calculateBikeRentalsAndReturns('history');
+        console.log('user 49: ', values.getBikeFailedRentalsOfUser(49));
     } 
    
     

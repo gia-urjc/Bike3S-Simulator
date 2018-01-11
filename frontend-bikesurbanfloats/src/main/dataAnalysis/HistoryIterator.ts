@@ -1,6 +1,6 @@
 import { HistoryTimeEntry } from "../../shared/history";
 import { HistoryReader } from '../util';
-import { TimeEntry } from './systemDataTypes/SystemInternalData';
+import { TimeEntry, Event } from './systemDataTypes/SystemInternalData';
 
 export class HistoryIterator {
     private history: HistoryReader;
@@ -64,6 +64,17 @@ export class HistoryIterator {
     }    
  }
 */
-
     
+        public static getEventByName(timeEntry: TimeEntry, name: string): Event {
+            let events: Array<Event> = timeEntry.events;
+            let foundEvent: Event = undefined;        
+        for(let event of events) {
+            if (event.name === name) {
+                foundEvent = event;
+                break;
+            }
+        }
+        return foundEvent;
+    }
+   
 }

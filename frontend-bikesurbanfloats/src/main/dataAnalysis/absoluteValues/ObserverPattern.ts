@@ -3,5 +3,5 @@ export interface Observer {
 }
 
 export interface Observable {
-    notify(data: any);
+    notify(data: any): void;
 }

@@ -46,7 +46,6 @@ export class ReservationsPerUser implements Observer {
         catch {
             console.log('error creating reservations per user data');
         }
-        return;
     }
     
     public getBikeFailedReservationsOfUser(userId: number): number| undefined {
