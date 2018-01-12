@@ -27,19 +27,21 @@ public class HistoricUser implements HistoricEntity {
     private int id;
 
     @Expose
+    private UserType type;
+
+    @Expose
     private double walkingVelocity;
 
     @Expose
     private double cyclingVelocity;
 
+    @Expose
+    private IdReference reservations;
+
     private GeoPoint position;
     private GeoRoute route;
     private IdReference bike;
     private IdReference destinationStation;
-    private IdReference reservations;
-
-    @Expose
-    private UserType type;
 
     public HistoricUser(User user) {
         Bike bike = user.getBike();

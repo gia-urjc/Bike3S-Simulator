@@ -12,6 +12,8 @@ import { STATE, VisualizationEngine } from './visualization.engine';
 })
 export class Visualization {
 
+    private static readonly REFRESH_RATE = 200;
+
     private static activeLayers: Set<Layer>;
 
     readonly STATE = STATE; // make STATE available in template
@@ -34,7 +36,7 @@ export class Visualization {
 
     ngOnInit() {
         Visualization.activeLayers = new Set();
-        this.engine = new VisualizationEngine(this.ajax, Visualization.activeLayers);
+        this.engine = new VisualizationEngine(this.ajax, Visualization.activeLayers, Visualization.REFRESH_RATE);
     }
 
     is(...states: Array<STATE>): boolean;
