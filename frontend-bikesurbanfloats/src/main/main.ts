@@ -66,14 +66,13 @@ namespace Main {
         app.on('activate', () => {
             if (window === null) createWindow();
         });
-
     }
     
     export async function ptm() {
         let values = await RentalsAndReturnsPerUser.create('history');
         let it = await TimeEntriesIterator.create();
         it.subscribe(values);
-        it.calculateBikeRentalsAndReturns('history');
+        await it.calculateBikeRentalsAndReturns('history');
         console.log('user 49: ', values.getBikeFailedRentalsOfUser(49));
     } 
    
