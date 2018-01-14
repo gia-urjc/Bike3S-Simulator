@@ -34,7 +34,7 @@ export class RentalsAndReturnsPerUser implements Observer {
             }
         }
         catch(error) {
-            console.log(error);
+            console.log('error getting users:', error);
         }
         return;
     }
@@ -48,7 +48,6 @@ export class RentalsAndReturnsPerUser implements Observer {
         catch(error) {
             console.log(error);
         }
-        return;
     }
 
     public getBikeFailedRentalsOfUser(userId: number): number | undefined {
@@ -69,14 +68,14 @@ export class RentalsAndReturnsPerUser implements Observer {
     
     public update(timeEntry: TimeEntry) {
         let name: string;
-        let event: Event = undefined;
-        
+        let event: Event;
+
         let key: number = undefined;
         let value: number = undefined;
 
         name = 'EventUserArrivesAtStationToRentBikeWithReservation';
         event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined) {
+        if (event !== undefined && event.changes.users.length !== 0) {
             key = event.changes.users[0].id;
             value = this.bikeSuccessfulRentalsPerUser.get(key);
             this.bikeSuccessfulRentalsPerUser.set(key, ++value);
@@ -84,7 +83,7 @@ export class RentalsAndReturnsPerUser implements Observer {
         
         name = 'EventUserArrivesAtStationToReturnBikeWithReservation';
         event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined) {
+        if (event !== undefined &&  event.changes.users.length !== 0) {
             key = event.changes.users[0].id;
             value = this.bikeSuccessfulReturnsPerUser.get(key);
             this.bikeSuccessfulReturnsPerUser.set(key, ++value);
@@ -92,10 +91,10 @@ export class RentalsAndReturnsPerUser implements Observer {
         
         name = 'EventUserArrivesAtStationToRentBikeWithoutReservation';
         event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined) {
+        if (event !== undefined && event.changes.users.length !== 0) {
             key = event.changes.users[0].id;
-            let bike: any = event.changes.users[0].bike.new; 
-            if (bike !== null) {
+            let bike: any = event.changes.users[0].bike;
+            if (bike !== undefined) {
                 value = this.bikeSuccessfulRentalsPerUser.get(key);
                 this.bikeSuccessfulRentalsPerUser.set(key, ++value);
             }
@@ -107,19 +106,22 @@ export class RentalsAndReturnsPerUser implements Observer {
         
         name = 'EventUserArrivesAtStationToReturnBikeWithoutReservation';
         event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined) {
+        if (event !== undefined && event.changes.users.length !== 0) {
             key = event.changes.users[0].id;
-            let bike: any = event.changes.users[0].bike.new;
-            if (bike === null) {
-                value = this.bikeSuccessfulReturnsPerUser.get(key);
-                this.bikeSuccessfulReturnsPerUser.set(key, ++value);
+            let bike: any = event.changes.users[0].bike;
+            if (bike !== undefined) {
+                value = this.bikeSuccessfulReturnsPerStation.get(key);
+                this.bikeSuccessfulReturnsPerStation.set(key, ++value);
             }
             else {
-                value = this.bikeFailedReturnsPerUser.get(key);
-                this.bikeFailedReturnsPerUser.set(key, ++value)
+                value = this.bikeFailedReturnsPerStation.get(key);
+                this.bikeFailedReturnsPerStation.set(key, ++value);
             }
         }
     }
     
-    
+    private numberOfBikes(station: Station): number {
+        
+    }
+        
 }
