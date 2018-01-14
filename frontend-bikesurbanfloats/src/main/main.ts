@@ -70,11 +70,11 @@ namespace Main {
     }
     
     export async function ptm() {
-        let values = await RentalsAndReturnsPerUser.create('history');
+        let values = await RentalsAndReturnsPerStation.create('history');
         let it = await TimeEntriesIterator.create();
         it.subscribe(values);
         await it.calculateBikeRentalsAndReturns('history');
-        console.log('user 49: ', values.getBikeFailedRentalsOfUser(49));
+        console.log('station 12:', values.getBikeFailedRentalsOfStation(12));
     } 
    
     

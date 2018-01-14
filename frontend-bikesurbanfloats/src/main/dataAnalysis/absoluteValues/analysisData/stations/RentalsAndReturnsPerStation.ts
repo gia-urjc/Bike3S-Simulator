@@ -48,7 +48,7 @@ export class RentalsAndReturnsPerStation implements Observer {
         }
     }
     
-    public async update(timeEntry: TimeEntry): Promise<void> {
+    public update(timeEntry: TimeEntry): Promise<void> {
         let name: string;
         let event: Event;
         
@@ -57,7 +57,7 @@ export class RentalsAndReturnsPerStation implements Observer {
         
         name = 'EventUserArrivesAtStationToRentBikeWithReservation';
         event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined && event.changes.stations.length !== 0) {
+        if (event !== undefined) {
             key = event.changes.stations[0].id;
             value = this.bikeSuccessfulRentalsPerStation.get(key);
             this.bikeSuccessfulRentalsPerStation.set(key, ++value);
@@ -75,30 +75,24 @@ export class RentalsAndReturnsPerStation implements Observer {
         event = HistoryIterator.getEventByName(timeEntry, name);
         if (event !== undefined && event.changes.stations.length !== 0) {
             key = event.changes.stations[0].id;
-            
-            if () {
-                value = this.bikeSuccessfulRentalsPerStation.get(key);
-                this.bikeSuccessfulRentalsPerStation.set(key, ++value);
-            }
-            else {
-                value = this.bikeFailedRentalsPerStation.get(key);
-                this.bikeFailedRentalsPerStation.set(key, ++value);
-            }
+            value = this.bikeSuccessfulRentalsPerStation.get(key);
+            this.bikeSuccessfulRentalsPerStation.set(key, ++value);
+        }
+        else {
+            value = this.bikeFailedRentalsPerStation.get(key);
+            this.bikeFailedRentalsPerStation.set(key, ++value);
         }
         
         name = 'EventUserArrivesAtStationToReturnBikeWithoutReservation';
         event = HistoryIterator.getEventByName(timeEntry, name);
         if (event !== undefined && event.changes.stations.length !== 0) {
             key = event.changes.stations[0].id;
-
-            if () {
-                value = this.bikeSuccessfulReturnsPerStation.get(key);
-                this.bikeSuccessfulReturnsPerStation.set(key, ++value);
-            }
-            else {
-                value = this.bikeFailedReturnsPerStation.get(key);
-                this.bikeFailedReturnsPerStation.set(key, ++value);
-            }
+            value = this.bikeSuccessfulReturnsPerStation.get(key);
+            this.bikeSuccessfulReturnsPerStation.set(key, ++value);
+        }
+        else {
+            value = this.bikeFailedReturnsPerStation.get(key);
+            this.bikeFailedReturnsPerStation.set(key, ++value);
         }
     }
 
