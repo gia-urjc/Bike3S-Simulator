@@ -42,10 +42,10 @@ export abstract class Entity {
     id: number;
 }
 
-type EntityKey<T, P extends string> = If<Is<Entity, T>, P, never>
+type TestEntity<T, P extends string> = If<Is<Entity, T & Object>, P, never>
 
 type EntityKeys<T extends Entity> = {
-    [P in keyof T]: If<Is<Array<any>, T[P]>, EntityKey<UnArray<T[P]>, P>, EntityKey<T[P], P>>
+    [P in keyof T]: If<Is<Array<any>, T[P]>, TestEntity<UnArray<T[P]>, P>, TestEntity<T[P], P>>
 }[keyof T]
 
 type References<T extends Entity> = {

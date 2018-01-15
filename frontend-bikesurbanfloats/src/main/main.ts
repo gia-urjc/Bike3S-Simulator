@@ -17,8 +17,7 @@ namespace Main {
             slashes: true
         }));
 
-        // https://github.com/electron/electron-typescript-definitions/issues/88
-        window.on('closed', () => window = null as any);
+        window.on('closed', () => window = null);
 
         window.webContents.on('will-navigate', (event, url) => {
             event.preventDefault(); // prevents dragging images or other documents into browser window
