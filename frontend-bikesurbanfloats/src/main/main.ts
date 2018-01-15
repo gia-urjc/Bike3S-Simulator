@@ -2,6 +2,7 @@ import { app, BrowserWindow, shell } from 'electron';
 import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
+import { RentalsAndReturnsPerStation } from "./dataAnalysis/absoluteValues/analysisData/stations/RentalsAndReturnsPerStation";
 import { ReservationsPerStation } from "./dataAnalysis/absoluteValues/analysisData/stations/ReservationsPerStation";
 import { RentalsAndReturnsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/RentalsAndReturnsPerUser";
 import { ReservationsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/ReservationsPerUser";
@@ -69,14 +70,14 @@ namespace Main {
     }
     
     export async function ptm() {
-        let values = await RentalsAndReturnsPerStation.create('history');
-        let it = await TimeEntriesIterator.create();
+        let values: RentalsAndReturnsPerStation = await RentalsAndReturnsPerStation.create('history');
+        let it: TimeEntriesIterator = TimeEntriesIterator.create();
         it.subscribe(values);
         await it.calculateBikeRentalsAndReturns('history');
-        console.log('station 12:', values.getBikeFailedRentalsOfStation(12));
+        console.log('station 12:', values.getBikeFailedRentalsOfStation(4));
     } 
    
-    
+  
 }
   
 Main.init();

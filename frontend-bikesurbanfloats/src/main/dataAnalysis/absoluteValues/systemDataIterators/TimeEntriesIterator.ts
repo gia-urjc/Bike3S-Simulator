@@ -10,7 +10,7 @@ export class TimeEntriesIterator implements Observable {
         this.observers = new Array<Observer>();
     }
     
-    public static async create(): Promise<TimeEntriesIterator> {
+    public static create(): TimeEntriesIterator {
         return new TimeEntriesIterator();
     }
     

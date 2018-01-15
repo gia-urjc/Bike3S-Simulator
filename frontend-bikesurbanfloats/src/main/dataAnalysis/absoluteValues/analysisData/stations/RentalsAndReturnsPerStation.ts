@@ -1,5 +1,6 @@
 import { HistoryReader } from '../../../../util';
 import { HistoryEntitiesJson } from '../../../../../shared/history';
+import { HistoryIterator } from "../../../HistoryIterator";
 import { Observer } from '../../ObserverPattern';
 import  { Station } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
@@ -18,7 +19,7 @@ export class RentalsAndReturnsPerStation implements Observer {
         this.bikeSuccessfulReturnsPerStation = new Map<number, number>();
     }
     
-    private async init(path:  string): Promise<void> {
+    private async init(path: string): Promise<void> {
         try {
             let history: HistoryReader = await HistoryReader.create(path);
             let entities: HistoryEntitiesJson = await history.getEntities("stations");
@@ -48,52 +49,121 @@ export class RentalsAndReturnsPerStation implements Observer {
         }
     }
     
-    public update(timeEntry: TimeEntry): Promise<void> {
-        let name: string;
-        let event: Event;
+    public update(timeEntry: TimeEntry): void {
+        let events: Array<Event> = timeEntry.events;
+        let stationPosition, routeLastPoint: any;
         
         let key: number;
         let value: number | undefined; 
         
-        name = 'EventUserArrivesAtStationToRentBikeWithReservation';
-        event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined) {
-            key = event.changes.stations[0].id;
-            value = this.bikeSuccessfulRentalsPerStation.get(key);
-            this.bikeSuccessfulRentalsPerStation.set(key, ++value);
+        for (let event of events) {
+                
+            if (event.name === 'EventUserArrivesAtStationToRentBikeWithReservation' 
+                && event.changes.stations.length > 0) {
+                if (event.changes.stations.length === 1) {
+                    key = event.changes.stations[0].id;
+                }
+                else {
+                    stationPosition = event.changes.users[0].position.new;
+                    key = this.getStationId(stationPosition);
+                }
+    
+                value = this.bikeSuccessfulRentalsPerStation.get(key);
+                if (value !== undefined) {
+                    this.bikeSuccessfulRentalsPerStation.set(key, ++value);
+                }
+            }
+            
+            else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithReservation'
+                && event.changes.stations.length > 0) {
+                //TODO: set route to null if user can return the bike
+                if (event.changes.stations.length === 1) {
+                    key = event.changes.stations[0].id;
+                }
+                else {
+                    routeLastPoint = event.changes.users[0].route.old.points.length-1; 
+                    stationPosition = event.changes.users[0].route.old.points[routeLastPoint];
+                    key = this.getStationId(stationPosition);
+                }
+                
+                value = this.bikeSuccessfulReturnsPerStation.get(key);
+                if (value !== undefined) {
+                    this.bikeSuccessfulReturnsPerStation.set(key, ++value);
+                }
+            }
+                
+            else if (event.name === 'EventUserArrivesAtStationToRentBikeWithoutReservation') {
+                // TODO: set route to null if user can't rent a bike and leaves the system
+                routeLastPoint = event.changes.users[0].route.old.points.length-1; 
+                stationPosition = event.changes.users[0].route.old.points[routeLastPoint];
+                key = this.getStationId(stationPosition);
+                    
+                if (event.changes.stations.length > 0) {   
+                    value = this.bikeSuccessfulRentalsPerStation.get(key);
+                    if (value !== undefined) {
+                        this.bikeSuccessfulRentalsPerStation.set(key, ++value);
+                    }
+                }
+                else {
+                    value = this.bikeFailedRentalsPerStation.get(key);
+                    if (value !== undefined) {
+                        this.bikeFailedRentalsPerStation.set(key, ++value);
+                    }
+                }
+            }
+            
+            else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithoutReservation') {
+                // TODO: set route to null when user returns the bike  
+                routeLastPoint = event.changes.users[0].route.old.points.length-1; 
+                stationPosition = event.changes.users[0].route.old.points[routeLastPoint];
+                key = this.getStationId(stationPosition);
+                    
+                if (event.changes.stations.length > 0) {
+                    value = this.bikeSuccessfulReturnsPerStation.get(key);
+                    if (value !== undefined) {
+                        this.bikeSuccessfulReturnsPerStation.set(key, ++value);
+                    }
+                }
+                else {
+                    value = this.bikeFailedReturnsPerStation.get(key);
+                    if (value !== undefined) {
+                        this.bikeFailedReturnsPerStation.set(key, ++value);
+                    }
+                }
+            }
         }
-        
-        name = 'EventUserArrivesAtStationToReturnBikeWithReservation';
-        event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined && event.changes.stations.length !== 0) {
-            key = event.changes.stations[0].id;
-            value = this.bikeSuccessfulReturnsPerStation.get(key);
-            this.bikeSuccessfulReturnsPerStation.set(key, ++value);
+    }
+    
+    /* This meth<od is used for events of type bike rental or return without reservation,
+     * where involved station may not change its state (user can't rent or return a bike) 
+     * and, then, its id isn't registered.  
+     */ 
+    private getStationId(stationPosition: any): number {
+        let stationId: number = -1;
+        for(let station of this.stations) {
+            if (station.position.latitude === stationPosition.latitude && station.position.longitude === stationPosition.longitude) {
+                stationId = station.id;
+                break; 
+            }
         }
-        
-        name = 'EventUserArrivesAtStationToRentBikeWithoutReservation';
-        event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined && event.changes.stations.length !== 0) {
-            key = event.changes.stations[0].id;
-            value = this.bikeSuccessfulRentalsPerStation.get(key);
-            this.bikeSuccessfulRentalsPerStation.set(key, ++value);
-        }
-        else {
-            value = this.bikeFailedRentalsPerStation.get(key);
-            this.bikeFailedRentalsPerStation.set(key, ++value);
-        }
-        
-        name = 'EventUserArrivesAtStationToReturnBikeWithoutReservation';
-        event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined && event.changes.stations.length !== 0) {
-            key = event.changes.stations[0].id;
-            value = this.bikeSuccessfulReturnsPerStation.get(key);
-            this.bikeSuccessfulReturnsPerStation.set(key, ++value);
-        }
-        else {
-            value = this.bikeFailedReturnsPerStation.get(key);
-            this.bikeFailedReturnsPerStation.set(key, ++value);
-        }
+
+        return stationId;
+    }
+    
+    public getBikeFailedRentalsOfStation(stationId: number): number | undefined {
+        return this.bikeFailedRentalsPerStation.get(stationId);
+    }
+    
+    public getBikeSuccessfulRentalsOfStation(stationId: number): number | undefined {
+        return this.bikeSuccessfulRentalsPerStation.get(stationId);
+    }
+    
+    public getBikeFailedReturnsOfStation(stationId: number): number | undefined {
+        return this.bikeFailedReturnsPerStation.get(stationId);
+    }
+    
+    public getBikeSuccessfulReturnsOfStation(stationId: number): number | undefined {
+        return this.bikeSuccessfulReturnsPerStation.get(stationId);
     }
 
 }

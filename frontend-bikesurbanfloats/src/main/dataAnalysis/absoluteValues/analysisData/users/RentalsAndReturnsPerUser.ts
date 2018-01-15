@@ -66,19 +66,21 @@ export class RentalsAndReturnsPerUser implements Observer {
         return this.bikeSuccessfulReturnsPerUser.get(userId);
     }
     
-    public update(timeEntry: TimeEntry) {
+    public update(timeEntry: TimeEntry): void {
         let name: string;
         let event: Event;
 
         let key: number = undefined;
-        let value: number = undefined;
+        let value: number | undefined = undefined;
 
         name = 'EventUserArrivesAtStationToRentBikeWithReservation';
         event = HistoryIterator.getEventByName(timeEntry, name);
         if (event !== undefined && event.changes.users.length !== 0) {
             key = event.changes.users[0].id;
             value = this.bikeSuccessfulRentalsPerUser.get(key);
-            this.bikeSuccessfulRentalsPerUser.set(key, ++value);
+            if (value !== undefined) {
+                this.bikeSuccessfulRentalsPerUser.set(key, ++value);
+            }
         }
         
         name = 'EventUserArrivesAtStationToReturnBikeWithReservation';
@@ -86,7 +88,9 @@ export class RentalsAndReturnsPerUser implements Observer {
         if (event !== undefined &&  event.changes.users.length !== 0) {
             key = event.changes.users[0].id;
             value = this.bikeSuccessfulReturnsPerUser.get(key);
-            this.bikeSuccessfulReturnsPerUser.set(key, ++value);
+            if (value !== undefined) {
+                this.bikeSuccessfulReturnsPerUser.set(key, ++value);
+            }
         }
         
         name = 'EventUserArrivesAtStationToRentBikeWithoutReservation';
@@ -96,11 +100,15 @@ export class RentalsAndReturnsPerUser implements Observer {
             let bike: any = event.changes.users[0].bike;
             if (bike !== undefined) {
                 value = this.bikeSuccessfulRentalsPerUser.get(key);
-                this.bikeSuccessfulRentalsPerUser.set(key, ++value);
+                if (value !== undefined) {                
+                    this.bikeSuccessfulRentalsPerUser.set(key, ++value);
+                }
             }
             else {
                 value = this.bikeFailedRentalsPerUser.get(key);
-                this.bikeFailedRentalsPerUser.set(key, ++value);
+                if (value !== undefined) {
+                    this.bikeFailedRentalsPerUser.set(key, ++value);
+                }
             }
         }
         
@@ -110,18 +118,18 @@ export class RentalsAndReturnsPerUser implements Observer {
             key = event.changes.users[0].id;
             let bike: any = event.changes.users[0].bike;
             if (bike !== undefined) {
-                value = this.bikeSuccessfulReturnsPerStation.get(key);
-                this.bikeSuccessfulReturnsPerStation.set(key, ++value);
+                value = this.bikeSuccessfulReturnsPerUser.get(key);
+                if (value !== undefined) {                  
+                    this.bikeSuccessfulReturnsPerUser.set(key, ++value);
+                }
             }
             else {
-                value = this.bikeFailedReturnsPerStation.get(key);
-                this.bikeFailedReturnsPerStation.set(key, ++value);
+                value = this.bikeFailedReturnsPerUser.get(key);
+                if (value !== undefined) {
+                    this.bikeFailedReturnsPerUser.set(key, ++value);
+                }
             }
         }
     }
-    
-    private numberOfBikes(station: Station): number {
-        
-    }
-        
+       
 }
