@@ -79,7 +79,7 @@ public class UserReasonable extends User {
                     "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
-                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", minRentalAttempts=" + minRentalAttempts +
                     ", bikeReturnPercentage=" + bikeReturnPercentage +
                     ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
                     ", failedReservationPercentage=" + failedReservationPercentage +
@@ -115,8 +115,11 @@ public class UserReasonable extends User {
         Station destination = null;
         
      if (!stations.isEmpty()) {
-         destination = systemManager.getRecommendationSystem()
-                .recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations).get(0); 
+         List<Station> recommendedStations = systemManager.getRecommendationSystem()
+                 .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
+
+         destination = recommendedStations.get(0).getPosition().equals(this.getPosition())
+                 ? recommendedStations.get(1) : recommendedStations.get(0);
      }
      return destination;
     }
@@ -131,7 +134,6 @@ public class UserReasonable extends User {
 
         List<Station> recommendedStations = systemManager.getRecommendationSystem()
                 .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
-
 
         return recommendedStations.get(0).getPosition().equals(this.getPosition())
                 ? recommendedStations.get(1) : recommendedStations.get(0);

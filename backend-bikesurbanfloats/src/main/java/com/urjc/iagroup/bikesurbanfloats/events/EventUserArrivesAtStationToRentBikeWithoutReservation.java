@@ -43,6 +43,7 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
             user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE);
             if (user.decidesToLeaveSystemWhenBikesUnavailable(instant)) {
                 user.setPosition(null);
+                user.setRoute(null);
             } else {
                 newEvents = manageBikeReservationDecisionAtOtherStation();
             }

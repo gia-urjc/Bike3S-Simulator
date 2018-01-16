@@ -84,7 +84,7 @@ public class UserDistanceRestriction extends User {
                     "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
-                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", minRentalAttempts=" + minRentalAttempts +
                     ", bikeReturnPercentage=" + bikeReturnPercentage +
                     ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
                     ", failedReservationPercentage=" + failedReservationPercentage +
@@ -126,6 +126,10 @@ public class UserDistanceRestriction extends User {
      List<Station> recommendedStations = systemManager.getRecommendationSystem()
              .recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations);
      
+     if (recommendedStations.get(0).getPosition().equals(this.getPosition( ))) {
+    	 recommendedStations.remove(0);
+     }
+     
      // TODO: revise this code
      Station destination;
      try {
@@ -151,17 +155,18 @@ public class UserDistanceRestriction extends User {
                 .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
         
         Station destination;
-        try {
-            List<Station> restrictedStations = recommendedStations.stream().filter(station -> station.getPosition()
-                    .distanceTo(this.getPosition()) <= parameters.maxDistance).collect(Collectors.toList());
-            destination = restrictedStations.get(0).getPosition().equals(this.getPosition())
+        List<Station> restrictedStations = recommendedStations.stream().filter(station -> station.getPosition()
+                .distanceTo(this.getPosition()) <= parameters.maxDistance).collect(Collectors.toList());
+        
+        if (restrictedStations.size() > 0) {
+        	destination = restrictedStations.get(0).getPosition().equals(this.getPosition()) && restrictedStations.size() > 1
                     ? restrictedStations.get(1) : restrictedStations.get(0);
         }
-        catch (NullPointerException e) {
-            List<Station> stationsByDistance = systemManager.getRecommendationSystem()
-                    .recommendByLinearDistance(this.getPosition(), stations);
-            destination = stationsByDistance.get(0).getPosition().equals(this.getPosition())
-                    ? stationsByDistance.get(1) : stationsByDistance.get(0);
+        else {
+            recommendedStations = systemManager.getRecommendationSystem()
+                .recommendByLinearDistance(this.getPosition(), stations);
+            destination = recommendedStations.get(0).getPosition().equals(this.getPosition())
+                    ? recommendedStations.get(1) : recommendedStations.get(0);
         }
         return destination;
     }

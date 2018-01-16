@@ -76,7 +76,6 @@ export class RentalsAndReturnsPerStation implements Observer {
             
             else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithReservation'
                 && event.changes.stations.length > 0) {
-                //TODO: set route to null if user can return the bike
                 if (event.changes.stations.length === 1) {
                     key = event.changes.stations[0].id;
                 }
@@ -93,8 +92,10 @@ export class RentalsAndReturnsPerStation implements Observer {
             }
                 
             else if (event.name === 'EventUserArrivesAtStationToRentBikeWithoutReservation') {
-                // TODO: set route to null if user can't rent a bike and leaves the system
-                routeLastPoint = event.changes.users[0].route.old.points.length-1; 
+                if(event.changes.users[0] === undefined) {
+                    console.log(timeEntry);     
+                }
+                routeLastPoint = event.changes.users[0].route.old.points.length-1;            
                 stationPosition = event.changes.users[0].route.old.points[routeLastPoint];
                 key = this.getStationId(stationPosition);
                     
@@ -113,7 +114,6 @@ export class RentalsAndReturnsPerStation implements Observer {
             }
             
             else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithoutReservation') {
-                // TODO: set route to null when user returns the bike  
                 routeLastPoint = event.changes.users[0].route.old.points.length-1; 
                 stationPosition = event.changes.users[0].route.old.points[routeLastPoint];
                 key = this.getStationId(stationPosition);

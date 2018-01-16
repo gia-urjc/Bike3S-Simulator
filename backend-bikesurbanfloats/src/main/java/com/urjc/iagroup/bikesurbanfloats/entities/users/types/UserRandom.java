@@ -48,13 +48,17 @@ public class UserRandom extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        Station destination = null;
         
-     if (stations.isEmpty()) {
-         stations = new ArrayList<>(systemManager.consultStations());
-     }
-
-        return systemManager.getRecommendationSystem()
-                .recommendByLinearDistance(this.getPosition(), stations).get(0);
+        if (!stations.isEmpty()) {
+         	List<Station> recommendedStations = systemManager.getRecommendationSystem()
+             .recommendByLinearDistance(this.getPosition(), stations);
+        
+        		 destination = recommendedStations.get(0).getPosition().equals(this.getPosition()) && recommendedStations.size() > 1  
+        				 ? recommendedStations.get(1) : recommendedStations.get(0);
+        }
+        
+        return destination;
 
     }
 
@@ -68,7 +72,7 @@ public class UserRandom extends User {
 
         List<Station> recommendedStations = systemManager.getRecommendationSystem()
                 .recommendByLinearDistance(this.getPosition(), stations);
-
+        // TODO: what happens if recommended stations size is 1?
         return recommendedStations.get(0).getPosition().equals(this.getPosition())
                 ? recommendedStations.get(1) : recommendedStations.get(0);
     }

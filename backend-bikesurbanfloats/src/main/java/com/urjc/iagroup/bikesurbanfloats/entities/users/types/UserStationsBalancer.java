@@ -78,7 +78,7 @@ public class UserStationsBalancer extends User {
                     "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
-                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", minRentalAttempts=" + minRentalAttempts +
                     ", bikeReturnPercentage=" + bikeReturnPercentage +
                     ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
                     ", failedReservationPercentage=" + failedReservationPercentage +

@@ -74,7 +74,7 @@ namespace Main {
         let it: TimeEntriesIterator = TimeEntriesIterator.create();
         it.subscribe(values);
         await it.calculateBikeRentalsAndReturns('history');
-        console.log('station 12:', values.getBikeFailedRentalsOfStation(4));
+        console.log('station 12:', values.getBikeSuccessfulRentalsOfStation(12));
     } 
    
   
