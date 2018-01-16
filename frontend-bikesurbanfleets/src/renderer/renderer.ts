@@ -11,7 +11,7 @@ import './css';
 
 import 'conic-gradient/conic-gradient';
 
-if (process.env.target === 'development') {
+if (process.env.target === 'production') {
     enableProdMode();
 } else {
     // Development and test

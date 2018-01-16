@@ -1,17 +1,17 @@
 <div class="btn-toolbar p-2">
     <div class="btn-group mr-2">
         <button class="btn btn-outline-secondary"
-                (click)="stepBackward()"
+                (click)="engine.stepBackward()"
                 [disabled]="is(STATE.LOADING, STATE.START, STATE.RUNNING)">
             <fa [icon]="'step-backward'" [fixed]="true"></fa>
         </button>
         <button class="btn btn-outline-secondary center-control"
                 (click)="togglePlayPause()"
-                [disabled]="is(STATE.LOADING) || is([STATE.START, speed < 0], [STATE.END, speed > 0]) || speedControl.errors">
-            <fa [icon]="mainActionIcon"></fa>
+                [disabled]="is(STATE.LOADING) || is([STATE.START, engine.speed < 0], [STATE.END, engine.speed > 0]) || engine.speedControl.errors">
+            <fa [icon]="engine.mainActionIcon"></fa>
         </button>
         <button class="btn btn-outline-secondary"
-                (click)="stepForward()"
+                (click)="engine.stepForward()"
                 [disabled]="is(STATE.LOADING, STATE.END, STATE.RUNNING)">
             <fa [icon]="'step-forward'" [fixed]="true"></fa>
         </button>
@@ -20,17 +20,17 @@
         <span class="input-group-btn decrease-speed">
             <button class="btn btn-outline-secondary"
                     (click)="changeSpeed(-10)"
-                    [disabled]="is(STATE.LOADING) || is([STATE.START, speed - 10 <= 0])">
+                    [disabled]="is(STATE.LOADING) || is([STATE.START, engine.speed - 10 <= 0])">
                 <fa [icon]="'minus'" [fixed]="true"></fa>
             </button>
         </span>
         <input type="text" class="form-control center-control"
-               [class.is-invalid]="speedControl.errors"
-               [formControl]="speedControl">
+               [class.is-invalid]="engine.speedControl.errors"
+               [formControl]="engine.speedControl">
         <span class="input-group-btn">
             <button class="btn btn-outline-secondary"
                     (click)="changeSpeed(+10)"
-                    [disabled]="is(STATE.LOADING) || is([STATE.END, speed + 10 >= 0])">
+                    [disabled]="is(STATE.LOADING) || is([STATE.END, engine.speed + 10 >= 0])">
                 <fa [icon]="'plus'" [fixed]="true"></fa>
             </button>
         </span>
@@ -40,4 +40,4 @@
     </div>
 </div>
 
-<map-view [markers]="activeMarkers"></map-view>
+<map-view [markers]="constructor.activeLayers"></map-view>

@@ -1,0 +1,53 @@
+2018-01-16 13:53:13 INFO  GraphHopperOSM:606 - version 0.9.0|2017-05-31T11:23:38Z (5,14,4,3,3,2)
+2018-01-16 13:53:13 INFO  GraphHopperOSM:608 - graph CH|foot|RAM_STORE|2D|NoExt|,,,,, details:edges:0(0MB), nodes:0(0MB), name:(0MB), geo:0(0MB), bounds:1.7976931348623157E308,-1.7976931348623157E308,1.7976931348623157E308,-1.7976931348623157E308, CHGraph|fastest|foot, shortcuts:0, nodesCH:(0MB)
+2018-01-16 13:53:13 INFO  GraphHopperOSM:685 - start creating graph from backend-bikesurbanfleets-core/maps/madrid.osm
+2018-01-16 13:53:13 INFO  GraphHopperOSM:671 - using CH|foot|RAM_STORE|2D|NoExt|,,,,, memory:totalMB:178, usedMB:34
+2018-01-16 13:53:18 INFO  GraphHopperOSM:1196 - edges: 139575, nodes 93691, there were 986 subnetworks. removed them => 3537 less nodes
+2018-01-16 13:53:48 INFO  GraphHopperOSM:1203 - flushing graph CH|foot|RAM_STORE|2D|NoExt|5,14,4,3,3, details:edges:139 575(5MB), nodes:93 691(2MB), name:(1MB), geo:328 719(2MB), bounds:-3.8654365509473507,-3.5174901452099565,40.35210513365504,40.509268056808445, CHGraph|fastest|foot, shortcuts:145 300, nodesCH:(1MB), totalMB:324, usedMB:203)
+2018-01-16 13:53:48 INFO  GraphHopperOSM:1206 - flushed graph totalMB:510, usedMB:32)
+2018-01-16 13:54:27 INFO  GraphHopperOSM:606 - version 0.9.0|2017-05-31T11:23:38Z (5,14,4,3,3,2)
+2018-01-16 13:54:27 INFO  GraphHopperOSM:608 - graph CH|foot|RAM_STORE|2D|NoExt|,,,,, details:edges:0(0MB), nodes:0(0MB), name:(0MB), geo:0(0MB), bounds:1.7976931348623157E308,-1.7976931348623157E308,1.7976931348623157E308,-1.7976931348623157E308, CHGraph|fastest|foot, shortcuts:0, nodesCH:(0MB)
+2018-01-16 13:54:27 INFO  GraphHopperOSM:685 - start creating graph from backend-bikesurbanfleets-core/maps/madrid.osm
+2018-01-16 13:54:27 INFO  GraphHopperOSM:671 - using CH|foot|RAM_STORE|2D|NoExt|,,,,, memory:totalMB:178, usedMB:34
+2018-01-16 13:54:34 INFO  GraphHopperOSM:1196 - edges: 139575, nodes 93691, there were 986 subnetworks. removed them => 3537 less nodes
+2018-01-16 13:55:20 INFO  GraphHopperOSM:1203 - flushing graph CH|foot|RAM_STORE|2D|NoExt|5,14,4,3,3, details:edges:139 575(5MB), nodes:93 691(2MB), name:(1MB), geo:328 719(2MB), bounds:-3.8654365509473507,-3.5174901452099565,40.35210513365504,40.509268056808445, CHGraph|fastest|foot, shortcuts:145 300, nodesCH:(1MB), totalMB:507, usedMB:43)
+2018-01-16 13:55:20 INFO  GraphHopperOSM:1206 - flushed graph totalMB:507, usedMB:48)
+2018-01-16 13:56:11 INFO  GraphHopperOSM:606 - version 0.9.0|2017-05-31T11:23:38Z (5,14,4,3,3,2)
+2018-01-16 13:56:11 INFO  GraphHopperOSM:608 - graph CH|foot|RAM_STORE|2D|NoExt|,,,,, details:edges:0(0MB), nodes:0(0MB), name:(0MB), geo:0(0MB), bounds:1.7976931348623157E308,-1.7976931348623157E308,1.7976931348623157E308,-1.7976931348623157E308, CHGraph|fastest|foot, shortcuts:0, nodesCH:(0MB)
+2018-01-16 13:56:11 INFO  GraphHopperOSM:685 - start creating graph from backend-bikesurbanfleets-core/maps/madrid.osm
+2018-01-16 13:56:11 INFO  GraphHopperOSM:671 - using CH|foot|RAM_STORE|2D|NoExt|,,,,, memory:totalMB:178, usedMB:34
+2018-01-16 14:00:40 INFO  GraphHopperOSM:606 - version 0.9.0|2017-05-31T11:23:38Z (5,14,4,3,3,2)
+2018-01-16 14:00:40 INFO  GraphHopperOSM:608 - graph CH|foot|RAM_STORE|2D|NoExt|,,,,, details:edges:0(0MB), nodes:0(0MB), name:(0MB), geo:0(0MB), bounds:1.7976931348623157E308,-1.7976931348623157E308,1.7976931348623157E308,-1.7976931348623157E308, CHGraph|fastest|foot, shortcuts:0, nodesCH:(0MB)
+2018-01-16 14:00:40 INFO  GraphHopperOSM:685 - start creating graph from backend-bikesurbanfleets-core/maps/madrid.osm
+2018-01-16 14:00:40 INFO  GraphHopperOSM:671 - using CH|foot|RAM_STORE|2D|NoExt|,,,,, memory:totalMB:178, usedMB:34
+2018-01-16 14:00:44 INFO  GraphHopperOSM:1196 - edges: 139575, nodes 93691, there were 986 subnetworks. removed them => 3537 less nodes
+2018-01-16 14:01:12 INFO  GraphHopperOSM:1203 - flushing graph CH|foot|RAM_STORE|2D|NoExt|5,14,4,3,3, details:edges:139 575(5MB), nodes:93 691(2MB), name:(1MB), geo:328 719(2MB), bounds:-3.8654365509473507,-3.5174901452099565,40.35210513365504,40.509268056808445, CHGraph|fastest|foot, shortcuts:145 300, nodesCH:(1MB), totalMB:324, usedMB:199)
+2018-01-16 14:01:12 INFO  GraphHopperOSM:1206 - flushed graph totalMB:324, usedMB:204)
+2018-01-16 14:07:36 INFO  GraphHopperOSM:606 - version 0.9.0|2017-05-31T11:23:38Z (5,14,4,3,3,2)
+2018-01-16 14:07:36 INFO  GraphHopperOSM:608 - graph CH|foot|RAM_STORE|2D|NoExt|,,,,, details:edges:0(0MB), nodes:0(0MB), name:(0MB), geo:0(0MB), bounds:1.7976931348623157E308,-1.7976931348623157E308,1.7976931348623157E308,-1.7976931348623157E308, CHGraph|fastest|foot, shortcuts:0, nodesCH:(0MB)
+2018-01-16 14:07:36 INFO  GraphHopperOSM:685 - start creating graph from backend-bikesurbanfleets-core/maps/madrid.osm
+2018-01-16 14:07:36 INFO  GraphHopperOSM:671 - using CH|foot|RAM_STORE|2D|NoExt|,,,,, memory:totalMB:178, usedMB:36
+2018-01-16 14:07:42 INFO  GraphHopperOSM:1196 - edges: 139575, nodes 93691, there were 986 subnetworks. removed them => 3537 less nodes
+2018-01-16 14:08:15 INFO  GraphHopperOSM:1203 - flushing graph CH|foot|RAM_STORE|2D|NoExt|5,14,4,3,3, details:edges:139 575(5MB), nodes:93 691(2MB), name:(1MB), geo:328 719(2MB), bounds:-3.8654365509473507,-3.5174901452099565,40.35210513365504,40.509268056808445, CHGraph|fastest|foot, shortcuts:145 300, nodesCH:(1MB), totalMB:313, usedMB:136)
+2018-01-16 14:08:15 INFO  GraphHopperOSM:1206 - flushed graph totalMB:313, usedMB:143)
+2018-01-16 14:09:07 INFO  GraphHopperOSM:606 - version 0.9.0|2017-05-31T11:23:38Z (5,14,4,3,3,2)
+2018-01-16 14:09:07 INFO  GraphHopperOSM:608 - graph CH|foot|RAM_STORE|2D|NoExt|,,,,, details:edges:0(0MB), nodes:0(0MB), name:(0MB), geo:0(0MB), bounds:1.7976931348623157E308,-1.7976931348623157E308,1.7976931348623157E308,-1.7976931348623157E308, CHGraph|fastest|foot, shortcuts:0, nodesCH:(0MB)
+2018-01-16 14:09:07 INFO  GraphHopperOSM:685 - start creating graph from backend-bikesurbanfleets-core/maps/madrid.osm
+2018-01-16 14:09:07 INFO  GraphHopperOSM:671 - using CH|foot|RAM_STORE|2D|NoExt|,,,,, memory:totalMB:178, usedMB:36
+2018-01-16 14:09:12 INFO  GraphHopperOSM:1196 - edges: 139575, nodes 93691, there were 986 subnetworks. removed them => 3537 less nodes
+2018-01-16 14:09:47 INFO  GraphHopperOSM:1203 - flushing graph CH|foot|RAM_STORE|2D|NoExt|5,14,4,3,3, details:edges:139 575(5MB), nodes:93 691(2MB), name:(1MB), geo:328 719(2MB), bounds:-3.8654365509473507,-3.5174901452099565,40.35210513365504,40.509268056808445, CHGraph|fastest|foot, shortcuts:145 300, nodesCH:(1MB), totalMB:315, usedMB:42)
+2018-01-16 14:09:47 INFO  GraphHopperOSM:1206 - flushed graph totalMB:315, usedMB:46)
+2018-01-16 14:19:43 INFO  GraphHopperOSM:606 - version 0.9.0|2017-05-31T11:23:38Z (5,14,4,3,3,2)
+2018-01-16 14:19:43 INFO  GraphHopperOSM:608 - graph CH|foot|RAM_STORE|2D|NoExt|,,,,, details:edges:0(0MB), nodes:0(0MB), name:(0MB), geo:0(0MB), bounds:1.7976931348623157E308,-1.7976931348623157E308,1.7976931348623157E308,-1.7976931348623157E308, CHGraph|fastest|foot, shortcuts:0, nodesCH:(0MB)
+2018-01-16 14:19:43 INFO  GraphHopperOSM:685 - start creating graph from backend-bikesurbanfleets-core/maps/madrid.osm
+2018-01-16 14:19:43 INFO  GraphHopperOSM:671 - using CH|foot|RAM_STORE|2D|NoExt|,,,,, memory:totalMB:178, usedMB:36
+2018-01-16 14:19:49 INFO  GraphHopperOSM:1196 - edges: 139575, nodes 93691, there were 986 subnetworks. removed them => 3537 less nodes
+2018-01-16 14:20:21 INFO  GraphHopperOSM:1203 - flushing graph CH|foot|RAM_STORE|2D|NoExt|5,14,4,3,3, details:edges:139 575(5MB), nodes:93 691(2MB), name:(1MB), geo:328 719(2MB), bounds:-3.8654365509473507,-3.5174901452099565,40.35210513365504,40.509268056808445, CHGraph|fastest|foot, shortcuts:145 300, nodesCH:(1MB), totalMB:317, usedMB:41)
+2018-01-16 14:20:21 INFO  GraphHopperOSM:1206 - flushed graph totalMB:317, usedMB:45)
+2018-01-16 14:40:13 INFO  GraphHopperOSM:606 - version 0.9.0|2017-05-31T11:23:38Z (5,14,4,3,3,2)
+2018-01-16 14:40:13 INFO  GraphHopperOSM:608 - graph CH|foot|RAM_STORE|2D|NoExt|,,,,, details:edges:0(0MB), nodes:0(0MB), name:(0MB), geo:0(0MB), bounds:1.7976931348623157E308,-1.7976931348623157E308,1.7976931348623157E308,-1.7976931348623157E308, CHGraph|fastest|foot, shortcuts:0, nodesCH:(0MB)
+2018-01-16 14:40:13 INFO  GraphHopperOSM:685 - start creating graph from backend-bikesurbanfleets-core/maps/madrid.osm
+2018-01-16 14:40:13 INFO  GraphHopperOSM:671 - using CH|foot|RAM_STORE|2D|NoExt|,,,,, memory:totalMB:178, usedMB:34
+2018-01-16 14:40:17 INFO  GraphHopperOSM:1196 - edges: 139575, nodes 93691, there were 986 subnetworks. removed them => 3537 less nodes
+2018-01-16 14:40:47 INFO  GraphHopperOSM:1203 - flushing graph CH|foot|RAM_STORE|2D|NoExt|5,14,4,3,3, details:edges:139 575(5MB), nodes:93 691(2MB), name:(1MB), geo:328 719(2MB), bounds:-3.8654365509473507,-3.5174901452099565,40.35210513365504,40.509268056808445, CHGraph|fastest|foot, shortcuts:145 300, nodesCH:(1MB), totalMB:324, usedMB:202)
+2018-01-16 14:40:47 INFO  GraphHopperOSM:1206 - flushed graph totalMB:509, usedMB:33)

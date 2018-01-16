@@ -1,7 +1,8 @@
-import { JsonIdentifier } from './decorators';
-import { Entity } from './Entity';
+import { Entity, Historic } from './Entity';
 
-@JsonIdentifier('bikes')
+@Historic<Bike>({
+    jsonIdentifier: 'bikes',
+})
 export class Bike extends Entity {
     reserved: boolean;
 }

@@ -5,7 +5,7 @@ import * as paths from 'path';
 import { app } from 'electron';
 import { without } from 'lodash';
 
-import { HistoryEntities, HistoryTimeEntries } from '../../shared/history';
+import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { IpcUtil } from './index';
 
 interface TimeRange {
@@ -34,7 +34,10 @@ export default class HistoryReader {
 
     static async create(path: string): Promise<HistoryReader> {
         let reader = new HistoryReader(path);
-        reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities.json');
+        reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities').sort((a, b) => {
+            const [x, y] = [a, b].map((s) => parseInt(s.split('-')[0]));
+            return x - y;
+        });
         return reader;
     }
 
@@ -43,7 +46,7 @@ export default class HistoryReader {
             const reader = await this.create(historyPath);
 
             const channels = [
-                new Channel('history-entities', async () => await reader.readEntities()),
+                new Channel('history-entities', async (type) => await reader.getEntities(type)),
                 new Channel('history-get', async (n) => await reader.changeFile(n)),
                 new Channel('history-previous', async () => await reader.previousChangeFile()),
                 new Channel('history-next', async () => await reader.nextChangeFile()),
@@ -86,8 +89,8 @@ export default class HistoryReader {
         });
     }
 
-    async readEntities(): Promise<HistoryEntities> {
-        const entities = await fs.readJson(paths.join(this.historyPath, 'entities.json'));
+    async getEntities(type: string): Promise<HistoryEntitiesJson> {
+        const entities = await fs.readJson(paths.join(this.historyPath, `entities/${type}.json`));
 
         if (!HistoryReader.ajv.validate(HistoryReader.entityFileSchema, entities)) {
             throw new Error(HistoryReader.ajv.errorsText());
@@ -96,7 +99,7 @@ export default class HistoryReader {
         return entities;
     }
 
-    async previousChangeFile(): Promise<HistoryTimeEntries> {
+    async previousChangeFile(): Promise<Array<HistoryTimeEntry>>  {
         if (this.currentIndex <= 0) {
             throw new Error(`No previous change file available!`);
         }
@@ -110,7 +113,7 @@ export default class HistoryReader {
         return file;
     }
 
-    async nextChangeFile(): Promise<HistoryTimeEntries> {
+    async nextChangeFile(): Promise<Array<HistoryTimeEntry>> {
         if (this.currentIndex === this.changeFiles.length - 1) {
             throw new Error(`No next change file available!`);
         }
@@ -124,7 +127,7 @@ export default class HistoryReader {
         return file;
     }
 
-    async changeFile(n: number): Promise<HistoryTimeEntries> {
+    async changeFile(n: number): Promise<Array<HistoryTimeEntry>> {
         if (n < 0 || n >= this.numberOfChangeFiles) {
             throw new Error(`Change file not available! Got ${n}, need n ∈ [0, ${this.numberOfChangeFiles})`);
         }

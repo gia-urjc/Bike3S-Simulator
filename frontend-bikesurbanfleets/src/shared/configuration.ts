@@ -1,12 +1,12 @@
-import { GeoPoint, PlainObject } from './util';
+import { Geo, PlainObject } from './util';
 
 export interface BaseConfiguration  extends PlainObject {
     reservationTime: number;
     totalTimeSimulation: number;
     randomSeed: number;
     boundingBox: {
-        northWest: GeoPoint;
-        southEast: GeoPoint;
+        northWest: Geo.Point;
+        southEast: Geo.Point;
     }
     map: string;
     historyOutputPath: string;

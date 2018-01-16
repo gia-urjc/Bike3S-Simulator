@@ -1,3 +1,4 @@
+import { isPlainObject } from 'lodash';
 import { PlainObject } from './util';
 
 export interface HistoryEntity extends PlainObject {
@@ -9,8 +10,9 @@ export interface PropertyChange<T> {
     new: T,
 }
 
-export interface HistoryEntities {
-    [key: string]: Array<HistoryEntity>
+export interface HistoryEntitiesJson {
+    prototype: Array<string>,
+    instances: Array<HistoryEntity>,
 }
 
 export type EntityChanges = {
@@ -19,7 +21,7 @@ export type EntityChanges = {
     [key: string]: PropertyChange<any>
 }
 
-export type HistoryTimeEntries = Array<{
+export type HistoryTimeEntry = {
     time: number,
     events: Array<{
         name: string,
@@ -27,4 +29,30 @@ export type HistoryTimeEntries = Array<{
             [key: string]: Array<EntityChanges>
         }
     }>
-}>
+}
+
+export enum ReservationType {
+    SLOT = 'SLOT',
+    BIKE = 'BIKE',
+}
+
+export enum ReservationState {
+    ACTIVE = 'ACTIVE',
+    FAILED = 'FAILED',
+    EXPIRED = 'EXPIRED',
+    SUCCESSFUL = 'SUCCESSFUL',
+}
+
+export interface Timestamp {
+    seconds: number,
+    formatted: string,
+}
+
+export interface IdReference {
+    type: string,
+    id: number | Array<number | null>,
+}
+
+export function isIdReference(property: any): boolean {
+    return isPlainObject(property) && 'type' in property && 'id' in property;
+}
