@@ -1,5 +1,5 @@
 import { Icon, LeafletEvent } from 'leaflet';
-import { Diff, Flatten, If, Is, UnArray } from '../../../../shared/mappedtypes';
+import { Diff, Flatten, If, Is, Safe, UnArray } from '../../../../shared/mappedtypes';
 import { Geo } from '../../../../shared/util';
 import { LeafletUtil } from '../util';
 
@@ -42,14 +42,14 @@ export abstract class Entity {
     id: number;
 }
 
-type TestEntity<T, P extends string> = If<Is<Entity, T & Object>, P, never>
+type TestEntity<T, P extends string> = If<Is<Entity, Safe<T>>, P, never>
 
 type EntityKeys<T extends Entity> = {
-    [P in keyof T]: If<Is<Array<any>, T[P]>, TestEntity<UnArray<T[P]>, P>, TestEntity<T[P], P>>
+    [P in keyof T]: If<Is<Array<any>, Safe<T[P]>>, TestEntity<UnArray<Safe<T[P]>>, P>, TestEntity<T[P], P>>
 }[keyof T]
 
 type References<T extends Entity> = {
-    [P in EntityKeys<T>]?: If<Is<Array<any>, T[P]>, ReferenceCallback<T, UnArray<T[P]>>, ReferenceCallback<T, T[P]>>
+    [P in EntityKeys<T>]?: If<Is<Array<any>, Safe<T[P]>>, ReferenceCallback<T, UnArray<Safe<T[P]>>>, ReferenceCallback<T, T[P]>>
 }
 
 export interface Entity {
