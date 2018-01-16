@@ -12,7 +12,7 @@ export interface PropertyChange<T> {
 
 export interface HistoryEntitiesJson {
     prototype: Array<string>,
-    instances: Array<HistoryEntity>,
+    instances: Array<HistoryEntity>
 }
 
 export type EntityChanges = {

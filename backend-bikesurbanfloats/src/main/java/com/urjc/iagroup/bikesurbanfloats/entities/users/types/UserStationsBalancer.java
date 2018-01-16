@@ -50,7 +50,7 @@ public class UserStationsBalancer extends User {
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentingAttempts = systemManager.getRandom().nextInt(4, 8);
+        private int minRentalAttempts = systemManager.getRandom().nextInt(4, 8);
 
         /**
          * It determines the rate with which the user will decide to go directly to a station
@@ -78,7 +78,7 @@ public class UserStationsBalancer extends User {
                     "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
-                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", minRentalAttempts=" + minRentalAttempts +
                     ", bikeReturnPercentage=" + bikeReturnPercentage +
                     ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
                     ", failedReservationPercentage=" + failedReservationPercentage +
@@ -105,7 +105,7 @@ public class UserStationsBalancer extends User {
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == parameters.minRentingAttempts ? true : false;
+        return getMemory().getCounterRentingAttempts() == parameters.minRentalAttempts ? true : false;
     }
     
     @Override
