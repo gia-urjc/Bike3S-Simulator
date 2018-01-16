@@ -1,3 +1,5 @@
-const Rx = (window as any).require('rxjs/operators');
+import * as Rx from 'rxjs/operators';
 
-export const takeWhile = Rx.takeWhile;
+const operators = (window as any).require('rxjs/operators');
+
+export const takeWhile: typeof Rx.takeWhile = operators.takeWhile;
