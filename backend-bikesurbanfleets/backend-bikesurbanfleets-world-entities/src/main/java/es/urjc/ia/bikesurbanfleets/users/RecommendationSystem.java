@@ -56,8 +56,8 @@ public class RecommendationSystem {
     
     private List<Station> validStationsByLinearDistanceToReturnBike(GeoPoint point, List<Station> stations) {
         return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= MAX_DISTANCE && station.availableSlots() > 0)
-    }            .collect(Collectors.toList());
-    
+                .collect(Collectors.toList());
+    }
  
     /**
      * It verifies which stations have real routes of less than MAX_DISTANCE meters 
@@ -133,7 +133,7 @@ public class RecommendationSystem {
     public List<Station> recommendByLinearDistance(GeoPoint point, List<Station> stations) {
         Comparator<Station> byLinearDistance = (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point),
                 s2.getPosition().distanceTo(point));
-        return validStationsByLinearDistance(point, stations).stream().sorted(byLinearDistance).collect(Collectors.toList());
+        return validStationsByLinearDistanceToRentBike(point, stations).stream().sorted(byLinearDistance).collect(Collectors.toList());
     }
     
     /**
@@ -150,7 +150,7 @@ public class RecommendationSystem {
     public List<Station> recommendByProportionBetweenDistanceAndBikes(GeoPoint point, List<Station> stations) {
         Comparator<Station> byProportion = (s1, s2) -> Double.compare(s1.getPosition()
                 .distanceTo(point)/s1.availableBikes(), s2.getPosition().distanceTo(point)/s2.availableBikes());
-        return validStationsByLinearDistance(point, stations).stream().sorted(byProportion).collect(Collectors.toList());
+        return validStationsByLinearDistanceToRentBike(point, stations).stream().sorted(byProportion).collect(Collectors.toList());
     }
     
     /**
@@ -167,7 +167,7 @@ public class RecommendationSystem {
     public List<Station> recommendByProportionBetweenDistanceAndSlots(GeoPoint point, List<Station> stations) {
         Comparator<Station> byProportion = (s1, s2) -> Double.compare(s1.getPosition()
                 .distanceTo(point)/s1.availableSlots(), s2.getPosition().distanceTo(point)/s2.availableSlots());
-        return validStationsByLinearDistance(point, stations).stream().sorted(byProportion)
+        return validStationsByLinearDistanceToRentBike(point, stations).stream().sorted(byProportion)
                 .collect(Collectors.toList());
     }
     
