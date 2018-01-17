@@ -21,7 +21,17 @@
         </dependency>
         <dependency>
             <groupId>es.urjc.ia</groupId>
-            <artifactId>bikesurbanfleets-usersgenerator</artifactId>
+            <artifactId>bikesurbanfleets-config-usersgenerator</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>es.urjc.ia</groupId>
+            <artifactId>bikesurbanfleets-world-entities</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>es.urjc.ia</groupId>
+            <artifactId>bikesurbanfleets-history</artifactId>
             <version>1.0</version>
         </dependency>
 	</dependencies>

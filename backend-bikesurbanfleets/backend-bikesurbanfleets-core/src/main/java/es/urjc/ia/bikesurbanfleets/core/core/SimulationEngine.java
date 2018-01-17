@@ -1,14 +1,17 @@
 package es.urjc.ia.bikesurbanfleets.core.core;
 
+
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.core.config.SimulationConfiguration;
-import es.urjc.ia.bikesurbanfleets.core.entities.users.User;
-import es.urjc.ia.bikesurbanfleets.core.entities.users.UserFactory;
-import es.urjc.ia.bikesurbanfleets.core.events.Event;
+import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUser;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
-import es.urjc.ia.bikesurbanfleets.core.history.History;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.config.SingleUser;
+import es.urjc.ia.bikesurbanfleets.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.history.History;
+import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
+import es.urjc.ia.bikesurbanfleets.users.UserFactory;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +36,13 @@ public class SimulationEngine {
         this.simulationConfiguration = simulationConfiguration;
         this.systemManager = systemManager;
         this.eventsQueue = new PriorityQueue<>(processEntryPoints());
+        Reservation.VALID_TIME = simulationConfiguration.getReservationTime();
     }
 
     private List<EventUserAppears> processEntryPoints() {
         List<EventUserAppears> eventUserAppearsList = new ArrayList<>();
-
         UserFactory userFactory = new UserFactory();
-        for (SingleUser singleUser : simulationConfiguration.getUsers()) {
+        for (SingleUser singleUser: simulationConfiguration.getUsers()) {
             User user = userFactory.createUser(singleUser.getUserType());
             int instant = singleUser.getTimeInstant();
             GeoPoint position = singleUser.getPosition();
@@ -55,7 +58,7 @@ public class SimulationEngine {
 
     public void run() throws Exception {
 
-        History.init(simulationConfiguration);
+        History.init(simulationConfiguration.getOutputPath());
 
         while (!eventsQueue.isEmpty()) {
             Event event = eventsQueue.poll();  // retrieves and removes first element

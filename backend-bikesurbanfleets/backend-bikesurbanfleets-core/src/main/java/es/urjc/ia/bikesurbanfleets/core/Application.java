@@ -4,10 +4,10 @@ import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
 import es.urjc.ia.bikesurbanfleets.core.config.ConfigJsonReader;
 import es.urjc.ia.bikesurbanfleets.core.config.SimulationConfiguration;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
-import es.urjc.ia.bikesurbanfleets.core.core.SystemManager;
 
 import java.io.IOException;
 
+import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;

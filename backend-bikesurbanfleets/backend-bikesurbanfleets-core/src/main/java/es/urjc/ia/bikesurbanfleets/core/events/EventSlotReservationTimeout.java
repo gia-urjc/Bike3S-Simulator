@@ -1,9 +1,10 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
+import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.core.entities.Entity;
-import es.urjc.ia.bikesurbanfleets.core.entities.Reservation;
-import es.urjc.ia.bikesurbanfleets.core.entities.users.User;
+import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
+import es.urjc.ia.bikesurbanfleets.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.entities.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;

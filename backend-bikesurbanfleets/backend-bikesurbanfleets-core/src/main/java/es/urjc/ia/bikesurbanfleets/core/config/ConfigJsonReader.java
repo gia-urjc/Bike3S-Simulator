@@ -2,8 +2,7 @@ package es.urjc.ia.bikesurbanfleets.core.config;
 
 import com.google.gson.Gson;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.core.core.SystemManager;
-import es.urjc.ia.bikesurbanfleets.core.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -33,8 +32,6 @@ public class ConfigJsonReader {
         try (FileReader reader = new FileReader(configurationFile)) {
             SimulationConfiguration simulationConfiguration = gson.fromJson(reader, SimulationConfiguration.class);
             SimulationRandom.init(simulationConfiguration.getRandomSeed());
-            Reservation.VALID_TIME = simulationConfiguration.getReservationTime();
-
             return simulationConfiguration;
         }
     }
@@ -43,8 +40,8 @@ public class ConfigJsonReader {
      * It creates a system manager object from the simulation configuration object.
      * @return the created system manager object.
      */
-    public SystemManager createSystemManager(SimulationConfiguration simulationConfiguration) throws IOException {
-        return new SystemManager(simulationConfiguration);
+    public SystemManager createSystemManager(SimulationConfiguration simConf) throws IOException {
+        return new SystemManager(simConf.getStations(), simConf.getMap(), simConf.getBoundingBox());
     }
 
 }

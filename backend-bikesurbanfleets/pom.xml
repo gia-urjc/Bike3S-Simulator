@@ -9,10 +9,17 @@
     <version>1.0</version>
     <packaging>pom</packaging>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
     <modules>
-            <module>backend-bikesurbanfleets-common</module>
-            <module>backend-bikesurbanfleets-usersgenerator</module>
-            <module>backend-bikesurbanfleets-core</module>
+        <module>backend-bikesurbanfleets-common</module>
+        <module>backend-bikesurbanfleets-config-usersgenerator</module>
+        <module>backend-bikesurbanfleets-core</module>
+        <module>backend-bikesurbanfleets-history</module>
+        <module>backend-bikesurbanfleets-world-entities</module>
     </modules>
 
     <dependencies>

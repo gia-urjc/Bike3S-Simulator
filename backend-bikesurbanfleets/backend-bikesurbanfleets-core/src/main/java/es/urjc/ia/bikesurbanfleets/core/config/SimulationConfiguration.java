@@ -3,11 +3,12 @@ package es.urjc.ia.bikesurbanfleets.core.config;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
-import es.urjc.ia.bikesurbanfleets.core.config.deserializers.StationDeserializer;
-import es.urjc.ia.bikesurbanfleets.core.entities.Station;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.config.SingleUser;
+import es.urjc.ia.bikesurbanfleets.entities.Station;
+import es.urjc.ia.bikesurbanfleets.entities.deserializers.StationDeserializer;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;
 
 import java.util.List;
+
 /**
  * It encapsulates the information of the configuration file in a data type understandable 
  * and manageable for the system.
@@ -81,9 +82,7 @@ public class SimulationConfiguration {
         return users;
     }
 
-    public List<Station> getStations() {
-        return stations;
-    }
+    public List<Station> getStations() { return stations; }
     
     public String getOutputPath() {
         return historyOutputPath;
