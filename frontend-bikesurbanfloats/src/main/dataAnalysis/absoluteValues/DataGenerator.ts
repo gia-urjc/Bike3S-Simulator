@@ -7,6 +7,7 @@ import { RentalsAndReturnsPerStation } from './analysisData/stations/RentalsAndR
 
 export class DataGenerator {
     private path: string;
+    private counter: number;
     private reservationsIterator: ReservationsIterator;
     private timeEntriesIterator: TimeEntriesIterator;
     private reservationsPerUser: ReservationsPerUser;
@@ -16,10 +17,15 @@ export class DataGenerator {
     
     public constructor(path: string) {
         this.path = path;
+        this.counter = 0;
     }
     
     public async init(): Promise<void> {
-        this.reservationsIterator = await ReservationsIterator.create(this.path);
+        this.reservationsIterator = new ReservationsIterator();
+        this.reservationsIterator.init().then(() => {
+            this.counter++;
+            verify();     
+        })
         this.timeEntriesIterator = await TimeEntriesIterator.create();
         this.reservationsPerUser = await ReservationsPerUser.create(this.path);
         this.rentalsAndReturnsPerUser = await RentalsAndReturnsPerUser.create(this.path);
@@ -33,6 +39,8 @@ export class DataGenerator {
         
         this.reservationsIterator.calculateReservations();
         this.timeEntriesIterator.calculateBikeRentalsAndReturns(this.path);
+    }
+    
     }
 
     

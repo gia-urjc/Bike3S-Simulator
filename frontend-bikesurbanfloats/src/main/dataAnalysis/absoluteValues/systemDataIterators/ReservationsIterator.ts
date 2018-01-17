@@ -39,10 +39,11 @@ export class ReservationsIterator implements Observable {
         return;
     }
     
-    public async calculateReservations(): Promise<void> {
+    public async calculateReservations(): Promise<boolean> {
         for (let reservation of this.reservations) {
             this.notify(reservation);
         }
+        return true;
     }
     
     public notify(reservation: Reservation): void {

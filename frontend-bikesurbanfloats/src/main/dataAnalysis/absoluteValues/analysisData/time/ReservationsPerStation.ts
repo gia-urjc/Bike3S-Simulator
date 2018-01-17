@@ -10,29 +10,23 @@ export class ReservationsPerStation implements Observer {
     private bikeSuccessfulReservationsPerStation: Map<number, number>;
     private slotSuccessfulReservationsPerStation: Map<number, number>;
     
-    public constructor() {
+    private constructor() {
         this.bikeFailedReservationsPerStation = new Map<number, number>(); 
         this.slotFailedReservationsPerStation = new Map<number, number>();
         this.bikeSuccessfulReservationsPerStation = new Map<number, number>();
         this.slotSuccessfulReservationsPerStation = new Map<number, number>();
     }
     
-    public async init(path: string): Promise<boolean> {
-        try {
-            let history: HistoryReader = await HistoryReader.create(path);
-            let entities: HistoryEntitiesJson = await history.getEntities("stations");
-            this.stations = <Station[]> entities.instances;
+    private async init(path: string): Promise<void> {
+        let history: HistoryReader = await HistoryReader.create(path);
+        let entities: HistoryEntitiesJson = await history.getEntities("stations");
+        this.stations = <Station[]> entities.instances;
         
-            for(let station of this.stations) {
-                this.bikeFailedReservationsPerStation.set(station.id, 0);
-                this.slotFailedReservationsPerStation.set(station.id, 0);            
-                this.bikeSuccessfulReservationsPerStation.set(station.id, 0);
-                this.slotSuccessfulReservationsPerStation.set(station.id, 0);
-            }
-            return true;
-        }
-        catch(error) {
-            console.log('error getting stations when initializing reservations values:', error);
+        for(let station of this.stations) {
+            this.bikeFailedReservationsPerStation.set(station.id, 0);
+            this.slotFailedReservationsPerStation.set(station.id, 0);            
+            this.bikeSuccessfulReservationsPerStation.set(station.id, 0);
+            this.slotSuccessfulReservationsPerStation.set(station.id, 0);
         }
     }
    

@@ -13,16 +13,16 @@ export class RentalsAndReturnsPerUser implements Observer {
     private bikeFailedReturnsPerUser: Map<number, number>;
     private bikeSuccessfulReturnsPerUser: Map<number, number>;
     
-    private constructor() {
+    public constructor() {
         this.bikeFailedRentalsPerUser = new Map<number, number>();
         this.bikeSuccessfulRentalsPerUser = new Map<number, number>();
         this.bikeFailedReturnsPerUser = new Map<number, number>();
         this.bikeSuccessfulReturnsPerUser = new Map<number, number>();
     }
     
-    private async init(path: string): Promise<void> {
-        let history: HistoryReader = await HistoryReader.create(path);
+    public async init(path: string): Promise<boolean> {
         try {
+            let history: HistoryReader = await HistoryReader.create(path);
             let entities: HistoryEntitiesJson = await history.getEntities("users");
             this.users = entities.instances ;
                 
@@ -32,11 +32,11 @@ export class RentalsAndReturnsPerUser implements Observer {
                 this.bikeFailedReturnsPerUser.set(user.id, 0);            
                 this.bikeSuccessfulReturnsPerUser.set(user.id, 0);            
             }
+            return true;
         }
         catch(error) {
             console.log('error getting users:', error);
         }
-        return;
     }
 
     public static async create(path: string): Promise<RentalsAndReturnsPerUser> {
@@ -67,66 +67,63 @@ export class RentalsAndReturnsPerUser implements Observer {
     }
     
     public update(timeEntry: TimeEntry): void {
-        let name: string;
-        let event: Event;
+        let events: Array<Event> = timeEntry.events;
 
-        let key: number = undefined;
-        let value: number | undefined = undefined;
+        let key: number;
+        let value: number | undefined;
 
-        name = 'EventUserArrivesAtStationToRentBikeWithReservation';
-        event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined && event.changes.users.length !== 0) {
-            key = event.changes.users[0].id;
-            value = this.bikeSuccessfulRentalsPerUser.get(key);
-            if (value !== undefined) {
-                this.bikeSuccessfulRentalsPerUser.set(key, ++value);
-            }
-        }
-        
-        name = 'EventUserArrivesAtStationToReturnBikeWithReservation';
-        event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined &&  event.changes.users.length !== 0) {
-            key = event.changes.users[0].id;
-            value = this.bikeSuccessfulReturnsPerUser.get(key);
-            if (value !== undefined) {
-                this.bikeSuccessfulReturnsPerUser.set(key, ++value);
-            }
-        }
-        
-        name = 'EventUserArrivesAtStationToRentBikeWithoutReservation';
-        event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined && event.changes.users.length !== 0) {
-            key = event.changes.users[0].id;
-            let bike: any = event.changes.users[0].bike;
-            if (bike !== undefined) {
+        for(let event of events) {
+            if (event.name === 'EventUserArrivesAtStationToRentBikeWithReservation'
+                && event.changes.users.length > 0) {
+                key = event.changes.users[0].id;
                 value = this.bikeSuccessfulRentalsPerUser.get(key);
-                if (value !== undefined) {                
+                if (value !== undefined) {
                     this.bikeSuccessfulRentalsPerUser.set(key, ++value);
                 }
             }
-            else {
-                value = this.bikeFailedRentalsPerUser.get(key);
-                if (value !== undefined) {
-                    this.bikeFailedRentalsPerUser.set(key, ++value);
-                }
-            }
-        }
-        
-        name = 'EventUserArrivesAtStationToReturnBikeWithoutReservation';
-        event = HistoryIterator.getEventByName(timeEntry, name);
-        if (event !== undefined && event.changes.users.length !== 0) {
-            key = event.changes.users[0].id;
-            let bike: any = event.changes.users[0].bike;
-            if (bike !== undefined) {
+                
+            else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithReservation'
+                &&  event.changes.users.length > 0) {
+                key = event.changes.users[0].id;
                 value = this.bikeSuccessfulReturnsPerUser.get(key);
-                if (value !== undefined) {                  
+                if (value !== undefined) {
                     this.bikeSuccessfulReturnsPerUser.set(key, ++value);
                 }
             }
-            else {
-                value = this.bikeFailedReturnsPerUser.get(key);
-                if (value !== undefined) {
-                    this.bikeFailedReturnsPerUser.set(key, ++value);
+            
+            else if (event.name === 'EventUserArrivesAtStationToRentBikeWithoutReservation'
+                && event.changes.users.length > 0) {
+                key = event.changes.users[0].id;
+                let bike: any = event.changes.users[0].bike;
+                if (bike !== undefined) {
+                    value = this.bikeSuccessfulRentalsPerUser.get(key);
+                    if (value !== undefined) {                
+                        this.bikeSuccessfulRentalsPerUser.set(key, ++value);
+                    }
+                }
+                else {
+                    value = this.bikeFailedRentalsPerUser.get(key);
+                    if (value !== undefined) {
+                        this.bikeFailedRentalsPerUser.set(key, ++value);
+                    }
+                }
+            }
+    
+            else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithoutReservation'
+                && event.changes.users.length > 0) {
+                key = event.changes.users[0].id;
+                let bike: any = event.changes.users[0].bike;
+                if (bike !== undefined) {
+                    value = this.bikeSuccessfulReturnsPerUser.get(key);
+                    if (value !== undefined) {                  
+                        this.bikeSuccessfulReturnsPerUser.set(key, ++value);
+                    }
+                }
+                else {
+                    value = this.bikeFailedReturnsPerUser.get(key);
+                    if (value !== undefined) {
+                        this.bikeFailedReturnsPerUser.set(key, ++value);
+                    }
                 }
             }
         }

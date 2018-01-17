@@ -14,26 +14,21 @@ export class TimeEntriesIterator implements Observable {
         return new TimeEntriesIterator();
     }
     
-    public async calculateBikeRentalsAndReturns(path: string): Promise<void> {
+    public async calculateBikeRentalsAndReturns(path: string): Promise<boolean> {
         let it: HistoryIterator; 
         try {
             it = await HistoryIterator.create(path);
-        }
-        catch(error) {
-            console.log('error creating history iterator:', error);
-        }
-        try {
             let timeEntry: TimeEntry = await it.nextTimeEntry();
        
             while(timeEntry !== undefined) {
                 this.notify(timeEntry);
                 timeEntry = await it.nextTimeEntry();
             }
+            return true;
         }
         catch(error) {
             console.log('error getting time entries:', error);
         }
-        return;
     }
         
     public notify(timeEntry: TimeEntry): void {

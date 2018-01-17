@@ -66,16 +66,5 @@ export class HistoryIterator {
      }
     */
     
-    public static getEventByName(timeEntry: TimeEntry, name: string): Event {
-        let events: Array<Event> = timeEntry.events;
-        let foundEvent: Event = undefined;
-        for (let event of events) {
-            if (event.name === name) {
-                foundEvent = event;
-                break;
-            }
-        }
-        return foundEvent;
-    }
-
+    
 }
