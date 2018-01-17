@@ -69,17 +69,7 @@ namespace Main {
         });
     }
     
-    export async function ptm() {
-        let values: RentalsAndReturnsPerStation = await RentalsAndReturnsPerStation.create('history');
-        let it: TimeEntriesIterator = TimeEntriesIterator.create();
-        it.subscribe(values);
-        await it.calculateBikeRentalsAndReturns('history');
-        console.log('station 12:', values.getBikeSuccessfulRentalsOfStation(12));
-    } 
-   
-  
 }
   
 Main.init();
-Main.ptm();
 

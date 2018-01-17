@@ -24,17 +24,21 @@ export class EmptyStation implements Observer {
         try {
             let history: HistoryReader = await HistoryReader.create(path);
             let entities: HistoryEntitiesJson = await history.getEntities('stations');
-            this.stations = entities.instances;
+            this.stations = <Station[]> entities.instances;
         
             for(let station of this.stations) {
                 this.emptyIntervalsPerStation.set(station.id, new Array());
-                this.emptytimesPerStation.set(station.id, new Array());
+                this.emptyTimesPerStation.set(station.id, number);
             }
             return true;
         }
         catch(error) {
             console.log('error getting stations:', error);
         }
+    }
+    
+    public update(timeEntry: TimeEntry): void {
+        
     }
     
 

@@ -6,12 +6,8 @@ import { Observer, Observable } from '../ObserverPattern';
 export class TimeEntriesIterator implements Observable {
     private observers: Array<Observer>;
     
-    private constructor() {
+    public constructor() {
         this.observers = new Array<Observer>();
-    }
-    
-    public static create(): TimeEntriesIterator {
-        return new TimeEntriesIterator();
     }
     
     public async calculateBikeRentalsAndReturns(path: string): Promise<boolean> {

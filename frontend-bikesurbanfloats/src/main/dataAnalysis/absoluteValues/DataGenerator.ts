@@ -6,6 +6,8 @@ import { ReservationsPerStation } from './analysisData/stations/ReservationsPerS
 import { RentalsAndReturnsPerStation } from './analysisData/stations/RentalsAndReturnsPerStation';
 
 export class DataGenerator {
+    private readonly INICIALIZATION: number = 6;
+    private readonly CALCULATION: number = 2;
     private path: string;
     private counter: number;
     private reservationsIterator: ReservationsIterator;
@@ -21,27 +23,68 @@ export class DataGenerator {
     }
     
     public async init(): Promise<void> {
+        this.timeEntriesIterator = new TimeEntriesIterator();
+        
         this.reservationsIterator = new ReservationsIterator();
-        this.reservationsIterator.init().then(() => {
+        this.reservationsIterator.init(this.path).then(() => {
             this.counter++;
-            verify();     
-        })
-        this.timeEntriesIterator = await TimeEntriesIterator.create();
-        this.reservationsPerUser = await ReservationsPerUser.create(this.path);
-        this.rentalsAndReturnsPerUser = await RentalsAndReturnsPerUser.create(this.path);
-        this.reservationsPerStation = await ReservationsPerStation.create(this.path);
-        this.rentalsAndReturnsPerStation = await RentalsAndReturnsPerStation.create(this.path);
+            this.verifyInicialization();     
+        });
+         
+        this.reservationsPerUser = new ReservationsPerUser();
+        this.reservationsPerUser.init(this.path).then( () => {
+            this.counter++;
+            this.verifyInicialization();
+        });
         
-        this.reservationsIterator.subscribe(this.reservationsPerUser);
-        this.reservationsIterator.subscribe(this.reservationsPerStation);
-        this.timeEntriesIterator.subscribe(this.rentalsAndReturnsPerUser);        
-        this.timeEntriesIterator.subscribe(this.rentalsAndReturnsPerStation);
+        this.rentalsAndReturnsPerUser = new RentalsAndReturnsPerUser();
+        this.rentalsAndReturnsPerUser.init(this.path).then( () => {
+            this.counter++;
+            this.verifyInicialization();
+        });
         
-        this.reservationsIterator.calculateReservations();
-        this.timeEntriesIterator.calculateBikeRentalsAndReturns(this.path);
+        this.reservationsPerStation = new ReservationsPerStation();
+        this.reservationsPerStation.init(this.path).then( () => { 
+            this.counter++;
+            this.verifyInicialization();
+        });
+        
+        this.rentalsAndReturnsPerStation = new RentalsAndReturnsPerStation();
+        this.rentalsAndReturnsPerStation.init(this.path).then( () => {
+            this.counter++;
+            this.verifyInicialization();
+        });
     }
     
+    private verifyInicialization() {
+        if (this.counter === this.INICIALIZATION) {
+            this.counter = 0;
+            this.reservationsIterator.subscribe(this.reservationsPerUser);
+            this.reservationsIterator.subscribe(this.reservationsPerStation);
+            this.timeEntriesIterator.subscribe(this.rentalsAndReturnsPerUser);        
+            this.timeEntriesIterator.subscribe(this.rentalsAndReturnsPerStation);
+            
+            this.reservationsIterator.calculateReservations().then( () => {
+                this.counter++;
+                this.verifyCalculation();
+            });
+            this.timeEntriesIterator.calculateBikeRentalsAndReturns(this.path).then( () => {
+                this.counter++;
+                this.verifyCalculation();
+            });
+         }
+    }
+    
+    private verifyCalculation() {
+        if (this.counter === this.CALCULATION) {
+            console.log('Failed rental attempts in sation 4:', this.rentalsAndReturnsPerStation.getBikeFailedRentalsOfStation(4));
+        }
     }
 
+    public static async create(path: string) {
+        let generator: DataGenerator = new DataGenerator(path);
+        await generator.init();
+        return generator;
+    }
     
 }

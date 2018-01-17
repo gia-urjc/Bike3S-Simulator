@@ -8,12 +8,12 @@ export class ReservationsIterator implements Observable {
     private reservations: Array<Reservation>;
     private observers: Array<Observer>;
     
-    private constructor() {
+    public constructor() {
         this.observers = new Array<Observer>();
       
     }
     
-    private async init(path: string): Promise<void> {
+    public async init(path: string): Promise<void> {
         let history: HistoryReader = await HistoryReader.create(path);
         try {
             let entities: HistoryEntitiesJson = await history.getEntities("reservations");
