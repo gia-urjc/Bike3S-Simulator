@@ -50,7 +50,7 @@ public class RecommendationSystem {
      * @return an unordered list of stations from which the system will prepare its recommendations.
      */
     private List<Station> validStationsByLinearDistance(GeoPoint point, List<Station> stations) {
-        return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= MAX_DISTANCE)
+        return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= MAX_DISTANCE && station.availableBikes() > 0)
                 .collect(Collectors.toList());
     }
     

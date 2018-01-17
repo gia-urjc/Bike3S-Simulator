@@ -31,6 +31,10 @@ projectRoot.build.jsonschemaValidator = () => path.join(projectRoot.build(), 'js
 projectRoot.fuseCache = () => path.join(projectRoot(), '.fusebox');
 projectRoot.schemaCache = () => path.join(projectRoot(), '.schema');
 
+const production = false;
+
+const schemaBuildPath = projectRoot.build.schema();
+
 
 Sparky.task('clean:backend', () => new Promise((resolve, reject) => {
     const maven = spawn('mvn', ['clean'], {

@@ -39,6 +39,7 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
         reservation.resolve(instant);
         user.returnBikeWithReservationTo(station);
         user.setPosition(null);
+        user.setRoute(null);
         return newEvents;
     }
 

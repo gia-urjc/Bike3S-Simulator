@@ -37,6 +37,7 @@ public class EventBikeReservationTimeout extends EventUser {
 
         if (user.decidesToLeaveSystemAfterTimeout(instant)) {
             user.setPosition(null);
+            user.setRoute(null);
         } else if (user.decidesToDetermineOtherStationAfterTimeout()) {
             newEvents = manageBikeReservationDecisionAtOtherStation();
         } else {

@@ -60,7 +60,7 @@ public class UserTourist extends User {
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentingAttempts = systemManager.getRandom().nextInt(3, 6);
+        private int minRentalAttempts = systemManager.getRandom().nextInt(3, 6);
 
         /**
          * It determines the rate with which the user will reserve a bike.
@@ -94,7 +94,7 @@ public class UserTourist extends User {
                     ", touristDestination=" + touristDestination +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
-                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", minRentalAttempts=" + minRentalAttempts +
                     ", bikeReservationPercentage=" + bikeReservationPercentage +
                     ", slotReservationPercentage=" + slotReservationPercentage +
                     ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
@@ -122,7 +122,7 @@ public class UserTourist extends User {
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == parameters.minRentingAttempts ? true : false;
+        return getMemory().getCounterRentingAttempts() == parameters.minRentalAttempts ? true : false;
     }
     
     /**
@@ -136,12 +136,16 @@ public class UserTourist extends User {
         if (!stations.isEmpty()) {
                 List<Station> recommendedStations = systemManager.getRecommendationSystem()
                 .recommendByLinearDistance(this.getPosition(), stations);
+                
+                if (recommendedStations.get(0).getPosition().equals(this.getPosition( ))) {
+                	recommendedStations.remove(0);
+                }
+                
                 List<Station> nearestStations = new ArrayList<>();
                 
-                int end = parameters.SELECTION_STATIONS_SET;
-                if (parameters.SELECTION_STATIONS_SET > recommendedStations.size()) {
-                    end = recommendedStations.size();
-                }
+                int end = parameters.SELECTION_STATIONS_SET < recommendedStations.size() 
+                    ? parameters.SELECTION_STATIONS_SET : recommendedStations.size();
+
 
                 for(int i = 0; i < end; i++) {
                     nearestStations.add(recommendedStations.get(i));
@@ -167,6 +171,11 @@ public class UserTourist extends User {
 
         List<Station> recommendedStations = systemManager.getRecommendationSystem()
                 .recommendByLinearDistance(this.getPosition(), stations);
+        
+        if (recommendedStations.get(0).getPosition().equals(this.getPosition( ))) {
+        	recommendedStations.remove(0);
+        }
+        
         List<Station> nearestStations = new ArrayList<>();
         
         for(int i = 0; i < parameters.SELECTION_STATIONS_SET; i++) {

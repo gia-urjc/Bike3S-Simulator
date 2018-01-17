@@ -32,6 +32,8 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
             newEvents = manageSlotReservationDecisionAtOtherStation();
         } else {
             user.setPosition(null);
+            user.setRoute(null);
+            
         }
         return newEvents;
     }

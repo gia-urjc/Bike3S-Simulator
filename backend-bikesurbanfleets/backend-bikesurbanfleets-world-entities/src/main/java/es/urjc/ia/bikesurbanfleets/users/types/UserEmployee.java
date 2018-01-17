@@ -9,6 +9,7 @@ import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.entities.User;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This class represents a employee, i.e., a user who uses the bike as a public transport 
@@ -86,7 +87,7 @@ public class UserEmployee extends User {
         private UserEmployeeParameters() {}
     }
     private UserEmployeeParameters parameters;
-
+    
     public UserEmployee(UserEmployeeParameters parameters) {
         super();
         this.parameters = parameters;
@@ -113,8 +114,11 @@ public class UserEmployee extends User {
         Station destination = null;
         
         if (!stations.isEmpty()) {
-            destination = systemManager.getRecommendationSystem().recommendByLinearDistance(this
-                    .getPosition(), stations).get(0);
+            List<Station> recommendedStations = systemManager.getRecommendationSystem()
+            		.recommendByLinearDistance(this.getPosition(), stations);      
+        
+        destination = recommendedStations.get(0).getPosition().equals(this.getPosition()) && recommendedStations.size() > 1  
+        		? recommendedStations.get(1) : recommendedStations.get(1);
         }
         
         return destination; 
@@ -125,11 +129,14 @@ public class UserEmployee extends User {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
 
         if (stations.isEmpty()) {
-            stations = systemManager.consultStations();  
+            stations = new ArrayList(systemManager.consultStations());  
         }
         
-        return systemManager.getRecommendationSystem().recommendByLinearDistance(this
-                .getPosition(), stations).get(0); 
+        List<Station> recommendedStations = systemManager.getRecommendationSystem()
+        		.recommendByLinearDistance(this.getPosition(), stations);
+        
+        return recommendedStations.get(0).getPosition().equals(this.getPosition()) && recommendedStations.size() > 1  
+        		? recommendedStations.get(1) : recommendedStations.get(1);
     }
 
     @Override

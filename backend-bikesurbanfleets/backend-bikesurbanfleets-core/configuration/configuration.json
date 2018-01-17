@@ -24,12 +24,7 @@
                 "latitude": 40.42750,
                 "longitude": -3.71384
             },
-            "radius": 100.0,
-            "totalUsers": 50,
-            "distribution": {
-                "type": "POISSON",
-                "lambda": 0.0033333
-            }
+            "timeInstant": 1
         },
         {
             "entryPointType": "POISSON",
@@ -41,7 +36,7 @@
                 "longitude": -3.692046
             },
             "radius": 100.0,
-            "totalUsers": 20,
+            "totalUsers": 100,
             "distribution": {
                 "type": "POISSON",
                 "lambda": 0.0033333

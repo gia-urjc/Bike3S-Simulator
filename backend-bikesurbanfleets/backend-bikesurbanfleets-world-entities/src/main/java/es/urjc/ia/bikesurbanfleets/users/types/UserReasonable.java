@@ -51,7 +51,7 @@ public class UserReasonable extends User {
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentingAttempts = systemManager.getRandom().nextInt(3, 5);
+        private int minRentalAttempts = systemManager.getRandom().nextInt(3, 5);
 
         /**
          * It determines the rate with which the user will decide to go directly to a station
@@ -79,7 +79,7 @@ public class UserReasonable extends User {
                     "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
-                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", minRentalAttempts=" + minRentalAttempts +
                     ", bikeReturnPercentage=" + bikeReturnPercentage +
                     ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
                     ", failedReservationPercentage=" + failedReservationPercentage +
@@ -106,7 +106,7 @@ public class UserReasonable extends User {
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == parameters.minRentingAttempts ? true : false;
+        return getMemory().getCounterRentingAttempts() == parameters.minRentalAttempts ? true : false;
     }
     
     @Override
@@ -115,8 +115,11 @@ public class UserReasonable extends User {
         Station destination = null;
         
      if (!stations.isEmpty()) {
-         destination = systemManager.getRecommendationSystem()
-                .recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations).get(0); 
+         List<Station> recommendedStations = systemManager.getRecommendationSystem()
+                 .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
+
+         destination = recommendedStations.get(0).getPosition().equals(this.getPosition())
+                 ? recommendedStations.get(1) : recommendedStations.get(0);
      }
      return destination;
     }
@@ -131,7 +134,6 @@ public class UserReasonable extends User {
 
         List<Station> recommendedStations = systemManager.getRecommendationSystem()
                 .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
-
 
         return recommendedStations.get(0).getPosition().equals(this.getPosition())
                 ? recommendedStations.get(1) : recommendedStations.get(0);

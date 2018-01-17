@@ -2,6 +2,12 @@ import { app, BrowserWindow, shell } from 'electron';
 import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
+import { RentalsAndReturnsPerStation } from "./dataAnalysis/absoluteValues/analysisData/stations/RentalsAndReturnsPerStation";
+import { ReservationsPerStation } from "./dataAnalysis/absoluteValues/analysisData/stations/ReservationsPerStation";
+import { RentalsAndReturnsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/RentalsAndReturnsPerUser";
+import { ReservationsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/ReservationsPerUser";
+import { ReservationsIterator } from "./dataAnalysis/absoluteValues/systemDataIterators/ReservationsIterator";
+import { TimeEntriesIterator } from "./dataAnalysis/absoluteValues/systemDataIterators/TimeEntriesIterator";
 import { Settings } from './settings';
 import { HistoryReader } from './util';
 
@@ -61,8 +67,19 @@ namespace Main {
         app.on('activate', () => {
             if (window === null) createWindow();
         });
-
     }
+    
+    export async function ptm() {
+        let values: RentalsAndReturnsPerStation = await RentalsAndReturnsPerStation.create('history');
+        let it: TimeEntriesIterator = TimeEntriesIterator.create();
+        it.subscribe(values);
+        await it.calculateBikeRentalsAndReturns('history');
+        console.log('station 12:', values.getBikeSuccessfulRentalsOfStation(12));
+    } 
+   
+  
 }
-
+  
 Main.init();
+Main.ptm();
+

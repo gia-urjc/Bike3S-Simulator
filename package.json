@@ -43,6 +43,7 @@
         "lodash": "^4.17.4",
         "moment": "^2.20.1",
         "ng-font-awesome": "github:tao-cumplido/ng-font-awesome",
+        "npm": "^5.5.1",
         "rxjs": "^5.5.5",
         "zone.js": "^0.8.18"
     },
@@ -54,6 +55,7 @@
         "@types/moment": "^2.13.0",
         "@types/node": "^8.5.1",
         "@types/reflect-metadata": "0.0.5",
+        "angular-ide": "^0.9.38",
         "commander": "^2.12.2",
         "electron": "^1.8.1",
         "electron-builder": "^19.49.2",

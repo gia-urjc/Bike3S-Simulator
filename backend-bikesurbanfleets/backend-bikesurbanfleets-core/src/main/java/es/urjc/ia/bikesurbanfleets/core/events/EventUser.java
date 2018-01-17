@@ -169,6 +169,7 @@ public abstract class EventUser implements Event {
             Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);
             destination.getReservations().add(reservation);
             user.addReservation(reservation);
+            //aq:
             if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user waljs to the initially chosen station
                 newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
             } else {
