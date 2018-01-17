@@ -49,11 +49,16 @@ public class RecommendationSystem {
      * that don't exceed the preset maximum distance from the specified geographical point.      
      * @return an unordered list of stations from which the system will prepare its recommendations.
      */
-    private List<Station> validStationsByLinearDistance(GeoPoint point, List<Station> stations) {
+    private List<Station> validStationsByLinearDistanceToRentBike(GeoPoint point, List<Station> stations) {
         return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= MAX_DISTANCE && station.availableBikes() > 0)
                 .collect(Collectors.toList());
     }
     
+    private List<Station> validStationsByLinearDistanceToReturnBike(GeoPoint point, List<Station> stations) {
+        return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= MAX_DISTANCE && station.availableSlots() > 0)
+    }            .collect(Collectors.toList());
+    
+ 
     /**
      * It verifies which stations have real routes of less than MAX_DISTANCE meters 
           * to the indicated geographical point. 
@@ -97,7 +102,7 @@ public class RecommendationSystem {
      */
     public List<Station> recommendByNumberOfBikes(GeoPoint point, List<Station> stations) {
         Comparator<Station> byNumberOfBikes = (s1, s2) -> Integer.compare(s2.availableBikes(), s1.availableBikes());
-        return validStationsByLinearDistance(point, stations).stream().sorted(byNumberOfBikes).collect(Collectors.toList());
+        return validStationsByLinearDistanceToRentBike(point, stations).stream().sorted(byNumberOfBikes).collect(Collectors.toList());
     }
     
     /**
@@ -111,7 +116,7 @@ public class RecommendationSystem {
      */
     public List<Station> recommendByNumberOfSlots(GeoPoint point, List<Station> stations) {
         Comparator<Station> byNumberOfSlots = (s1, s2) -> Integer.compare(s2.availableSlots(), s1.availableSlots());
-        return validStationsByLinearDistance(point, stations).stream().sorted(byNumberOfSlots).collect(Collectors.toList());
+        return validStationsByLinearDistanceToReturnBike(point, stations).stream().sorted(byNumberOfSlots).collect(Collectors.toList());
     }
     
     /**
