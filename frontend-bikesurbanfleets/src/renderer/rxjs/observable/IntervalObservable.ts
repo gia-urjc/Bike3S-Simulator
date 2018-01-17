@@ -1,3 +1,5 @@
-const Rx = (window as any).require('rxjs/observable/IntervalObservable');
+import * as Rx from 'rxjs/observable/IntervalObservable';
 
-export const IntervalObservable = Rx.IntervalObservable;
+const observable = (window as any).require('rxjs/observable/IntervalObservable');
+
+export const IntervalObservable: typeof Rx.IntervalObservable = observable.IntervalObservable;
