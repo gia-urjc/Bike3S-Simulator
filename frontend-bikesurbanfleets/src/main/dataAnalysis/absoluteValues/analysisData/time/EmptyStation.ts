@@ -28,7 +28,7 @@ export class EmptyStation implements Observer {
         
             for(let station of this.stations) {
                 this.emptyIntervalsPerStation.set(station.id, new Array());
-                this.emptyTimesPerStation.set(station.id, number);
+                this.emptyTimesPerStation.set(station.id, 0);
             }
             return true;
         }
