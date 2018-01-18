@@ -1,37 +1,34 @@
 import { JsonSchema } from 'json-schema-builder-ts';
 import { sAnyOf, sMerge } from 'json-schema-builder-ts/dist/operators/schematical';
 import { rData } from 'json-schema-builder-ts/dist/references';
-import { sArray, sConst, sInteger, sNull, sNumber, sObject, sString } from 'json-schema-builder-ts/dist/types';
+import { sArray, sConst, sEnum, sInteger, sNull, sNumber, sObject, sString } from 'json-schema-builder-ts/dist/types';
 import { GeoPoint, options, UInt, UserProperties } from './common';
 
-const distributions = [
-    sObject({
-        type: sConst('RANDOM'),
-    }).require.all().restrict(),
-    sObject({
-        type: sConst('POISSON'),
+const distributions = {
+    'poisson': sObject({
         lambda: sNumber(),
-    }).require.all().restrict(),
-];
-
-const EntryPointBase = sObject({
-    userProperties: UserProperties,
-    position: GeoPoint,
-}).require.all().restrict();
+    }).require.all().restrict()
+};
 
 const EntryPoint = sAnyOf(
-    sMerge(EntryPointBase, sObject({
-        timeInstant: UInt,
-    }).require.all().restrict()),
-    sMerge(EntryPointBase, sObject({
-        distribution: sAnyOf(...distributions),
-        radius: sNumber().xMin(0),
+    sObject({
+        entryPointType: sConst('POISSON'),
+        distribution: distributions.poisson,
+        userType: UserProperties,
+        position: GeoPoint,
         timeRange: sObject({
             start: UInt,
             end: UInt,
         }).require.all().restrict(),
+        radius: sNumber().xMin(0),
         totalUsers: sInteger().xMin(0)
-    }).require('distribution').restrict()),
+    }).require('entryPointType', 'userType', 'distribution', 'position'),
+    sObject({
+        entryPointType: sConst('SINGLEUSER'),
+        userType: UserProperties,
+        position: GeoPoint,
+        timeInstant: UInt
+    })
 );
 
 const Bike = sObject();

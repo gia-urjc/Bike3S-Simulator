@@ -1,0 +1,1252 @@
+{
+  "reservationTime": 150,
+  "totalSimulationTime": 250000,
+  "randomSeed": 201,
+  "boundingBox": {
+    "northWest": {
+      "latitude": 40.362241948999,
+      "longitude": -3.8400650024414
+    },
+    "southEast": {
+      "latitude": 40.484037303555,
+      "longitude": -3.5327911376953
+    }
+  },
+  "map": "backend-bikesurbanfleets-core/maps/madrid.osm",
+  "historyOutputPath": "../build/history",
+  "stations": [
+    {
+      "bikes": 0,
+      "position": {
+        "latitude": 40.4285524,
+        "longitude": -3.7025875
+      },
+      "capacity": 24
+    },
+    {
+      "bikes": 5,
+      "position": {
+        "latitude": 40.424148,
+        "longitude": -3.698447
+      },
+      "capacity": 24
+    },
+    {
+      "bikes": 11,
+      "position": {
+        "latitude": 40.4089282,
+        "longitude": -3.7008803
+      },
+      "capacity": 24
+    },
+    {
+      "bikes": 14,
+      "position": {
+        "latitude": 40.4074902,
+        "longitude": -3.6901234
+      },
+      "capacity": 27
+    },
+    {
+      "bikes": 9,
+      "position": {
+        "latitude": 40.4302937,
+        "longitude": -3.7069171
+      },
+      "capacity": 18
+    },
+    {
+      "bikes": 20,
+      "position": {
+        "latitude": 40.4192342,
+        "longitude": -3.6954615
+      },
+      "capacity": 24
+    },
+    {
+      "bikes": 13,
+      "position": {
+        "latitude": 40.4205886,
+        "longitude": -3.7058415
+      },
+      "capacity": 24
+    },
+    {
+      "bikes": 7,
+      "position": {
+        "latitude": 40.428528,
+        "longitude": -3.7020599
+      },
+      "capacity": 27
+    },
+    {
+      "bikes": 14,
+      "position": {
+        "latitude": 40.4197204,
+        "longitude": -3.7015235
+      },
+      "capacity": 24
+    },
+    {
+      "bikes": 6,
+      "position": {
+        "latitude": 40.4132798,
+        "longitude": -3.6956178
+      },
+      "capacity": 24
+    },
+    {
+      "bikes": 24,
+      "position": {
+        "latitude": 40.4181663,
+        "longitude": -3.69926
+      },
+      "capacity": 27
+    },
+    {
+      "bikes": 9,
+      "position": {
+        "latitude": 40.4163638,
+        "longitude": -3.7068969
+      },
+      "capacity": 27
+    },
+    {
+      "bikes": 2,
+      "position": {
+        "latitude": 40.4141931,
+        "longitude": -3.7103285
+      },
+      "capacity": 24
+    },
+    {
+      "bikes": 4,
+      "position": {
+        "latitude": 40.4167281,
+        "longitude": -3.7124038
+      },
+      "capacity": 24
+    },
+    {
+      "bikes": 10,
+      "position": {
+        "latitude": 40.4122047,
+        "longitude": -3.6991147
+      },
+      "capacity": 21
+    }
+  ],
+  "entryPoints": [
+    {
+      "position": {
+        "latitude": 40.4275,
+        "longitude": -3.71384
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.41009650399825,
+        "longitude": -3.692558500123865
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 95,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40948840346579,
+        "longitude": -3.6911935149506667
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 212,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40877677317264,
+        "longitude": -3.6918169130688336
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 257,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409079994933684,
+        "longitude": -3.692204909415325
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 290,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409269316076795,
+        "longitude": -3.6919691542685547
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 372,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40876212675154,
+        "longitude": -3.6923771714943214
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 519,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40952332019284,
+        "longitude": -3.6925647908788495
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 609,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.408535854611934,
+        "longitude": -3.6921432324903796
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 709,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409845690916924,
+        "longitude": -3.69110344127355
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 709,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40946767738492,
+        "longitude": -3.6928028058276343
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 853,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409258294905335,
+        "longitude": -3.691229188338682
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1035,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40967512434437,
+        "longitude": -3.691693107649997
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1261,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.41002757841915,
+        "longitude": -3.6919815048239446
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1356,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40921561346178,
+        "longitude": -3.6924166635825935
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1678,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40989576617909,
+        "longitude": -3.6924051820525507
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1955,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.41020485947788,
+        "longitude": -3.692372217812058
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 2597,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40922526571193,
+        "longitude": -3.6921152521539335
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 2673,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40896996531601,
+        "longitude": -3.692430777725021
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 2837,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40979008066627,
+        "longitude": -3.6925588166286474
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 2964,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40874476654326,
+        "longitude": -3.6922329403528185
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 3176,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409066848200084,
+        "longitude": -3.6924698300439514
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 3372,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409528532101255,
+        "longitude": -3.691669569760376
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 3516,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40879022059814,
+        "longitude": -3.6923311135347134
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 3590,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40903265082988,
+        "longitude": -3.6910738907552716
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 3739,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40993241937806,
+        "longitude": -3.6930199856245616
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 4110,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40962438553258,
+        "longitude": -3.691385967750762
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 5275,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40943644910114,
+        "longitude": -3.6916587147995035
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 5808,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.408640197044264,
+        "longitude": -3.691901162252445
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 5857,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.410210619282665,
+        "longitude": -3.691549343214131
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6128,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409765113237384,
+        "longitude": -3.693087284438117
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6478,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409372922159356,
+        "longitude": -3.6924726297026305
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6486,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40885068145974,
+        "longitude": -3.6914740032561766
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6725,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409239621324105,
+        "longitude": -3.6911125394339255
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6858,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40962346264142,
+        "longitude": -3.691809372428732
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6986,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409203655947266,
+        "longitude": -3.691605189826022
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 7050,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40919415586306,
+        "longitude": -3.6926528963177914
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 7539,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.408999539805556,
+        "longitude": -3.692076712542657
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 7679,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40996332581944,
+        "longitude": -3.6916682563501673
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 7699,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.408739104841736,
+        "longitude": -3.691990625565851
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 7962,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40864114757174,
+        "longitude": -3.6916272455944634
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 8391,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40915422098969,
+        "longitude": -3.6920649127208183
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 8736,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40908018590376,
+        "longitude": -3.6917164915997533
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 8754,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40992398258484,
+        "longitude": -3.6923150436936387
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 9112,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.410151327230324,
+        "longitude": -3.691984511758609
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 9782,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409765110709955,
+        "longitude": -3.691385616041972
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 10025,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.408913899264654,
+        "longitude": -3.6920827964519725
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 10728,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.408802284230475,
+        "longitude": -3.6925534004406053
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 10864,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40955875607269,
+        "longitude": -3.6913977234604958
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 11140,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40927129072471,
+        "longitude": -3.692658477960527
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 11284,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.410206180670436,
+        "longitude": -3.692032950584661
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 11803,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409584919021306,
+        "longitude": -3.691592095078137
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 11937,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40927403808936,
+        "longitude": -3.6909635300785615
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 12177,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40901201081141,
+        "longitude": -3.69249882916234
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 12421,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40870372527098,
+        "longitude": -3.6913978423359914
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 12518,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40949123724985,
+        "longitude": -3.6928650665096523
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 13085,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409525332703964,
+        "longitude": -3.6921451939639978
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 13476,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40986708385669,
+        "longitude": -3.692560248848501
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 13487,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40958733470676,
+        "longitude": -3.692332477622608
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 13853,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.408983708152746,
+        "longitude": -3.691656206326865
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 13886,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40950194243396,
+        "longitude": -3.691665736653886
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14196,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.41015219488444,
+        "longitude": -3.6913704453323066
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14409,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40926645457786,
+        "longitude": -3.6931752868456105
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14508,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409415903219596,
+        "longitude": -3.6912643887014753
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14656,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40859988845985,
+        "longitude": -3.6917291099749465
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14846,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.4087968998573,
+        "longitude": -3.6915867510311817
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14921,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40992216484277,
+        "longitude": -3.6914648227435563
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 15204,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40984234575366,
+        "longitude": -3.6914209537983163
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 15872,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40977641620803,
+        "longitude": -3.6929773389552896
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 15889,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40910193787182,
+        "longitude": -3.692334057976211
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 16128,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40939112252791,
+        "longitude": -3.6910822344622245
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 16532,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.41011434003028,
+        "longitude": -3.6923619757846824
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 16556,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.41019852446632,
+        "longitude": -3.691577400204998
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 16830,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40951912888423,
+        "longitude": -3.6917134754296743
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17057,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40941730629782,
+        "longitude": -3.6931702150812087
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17204,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409291127338484,
+        "longitude": -3.6922947039408056
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17549,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40909952656199,
+        "longitude": -3.6916164497634103
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17684,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.4095503605113,
+        "longitude": -3.692678776588534
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17917,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40976852850707,
+        "longitude": -3.693009455833524
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17949,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409831321597004,
+        "longitude": -3.691063370938962
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17968,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409148148212886,
+        "longitude": -3.692034153149536
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17970,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40952961432336,
+        "longitude": -3.6908770779390667
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 18090,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.408996197976364,
+        "longitude": -3.691716758293182
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 18122,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409011358640576,
+        "longitude": -3.692071915852878
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 18230,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.408787600171244,
+        "longitude": -3.69194289359075
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 18326,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409401033233365,
+        "longitude": -3.691847240893914
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 18599,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40984021573282,
+        "longitude": -3.6916587471893565
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19050,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40962147492548,
+        "longitude": -3.691397928784791
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19064,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409250314106295,
+        "longitude": -3.6921723079708832
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19171,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40872255027348,
+        "longitude": -3.692554810432911
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19243,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40870826980894,
+        "longitude": -3.6914518806921173
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19345,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40959816008115,
+        "longitude": -3.692344117056555
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19581,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.41014188565928,
+        "longitude": -3.691458730018659
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19758,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40876174541797,
+        "longitude": -3.6920565532453367
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19781,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40907491791853,
+        "longitude": -3.691973652193413
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19908,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409544071170096,
+        "longitude": -3.6930240479903182
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 20642,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40938882760869,
+        "longitude": -3.691509357283729
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 20883,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40932964443098,
+        "longitude": -3.6932136258511097
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 21096,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40989475465838,
+        "longitude": -3.691389433403648
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 21185,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.409151060938946,
+        "longitude": -3.6918401540932155
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 21231,
+      "entryPointType": "SINGLEUSER"
+    },
+    {
+      "position": {
+        "latitude": 40.40886738413486,
+        "longitude": -3.691772209378926
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 21461,
+      "entryPointType": "SINGLEUSER"
+    }
+  ]
+}

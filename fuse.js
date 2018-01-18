@@ -11,33 +11,39 @@ const path = require('path');
 const fs = require('fs-extra');
 
 const projectRoot = () => process.cwd();
-projectRoot.backend = () => path.join(projectRoot(), 'backend-bikesurbanfloats');
-projectRoot.backend.mavenTarget = () => path.join(projectRoot.backend(), 'target');
-projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfloats');
+
+projectRoot.backendRoot = () => path.join(projectRoot(), 'backend-bikesurbanfleets');
+
+projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfleets');
 projectRoot.frontend.src = () => path.join(projectRoot.frontend(), 'src');
 projectRoot.frontend.main = () => path.join(projectRoot.frontend.src(), 'main');
 projectRoot.frontend.renderer = () => path.join(projectRoot.frontend.src(), 'renderer');
+
 projectRoot.schema = () => path.join(projectRoot(), 'schema');
+
 projectRoot.jsonschemaValidator = () => path.join(projectRoot(), 'jsonschema-validator/src');
+
 projectRoot.build = () => path.join(projectRoot(), 'build');
 projectRoot.build.schema = () => path.join(projectRoot.build(), 'schema');
 projectRoot.build.frontend = () => path.join(projectRoot.build(), 'frontend');
 projectRoot.build.jsonschemaValidator = () => path.join(projectRoot.build(), 'jsonschema-validator');
+
 projectRoot.fuseCache = () => path.join(projectRoot(), '.fusebox');
 projectRoot.schemaCache = () => path.join(projectRoot(), '.schema');
 
-let production = false;
+const production = false;
 
-let schemaBuildPath = projectRoot.build.schema();
+const schemaBuildPath = projectRoot.build.schema();
 
-Sparky.task('build:backend', () => new Promise((resolve, reject) => {
-    const maven = spawn('mvn', ['clean', 'package'], {
-        cwd: projectRoot.backend(),
+
+Sparky.task('clean:backend', () => new Promise((resolve, reject) => {
+    const maven = spawn('mvn', ['clean'], {
+        cwd: projectRoot.backendRoot(),
         shell: true, // necessary for windows
         stdio: 'inherit' // pipe to calling process
     });
 
-    log.time().green('start packaging backend jar').echo();
+    log.time().green('start cleaning and installing backend maven dependencies').echo();
 
     maven.on('error', (error) => {
         log.red(error).echo();
@@ -45,14 +51,46 @@ Sparky.task('build:backend', () => new Promise((resolve, reject) => {
 
     maven.on('close', (code) => {
         if (code === 0) {
-            const jar = fs.readdirSync(projectRoot.backend.mavenTarget()).find((file) => file.endsWith('.jar'));
-            const target = path.join(projectRoot.backend.mavenTarget(), jar);
-            const destination = path.join(projectRoot.build(), 'backend.jar');
+            log.time().green('finished cleaning and install of backend maven dependencies').echo();
+            resolve();
+        } else {
+            log.time().red(`maven finished with error code ${code}`).echo();
+            reject();
+        }
+    });
+}));
 
-            fs.copySync(target, destination);
+Sparky.task('build:backend', () => new Promise((resolve, reject) => {
+    const maven = spawn('mvn', ['clean', 'package'], {
+        cwd: projectRoot.backendRoot(),
+        shell: true, // necessary for windows
+        stdio: 'inherit' // pipe to calling process
+    });
 
-            log.time().green('finished packaging backend jar').echo();
+    log.time().green('Started backend-bikesurbanfleets building').echo();
 
+    maven.on('error', (error) => {
+        log.red(error).echo();
+    });
+
+    maven.on('close', (code) => {
+        if (code === 0) {
+            let dirs = fs.readdirSync(projectRoot.backendRoot());
+            dirs = dirs.filter(dirName => dirName.startsWith("backend-bikesurbanfleets"))
+                .map(dirName => path.join(projectRoot.backendRoot(), `${dirName}/target`));
+
+            dirs.forEach(dirName => {
+               fs.readdirSync(dirName).filter((file) => file.endsWith('jar-with-dependencies.jar')).forEach((file) => {
+                   const target = path.join(dirName, file);
+                   const destination = path.join(projectRoot.build(), file.replace('-jar-with-dependencies', ''));
+
+                   fs.copySync(target, destination);
+
+                   log.time().green(`finished packaging ${file}`).echo();
+               })
+            });
+
+            log.time().green('backend-bikesurbanfleets build finished').echo();
             resolve();
         } else {
             log.time().red(`maven finished with error code ${code}`).echo();
@@ -195,7 +233,7 @@ Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:
     return Sparky.src(path.join(projectRoot(), 'package.json')).dest(projectRoot.build());
 });
 
-Sparky.task('build:dev', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:frontend', 'build:jsonschema-validator'], () => {});
+Sparky.task('build:dev', ['clean:build', 'clean:cache', 'build:backend-core', 'build:schema', 'build:frontend', 'build:jsonschema-validator'], () => {});
 
 Sparky.task('build:dist', () => {
     production = true;
