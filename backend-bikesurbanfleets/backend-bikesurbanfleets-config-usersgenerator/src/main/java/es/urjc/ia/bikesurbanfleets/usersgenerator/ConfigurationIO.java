@@ -39,12 +39,11 @@ public class ConfigurationIO {
         if(pathJsonValidator != null){
             String resultValidation = JsonValidation.validate(pathSchemas, inputConfPath, pathJsonValidator);
             if(!resultValidation.equals("OK")) {
-                System.out.println(ANSI_GREEN + "ValidationInput " + resultValidation);
+                System.out.println(ANSI_RED + "ValidationInput " + resultValidation);
                 throw new Exception(resultValidation);
             }
+            System.out.println(ANSI_GREEN + "Validation configuration input: " + resultValidation + ANSI_RESET);
         }
-        entryPoints = gson.fromJson(new JsonReader(new FileReader(inputConfPath)), EntryPointList.class);
-        System.out.println(entryPoints.getEntryPoints().size());
         return gson.fromJson(new JsonReader(new FileReader(inputConfPath)), EntryPointList.class);
     }
 
@@ -53,28 +52,19 @@ public class ConfigurationIO {
         JsonElement jsonElement = parser.parse(new FileReader(inputConfPath));
         JsonObject confJson = jsonElement.getAsJsonObject();
         confJson.remove("entryPoints");
-        JsonArray newEntryPoints = new JsonArray();
+        JsonArray initialUsers = new JsonArray();
         for(EntryPoint entryPoint: entryPoints.getEntryPoints()) {
             List<SingleUser> newUsers = entryPoint.generateUsers();
             for(SingleUser user: newUsers) {
-                EntryPointSingle newEntryPoint = new EntryPointSingle(user.getPosition(), user.getUserType(), user.getTimeInstant());
-                newEntryPoints.add(gson.toJsonTree(newEntryPoint, EntryPointSingle.class));
+                initialUsers.add(gson.toJsonTree(user, SingleUser.class));
             }
         }
-        confJson.add("entryPoints", newEntryPoints);
+        confJson.add("initialUsers", initialUsers);
         FileWriter file = new FileWriter(outputConfPath);
         gson.toJson(confJson, file);
         file.close();
-
-        if(pathJsonValidator != null) {
-            String resultValidation = JsonValidation.validate(pathSchemas, outputConfPath, pathJsonValidator);
-            if(!resultValidation.equals("OK")){
-                System.out.println(ANSI_RED + "Configuration created with errors");
-                throw new Exception(resultValidation);
-            }
-            System.out.println(ANSI_GREEN + "ValidationOutput " + resultValidation + ANSI_RESET);
-            System.out.println(ANSI_GREEN + "Configuration created without problems");
-        }
+        System.out.println(ANSI_GREEN + "Configuration created without problems in:" + ANSI_RESET);
+        System.out.println(outputConfPath);
     }
 
 }

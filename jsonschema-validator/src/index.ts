@@ -2,12 +2,14 @@ import * as Ajv from 'ajv';
 import * as program from 'commander';
 import * as fs from 'fs-extra';
 
+
+
 export const validate = async (dirInput: string, dirSchema: string): Promise<any> => {
     try {
         let jsonInput = await fs.readJson(dirInput);
         let jsonSchema = await fs.readJson(dirSchema);
         let ajv = new Ajv({
-            allErrors: true
+            $data: true
         });
         let valid = ajv.validate(jsonSchema, jsonInput);
         if (!valid) return ajv.errors;

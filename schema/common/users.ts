@@ -5,7 +5,7 @@ import { GeoPoint, UInt } from './index';
 const Percentage = sNumber().min(0).max(100);
 
 const typeParameters = {
-    USER_RANDOM: undefined,
+    USER_RANDOM: {},
     USER_DISTANCE_RESTRICTION: {
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,
