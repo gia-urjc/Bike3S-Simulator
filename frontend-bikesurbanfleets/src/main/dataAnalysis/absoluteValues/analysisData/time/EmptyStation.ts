@@ -20,7 +20,7 @@ export class EmptyStation implements Observer {
         this.emptyTimesPerStation = new Map();
     }
     
-    public async init(path: string): Promise<boolean> {
+    public async init(path: string): Promise<void> {
         try {
             let history: HistoryReader = await HistoryReader.create(path);
             let entities: HistoryEntitiesJson = await history.getEntities('stations');
@@ -30,11 +30,11 @@ export class EmptyStation implements Observer {
                 this.emptyIntervalsPerStation.set(station.id, new Array());
                 this.emptyTimesPerStation.set(station.id, 0);
             }
-            return true;
         }
         catch(error) {
             console.log('error getting stations:', error);
         }
+        return;
     }
     
     public update(timeEntry: TimeEntry): void {

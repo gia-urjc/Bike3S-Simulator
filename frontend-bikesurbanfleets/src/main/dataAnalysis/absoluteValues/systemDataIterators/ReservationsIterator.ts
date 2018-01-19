@@ -31,12 +31,11 @@ export class ReservationsIterator implements Observable {
         let it = new ReservationsIterator();
         try {
             await it.init(path);
-            return it;
         }
         catch(error) {
             console.log('error creating the reservations iterator: ', error);
         }
-        return;
+        return it;
     }
     
     public async calculateReservations(): Promise<boolean> {

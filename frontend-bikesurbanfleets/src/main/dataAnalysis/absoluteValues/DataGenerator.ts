@@ -6,72 +6,96 @@ import { ReservationsPerStation } from './analysisData/stations/ReservationsPerS
 import { RentalsAndReturnsPerStation } from './analysisData/stations/RentalsAndReturnsPerStation';
 
 export class DataGenerator {
-    private readonly INICIALIZATION: number = 6;
+    private readonly INICIALIZATION: number = 5;
     private readonly CALCULATION: number = 2;
     private path: string;
     private counter: number;
     private reservationsIterator: ReservationsIterator;
     private timeEntriesIterator: TimeEntriesIterator;
-    private reservationsPerUser: ReservationsPerUser;
-    private rentalsAndReturnsPerUser: RentalsAndReturnsPerUser;
-    private reservationsPerStation: ReservationsPerStation;
-    private rentalsAndReturnsPerStation: RentalsAndReturnsPerStation;  
+    private data: Map<string, any>;
     
     public constructor(path: string) {
         this.path = path;
         this.counter = 0;
-    }
-    
-    public async init(): Promise<void> {
         this.timeEntriesIterator = new TimeEntriesIterator();
         this.reservationsIterator = new ReservationsIterator();
-        this.reservationsPerUser = new ReservationsPerUser();
-        this.rentalsAndReturnsPerUser = new RentalsAndReturnsPerUser();
-        this.reservationsPerStation = new ReservationsPerStation();
-        this.rentalsAndReturnsPerStation = new RentalsAndReturnsPerStation();
+        this.data = new Map();
+    }
+    
+    private async init(): Promise<void> {
+        let reservationsPerUser: ReservationsPerUser = new ReservationsPerUser();
+        let rentalsAndReturnsPerUser: RentalsAndReturnsPerUser = new RentalsAndReturnsPerUser();
+        let reservationsPerStation: ReservationsPerStation = new ReservationsPerStation();
+        let rentalsAndReturnsPerStation: RentalsAndReturnsPerStation = new RentalsAndReturnsPerStation();
         
-        this.reservationsIterator.subscribe(this.reservationsPerUser);
-        this.reservationsIterator.subscribe(this.reservationsPerStation);
-        this.timeEntriesIterator.subscribe(this.rentalsAndReturnsPerUser);        
-        this.timeEntriesIterator.subscribe(this.rentalsAndReturnsPerStation);
+        this.data.set(reservationsPerUser.constructor.name, reservationsPerUser);
+        this.data.set(rentalsAndReturnsPerUser.constructor.name, rentalsAndReturnsPerUser);
+        this.data.set(reservationsPerStation.constructor.name, reservationsPerStation);
+        this.data.set(rentalsAndReturnsPerStation.constructor.name, rentalsAndReturnsPerStation);
+        
+        this.reservationsIterator.subscribe(reservationsPerUser);
+        this.reservationsIterator.subscribe(reservationsPerStation);
+        this.timeEntriesIterator.subscribe(rentalsAndReturnsPerUser);        
+        this.timeEntriesIterator.subscribe(rentalsAndReturnsPerStation);
        
-        this.reservationsIterator.init(this.path).then(() => {
-            this.counter++;
+        this.reservationsIterator.init(this.path).then( () => {
+            this.counter++;        console.log('iterator:',this.counter); 
             this.calculateAbsoluteValues();     
         });
          
-        this.reservationsPerUser.init(this.path).then( () => {
-            this.counter++;
+        reservationsPerUser.init(this.path).then( () => {
+            this.counter++;        console.log('RPU:',this.counter);
             this.calculateAbsoluteValues();
         });
         
-        this.rentalsAndReturnsPerUser.init(this.path).then( () => {
-            this.counter++;
+        rentalsAndReturnsPerUser.init(this.path).then( () => {
+            this.counter++;        console.log('RARPU:',this.counter);
             this.calculateAbsoluteValues();
         });
         
-        this.reservationsPerStation.init(this.path).then( () => { 
-            this.counter++;
+        reservationsPerStation.init(this.path).then( () => { 
+            this.counter++;        console.log('RPT:',this.counter);
             this.calculateAbsoluteValues();
         });
         
-       this.rentalsAndReturnsPerStation.init(this.path).then( () => {
-            this.counter++;
+       rentalsAndReturnsPerStation.init(this.path).then( () => {
+            this.counter++;        console.log('RARPT:',this.counter);
             this.calculateAbsoluteValues();
         });
     }
     
-    private calculateAbsoluteValues() {
+    private calculateAbsoluteValues(): void {
         if (this.counter === this.INICIALIZATION) {
-            this.reservationsIterator.calculateReservations();
-            this.timeEntriesIterator.calculateBikeRentalsAndReturns(this.path);
+            console.log('INICIALIZADO TODO:',this.counter);
+        
+            this.counter = 0;
+            this.reservationsIterator.calculateReservations().then( () => {
+                this.counter++; console.log('reservations calculated', this.counter);
+                this.write();
+            });
+            this.timeEntriesIterator.calculateBikeRentalsAndReturns(this.path).then( () => {
+                this.counter++;console.log('rentals and returns calculated', this.counter);
+                this.write();
+            });
          }
     }
     
-    public static async create(path: string) {
+    public static async create(path: string): Promise<DataGenerator> {
         let generator: DataGenerator = new DataGenerator(path);
+        try {
         await generator.init();
+        }
+        catch(error) {
+            console.log('error initializing data generator:', error);
+        }
         return generator;
     }
     
+    private write(): void {
+        if (this.counter === this.CALCULATION) {
+            console.log('Failed rentals of station 4:', this.data.get(RentalsAndReturnsPerStation.name).getBikeFailedRentalsOfStation(4));
+            console.log('Failed bike reservations of user 49:', this.data.get(ReservationsPerUser.name).getBikeFailedReservationsOfUser(49));
+        }
+    }
+       
 }

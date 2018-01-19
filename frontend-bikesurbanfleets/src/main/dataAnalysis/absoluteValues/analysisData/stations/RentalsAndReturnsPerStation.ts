@@ -19,7 +19,7 @@ export class RentalsAndReturnsPerStation implements Observer {
         this.bikeSuccessfulReturnsPerStation = new Map<number, number>();
     }
     
-    public async init(path: string): Promise<boolean> {
+    public async init(path: string): Promise<void> {
         try {
             let history: HistoryReader = await HistoryReader.create(path);
             let entities: HistoryEntitiesJson = await history.getEntities("stations");
@@ -31,7 +31,6 @@ export class RentalsAndReturnsPerStation implements Observer {
                 this.bikeFailedReturnsPerStation.set(station.id, 0);            
                 this.bikeSuccessfulReturnsPerStation.set(station.id, 0);            
             }
-            return true;
         }
         catch(error) {
             console.log('error getting stations when initializing rentals and returns values:', error);
@@ -43,11 +42,11 @@ export class RentalsAndReturnsPerStation implements Observer {
         let stationValues = new RentalsAndReturnsPerStation();
         try {
             await stationValues.init(path);
-            return stationValues;
         }
         catch(error) {
             console.log('error creating station values:', error);
         }
+        return stationValues;
     }
     
     public update(timeEntry: TimeEntry): void {

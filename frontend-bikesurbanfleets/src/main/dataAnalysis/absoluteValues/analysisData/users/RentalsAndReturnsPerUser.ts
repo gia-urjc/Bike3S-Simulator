@@ -20,11 +20,11 @@ export class RentalsAndReturnsPerUser implements Observer {
         this.bikeSuccessfulReturnsPerUser = new Map<number, number>();
     }
     
-    public async init(path: string): Promise<boolean> {
+    public async init(path: string): Promise<void> {
         try {
             let history: HistoryReader = await HistoryReader.create(path);
             let entities: HistoryEntitiesJson = await history.getEntities("users");
-            this.users = entities.instances ;
+            this.users = entities.instances;
                 
             for(let user of this.users) {
                 this.bikeFailedRentalsPerUser.set(user.id, 0);
@@ -32,22 +32,22 @@ export class RentalsAndReturnsPerUser implements Observer {
                 this.bikeFailedReturnsPerUser.set(user.id, 0);            
                 this.bikeSuccessfulReturnsPerUser.set(user.id, 0);            
             }
-            return true;
         }
         catch(error) {
             console.log('error getting users:', error);
         }
+        return;
     }
 
     public static async create(path: string): Promise<RentalsAndReturnsPerUser> {
         let rentalsAndReturnsValues = new RentalsAndReturnsPerUser();
         try {
             await rentalsAndReturnsValues.init(path);
-            return rentalsAndReturnsValues;
         }
         catch(error) {
             console.log(error);
         }
+        return rentalsAndReturnsValues;
     }
 
     public getBikeFailedRentalsOfUser(userId: number): number | undefined {

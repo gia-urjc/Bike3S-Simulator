@@ -8,8 +8,6 @@ export class HistoryIterator {
     private pointer: number;
 
     private constructor() {
-        this.history = undefined;
-        this.currentFile = undefined;
         this.pointer = -1;
     }
 
@@ -18,11 +16,11 @@ export class HistoryIterator {
         try {
             historyIt.history = await HistoryReader.create(path);
             historyIt.currentFile = await historyIt.history.nextChangeFile();
-            return historyIt;
         }
         catch (error) {
             console.log('There is no available files:', error);
         }
+        return historyIt;
     }
 
     public async nextTimeEntry(): Promise<TimeEntry> {

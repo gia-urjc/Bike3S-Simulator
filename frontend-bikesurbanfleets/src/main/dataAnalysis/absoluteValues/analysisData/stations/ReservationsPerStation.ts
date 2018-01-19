@@ -17,7 +17,7 @@ export class ReservationsPerStation implements Observer {
         this.slotSuccessfulReservationsPerStation = new Map<number, number>();
     }
     
-    public async init(path: string): Promise<boolean> {
+    public async init(path: string): Promise<void> {
         try {
             let history: HistoryReader = await HistoryReader.create(path);
             let entities: HistoryEntitiesJson = await history.getEntities("stations");
@@ -29,11 +29,11 @@ export class ReservationsPerStation implements Observer {
                 this.bikeSuccessfulReservationsPerStation.set(station.id, 0);
                 this.slotSuccessfulReservationsPerStation.set(station.id, 0);
             }
-            return true;
         }
         catch(error) {
             console.log('error getting stations when initializing reservations values:', error);
         }
+        return;
     }
    
     public static async create(path: string): Promise<ReservationsPerStation> {

@@ -10,7 +10,7 @@ export class TimeEntriesIterator implements Observable {
         this.observers = new Array<Observer>();
     }
     
-    public async calculateBikeRentalsAndReturns(path: string): Promise<boolean> {
+    public async calculateBikeRentalsAndReturns(path: string): Promise<void> {
         let it: HistoryIterator; 
         try {
             it = await HistoryIterator.create(path);
@@ -20,11 +20,11 @@ export class TimeEntriesIterator implements Observable {
                 this.notify(timeEntry);
                 timeEntry = await it.nextTimeEntry();
             }
-            return true;
         }
         catch(error) {
             console.log('error getting time entries:', error);
         }
+        return;
     }
         
     public notify(timeEntry: TimeEntry): void {

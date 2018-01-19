@@ -2,6 +2,7 @@ import { app, BrowserWindow, shell } from 'electron';
 import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
+import { DataGenerator } from "./dataAnalysis/absoluteValues/DataGenerator";
 import { RentalsAndReturnsPerStation } from "./dataAnalysis/absoluteValues/analysisData/stations/RentalsAndReturnsPerStation";
 import { ReservationsPerStation } from "./dataAnalysis/absoluteValues/analysisData/stations/ReservationsPerStation";
 import { RentalsAndReturnsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/RentalsAndReturnsPerUser";
@@ -69,7 +70,17 @@ namespace Main {
         });
     }
     
+    export async function test() {
+       try {
+            let data: DataGenerator = await DataGenerator.create('history');
+        }
+        catch(error) {
+           console.log('esto ha petao:', error);
+        }
+        
+    }
+    
 }
   
 Main.init();
-
+Main.test();
