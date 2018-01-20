@@ -1,5 +1,13 @@
 import { Geo, PlainObject } from './util';
 
+export type SchemaConfig = {
+    type: string;
+    properties?: any;
+    enum?: string;
+    items?: SchemaConfig;
+}
+
+
 export interface BaseConfiguration  extends PlainObject {
     reservationTime: number;
     totalTimeSimulation: number;

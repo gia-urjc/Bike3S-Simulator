@@ -21,6 +21,7 @@ import {Bootstrap4FrameworkModule, JsonSchemaFormModule} from 'angular2-json-sch
         ReactiveFormsModule,
         NgFontAwesomeModule,
         LeafletModule.forRoot(),
+        Bootstrap4FrameworkModule,
         JsonSchemaFormModule.forRoot(Bootstrap4FrameworkModule)
     ],
     declarations: [
