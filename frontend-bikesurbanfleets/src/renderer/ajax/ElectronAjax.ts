@@ -3,6 +3,7 @@ import { Event } from 'electron';
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
 import {AjaxProtocol, FormSchemaAjax, HistoryAjax, SettingsAjax} from './AjaxProtocol';
+import {EntryPointDataType} from "../../shared/configuration";
 
 // https://github.com/electron/electron/issues/7300#issuecomment-274269710
 const { ipcRenderer } = (window as any).require('electron');
@@ -81,8 +82,16 @@ class ElectronFormSchema implements FormSchemaAjax {
         return await readIpc('form-schema-init');
     }
 
-    async getschemaFormEntryPointAndUserTypes(): Promise<any> {
+    async getSchemaFormEntryPointAndUserTypes(): Promise<any> {
         return await readIpc('form-schema-entry-user-type');
+    }
+
+    async getSchemaByTypes(dataTypes: EntryPointDataType): Promise<any> {
+        return await readIpc('form-schema-entry-point-by-type', dataTypes);
+    }
+
+    async getStationSchema(): Promise<any> {
+        return await readIpc('form-schema-station');
     }
 }
 

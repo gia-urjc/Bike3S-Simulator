@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { settingsPathGenerator } from '../../shared/settings';
 import { AjaxProtocol } from '../ajax/AjaxProtocol';
+import {EntryPointDataType} from "../../shared/configuration";
 
 @Component({
     selector: 'my-app',
@@ -9,18 +10,18 @@ import { AjaxProtocol } from '../ajax/AjaxProtocol';
 })
 export class AppComponent implements OnInit {
 
-    test: number;
-    schema: any;
-
     constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
 
     async ngOnInit() {
+        // TEST FORMS
+        /*
         this.ajax.formSchema.init().then(() => {
-            this.ajax.formSchema.getschemaFormEntryPointAndUserTypes().then(data => {
-                this.schema = data;
-            });
-
+            this.ajax.formSchema.getStationSchema().then((newSchema) => {
+                console.log(newSchema);
+                this.schema = newSchema;
+            })
         })
+        */
 
        /* try {
             let path = settingsPathGenerator();

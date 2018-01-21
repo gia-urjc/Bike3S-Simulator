@@ -12,7 +12,9 @@ export interface HistoryAjax {
 
 export interface FormSchemaAjax {
     init(): Promise<void>
-    getschemaFormEntryPointAndUserTypes(): Promise<void>
+    getSchemaFormEntryPointAndUserTypes(): Promise<any>
+    getSchemaByTypes(dataTypes: any): Promise<any>
+    getStationSchema(): Promise<any>
 }
 
 export interface SettingsAjax {

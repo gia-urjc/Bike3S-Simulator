@@ -1,8 +1,9 @@
 import * as fs from 'fs-extra';
 import { app } from 'electron';
 import * as paths from 'path';
-import {SchemaConfig} from "../../shared/configuration";
+import {EntryPointDataType, SchemaConfig} from "../../shared/configuration";
 import {IpcUtil} from "../util";
+import SchemaParser from "./SchemaParser";
 
 class Channel {
     constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
@@ -10,18 +11,19 @@ class Channel {
 
 export default class SchemaFormGenerator{
 
-    private static configurationFile: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/initial-config.json'));
+    private static configurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/initial-config.json'));
 
     static create() {
         return new SchemaFormGenerator();
     }
 
     static enableIpc(): void {
-        let schemaFormGenerator = SchemaFormGenerator.create();
         IpcUtil.openChannel('form-schema-init', async () => {
 
             const channels = [
-                new Channel('form-schema-entry-user-type', async () => await schemaFormGenerator.schemaFormEntryPointAndUserTypes())
+                new Channel('form-schema-entry-user-type', async () => this.schemaFormEntryPointAndUserTypes()),
+                new Channel('form-schema-entry-point-by-type', async (dataTypes: EntryPointDataType) => this.schemaFormEntryPointByTypes(dataTypes)),
+                new Channel('form-schema-station', async () => this.schemaFormStation())
             ];
 
             channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
@@ -35,40 +37,10 @@ export default class SchemaFormGenerator{
         });
     }
 
-    private constructor() {}
-
-    private getEntryPointSchemas(): Array<SchemaConfig> {
-        return SchemaFormGenerator.configurationFile.properties.entryPoints.items.anyOf;
-    }
-
-    private getUserTypeSchemas(): Array<SchemaConfig> {
-        let entryPointSchemas: Array<any> = this.getEntryPointSchemas();
-        if(entryPointSchemas.length === 0) {
-            return [];
-        }
-        return entryPointSchemas[0].properties.userType.anyOf;
-    }
-
-    private readEntriesAndUserTypes(entryPointTypes: Array<string>, userTypes: Array<string>) {
-        let usersRead = false;
-        for (let entryPointSchema of this.getEntryPointSchemas()) {
-            let entryPointProperties = entryPointSchema.properties;
-            entryPointTypes.push(entryPointProperties.entryPointType.const);
-            if (!usersRead) {
-                for (let userSchema of this.getUserTypeSchemas()) {
-                    let userProperties = userSchema.properties;
-                    userTypes.push(userProperties.typeName.const);
-                }
-                usersRead = true;
-            }
-        }
-    }
-
-    public schemaFormEntryPointAndUserTypes(): SchemaConfig {
+    public static async schemaFormEntryPointAndUserTypes(): Promise<SchemaConfig> {
         let schema: SchemaConfig;
-        let entryPointTypes: Array<string> = [];
-        let userTypes: Array<string> = [];
-        this.readEntriesAndUserTypes(entryPointTypes, userTypes);
+        let entryPointTypes: Array<string> = await SchemaParser.readEntryPointTypes(this.configurationSchema);
+        let userTypes: Array<string> = await SchemaParser.readUserTypes(this.configurationSchema);
         schema = {
             type: "object",
             properties: {
@@ -84,6 +56,26 @@ export default class SchemaFormGenerator{
         };
         console.log(schema);
         return schema;
+    }
+
+    public static async schemaFormEntryPointByTypes(dataTypes: EntryPointDataType): Promise<SchemaConfig | undefined> {
+        let entryPointSchema = await SchemaParser.getEntryPointSchema(this.configurationSchema, dataTypes.entryPointType, dataTypes.userType);
+        if(entryPointSchema !== undefined) {
+            return entryPointSchema;
+        }
+        else {
+            throw new Error("Entry Point type or user Type is not valid");
+        }
+    }
+
+    public static async schemaFormStation(): Promise<SchemaConfig | undefined> {
+        let stationSchema = await SchemaParser.getStationSchema(this.configurationSchema);
+        if(stationSchema !== undefined) {
+            return stationSchema
+        }
+        else {
+            throw new Error("Station is not valid or is not defined in schemas");
+        }
     }
 }
 
