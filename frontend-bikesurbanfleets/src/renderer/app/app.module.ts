@@ -10,6 +10,8 @@ import { ElectronAjax } from '../ajax/ElectronAjax';
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
 import { Visualization } from './visualization/visualization.component';
+import {SchemaformComponent} from './schemaform/schemaform.component';
+import {Bootstrap4FrameworkModule, JsonSchemaFormModule} from 'angular2-json-schema-form';
 
 @NgModule({
     imports: [
@@ -18,12 +20,15 @@ import { Visualization } from './visualization/visualization.component';
         FormsModule,
         ReactiveFormsModule,
         NgFontAwesomeModule,
-        LeafletModule.forRoot()
+        LeafletModule.forRoot(),
+        Bootstrap4FrameworkModule,
+        JsonSchemaFormModule.forRoot(Bootstrap4FrameworkModule)
     ],
     declarations: [
         AppComponent,
         MapComponent,
         Visualization,
+        SchemaformComponent
     ],
     bootstrap: [ AppComponent ],
     providers: [{

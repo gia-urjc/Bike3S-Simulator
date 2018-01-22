@@ -1,6 +1,6 @@
 {
   "reservationTime": 150,
-  "totalSimulationTime": 250000,
+  "totalSimulationTime": 25000,
   "randomSeed": 201,
   "boundingBox": {
     "northWest": {
@@ -136,7 +136,7 @@
       "capacity": 21
     }
   ],
-  "entryPoints": [
+  "initialUsers": [
     {
       "position": {
         "latitude": 40.4275,
@@ -145,8 +145,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 1,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 1
     },
     {
       "position": {
@@ -156,8 +155,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 95,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 95
     },
     {
       "position": {
@@ -167,8 +165,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 212,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 212
     },
     {
       "position": {
@@ -178,8 +175,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 257,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 257
     },
     {
       "position": {
@@ -189,8 +185,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 290,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 290
     },
     {
       "position": {
@@ -200,8 +195,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 372,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 372
     },
     {
       "position": {
@@ -211,8 +205,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 519,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 519
     },
     {
       "position": {
@@ -222,8 +215,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 609,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 609
     },
     {
       "position": {
@@ -233,8 +225,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 709,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 709
     },
     {
       "position": {
@@ -244,8 +235,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 709,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 709
     },
     {
       "position": {
@@ -255,8 +245,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 853,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 853
     },
     {
       "position": {
@@ -266,8 +255,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 1035,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 1035
     },
     {
       "position": {
@@ -277,8 +265,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 1261,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 1261
     },
     {
       "position": {
@@ -288,8 +275,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 1356,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 1356
     },
     {
       "position": {
@@ -299,8 +285,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 1678,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 1678
     },
     {
       "position": {
@@ -310,8 +295,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 1955,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 1955
     },
     {
       "position": {
@@ -321,8 +305,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 2597,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 2597
     },
     {
       "position": {
@@ -332,8 +315,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 2673,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 2673
     },
     {
       "position": {
@@ -343,8 +325,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 2837,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 2837
     },
     {
       "position": {
@@ -354,8 +335,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 2964,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 2964
     },
     {
       "position": {
@@ -365,8 +345,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 3176,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 3176
     },
     {
       "position": {
@@ -376,8 +355,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 3372,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 3372
     },
     {
       "position": {
@@ -387,8 +365,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 3516,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 3516
     },
     {
       "position": {
@@ -398,8 +375,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 3590,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 3590
     },
     {
       "position": {
@@ -409,8 +385,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 3739,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 3739
     },
     {
       "position": {
@@ -420,8 +395,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 4110,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 4110
     },
     {
       "position": {
@@ -431,8 +405,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 5275,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 5275
     },
     {
       "position": {
@@ -442,8 +415,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 5808,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 5808
     },
     {
       "position": {
@@ -453,8 +425,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 5857,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 5857
     },
     {
       "position": {
@@ -464,8 +435,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 6128,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 6128
     },
     {
       "position": {
@@ -475,8 +445,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 6478,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 6478
     },
     {
       "position": {
@@ -486,8 +455,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 6486,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 6486
     },
     {
       "position": {
@@ -497,8 +465,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 6725,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 6725
     },
     {
       "position": {
@@ -508,8 +475,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 6858,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 6858
     },
     {
       "position": {
@@ -519,8 +485,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 6986,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 6986
     },
     {
       "position": {
@@ -530,8 +495,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 7050,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 7050
     },
     {
       "position": {
@@ -541,8 +505,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 7539,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 7539
     },
     {
       "position": {
@@ -552,8 +515,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 7679,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 7679
     },
     {
       "position": {
@@ -563,8 +525,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 7699,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 7699
     },
     {
       "position": {
@@ -574,8 +535,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 7962,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 7962
     },
     {
       "position": {
@@ -585,8 +545,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 8391,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 8391
     },
     {
       "position": {
@@ -596,8 +555,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 8736,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 8736
     },
     {
       "position": {
@@ -607,8 +565,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 8754,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 8754
     },
     {
       "position": {
@@ -618,8 +575,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 9112,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 9112
     },
     {
       "position": {
@@ -629,8 +585,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 9782,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 9782
     },
     {
       "position": {
@@ -640,8 +595,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 10025,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 10025
     },
     {
       "position": {
@@ -651,8 +605,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 10728,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 10728
     },
     {
       "position": {
@@ -662,8 +615,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 10864,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 10864
     },
     {
       "position": {
@@ -673,8 +625,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 11140,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 11140
     },
     {
       "position": {
@@ -684,8 +635,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 11284,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 11284
     },
     {
       "position": {
@@ -695,8 +645,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 11803,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 11803
     },
     {
       "position": {
@@ -706,8 +655,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 11937,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 11937
     },
     {
       "position": {
@@ -717,8 +665,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 12177,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 12177
     },
     {
       "position": {
@@ -728,8 +675,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 12421,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 12421
     },
     {
       "position": {
@@ -739,8 +685,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 12518,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 12518
     },
     {
       "position": {
@@ -750,8 +695,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 13085,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 13085
     },
     {
       "position": {
@@ -761,8 +705,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 13476,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 13476
     },
     {
       "position": {
@@ -772,8 +715,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 13487,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 13487
     },
     {
       "position": {
@@ -783,8 +725,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 13853,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 13853
     },
     {
       "position": {
@@ -794,8 +735,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 13886,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 13886
     },
     {
       "position": {
@@ -805,8 +745,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 14196,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 14196
     },
     {
       "position": {
@@ -816,8 +755,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 14409,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 14409
     },
     {
       "position": {
@@ -827,8 +765,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 14508,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 14508
     },
     {
       "position": {
@@ -838,8 +775,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 14656,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 14656
     },
     {
       "position": {
@@ -849,8 +785,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 14846,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 14846
     },
     {
       "position": {
@@ -860,8 +795,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 14921,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 14921
     },
     {
       "position": {
@@ -871,8 +805,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 15204,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 15204
     },
     {
       "position": {
@@ -882,8 +815,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 15872,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 15872
     },
     {
       "position": {
@@ -893,8 +825,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 15889,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 15889
     },
     {
       "position": {
@@ -904,8 +835,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 16128,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 16128
     },
     {
       "position": {
@@ -915,8 +845,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 16532,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 16532
     },
     {
       "position": {
@@ -926,8 +855,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 16556,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 16556
     },
     {
       "position": {
@@ -937,8 +865,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 16830,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 16830
     },
     {
       "position": {
@@ -948,8 +875,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 17057,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 17057
     },
     {
       "position": {
@@ -959,8 +885,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 17204,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 17204
     },
     {
       "position": {
@@ -970,8 +895,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 17549,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 17549
     },
     {
       "position": {
@@ -981,8 +905,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 17684,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 17684
     },
     {
       "position": {
@@ -992,8 +915,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 17917,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 17917
     },
     {
       "position": {
@@ -1003,8 +925,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 17949,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 17949
     },
     {
       "position": {
@@ -1014,8 +935,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 17968,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 17968
     },
     {
       "position": {
@@ -1025,8 +945,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 17970,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 17970
     },
     {
       "position": {
@@ -1036,8 +955,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 18090,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 18090
     },
     {
       "position": {
@@ -1047,8 +965,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 18122,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 18122
     },
     {
       "position": {
@@ -1058,8 +975,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 18230,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 18230
     },
     {
       "position": {
@@ -1069,8 +985,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 18326,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 18326
     },
     {
       "position": {
@@ -1080,8 +995,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 18599,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 18599
     },
     {
       "position": {
@@ -1091,8 +1005,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 19050,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 19050
     },
     {
       "position": {
@@ -1102,8 +1015,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 19064,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 19064
     },
     {
       "position": {
@@ -1113,8 +1025,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 19171,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 19171
     },
     {
       "position": {
@@ -1124,8 +1035,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 19243,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 19243
     },
     {
       "position": {
@@ -1135,8 +1045,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 19345,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 19345
     },
     {
       "position": {
@@ -1146,8 +1055,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 19581,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 19581
     },
     {
       "position": {
@@ -1157,8 +1065,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 19758,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 19758
     },
     {
       "position": {
@@ -1168,8 +1075,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 19781,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 19781
     },
     {
       "position": {
@@ -1179,8 +1085,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 19908,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 19908
     },
     {
       "position": {
@@ -1190,8 +1095,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 20642,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 20642
     },
     {
       "position": {
@@ -1201,8 +1105,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 20883,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 20883
     },
     {
       "position": {
@@ -1212,8 +1115,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 21096,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 21096
     },
     {
       "position": {
@@ -1223,8 +1125,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 21185,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 21185
     },
     {
       "position": {
@@ -1234,8 +1135,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 21231,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 21231
     },
     {
       "position": {
@@ -1245,8 +1145,7 @@
       "userType": {
         "typeName": "USER_RANDOM"
       },
-      "timeInstant": 21461,
-      "entryPointType": "SINGLEUSER"
+      "timeInstant": 21461
     }
   ]
 }

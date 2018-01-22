@@ -1,7 +1,7 @@
 process.env.SPARKY_LOG = false;
 
 const { FuseBox, Sparky } = require('fuse-box');
-const { EnvPlugin, CSSPlugin, CSSResourcePlugin, RawPlugin, WebIndexPlugin } = require('fuse-box');
+const { EnvPlugin, CSSPlugin, CSSResourcePlugin, RawPlugin, WebIndexPlugin, JSONPlugin } = require('fuse-box');
 
 const log = require('fliplog');
 const express = require('express');
@@ -138,7 +138,11 @@ Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, 
 Sparky.task('build:jsonschema-validator', () => {
     const fuse = FuseBox.init({
         homeDir: projectRoot.jsonschemaValidator(),
-        output: path.join(projectRoot.build.jsonschemaValidator(), '$name.js')
+        output: path.join(projectRoot.build.jsonschemaValidator(), '$name.js'),
+        experimentalFeatures: true,
+        plugins: [
+            JSONPlugin()
+        ]
     });
     
     fuse.bundle("jsonschema-validator.js").instructions(`>index.ts`);

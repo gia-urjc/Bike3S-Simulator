@@ -70,17 +70,18 @@ public class Application {
         boolean result = false;
         if(validator != null && schema != null && config != null) {
             try {
-                String output = JsonValidation.validate(schema, config, validator);
-                if(!output.equals("OK") && !output.equals("NODE_NOT_INSTALLED")) {
+                String resultValidation = JsonValidation.validate(schema, config, validator);
+                if(!resultValidation.equals("OK") && !resultValidation.equals("NODE_NOT_INSTALLED")) {
                     System.out.println(ANSI_RED +"JSON has errors" + ANSI_RESET);
-                    System.out.println(output);
+                    System.out.println(resultValidation);
                     result = true;
                     return false;
-                } else if (output.equals("NODE_NOT_INSALLED")) {
-                    System.out.println(ANSI_RED + "Node is necessary to execute validator:" + validator + ". \n"
+                } else if (resultValidation.equals("NODE_NOT_INSALLED")) {
+                    System.out.println(ANSI_RED + "Node is necessary to execute validator: " + validator + ". \n"
                             + "Verify if node is installed or install node" + ANSI_RESET);
                 } else {
-                    System.out.println(ANSI_GREEN + "JSON is OK" + ANSI_RESET);
+                    System.out.println(ANSI_GREEN + "Validation configuration input:" + resultValidation + ANSI_RESET);
+                    result = true;
                 }
             } catch (IOException | InterruptedException e) {
                 System.out.println(ANSI_RED + "Fail executing validation" + ANSI_RESET);

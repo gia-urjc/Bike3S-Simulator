@@ -68,13 +68,8 @@ public class EntryPointPoisson extends EntryPoint {
         }
 
         maximumUsers = totalUsers == 0 ? Integer.MAX_VALUE : totalUsers;
-        System.out.println(currentTime);
-        System.out.println(endTime);
-        System.out.println(maximumUsers);
-        System.out.println(usersCounter);
 
         while (currentTime < endTime && usersCounter < maximumUsers) {
-            System.out.println(currentTime);
             usersCounter++;
             GeoPoint userPosition;
 

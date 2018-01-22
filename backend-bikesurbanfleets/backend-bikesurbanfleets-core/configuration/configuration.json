@@ -38,7 +38,6 @@
             "radius": 100.0,
             "totalUsers": 100,
             "distribution": {
-                "type": "POISSON",
                 "lambda": 0.0033333
             }
         }

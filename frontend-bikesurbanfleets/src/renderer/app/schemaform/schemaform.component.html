@@ -1,0 +1,6 @@
+<json-schema-form
+        *ngIf="schema !== undefined"
+        [schema]="schema"
+        [(ngModel)]="data"
+        (onSubmit)="submitForm($event)">
+</json-schema-form>
