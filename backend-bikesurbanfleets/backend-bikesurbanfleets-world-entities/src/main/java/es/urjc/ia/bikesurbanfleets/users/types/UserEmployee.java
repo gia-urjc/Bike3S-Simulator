@@ -115,10 +115,11 @@ public class UserEmployee extends User {
         
         if (!stations.isEmpty()) {
             List<Station> recommendedStations = systemManager.getRecommendationSystem()
-            		.recommendByLinearDistance(this.getPosition(), stations);      
-        
-        destination = recommendedStations.get(0).getPosition().equals(this.getPosition()) && recommendedStations.size() > 1  
-        		? recommendedStations.get(1) : recommendedStations.get(1);
+            		.recommendToRentBikeByRealRouteDistance(this.getPosition(), stations);
+            
+            if (!recommendedStations.isEmpty()) {
+            	destination = recommendedStations.get(0);
+            }
         }
         
         return destination; 
@@ -127,16 +128,21 @@ public class UserEmployee extends User {
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        List<Station> recommendedStations;
 
         if (stations.isEmpty()) {
-            stations = new ArrayList(systemManager.consultStations());  
+            stations = new ArrayList<Station>(systemManager.consultStations());  
         }
         
-        List<Station> recommendedStations = systemManager.getRecommendationSystem()
-        		.recommendByLinearDistance(this.getPosition(), stations);
+        recommendedStations = systemManager.getRecommendationSystem()
+        		.recommendToReturnBikeByRealRouteDistance(this.getPosition(), stations);
         
-        return recommendedStations.get(0).getPosition().equals(this.getPosition()) && recommendedStations.size() > 1  
-        		? recommendedStations.get(1) : recommendedStations.get(1);
+        if (recommendedStations.isEmpty()) {
+        	stations = new ArrayList<Station>(systemManager.consultStations());
+        	recommendedStations = systemManager.getRecommendationSystem()
+            		.recommendToReturnBikeByRealRouteDistance(this.getPosition(), stations);
+        }
+        return recommendedStations.get(0);
     }
 
     @Override

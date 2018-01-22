@@ -135,25 +135,22 @@ public class UserTourist extends User {
         
         if (!stations.isEmpty()) {
                 List<Station> recommendedStations = systemManager.getRecommendationSystem()
-                .recommendByLinearDistance(this.getPosition(), stations);
+                .recommendToRentBikeByRealRouteDistance(this.getPosition(), stations);
                 
-                if (recommendedStations.get(0).getPosition().equals(this.getPosition( ))) {
-                	recommendedStations.remove(0);
+                if (!recommendedStations.isEmpty()) {
+	                List<Station> nearestStations = new ArrayList<>();
+	                
+	                int end = parameters.SELECTION_STATIONS_SET < recommendedStations.size() 
+	                    ? parameters.SELECTION_STATIONS_SET : recommendedStations.size();
+	                
+	                for(int i = 0; i < end; i++) {
+	                    nearestStations.add(recommendedStations.get(i));
+	                }
+	         
+	                int index = systemManager.getRandom().nextInt(0, end-1);
+	                destination = nearestStations.get(index);
                 }
-                
-                List<Station> nearestStations = new ArrayList<>();
-                
-                int end = parameters.SELECTION_STATIONS_SET < recommendedStations.size() 
-                    ? parameters.SELECTION_STATIONS_SET : recommendedStations.size();
-
-
-                for(int i = 0; i < end; i++) {
-                    nearestStations.add(recommendedStations.get(i));
-                }
-         
-                int index = systemManager.getRandom().nextInt(0, parameters.SELECTION_STATIONS_SET - 1);
-                destination = nearestStations.get(index);
-        }
+	        }
         
         return destination;
     }
@@ -164,25 +161,31 @@ public class UserTourist extends User {
     @Override
     public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        List<Station> recommendedStations;
         
         if (stations.isEmpty()) {
             stations = new ArrayList<>(systemManager.consultStations());
         }
 
-        List<Station> recommendedStations = systemManager.getRecommendationSystem()
-                .recommendByLinearDistance(this.getPosition(), stations);
+        recommendedStations = systemManager.getRecommendationSystem()
+                .recommendToReturnBikeByRealRouteDistance(this.getPosition(), stations);
         
-        if (recommendedStations.get(0).getPosition().equals(this.getPosition( ))) {
-        	recommendedStations.remove(0);
+        if (recommendedStations.isEmpty()) {
+        	stations = new ArrayList<>(systemManager.consultStations());
+            recommendedStations = systemManager.getRecommendationSystem()
+                    .recommendToReturnBikeByRealRouteDistance(this.getPosition(), stations);
         }
         
-        List<Station> nearestStations = new ArrayList<>();
+        int end = parameters.SELECTION_STATIONS_SET < recommendedStations.size() 
+            ? parameters.SELECTION_STATIONS_SET : recommendedStations.size();
+            
+       List<Station> nearestStations = new ArrayList<>();
         
-        for(int i = 0; i < parameters.SELECTION_STATIONS_SET; i++) {
+        for(int i = 0; i < end; i++) {
             nearestStations.add(recommendedStations.get(i));
         }
          
-        int index = systemManager.getRandom().nextInt(0, parameters.SELECTION_STATIONS_SET - 1);
+        int index = systemManager.getRandom().nextInt(0, end-1);
         return nearestStations.get(index);
     }
 

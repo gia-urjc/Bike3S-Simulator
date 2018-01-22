@@ -111,27 +111,38 @@ public class UserStationsBalancer extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        Station destination = null;
         
-     if (stations.isEmpty()) {
-         stations = new ArrayList<>(systemManager.consultStations());
+     if (!stations.isEmpty()) {
+         List<Station> recommendedStations = systemManager.getRecommendationSystem()
+                .recommendByNumberOfBikes(this.getPosition(), stations);
+         
+         if (!recommendedStations.isEmpty()) {
+        	 destination = recommendedStations.get(0);
+         }
      }
-
-        return systemManager.getRecommendationSystem()
-                .recommendByNumberOfBikes(this.getPosition(), stations).get(0);
+     return destination;
     }
 
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-        Station destination = null;
+        List<Station> recommendedStations;
         
-        if (!stations.isEmpty()) {
-            destination = systemManager.getRecommendationSystem()
-                    .recommendByNumberOfSlots(this.getPosition(), stations).get(0);
-        }
-
-        return destination;
-        }
+        if (stations.isEmpty()) {
+        	   stations = new ArrayList<Station>(systemManager.consultStations());        
+    	  	}
+    
+    			recommendedStations = systemManager.getRecommendationSystem()
+            .recommendByNumberOfSlots(this.getPosition(), stations);
+    			
+    			if (recommendedStations.isEmpty()) {
+    				 stations = new ArrayList<Station>(systemManager.consultStations());        
+    					recommendedStations = systemManager.getRecommendationSystem()
+    			            .recommendByNumberOfSlots(this.getPosition(), stations);
+							}
+       return recommendedStations.get(0);
+    }
     
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {

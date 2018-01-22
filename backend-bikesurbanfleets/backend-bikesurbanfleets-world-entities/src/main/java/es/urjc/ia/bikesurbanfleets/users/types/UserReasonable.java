@@ -117,9 +117,10 @@ public class UserReasonable extends User {
      if (!stations.isEmpty()) {
          List<Station> recommendedStations = systemManager.getRecommendationSystem()
                  .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
-
-         destination = recommendedStations.get(0).getPosition().equals(this.getPosition())
-                 ? recommendedStations.get(1) : recommendedStations.get(0);
+         
+         if (!recommendedStations.isEmpty()) {
+        	 destination = recommendedStations.get(0);
+         }
      }
      return destination;
     }
@@ -127,17 +128,22 @@ public class UserReasonable extends User {
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        List<Station> recommendedStations;
         
         if (stations.isEmpty()) {
             stations = new ArrayList<>(systemManager.consultStations());
         }
 
-        List<Station> recommendedStations = systemManager.getRecommendationSystem()
+        recommendedStations = systemManager.getRecommendationSystem()
                 .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
-
-        return recommendedStations.get(0).getPosition().equals(this.getPosition())
-                ? recommendedStations.get(1) : recommendedStations.get(0);
-    }
+        
+        if (recommendedStations.isEmpty()) {
+        	stations = new ArrayList<>(systemManager.consultStations());
+        	recommendedStations = systemManager.getRecommendationSystem()
+                    .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
+        }
+        return recommendedStations.get(0);
+   }
     
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {

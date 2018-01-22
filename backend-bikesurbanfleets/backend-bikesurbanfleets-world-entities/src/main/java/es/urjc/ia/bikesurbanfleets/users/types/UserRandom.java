@@ -52,29 +52,32 @@ public class UserRandom extends User {
         
         if (!stations.isEmpty()) {
          	List<Station> recommendedStations = systemManager.getRecommendationSystem()
-             .recommendByLinearDistance(this.getPosition(), stations);
-        
-        		 destination = recommendedStations.get(0).getPosition().equals(this.getPosition()) && recommendedStations.size() > 1  
-        				 ? recommendedStations.get(1) : recommendedStations.get(0);
+             .recommendToRentBikeByRealRouteDistance(this.getPosition(), stations);
+         	
+         	if (!recommendedStations.isEmpty()) {
+        		 	destination = recommendedStations.get(0);
+         	}
         }
-        
         return destination;
-
     }
 
     @Override
     public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
+        List<Station> recommendedStations; 
         
         if (stations.isEmpty()) {
-             stations = new ArrayList<>(systemManager.consultStations());
+             stations = new ArrayList<Station>(systemManager.consultStations());
         }
 
-        List<Station> recommendedStations = systemManager.getRecommendationSystem()
-                .recommendByLinearDistance(this.getPosition(), stations);
-        // TODO: what happens if recommended stations size is 1?
-        return recommendedStations.get(0).getPosition().equals(this.getPosition())
-                ? recommendedStations.get(1) : recommendedStations.get(0);
+        recommendedStations = systemManager.getRecommendationSystem()
+                .recommendToReturnBikeByRealRouteDistance(this.getPosition(), stations);
+        if (recommendedStations.isEmpty()) {
+        	stations = new ArrayList<Station>(systemManager.consultStations());
+        	recommendedStations = systemManager.getRecommendationSystem()
+                    .recommendToReturnBikeByRealRouteDistance(this.getPosition(), stations);
+        }
+        return recommendedStations.get(0);        
     }
     
     @Override
