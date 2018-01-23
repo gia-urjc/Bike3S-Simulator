@@ -10,6 +10,13 @@ export interface HistoryAjax {
     getChangeFile(n: number): Promise<Array<HistoryTimeEntry>>,
 }
 
+export interface FormSchemaAjax {
+    init(): Promise<void>
+    getSchemaFormEntryPointAndUserTypes(): Promise<any>
+    getSchemaByTypes(dataTypes: any): Promise<any>
+    getStationSchema(): Promise<any>
+}
+
 export interface SettingsAjax {
     get(property: string): Promise<any>,
     set(property: string, value: JsonValue): Promise<void>,
@@ -18,4 +25,5 @@ export interface SettingsAjax {
 export interface AjaxProtocol {
     history: HistoryAjax,
     settings: SettingsAjax,
+    formSchema: FormSchemaAjax
 }

@@ -1,5 +1,5 @@
 <json-schema-form
-        loadExternalAssets="true"
+        *ngIf="schema !== undefined"
         [schema]="schema"
         [(ngModel)]="data"
         (onSubmit)="submitForm($event)">

@@ -25,7 +25,7 @@ export default class HistoryReader {
         verbose: true,
     });
 
-    private static entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'))
+    private static entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
     private static changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));
 
     private historyPath: string;

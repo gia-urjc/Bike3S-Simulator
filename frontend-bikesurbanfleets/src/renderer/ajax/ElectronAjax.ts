@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Event } from 'electron';
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
-import { AjaxProtocol, HistoryAjax, SettingsAjax } from './AjaxProtocol';
+import {AjaxProtocol, FormSchemaAjax, HistoryAjax, SettingsAjax} from './AjaxProtocol';
+import {EntryPointDataType} from "../../shared/configuration";
 
 // https://github.com/electron/electron/issues/7300#issuecomment-274269710
 const { ipcRenderer } = (window as any).require('electron');
@@ -76,14 +77,34 @@ class ElectronSettings implements SettingsAjax {
     }
 }
 
+class ElectronFormSchema implements FormSchemaAjax {
+    async init(): Promise<any> {
+        return await readIpc('form-schema-init');
+    }
+
+    async getSchemaFormEntryPointAndUserTypes(): Promise<any> {
+        return await readIpc('form-schema-entry-user-type');
+    }
+
+    async getSchemaByTypes(dataTypes: EntryPointDataType): Promise<any> {
+        return await readIpc('form-schema-entry-point-by-type', dataTypes);
+    }
+
+    async getStationSchema(): Promise<any> {
+        return await readIpc('form-schema-station');
+    }
+}
+
 @Injectable()
 export class ElectronAjax implements AjaxProtocol {
 
     history: HistoryAjax;
     settings: SettingsAjax;
+    formSchema: FormSchemaAjax;
 
     constructor() {
         this.history = new ElectronHistory();
         this.settings = new ElectronSettings();
+        this.formSchema = new ElectronFormSchema();
     }
 }
