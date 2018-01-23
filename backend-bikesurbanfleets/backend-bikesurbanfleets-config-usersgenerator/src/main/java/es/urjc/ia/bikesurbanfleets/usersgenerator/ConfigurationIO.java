@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.implementations.EntryPointSingle;
 
 import java.io.FileReader;
 import java.io.FileWriter;

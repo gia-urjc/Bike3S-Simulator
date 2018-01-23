@@ -64,7 +64,8 @@ public class UserRandom extends User {
     @Override
     public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
-        List<Station> recommendedStations; 
+        List<Station> recommendedStations;
+        Station destination;
         
         if (stations.isEmpty()) {
              stations = new ArrayList<Station>(systemManager.consultStations());
@@ -72,12 +73,15 @@ public class UserRandom extends User {
 
         recommendedStations = systemManager.getRecommendationSystem()
                 .recommendToReturnBikeByRealRouteDistance(this.getPosition(), stations);
-        if (recommendedStations.isEmpty()) {
-        	stations = new ArrayList<Station>(systemManager.consultStations());
-        	recommendedStations = systemManager.getRecommendationSystem()
-                    .recommendToReturnBikeByRealRouteDistance(this.getPosition(), stations);
+        if (!recommendedStations.isEmpty()) {
+        	destination = recommendedStations.get(0);
         }
-        return recommendedStations.get(0);        
+        else {
+        	recommendedStations= systemManager.consultStations();
+        	int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);
+        	destination = recommendedStations.get(index);
+        }
+        return destination;        
     }
     
     @Override

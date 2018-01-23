@@ -171,9 +171,7 @@ public class UserTourist extends User {
                 .recommendToReturnBikeByRealRouteDistance(this.getPosition(), stations);
         
         if (recommendedStations.isEmpty()) {
-        	stations = new ArrayList<>(systemManager.consultStations());
-            recommendedStations = systemManager.getRecommendationSystem()
-                    .recommendToReturnBikeByRealRouteDistance(this.getPosition(), stations);
+        	recommendedStations = systemManager.consultStations();
         }
         
         int end = parameters.SELECTION_STATIONS_SET < recommendedStations.size() 

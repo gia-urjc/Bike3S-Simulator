@@ -1,7 +1,9 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
+import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
+import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
@@ -126,9 +128,16 @@ public class UserDistanceRestriction extends User {
          if (!recommendedStations.isEmpty()) {
      
 	         try {
-	        	 destination = recommendedStations.stream().filter(station -> systemManager
-	        			 .getGraphManager().obtainShortestRouteBetween(station.getPosition(), this
-	        					 .getPosition()).getTotalDistance() <= parameters.maxDistance).findFirst().get();
+	        	 destination = recommendedStations.stream().filter(station -> {
+					boolean lessThan = false;
+	        		 try {
+						lessThan = systemManager.getGraphManager().obtainShortestRouteBetween(station.getPosition(), this
+										 .getPosition()).getTotalDistance() <= parameters.maxDistance;
+					} catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
+						e.printStackTrace();
+					}
+	        		return lessThan;
+				}).findFirst().get();
 	         }
 	         catch (Exception e) {
 	        	 destination = null;
@@ -143,6 +152,7 @@ public class UserDistanceRestriction extends User {
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
         List<Station> recommendedStations, restrictedStations;
+        Station destination=null;
         
         if (stations.isEmpty()) {
             stations = new ArrayList<Station>(systemManager.consultStations());
@@ -151,29 +161,36 @@ public class UserDistanceRestriction extends User {
         recommendedStations = systemManager.getRecommendationSystem()
                 .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
         
-        Station destination;
         if (!recommendedStations.isEmpty()) {
         	try {
-        		restrictedStations = recommendedStations.stream().filter(station -> systemManager
-        				.getGraphManager().obtainShortestRouteBetween(station.getPosition(), this.getPosition()).getTotalDistance() <= parameters.maxDistance).collect(Collectors.toList());
-        	}
-        	catch(Exception e) {
-        		e.printStackTrace();
-        	}
-        
-	        if (!restrictedStations.isEmpty()) {
-	        	destination = restrictedStations.get(0);
-	        }
-	        else {
-	            destination = recommendedStations.get(0);
-	        }
+        		restrictedStations = recommendedStations.stream().filter(station -> {
+					boolean lessThan = false;
+        			try {
+						lessThan = systemManager
+								.getGraphManager().obtainShortestRouteBetween(station.getPosition(), this.getPosition()).getTotalDistance() <= parameters.maxDistance;
+					} catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
+												e.printStackTrace();
+					}
+        			return lessThan;
+				}).collect(Collectors.toList());
+        	
+        	if (!restrictedStations.isEmpty()) {
+		        	destination = restrictedStations.get(0);
+		        }
+		        else {
+		            destination = recommendedStations.get(0);
+		        }
+	        	}
+	        	catch(Exception e) {
+	        		e.printStackTrace();
+	        	}
+           
         }
-	       //revise this condition
+	       
         else {
-        	stations = new ArrayList<Station> (systemManager.consultStations());
-        	recommendedStations = systemManager.getRecommendationSystem()
-        			.recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
-        	destination = recommendedStations.get(0);
+        	recommendedStations = systemManager.consultStations();
+        	int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);
+        	destination = recommendedStations.get(index);
         }
         return destination;
     }

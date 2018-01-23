@@ -129,6 +129,7 @@ public class UserReasonable extends User {
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
         List<Station> recommendedStations;
+        Station destination;
         
         if (stations.isEmpty()) {
             stations = new ArrayList<>(systemManager.consultStations());
@@ -137,12 +138,15 @@ public class UserReasonable extends User {
         recommendedStations = systemManager.getRecommendationSystem()
                 .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
         
-        if (recommendedStations.isEmpty()) {
-        	stations = new ArrayList<>(systemManager.consultStations());
-        	recommendedStations = systemManager.getRecommendationSystem()
-                    .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
+        if (!recommendedStations.isEmpty()) {
+        	destination = recommendedStations.get(0);
         }
-        return recommendedStations.get(0);
+        else {
+        	recommendedStations= systemManager.consultStations();
+        	int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);
+        	destination = recommendedStations.get(index);
+        }
+        return destination;
    }
     
     @Override
