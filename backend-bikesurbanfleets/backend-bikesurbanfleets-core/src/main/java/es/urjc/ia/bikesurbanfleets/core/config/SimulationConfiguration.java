@@ -49,8 +49,7 @@ public class SimulationConfiguration {
  /**
   * They are all the entry points of the system obtained from the configuration file.
   */
-    @SerializedName("entryPoints")
-    private List<SingleUser> users;
+    private List<SingleUser> initialUsers;
 
     /**
      * They are all the stations of the system obtained from the configuration file. 
@@ -79,7 +78,7 @@ public class SimulationConfiguration {
     }
 
     public List<SingleUser> getUsers() {
-        return users;
+        return initialUsers;
     }
 
     public List<Station> getStations() { return stations; }

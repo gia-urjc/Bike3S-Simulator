@@ -20,7 +20,7 @@ public class JsonValidation {
         }
         ArrayList<String> command = new ArrayList<>();
         command.addAll(Arrays.asList("node", jsValidatorDir, "verify", "-i", jsonDir, "-s", schemaDir));
-        System.out.println("node " + jsValidatorDir + " -i " + jsonDir + " -s " + schemaDir);
+        System.out.println("Executing: node " + jsValidatorDir + " verify -i " + jsonDir + " -s " + schemaDir);
         ProcessBuilder pb = new ProcessBuilder(command);
         Process validationProcess = pb.start();
         BufferedReader in = new BufferedReader(new InputStreamReader(validationProcess.getInputStream()));
@@ -30,7 +30,9 @@ public class JsonValidation {
             if(line.equals(OK_VALIDATION)) {
                 output += line;
             }
-            output += line + "\n";
+            else {
+                output += line + "\n";
+            }
         }
         validationProcess.waitFor();
         return output;

@@ -21,5 +21,5 @@ export {
     Route,
     UInt,
     UserProperties,
-    UserType,
+    UserType
 }
