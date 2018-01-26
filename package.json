@@ -39,6 +39,7 @@
         "core-js": "^2.5.3",
         "font-awesome": "^4.7.0",
         "fs-extra": "^4.0.3",
+        "json2csv": "^3.11.5",
         "leaflet": "^1.2.0",
         "lodash": "^4.17.4",
         "moment": "^2.20.1",

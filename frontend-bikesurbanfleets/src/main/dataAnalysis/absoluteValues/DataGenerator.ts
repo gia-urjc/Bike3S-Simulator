@@ -1,3 +1,4 @@
+import * as csv_parser from 'json2csv';
 import { ReservationsIterator } from './systemDataIterators/ReservationsIterator';
 import { TimeEntriesIterator } from './systemDataIterators/TimeEntriesIterator';
 import { ReservationsPerUser } from './analysisData/users/ReservationsPerUser';
@@ -93,8 +94,7 @@ export class DataGenerator {
     
     private write(): void {
         if (this.counter === this.CALCULATION) {
-            console.log('Failed rentals of station 4:', this.data.get(RentalsAndReturnsPerStation.name).getBikeFailedRentalsOfStation(4));
-            console.log('Failed bike reservations of user 49:', this.data.get(ReservationsPerUser.name).getBikeFailedReservationsOfUser(49));
+          this.data.forEach( (value, key) => value.print());
         }
     }
        

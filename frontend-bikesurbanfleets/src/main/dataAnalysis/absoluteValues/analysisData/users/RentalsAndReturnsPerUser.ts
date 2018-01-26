@@ -128,5 +128,13 @@ export class RentalsAndReturnsPerUser implements Observer {
             }
         }
     }
+  
+  public print(): void {
+    this.bikeFailedReturnsPerUser.forEach( (value, key) => console.log('User', key, 'Bike failed returns', value));
+    this.bikeFailedRentalsPerUser.forEach( (value, key) => console.log('User', key, 'Bike failed rentals' ,value));
+    this.bikeSuccessfulReturnsPerUser.forEach( (value, key) => console.log('User', key, 'Bike successful returns', value));
+    this.bikeSuccessfulRentalsPerUser.forEach( (value, key) => console.log('User', key, 'Bike successful rentals', value));
+  }
+  
        
 }
