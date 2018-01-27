@@ -5,6 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
 import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.users.UserMemory;
 
 import java.util.ArrayList;
@@ -30,21 +31,26 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         user.setPosition(station.getPosition());
-        
+        debugEventLog();
         if (user.removeBikeWithoutReservationFrom(station)) {
+            debugEventLog("User removes Bike without reservation");
             if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
+                debugEventLog("User decides to return bike to other station");
                 newEvents = manageSlotReservationDecisionAtOtherStation();
             } else {   // user rides his bike to a point which is not a station
                 GeoPoint point = user.decidesNextPoint();
                 user.setDestination(point);
                 int arrivalTime = user.timeToReach();
+                debugEventLog("User decides to take a ride");
                 newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
             }
         } else {   // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation
             user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE);
+            debugEventLog("User can't take bikes from the station");
             if (user.decidesToLeaveSystemWhenBikesUnavailable(instant)) {
                 user.setPosition(null);
                 user.setRoute(null);
+                debugEventLog("User decides to leave the system");
             } else {
                 newEvents = manageBikeReservationDecisionAtOtherStation();
             }

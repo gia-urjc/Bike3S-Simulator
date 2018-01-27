@@ -4,6 +4,7 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.log.Debug;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ public class EventUserWantsToReturnBike extends EventUser {
     @Override
     public List<Event> execute() throws Exception {
         user.setPosition(actualPosition);
+        debugEventLog();
         return manageSlotReservationDecisionAtOtherStation();
     }
 

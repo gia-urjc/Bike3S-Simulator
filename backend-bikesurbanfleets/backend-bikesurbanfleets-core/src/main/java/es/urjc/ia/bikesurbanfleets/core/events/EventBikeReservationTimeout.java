@@ -34,13 +34,16 @@ public class EventBikeReservationTimeout extends EventUser {
         reservation.expire();
         user.cancelsBikeReservation(user.getDestinationStation());
         user.getMemory().update(UserMemory.FactType.BIKE_RESERVATION_TIMEOUT);
-
+        debugEventLog();
         if (user.decidesToLeaveSystemAfterTimeout(instant)) {
             user.setPosition(null);
             user.setRoute(null);
+            debugEventLog("User leaves the system");
         } else if (user.decidesToDetermineOtherStationAfterTimeout()) {
+            debugEventLog("User decides to manage bike reservation at other Station");
             newEvents = manageBikeReservationDecisionAtOtherStation();
         } else {
+            debugEventLog("User decides to manage bike reservation at the same station");
             newEvents = manageBikeReservationDecisionAtSameStationAfterTimeout();
         }
 

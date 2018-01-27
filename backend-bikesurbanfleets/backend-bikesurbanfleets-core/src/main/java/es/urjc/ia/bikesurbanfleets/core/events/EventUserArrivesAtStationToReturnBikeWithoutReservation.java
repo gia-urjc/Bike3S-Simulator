@@ -4,6 +4,7 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
 import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.log.Debug;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,12 +28,15 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
     @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
+        debugEventLog();
         if(!user.returnBikeWithoutReservationTo(station)) {
             user.setPosition(station.getPosition());
+            debugEventLog("User can't return bike");
             newEvents = manageSlotReservationDecisionAtOtherStation();
         } else {
             user.setPosition(null);
             user.setRoute(null);
+            debugEventLog("User returns the bike");
             
         }
         return newEvents;
