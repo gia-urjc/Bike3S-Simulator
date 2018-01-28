@@ -1,6 +1,6 @@
 import {} from './initial-config';
 import {GeoPoint, options, UInt, UserType} from './common';
-import {sArray, sInteger, sObject, sString} from 'json-schema-builder-ts/dist/types';
+import {sArray, sBoolean, sInteger, sObject, sString} from 'json-schema-builder-ts/dist/types';
 import {JsonSchema} from 'json-schema-builder-ts';
 import {rData} from 'json-schema-builder-ts/dist/references';
 import {Station} from './common-config';
@@ -14,6 +14,7 @@ const SingleUser = sObject({
 
 export default new JsonSchema(options, sObject({
     totalSimulationTime: UInt,
+    debugMode: sBoolean(),
     reservationTime: sInteger().min(0).max(rData('1/totalSimulationTime')),
     randomSeed: sInteger(),
     boundingBox: sObject({

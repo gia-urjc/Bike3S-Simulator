@@ -10,4 +10,6 @@ package es.urjc.ia.bikesurbanfleets.common.interfaces;
 
 public interface Entity {
     int getId();
+
+    String toString();
 }

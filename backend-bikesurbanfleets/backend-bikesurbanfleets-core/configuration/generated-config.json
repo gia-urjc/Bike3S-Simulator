@@ -1,6 +1,7 @@
 {
   "reservationTime": 150,
   "totalSimulationTime": 25000,
+  "debugMode": true,
   "randomSeed": 201,
   "boundingBox": {
     "northWest": {

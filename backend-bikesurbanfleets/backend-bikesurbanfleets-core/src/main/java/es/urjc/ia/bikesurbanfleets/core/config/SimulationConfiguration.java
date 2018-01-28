@@ -25,6 +25,12 @@ public class SimulationConfiguration {
      * It is the moment when the system stops creating entry points for the simulation, so it ends.   
      */
     private int totalSimulationTime;
+
+
+    /**
+     * If true, user log files will be generated for debug purposes
+     */
+    private boolean debugMode;
     
     /**
      * It is the seed which initializes the random instance. 
@@ -65,6 +71,10 @@ public class SimulationConfiguration {
         return totalSimulationTime;
     }
 
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
     public long getRandomSeed() {
         return randomSeed;
     }
@@ -86,5 +96,4 @@ public class SimulationConfiguration {
     public String getOutputPath() {
         return historyOutputPath;
     }
-    
 }

@@ -5,6 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.entities.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,7 @@ public class EventUserAppears extends EventUser {
     @Override
     public List<Event> execute() throws Exception {
         user.setPosition(position);
+        debugEventLog();
         return manageBikeReservationDecisionAtOtherStation();
     }
 

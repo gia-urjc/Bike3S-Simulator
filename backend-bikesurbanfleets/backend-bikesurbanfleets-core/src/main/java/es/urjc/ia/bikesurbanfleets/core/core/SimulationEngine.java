@@ -9,6 +9,7 @@ import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.entities.User;
 import es.urjc.ia.bikesurbanfleets.history.History;
+import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
 import es.urjc.ia.bikesurbanfleets.users.UserFactory;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;
@@ -35,11 +36,12 @@ public class SimulationEngine {
     public SimulationEngine(SimulationConfiguration simulationConfiguration, SystemManager systemManager) {
         this.simulationConfiguration = simulationConfiguration;
         this.systemManager = systemManager;
-        this.eventsQueue = new PriorityQueue<>(processEntryPoints());
+        this.eventsQueue = new PriorityQueue<>(processUsers());
         Reservation.VALID_TIME = simulationConfiguration.getReservationTime();
+        Debug.DEBUG_MODE = simulationConfiguration.isDebugMode();
     }
 
-    private List<EventUserAppears> processEntryPoints() {
+    private List<EventUserAppears> processUsers() {
         List<EventUserAppears> eventUserAppearsList = new ArrayList<>();
         UserFactory userFactory = new UserFactory();
         for (SingleUser singleUser: simulationConfiguration.getUsers()) {
@@ -59,16 +61,17 @@ public class SimulationEngine {
     public void run() throws Exception {
 
         History.init(simulationConfiguration.getOutputPath());
+        Debug.init();
 
         while (!eventsQueue.isEmpty()) {
             Event event = eventsQueue.poll();  // retrieves and removes first element
             List<Event> newEvents = event.execute();
-            System.out.println(event.toString());
             eventsQueue.addAll(newEvents);
             History.registerEvent(event);
         }
 
         History.close();
+        Debug.closeAllLogs();
     }
 
 }

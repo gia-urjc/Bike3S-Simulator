@@ -1,4 +1,3 @@
-import * as csv_parser from 'json2csv';
 import { ReservationsIterator } from './systemDataIterators/ReservationsIterator';
 import { TimeEntriesIterator } from './systemDataIterators/TimeEntriesIterator';
 import { ReservationsPerUser } from './analysisData/users/ReservationsPerUser';
@@ -13,14 +12,16 @@ export class DataGenerator {
     private counter: number;
     private reservationsIterator: ReservationsIterator;
     private timeEntriesIterator: TimeEntriesIterator;
-    private data: Map<string, any>;
+    private users: Map<string, any>;
+    private stations: Map<string, any>;
     
     public constructor(path: string) {
         this.path = path;
         this.counter = 0;
         this.timeEntriesIterator = new TimeEntriesIterator();
         this.reservationsIterator = new ReservationsIterator();
-        this.data = new Map();
+        this.users = new Map();
+        this.stations = new Map();
     }
     
     private async init(): Promise<void> {
@@ -29,10 +30,10 @@ export class DataGenerator {
         let reservationsPerStation: ReservationsPerStation = new ReservationsPerStation();
         let rentalsAndReturnsPerStation: RentalsAndReturnsPerStation = new RentalsAndReturnsPerStation();
         
-        this.data.set(reservationsPerUser.constructor.name, reservationsPerUser);
-        this.data.set(rentalsAndReturnsPerUser.constructor.name, rentalsAndReturnsPerUser);
-        this.data.set(reservationsPerStation.constructor.name, reservationsPerStation);
-        this.data.set(rentalsAndReturnsPerStation.constructor.name, rentalsAndReturnsPerStation);
+        this.users(reservationsPerUser.constructor.name, reservationsPerUser);
+        this.users(rentalsAndReturnsPerUser.constructor.name, rentalsAndReturnsPerUser);
+        this.stations(reservationsPerStation.constructor.name, reservationsPerStation);
+        this.stations(rentalsAndReturnsPerStation.constructor.name, rentalsAndReturnsPerStation);
         
         this.reservationsIterator.subscribe(reservationsPerUser);
         this.reservationsIterator.subscribe(reservationsPerStation);
@@ -94,8 +95,16 @@ export class DataGenerator {
     
     private write(): void {
         if (this.counter === this.CALCULATION) {
-          this.data.forEach( (value, key) => value.print());
+          CsvGenerator.createCsv(data);
         }
     }
+
+	public getUsers(): Map<string, any> {
+		return this.users;
+	}
+
+	public getStations(): Map<string, any> {
+		return this.stations;
+	}
        
 }
