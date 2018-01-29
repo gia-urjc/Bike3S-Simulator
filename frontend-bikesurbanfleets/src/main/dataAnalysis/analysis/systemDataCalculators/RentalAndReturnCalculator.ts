@@ -3,7 +3,7 @@ import { HistoryIterator } from '../../HistoryIterator';
 import { TimeEntry } from '../../systemDataTypes/SystemInternalData';
 import { Observer, Observable } from '../ObserverPattern';
 
-export class TimeEntriesIterator implements Observable {
+export class RentalAndReturnCalculator implements Observable {
     private observers: Array<Observer>;
     
     public constructor() {

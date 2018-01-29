@@ -4,7 +4,7 @@ import { HistoryIterator } from '../../HistoryIterator';
 import { Reservation } from '../../systemDataTypes/Entities';
 import { Observer, Observable } from '../ObserverPattern';
 
-export class ReservationsIterator implements Observable {
+export class ReservationCalculator implements Observable {
     private reservations: Array<Reservation>;
     private observers: Array<Observer>;
     
@@ -27,8 +27,8 @@ export class ReservationsIterator implements Observable {
         return; 
     }
     
-    public static async create(path: string): Promise<ReservationsIterator> {
-        let it = new ReservationsIterator();
+    public static async create(path: string): Promise<ReservationCalculator> {
+        let it = new ReservationCalculator();
         try {
             await it.init(path);
         }

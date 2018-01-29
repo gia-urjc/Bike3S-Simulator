@@ -1,4 +1,4 @@
 export interface AbsoluteValue {
 	name: string;
-	value: Map<number, number>;;
+	value: Map<number, number>;
 }

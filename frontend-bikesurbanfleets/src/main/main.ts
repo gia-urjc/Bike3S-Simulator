@@ -2,16 +2,10 @@ import { app, BrowserWindow, shell } from 'electron';
 import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
-import { DataGenerator } from "./dataAnalysis/absoluteValues/DataGenerator";
-import { RentalsAndReturnsPerStation } from "./dataAnalysis/absoluteValues/analysisData/stations/RentalsAndReturnsPerStation";
-import { ReservationsPerStation } from "./dataAnalysis/absoluteValues/analysisData/stations/ReservationsPerStation";
-import { RentalsAndReturnsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/RentalsAndReturnsPerUser";
-import { ReservationsPerUser } from "./dataAnalysis/absoluteValues/analysisData/users/ReservationsPerUser";
-import { ReservationsIterator } from "./dataAnalysis/absoluteValues/systemDataIterators/ReservationsIterator";
-import { TimeEntriesIterator } from "./dataAnalysis/absoluteValues/systemDataIterators/TimeEntriesIterator";
 import { Settings } from './settings';
 import { HistoryReader } from './util';
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
+import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 
 namespace Main {
     let window: Electron.BrowserWindow | null;

@@ -1,27 +1,26 @@
-import { ReservationsIterator } from './systemDataIterators/ReservationsIterator';
-import { TimeEntriesIterator } from './systemDataIterators/TimeEntriesIterator';
-import { ReservationsPerUser } from './analysisData/users/ReservationsPerUser';
-import { RentalsAndReturnsPerUser } from './analysisData/users/RentalsAndReturnsPerUser';
-import { ReservationsPerStation } from './analysisData/stations/ReservationsPerStation';
-import { RentalsAndReturnsPerStation } from './analysisData/stations/RentalsAndReturnsPerStation';
 
+import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
+import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
+import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
+import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
+import { ReservationCalculator } from "../systemDataCalculators/ReservationCalculator";
+import { RentalAndReturnCalculator } from "../systemDataCalculators/RentalAndReturnCalculator";
+import { CsvGenerator } from "./CsvGenerator";
 export class DataGenerator {
     private readonly INICIALIZATION: number = 5;
     private readonly CALCULATION: number = 2;
     private path: string;
     private counter: number;
-    private reservationsIterator: ReservationsIterator;
-    private timeEntriesIterator: TimeEntriesIterator;
-    private users: Map<string, any>;
-    private stations: Map<string, any>;
+    private reservationCalculator: ReservationCalculator;
+    private rentalAndReturnCalculator: RentalAndReturnCalculator;
+    private data: Map<string, any>;
     
     public constructor(path: string) {
         this.path = path;
         this.counter = 0;
-        this.timeEntriesIterator = new TimeEntriesIterator();
-        this.reservationsIterator = new ReservationsIterator();
-        this.users = new Map();
-        this.stations = new Map();
+        this.rentalAndReturnCalculator = new RentalAndReturnCalculator();
+        this.reservationCalculator = new ReservationCalculator();
+        this.data = new Map();
     }
     
     private async init(): Promise<void> {
@@ -30,17 +29,17 @@ export class DataGenerator {
         let reservationsPerStation: ReservationsPerStation = new ReservationsPerStation();
         let rentalsAndReturnsPerStation: RentalsAndReturnsPerStation = new RentalsAndReturnsPerStation();
         
-        this.users(reservationsPerUser.constructor.name, reservationsPerUser);
-        this.users(rentalsAndReturnsPerUser.constructor.name, rentalsAndReturnsPerUser);
-        this.stations(reservationsPerStation.constructor.name, reservationsPerStation);
-        this.stations(rentalsAndReturnsPerStation.constructor.name, rentalsAndReturnsPerStation);
+        this.data.set(reservationsPerUser.constructor.name, reservationsPerUser);
+        this.data.set(rentalsAndReturnsPerUser.constructor.name, rentalsAndReturnsPerUser);
+        this.data.set(reservationsPerStation.constructor.name, reservationsPerStation);
+        this.data.set(rentalsAndReturnsPerStation.constructor.name, rentalsAndReturnsPerStation);
         
-        this.reservationsIterator.subscribe(reservationsPerUser);
-        this.reservationsIterator.subscribe(reservationsPerStation);
-        this.timeEntriesIterator.subscribe(rentalsAndReturnsPerUser);        
-        this.timeEntriesIterator.subscribe(rentalsAndReturnsPerStation);
+        this.reservationCalculator.subscribe(reservationsPerUser);
+        this.reservationCalculator.subscribe(reservationsPerStation);
+        this.rentalAndReturnCalculator.subscribe(rentalsAndReturnsPerUser);        
+        this.rentalAndReturnCalculator.subscribe(rentalsAndReturnsPerStation);
        
-        this.reservationsIterator.init(this.path).then( () => {
+        this.reservationCalculator.init(this.path).then( () => {
             this.counter++;        console.log('iterator:',this.counter); 
             this.calculateAbsoluteValues();     
         });
@@ -71,11 +70,11 @@ export class DataGenerator {
             console.log('INICIALIZADO TODO:',this.counter);
         
             this.counter = 0;
-            this.reservationsIterator.calculateReservations().then( () => {
+            this.reservationCalculator.calculateReservations().then( () => {
                 this.counter++; console.log('reservations calculated', this.counter);
                 this.write();
             });
-            this.timeEntriesIterator.calculateBikeRentalsAndReturns(this.path).then( () => {
+            this.rentalAndReturnCalculator.calculateBikeRentalsAndReturns(this.path).then( () => {
                 this.counter++;console.log('rentals and returns calculated', this.counter);
                 this.write();
             });
@@ -95,16 +94,13 @@ export class DataGenerator {
     
     private write(): void {
         if (this.counter === this.CALCULATION) {
-          CsvGenerator.createCsv(data);
+          let generator: CsvGenerator = new CsvGenerator(this.path);
+          generator.generate(this.data);
         }
     }
 
-	public getUsers(): Map<string, any> {
-		return this.users;
-	}
-
-	public getStations(): Map<string, any> {
-		return this.stations;
+		public Data(): Map<string, any> {
+		return this.data;
 	}
        
 }
