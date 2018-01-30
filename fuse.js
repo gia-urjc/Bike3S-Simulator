@@ -43,21 +43,21 @@ Sparky.task('clean:backend', () => new Promise((resolve, reject) => {
         stdio: 'inherit' // pipe to calling process
     });
 
-    log.time().green('start cleaning and installing backend maven dependencies').echo();
+log.time().green('start cleaning and installing backend maven dependencies').echo();
 
-    maven.on('error', (error) => {
-        log.red(error).echo();
-    });
+maven.on('error', (error) => {
+    log.red(error).echo();
+});
 
-    maven.on('close', (code) => {
-        if (code === 0) {
-            log.time().green('finished cleaning and install of backend maven dependencies').echo();
-            resolve();
-        } else {
-            log.time().red(`maven finished with error code ${code}`).echo();
-            reject();
-        }
-    });
+maven.on('close', (code) => {
+    if (code === 0) {
+    log.time().green('finished cleaning and install of backend maven dependencies').echo();
+    resolve();
+} else {
+    log.time().red(`maven finished with error code ${code}`).echo();
+    reject();
+}
+});
 }));
 
 Sparky.task('build:backend', () => new Promise((resolve, reject) => {
@@ -67,36 +67,36 @@ Sparky.task('build:backend', () => new Promise((resolve, reject) => {
         stdio: 'inherit' // pipe to calling process
     });
 
-    log.time().green('Started backend-bikesurbanfleets building').echo();
+log.time().green('Started backend-bikesurbanfleets building').echo();
 
-    maven.on('error', (error) => {
-        log.red(error).echo();
-    });
+maven.on('error', (error) => {
+    log.red(error).echo();
+});
 
-    maven.on('close', (code) => {
-        if (code === 0) {
-            let dirs = fs.readdirSync(projectRoot.backendRoot());
-            dirs = dirs.filter(dirName => dirName.startsWith("backend-bikesurbanfleets"))
-                .map(dirName => path.join(projectRoot.backendRoot(), `${dirName}/target`));
+maven.on('close', (code) => {
+    if (code === 0) {
+    let dirs = fs.readdirSync(projectRoot.backendRoot());
+    dirs = dirs.filter(dirName => dirName.startsWith("backend-bikesurbanfleets"))
+.map(dirName => path.join(projectRoot.backendRoot(), `${dirName}/target`));
 
-            dirs.forEach(dirName => {
-               fs.readdirSync(dirName).filter((file) => file.endsWith('jar-with-dependencies.jar')).forEach((file) => {
-                   const target = path.join(dirName, file);
-                   const destination = path.join(projectRoot.build(), file.replace('-jar-with-dependencies', ''));
+    dirs.forEach(dirName => {
+        fs.readdirSync(dirName).filter((file) => file.endsWith('jar-with-dependencies.jar')).forEach((file) => {
+        const target = path.join(dirName, file);
+    const destination = path.join(projectRoot.build(), file.replace('-jar-with-dependencies', ''));
 
-                   fs.copySync(target, destination);
+    fs.copySync(target, destination);
 
-                   log.time().green(`finished packaging ${file}`).echo();
-               })
-            });
+    log.time().green(`finished packaging ${file}`).echo();
+})
+});
 
-            log.time().green('backend-bikesurbanfleets build finished').echo();
-            resolve();
-        } else {
-            log.time().red(`maven finished with error code ${code}`).echo();
-            reject();
-        }
-    });
+    log.time().green('backend-bikesurbanfleets build finished').echo();
+    resolve();
+} else {
+    log.time().red(`maven finished with error code ${code}`).echo();
+    reject();
+}
+});
 }));
 
 Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, reject) => {
@@ -106,33 +106,33 @@ Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, 
         stdio: 'inherit'
     });
 
-    tsc.on('error', (error) => {
+tsc.on('error', (error) => {
+    log.red(error).echo();
+});
+
+tsc.on('close', (code) => {
+    if (code === 0) {
+    log.time().green('compiling schemas').echo();
+
+    fs.readdirSync(projectRoot.schemaCache()).filter((file) => file.endsWith('.js')).forEach((file) => {
+        const schema = require(path.join(projectRoot.schemaCache(), file)).default;
+    const out = path.join(schemaBuildPath, `${file.slice(0, -3)}.json`);
+
+    schema.errors.forEach((error) => {
         log.red(error).echo();
-    });
+});
 
-    tsc.on('close', (code) => {
-        if (code === 0) {
-            log.time().green('compiling schemas').echo();
+    schema.write(out);
 
-            fs.readdirSync(projectRoot.schemaCache()).filter((file) => file.endsWith('.js')).forEach((file) => {
-                const schema = require(path.join(projectRoot.schemaCache(), file)).default;
-                const out = path.join(schemaBuildPath, `${file.slice(0, -3)}.json`);
+    log.time().green(`written schema to ${out}`).echo();
+});
 
-                schema.errors.forEach((error) => {
-                    log.red(error).echo();
-                });
-
-                schema.write(out);
-
-                log.time().green(`written schema to ${out}`).echo();
-            });
-
-            resolve();
-        } else {
-            log.time().red(`tsc finished with error code ${code}`).echo();
-            reject();
-        }
-    });
+    resolve();
+} else {
+    log.time().red(`tsc finished with error code ${code}`).echo();
+    reject();
+}
+});
 }));
 
 Sparky.task('build:jsonschema-validator', () => {
@@ -144,10 +144,10 @@ Sparky.task('build:jsonschema-validator', () => {
             JSONPlugin()
         ]
     });
-    
-    fuse.bundle("jsonschema-validator.js").instructions(`>index.ts`);
-    
-    fuse.run();
+
+fuse.bundle("jsonschema-validator.js").instructions(`>index.ts`);
+
+fuse.run();
 });
 
 Sparky.task('build:frontend:main', () => {
@@ -162,20 +162,20 @@ Sparky.task('build:frontend:main', () => {
         ]
     });
 
-    const main = fuse.bundle('main').instructions('> [main/main.ts]');
+const main = fuse.bundle('main').instructions('> [main/main.ts]');
 
-    if (!production) {
-        // main.watch('main/**');
-        return fuse.run().then(() => {
-            const electron = spawn('npm', ['run', 'start:electron'], {
-                cwd: projectRoot(),
-                shell: true, // necessary on windows
-                stdio: 'inherit' // pipe to calling process
-            });
+if (!production) {
+    // main.watch('main/**');
+    return fuse.run().then(() => {
+        const electron = spawn('npm', ['run', 'start:electron'], {
+            cwd: projectRoot(),
+            shell: true, // necessary on windows
+            stdio: 'inherit' // pipe to calling process
         });
-    }
+});
+}
 
-    return fuse.run();
+return fuse.run();
 });
 
 Sparky.task('build:frontend:renderer', () => {
@@ -201,25 +201,24 @@ Sparky.task('build:frontend:renderer', () => {
         ]
     });
 
-    const rendererEntrypoint = 'renderer/renderer.ts';
+const rendererEntrypoint = 'renderer/renderer.ts';
 
-    const vendor = fuse.bundle('vendor').instructions(`~ ${rendererEntrypoint}`);
-    const renderer = fuse.bundle('renderer').instructions(`!> [${rendererEntrypoint}]`);
+const vendor = fuse.bundle('vendor').instructions(`~ ${rendererEntrypoint}`);
+const renderer = fuse.bundle('renderer').instructions(`!> [${rendererEntrypoint}]`);
 
-    /*if (!production) {
-        fuse.dev({ root: false }, (server) => {
-            const app = server.httpServer.app;
-            app.use('/renderer/', express.static(projectRoot.build.frontend()));
-            app.get('*', (request, response) => {
-                response.send(path.join(projectRoot.build.frontend(), 'index.html'));
-            });
-            // TODO: make the server close on electron window close (note: apparently not possible)
+/*if (!production) {
+    fuse.dev({ root: false }, (server) => {
+        const app = server.httpServer.app;
+        app.use('/renderer/', express.static(projectRoot.build.frontend()));
+        app.get('*', (request, response) => {
+            response.send(path.join(projectRoot.build.frontend(), 'index.html'));
         });
+        // TODO: make the server close on electron window close (note: apparently not possible)
+    });
+    renderer.hmr().watch('renderer/**');
+}*/
 
-        renderer.hmr().watch('renderer/**');
-    }*/
-
-    return fuse.run();
+return fuse.run();
 });
 
 Sparky.task('copy:assets', async () => {
@@ -241,10 +240,10 @@ Sparky.task('build:dev', ['clean:build', 'clean:cache', 'build:backend-core', 'b
 
 Sparky.task('build:dist', () => {
     production = true;
-    return Sparky.start('build:dev');
+return Sparky.start('build:dev');
 });
 
 Sparky.task('build:schema:forBackend', () => {
     schemaBuildPath = path.join(projectRoot.backend(), 'schema');
-    return Sparky.start('build:schema');
+return Sparky.start('build:schema');
 });
