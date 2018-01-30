@@ -22,9 +22,10 @@ export class CsvGenerator {
     this.path = path;
   }
 
-	public generate(data: Map<string, any>): void {
-  this.init(data);
+	public async generate(data: Map<string, any>): Promise<void> {
+  await this.init(data);
 		this.transformToCsv();
+    return;
 	}
 
 	public async init(data: Map<string, any>): Promise<void> {
@@ -34,7 +35,7 @@ export class CsvGenerator {
 		this.titles.push('bike_successful_reservations');
 		this.titles.push('slot_successful_reservations');
 		this.titles.push('bike_failed_rentals');
-		this.titles.push('bike_failed_rentals');
+		this.titles.push('bike_failed_returns');
 		this.titles.push('bike_successful_rentals');
 		this.titles.push('bike_successful_returns');
     
@@ -44,9 +45,11 @@ export class CsvGenerator {
     entities = await history.getEntities('users');
     let users: Array<User> = <User[]> entities.instances;
     
-    let stationJson, userJson: JsonObject;
+    let stationJson: JsonObject = {};
+    let userJson: JsonObject = {};
     let reservations, rentalsAndReturns: any;
     let value: number;
+    
     for (let station of stations) {
       reservations = data.get(ReservationsPerStation.name);
       value = reservations.getBikeFailedReservationsOfStation(station.id);
@@ -94,7 +97,7 @@ export class CsvGenerator {
                   
       this.userData.push(userJson);
     }
-
+    return;
 	}
 
 	public transformToCsv(): void {

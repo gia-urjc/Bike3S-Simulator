@@ -81,7 +81,7 @@ export class DataGenerator {
          }
     }
     
-    public static async create(path: string): Promise<DataGenerator> {
+    public static async generate(path: string): Promise<DataGenerator> {
         let generator: DataGenerator = new DataGenerator(path);
         try {
         await generator.init();
@@ -92,10 +92,10 @@ export class DataGenerator {
         return generator;
     }
     
-    private write(): void {
+    private async write(): Promise<void> {
         if (this.counter === this.CALCULATION) {
           let generator: CsvGenerator = new CsvGenerator(this.path);
-          generator.generate(this.data);
+          await generator.generate(this.data);
         }
     }
 

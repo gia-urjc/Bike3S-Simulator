@@ -68,7 +68,7 @@ namespace Main {
     
     export async function test() {
        try {
-            let data: DataGenerator = await DataGenerator.create('history');
+            let data: DataGenerator = await DataGenerator.generate('history');
         }
         catch(error) {
            console.log('esto ha petao:', error);
