@@ -1,4 +1,3 @@
-
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
@@ -6,6 +5,7 @@ import { ReservationsPerUser } from "../absoluteValues/reservations/Reservations
 import { ReservationCalculator } from "../systemDataCalculators/ReservationCalculator";
 import { RentalAndReturnCalculator } from "../systemDataCalculators/RentalAndReturnCalculator";
 import { CsvGenerator } from "./CsvGenerator";
+
 export class DataGenerator {
     private readonly INICIALIZATION: number = 5;
     private readonly CALCULATION: number = 2;
@@ -40,42 +40,40 @@ export class DataGenerator {
         this.rentalAndReturnCalculator.subscribe(rentalsAndReturnsPerStation);
        
         this.reservationCalculator.init(this.path).then( () => {
-            this.counter++;        console.log('iterator:',this.counter); 
+            this.counter++; 
             this.calculateAbsoluteValues();     
         });
          
         reservationsPerUser.init(this.path).then( () => {
-            this.counter++;        console.log('RPU:',this.counter);
+            this.counter++; 
             this.calculateAbsoluteValues();
         });
         
         rentalsAndReturnsPerUser.init(this.path).then( () => {
-            this.counter++;        console.log('RARPU:',this.counter);
+            this.counter++;        
             this.calculateAbsoluteValues();
         });
         
         reservationsPerStation.init(this.path).then( () => { 
-            this.counter++;        console.log('RPT:',this.counter);
+            this.counter++;
             this.calculateAbsoluteValues();
         });
         
        rentalsAndReturnsPerStation.init(this.path).then( () => {
-            this.counter++;        console.log('RARPT:',this.counter);
+            this.counter++;
             this.calculateAbsoluteValues();
         });
     }
     
-    private calculateAbsoluteValues(): void {
+    private async calculateAbsoluteValues(): Promise<void> {
         if (this.counter === this.INICIALIZATION) {
-            console.log('INICIALIZADO TODO:',this.counter);
-        
             this.counter = 0;
             this.reservationCalculator.calculateReservations().then( () => {
-                this.counter++; console.log('reservations calculated', this.counter);
+                this.counter++;
                 this.write();
             });
             this.rentalAndReturnCalculator.calculateBikeRentalsAndReturns(this.path).then( () => {
-                this.counter++;console.log('rentals and returns calculated', this.counter);
+                this.counter++;
                 this.write();
             });
          }
@@ -92,15 +90,16 @@ export class DataGenerator {
         return generator;
     }
     
-    private async write(): Promise<void> {
+    private write(): void {
         if (this.counter === this.CALCULATION) {
+          setTimeout(() => {this.data.get(ReservationsPerStation.name).print();
           let generator: CsvGenerator = new CsvGenerator(this.path);
-          await generator.generate(this.data);
+          generator.generate(this.data);}, 1000);
         }
     }
 
 		public Data(): Map<string, any> {
 		return this.data;
 	}
-       
+     
 }

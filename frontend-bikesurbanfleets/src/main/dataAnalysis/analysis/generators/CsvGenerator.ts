@@ -25,7 +25,7 @@ export class CsvGenerator {
 	public async generate(data: Map<string, any>): Promise<void> {
   await this.init(data);
 		this.transformToCsv();
-    return;
+   return;
 	}
 
 	public async init(data: Map<string, any>): Promise<void> {
@@ -50,8 +50,12 @@ export class CsvGenerator {
     let reservations, rentalsAndReturns: any;
     let value: number;
     
+    reservations = data.get(ReservationsPerStation.name);
+    rentalsAndReturns = data.get(RentalsAndReturnsPerStation.name);
+    //console.log('reservations per station', reservations);
+    //console.log('rentals and returns per station:', rentalsAndReturns);    
     for (let station of stations) {
-      reservations = data.get(ReservationsPerStation.name);
+      stationJson.id = station.id;
       value = reservations.getBikeFailedReservationsOfStation(station.id);
       stationJson.bike_failed_reservations = value;
       value = reservations.getSlotFailedReservationsOfStation(station.id);
@@ -61,7 +65,6 @@ export class CsvGenerator {
       value = reservations.getSlotSuccessfulReservationsOfStation(station.id);
       stationJson.slot_successful_reservations = value;
       
-      rentalsAndReturns = data.get(RentalsAndReturnsPerStation.name);
       value = rentalsAndReturns.getBikeFailedRentalsOfStation(station.id);
       stationJson.bike_failed_rentals = value;
       value = rentalsAndReturns.getBikeFailedReturnsOfStation(station.id);
@@ -74,18 +77,22 @@ export class CsvGenerator {
       this.stationData.push(stationJson);
     }
     
+    reservations = data.get(ReservationsPerUser.name);
+    rentalsAndReturns = data.get(RentalsAndReturnsPerUser.name);
+    //console.log('reservations per user');
+    //reservations.print();
+    //console.log('rentals and returns per user:', rentalsAndReturns);    
     for (let user of users) {
-      reservations = data.get(ReservationsPerUser.name);
+      userJson.id = user.id;
       value = reservations.getBikeFailedReservationsOfUser(user.id);
       userJson.bike_failed_reservation = value;
       value = reservations.getSlotFailedReservationsOfUser(user.id);
       userJson.slot_failed_reservation = value;
       value = reservations.getBikeSuccessfulReservationsOfUser(user.id);
       userJson.bike_successful_reservation = value;
-      value = reservations.getSlotSuccessfuulReservationsOfUser(user.id);
+      value = reservations.getSlotSuccessfulReservationsOfUser(user.id);
       userJson.slot_successful_reservation = value;
       
-      rentalsAndReturns = data.get(RentalsAndReturnsPerUser.name);
       value = rentalsAndReturns.getBikeFailedRentalsOfUser(user.id);
       userJson.bike_failed_rentals = value;
       value = rentalsAndReturns.getBikeFailedReturnsOfUser(user.id);

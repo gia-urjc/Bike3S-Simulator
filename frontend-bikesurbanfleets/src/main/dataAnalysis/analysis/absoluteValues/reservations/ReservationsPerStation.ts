@@ -1,7 +1,7 @@
 import { HistoryReader } from '../../../../util';
 import { HistoryEntitiesJson } from '../../../../../shared/history';
 import { Observer } from '../../ObserverPattern';
-import  { Station, Reservation, ReservationType, ReservationState  } from '../../../systemDataTypes/Entities';
+import  { Station, Reservation } from '../../../systemDataTypes/Entities';
 
 export class ReservationsPerStation implements Observer {
     private stations: Array<Station>;

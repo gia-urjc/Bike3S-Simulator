@@ -1,7 +1,7 @@
 import { HistoryReader } from '../../../../util';
 import { HistoryEntitiesJson } from '../../../../../shared/history';
 import { Observer } from '../../ObserverPattern';
-import  { User, Reservation, ReservationType, ReservationState } from '../../../systemDataTypes/Entities';
+import  { User, Reservation } from '../../../systemDataTypes/Entities';
 import { EnumType } from "typescript";
 
 export class ReservationsPerUser implements Observer {

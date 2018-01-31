@@ -13,7 +13,7 @@
       "longitude": -3.5327911376953
     }
   },
-  "map": "backend-bikesurbanfleets-core/maps/madrid.osm",
+  "map": "../backend-configuration-files/maps/madrid.osm",
   "historyOutputPath": "../build/history",
   "stations": [
     {
