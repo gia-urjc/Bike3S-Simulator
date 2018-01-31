@@ -15,12 +15,16 @@ import java.io.IOException;
  */
 public class ConfigJsonReader {
 
-    private String configurationFile;
+    private String globalConfFile;
+    private String stationConfFile;
+    private String usersConfFile;
 
     private Gson gson;
 
-    public ConfigJsonReader(String configurationFile) {
-        this.configurationFile = configurationFile;
+    public ConfigJsonReader(String globalConfFile, String stationsConfFile, String usersConfFile) {
+        this.globalConfFile = globalConfFile;
+        this.stationConfFile = stationsConfFile;
+        this.usersConfFile = usersConfFile;
         this.gson = new Gson();
     }
     
@@ -28,20 +32,34 @@ public class ConfigJsonReader {
      * It creates a simulation configuration object from json configuration file.
      * @return the created simulationo configuration object.
      */
-    public SimulationConfiguration createSimulationConfiguration() throws IOException {
-        try (FileReader reader = new FileReader(configurationFile)) {
-            SimulationConfiguration simulationConfiguration = gson.fromJson(reader, SimulationConfiguration.class);
-            SimulationRandom.init(simulationConfiguration.getRandomSeed());
-            return simulationConfiguration;
+    public GlobalInfo readGlobalConfiguration() throws IOException {
+        try (FileReader reader = new FileReader(globalConfFile)) {
+            GlobalInfo globalInfo = gson.fromJson(reader, GlobalInfo.class);
+            SimulationRandom.init(globalInfo.getRandomSeed());
+            return globalInfo;
         }
     }
-    
+
+    public StationsInfo readStationsConfiguration() throws IOException {
+        try (FileReader reader = new FileReader(stationConfFile)) {
+            StationsInfo stationsInfo = gson.fromJson(reader, StationsInfo.class);
+            return stationsInfo;
+        }
+    }
+
+    public UsersInfo readUsersConfiguration() throws IOException {
+        try (FileReader reader = new FileReader(usersConfFile)) {
+            UsersInfo usersInfo = gson.fromJson(reader, UsersInfo.class);
+            return usersInfo;
+        }
+    }
+
     /**
      * It creates a system manager object from the simulation configuration object.
      * @return the created system manager object.
      */
-    public SystemManager createSystemManager(SimulationConfiguration simConf) throws IOException {
-        return new SystemManager(simConf.getStations(), simConf.getMap(), simConf.getBoundingBox());
+    public SystemManager createSystemManager(StationsInfo stationsInfo, GlobalInfo globalInfo) throws IOException {
+        return new SystemManager(stationsInfo.getStations(), globalInfo.getMap(), globalInfo.getBoundingBox());
     }
 
 }
