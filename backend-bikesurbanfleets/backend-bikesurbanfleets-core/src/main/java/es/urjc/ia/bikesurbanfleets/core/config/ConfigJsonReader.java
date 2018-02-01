@@ -1,6 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.core.config;
 
 import com.google.gson.Gson;
+import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
 

@@ -1,0 +1,9 @@
+1. Before run bikesurbanfleets-core, it's necessary to generate objects
+
+java -jar bikesurbanfleets-config-usersgenerator-1.0.jar \
+	-entryPointsSchema <path to entrypoints schema> \
+	-globalSchema <path to global schema> \
+	-entryPointsInput <path to entry point configuration file> \
+	-globalInput <path to global configuration file> \
+	-output <path for the users configuration file> \
+	-validator <Directory to the js validator> 

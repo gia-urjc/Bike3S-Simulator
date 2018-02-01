@@ -1,8 +1,11 @@
 package es.urjc.ia.bikesurbanfleets.usersgenerator;
 
 import com.google.gson.Gson;
+import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.EntryPointInfo;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint;
+import jdk.nashorn.internal.objects.Global;
 import org.apache.commons.cli.*;
 
 public class Application {
@@ -16,9 +19,11 @@ public class Application {
     private static CommandLine commandParser(String[] args) throws ParseException {
 
         Options options = new Options();
-        options.addOption("schema", true, "Directory to schema validation");
-        options.addOption("configInput", true, "Directory to the input configuration file");
-        options.addOption("configOutput", true, "Directory to the output configuration file");
+        options.addOption("entryPointsSchema", true, "Directory to entry points schema validation");
+        options.addOption("globalSchema", true, "Directory to global schema");
+        options.addOption("entryPointsInput", true, "Directory to the input entry points configuration file");
+        options.addOption("globalInput", true, "Directory to the input entry points configuration file");
+        options.addOption("output", true, "Directory to the output users configuration file");
         options.addOption("validator", true, "Directory to the js validator");
 
         CommandLineParser parser = new DefaultParser();
@@ -36,31 +41,36 @@ public class Application {
             throw e1;
         }
 
-        String schema = cmd.getOptionValue("schema");
-        String configInput = cmd.getOptionValue("configInput");
-        String configOutput = cmd.getOptionValue("configOutput");
+        String entryPointSchema = cmd.getOptionValue("entryPointsSchema");
+        String globalSchema = cmd.getOptionValue("globalSchema");
+        String entryPointInput = cmd.getOptionValue("entryPointsInput");
+        String globalInput = cmd.getOptionValue("globalInput");
+        String configOutput = cmd.getOptionValue("output");
         String validator = cmd.getOptionValue("validator");
         ConfigurationIO configurationIO;
-        EntryPointList entryPointList;
-        Gson gson = new Gson();
-        if(schema != null && validator != null && configInput != null && configOutput != null){
-            configurationIO = new ConfigurationIO(validator, schema);
+        EntryPointInfo entryPointInfo;
+        GlobalInfo globalInfo;
+        if(entryPointSchema != null && globalSchema != null
+                && validator != null && entryPointInput != null && globalInput != null && configOutput != null){
+            configurationIO = new ConfigurationIO(validator, entryPointSchema, globalSchema);
             try {
-                entryPointList = configurationIO.readPreConfigEntryPoints(configInput);
-                EntryPoint.TOTAL_SIMULATION_TIME = entryPointList.getTotalSimulationTime();
-                SimulationRandom.init(entryPointList.getRandomSeed());
-                configurationIO.writeFinalConfig(configInput, configOutput, entryPointList);
+                entryPointInfo = configurationIO.readPreConfigEntryPoints(entryPointInput);
+                globalInfo = configurationIO.readPreConfigGlobalInfo(globalInput);
+                EntryPoint.TOTAL_SIMULATION_TIME = globalInfo.getTotalSimulationTime();
+                SimulationRandom.init(globalInfo.getRandomSeed());
+                configurationIO.writeFinalConfig(entryPointInput, configOutput, entryPointInfo);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        else if(configInput != null && configOutput != null) {
+        else if(entryPointInput != null && globalInput != null && configOutput != null) {
             configurationIO = new ConfigurationIO();
             try {
-                entryPointList = configurationIO.readPreConfigEntryPoints(configInput);
-                EntryPoint.TOTAL_SIMULATION_TIME = entryPointList.getTotalSimulationTime();
-                SimulationRandom.init(entryPointList.getRandomSeed());
-                configurationIO.writeFinalConfig(configInput, configOutput, entryPointList);
+                entryPointInfo = configurationIO.readPreConfigEntryPoints(entryPointInput);
+                globalInfo = configurationIO.readPreConfigGlobalInfo(globalInput);
+                EntryPoint.TOTAL_SIMULATION_TIME = globalInfo.getTotalSimulationTime();
+                SimulationRandom.init(globalInfo.getRandomSeed());
+                configurationIO.writeFinalConfig(entryPointInput, configOutput, entryPointInfo);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.core.config;
+package es.urjc.ia.bikesurbanfleets.common.config;
 
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 

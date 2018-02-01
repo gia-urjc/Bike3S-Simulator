@@ -3,7 +3,7 @@ package es.urjc.ia.bikesurbanfleets.core.core;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
-import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersInfo;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUser;

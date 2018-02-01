@@ -2,13 +2,14 @@ package es.urjc.ia.bikesurbanfleets.core;
 
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
 import es.urjc.ia.bikesurbanfleets.core.config.ConfigJsonReader;
-import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersInfo;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 
 import java.io.IOException;
 
+import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -32,8 +33,12 @@ public class Application {
     private static CommandLine commandParser(String[] args) throws ParseException {
         
         Options options = new Options();
-        options.addOption("schema", true, "Directory to schema validation");
-        options.addOption("config", true, "Directory to the configuration file");
+        options.addOption("globalSchema", true, "Directory to global schema validation");
+        options.addOption("usersSchema", true, "Directory to users schema validation");
+        options.addOption("stationsSchema", true, "Directory to stations schema validation");
+        options.addOption("globalConfig", true, "Directory to the global configuration file");
+        options.addOption("usersConfig", true, "Directory to the users configuration file");
+        options.addOption("stationsConfig", true, "Directory to the stations configuration file");
         options.addOption("validator", true, "Directory to the js validator");
     
         CommandLineParser parser = new DefaultParser();
@@ -51,12 +56,12 @@ public class Application {
             throw e1;
         }
         
-        String globalSchema = cmd.getOptionValue("global-schema");
-        String usersSchema = cmd.getOptionValue("global-schema");
-        String stationsSchema = cmd.getOptionValue("stations-schema");
-        String globalConfig = cmd.getOptionValue("global-config");
-        String usersConfig = cmd.getOptionValue("users-config");
-        String stationsConfig = cmd.getOptionValue("stations-config");
+        String globalSchema = cmd.getOptionValue("globalSchema");
+        String usersSchema = cmd.getOptionValue("usersSchema");
+        String stationsSchema = cmd.getOptionValue("stationsSchema");
+        String globalConfig = cmd.getOptionValue("globalConfig");
+        String usersConfig = cmd.getOptionValue("usersConfig");
+        String stationsConfig = cmd.getOptionValue("stationsConfig");
         String validator = cmd.getOptionValue("validator");
         
         if(checkParams(globalSchema, usersSchema, stationsSchema, globalConfig, usersConfig, stationsConfig, validator)) {
@@ -65,6 +70,7 @@ public class Application {
                 GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
                 UsersInfo usersInfo = jsonReader.readUsersConfiguration();
                 StationsInfo stationsInfo = jsonReader.readStationsConfiguration();
+                System.out.println("DEBUG MODE: " + globalInfo.isDebugMode());
                 SystemManager systemManager = jsonReader.createSystemManager(stationsInfo, globalInfo);
                 SimulationEngine simulation = new SimulationEngine(globalInfo, stationsInfo, usersInfo, systemManager);
                 simulation.run();
@@ -82,7 +88,7 @@ public class Application {
 
                 String globalConfigValidation = JsonValidation.validate(globalSchema, globalConfig, validator);
                 String usersConfigValidation = JsonValidation.validate(usersSchema, usersConfig, validator);
-                String stationsConfigValidation = JsonValidation.validate(stationsSchema, usersConfig, validator);
+                String stationsConfigValidation = JsonValidation.validate(stationsSchema, stationsConfig, validator);
 
                 if((!globalConfigValidation.equals("OK") || !usersConfigValidation.equals("OK") || !stationsConfigValidation.equals("OK"))
                         && (!globalConfig.equals("NODE_NOT_INSTALLED"))) {

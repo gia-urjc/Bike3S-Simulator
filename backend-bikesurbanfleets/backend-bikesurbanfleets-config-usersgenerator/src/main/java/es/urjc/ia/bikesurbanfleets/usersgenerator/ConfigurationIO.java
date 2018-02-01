@@ -2,9 +2,10 @@ package es.urjc.ia.bikesurbanfleets.usersgenerator;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
+import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.config.EntryPointInfo;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.implementations.EntryPointSingle;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -19,7 +20,8 @@ public class ConfigurationIO {
 
     private Gson gson;
     private String pathJsonValidator;
-    private String pathSchemas;
+    private String entryPointSchema;
+    private String globalConfigSchema;
 
     public ConfigurationIO() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
@@ -28,26 +30,38 @@ public class ConfigurationIO {
                 "defined in the schema the configuration file will not work" + ANSI_RESET);
     }
 
-    public ConfigurationIO(String pathSchemaValidator, String pathSchemas) {
+    public ConfigurationIO(String pathSchemaValidator, String entryPointSchema, String globalConfigSchema) {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.pathJsonValidator = pathSchemaValidator;
-        this.pathSchemas = pathSchemas;
+        this.entryPointSchema = entryPointSchema;
+        this.globalConfigSchema = globalConfigSchema;
     }
 
-    public EntryPointList readPreConfigEntryPoints(String inputConfPath) throws Exception {
-        EntryPointList entryPoints;
+    public EntryPointInfo readPreConfigEntryPoints(String entryPointConfigPath) throws Exception {
         if(pathJsonValidator != null){
-            String resultValidation = JsonValidation.validate(pathSchemas, inputConfPath, pathJsonValidator);
+            String resultValidation = JsonValidation.validate(entryPointSchema, entryPointConfigPath, pathJsonValidator);
             if(!resultValidation.equals("OK")) {
                 System.out.println(ANSI_RED + "ValidationInput " + resultValidation);
                 throw new Exception(resultValidation);
             }
-            System.out.println(ANSI_GREEN + "Validation configuration input: " + resultValidation + ANSI_RESET);
+            System.out.println("Validation Entry Points configuration input: " + ANSI_GREEN + resultValidation + ANSI_RESET);
         }
-        return gson.fromJson(new JsonReader(new FileReader(inputConfPath)), EntryPointList.class);
+        return gson.fromJson(new JsonReader(new FileReader(entryPointConfigPath)), EntryPointInfo.class);
     }
 
-    public void writeFinalConfig(String inputConfPath, String outputConfPath, EntryPointList entryPoints) throws Exception {
+    public GlobalInfo readPreConfigGlobalInfo(String globalConfigPath) throws Exception {
+        if(pathJsonValidator != null){
+            String resultValidation = JsonValidation.validate(globalConfigSchema, globalConfigPath, pathJsonValidator);
+            if(!resultValidation.equals("OK")) {
+                System.out.println(ANSI_RED + "ValidationInput " + resultValidation);
+                throw new Exception(resultValidation);
+            }
+            System.out.println("Validation global configuration input: " + ANSI_GREEN + resultValidation + ANSI_RESET);
+        }
+        return gson.fromJson(new JsonReader(new FileReader(globalConfigPath)), GlobalInfo.class);
+    }
+
+    public void writeFinalConfig(String inputConfPath, String outputConfPath, EntryPointInfo entryPoints) throws Exception {
         JsonParser parser = new JsonParser();
         JsonElement jsonElement = parser.parse(new FileReader(inputConfPath));
         JsonObject confJson = jsonElement.getAsJsonObject();
