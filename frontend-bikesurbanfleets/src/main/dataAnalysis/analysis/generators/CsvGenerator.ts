@@ -116,7 +116,7 @@ export class CsvGenerator {
     csv = json2csv({ data: this.userData, fields: this.titles });
     fs.writeFile ('users.csv', csv, (err) => {
       if (err) throw err;
-      console.log('stations file saved');
+      console.log('user file saved');
     });    
 	}
 

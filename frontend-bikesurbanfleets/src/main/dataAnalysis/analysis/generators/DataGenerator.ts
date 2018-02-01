@@ -1,3 +1,4 @@
+
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
@@ -90,12 +91,12 @@ export class DataGenerator {
         return generator;
     }
     
-    private write(): void {
+    private async write(): Promise<void> {
         if (this.counter === this.CALCULATION) {
-          setTimeout(() => {this.data.get(ReservationsPerStation.name).print();
           let generator: CsvGenerator = new CsvGenerator(this.path);
-          generator.generate(this.data);}, 1000);
+          await generator.generate(this.data);
         }
+      return;
     }
 
 		public Data(): Map<string, any> {
