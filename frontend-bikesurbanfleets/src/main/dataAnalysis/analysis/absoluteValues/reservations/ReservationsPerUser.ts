@@ -80,13 +80,13 @@ export class ReservationsPerUser implements Observer {
                 this.slotFailedReservationsPerUser.set(key, ++value);
             }
         }
-        else if (reservation.type === 'BIKE' && reservation.state === 'SUCCESSFUL') {
+        else if (reservation.type === 'BIKE' && reservation.state === 'ACTIVE') {
             value = this.bikeSuccessfulReservationsPerUser.get(key);
             if (value !== undefined) {   
                 this.bikeSuccessfulReservationsPerUser.set(key, ++value);
             }
         }
-        else if (reservation.type === 'SLOT' && reservation.state === 'SUCCESSFUL') {
+        else if (reservation.type === 'SLOT' && reservation.state === 'ACTIVE') {
             value = this.slotSuccessfulReservationsPerUser.get(key);
             if (value !== undefined) {             
                 this.slotSuccessfulReservationsPerUser.set(key, ++value);

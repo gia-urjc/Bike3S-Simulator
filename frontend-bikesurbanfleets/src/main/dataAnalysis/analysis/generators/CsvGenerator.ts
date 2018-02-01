@@ -45,53 +45,59 @@ export class CsvGenerator {
     entities = await history.getEntities('users');
     let users: Array<User> = <User[]> entities.instances;
     
-    let stationJson: JsonObject = {};
-    let userJson: JsonObject = {};
     let reservations, rentalsAndReturns: any;
     let value: number;
     
     reservations = data.get(ReservationsPerStation.name);
     rentalsAndReturns = data.get(RentalsAndReturnsPerStation.name);
-    //console.log('reservations per station', reservations);
-    //console.log('rentals and returns per station:', rentalsAndReturns);    
     for (let station of stations) {
+      
+      let stationJson: JsonObject = {};
+      
       stationJson.id = station.id;
       value = reservations.getBikeFailedReservationsOfStation(station.id);
       stationJson.bike_failed_reservations = value;
+      
       value = reservations.getSlotFailedReservationsOfStation(station.id);
       stationJson.slot_failed_reservations = value;
+      
       value = reservations.getBikeSuccessfulReservationsOfStation(station.id);
       stationJson.bike_successful_reservations = value;
+      
       value = reservations.getSlotSuccessfulReservationsOfStation(station.id);
       stationJson.slot_successful_reservations = value;
       
       value = rentalsAndReturns.getBikeFailedRentalsOfStation(station.id);
       stationJson.bike_failed_rentals = value;
+      
       value = rentalsAndReturns.getBikeFailedReturnsOfStation(station.id);
       stationJson.bike_failed_returns = value;
+      
       value = rentalsAndReturns.getBikeSuccessfulRentalsOfStation(station.id);
       stationJson.bike_successful_rentals = value;
+      
       value = rentalsAndReturns.getBikeSuccessfulReturnsOfStation(station.id);
       stationJson.bike_successful_returns = value;
-            
+      
       this.stationData.push(stationJson);
+      
     }
     
     reservations = data.get(ReservationsPerUser.name);
+    reservations.print();
     rentalsAndReturns = data.get(RentalsAndReturnsPerUser.name);
-    //console.log('reservations per user');
-    //reservations.print();
-    //console.log('rentals and returns per user:', rentalsAndReturns);    
     for (let user of users) {
+      let userJson: JsonObject = {};
+      
       userJson.id = user.id;
       value = reservations.getBikeFailedReservationsOfUser(user.id);
-      userJson.bike_failed_reservation = value;
+      userJson.bike_failed_reservations = value;
       value = reservations.getSlotFailedReservationsOfUser(user.id);
-      userJson.slot_failed_reservation = value;
+      userJson.slot_failed_reservations = value;
       value = reservations.getBikeSuccessfulReservationsOfUser(user.id);
-      userJson.bike_successful_reservation = value;
+      userJson.bike_successful_reservations = value;
       value = reservations.getSlotSuccessfulReservationsOfUser(user.id);
-      userJson.slot_successful_reservation = value;
+      userJson.slot_successful_reservations = value;
       
       value = rentalsAndReturns.getBikeFailedRentalsOfUser(user.id);
       userJson.bike_failed_rentals = value;
@@ -101,19 +107,20 @@ export class CsvGenerator {
       userJson.bike_successful_rentals = value;
       value = rentalsAndReturns.getBikeSuccessfulReturnsOfUser(user.id);
       userJson.bike_successful_returns = value;
-                  
+      
       this.userData.push(userJson);
+      
     }
     return;
 	}
 
 	public transformToCsv(): void {
-    let csv = json2csv({ data: this.stationData, fields: this.titles });
+    let csv = json2csv({ data: this.stationData, fields: this.titles, withBOM: true });
     fs.writeFile ('stations.csv', csv, (err) => {
       if (err) throw err;
       console.log('stations file saved');
     });
-    csv = json2csv({ data: this.userData, fields: this.titles });
+    csv = json2csv({ data: this.userData, fields: this.titles, withBOM: true });
     fs.writeFile ('users.csv', csv, (err) => {
       if (err) throw err;
       console.log('user file saved');
