@@ -1,9 +1,21 @@
+ENVIRONMENT CONFIGURATION 
+
 1. Before run bikesurbanfleets-core, it's necessary to generate objects
 
-java -jar bikesurbanfleets-config-usersgenerator-1.0.jar \
-	-entryPointsSchema <path to entrypoints schema> \
-	-globalSchema <path to global schema> \
-	-entryPointsInput <path to entry point configuration file> \
-	-globalInput <path to global configuration file> \
-	-output <path for the users configuration file> \
-	-validator <Directory to the js validator> 
+ARGUMENTS:
+	-globalSchema ../build/schema/global-config.json
+	-usersSchema ../build/schema/users-config.json
+	-stationsSchema ../build/schema/stations-config.json
+	-globalConfig ../backend-configuration-files/global-configuration.json
+	-usersConfig ../backend-configuration-files/users-configuration.json
+	-stationsConfig ../backend-configuration-files/stations-configuration.json
+	-validator ../build/jsonschema-validator/jsonschema-validator.js
+
+2. After that run the core
+ARGUMENTS 
+	-entryPointsSchema ../build/schema/entrypoints-config.json
+	-globalSchema ../build/schema/global-config.json
+	-entryPointsInput ../backend-configuration-files/entry-points-configuration.json
+	-globalInput ../backend-configuration-files/global-configuration.json
+	-output ../backend-configuration-files/users-configuration.json
+	-validator ../build/jsonschema-validator/jsonschema-validator.js
