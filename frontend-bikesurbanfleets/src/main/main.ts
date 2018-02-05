@@ -35,7 +35,7 @@ namespace Main {
         app.on('ready', async () => {
             HistoryReader.enableIpc();
             Settings.enableIpc();
-            SchemaFormGenerator.enableIpc();
+            //SchemaFormGenerator.enableIpc();
 
             if (process.env.target === 'development') {
                 const extensions = await Settings.get(settingsPathGenerator().development.extensions());
