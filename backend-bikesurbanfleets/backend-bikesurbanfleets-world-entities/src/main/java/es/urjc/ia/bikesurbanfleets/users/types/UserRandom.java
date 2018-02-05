@@ -30,19 +30,17 @@ public class UserRandom extends User {
 
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
+        return systemManager.getRandom().nextBoolean();
     }
-
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
+        return systemManager.getRandom().nextBoolean();
     }
-
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return systemManager.consultStationsWithBikeReservationAttempt(this, instant).size() == systemManager.consultStations().size();
+        return systemManager.getRandom().nextBoolean();
     }
 
     @Override
