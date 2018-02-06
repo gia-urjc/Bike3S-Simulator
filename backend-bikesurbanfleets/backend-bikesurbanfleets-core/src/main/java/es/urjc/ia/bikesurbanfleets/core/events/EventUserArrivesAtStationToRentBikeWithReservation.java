@@ -6,6 +6,7 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
 import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.log.Debug;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,12 +39,15 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         user.setPosition(station.getPosition());
         reservation.resolve(instant);
         user.removeBikeWithReservationFrom(station);
+        debugEventLog();
         if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
+            debugEventLog("User decides to return bike to other station");
             newEvents = manageSlotReservationDecisionAtOtherStation();
         } else {   // user rides his bike to a point which is not a station
             GeoPoint point = user.decidesNextPoint();
             user.setDestination(point);
             int arrivalTime = user.timeToReach();
+            debugEventLog("User decides take a ride");
             newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
         }
         return newEvents;

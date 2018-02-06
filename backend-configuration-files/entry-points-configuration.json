@@ -1,0 +1,30 @@
+{
+    "entryPoints": [
+        {
+            "entryPointType": "SINGLEUSER",
+            "userType": {
+                "typeName": "USER_RANDOM"
+            },
+            "position": {
+                "latitude": 40.42750,
+                "longitude": -3.71384
+            },
+            "timeInstant": 1
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_RANDOM"
+            },
+            "position": {
+                "latitude": 40.409431,
+                "longitude": -3.692046
+            },
+            "radius": 100.0,
+            "totalUsers": 100,
+            "distribution": {
+                "lambda": 0.0033333
+            }
+        }
+    ]    
+}

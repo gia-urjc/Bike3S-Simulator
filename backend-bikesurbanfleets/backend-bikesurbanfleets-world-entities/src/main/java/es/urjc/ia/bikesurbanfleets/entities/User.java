@@ -8,9 +8,6 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrati
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.entities.Reservation;
-import es.urjc.ia.bikesurbanfleets.entities.Station;
 import es.urjc.ia.bikesurbanfleets.entities.history.HistoricUser;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
@@ -464,7 +461,7 @@ public abstract class User implements Entity {
         }
         result += " | Has Bike: " + hasBike();
         result += " | Actual velocity: " + getAverageVelocity();
-        result +=     " | Has reserved bike: "+hasReservedBike();
+        result +=     "| Has reserved bike: "+hasReservedBike();
         result += " | Has reserved slot: "+hasReservedSlot()+"\n";
         return result;
     }

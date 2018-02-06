@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.common.interfaces;
 
+import java.io.IOException;
 import java.util.List;
 /**
  * This interface provides the common behaviour of events.
@@ -24,7 +25,7 @@ public interface Event extends Comparable<Event> {
      * @return a list with all the entities that are updated (but not created) in the event.
      */
     List<Entity> getEntities();
-    
+
     /**
      * It allows to compare 2 events by the time instant they'll occur. 
      */
