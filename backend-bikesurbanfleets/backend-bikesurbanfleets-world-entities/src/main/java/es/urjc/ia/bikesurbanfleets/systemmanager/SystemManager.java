@@ -3,6 +3,8 @@ package es.urjc.ia.bikesurbanfleets.systemmanager;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphHopperIntegration;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
+import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
+import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.entities.Bike;
@@ -10,11 +12,13 @@ import es.urjc.ia.bikesurbanfleets.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.entities.Reservation.ReservationType;
 import es.urjc.ia.bikesurbanfleets.entities.Reservation.ReservationState;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
+import es.urjc.ia.bikesurbanfleets.entities.comparators.StationsByDistanceComparator;
 import es.urjc.ia.bikesurbanfleets.users.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.entities.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -117,7 +121,13 @@ public class SystemManager {
     public RecommendationSystem getRecommendationSystem() {
         return recommendationSystem;
     }
-    
+
+    public List<Station> consultOrderedStationsByDistance(User user) {
+        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
+        List<Station> stations = new ArrayList<>(this.stations);
+        return stations.stream().sorted(byDistance).collect(Collectors.toList());
+    }
+
     /**
      * It obtains the stations for which a user has tried to make a bike reservation in an specific moment.
      * @param user it is the user who has tried to reserve a bike.
@@ -126,11 +136,13 @@ public class SystemManager {
      * @return a list of stations for which the bike reservation has failed because of unavailable bikes.
      */
     public List<Station> consultStationsWithBikeReservationAttempt(User user, int timeInstant) {
+        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
         return consultReservations(user).stream()
                 .filter(reservation -> reservation.getType() == ReservationType.BIKE)
                 .filter(reservation -> reservation.getState() == ReservationState.FAILED)
                 .filter(reservation -> reservation.getStartInstant() == timeInstant)
                 .map(Reservation::getStation)
+                .sorted(byDistance)
                 .collect(Collectors.toList());
     }
 
@@ -143,24 +155,28 @@ public class SystemManager {
      * @return a list of stations for which user hasn't still tried to reserve a bike at that specific moment.
      */
     public List<Station> consultStationsWithoutBikeReservationAttempt(User user, int timeInstant) {
+        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(consultStationsWithBikeReservationAttempt(user, timeInstant));
-        return filteredStations;
+        return filteredStations.stream().sorted(byDistance).collect(Collectors.toList());
     }
 
     public List<Station> consultStationsWithSlotReservationAttempt(User user, int timeInstant) {
+        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
         return consultReservations(user).stream()
                 .filter(reservation -> reservation.getType() == ReservationType.SLOT)
                 .filter(reservation -> reservation.getState() == ReservationState.FAILED)
                 .filter(reservation -> reservation.getStartInstant() == timeInstant)
                 .map(Reservation::getStation)
+                .sorted(byDistance)
                 .collect(Collectors.toList());
     }
 
     public List<Station> consultStationsWithoutSlotReservationAttempt(User user, int timeInstant) {
+        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(consultStationsWithSlotReservationAttempt(user, timeInstant));
-        return filteredStations;
+        return filteredStations.stream().sorted(byDistance).collect(Collectors.toList());
     }
 
 

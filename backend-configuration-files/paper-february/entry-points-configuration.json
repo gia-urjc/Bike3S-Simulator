@@ -3,7 +3,7 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_RANDOM"
+                "typeName": "USER_UNINFORMED"
             },
             "position": {
                 "latitude": 40.419969,
@@ -12,7 +12,7 @@
             "radius": 100.0,
             "totalUsers": 100,
             "distribution": {
-                "lambda": 0.0033333
+                "lambda": 0.006666667
             }
         }
     ]    

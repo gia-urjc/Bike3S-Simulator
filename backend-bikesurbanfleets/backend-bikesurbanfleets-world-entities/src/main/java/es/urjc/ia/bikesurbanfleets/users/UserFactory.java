@@ -37,6 +37,8 @@ public class UserFactory {
             case USER_DISTANCE_RESTRICTION:
                 return new UserDistanceRestriction(gson.fromJson(epUserProps.getParameters(),
                         UserDistanceRestriction.UserDistanceRestrictionParameters.class));
+            case USER_UNINFORMED:
+                return new UserUninformed();
             
         }
         throw new IllegalArgumentException("The type" + epUserProps.getTypeName() + "doesn't exists");

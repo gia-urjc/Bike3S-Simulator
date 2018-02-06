@@ -3,9 +3,10 @@ package es.urjc.ia.bikesurbanfleets.users;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
+import es.urjc.ia.bikesurbanfleets.entities.comparators.StationsBikesByProportionComparator;
+import es.urjc.ia.bikesurbanfleets.entities.comparators.StationsByDistanceComparator;
+import es.urjc.ia.bikesurbanfleets.entities.comparators.StationsSlotsByProportionComparator;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -58,33 +59,33 @@ public class RecommendationSystem {
     private List<Station> validStationsToRentBike(GeoPoint point, List<Station> stations) {
     	List<Station> validStations;
     	if (linearDistance) {
-        validStations = stations.stream().filter(station -> station.getPosition()
-        		.distanceTo(point) <= MAX_DISTANCE && station.availableBikes() > 0)
-                .collect(Collectors.toList());
-    	}
-    	else {
-    	    validStations = new ArrayList<>();
-         List<GeoRoute> routes;            
-         for(Station station: stations) {
-             try {
-                 routes = graph.obtainAllRoutesBetween(station.getPosition(), point);
-             }
-             catch(Exception e) {
-                 continue;
-             }
-                
-             List<GeoRoute> validRoutes = routes.stream().filter(route -> route
-            		 .getTotalDistance() <= MAX_DISTANCE && station.availableBikes() > 0)
-                 .collect(Collectors.toList());
-                
-             if (!validRoutes.isEmpty()) {
-                 validStations.add(station);
-             }
-         }
+            validStations = stations.stream().filter(station -> station.getPosition()
+                    .distanceTo(point) <= MAX_DISTANCE && station.availableBikes() > 0)
+                    .collect(Collectors.toList());
+            }
+            else {
+                validStations = new ArrayList<>();
+                List<GeoRoute> routes;
+                for(Station station: stations) {
+                    try {
+                        routes = graph.obtainAllRoutesBetween(station.getPosition(), point);
+                    }
+                    catch(Exception e) {
+                        continue;
+                    }
+
+                    List<GeoRoute> validRoutes = routes.stream().filter(route -> route
+                         .getTotalDistance() <= MAX_DISTANCE && station.availableBikes() > 0)
+                     .collect(Collectors.toList());
+
+                    if (!validRoutes.isEmpty()) {
+                        validStations.add(station);
+                    }
+                }
     	}
     	return validStations;
     }
-    
+
     private List<Station> validStationsToReturnBike(GeoPoint point, List<Station> stations) {
     	List<Station> validStations;
      if (linearDistance) {
@@ -155,27 +156,7 @@ public class RecommendationSystem {
      * @return a list of stations ordered asscending by the previously described proportion.  
      */
     public List<Station> recommendByProportionBetweenDistanceAndBikes(GeoPoint point, List<Station> stations) {
-      Comparator<Station> byProportion = (s1, s2) -> {
-        	double distance1, distance2;
-        	
-        	if (linearDistance) {
-        		distance1 = s1.getPosition().distanceTo(point); 
-        		distance2 = s2.getPosition().distanceTo(point);
-        	}
-        	else {
-        		distance1 = Double.MAX_VALUE;
-	            distance2 = Double.MIN_VALUE;
-	            try {
-	        					distance1 = graph.obtainShortestRouteBetween(s1.getPosition(), point)
-	        							.getTotalDistance();
-	        					distance2 = graph.obtainShortestRouteBetween(s2.getPosition(), point)
-	        							.getTotalDistance();
-	            } catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
-	                e.printStackTrace();
-	            }
-        	}
-         return Double.compare(distance1/s1.availableBikes(), distance2/s2.availableBikes());
-        }; 
+        Comparator<Station> byProportion = new StationsBikesByProportionComparator(graph, linearDistance, point);
         List<Station> recommendedStations = validStationsToRentBike(point, stations)
         		.stream().sorted(byProportion).collect(Collectors.toList());
         if (recommendedStations.get(0).getPosition().equals(point)) {
@@ -196,27 +177,7 @@ public class RecommendationSystem {
      * @return a list of stations ordered asscending by the previously described proportion.  
      */
     public List<Station> recommendByProportionBetweenDistanceAndSlots(GeoPoint point, List<Station> stations) {
-    	  Comparator<Station> byProportion = (s1, s2) -> {
-          	double distance1, distance2;
-          	
-          	if (linearDistance) {
-          		distance1 = s1.getPosition().distanceTo(point); 
-          		distance2 = s2.getPosition().distanceTo(point);
-          	}
-          	else {
-          		distance1 = Double.MAX_VALUE;
-  	            distance2 = Double.MIN_VALUE;
-  	            try {
-  	        					distance1 = graph.obtainShortestRouteBetween(s1.getPosition(), point)
-  	        							.getTotalDistance();
-  	        					distance2 = graph.obtainShortestRouteBetween(s2.getPosition(), point)
-  	        							.getTotalDistance();
-  	            } catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
-  	                e.printStackTrace();
-  	            }
-          	}
-           return Double.compare(distance1/s1.availableSlots(), distance2/s2.availableSlots());
-          }; 
+    	  Comparator<Station> byProportion = new StationsSlotsByProportionComparator(graph, linearDistance, point);
           List<Station> recommendedStations = validStationsToReturnBike(point, stations)
           		.stream().sorted(byProportion).collect(Collectors.toList());
           if (recommendedStations.get(0).getPosition().equals(point)) {
@@ -238,26 +199,7 @@ public class RecommendationSystem {
      * the specified geographical point.
      */
     public List<Station> recommendToRentBikeByDistance(GeoPoint point, List<Station> stations) {
-        Comparator<Station> byDistance = (s1, s2) -> {
-
-            double distance1, distance2;
-
-        	if (linearDistance) {
-        	    distance1 = s1.getPosition().distanceTo(point);
-        	    distance2 = s2.getPosition().distanceTo(point);
-        	}
-        	else {
-                distance1 = Double.MAX_VALUE;
-                distance2 = Double.MIN_VALUE;
-            try {
-                distance1 = graph.obtainShortestRouteBetween(s1.getPosition(), point).getTotalDistance();
-                distance2 = graph.obtainShortestRouteBetween(s2.getPosition(), point).getTotalDistance();
-            } catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
-                e.printStackTrace();
-            }
-        	}
-         return Double.compare(distance1, distance2);
-        };
+        Comparator<Station> byDistance = new StationsByDistanceComparator(graph, linearDistance, point);
         List<Station> recommendedStations = validStationsToRentBike(point, stations)
         		.stream().sorted(byDistance).collect(Collectors.toList());
         if (recommendedStations.get(0).getPosition().equals(point)) {
@@ -267,24 +209,7 @@ public class RecommendationSystem {
     }
     
     public List<Station> recommendToReturnBikeByDistance(GeoPoint point, List<Station> stations) {
-        Comparator<Station> byDistance = (s1, s2) -> {
-        	double distance1, distance2;
-        	if (linearDistance) {
-        		distance1 = s1.getPosition().distanceTo(point);
-        		distance2 = s2.getPosition().distanceTo(point);
-        	}
-        	else {
-            distance1 = Double.MAX_VALUE;
-            distance2 = Double.MIN_VALUE;
-            try {
-                distance1 = graph.obtainShortestRouteBetween(s1.getPosition(), point).getTotalDistance();
-                distance2 = graph.obtainShortestRouteBetween(s2.getPosition(), point).getTotalDistance();
-            } catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
-                e.printStackTrace();
-            }
-        	}
-         return Double.compare(distance1, distance2);
-        };
+        Comparator<Station> byDistance = new StationsByDistanceComparator(graph, linearDistance, point);
         List<Station> recommendedStations = validStationsToReturnBike(point, stations)
         		.stream().sorted(byDistance).collect(Collectors.toList());
         if (recommendedStations.get(0).getPosition().equals(point) ) {

@@ -6,6 +6,7 @@ const Percentage = sNumber().min(0).max(100);
 
 const typeParameters = {
     USER_RANDOM: {},
+    USER_UNINFORMED: {},
     USER_DISTANCE_RESTRICTION: {
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,

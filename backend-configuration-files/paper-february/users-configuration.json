@@ -6,9 +6,9 @@
         "longitude": -3.710931580395725
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 95
+      "timeInstant": 47
     },
     {
       "position": {
@@ -16,9 +16,9 @@
         "longitude": -3.709566381430526
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 212
+      "timeInstant": 106
     },
     {
       "position": {
@@ -26,9 +26,9 @@
         "longitude": -3.7101898771890753
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 257
+      "timeInstant": 128
     },
     {
       "position": {
@@ -36,9 +36,9 @@
         "longitude": -3.710577934304008
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 290
+      "timeInstant": 145
     },
     {
       "position": {
@@ -46,9 +46,9 @@
         "longitude": -3.710342142232677
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 372
+      "timeInstant": 186
     },
     {
       "position": {
@@ -56,9 +56,9 @@
         "longitude": -3.710750223362556
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 519
+      "timeInstant": 259
     },
     {
       "position": {
@@ -66,9 +66,9 @@
         "longitude": -3.7109378721343913
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 609
+      "timeInstant": 304
     },
     {
       "position": {
@@ -76,9 +76,9 @@
         "longitude": -3.7105162477188274
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 709
+      "timeInstant": 354
     },
     {
       "position": {
@@ -86,9 +86,9 @@
         "longitude": -3.7094762936438586
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 709
+      "timeInstant": 354
     },
     {
       "position": {
@@ -96,9 +96,9 @@
         "longitude": -3.7111759243619233
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 853
+      "timeInstant": 426
     },
     {
       "position": {
@@ -106,9 +106,9 @@
         "longitude": -3.709602060406954
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 1035
+      "timeInstant": 517
     },
     {
       "position": {
@@ -116,9 +116,9 @@
         "longitude": -3.710066052378015
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 1261
+      "timeInstant": 630
     },
     {
       "position": {
@@ -126,9 +126,9 @@
         "longitude": -3.7103544947222518
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 1356
+      "timeInstant": 678
     },
     {
       "position": {
@@ -136,9 +136,9 @@
         "longitude": -3.710789721637083
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 1678
+      "timeInstant": 839
     },
     {
       "position": {
@@ -146,9 +146,9 @@
         "longitude": -3.7107782383100525
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 1955
+      "timeInstant": 978
     },
     {
       "position": {
@@ -156,9 +156,9 @@
         "longitude": -3.710745268907087
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 2597
+      "timeInstant": 1299
     },
     {
       "position": {
@@ -166,9 +166,9 @@
         "longitude": -3.710488263000442
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 2673
+      "timeInstant": 1337
     },
     {
       "position": {
@@ -176,9 +176,9 @@
         "longitude": -3.7108038379895127
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 2837
+      "timeInstant": 1419
     },
     {
       "position": {
@@ -186,9 +186,9 @@
         "longitude": -3.710931896949157
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 2964
+      "timeInstant": 1483
     },
     {
       "position": {
@@ -196,9 +196,9 @@
         "longitude": -3.710605969631481
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 3176
+      "timeInstant": 1589
     },
     {
       "position": {
@@ -206,9 +206,9 @@
         "longitude": -3.7108428964251843
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 3372
+      "timeInstant": 1687
     },
     {
       "position": {
@@ -216,9 +216,9 @@
         "longitude": -3.7100425108020043
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 3516
+      "timeInstant": 1759
     },
     {
       "position": {
@@ -226,9 +226,9 @@
         "longitude": -3.710704158189348
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 3590
+      "timeInstant": 1796
     },
     {
       "position": {
@@ -236,9 +236,9 @@
         "longitude": -3.709446738501613
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 3739
+      "timeInstant": 1871
     },
     {
       "position": {
@@ -246,9 +246,9 @@
         "longitude": -3.7113931381770455
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 4110
+      "timeInstant": 2056
     },
     {
       "position": {
@@ -256,9 +256,9 @@
         "longitude": -3.7097588643730184
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 5275
+      "timeInstant": 2639
     },
     {
       "position": {
@@ -266,9 +266,9 @@
         "longitude": -3.7100316541412397
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 5808
+      "timeInstant": 2906
     },
     {
       "position": {
@@ -276,9 +276,9 @@
         "longitude": -3.7102741395679684
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 5857
+      "timeInstant": 2930
     },
     {
       "position": {
@@ -286,9 +286,9 @@
         "longitude": -3.709922265423517
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 6128
+      "timeInstant": 3066
     },
     {
       "position": {
@@ -296,9 +296,9 @@
         "longitude": -3.711460447530399
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 6478
+      "timeInstant": 3241
     },
     {
       "position": {
@@ -306,9 +306,9 @@
         "longitude": -3.7108456965230343
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 6486
+      "timeInstant": 3245
     },
     {
       "position": {
@@ -316,9 +316,9 @@
         "longitude": -3.709846913669521
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 6725
+      "timeInstant": 3364
     },
     {
       "position": {
@@ -326,9 +326,9 @@
         "longitude": -3.709485393232379
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 6858
+      "timeInstant": 3431
     },
     {
       "position": {
@@ -336,9 +336,9 @@
         "longitude": -3.7101823353668255
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 6986
+      "timeInstant": 3495
     },
     {
       "position": {
@@ -346,9 +346,9 @@
         "longitude": -3.7099781207850375
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 7050
+      "timeInstant": 3527
     },
     {
       "position": {
@@ -356,9 +356,9 @@
         "longitude": -3.7110259913716477
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 7539
+      "timeInstant": 3771
     },
     {
       "position": {
@@ -366,9 +366,9 @@
         "longitude": -3.710449717352931
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 7679
+      "timeInstant": 3841
     },
     {
       "position": {
@@ -376,9 +376,9 @@
         "longitude": -3.710041197185289
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 7699
+      "timeInstant": 3851
     },
     {
       "position": {
@@ -386,9 +386,9 @@
         "longitude": -3.7103636168931176
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 7962
+      "timeInstant": 3983
     },
     {
       "position": {
@@ -396,9 +396,9 @@
         "longitude": -3.710000180009139
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 8391
+      "timeInstant": 4198
     },
     {
       "position": {
@@ -406,9 +406,9 @@
         "longitude": -3.71043791568291
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 8736
+      "timeInstant": 4371
     },
     {
       "position": {
@@ -416,9 +416,9 @@
         "longitude": -3.7100894399913638
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 8754
+      "timeInstant": 4380
     },
     {
       "position": {
@@ -426,9 +426,9 @@
         "longitude": -3.7106880858331417
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 9112
+      "timeInstant": 4559
     },
     {
       "position": {
@@ -436,9 +436,9 @@
         "longitude": -3.7103575021278417
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 9782
+      "timeInstant": 4894
     },
     {
       "position": {
@@ -446,9 +446,9 @@
         "longitude": -3.709758512608556
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 10025
+      "timeInstant": 5015
     },
     {
       "position": {
@@ -456,9 +456,9 @@
         "longitude": -3.71045580221509
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 10728
+      "timeInstant": 5366
     },
     {
       "position": {
@@ -466,9 +466,9 @@
         "longitude": -3.710926479910049
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 10864
+      "timeInstant": 5434
     },
     {
       "position": {
@@ -476,9 +476,9 @@
         "longitude": -3.709770621924217
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 11140
+      "timeInstant": 5572
     },
     {
       "position": {
@@ -486,9 +486,9 @@
         "longitude": -3.711031573888858
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 11284
+      "timeInstant": 5644
     },
     {
       "position": {
@@ -496,9 +496,9 @@
         "longitude": -3.710405948540814
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 11803
+      "timeInstant": 5904
     },
     {
       "position": {
@@ -506,9 +506,9 @@
         "longitude": -3.7099650239853132
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 11937
+      "timeInstant": 5971
     },
     {
       "position": {
@@ -516,9 +516,9 @@
         "longitude": -3.7093363605384613
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 12177
+      "timeInstant": 6091
     },
     {
       "position": {
@@ -526,9 +526,9 @@
         "longitude": -3.7108719000853028
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 12421
+      "timeInstant": 6213
     },
     {
       "position": {
@@ -536,9 +536,9 @@
         "longitude": -3.709770740821493
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 12518
+      "timeInstant": 6261
     },
     {
       "position": {
@@ -546,9 +546,9 @@
         "longitude": -3.711238194795573
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 13085
+      "timeInstant": 6544
     },
     {
       "position": {
@@ -556,9 +556,9 @@
         "longitude": -3.7105182095002216
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 13476
+      "timeInstant": 6739
     },
     {
       "position": {
@@ -566,9 +566,9 @@
         "longitude": -3.7109333293936344
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 13487
+      "timeInstant": 6744
     },
     {
       "position": {
@@ -576,9 +576,9 @@
         "longitude": -3.7107055224921974
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 13853
+      "timeInstant": 6927
     },
     {
       "position": {
@@ -586,9 +586,9 @@
         "longitude": -3.710029145276757
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 13886
+      "timeInstant": 6944
     },
     {
       "position": {
@@ -596,9 +596,9 @@
         "longitude": -3.710038677095331
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 14196
+      "timeInstant": 7099
     },
     {
       "position": {
@@ -606,9 +606,9 @@
         "longitude": -3.709743339521362
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 14409
+      "timeInstant": 7206
     },
     {
       "position": {
@@ -616,9 +616,9 @@
         "longitude": -3.711548463718295
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 14508
+      "timeInstant": 7256
     },
     {
       "position": {
@@ -626,9 +626,9 @@
         "longitude": -3.709637266282336
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 14656
+      "timeInstant": 7330
     },
     {
       "position": {
@@ -636,9 +636,9 @@
         "longitude": -3.710102060343793
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 14846
+      "timeInstant": 7425
     },
     {
       "position": {
@@ -646,9 +646,9 @@
         "longitude": -3.7099596791032714
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 14921
+      "timeInstant": 7462
     },
     {
       "position": {
@@ -656,9 +656,9 @@
         "longitude": -3.7098377317155244
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 15204
+      "timeInstant": 7603
     },
     {
       "position": {
@@ -666,9 +666,9 @@
         "longitude": -3.7097938558995738
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 15872
+      "timeInstant": 7937
     },
     {
       "position": {
@@ -676,9 +676,9 @@
         "longitude": -3.7113504848273875
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 15889
+      "timeInstant": 7945
     },
     {
       "position": {
@@ -686,9 +686,9 @@
         "longitude": -3.7107071030925094
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 16128
+      "timeInstant": 8064
     },
     {
       "position": {
@@ -696,9 +696,9 @@
         "longitude": -3.709455083513357
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 16532
+      "timeInstant": 8266
     },
     {
       "position": {
@@ -706,9 +706,9 @@
         "longitude": -3.710735025275388
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 16556
+      "timeInstant": 8278
     },
     {
       "position": {
@@ -716,9 +716,9 @@
         "longitude": -3.709950326808944
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 16830
+      "timeInstant": 8415
     },
     {
       "position": {
@@ -726,9 +726,9 @@
         "longitude": -3.71008642334812
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 17057
+      "timeInstant": 8529
     },
     {
       "position": {
@@ -736,9 +736,9 @@
         "longitude": -3.7115433911604336
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 17204
+      "timeInstant": 8602
     },
     {
       "position": {
@@ -746,9 +746,9 @@
         "longitude": -3.710667742893647
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 17549
+      "timeInstant": 8775
     },
     {
       "position": {
@@ -756,9 +756,9 @@
         "longitude": -3.7099893824862344
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 17684
+      "timeInstant": 8842
     },
     {
       "position": {
@@ -766,9 +766,9 @@
         "longitude": -3.7110518756971143
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 17917
+      "timeInstant": 8959
     },
     {
       "position": {
@@ -776,9 +776,9 @@
         "longitude": -3.7113826067357834
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 17949
+      "timeInstant": 8975
     },
     {
       "position": {
@@ -786,9 +786,9 @@
         "longitude": -3.709436217033247
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 17968
+      "timeInstant": 8984
     },
     {
       "position": {
@@ -796,9 +796,9 @@
         "longitude": -3.71040715129408
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 17970
+      "timeInstant": 8985
     },
     {
       "position": {
@@ -806,9 +806,9 @@
         "longitude": -3.7092498948569275
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 18090
+      "timeInstant": 9045
     },
     {
       "position": {
@@ -816,9 +816,9 @@
         "longitude": -3.7100897067267247
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 18122
+      "timeInstant": 9061
     },
     {
       "position": {
@@ -826,9 +826,9 @@
         "longitude": -3.710444919911829
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 18230
+      "timeInstant": 9115
     },
     {
       "position": {
@@ -836,9 +836,9 @@
         "longitude": -3.710315877442135
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 18326
+      "timeInstant": 9163
     },
     {
       "position": {
@@ -846,9 +846,9 @@
         "longitude": -3.710220209763411
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 18599
+      "timeInstant": 9299
     },
     {
       "position": {
@@ -856,9 +856,9 @@
         "longitude": -3.7100316865353675
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 19050
+      "timeInstant": 9525
     },
     {
       "position": {
@@ -866,9 +866,9 @@
         "longitude": -3.70977082728047
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 19064
+      "timeInstant": 9532
     },
     {
       "position": {
@@ -876,9 +876,9 @@
         "longitude": -3.7105453277535805
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 19171
+      "timeInstant": 9586
     },
     {
       "position": {
@@ -886,9 +886,9 @@
         "longitude": -3.7109278901229077
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 19243
+      "timeInstant": 9622
     },
     {
       "position": {
@@ -896,9 +896,9 @@
         "longitude": -3.7098247876409474
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 19345
+      "timeInstant": 9673
     },
     {
       "position": {
@@ -906,9 +906,9 @@
         "longitude": -3.7107171637491874
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 19581
+      "timeInstant": 9791
     },
     {
       "position": {
@@ -916,9 +916,9 @@
         "longitude": -3.709831638035647
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 19758
+      "timeInstant": 9879
     },
     {
       "position": {
@@ -926,9 +926,9 @@
         "longitude": -3.7104295548981594
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 19781
+      "timeInstant": 9890
     },
     {
       "position": {
@@ -936,9 +936,9 @@
         "longitude": -3.710346640862143
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 19908
+      "timeInstant": 9954
     },
     {
       "position": {
@@ -946,9 +946,9 @@
         "longitude": -3.7113972011769794
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 20642
+      "timeInstant": 10321
     },
     {
       "position": {
@@ -956,9 +956,9 @@
         "longitude": -3.7098822732325623
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 20883
+      "timeInstant": 10442
     },
     {
       "position": {
@@ -966,9 +966,9 @@
         "longitude": -3.7115868087288852
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 21096
+      "timeInstant": 10548
     },
     {
       "position": {
@@ -976,9 +976,9 @@
         "longitude": -3.7097623305677687
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 21185
+      "timeInstant": 10593
     },
     {
       "position": {
@@ -986,9 +986,9 @@
         "longitude": -3.71021312185303
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 21231
+      "timeInstant": 10616
     },
     {
       "position": {
@@ -996,9 +996,9 @@
         "longitude": -3.710145166497571
       },
       "userType": {
-        "typeName": "USER_RANDOM"
+        "typeName": "USER_UNINFORMED"
       },
-      "timeInstant": 21461
+      "timeInstant": 10731
     }
   ]
 }
