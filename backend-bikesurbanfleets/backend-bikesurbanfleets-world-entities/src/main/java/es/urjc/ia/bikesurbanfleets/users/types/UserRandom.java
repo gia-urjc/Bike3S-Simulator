@@ -73,6 +73,7 @@ public class UserRandom extends User {
 
         recommendedStations = systemManager.getRecommendationSystem()
                 .recommendToReturnBikeByDistance(this.getPosition(), stations);
+
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0);
         }

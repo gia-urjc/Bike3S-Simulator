@@ -99,7 +99,7 @@ public class SystemManager {
      * has makde and has tried to made.
      */
     public List<Reservation> consultReservations(User user) {
-        return reservations.stream().filter(reservation -> reservation.getUser() == user).collect(Collectors.toList());
+        return reservations.stream().filter(reservation -> reservation.getUser().getId() == user.getId()).collect(Collectors.toList());
     }
 
     public List<Station> consultStations() {

@@ -1,0 +1,1004 @@
+{
+  "initialUsers": [
+    {
+      "position": {
+        "latitude": 40.420634503997825,
+        "longitude": -3.710931580395725
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 95
+    },
+    {
+      "position": {
+        "latitude": 40.420026403464625,
+        "longitude": -3.709566381430526
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 212
+    },
+    {
+      "position": {
+        "latitude": 40.41931477317255,
+        "longitude": -3.7101898771890753
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 257
+    },
+    {
+      "position": {
+        "latitude": 40.41961799493365,
+        "longitude": -3.710577934304008
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 290
+    },
+    {
+      "position": {
+        "latitude": 40.419807316076785,
+        "longitude": -3.710342142232677
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 372
+    },
+    {
+      "position": {
+        "latitude": 40.41930012675137,
+        "longitude": -3.710750223362556
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 519
+    },
+    {
+      "position": {
+        "latitude": 40.42006132019241,
+        "longitude": -3.7109378721343913
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 609
+    },
+    {
+      "position": {
+        "latitude": 40.41907385461192,
+        "longitude": -3.7105162477188274
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 709
+    },
+    {
+      "position": {
+        "latitude": 40.420383690915514,
+        "longitude": -3.7094762936438586
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 709
+    },
+    {
+      "position": {
+        "latitude": 40.420005677384,
+        "longitude": -3.7111759243619233
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 853
+    },
+    {
+      "position": {
+        "latitude": 40.41979629490426,
+        "longitude": -3.709602060406954
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1035
+    },
+    {
+      "position": {
+        "latitude": 40.42021312434416,
+        "longitude": -3.710066052378015
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1261
+    },
+    {
+      "position": {
+        "latitude": 40.42056557841914,
+        "longitude": -3.7103544947222518
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1356
+    },
+    {
+      "position": {
+        "latitude": 40.41975361346157,
+        "longitude": -3.710789721637083
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1678
+    },
+    {
+      "position": {
+        "latitude": 40.42043376617889,
+        "longitude": -3.7107782383100525
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 1955
+    },
+    {
+      "position": {
+        "latitude": 40.42074285947771,
+        "longitude": -3.710745268907087
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 2597
+    },
+    {
+      "position": {
+        "latitude": 40.41976326571192,
+        "longitude": -3.710488263000442
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 2673
+    },
+    {
+      "position": {
+        "latitude": 40.41950796531577,
+        "longitude": -3.7108038379895127
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 2837
+    },
+    {
+      "position": {
+        "latitude": 40.420328080665854,
+        "longitude": -3.710931896949157
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 2964
+    },
+    {
+      "position": {
+        "latitude": 40.4192827665432,
+        "longitude": -3.710605969631481
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 3176
+    },
+    {
+      "position": {
+        "latitude": 40.41960484819979,
+        "longitude": -3.7108428964251843
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 3372
+    },
+    {
+      "position": {
+        "latitude": 40.42006653210102,
+        "longitude": -3.7100425108020043
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 3516
+    },
+    {
+      "position": {
+        "latitude": 40.41932822059801,
+        "longitude": -3.710704158189348
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 3590
+    },
+    {
+      "position": {
+        "latitude": 40.419570650828376,
+        "longitude": -3.709446738501613
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 3739
+    },
+    {
+      "position": {
+        "latitude": 40.42047041937654,
+        "longitude": -3.7113931381770455
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 4110
+    },
+    {
+      "position": {
+        "latitude": 40.42016238553189,
+        "longitude": -3.7097588643730184
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 5275
+    },
+    {
+      "position": {
+        "latitude": 40.41997444910091,
+        "longitude": -3.7100316541412397
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 5808
+    },
+    {
+      "position": {
+        "latitude": 40.41917819704424,
+        "longitude": -3.7102741395679684
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 5857
+    },
+    {
+      "position": {
+        "latitude": 40.42074861928228,
+        "longitude": -3.709922265423517
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6128
+    },
+    {
+      "position": {
+        "latitude": 40.42030311323564,
+        "longitude": -3.711460447530399
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6478
+    },
+    {
+      "position": {
+        "latitude": 40.41991092215907,
+        "longitude": -3.7108456965230343
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6486
+    },
+    {
+      "position": {
+        "latitude": 40.419388681459225,
+        "longitude": -3.709846913669521
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6725
+    },
+    {
+      "position": {
+        "latitude": 40.41977762132271,
+        "longitude": -3.709485393232379
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6858
+    },
+    {
+      "position": {
+        "latitude": 40.420161462641325,
+        "longitude": -3.7101823353668255
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 6986
+    },
+    {
+      "position": {
+        "latitude": 40.41974165594695,
+        "longitude": -3.7099781207850375
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 7050
+    },
+    {
+      "position": {
+        "latitude": 40.41973215586248,
+        "longitude": -3.7110259913716477
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 7539
+    },
+    {
+      "position": {
+        "latitude": 40.41953753980555,
+        "longitude": -3.710449717352931
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 7679
+    },
+    {
+      "position": {
+        "latitude": 40.42050132581922,
+        "longitude": -3.710041197185289
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 7699
+    },
+    {
+      "position": {
+        "latitude": 40.41927710484173,
+        "longitude": -3.7103636168931176
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 7962
+    },
+    {
+      "position": {
+        "latitude": 40.41917914757147,
+        "longitude": -3.710000180009139
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 8391
+    },
+    {
+      "position": {
+        "latitude": 40.41969222098969,
+        "longitude": -3.71043791568291
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 8736
+    },
+    {
+      "position": {
+        "latitude": 40.41961818590359,
+        "longitude": -3.7100894399913638
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 8754
+    },
+    {
+      "position": {
+        "latitude": 40.42046198258473,
+        "longitude": -3.7106880858331417
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 9112
+    },
+    {
+      "position": {
+        "latitude": 40.42068932723032,
+        "longitude": -3.7103575021278417
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 9782
+    },
+    {
+      "position": {
+        "latitude": 40.42030311070925,
+        "longitude": -3.709758512608556
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 10025
+    },
+    {
+      "position": {
+        "latitude": 40.41945189926466,
+        "longitude": -3.71045580221509
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 10728
+    },
+    {
+      "position": {
+        "latitude": 40.41934028423005,
+        "longitude": -3.710926479910049
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 10864
+    },
+    {
+      "position": {
+        "latitude": 40.42009675607201,
+        "longitude": -3.709770621924217
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 11140
+    },
+    {
+      "position": {
+        "latitude": 40.41980929072412,
+        "longitude": -3.711031573888858
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 11284
+    },
+    {
+      "position": {
+        "latitude": 40.42074418067043,
+        "longitude": -3.710405948540814
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 11803
+    },
+    {
+      "position": {
+        "latitude": 40.420122919020976,
+        "longitude": -3.7099650239853132
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 11937
+    },
+    {
+      "position": {
+        "latitude": 40.419812038087485,
+        "longitude": -3.7093363605384613
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 12177
+    },
+    {
+      "position": {
+        "latitude": 40.419550010811086,
+        "longitude": -3.7108719000853028
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 12421
+    },
+    {
+      "position": {
+        "latitude": 40.41924172527031,
+        "longitude": -3.709770740821493
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 12518
+    },
+    {
+      "position": {
+        "latitude": 40.42002923724878,
+        "longitude": -3.711238194795573
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 13085
+    },
+    {
+      "position": {
+        "latitude": 40.420063332703954,
+        "longitude": -3.7105182095002216
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 13476
+    },
+    {
+      "position": {
+        "latitude": 40.420405083856274,
+        "longitude": -3.7109333293936344
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 13487
+    },
+    {
+      "position": {
+        "latitude": 40.420125334706626,
+        "longitude": -3.7107055224921974
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 13853
+    },
+    {
+      "position": {
+        "latitude": 40.41952170815251,
+        "longitude": -3.710029145276757
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 13886
+    },
+    {
+      "position": {
+        "latitude": 40.420039942433725,
+        "longitude": -3.710038677095331
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14196
+    },
+    {
+      "position": {
+        "latitude": 40.420690194883704,
+        "longitude": -3.709743339521362
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14409
+    },
+    {
+      "position": {
+        "latitude": 40.41980445457581,
+        "longitude": -3.711548463718295
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14508
+    },
+    {
+      "position": {
+        "latitude": 40.41995390321862,
+        "longitude": -3.709637266282336
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14656
+    },
+    {
+      "position": {
+        "latitude": 40.419137888459694,
+        "longitude": -3.710102060343793
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14846
+    },
+    {
+      "position": {
+        "latitude": 40.41933489985698,
+        "longitude": -3.7099596791032714
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 14921
+    },
+    {
+      "position": {
+        "latitude": 40.420460164842225,
+        "longitude": -3.7098377317155244
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 15204
+    },
+    {
+      "position": {
+        "latitude": 40.42038034575304,
+        "longitude": -3.7097938558995738
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 15872
+    },
+    {
+      "position": {
+        "latitude": 40.420314416206644,
+        "longitude": -3.7113504848273875
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 15889
+    },
+    {
+      "position": {
+        "latitude": 40.41963993787169,
+        "longitude": -3.7107071030925094
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 16128
+    },
+    {
+      "position": {
+        "latitude": 40.41992912252642,
+        "longitude": -3.709455083513357
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 16532
+    },
+    {
+      "position": {
+        "latitude": 40.420652340030124,
+        "longitude": -3.710735025275388
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 16556
+    },
+    {
+      "position": {
+        "latitude": 40.420736524465966,
+        "longitude": -3.709950326808944
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 16830
+    },
+    {
+      "position": {
+        "latitude": 40.420057128884054,
+        "longitude": -3.71008642334812
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17057
+    },
+    {
+      "position": {
+        "latitude": 40.4199553062958,
+        "longitude": -3.7115433911604336
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17204
+    },
+    {
+      "position": {
+        "latitude": 40.419829127338396,
+        "longitude": -3.710667742893647
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17549
+    },
+    {
+      "position": {
+        "latitude": 40.4196375265617,
+        "longitude": -3.7099893824862344
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17684
+    },
+    {
+      "position": {
+        "latitude": 40.42008836051066,
+        "longitude": -3.7110518756971143
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17917
+    },
+    {
+      "position": {
+        "latitude": 40.4203065285056,
+        "longitude": -3.7113826067357834
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17949
+    },
+    {
+      "position": {
+        "latitude": 40.420369321595444,
+        "longitude": -3.709436217033247
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17968
+    },
+    {
+      "position": {
+        "latitude": 40.4196861482129,
+        "longitude": -3.71040715129408
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 17970
+    },
+    {
+      "position": {
+        "latitude": 40.42006761432118,
+        "longitude": -3.7092498948569275
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 18090
+    },
+    {
+      "position": {
+        "latitude": 40.419534197976205,
+        "longitude": -3.7100897067267247
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 18122
+    },
+    {
+      "position": {
+        "latitude": 40.41954935864057,
+        "longitude": -3.710444919911829
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 18230
+    },
+    {
+      "position": {
+        "latitude": 40.419325600171234,
+        "longitude": -3.710315877442135
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 18326
+    },
+    {
+      "position": {
+        "latitude": 40.41993903323331,
+        "longitude": -3.710220209763411
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 18599
+    },
+    {
+      "position": {
+        "latitude": 40.42037821573258,
+        "longitude": -3.7100316865353675
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19050
+    },
+    {
+      "position": {
+        "latitude": 40.42015947492481,
+        "longitude": -3.70977082728047
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19064
+    },
+    {
+      "position": {
+        "latitude": 40.41978831410628,
+        "longitude": -3.7105453277535805
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19171
+    },
+    {
+      "position": {
+        "latitude": 40.419260550273066,
+        "longitude": -3.7109278901229077
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19243
+    },
+    {
+      "position": {
+        "latitude": 40.419246269808376,
+        "longitude": -3.7098247876409474
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19345
+    },
+    {
+      "position": {
+        "latitude": 40.420136160081015,
+        "longitude": -3.7107171637491874
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19581
+    },
+    {
+      "position": {
+        "latitude": 40.42067988565872,
+        "longitude": -3.709831638035647
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19758
+    },
+    {
+      "position": {
+        "latitude": 40.41929974541797,
+        "longitude": -3.7104295548981594
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19781
+    },
+    {
+      "position": {
+        "latitude": 40.41961291791852,
+        "longitude": -3.710346640862143
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 19908
+    },
+    {
+      "position": {
+        "latitude": 40.42008207116857,
+        "longitude": -3.7113972011769794
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 20642
+    },
+    {
+      "position": {
+        "latitude": 40.41992682760822,
+        "longitude": -3.7098822732325623
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 20883
+    },
+    {
+      "position": {
+        "latitude": 40.4198676444288,
+        "longitude": -3.7115868087288852
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 21096
+    },
+    {
+      "position": {
+        "latitude": 40.42043275465768,
+        "longitude": -3.7097623305677687
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 21185
+    },
+    {
+      "position": {
+        "latitude": 40.41968906093887,
+        "longitude": -3.71021312185303
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 21231
+    },
+    {
+      "position": {
+        "latitude": 40.41940538413475,
+        "longitude": -3.710145166497571
+      },
+      "userType": {
+        "typeName": "USER_RANDOM"
+      },
+      "timeInstant": 21461
+    }
+  ]
+}

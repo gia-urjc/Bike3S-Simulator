@@ -239,13 +239,16 @@ public class RecommendationSystem {
      */
     public List<Station> recommendToRentBikeByDistance(GeoPoint point, List<Station> stations) {
         Comparator<Station> byDistance = (s1, s2) -> {
-        	double distance1 = 0.0; 
-        	double distance2 = 0.0;
+
+            double distance1, distance2;
+
         	if (linearDistance) {
+        	    distance1 = s1.getPosition().distanceTo(point);
+        	    distance2 = s2.getPosition().distanceTo(point);
         	}
         	else {
-            distance1 = Double.MAX_VALUE;
-            distance2 = Double.MIN_VALUE;
+                distance1 = Double.MAX_VALUE;
+                distance2 = Double.MIN_VALUE;
             try {
                 distance1 = graph.obtainShortestRouteBetween(s1.getPosition(), point).getTotalDistance();
                 distance2 = graph.obtainShortestRouteBetween(s2.getPosition(), point).getTotalDistance();

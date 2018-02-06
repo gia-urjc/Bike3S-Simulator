@@ -73,6 +73,7 @@ public class SimulationEngine {
         while (!eventsQueue.isEmpty()) {
             Event event = eventsQueue.poll();  // retrieves and removes first element
             List<Event> newEvents = event.execute();
+            System.out.println(event.toString());
             eventsQueue.addAll(newEvents);
             History.registerEvent(event);
         }

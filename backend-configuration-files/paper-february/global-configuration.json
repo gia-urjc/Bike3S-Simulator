@@ -1,0 +1,19 @@
+{
+	"reservationTime": 150,
+    "totalSimulationTime": 25000,
+    "debugMode": true,
+    "randomSeed": 201,
+    "linearDistance": true,
+    "boundingBox": {
+        "northWest": {
+            "latitude": 40.4215886,
+            "longitude": -3.7134038
+        },
+        "southEast": {
+            "latitude": 40.4121931,
+            "longitude": -3.69826
+        }
+    },
+    "map": "../backend-configuration-files/maps/madrid.osm",
+    "historyOutputPath": "../build/history"
+}
