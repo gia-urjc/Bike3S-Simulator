@@ -3,13 +3,13 @@ package es.urjc.ia.bikesurbanfleets.core.core;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
-import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersInfo;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUser;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;

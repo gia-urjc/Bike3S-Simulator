@@ -2,6 +2,7 @@ package es.urjc.ia.bikesurbanfleets.users;
 
 import com.google.gson.Gson;
 import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.types.*;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.UserProperties;
 
@@ -11,7 +12,7 @@ import es.urjc.ia.bikesurbanfleets.usersgenerator.UserProperties;
  */
 public class UserFactory {
 
-    Gson gson = new Gson();
+	Gson gson = new Gson();
     /**
      * It creates a specific type of user.
      * @param epUserProps It is the user type and parameters which determines the instance type to create.
@@ -27,9 +28,9 @@ public class UserFactory {
             case USER_COMMUTER:
                 return new UserCommuter(gson.fromJson(epUserProps.getParameters(),
                         UserCommuter.UserEmployeeParameters.class));
-            case USER_STATIONS_BALANCER:
-                return new UserStationsBalancer(gson.fromJson(epUserProps.getParameters(),
-                        UserStationsBalancer.UserStationsBalancerParameters.class));
+            case USER_AVAILABLE_RESOURCES: 
+                return new UserAvailableResources(gson.fromJson(epUserProps.getParameters(),
+                        UserAvailableResources.UserStationsBalancerParameters.class));
             case USER_REASONABLE:
                 return new UserReasonable(gson.fromJson(epUserProps.getParameters(),
                         UserReasonable.UserReasonableParameters.class));

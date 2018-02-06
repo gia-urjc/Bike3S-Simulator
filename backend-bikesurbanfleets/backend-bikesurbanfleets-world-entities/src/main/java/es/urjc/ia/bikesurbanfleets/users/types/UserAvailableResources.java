@@ -23,8 +23,8 @@ import java.util.List;
  * 
  * @author IAgroup
  */
-@AssociatedType(UserType.USER_STATIONS_BALANCER)
-public class UserStationsBalancer extends User {
+@AssociatedType(UserType.USER_AVAILABLE_RESOURCES)
+public class UserAvailableResources extends User {
 
     public class UserStationsBalancerParameters {
         /**
@@ -88,7 +88,7 @@ public class UserStationsBalancer extends User {
 
     private UserStationsBalancerParameters parameters;
     
-    public UserStationsBalancer(UserStationsBalancerParameters parameters) {
+    public UserAvailableResources(UserStationsBalancerParameters parameters) {
         super();
         this.parameters = parameters;
     }

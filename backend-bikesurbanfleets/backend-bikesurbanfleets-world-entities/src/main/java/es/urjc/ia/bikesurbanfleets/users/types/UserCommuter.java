@@ -4,36 +4,36 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
+import es.urjc.ia.bikesurbanfleets.entities.User;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
-import es.urjc.ia.bikesurbanfleets.entities.User;
 
 import java.util.List;
 import java.util.ArrayList;
 
 /**
- * This class represents a employee, i.e., a user who uses the bike as a public transport 
- * in order to arrive at work.
+ * This class represents a user (employee, student, etc) who uses the bike as a public transport 
+ * in order to arrive at his destination place (work, university, etc).
  * Then, this user always decides the destination station just after renting the bike 
- * in order to arrive at work as soon as possible.
- * Moreover, he always chooses both the closest origin station to himself and the closest destination 
- * station to his work. Also, he always chooses the shortest routes to get the stations.
+ * in order to arrive at work, university,... as soon as possible.
+ * Moreover, he always chooses both the closest origin station to himself and the closest 
+ * station to his destination. Also, he always chooses the shortest routes to get the stations.
  * Also, this type of user always determines a new destination station after 
  * a reservation failed attempt and always decides to continue to the previously chosen 
  * station after a timeout event with the intention of losing as little time as possible.
- * And, of course, he never leaves the system as he needs to ride on bike in order to arrive at work. 
+ * And, of course, he never leaves the system as he needs to ride on bike in order to arrive at work/university. 
  *   
  * @author IAgroup
   */
-@AssociatedType(UserType.USER_EMPLOYEE)
+@AssociatedType(UserType.USER_COMMUTER)
 public class UserCommuter extends User {
 
     public class UserEmployeeParameters {
 
         /**
-         * It is the street of the company where the user works.
+         * It is the street of the building where the user works or studies.
          */
-        private GeoPoint companyStreet;
+        private GeoPoint destinationStreet;
 
         /**
          * It determines the rate with which the user will reserve a bike.
@@ -74,7 +74,7 @@ public class UserCommuter extends User {
         @Override
         public String toString() {
             return "UserEmployeeParameters{" +
-                    "companyStreet=" + companyStreet +
+                    "destinationStreet=" + destinationStreet +
                     ", bikeReservationPercentage=" + bikeReservationPercentage +
                     ", slotReservationPercentage=" + slotReservationPercentage +
                     ", MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
