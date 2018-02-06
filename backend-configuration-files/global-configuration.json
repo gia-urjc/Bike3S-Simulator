@@ -3,6 +3,7 @@
     "totalSimulationTime": 25000,
     "debugMode": false,
     "randomSeed": 201,
+    "linearDistance": true,
     "boundingBox": {
         "northWest": {
             "latitude": 40.362241948999,

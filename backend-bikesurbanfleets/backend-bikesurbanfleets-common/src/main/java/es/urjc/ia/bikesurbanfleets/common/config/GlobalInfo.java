@@ -35,10 +35,15 @@ public class GlobalInfo {
      */
     private BoundingBox boundingBox;
 
-    /*
+    /**
      * Path  where history files stored
      */
     private String historyOutputPath;
+
+    /**
+     *
+     */
+    private boolean linearDistance;
 
 
     public int getReservationTime() {
@@ -67,6 +72,10 @@ public class GlobalInfo {
 
     public String getHistoryOutputPath() {
         return historyOutputPath;
+    }
+
+    public boolean getLinearDistance() {
+        return linearDistance;
     }
 
 }
