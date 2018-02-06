@@ -67,7 +67,7 @@ public class SystemManager {
      */
     private boolean linearDistance;
     
-    public SystemManager(List<Station> stations, String mapPath, BoundingBox bbox, gboolean linearDistance) throws IOException {
+    public SystemManager(List<Station> stations, String mapPath, BoundingBox bbox, boolean linearDistance) throws IOException {
         this.stations = new ArrayList<>(stations);
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         this.reservations = new ArrayList<>();

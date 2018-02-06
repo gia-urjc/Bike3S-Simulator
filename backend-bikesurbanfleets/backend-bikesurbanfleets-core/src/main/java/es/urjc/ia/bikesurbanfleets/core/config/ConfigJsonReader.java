@@ -60,7 +60,7 @@ public class ConfigJsonReader {
      * @return the created system manager object.
      */
     public SystemManager createSystemManager(StationsInfo stationsInfo, GlobalInfo globalInfo) throws IOException {
-        return new SystemManager(stationsInfo.getStations(), globalInfo.getMap(), globalInfo.getBoundingBox());
+        return new SystemManager(stationsInfo.getStations(), globalInfo.getMap(), globalInfo.getBoundingBox(), globalInfo.getLinearDistance());
     }
 
 }
