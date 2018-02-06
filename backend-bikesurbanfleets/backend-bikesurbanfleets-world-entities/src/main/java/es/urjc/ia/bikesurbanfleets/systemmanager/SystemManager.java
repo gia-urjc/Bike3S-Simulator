@@ -61,14 +61,21 @@ public class SystemManager {
      */
     private RecommendationSystem recommendationSystem;
     
-    public SystemManager(List<Station> stations, String mapPath, BoundingBox bbox) throws IOException {
+    /**
+     * It  indicates if the recommendation system recommends by linear distance or by 
+     * real distance (the distance of the shortest route).
+     */
+    private boolean linearDistance;
+    
+    public SystemManager(List<Station> stations, String mapPath, BoundingBox bbox, gboolean linearDistance) throws IOException {
         this.stations = new ArrayList<>(stations);
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         this.reservations = new ArrayList<>();
         this.graphManager = createGraphManager(mapPath);
         this.random = SimulationRandom.getGeneralInstance();
         this.bbox = bbox;
-        this.recommendationSystem = new RecommendationSystem(graphManager);    
+        this.recommendationSystem = new RecommendationSystem(graphManager, linearDistance);
+        this.linearDistance = linearDistance;
     }
 
     private GraphHopperIntegration createGraphManager(String mapPath) throws IOException {
@@ -110,7 +117,7 @@ public class SystemManager {
     public RecommendationSystem getRecommendationSystem() {
         return recommendationSystem;
     }
-
+    
     /**
      * It obtains the stations for which a user has tried to make a bike reservation in an specific moment.
      * @param user it is the user who has tried to reserve a bike.
