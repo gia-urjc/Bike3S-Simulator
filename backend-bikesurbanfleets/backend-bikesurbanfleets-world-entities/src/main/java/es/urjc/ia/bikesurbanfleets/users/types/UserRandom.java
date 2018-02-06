@@ -52,29 +52,36 @@ public class UserRandom extends User {
         
         if (!stations.isEmpty()) {
          	List<Station> recommendedStations = systemManager.getRecommendationSystem()
-             .recommendByLinearDistance(this.getPosition(), stations);
-        
-        		 destination = recommendedStations.get(0).getPosition().equals(this.getPosition()) && recommendedStations.size() > 1  
-        				 ? recommendedStations.get(1) : recommendedStations.get(0);
+             .recommendToRentBikeByDistance(this.getPosition(), stations);
+         	
+         	if (!recommendedStations.isEmpty()) {
+        		 	destination = recommendedStations.get(0);
+         	}
         }
-        
         return destination;
-
     }
 
     @Override
     public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
+        List<Station> recommendedStations;
+        Station destination;
         
         if (stations.isEmpty()) {
-             stations = new ArrayList<>(systemManager.consultStations());
+             stations = new ArrayList<Station>(systemManager.consultStations());
         }
 
-        List<Station> recommendedStations = systemManager.getRecommendationSystem()
-                .recommendByLinearDistance(this.getPosition(), stations);
-        // TODO: what happens if recommended stations size is 1?
-        return recommendedStations.get(0).getPosition().equals(this.getPosition())
-                ? recommendedStations.get(1) : recommendedStations.get(0);
+        recommendedStations = systemManager.getRecommendationSystem()
+                .recommendToReturnBikeByDistance(this.getPosition(), stations);
+        if (!recommendedStations.isEmpty()) {
+        	destination = recommendedStations.get(0);
+        }
+        else {
+        	recommendedStations= systemManager.consultStations();
+        	int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);
+        	destination = recommendedStations.get(index);
+        }
+        return destination;        
     }
     
     @Override

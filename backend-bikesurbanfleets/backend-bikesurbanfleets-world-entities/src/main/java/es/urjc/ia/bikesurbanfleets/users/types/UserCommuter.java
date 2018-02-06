@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * @author IAgroup
   */
 @AssociatedType(UserType.USER_EMPLOYEE)
-public class UserEmployee extends User {
+public class UserCommuter extends User {
 
     public class UserEmployeeParameters {
 
@@ -88,7 +88,7 @@ public class UserEmployee extends User {
     }
     private UserEmployeeParameters parameters;
     
-    public UserEmployee(UserEmployeeParameters parameters) {
+    public UserCommuter(UserEmployeeParameters parameters) {
         super();
         this.parameters = parameters;
     }
@@ -115,10 +115,11 @@ public class UserEmployee extends User {
         
         if (!stations.isEmpty()) {
             List<Station> recommendedStations = systemManager.getRecommendationSystem()
-            		.recommendByLinearDistance(this.getPosition(), stations);      
-        
-        destination = recommendedStations.get(0).getPosition().equals(this.getPosition()) && recommendedStations.size() > 1  
-        		? recommendedStations.get(1) : recommendedStations.get(1);
+            		.recommendToRentBikeByDistance(this.getPosition(), stations);
+            
+            if (!recommendedStations.isEmpty()) {
+            	destination = recommendedStations.get(0);
+            }
         }
         
         return destination; 
@@ -127,16 +128,25 @@ public class UserEmployee extends User {
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        List<Station> recommendedStations;
+        Station destination;
 
         if (stations.isEmpty()) {
-            stations = new ArrayList(systemManager.consultStations());  
+            stations = new ArrayList<Station>(systemManager.consultStations());  
         }
         
-        List<Station> recommendedStations = systemManager.getRecommendationSystem()
-        		.recommendByLinearDistance(this.getPosition(), stations);
+        recommendedStations = systemManager.getRecommendationSystem()
+        		.recommendToReturnBikeByDistance(this.getPosition(), stations);
         
-        return recommendedStations.get(0).getPosition().equals(this.getPosition()) && recommendedStations.size() > 1  
-        		? recommendedStations.get(1) : recommendedStations.get(1);
+        if (!recommendedStations.isEmpty()) {
+        	destination = recommendedStations.get(0);
+        }
+        else {
+        	recommendedStations = systemManager.consultStations();
+        	int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);
+        	destination = recommendedStations.get(index);
+        }
+        return destination;
     }
 
     @Override

@@ -150,11 +150,6 @@ public abstract class User implements Entity {
         return reservedSlot;
     }
 
-    // TODO: getter possibly unnecessary
-    /*public Reservation getReservation() {
-        return this.reservation;
-    }*/
-
     public Station getDestinationStation() {
         return destinationStation;
     }

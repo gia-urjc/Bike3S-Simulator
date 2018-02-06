@@ -111,27 +111,42 @@ public class UserStationsBalancer extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        Station destination = null;
         
-     if (stations.isEmpty()) {
-         stations = new ArrayList<>(systemManager.consultStations());
+     if (!stations.isEmpty()) {
+         List<Station> recommendedStations = systemManager.getRecommendationSystem()
+                .recommendByNumberOfBikes(this.getPosition(), stations);
+         
+         if (!recommendedStations.isEmpty()) {
+        	 destination = recommendedStations.get(0);
+         }
      }
-
-        return systemManager.getRecommendationSystem()
-                .recommendByNumberOfBikes(this.getPosition(), stations).get(0);
+     return destination;
     }
 
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-        Station destination = null;
+        List<Station> recommendedStations;
+        Station destination;
         
-        if (!stations.isEmpty()) {
-            destination = systemManager.getRecommendationSystem()
-                    .recommendByNumberOfSlots(this.getPosition(), stations).get(0);
-        }
-
-        return destination;
-        }
+        if (stations.isEmpty()) {
+        	   stations = new ArrayList<Station>(systemManager.consultStations());        
+    	  	}
+    
+    			recommendedStations = systemManager.getRecommendationSystem()
+            .recommendByNumberOfSlots(this.getPosition(), stations);
+    			
+    			if (!recommendedStations.isEmpty()) {
+    				destination = recommendedStations.get(0);
+							}
+    			else {
+    				recommendedStations = systemManager.consultStations();
+    	        	int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);
+    	        	destination = recommendedStations.get(index);
+    			}
+       return destination;
+    }
     
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {

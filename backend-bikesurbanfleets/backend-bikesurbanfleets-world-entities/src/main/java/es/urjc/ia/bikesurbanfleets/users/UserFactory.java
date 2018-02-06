@@ -24,9 +24,9 @@ public class UserFactory {
             case USER_TOURIST:
                 return new UserTourist(gson.fromJson(epUserProps.getParameters(),
                         UserTourist.UserTouristParameters.class));
-            case USER_EMPLOYEE:
-                return new UserEmployee(gson.fromJson(epUserProps.getParameters(),
-                        UserEmployee.UserEmployeeParameters.class));
+            case USER_COMMUTER:
+                return new UserCommuter(gson.fromJson(epUserProps.getParameters(),
+                        UserCommuter.UserEmployeeParameters.class));
             case USER_STATIONS_BALANCER:
                 return new UserStationsBalancer(gson.fromJson(epUserProps.getParameters(),
                         UserStationsBalancer.UserStationsBalancerParameters.class));

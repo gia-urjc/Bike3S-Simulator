@@ -72,9 +72,6 @@ public class History {
      * the changes that the entities have been passing throught the entire simulation.
      */
     public static void close() throws IOException {
-
-        // TODO: maybe split entities.json into multiple files, e.g. entities/users.json
-
         /*
          * It is a map with the names of the entities'  history classes as the key and
          * a list of historic classes of a concrete entity as the value.
