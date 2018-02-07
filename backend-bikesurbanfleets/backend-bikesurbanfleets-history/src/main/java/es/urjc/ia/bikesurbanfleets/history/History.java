@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.HistoricEntity;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -28,6 +29,9 @@ public class History {
     private final static int TIMEENTRIES_PER_FILE = 100;
 
     private static String DEFAULT_HISTORY_OUTPUT_PATH = "history";
+
+    //Needed if the are no reservations in the system
+    private static Class<? extends HistoricEntity> reservationClass;
 
     private static Gson gson = new GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()
@@ -63,8 +67,12 @@ public class History {
      * of the directory where historic files will be stored.
      * @param outPath It contains the path where the history will be stored
      */
-    public static void init(String outPath) {
+    public static void init(String outPath) throws IOException {
         outputPath = Paths.get(outPath);
+        File outputDirectory = new File(outPath);
+        FileUtils.deleteDirectory(outputDirectory);
+        outputDirectory.mkdirs();
+
     }
 
     /**
@@ -72,19 +80,28 @@ public class History {
      * the changes that the entities have been passing throught the entire simulation.
      */
     public static void close() throws IOException {
-        /*
+        /*q
          * It is a map with the names of the entities'  history classes as the key and
          * a list of historic classes of a concrete entity as the value.
          */
+
         Map<String, EntitiesJson> entries = new HashMap<>();
         initialEntities.getEntityMaps().forEach((historicClass, entities) -> {
             String jsonIdentifier = getJsonIdentifier(historicClass);
             entries.put(jsonIdentifier, new EntitiesJson(historicClass, entities.values()));
         });
 
+        //needed if there's no reservations on the system
+        String resJsonIdentifier = getJsonIdentifier(reservationClass);
+        if(!entries.containsKey(resJsonIdentifier)) {
+            entries.put(resJsonIdentifier, new EntitiesJson(reservationClass, new ArrayList<>()));
+        }
+
         for (Map.Entry<String, EntitiesJson> entry : entries.entrySet()) {
             writeJson("entities/" + entry.getKey() + ".json", entry.getValue());
         }
+
+
 
         writeTimeEntries();
 
@@ -146,6 +163,10 @@ public class History {
         for (HistoricEntity entity : historicEntities) {
             updatedEntities.addToMapFor(entity.getClass(), entity);
         }
+    }
+
+    public static void reservationClass(Class<? extends HistoricEntity> resClass) {
+        reservationClass = resClass;
     }
 
     /**

@@ -1,0 +1,29 @@
+{
+    "entryPoints": [
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_UNINFORMED",
+                "parameters": {
+                    "willReserve": true,
+                    "minReservationAttempts": 3,
+                    "minReservationTimeouts": 2,
+                    "minRentalAttempts": 2,
+                    "bikeReservationPercentage": 100,
+                    "slotReservationPercentage": 100,
+                    "reservationTimeoutPercentage": 100,
+                    "failedReservationPercentage": 100
+                }
+            },
+            "position": {
+                "latitude": 40.419969,
+                "longitude": -3.710419
+            },
+            "radius": 50.0,
+            "totalUsers": 1000,
+            "distribution": {
+                "lambda": 0.006666667
+            }
+        }
+    ]    
+}

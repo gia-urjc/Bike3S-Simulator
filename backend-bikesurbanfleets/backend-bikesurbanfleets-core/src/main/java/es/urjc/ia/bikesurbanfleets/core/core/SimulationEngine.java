@@ -11,6 +11,7 @@ import es.urjc.ia.bikesurbanfleets.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.entities.User;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.history.History;
+import es.urjc.ia.bikesurbanfleets.history.entities.HistoricReservation;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
 import es.urjc.ia.bikesurbanfleets.users.UserFactory;
@@ -46,6 +47,9 @@ public class SimulationEngine {
         this.eventsQueue = new PriorityQueue<>(processUsers());
         Reservation.VALID_TIME = globalInfo.getReservationTime();
         Debug.DEBUG_MODE = globalInfo.isDebugMode();
+
+        //needed if there's no reservations in the system
+        History.reservationClass(HistoricReservation.class);
     }
 
     private List<EventUserAppears> processUsers() {

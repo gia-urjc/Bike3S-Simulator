@@ -1,12 +1,21 @@
 import { sAnyOf } from 'json-schema-builder-ts/dist/operators/schematical';
-import { sConst, sEnum, sInteger, sNumber, sObject } from 'json-schema-builder-ts/dist/types';
+import {sBoolean, sConst, sEnum, sInteger, sNumber, sObject} from 'json-schema-builder-ts/dist/types';
 import { GeoPoint, UInt } from './index';
 
 const Percentage = sNumber().min(0).max(100);
 
 const typeParameters = {
     USER_RANDOM: {},
-    USER_UNINFORMED: {},
+    USER_UNINFORMED: {
+        willReserve: sBoolean(),
+        minReservationAttempts: UInt,
+        minReservationTimeouts: UInt,
+        minRentalAttempts: UInt,
+        bikeReservationPercentage: Percentage,
+        slotReservationPercentage: Percentage,
+        reservationTimeoutPercentage: Percentage,
+        failedReservationPercentage: Percentage
+    },
     USER_DISTANCE_RESTRICTION: {
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,

@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.entities.history;
+package es.urjc.ia.bikesurbanfleets.history.entities;
 
 import com.google.gson.annotations.Expose;
 import es.urjc.ia.bikesurbanfleets.entities.Bike;

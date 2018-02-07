@@ -9,8 +9,8 @@
                 "latitude": 40.419969,
                 "longitude": -3.710419
             },
-            "radius": 100.0,
-            "totalUsers": 100,
+            "radius": 500.0,
+            "totalUsers": 1000,
             "distribution": {
                 "lambda": 0.006666667
             }

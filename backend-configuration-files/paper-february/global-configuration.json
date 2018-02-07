@@ -1,6 +1,6 @@
 {
 	"reservationTime": 150,
-    "totalSimulationTime": 25000,
+    "totalSimulationTime": 86400,
     "debugMode": true,
     "randomSeed": 201,
     "linearDistance": true,

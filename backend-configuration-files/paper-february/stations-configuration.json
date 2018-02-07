@@ -148,14 +148,6 @@
         {
             "bikes": 10,
             "position": {
-                "latitude": 40.4156057,
-                "longitude": -3.7095084
-            },
-            "capacity": 20
-        },
-        {
-            "bikes": 10,
-            "position": {
                 "latitude": 40.4141931,
                 "longitude": -3.7103285
             },
