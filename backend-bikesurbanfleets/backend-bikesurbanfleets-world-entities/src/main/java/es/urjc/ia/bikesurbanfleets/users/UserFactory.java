@@ -21,16 +21,22 @@ public class UserFactory {
      * @return an instance of a specific user type.
      */
     public User createUser(UserProperties epUserProps) {
+
         JsonElement parameters;
-        if(epUserProps.getParameters() == null) {
-            parameters = new JsonObject();
+        parameters = new JsonObject();
+        if(epUserProps.getParameters() != null) {
+            parameters = epUserProps.getParameters();
         }
-        parameters = epUserProps.getParameters();
         String type = epUserProps.getTypeName();
 
         switch (UserType.valueOf(type)) {
             case USER_RANDOM:
                 return new UserRandom();
+            case USER_UNINFORMED:
+                return new UserUninformed();
+            case USER_INFORMED:
+                return new UserInformed(gson.fromJson(parameters,
+                        UserInformed.UserInformedParameters.class));
             case USER_TOURIST:
                 return new UserTourist(gson.fromJson(parameters,
                         UserTourist.UserTouristParameters.class));
@@ -46,9 +52,6 @@ public class UserFactory {
             case USER_DISTANCE_RESTRICTION:
                 return new UserDistanceRestriction(gson.fromJson(parameters,
                         UserDistanceRestriction.UserDistanceRestrictionParameters.class));
-            case USER_UNINFORMED:
-                return new UserUninformed(gson.fromJson(parameters,
-                        UserUninformed.UserUninformedParameters.class));
             
         }
         throw new IllegalArgumentException("The type" + epUserProps.getTypeName() + "doesn't exists");

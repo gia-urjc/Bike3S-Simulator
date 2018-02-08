@@ -3,8 +3,6 @@ package es.urjc.ia.bikesurbanfleets.systemmanager;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphHopperIntegration;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.entities.Bike;
@@ -208,13 +206,31 @@ public class SystemManager {
         return filteredStations.stream().sorted(byDistance).collect(Collectors.toList());
     }
 
-    public List<Station> consultStationWithoutBikeRentAttempt(User user) {
+    public List<Station> consultStationsWithoutBikeRentAttemptOrdered(User user) {
         Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(user.getMemory().getStationsWithRentFailure());
         return filteredStations.stream().sorted(byDistance).collect(Collectors.toList());
     }
 
+    public List<Station> consultStationsWithoutBikeRentAttempt(User user) {
+        List<Station> filteredStations = new ArrayList<>(this.stations);
+        filteredStations.removeAll(user.getMemory().getStationsWithRentFailure());
+        return filteredStations.stream().collect(Collectors.toList());
+    }
+
+    public List<Station> consultStationsWithoutSlotDevolutionAttemptOrdered(User user) {
+        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
+        List<Station> filteredStations = new ArrayList<>(this.stations);
+        filteredStations.removeAll(user.getMemory().getStationsWithSlotDevolutionFail());
+        return filteredStations.stream().sorted(byDistance).collect(Collectors.toList());
+    }
+
+    public List<Station> consultStationsWithoutSlotDevolutionAttempt(User user) {
+        List<Station> filteredStations = new ArrayList<>(this.stations);
+        filteredStations.removeAll(user.getMemory().getStationsWithSlotDevolutionFail());
+        return filteredStations.stream().collect(Collectors.toList());
+    }
 
     public GeoPoint generateBoundingBoxRandomPoint(SimulationRandom random) {
         return bbox.randomPoint(random);
