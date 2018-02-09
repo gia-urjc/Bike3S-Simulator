@@ -1,7 +1,7 @@
 {
 	"reservationTime": 150,
     "totalSimulationTime": 25000,
-    "debugMode": false,
+    "debugMode": true,
     "randomSeed": 201,
     "linearDistance": true,
     "boundingBox": {

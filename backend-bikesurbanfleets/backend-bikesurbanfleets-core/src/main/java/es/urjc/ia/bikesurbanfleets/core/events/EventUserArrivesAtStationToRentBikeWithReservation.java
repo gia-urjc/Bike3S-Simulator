@@ -38,7 +38,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         user.setPosition(station.getPosition());
         reservation.resolve(instant);
         user.removeBikeWithReservationFrom(station);
-        debugEventLog();
+        debugEventLog("User removes Bike with reservation");
         if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
             debugEventLog("User decides to return bike to other station");
             newEvents = manageSlotReservationDecisionAtOtherStation();

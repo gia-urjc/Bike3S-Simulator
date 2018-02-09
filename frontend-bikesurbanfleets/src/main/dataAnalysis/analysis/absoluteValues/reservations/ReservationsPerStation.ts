@@ -94,5 +94,21 @@ export class ReservationsPerStation implements Observer {
     this.slotFailedReservationsPerStation.forEach( (value, key) => console.log('Station', key,'Slotfailed reservations', value));
     this.slotSuccessfulReservationsPerStation.forEach( (value, key) => console.log('Station', key,'Slot successful reservations', value));
   }
+  
+  public getBikeSuccessfulReservations(): Map<number, number> {
+    return this.bikeSuccessfulReservationsPerStation;
+  }
+   
+   public getSlotSuccessfulReservations(): Map<number, number> {
+     return this.slotSuccessfulReservationsPerStation;
+   }
+  
+  public getBikeFailedReservations(): Map<number, number> {
+    return this.bikeFailedReservationsPerStation;
+  }
+  
+  public getSlotFailedReservations(): Map<number, number> {
+    return this.slotFailedReservationsPerStation;
+  }
               
 }

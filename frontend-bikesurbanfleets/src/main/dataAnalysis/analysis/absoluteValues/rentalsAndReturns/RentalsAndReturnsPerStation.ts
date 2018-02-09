@@ -172,5 +172,24 @@ export class RentalsAndReturnsPerStation implements Observer {
     this.bikeSuccessfulReturnsPerStation.forEach( (value, key) => console.log('Station', key, 'Bike successful returns', value));
     this.bikeSuccessfulRentalsPerStation.forEach( (value, key) => console.log('Station', key, 'Bike successful rentals', value));
   }
+  
+  public getBikeSuccessfulRentals(): Map<number, number> {
+    return this.bikeSuccessfulRentalsPerStation;
+  }
+  
+  public getBikeSuccessfulReturns(): Map<number, number> {
+    return this.bikeSuccessfulReturnsPerStation;
+  }
+  
+  public getBikeFailedRentals(): Map<number, number> {
+    return this.bikeFailedRentalsPerStation;
+  }
+  
+  public getBikeFailedReturns(): Map<number, number> {
+    return this.bikeFailedReturnsPerStation;
+  }
+
+
+
 
 }

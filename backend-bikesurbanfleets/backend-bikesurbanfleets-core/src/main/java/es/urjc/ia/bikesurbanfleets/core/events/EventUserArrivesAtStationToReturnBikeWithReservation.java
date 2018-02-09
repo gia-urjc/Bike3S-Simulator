@@ -40,7 +40,7 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
         user.returnBikeWithReservationTo(station);
         user.setPosition(null);
         user.setRoute(null);
-        debugEventLog();
+        debugEventLog("User returns the bike");
         return newEvents;
     }
 
