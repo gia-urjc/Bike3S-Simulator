@@ -5,6 +5,7 @@ import { ReservationsPerUser } from "../absoluteValues/reservations/Reservations
 import { ReservationCalculator } from "../systemDataCalculators/ReservationCalculator";
 import { RentalAndReturnCalculator } from "../systemDataCalculators/RentalAndReturnCalculator";
 import { CsvGenerator } from "./CsvGenerator";
+import {SystemGlobalValues} from '../SystemGlobalValues';
 
 export class DataGenerator {
     private readonly INICIALIZATION: number = 5;
@@ -70,11 +71,11 @@ export class DataGenerator {
             this.counter = 0;
             this.reservationCalculator.calculateReservations().then( () => {
                 this.counter++;
-                this.write();
+                this.writeAndCalculateSystemGlobalData();
             });
             this.rentalAndReturnCalculator.calculateBikeRentalsAndReturns(this.path).then( () => {
                 this.counter++;
-                this.write();
+                this.writeAndCalculateSystemGlobalData();
             });
          }
     }
@@ -82,7 +83,7 @@ export class DataGenerator {
     public static async generate(path: string): Promise<DataGenerator> {
         let generator: DataGenerator = new DataGenerator(path);
         try {
-        await generator.init();
+            await generator.init();
         }
         catch(error) {
             console.log('error initializing data generator:', error);
@@ -90,16 +91,19 @@ export class DataGenerator {
         return generator;
     }
     
-    private async write(): Promise<void> {
+    private async writeAndCalculateSystemGlobalData(): Promise<void> {
         if (this.counter === this.CALCULATION) {
           console.log(this.data.get(ReservationsPerStation.name).getSlotSuccessfulReservationsOfStation(1));
-          let generator: CsvGenerator = new CsvGenerator(this.path);
+          let globalValues: SystemGlobalValues = new SystemGlobalValues(this.data);
+          await globalValues.init(this.path);
+          globalValues.calculateGlobalData();
+          let generator: CsvGenerator = new CsvGenerator(this.path, globalValues);
           await generator.generate(this.data);
         }
       return;
     }
 
-		public getData(): Map<string, any> {
+    public getData(): Map<string, any> {
 		return this.data;
 	}
      

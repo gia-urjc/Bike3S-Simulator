@@ -8,22 +8,30 @@ import { ReservationsPerStation } from "../absoluteValues/reservations/Reservati
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
 import * as json2csv from 'json2csv';
 import * as fs from 'fs';
+import {SystemGlobalValues} from '../SystemGlobalValues';
 
 export class CsvGenerator {
   private titles: Array<string>;
 	private stationData: Array<JsonObject>;
 	private userData: Array<JsonObject>;
-  private path: string;
+    private path: string;
+    private globalValuesFields: Array<string>;
+    private globalValues: JsonObject;
   
-  public constructor(path: string) {
+  public constructor(path: string, globalValues: SystemGlobalValues) {
     this.titles = new Array();
     this.stationData = new Array();
     this.userData = new Array();
+    this.globalValuesFields = new Array();
+    this.globalValues = {};
+    this.globalValues.demand_satisfaction = globalValues.getDemandSatisfaction();
+    this.globalValues.hire_efficiency = globalValues.getRentalEfficiency();
+    this.globalValues.return_efficiency = globalValues.getReturnEfficiency();
     this.path = path;
   }
 
 	public async generate(data: Map<string, any>): Promise<void> {
-  await this.init(data);
+        await this.init(data);
 		this.transformToCsv();
    return;
 	}
@@ -38,6 +46,10 @@ export class CsvGenerator {
 		this.titles.push('bike_failed_returns');
 		this.titles.push('bike_successful_rentals');
 		this.titles.push('bike_successful_returns');
+
+		this.globalValuesFields.push('demand_satisfaction');
+		this.globalValuesFields.push('hire_efficiency');
+		this.globalValuesFields.push('return_efficiency');
     
     let history: HistoryReader = await HistoryReader.create(this.path);
     let entities: HistoryEntitiesJson = await history.getEntities('stations');    
@@ -87,44 +99,50 @@ export class CsvGenerator {
     reservations.print();
     rentalsAndReturns = data.get(RentalsAndReturnsPerUser.name);
     for (let user of users) {
-      let userJson: JsonObject = {};
-      
-      userJson.id = user.id;
-      value = reservations.getBikeFailedReservationsOfUser(user.id);
-      userJson.bike_failed_reservations = value;
-      value = reservations.getSlotFailedReservationsOfUser(user.id);
-      userJson.slot_failed_reservations = value;
-      value = reservations.getBikeSuccessfulReservationsOfUser(user.id);
-      userJson.bike_successful_reservations = value;
-      value = reservations.getSlotSuccessfulReservationsOfUser(user.id);
-      userJson.slot_successful_reservations = value;
-      
-      value = rentalsAndReturns.getBikeFailedRentalsOfUser(user.id);
-      userJson.bike_failed_rentals = value;
-      value = rentalsAndReturns.getBikeFailedReturnsOfUser(user.id);
-      userJson.bike_failed_returns = value;
-      value = rentalsAndReturns.getBikeSuccessfulRentalsOfUser(user.id);
-      userJson.bike_successful_rentals = value;
-      value = rentalsAndReturns.getBikeSuccessfulReturnsOfUser(user.id);
-      userJson.bike_successful_returns = value;
-      
-      this.userData.push(userJson);
-      
+        let userJson: JsonObject = {};
+
+        userJson.id = user.id;
+        value = reservations.getBikeFailedReservationsOfUser(user.id);
+        userJson.bike_failed_reservations = value;
+        value = reservations.getSlotFailedReservationsOfUser(user.id);
+        userJson.slot_failed_reservations = value;
+        value = reservations.getBikeSuccessfulReservationsOfUser(user.id);
+        userJson.bike_successful_reservations = value;
+        value = reservations.getSlotSuccessfulReservationsOfUser(user.id);
+        userJson.slot_successful_reservations = value;
+
+        value = rentalsAndReturns.getBikeFailedRentalsOfUser(user.id);
+        userJson.bike_failed_rentals = value;
+        value = rentalsAndReturns.getBikeFailedReturnsOfUser(user.id);
+        userJson.bike_failed_returns = value;
+        value = rentalsAndReturns.getBikeSuccessfulRentalsOfUser(user.id);
+        userJson.bike_successful_rentals = value;
+        value = rentalsAndReturns.getBikeSuccessfulReturnsOfUser(user.id);
+        userJson.bike_successful_returns = value;
+
+        this.userData.push(userJson);
+
     }
+
     return;
 	}
 
 	public transformToCsv(): void {
-    let csv = json2csv({ data: this.stationData, fields: this.titles, withBOM: true });
-    fs.writeFile ('stations.csv', csv, (err) => {
-      if (err) throw err;
-      console.log('stations file saved');
-    });
-    csv = json2csv({ data: this.userData, fields: this.titles, withBOM: true });
-    fs.writeFile ('users.csv', csv, (err) => {
-      if (err) throw err;
-      console.log('user file saved');
-    });    
+        let csv = json2csv({ data: this.stationData, fields: this.titles, withBOM: true });
+        fs.writeFile ('stations.csv', csv, (err) => {
+          if (err) throw err;
+          console.log('stations file saved');
+        });
+        csv = json2csv({ data: this.userData, fields: this.titles, withBOM: true });
+        fs.writeFile ('users.csv', csv, (err) => {
+          if (err) throw err;
+          console.log('user file saved');
+        });
+        csv = json2csv({data: [this.globalValues], fields: this.globalValuesFields, withBOM: true });
+        fs.writeFile('global_values.csv', csv, (err) => {
+            if (err) throw err;
+            console.log('global values file saved');
+        });
 	}
 
 }  

@@ -30,7 +30,7 @@ public class RecommendationSystem {
      * It is the maximum distance in meters between the recommended stations and the indicated 
      * geographical point.
      */
-    private final int MAX_DISTANCE = 5000;
+    private final int MAX_DISTANCE = 600;
     
     /**
      * It alloows to manage routes. 
