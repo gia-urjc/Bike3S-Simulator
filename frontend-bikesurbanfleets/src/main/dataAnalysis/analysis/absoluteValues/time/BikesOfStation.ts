@@ -54,7 +54,7 @@ export class BikesOfStation implements Observer {
           this.reservations = <Reservation[]> entities.instances;
         
           for(let station of systemStations) {
-            let value: StationWithBikesPerTime = {time: 0, availableBikes: numberOfBikes(station)});
+            let value: StationWithBikesPerTime = {time: 0, availableBikes: numberOfBikes(station)};
             this.stations.set(station.id, value);
           }
       }
