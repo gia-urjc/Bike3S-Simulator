@@ -10,7 +10,7 @@ import es.urjc.ia.bikesurbanfleets.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.entities.Reservation.ReservationType;
 import es.urjc.ia.bikesurbanfleets.entities.Reservation.ReservationState;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
-import es.urjc.ia.bikesurbanfleets.entities.comparators.StationsByDistanceComparator;
+import es.urjc.ia.bikesurbanfleets.entities.comparators.ComparatorByDistance;
 import es.urjc.ia.bikesurbanfleets.users.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.entities.User;
 
@@ -121,7 +121,7 @@ public class SystemManager {
     }
 
     public List<Station> consultOrderedStationsByDistance(User user) {
-        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
+        Comparator<Station> byDistance = new ComparatorByDistance(graphManager, linearDistance, user.getPosition());
         List<Station> stations = new ArrayList<>(this.stations);
         return stations.stream().sorted(byDistance).collect(Collectors.toList());
     }
@@ -172,7 +172,7 @@ public class SystemManager {
     }
 
     public List<Station> consultStationsWithBikeReservationAttemptOrdered(User user, int timeInstant) {
-        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
+        Comparator<Station> byDistance = new ComparatorByDistance(graphManager, linearDistance, user.getPosition());
         return consultReservations(user).stream()
                 .filter(reservation -> reservation.getType() == ReservationType.BIKE)
                 .filter(reservation -> reservation.getState() == ReservationState.FAILED)
@@ -183,13 +183,13 @@ public class SystemManager {
     }
 
     public List<Station> consultStationsWithoutBikeReservationAttemptOrdered(User user, int timeInstant) {
-        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
+        Comparator<Station> byDistance = new ComparatorByDistance(graphManager, linearDistance, user.getPosition());
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(consultStationsWithBikeReservationAttempt(user, timeInstant));
         return filteredStations.stream().sorted(byDistance).collect(Collectors.toList());
     }
     public List<Station> consultStationsWithSlotReservationAttemptOrdered(User user, int timeInstant) {
-        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
+        Comparator<Station> byDistance = new ComparatorByDistance(graphManager, linearDistance, user.getPosition());
         return consultReservations(user).stream()
                 .filter(reservation -> reservation.getType() == ReservationType.SLOT)
                 .filter(reservation -> reservation.getState() == ReservationState.FAILED)
@@ -200,33 +200,33 @@ public class SystemManager {
     }
 
     public List<Station> consultStationsWithoutSlotReservationAttemptOrdered(User user, int timeInstant) {
-        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
+        Comparator<Station> byDistance = new ComparatorByDistance(graphManager, linearDistance, user.getPosition());
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(consultStationsWithSlotReservationAttempt(user, timeInstant));
         return filteredStations.stream().sorted(byDistance).collect(Collectors.toList());
     }
 
-    public List<Station> consultStationsWithoutBikeRentAttemptOrdered(User user) {
-        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
+    public List<Station> consultStationsWithoutBikeRentalAttemptsOrdered(User user) {
+        Comparator<Station> byDistance = new ComparatorByDistance(graphManager, linearDistance, user.getPosition());
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(user.getMemory().getStationsWithRentFailure());
         return filteredStations.stream().sorted(byDistance).collect(Collectors.toList());
     }
 
-    public List<Station> consultStationsWithoutBikeRentAttempt(User user) {
+    public List<Station> consultStationsWithoutBikeRentalAttempts(User user) {
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(user.getMemory().getStationsWithRentFailure());
         return filteredStations.stream().collect(Collectors.toList());
     }
 
-    public List<Station> consultStationsWithoutSlotDevolutionAttemptOrdered(User user) {
-        Comparator<Station> byDistance = new StationsByDistanceComparator(graphManager, linearDistance, user.getPosition());
+    public List<Station> consultStationsWithoutBikeReturnAttemptsOrdered(User user) {
+        Comparator<Station> byDistance = new ComparatorByDistance(graphManager, linearDistance, user.getPosition());
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(user.getMemory().getStationsWithSlotDevolutionFail());
         return filteredStations.stream().sorted(byDistance).collect(Collectors.toList());
     }
 
-    public List<Station> consultStationsWithoutSlotDevolutionAttempt(User user) {
+    public List<Station> consultStationsWithoutBikeReturnAttempts(User user) {
         List<Station> filteredStations = new ArrayList<>(this.stations);
         filteredStations.removeAll(user.getMemory().getStationsWithSlotDevolutionFail());
         return filteredStations.stream().collect(Collectors.toList());

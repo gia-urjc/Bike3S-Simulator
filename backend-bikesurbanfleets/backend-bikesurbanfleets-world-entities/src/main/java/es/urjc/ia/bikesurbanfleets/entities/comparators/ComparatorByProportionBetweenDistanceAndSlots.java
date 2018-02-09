@@ -9,10 +9,12 @@ import es.urjc.ia.bikesurbanfleets.entities.Station;
 import java.util.Comparator;
 
 /**
- * This comparator order stations given a geographical point by distances to this point
+ * This comparator order stations given a formula and a reference point
+ * The parameter for order is distance/availableSlots
+ * It's needed a reference point
+ *
  */
-public class StationsByDistanceComparator implements Comparator<Station> {
-
+public class ComparatorByProportionBetweenDistanceAndSlots implements Comparator<Station> {
 
     private GraphManager graph;
 
@@ -20,7 +22,7 @@ public class StationsByDistanceComparator implements Comparator<Station> {
 
     private GeoPoint referencePoint;
 
-    public StationsByDistanceComparator(GraphManager graph, boolean linearDistance, GeoPoint referencePoint) {
+    public ComparatorByProportionBetweenDistanceAndSlots(GraphManager graph, boolean linearDistance, GeoPoint referencePoint) {
         this.graph = graph;
         this.linearDistance = linearDistance;
         this.referencePoint = referencePoint;
@@ -28,8 +30,8 @@ public class StationsByDistanceComparator implements Comparator<Station> {
 
     @Override
     public int compare(Station s1, Station s2) {
-
         double distance1, distance2;
+
         if (linearDistance) {
             distance1 = s1.getPosition().distanceTo(referencePoint);
             distance2 = s2.getPosition().distanceTo(referencePoint);
@@ -38,14 +40,15 @@ public class StationsByDistanceComparator implements Comparator<Station> {
             distance1 = Double.MAX_VALUE;
             distance2 = Double.MIN_VALUE;
             try {
-                distance1 = graph.obtainShortestRouteBetween(s1.getPosition(), referencePoint).getTotalDistance();
-                distance2 = graph.obtainShortestRouteBetween(s2.getPosition(), referencePoint).getTotalDistance();
+                distance1 = graph.obtainShortestRouteBetween(s1.getPosition(), referencePoint)
+                        .getTotalDistance();
+                distance2 = graph.obtainShortestRouteBetween(s2.getPosition(), referencePoint)
+                        .getTotalDistance();
             } catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
                 e.printStackTrace();
             }
         }
-        return Double.compare(distance1, distance2);
+        return Double.compare(distance1/s1.availableSlots(), distance2/s2.availableSlots());
     }
-
 
 }

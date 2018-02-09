@@ -46,7 +46,7 @@ public class UserUninformed extends User {
 
         Station destination = null;
         List<Station> stations;
-        stations = systemManager.consultStationsWithoutBikeRentAttemptOrdered(this);
+        stations = systemManager.consultStationsWithoutBikeRentalAttemptsOrdered(this);
 
         int index = 0;
         while(index < stations.size()) {
@@ -69,7 +69,7 @@ public class UserUninformed extends User {
     public Station determineStationToReturnBike(int instant) {
 
         List<Station> stations;
-        stations = systemManager.consultStationsWithoutSlotDevolutionAttemptOrdered(this);
+        stations = systemManager.consultStationsWithoutBikeReturnAttemptsOrdered(this);
 
         Station destination;
 

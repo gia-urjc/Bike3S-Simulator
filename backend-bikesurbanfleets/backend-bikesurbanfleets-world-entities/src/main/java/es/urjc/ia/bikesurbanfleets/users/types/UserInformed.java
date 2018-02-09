@@ -131,7 +131,7 @@ public class UserInformed extends User {
         if(parameters.willReserve) {
             stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
         } else {
-            stations = systemManager.consultStationsWithoutBikeRentAttempt(this);
+            stations = systemManager.consultStationsWithoutBikeRentalAttempts(this);
         }
 
         Station destination = null;
@@ -154,7 +154,7 @@ public class UserInformed extends User {
         if(parameters.willReserve) {
             stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
         } else {
-            stations = systemManager.consultStationsWithoutSlotDevolutionAttempt(this);
+            stations = systemManager.consultStationsWithoutBikeReturnAttempts(this);
         }
 
         List<Station> recommendedStations;

@@ -23,17 +23,10 @@ import java.util.List;
  * 
  * @author IAgroup
  */
-@AssociatedType(UserType.USER_AVAILABLE_RESOURCES)
-public class UserAvailableResources extends User {
+@AssociatedType(UserType.USER_OBEDIENT)
+public class UserObedient extends User {
 
-    public class UserAvailableResourcesParameters {
-        /**
-         * It is the time in seconds until which the user will decide to continue walking
-         * or cycling towards the previously chosen station without making a new reservation
-         * after a reservation timeout event has happened.
-         */
-        private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
-
+    public class UserObedientParameters {
         /**
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
@@ -69,26 +62,20 @@ public class UserAvailableResources extends User {
          * after he hasn't been able to make a reservation.
          */
         private int failedReservationPercentage;
+        
+        
+        /**
+         * It determines if the user will make a reservation or not.
+         */
+        private boolean willReserve;
+                
+        private UserObedientParameters() {}
 
-        private UserAvailableResourcesParameters() {}
-
-        @Override
-        public String toString() {
-            return "UserStationsBalancerParameters{" +
-                    "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
-                    ", minReservationAttempts=" + minReservationAttempts +
-                    ", minReservationTimeouts=" + minReservationTimeouts +
-                    ", minRentalAttempts=" + minRentalAttempts +
-                    ", bikeReturnPercentage=" + bikeReturnPercentage +
-                    ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
-                    ", failedReservationPercentage=" + failedReservationPercentage +
-                    '}';
-        }
     }
 
-    private UserAvailableResourcesParameters parameters;
+    private UserObedientParameters parameters;
     
-    public UserAvailableResources(UserAvailableResourcesParameters parameters) {
+    public UserObedient(UserObedientParameters parameters) {
         super();
         this.parameters = parameters;
     }
@@ -110,12 +97,18 @@ public class UserAvailableResources extends User {
     
     @Override
     public Station determineStationToRentBike(int instant) {
-        List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-        Station destination = null;
-        
+    	List<Station> stations; 
+    	if (parameters.willReserve) {
+        stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+    	}
+    	else {
+    		stations = systemManager.consultStationsWithoutBikeRentalAttempts(this);  
+    	}
+     
+    	Station destination = null;
      if (!stations.isEmpty()) {
          List<Station> recommendedStations = systemManager.getRecommendationSystem()
-                .recommendByNumberOfBikes(this.getPosition(), stations);
+                .recommendByAvailableSlotsRatio(this.getPosition(), stations);
          
          if (!recommendedStations.isEmpty()) {
         	 destination = recommendedStations.get(0);
@@ -126,7 +119,14 @@ public class UserAvailableResources extends User {
 
     @Override
      public Station determineStationToReturnBike(int instant) {
-        List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        List<Station> stations;
+        if (parameters.willReserve) {
+        	stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        }
+        else {
+        	stations = systemManager.consultStationsWithoutBikeReturnAttempts(this);
+        }
+        
         List<Station> recommendedStations;
         Station destination;
         
@@ -135,7 +135,7 @@ public class UserAvailableResources extends User {
     	  	}
     
     			recommendedStations = systemManager.getRecommendationSystem()
-            .recommendByNumberOfSlots(this.getPosition(), stations);
+            .recommendByAvailableBikesRatio(this.getPosition(), stations);
     			
     			if (!recommendedStations.isEmpty()) {
     				destination = recommendedStations.get(0);
@@ -150,25 +150,22 @@ public class UserAvailableResources extends User {
     
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-        int arrivalTime = timeToReach();
-        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+        return parameters.willReserve;
     }
 
-    
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-        return false;
+    	return parameters.willReserve;
     }
 
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        int arrivalTime = timeToReach();
-        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+    	return parameters.willReserve;
     }
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-        return false;
+    	return parameters.willReserve;
     }
 
     @Override

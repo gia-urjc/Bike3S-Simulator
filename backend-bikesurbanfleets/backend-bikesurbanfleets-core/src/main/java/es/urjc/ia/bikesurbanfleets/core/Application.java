@@ -9,7 +9,6 @@ import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 
 import java.io.IOException;
 
-import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

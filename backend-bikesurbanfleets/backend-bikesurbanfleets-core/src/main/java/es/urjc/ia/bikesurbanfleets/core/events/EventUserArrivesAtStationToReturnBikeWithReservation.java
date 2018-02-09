@@ -5,7 +5,6 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
 import es.urjc.ia.bikesurbanfleets.entities.User;
-import es.urjc.ia.bikesurbanfleets.log.Debug;
 
 import java.util.ArrayList;
 import java.util.Arrays;

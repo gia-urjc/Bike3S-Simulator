@@ -45,13 +45,16 @@ public class UserFactory {
                         UserCommuter.UserEmployeeParameters.class));
             case USER_AVAILABLE_RESOURCES: 
                 return new UserAvailableResources(gson.fromJson(parameters,
-                        UserAvailableResources.UserStationsBalancerParameters.class));
+                        UserAvailableResources.UserAvailableResourcesParameters.class));
             case USER_REASONABLE:
                 return new UserReasonable(gson.fromJson(parameters,
                         UserReasonable.UserReasonableParameters.class));
             case USER_DISTANCE_RESTRICTION:
                 return new UserDistanceRestriction(gson.fromJson(parameters,
                         UserDistanceRestriction.UserDistanceRestrictionParameters.class));
+            case USER_OBEDIENT:
+            	return new UserObedient(gson.fromJson(parameters,
+            			UserObedient.UserObedientParameters.class));
             
         }
         throw new IllegalArgumentException("The type" + epUserProps.getTypeName() + "doesn't exists");

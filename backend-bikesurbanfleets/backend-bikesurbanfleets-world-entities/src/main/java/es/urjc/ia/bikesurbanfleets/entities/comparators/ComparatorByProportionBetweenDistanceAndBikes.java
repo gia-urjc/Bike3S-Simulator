@@ -14,7 +14,7 @@ import java.util.Comparator;
  * It's needed a reference point
  *
  */
-public class StationsBikesByProportionComparator implements Comparator<Station> {
+public class ComparatorByProportionBetweenDistanceAndBikes implements Comparator<Station> {
 
     private GraphManager graph;
 
@@ -22,7 +22,7 @@ public class StationsBikesByProportionComparator implements Comparator<Station> 
 
     private GeoPoint referencePoint;
 
-    public StationsBikesByProportionComparator(GraphManager graph, boolean linearDistance, GeoPoint referencePoint) {
+    public ComparatorByProportionBetweenDistanceAndBikes(GraphManager graph, boolean linearDistance, GeoPoint referencePoint) {
         this.graph = graph;
         this.linearDistance = linearDistance;
         this.referencePoint = referencePoint;
