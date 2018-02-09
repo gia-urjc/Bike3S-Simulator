@@ -10,7 +10,7 @@
                 "longitude": -3.709819
             },
             "radius": 100.0,
-            "totalUsers": 250,
+            "totalUsers": 125,
             "distribution": {
                 "lambda": 0.006666667
             }
@@ -25,7 +25,7 @@
                 "longitude": -3.700819
             },
             "radius": 100.0,
-            "totalUsers": 250,
+            "totalUsers": 125,
             "distribution": {
                 "lambda": 0.006666667
             }
@@ -40,7 +40,7 @@
                 "longitude": -3.70456
             },
             "radius": 100.0,
-            "totalUsers": 250,
+            "totalUsers": 125,
             "distribution": {
                 "lambda": 0.006666667
             }
@@ -55,7 +55,7 @@
                 "longitude": -3.7104038
             },
             "radius": 100.0,
-            "totalUsers": 250,
+            "totalUsers": 125,
             "distribution": {
                 "lambda": 0.006666667
             }

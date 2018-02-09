@@ -1,7 +1,7 @@
 {
-	"reservationTime": 150,
+	"reservationTime": 500,
     "totalSimulationTime": 86400,
-    "debugMode": true,
+    "debugMode": false,
     "randomSeed": 201,
     "linearDistance": true,
     "boundingBox": {
@@ -16,4 +16,5 @@
     },
     "map": "../backend-configuration-files/maps/madrid.osm",
     "historyOutputPath": "../build/history"
+
 }

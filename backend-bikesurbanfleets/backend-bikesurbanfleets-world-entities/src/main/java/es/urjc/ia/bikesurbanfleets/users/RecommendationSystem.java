@@ -219,24 +219,42 @@ public class RecommendationSystem {
     }
     
     public List<Station> recommendByAvailableBikesRatio(GeoPoint point, List<Station> stations) {
-    	Comparator<Station> byBikesRatio = (s2, s1) -> Double.compare(s2.availableBikes()/s2
-    			.getCapacity(), s1.availableBikes()/s1.getCapacity());
+    	Comparator<Station> byBikesRatio = (s1, s2) -> Double.compare((double)s2.availableBikes()/(double)s2
+    			.getCapacity(), (double)s1.availableBikes()/(double)s1.getCapacity());
+
+        int index = 0;
+        while(index < stations.size()) {
+            Station stationToRemove = stations.get(index);
+            if(stationToRemove.getPosition().equals(point)) {
+                stations.remove(index);
+                break;
+            }
+            index++;
+        }
+
     	List<Station> recommendedStations = validStationsToRentBike(point, stations)
     			.stream().sorted(byBikesRatio).collect(Collectors.toList());
-    	if (recommendedStations.get(0).getPosition().equals(point)) {
-    		recommendedStations.remove(0);
-    	}
-    	return recommendedStations;
+
+        return recommendedStations;
     }
     
     public List<Station> recommendByAvailableSlotsRatio(GeoPoint point, List<Station> stations) {
-    	Comparator<Station> bySlotsRatio = (s2, s1) -> Double.compare(s2.availableSlots()/s2
-    			.getCapacity(), s1.availableSlots()/s1.getCapacity());
+    	Comparator<Station> bySlotsRatio = (s1, s2) -> Double.compare((double)s2.availableSlots()/(double)s2
+    			.getCapacity(), (double) s1.availableSlots()/(double) s1.getCapacity());
+
+        int index = 0;
+        while(index < stations.size()) {
+            Station stationToRemove = stations.get(index);
+            if(stationToRemove.getPosition().equals(point)) {
+                stations.remove(index);
+                break;
+            }
+            index++;
+        }
+
     	List<Station> recommendedStations = validStationsToReturnBike(point, stations)
     			.stream().sorted(bySlotsRatio).collect(Collectors.toList());
-    	if (recommendedStations.get(0).getPosition().equals(point)) {
-    		recommendedStations.remove(0);
-    	}
+
     	return recommendedStations;
     }
     

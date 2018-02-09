@@ -17,6 +17,16 @@ const typeParameters = {
         reservationTimeoutPercentage: Percentage,
         failedReservationPercentage: Percentage
     },
+    USER_OBEDIENT: {
+        willReserve: sBoolean(),
+        minReservationAttempts: UInt,
+        minReservationTimeouts: UInt,
+        minRentalAttempts: UInt,
+        bikeReservationPercentage: Percentage,
+        slotReservationPercentage: Percentage,
+        reservationTimeoutPercentage: Percentage,
+        failedReservationPercentage: Percentage
+    },
     USER_DISTANCE_RESTRICTION: {
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,

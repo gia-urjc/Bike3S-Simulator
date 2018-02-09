@@ -62,7 +62,7 @@ public class UserObedient extends User {
          * after he hasn't been able to make a reservation.
          */
         private int failedReservationPercentage;
-        
+
         
         /**
          * It determines if the user will make a reservation or not.
@@ -97,7 +97,7 @@ public class UserObedient extends User {
     
     @Override
     public Station determineStationToRentBike(int instant) {
-    	List<Station> stations; 
+        List<Station> stations;
     	if (parameters.willReserve) {
         stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
     	}
@@ -106,46 +106,46 @@ public class UserObedient extends User {
     	}
      
     	Station destination = null;
-     if (!stations.isEmpty()) {
-         List<Station> recommendedStations = systemManager.getRecommendationSystem()
-                .recommendByAvailableSlotsRatio(this.getPosition(), stations);
-         
-         if (!recommendedStations.isEmpty()) {
-        	 destination = recommendedStations.get(0);
-         }
-     }
-     return destination;
+            if (!stations.isEmpty()) {
+                List<Station> recommendedStations = systemManager.getRecommendationSystem()
+                    .recommendByAvailableBikesRatio(this.getPosition(), stations);
+            if (!recommendedStations.isEmpty()) {
+                destination = recommendedStations.get(0);
+            }
+        }
+        return destination;
     }
 
     @Override
-     public Station determineStationToReturnBike(int instant) {
+    public Station determineStationToReturnBike(int instant) {
+
         List<Station> stations;
         if (parameters.willReserve) {
-        	stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+            stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
         }
         else {
-        	stations = systemManager.consultStationsWithoutBikeReturnAttempts(this);
+            stations = systemManager.consultStationsWithoutBikeReturnAttempts(this);
         }
-        
+
         List<Station> recommendedStations;
         Station destination;
-        
+
         if (stations.isEmpty()) {
-        	   stations = new ArrayList<Station>(systemManager.consultStations());        
-    	  	}
-    
-    			recommendedStations = systemManager.getRecommendationSystem()
-            .recommendByAvailableBikesRatio(this.getPosition(), stations);
-    			
-    			if (!recommendedStations.isEmpty()) {
-    				destination = recommendedStations.get(0);
-							}
-    			else {
-    				recommendedStations = systemManager.consultStations();
-    	        	int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);
-    	        	destination = recommendedStations.get(index);
-    			}
-       return destination;
+               stations = new ArrayList<Station>(systemManager.consultStations());
+        }
+
+        recommendedStations = systemManager.getRecommendationSystem()
+            .recommendByAvailableSlotsRatio(this.getPosition(), stations);
+
+        if (!recommendedStations.isEmpty()) {
+            destination = recommendedStations.get(0);
+        } else {
+            recommendedStations = systemManager.consultStations();
+            int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);
+            destination = recommendedStations.get(index);
+        }
+
+        return destination;
     }
     
     @Override
