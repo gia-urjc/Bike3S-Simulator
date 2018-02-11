@@ -176,14 +176,20 @@ export class RentalsAndReturnsPerStation implements Data {
       let str: any = '';
       switch(type) {
           case "Failed bike returns": {
-              this.bikeFailedReturnsPerStation.forEach( (absoluteValue, key) => str += 'Station'+key+absoluteValue.name+':'+absolutevalue.value));
+              this.bikeFailedReturnsPerStation.forEach( (absoluteValue, key) => 
+                  str += 'Station'+key+absoluteValue.name+':'+absolutevalue.value+'\n');
               break;
           }
+              
           case "Failed bike rentals": {
-              this.bikeFailedRentalsPerStation.forEach( (absoluteValue, key) => str += 'Station'+key+absoluteValue.name+':'+absolutevalue.value)); 
+              this.bikeFailedRentalsPerStation.forEach( (absoluteValue, key) => 
+                  str += 'Station'+key+absoluteValue.name+':'+absolutevalue.value+'\n');
+              break; 
           }
-              case "Successful bike reutrns": {
-                  this.bikeSuccessfulReturnsPerStation.forEach( (absoluteValue, key) => str += 'Station'+key+absoluteValue.name+':'+absolutevalue.value));
+              
+          case "Successful bike reutrns": {
+              this.bikeSuccessfulReturnsPerStation.forEach( (absoluteValue, key) => 
+                  str += 'Station'+key+absoluteValue.name+':'+absolutevalue.value+'\n');
               break;
           }
           case "Successful bike rentals": {

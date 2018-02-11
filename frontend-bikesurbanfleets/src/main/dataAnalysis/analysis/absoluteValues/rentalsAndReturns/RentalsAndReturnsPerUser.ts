@@ -10,16 +10,16 @@ import { Data } from '../Data';
 export class RentalsAndReturnsPerUser implements Data {
     private users: Array<User>;
     private bikeFailedRentalsPerUser: Map<number, AbsoluteValue>;
-    private bikeSuccessfulRentalsPerUser: Map<number, number>;
-    private bikeFailedReturnsPerUser: Map<number, number>;
-    private bikeSuccessfulReturnsPerUser: Map<number, number>;
+    private bikeSuccessfulRentalsPerUser: Map<number, AbsoluteValue>;
+    private bikeFailedReturnsPerUser: Map<number, AbsoluteValue>;
+    private bikeSuccessfulReturnsPerUser: Map<number, AbsoluteValue>;
     
     public constructor() {
         // TODO: init data attr
-        this.bikeFailedRentalsPerUser = new Map<number, number>();
-        this.bikeSuccessfulRentalsPerUser = new Map<number, number>();
+        this.bikeFailedRentalsPerUser = new Map<number, AbsoluteValue>();
+        this.bikeSuccessfulRentalsPerUser = new Map<number, AbsoluteValue>();
         this.bikeFailedReturnsPerUser = new Map<number, number>();
-        this.bikeSuccessfulReturnsPerUser = new Map<number, number>();
+        this.bikeSuccessfulReturnsPerUser = new Map<number, AbsoluteValue>();
     }
     
     public async init(path: string): Promise<void> {
@@ -29,10 +29,10 @@ export class RentalsAndReturnsPerUser implements Data {
             this.users = entities.instances;
                 
             for(let user of this.users) {
-                this.bikeFailedRentalsPerUser.set(user.id, 0);
-                this.bikeSuccessfulRentalsPerUser.set(user.id, 0);
-                this.bikeFailedReturnsPerUser.set(user.id, 0);            
-                this.bikeSuccessfulReturnsPerUser.set(user.id, 0);            
+                this.bikeFailedRentalsPerUser.set(user.id, { name: "Failed bike rentals", value: 0 });
+                this.bikeSuccessfulRentalsPerUser.set(user.id, { name: "Successful bike rentals", value: 0 });
+                 this.bikeFailedReturnsPerUser.set(user.id, { name: "Failed bike returns", value: 0 });            
+                this.bikeSuccessfulReturnsPerUser.set(user.id, { name: "Successful bike returns", value: 0 });            
             }
         }
         catch(error) {
@@ -53,43 +53,47 @@ export class RentalsAndReturnsPerUser implements Data {
     }
 
     public getBikeFailedRentalsOfUser(userId: number): number | undefined {
-        return this.bikeFailedRentalsPerUser.get(userId);
+        let absoluteValue: AbsoluteValue = this.bikeFailedRentalsPerUser.get(userId);
+        return absolute.Value.value;
     }
     
     public getBikeSuccessfulRentalsOfUser(userId: number): number | undefined {
-        return this.bikeSuccessfulRentalsPerUser.get(userId);
+        let absoluteValue: AbsoluteValue = this.bikeSuccessfulRentalsPerUser.get(userId);
+        return absoluteValue.value;
     }
     
     public getBikeFailedReturnsOfUser(userId: number): number | undefined {
-        return this.bikeFailedReturnsPerUser.get(userId);
+        let absoluteValue: AbsoluteValue = this.bikeFailedReturnsPerUser.get(userId);
+        return absoluteValue.value;
     }
     
     public getBikeSuccessfulReturnsOfUser(userId: number): number | undefined {
-        return this.bikeSuccessfulReturnsPerUser.get(userId);
+        let absoluteValue: AbsoluteValue = this.bikeSuccessfulReturnsPerUser.get(userId);
+        return absoluteValue.value;
     }
     
     public update(timeEntry: TimeEntry): void {
         let events: Array<Event> = timeEntry.events;
 
         let key: number;
-        let value: number | undefined;
+        let absoluteValue: AbsoluteValue | undefined;
 
         for(let event of events) {
             if (event.name === 'EventUserArrivesAtStationToRentBikeWithReservation'
                 && event.changes.users.length > 0) {
                 key = event.changes.users[0].id;
-                value = this.bikeSuccessfulRentalsPerUser.get(key);
-                if (value !== undefined) {
-                    this.bikeSuccessfulRentalsPerUser.set(key, ++value);
+                absoluteValue = this.bikeSuccessfulRentalsPerUser.get(key);
+                if (absoluteValue !== undefined) {
+                    absoluteValue.value++;
                 }
             }
                 
             else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithReservation'
                 &&  event.changes.users.length > 0) {
                 key = event.changes.users[0].id;
-                value = this.bikeSuccessfulReturnsPerUser.get(key);
-                if (value !== undefined) {
-                    this.bikeSuccessfulReturnsPerUser.set(key, ++value);
+                absoluteValue = this.bikeSuccessfulReturnsPerUser.get(key);
+                if (absoluteValue !== undefined) {
+                    absoluteValue.value++;
                 }
             }
             
@@ -98,15 +102,15 @@ export class RentalsAndReturnsPerUser implements Data {
                 key = event.changes.users[0].id;
                 let bike: any = event.changes.users[0].bike;
                 if (bike !== undefined) {
-                    value = this.bikeSuccessfulRentalsPerUser.get(key);
-                    if (value !== undefined) {                
-                        this.bikeSuccessfulRentalsPerUser.set(key, ++value);
+                    absoluteValue = this.bikeSuccessfulRentalsPerUser.get(key);
+                    if (absoluteValue !== undefined) {
+                       absoluteValue.value++;
                     }
                 }
                 else {
-                    value = this.bikeFailedRentalsPerUser.get(key);
-                    if (value !== undefined) {
-                        this.bikeFailedRentalsPerUser.set(key, ++value);
+                    absoluteValue = this.bikeFailedRentalsPerUser.get(key);
+                    if (absoluteValue !== undefined) {
+                        absoluteValue.value++;
                     }
                 }
             }
@@ -116,26 +120,32 @@ export class RentalsAndReturnsPerUser implements Data {
                 key = event.changes.users[0].id;
                 let bike: any = event.changes.users[0].bike;
                 if (bike !== undefined) {
-                    value = this.bikeSuccessfulReturnsPerUser.get(key);
-                    if (value !== undefined) {                  
-                        this.bikeSuccessfulReturnsPerUser.set(key, ++value);
+                    absoluteValue = this.bikeSuccessfulReturnsPerUser.get(key);
+                    if (absoluteValue !== undefined) {
+                       absoluteValue.value++;
                     }
                 }
                 else {
-                    value = this.bikeFailedReturnsPerUser.get(key);
-                    if (value !== undefined) {
-                        this.bikeFailedReturnsPerUser.set(key, ++value);
+                    absoluteValue = this.bikeFailedReturnsPerUser.get(key);
+                    if (absoluteValue !== undefined) {
+                       absoluteValue.value++;
                     }
                 }
             }
         }
     }
   
-  public print(): void {
-    this.bikeFailedReturnsPerUser.forEach( (value, key) => console.log('User', key, 'Bike failed returns', value));
-    this.bikeFailedRentalsPerUser.forEach( (value, key) => console.log('User', key, 'Bike failed rentals' ,value));
-    this.bikeSuccessfulReturnsPerUser.forEach( (value, key) => console.log('User', key, 'Bike successful returns', value));
-    this.bikeSuccessfulRentalsPerUser.forEach( (value, key) => console.log('User', key, 'Bike successful rentals', value));
+  public toString(): string {
+    this.bikeFailedReturnsPerUser.forEach( (absoluteValue, key) => 
+        src += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
+    this.bikeFailedRentalsPerUser.forEach( (absoluteValue, key) => 
+        src += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
+    this.bikeSuccessfulReturnsPerUser.forEach( (absoluteValue, key) => 
+        src += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
+    this.bikeSuccessfulRentalsPerUser.forEach( (absoluteValue, key) => 
+        src += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
+      
+      return src;
   }
   
        
