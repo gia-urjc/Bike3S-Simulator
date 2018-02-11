@@ -4,16 +4,18 @@ import { HistoryIterator } from "../../../HistoryIterator";
 import { Observer } from '../../ObserverPattern';
 import  { User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
+import { AbsoluteValue } from '../AbsoluteValue';
+import { Data } from '../Data';
 
-
-export class RentalsAndReturnsPerUser implements Observer {
+export class RentalsAndReturnsPerUser implements Data {
     private users: Array<User>;
-    private bikeFailedRentalsPerUser: Map<number, number>;
+    private bikeFailedRentalsPerUser: Map<number, AbsoluteValue>;
     private bikeSuccessfulRentalsPerUser: Map<number, number>;
     private bikeFailedReturnsPerUser: Map<number, number>;
     private bikeSuccessfulReturnsPerUser: Map<number, number>;
     
     public constructor() {
+        // TODO: init data attr
         this.bikeFailedRentalsPerUser = new Map<number, number>();
         this.bikeSuccessfulRentalsPerUser = new Map<number, number>();
         this.bikeFailedReturnsPerUser = new Map<number, number>();
