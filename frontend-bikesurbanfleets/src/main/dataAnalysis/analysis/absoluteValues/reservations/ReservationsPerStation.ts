@@ -2,19 +2,21 @@ import { HistoryReader } from '../../../../util';
 import { HistoryEntitiesJson } from '../../../../../shared/history';
 import { Observer } from '../../ObserverPattern';
 import  { Station, Reservation } from '../../../systemDataTypes/Entities';
+import { AbsoluteValue } from '../AbsoluteValue';
 
-export class ReservationsPerStation implements Observer {
+export class ReservationsPerStation implements Data {
     private stations: Array<Station>;
-    private bikeFailedReservationsPerStation: Map<number, number>; 
-    private slotFailedReservationsPerStation: Map<number, number>;
-    private bikeSuccessfulReservationsPerStation: Map<number, number>;
-    private slotSuccessfulReservationsPerStation: Map<number, number>;
+    private bikeFailedReservationsPerStation: Map<number, AbsoluteValue>; 
+    private slotFailedReservationsPerStation: Map<number, AbsoluteValue>;
+    private bikeSuccessfulReservationsPerStation: Map<number, AbsoluteValue>;
+    private slotSuccessfulReservationsPerStation: Map<number, AbsoluteValue>;
     
     public constructor() {
-        this.bikeFailedReservationsPerStation = new Map<number, number>(); 
-        this.slotFailedReservationsPerStation = new Map<number, number>();
-        this.bikeSuccessfulReservationsPerStation = new Map<number, number>();
-        this.slotSuccessfulReservationsPerStation = new Map<number, number>();
+        // TODO: init data attr
+        this.bikeFailedReservationsPerStation = new Map<number, AbsoluteValue>(); 
+        this.slotFailedReservationsPerStation = new Map<number, AbsoluteValue>();
+        this.bikeSuccessfulReservationsPerStation = new Map<number, AbsoluteValue>();
+        this.slotSuccessfulReservationsPerStation = new Map<number, AbsoluteValue>();
     }
     
     public async init(path: string): Promise<void> {
@@ -24,10 +26,10 @@ export class ReservationsPerStation implements Observer {
             this.stations = <Station[]> entities.instances;
         
             for(let station of this.stations) {
-                this.bikeFailedReservationsPerStation.set(station.id, 0);
-                this.slotFailedReservationsPerStation.set(station.id, 0);            
-                this.bikeSuccessfulReservationsPerStation.set(station.id, 0);
-                this.slotSuccessfulReservationsPerStation.set(station.id, 0);
+                this.bikeFailedReservationsPerStation.set(station.id, { name: "Failed bike reservations", value: 0});
+                this.slotFailedReservationsPerStation.set(station.id, { name: "Failed slot reservations", value: 0});            
+                this.bikeSuccessfulReservationsPerStation.set(station.id, { name: "Successfulbike reservations", value: 0});
+                this.slotSuccessfulReservationsPerStation.set(station.id, { name: "Successful slot reservations", value: 0});
             }
         }
         catch(error) {
@@ -42,72 +44,98 @@ export class ReservationsPerStation implements Observer {
         return reservationValues;
     }
     
-    public getBikeFailedReservationsOfStation(stationId: number): number| undefined {
-     return this.bikeFailedReservationsPerStation.get(stationId);
+    public getBikeFailedReservationsOfStation(stationId: number): number | undefined {
+     let absoluteValue:  AbsoluteValue = this.bikeFailedReservationsPerStation.get(stationId);
+        return absoluteValue.value;
     }
 
     public getSlotFailedReservationsOfStation(stationId: number): number | undefined {
-        return this.slotFailedReservationsPerStation.get(stationId);
+        let absoluteValue:  AbsoluteValue = this.slotFailedReservationsPerStation.get(stationId);
+        return absoluteValue.value;
     }
     
     public getBikeSuccessfulReservationsOfStation(stationId: number): number | undefined {
-        return this.bikeSuccessfulReservationsPerStation.get(stationId);
+        let absoluteValue:  AbsoluteValue = this.bikeSuccessfulReservationsPerStation.get(stationId);
+        return absoluteValue.value;
     }
     
     public getSlotSuccessfulReservationsOfStation(stationId: number): number | undefined {
-        return this.slotSuccessfulReservationsPerStation.get(stationId);
+        let absoluteValue:  AbsoluteValue = this.slotSuccessfulReservationsPerStation.get(stationId);
+        return absoluteValue.value;
     }
         
     public update(reservation: Reservation): void {
         let key: number = reservation.station.id;
-        let value: number | undefined;
+        let absoluteValue: AbsoluteValue | undefined;
         
         if (reservation.type === 'BIKE' && reservation.state === 'FAILED') {
-            value = this.bikeFailedReservationsPerStation.get(key);
-            if (value !== undefined) {
-                this.bikeFailedReservationsPerStation.set(key, ++value);
+            absoluteValue = this.bikeFailedReservationsPerStation.get(key);
+            if (absoluteValue !== undefined) {
+                absoluteValue.value++;
             }
         }
         else if (reservation.type === 'SLOT' && reservation.state === 'FAILED') {
-            value = this.slotFailedReservationsPerStation.get(key);
-            if (value !== undefined) {                 
-                this.slotFailedReservationsPerStation.set(key, ++value);
+            absoluteValue = this.slotFailedReservationsPerStation.get(key);
+            if (absoluteValue !== undefined) {
+                absoluteValue.value++;
             }
         }
         else if (reservation.type === 'BIKE' && reservation.state === 'ACTIVE') {
-            value = this.bikeSuccessfulReservationsPerStation.get(key);
-            if (value !== undefined) {
-                this.bikeSuccessfulReservationsPerStation.set(key, ++value);
+            absoluteValue = this.bikeSuccessfulReservationsPerStation.get(key);
+            if (absoluteValue !== undefined) {
+                absoluteValue.value++;
             }
         }
         else if (reservation.type === 'SLOT' && reservation.state === 'ACTIVE') {
-            value = this.slotSuccessfulReservationsPerStation.get(key);
-            if (value !== undefined) {                                
-                this.slotSuccessfulReservationsPerStation.set(key, ++value);
+            absoluteValue = this.slotSuccessfulReservationsPerStation.get(key);
+            if (absoluteValue !== undefined) {
+                absoluteValue.value++;
             }
         }
     }
   
-  public print(): void {
-    this.bikeFailedReservationsPerStation.forEach( (value, key) => console.log('Station', key,'Bike failed reservations', value));
-    this.bikeSuccessfulReservationsPerStation.forEach( (value, key) => console.log('Station', key,'Bike successful reservations', value));
-    this.slotFailedReservationsPerStation.forEach( (value, key) => console.log('Station', key,'Slotfailed reservations', value));
-    this.slotSuccessfulReservationsPerStation.forEach( (value, key) => console.log('Station', key,'Slot successful reservations', value));
+  public toString(type: string): string {
+      let str: string = "";
+      switch(type) {
+          case "Failed bike reservations": {
+              this.bikeFailedReservationsPerStation.forEach( (absoluteValue, key) => 
+                  src+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
+              break;
+          }
+              
+          case "Successful bike reservations": {
+              this.bikeSuccessfulReservationsPerStation.forEach( (absoluteValue, key) =>
+                  src+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
+              break; 
+          }
+              
+          case "Failed slot reservations": {
+              this.slotFailedReservationsPerStation.forEach( (absoluteValue, key) =>
+                  src+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
+              break; 
+          }
+              
+          case "Successful slot reservations": {
+              this.slotSuccessfulReservationsPerStation.forEach( (absoluteValue, key) =>
+                  src+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
+              break; 
+          }
+      }
   }
   
-  public getBikeSuccessfulReservations(): Map<number, number> {
+  public getBikeSuccessfulReservations(): Map<number, AbsoluteValue> {
     return this.bikeSuccessfulReservationsPerStation;
   }
    
-   public getSlotSuccessfulReservations(): Map<number, number> {
+   public getSlotSuccessfulReservations(): Map<number, AbsoluteValue> {
      return this.slotSuccessfulReservationsPerStation;
    }
   
-  public getBikeFailedReservations(): Map<number, number> {
+  public getBikeFailedReservations(): Map<number, AbsoluteValue> {
     return this.bikeFailedReservationsPerStation;
   }
   
-  public getSlotFailedReservations(): Map<number, number> {
+  public getSlotFailedReservations(): Map<number, AbsoluteValue> {
     return this.slotFailedReservationsPerStation;
   }
               
