@@ -1,3 +1,4 @@
+import { Data } from '../absoluteValues/Data';
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
@@ -9,80 +10,67 @@ import { CsvGenerator } from "./CsvGenerator";
 export class DataGenerator {
     private readonly INICIALIZATION: number = 5;
     private readonly CALCULATION: number = 2;
+    
     private path: string;
     private counter: number;
-    private reservationCalculator: ReservationCalculator;
-    private rentalAndReturnCalculator: RentalAndReturnCalculator;
-    private data: Map<string, any>;
+    private calculators: Map<string, Calculator>;
+    private data: Map<string, Data>;
     
     public constructor(path: string) {
         this.path = path;
         this.counter = 0;
-        this.rentalAndReturnCalculator = new RentalAndReturnCalculator();
-        this.reservationCalculator = new ReservationCalculator();
+        this.calculators = new Map(); 
         this.data = new Map();
     }
     
-    private async init(): Promise<void> {
-        let reservationsPerUser: ReservationsPerUser = new ReservationsPerUser();
-        let rentalsAndReturnsPerUser: RentalsAndReturnsPerUser = new RentalsAndReturnsPerUser();
-        let reservationsPerStation: ReservationsPerStation = new ReservationsPerStation();
-        let rentalsAndReturnsPerStation: RentalsAndReturnsPerStation = new RentalsAndReturnsPerStation();
+    private async generate(): Promise<void> {
+        this.calculators.set(ReservationCalculator.name, new ReservationCalculator());
+                this.calculators.set(RentalAndReturnCalculator.name, new RentalAndReturnCalculator());
         
-        this.data.set(reservationsPerUser.constructor.name, reservationsPerUser);
-        this.data.set(rentalsAndReturnsPerUser.constructor.name, rentalsAndReturnsPerUser);
-        this.data.set(reservationsPerStation.constructor.name, reservationsPerStation);
-        this.data.set(rentalsAndReturnsPerStation.constructor.name, rentalsAndReturnsPerStation);
+        this.data.set(ReservationsPerUser.name, new ReservationsPerUser());
+        this.data.set(RentalsAndReturnsPerUser.name, new RentalsAndReturnsPerUser());
+        this.data.set(ReservationsPerStation.constructor.name, new ReservationsPerStation());
+        this.data.set(RentalsAndReturnsPerStation.name, new RentalsAndReturnsPerStation());
         
-        this.reservationCalculator.subscribe(reservationsPerUser);
-        this.reservationCalculator.subscribe(reservationsPerStation);
-        this.rentalAndReturnCalculator.subscribe(rentalsAndReturnsPerUser);        
-        this.rentalAndReturnCalculator.subscribe(rentalsAndReturnsPerStation);
-       
-        this.reservationCalculator.init(this.path).then( () => {
+        this.data.forEach( (value, key) => {
+            if (value.actionType == 'reservation') {
+                this.reservationCalculator.subscribe(value);
+            }
+            else if (value.actionType === 'rentalAndReturn') {
+                this.rentalAndReturnCalculator.subscribe(value);
+            }
+        });
+        
+        this.calculators.get(ReservationCalculator.name).init(this.path).then( () => {
             this.counter++; 
             this.calculateAbsoluteValues();     
         });
-         
-        reservationsPerUser.init(this.path).then( () => {
-            this.counter++; 
-            this.calculateAbsoluteValues();
-        });
         
-        rentalsAndReturnsPerUser.init(this.path).then( () => {
-            this.counter++;        
-            this.calculateAbsoluteValues();
-        });
-        
-        reservationsPerStation.init(this.path).then( () => { 
-            this.counter++;
-            this.calculateAbsoluteValues();
-        });
-        
-       rentalsAndReturnsPerStation.init(this.path).then( () => {
-            this.counter++;
-            this.calculateAbsoluteValues();
+        this.data.forEach( (value, key) => {
+            value.init(this.path).then( () => {
+                this.counter++; 
+                this.calculateAbsoluteValues();
+            });
         });
     }
     
     private async calculateAbsoluteValues(): Promise<void> {
         if (this.counter === this.INICIALIZATION) {
             this.counter = 0;
-            this.reservationCalculator.calculateReservations().then( () => {
-                this.counter++;
-                this.write();
+            this.calculators.forEach( (value, key)) => {
+                value.calculate().then( () => {
+                    this.counter++;
+                    this.write();
+                });
             });
-            this.rentalAndReturnCalculator.calculateBikeRentalsAndReturns(this.path).then( () => {
-                this.counter++;
-                this.write();
-            });
+            
          }
     }
     
-    public static async generate(path: string): Promise<DataGenerator> {
+    public static async create(path: string): Promise<DataGenerator> {
         let generator: DataGenerator = new DataGenerator(path);
         try {
-        await generator.init();
+        await generator.generate();
         }
         catch(error) {
             console.log('error initializing data generator:', error);
@@ -92,14 +80,13 @@ export class DataGenerator {
     
     private async write(): Promise<void> {
         if (this.counter === this.CALCULATION) {
-          console.log(this.data.get(ReservationsPerStation.name).getSlotSuccessfulReservationsOfStation(1));
           let generator: CsvGenerator = new CsvGenerator(this.path);
           await generator.generate(this.data);
         }
       return;
     }
 
-		public getData(): Map<string, any> {
+		public getData(): Map<string, Data> {
 		return this.data;
 	}
      

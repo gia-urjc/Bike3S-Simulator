@@ -30,20 +30,15 @@ export class CsvGenerator {
 
 	public async init(data: Map<string, any>): Promise<void> {
 		this.titles.push('id');
-		this.titles.push('bike_failed_reservations');
-		this.titles.push('slot_failed_reservations');
-		this.titles.push('bike_successful_reservations');
-		this.titles.push('slot_successful_reservations');
-		this.titles.push('bike_failed_rentals');
-		this.titles.push('bike_failed_returns');
-		this.titles.push('bike_successful_rentals');
-		this.titles.push('bike_successful_returns');
-    
+        this.data.get(ReservationsPerStation.name).forEach( (value, key) => 
+            this.titles.push(value.name));
+        this.data.get(RentalsAndReturnsPerStation.name).forEach( (value, key) => 
+            this.titles.push(value.name));
     let history: HistoryReader = await HistoryReader.create(this.path);
-    let entities: HistoryEntitiesJson = await history.getEntities('stations');    
-    let stations: Array<Station> = <Station[]> entities.instances;
-    entities = await history.getEntities('users');
-    let users: Array<User> = <User[]> entities.instances;
+    let stationEntities: HistoryEntitiesJson = await history.getEntities('stations');    
+    let stations: Array<Station> = <Station[]> stationEntities.instances;
+    let userEntities: HistoryEntitiesJson = await history.getEntities('users');
+    let users: Array<User> = <User[]> userEntities.instances;
     
     let reservations, rentalsAndReturns: any;
     let value: number;

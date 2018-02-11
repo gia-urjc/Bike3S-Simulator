@@ -4,7 +4,7 @@ import { HistoryIterator } from '../../HistoryIterator';
 import { Reservation } from '../../systemDataTypes/Entities';
 import { Observer, Observable } from '../ObserverPattern';
 
-export class ReservationCalculator implements Observable {
+export class ReservationCalculator implements Calculator {
     private reservations: Array<Reservation>;
     private observers: Array<Observer>;
     
@@ -38,7 +38,7 @@ export class ReservationCalculator implements Observable {
         return it;
     }
     
-    public async calculateReservations(): Promise<boolean> {
+    public async calculate(): Promise<boolean> {
         for (let reservation of this.reservations) {
             this.notify(reservation);
         }

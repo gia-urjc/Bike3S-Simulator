@@ -1,5 +1,5 @@
-import { PlainObject } from "../../../../shared/util";
+import { Observable } from '../ObserverPattern';
 
-export interface Calculator extends  PlainObject {
-  calculate(): void;
+export interface Calculator extends Observable {
+  async calculate(): Promise<void>;
 }
