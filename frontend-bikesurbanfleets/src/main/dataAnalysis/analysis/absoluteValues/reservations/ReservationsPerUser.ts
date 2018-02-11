@@ -2,20 +2,22 @@ import { HistoryReader } from '../../../../util';
 import { HistoryEntitiesJson } from '../../../../../shared/history';
 import { Observer } from '../../ObserverPattern';
 import  { User, Reservation } from '../../../systemDataTypes/Entities';
+import { AbsoluteValue } from '../AbsoluteValue';
+import { Data } from '../Data';
 import { EnumType } from "typescript";
 
-export class ReservationsPerUser implements Observer {
+export class ReservationsPerUser implements Data {
     private users: Array<User>;
-    private bikeFailedReservationsPerUser: Map<number, number>; 
-    private slotFailedReservationsPerUser: Map<number, number>;
-    private bikeSuccessfulReservationsPerUser: Map<number, number>;
-    private slotSuccessfulReservationsPerUser: Map<number, number>;
+    private bikeFailedReservationsPerUser: Map<number, AbsoluteValue>; 
+    private slotFailedReservationsPerUser: Map<number, AbsoluteValue>;
+    private bikeSuccessfulReservationsPerUser: Map<number, AbsoluteValue>;
+    private slotSuccessfulReservationsPerUser: Map<number, AbsoluteValue>;
     
     public constructor() {
-        this.bikeFailedReservationsPerUser = new Map<number, number>(); 
-        this.slotFailedReservationsPerUser = new Map<number, number>();
-        this.bikeSuccessfulReservationsPerUser = new Map<number, number>();
-        this.slotSuccessfulReservationsPerUser = new Map<number, number>();
+        this.bikeFailedReservationsPerUser = new Map<number, AbsoluteValue>(); 
+        this.slotFailedReservationsPerUser = new Map<number, AbsoluteValue>();
+        this.bikeSuccessfulReservationsPerUser = new Map<number, AbsoluteValue>();
+        this.slotSuccessfulReservationsPerUser = new Map<number, AbsoluteValue>();
     }
     
     public async init(path: string): Promise<void> {
@@ -25,10 +27,10 @@ export class ReservationsPerUser implements Observer {
             this.users = entities.instances;
               
             for(let user of this.users) {
-                this.bikeFailedReservationsPerUser.set(user.id, 0);
-                this.slotFailedReservationsPerUser.set(user.id, 0);
-                this.bikeSuccessfulReservationsPerUser.set(user.id, 0);
-                this.slotSuccessfulReservationsPerUser.set(user.id, 0);
+                this.bikeFailedReservationsPerUser.set(user.id, { name: "Failed bike reservations", value: 0});
+                this.slotFailedReservationsPerUser.set(user.id, { name: "Failed slot reservations", value: 0});
+                this.bikeSuccessfulReservationsPerUser.set(user.id, { name: "Successful bike reservations", value: 0});
+                this.slotSuccessfulReservationsPerUser.set(user.id, { name: "Successful slot reservations", value: 0});
             }
         }
         catch(error) {
@@ -49,59 +51,69 @@ export class ReservationsPerUser implements Observer {
     }
     
     public getBikeFailedReservationsOfUser(userId: number): number| undefined {
-     return this.bikeFailedReservationsPerUser.get(userId);
+     let absoluteValue: AbsoluteValue = this.bikeFailedReservationsPerUser.get(userId);
+        return absoluteValue.value;
     }
 
     public getSlotFailedReservationsOfUser(userId: number): number | undefined {
-        return this.slotFailedReservationsPerUser.get(userId);
+        let absoluteValue: AbsoluteValue = this.slotFailedReservationsPerUser.get(userId);
+        return absoluteValue.value;
     }
     
     public getBikeSuccessfulReservationsOfUser(userId: number): number | undefined {
-        return this.bikeSuccessfulReservationsPerUser.get(userId);
+        let absoluteValue: AbsoluteValue = this.bikeSuccessfulReservationsPerUser.get(userId);
+        return absoluteValue.value;
     }
     
     public getSlotSuccessfulReservationsOfUser(userId: number): number | undefined {
-        return this.slotSuccessfulReservationsPerUser.get(userId);
+        let absoluteValue: AbsoluteValue = this.slotSuccessfulReservationsPerUser.get(userId);
+        return absoluteValue.value;
     }
         
     public update(reservation: Reservation): void {
         let key: number = reservation.user.id;
-        let value: number | undefined; 
+        let absoluteValue: AbsoluteValue | undefined; 
         
         if (reservation.type === 'BIKE' && reservation.state === 'FAILED') {
-            value = this.bikeFailedReservationsPerUser.get(key);
-            if (value !== undefined) {
-                this.bikeFailedReservationsPerUser.set(key, ++value);
+            absoluteValue = this.bikeFailedReservationsPerUser.get(key);
+            if (absoluteValue !== undefined) {
+                absoluteValue.value++;
             }
         }
+        
         else if (reservation.type === 'SLOT' && reservation.state === 'FAILED') {
-            value = this.slotFailedReservationsPerUser.get(key);
-            if (value !== undefined) {
-                this.slotFailedReservationsPerUser.set(key, ++value);
+            absoluteValue = this.slotFailedReservationsPerUser.get(key);
+            if (absoluteValue !== undefined) {
+                absoluteValue.value++;
             }
         }
+            
         else if (reservation.type === 'BIKE' && reservation.state === 'ACTIVE') {
-            value = this.bikeSuccessfulReservationsPerUser.get(key);
-            if (value !== undefined) {   
-                this.bikeSuccessfulReservationsPerUser.set(key, ++value);
+            absoluteValue = this.bikeSuccessfulReservationsPerUser.get(key);
+if (absoluteValue !== undefined) {
+                absoluteValue.value++;
             }
         }
+            
         else if (reservation.type === 'SLOT' && reservation.state === 'ACTIVE') {
-            value = this.slotSuccessfulReservationsPerUser.get(key);
-            if (value !== undefined) {             
-                this.slotSuccessfulReservationsPerUser.set(key, ++value);
+            absoluteValue = this.slotSuccessfulReservationsPerUser.get(key);
+if (absoluteValue !== undefined) {
+                absoluteValue.value++;
             }
         }
 
     }
   
-  public print(): void {
-    this.bikeFailedReservationsPerUser.forEach( (value, key) => console.log('User', key,'Bike failed reservations', value));
-    this.bikeSuccessfulReservationsPerUser.forEach( (value, key) => console.log('User', key,'Bike successful reservations', value));
-    this.slotFailedReservationsPerUser.forEach( (value, key) => console.log('User', key,'Slotfailed reservations', value));
-    this.slotSuccessfulReservationsPerUser.forEach( (value, key) => console.log('User', key,'Slot successful reservations', value));
+  public toString(): string {
+      let src: string='';
+    this.bikeFailedReservationsPerUser.forEach( (absoluteValue, key) => 
+        src+='User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n'));
+    this.bikeSuccessfulReservationsPerUser.forEach( (absoluteValue, key) => 
+        src+='User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n')); 
+        src+='User: '+key+' Successful bike reservations: '+value+'\n'));
+    this.slotFailedReservationsPerUser.forEach( (absoluteValue, key) => 
+        src+='User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n'));
+    this.slotSuccessfulReservationsPerUser.forEach( (absoluteValue, key) => 
+        src+='User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n'));
   }
-  
-
-               
 }
