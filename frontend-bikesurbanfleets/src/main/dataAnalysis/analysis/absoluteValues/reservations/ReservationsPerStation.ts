@@ -3,6 +3,7 @@ import { HistoryEntitiesJson } from '../../../../../shared/history';
 import { Observer } from '../../ObserverPattern';
 import  { Station, Reservation } from '../../../systemDataTypes/Entities';
 import { AbsoluteValue } from '../AbsoluteValue';
+import { Data } from "../Data";
 
 export class ReservationsPerStation implements Data {
     private stations: Array<Station>;
@@ -10,14 +11,25 @@ export class ReservationsPerStation implements Data {
     private slotFailedReservationsPerStation: Map<number, AbsoluteValue>;
     private bikeSuccessfulReservationsPerStation: Map<number, AbsoluteValue>;
     private slotSuccessfulReservationsPerStation: Map<number, AbsoluteValue>;
+  private factType: string;
+  private entityType: string;
     
     public constructor() {
-        // TODO: init data attr
+        this.factType = "RESERVATION";
+        this.entityType = "STATION";
         this.bikeFailedReservationsPerStation = new Map<number, AbsoluteValue>(); 
         this.slotFailedReservationsPerStation = new Map<number, AbsoluteValue>();
         this.bikeSuccessfulReservationsPerStation = new Map<number, AbsoluteValue>();
         this.slotSuccessfulReservationsPerStation = new Map<number, AbsoluteValue>();
     }
+  
+  public getFactType(): string {
+    return this.factType;
+  }
+  
+  public getEntityType(): string {
+    return this.entityType;
+  }
     
     public async init(path: string): Promise<void> {
         try {
@@ -63,34 +75,31 @@ export class ReservationsPerStation implements Data {
         let absoluteValue:  AbsoluteValue = this.slotSuccessfulReservationsPerStation.get(stationId);
         return absoluteValue.value;
     }
-        
+  
+  private increaseValue(data: Map<number, AbsoluteValue>, key: number): void { 
+      let absoluteValue: AbsoluteValue = data.get(key);
+      if (absoluteValue !== undefined) {  // a gotten map value could be undefined
+          absoluteValue.value++;
+      }
+ }
+  
     public update(reservation: Reservation): void {
         let key: number = reservation.station.id;
-        let absoluteValue: AbsoluteValue | undefined;
-        
+            
         if (reservation.type === 'BIKE' && reservation.state === 'FAILED') {
-            absoluteValue = this.bikeFailedReservationsPerStation.get(key);
-            if (absoluteValue !== undefined) {
-                absoluteValue.value++;
-            }
+            this.increaseValue(this.bikeFailedReservationsPerStation, key);
         }
+            
         else if (reservation.type === 'SLOT' && reservation.state === 'FAILED') {
-            absoluteValue = this.slotFailedReservationsPerStation.get(key);
-            if (absoluteValue !== undefined) {
-                absoluteValue.value++;
-            }
+            this.increaseValue(this.slotFailedReservationsPerStation, key);
         }
+          
         else if (reservation.type === 'BIKE' && reservation.state === 'ACTIVE') {
-            absoluteValue = this.bikeSuccessfulReservationsPerStation.get(key);
-            if (absoluteValue !== undefined) {
-                absoluteValue.value++;
-            }
+            this.increaseValue(this.bikeSuccessfulReservationsPerStation, key);
         }
+          
         else if (reservation.type === 'SLOT' && reservation.state === 'ACTIVE') {
-            absoluteValue = this.slotSuccessfulReservationsPerStation.get(key);
-            if (absoluteValue !== undefined) {
-                absoluteValue.value++;
-            }
+            this.increaseValue(this.slotSuccessfulReservationsPerStation, key);
         }
     }
   
@@ -99,28 +108,29 @@ export class ReservationsPerStation implements Data {
       switch(type) {
           case "Failed bike reservations": {
               this.bikeFailedReservationsPerStation.forEach( (absoluteValue, key) => 
-                  src+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
+                  str+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
               break;
           }
               
           case "Successful bike reservations": {
               this.bikeSuccessfulReservationsPerStation.forEach( (absoluteValue, key) =>
-                  src+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
+                  str+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
               break; 
           }
               
           case "Failed slot reservations": {
               this.slotFailedReservationsPerStation.forEach( (absoluteValue, key) =>
-                  src+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
+                  str+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
               break; 
           }
               
           case "Successful slot reservations": {
               this.slotSuccessfulReservationsPerStation.forEach( (absoluteValue, key) =>
-                  src+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
+                  str+= 'Station '+key+' '+absoluteValue.name+': '+absoluteValue.value);
               break; 
           }
       }
+    return str;
   }
   
   public getBikeSuccessfulReservations(): Map<number, AbsoluteValue> {

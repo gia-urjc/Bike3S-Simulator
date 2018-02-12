@@ -13,13 +13,24 @@ export class RentalsAndReturnsPerUser implements Data {
     private bikeSuccessfulRentalsPerUser: Map<number, AbsoluteValue>;
     private bikeFailedReturnsPerUser: Map<number, AbsoluteValue>;
     private bikeSuccessfulReturnsPerUser: Map<number, AbsoluteValue>;
+  private factType: string;
+  private entityType: string;
     
     public constructor() {
-        // TODO: init data attr
+        this.factType = "RENTAL_AND_RETURN";
+        this.entityType = "USER";
         this.bikeFailedRentalsPerUser = new Map<number, AbsoluteValue>();
         this.bikeSuccessfulRentalsPerUser = new Map<number, AbsoluteValue>();
-        this.bikeFailedReturnsPerUser = new Map<number, number>();
+        this.bikeFailedReturnsPerUser = new Map<number, AbsoluteValue>();
         this.bikeSuccessfulReturnsPerUser = new Map<number, AbsoluteValue>();
+    }
+  
+    public getFactType(): string {
+      return this.factType;
+    }
+  
+    public getEntityType(): string {
+      return this.entityType;
     }
     
     public async init(path: string): Promise<void> {
@@ -54,7 +65,7 @@ export class RentalsAndReturnsPerUser implements Data {
 
     public getBikeFailedRentalsOfUser(userId: number): number | undefined {
         let absoluteValue: AbsoluteValue = this.bikeFailedRentalsPerUser.get(userId);
-        return absolute.Value.value;
+        return absoluteValue.value;
     }
     
     public getBikeSuccessfulRentalsOfUser(userId: number): number | undefined {
@@ -71,30 +82,30 @@ export class RentalsAndReturnsPerUser implements Data {
         let absoluteValue: AbsoluteValue = this.bikeSuccessfulReturnsPerUser.get(userId);
         return absoluteValue.value;
     }
-    
+  
+  private increaseValue(data: Map<number, AbsoluteValue>, key: number): void { 
+      let absoluteValue: AbsoluteValue = data.get(key);
+      if (absoluteValue !== undefined) {  // a gotten map value could be undefined
+          absoluteValue.value++;
+      }
+ }
+  
     public update(timeEntry: TimeEntry): void {
         let events: Array<Event> = timeEntry.events;
 
         let key: number;
-        let absoluteValue: AbsoluteValue | undefined;
 
         for(let event of events) {
             if (event.name === 'EventUserArrivesAtStationToRentBikeWithReservation'
                 && event.changes.users.length > 0) {
                 key = event.changes.users[0].id;
-                absoluteValue = this.bikeSuccessfulRentalsPerUser.get(key);
-                if (absoluteValue !== undefined) {
-                    absoluteValue.value++;
-                }
+                this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
             }
                 
             else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithReservation'
                 &&  event.changes.users.length > 0) {
                 key = event.changes.users[0].id;
-                absoluteValue = this.bikeSuccessfulReturnsPerUser.get(key);
-                if (absoluteValue !== undefined) {
-                    absoluteValue.value++;
-                }
+                this.increaseValue(this.bikeSuccessfulReturnsPerUser, key);
             }
             
             else if (event.name === 'EventUserArrivesAtStationToRentBikeWithoutReservation'
@@ -102,16 +113,10 @@ export class RentalsAndReturnsPerUser implements Data {
                 key = event.changes.users[0].id;
                 let bike: any = event.changes.users[0].bike;
                 if (bike !== undefined) {
-                    absoluteValue = this.bikeSuccessfulRentalsPerUser.get(key);
-                    if (absoluteValue !== undefined) {
-                       absoluteValue.value++;
-                    }
+                    this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
                 }
                 else {
-                    absoluteValue = this.bikeFailedRentalsPerUser.get(key);
-                    if (absoluteValue !== undefined) {
-                        absoluteValue.value++;
-                    }
+                  this.increaseValue(this.bikeFailedRentalsPerUser, key);
                 }
             }
     
@@ -120,32 +125,27 @@ export class RentalsAndReturnsPerUser implements Data {
                 key = event.changes.users[0].id;
                 let bike: any = event.changes.users[0].bike;
                 if (bike !== undefined) {
-                    absoluteValue = this.bikeSuccessfulReturnsPerUser.get(key);
-                    if (absoluteValue !== undefined) {
-                       absoluteValue.value++;
-                    }
+                    this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
                 }
                 else {
-                    absoluteValue = this.bikeFailedReturnsPerUser.get(key);
-                    if (absoluteValue !== undefined) {
-                       absoluteValue.value++;
-                    }
+                  this.increaseValue(this.bikeFailedRentalsPerUser, key);
                 }
             }
         }
     }
   
   public toString(): string {
+    let str: string = '';
     this.bikeFailedReturnsPerUser.forEach( (absoluteValue, key) => 
-        src += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
+        str += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
     this.bikeFailedRentalsPerUser.forEach( (absoluteValue, key) => 
-        src += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
+        str += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
     this.bikeSuccessfulReturnsPerUser.forEach( (absoluteValue, key) => 
-        src += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
+        str += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
     this.bikeSuccessfulRentalsPerUser.forEach( (absoluteValue, key) => 
-        src += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
+        str += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
       
-      return src;
+      return str;
   }
   
        

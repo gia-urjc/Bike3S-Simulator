@@ -30,9 +30,9 @@ export class CsvGenerator {
 
 	public async init(data: Map<string, any>): Promise<void> {
 		this.titles.push('id');
-        this.data.get(ReservationsPerStation.name).forEach( (value, key) => 
+        data.get(ReservationsPerStation.name).forEach( (value, key) => 
             this.titles.push(value.name));
-        this.data.get(RentalsAndReturnsPerStation.name).forEach( (value, key) => 
+        data.get(RentalsAndReturnsPerStation.name).forEach( (value, key) => 
             this.titles.push(value.name));
     let history: HistoryReader = await HistoryReader.create(this.path);
     let stationEntities: HistoryEntitiesJson = await history.getEntities('stations');    

@@ -12,13 +12,25 @@ export class RentalsAndReturnsPerStation implements Data {
     private bikeSuccessfulRentalsPerStation: Map<number, AbsoluteValue>;
     private bikeFailedReturnsPerStation: Map<number, AbsoluteValue>;
     private bikeSuccessfulReturnsPerStation: Map<number, AbsoluteValue>;
+    private factType: string;
+    private entityType: string;
     
     public constructor() {
+        this.factType = "RENTAL_AND_RETURN";
+        this.entityType = "STATION"; 
         this.bikeFailedRentalsPerStation = new Map<number, AbsoluteValue>();
         this.bikeSuccessfulRentalsPerStation = new Map<number, AbsoluteValue>();
         this.bikeFailedReturnsPerStation = new Map<number, AbsoluteValue>();
         this.bikeSuccessfulReturnsPerStation = new Map<number, AbsoluteValue>();
     }
+  
+  public getFactType(): string {
+    return this.factType;
+  }
+  
+  public getEntityType(): string{
+    return this.entityType;
+  }
     
     public async init(path: string): Promise<void> {
         try {
@@ -49,72 +61,53 @@ export class RentalsAndReturnsPerStation implements Data {
         }
         return stationValues;
     }
+  
+  private increaseValue(data: Map<number, AbsoluteValue>, key: number | undefined): void {
+    if (key !== undefined) {
+      let absoluteValue: AbsoluteValue = data.get(key);
+      if (absoluteValue !== undefined) {  // a gotten map value could be undefined
+          absoluteValue.value++;
+      }
+    }
+ }
     
     public update(timeEntry: TimeEntry): void {
         let events: Array<Event> = timeEntry.events;
             
         let key: number | undefined;
-        let absoluteValue: AbsoluteValue | undefined; 
         
         for (let event of events) {
-                
             if (event.name === 'EventUserArrivesAtStationToRentBikeWithReservation' 
                 && event.changes.stations.length > 0) {
-                key = this.obtainChanedStation(id(event.changes.stations));
-                absoluteValue = this.bikeSuccessfulRentalsPerStation.get(key);
-                if (absoluteValue !== undefined) {  // a gotten map value could be undefined
-                    absoluteValue.value++;
-                }
+                key = this.obtainChangedStationId(event.changes.stations);
+                this.increaseValue(this.bikeSuccessfulRentalsPerStation, key);
             }
             
             else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithReservation'
                 && event.changes.stations.length > 0) {
-                key = this.obtainchangedStationId(event.changes.stations);
-                absoluteValue = this.bikeSuccessfulReturnsPerStation.get(key);
-                if (absoluteValue !== undefined) {  // a gotten map value can be undefined
-                    absoluteValue.value++; 
-                }
+                key = this.obtainChangedStationId(event.changes.stations);
+                this.increaseValue(this.bikeSuccessfulReturnsPerStation, key);
             }
                 
             else if (event.name === 'EventUserArrivesAtStationToRentBikeWithoutReservation') {
-            
-                if(event.changes.users[0] === undefined) {
-                    console.log("There not registered users in an arrival event");     
-                }
                 if (event.changes.stations > 0) {
                     key = this.obtainChangedStationId(event.changes.stations);
-                    if (key !== undefined) {
-                        absolluteValue = this.bikeSuccessfulRentalsPerStation.get(key);
-                        if (absoluteValue !== undefined) {
-                            absoluteValue.value++;
-                        }
-                    }
+                    this.increaseValue(this.bikeSuccessfulRentalsPerStation, key);
                 }
                 else {
                     key = this.obtainNotChangedStationId(event.changes.users[0]);
-                    absoluteValue = this.bikeFailedRentalsPerStation.get(key);
-                    if (absoluteValue !== undefined) {
-                        absoluteValue.value++;
-                    }
+                    this.increaseValue(this.bikeFailedRentalsPerStation, key);
                 }
             }
             
             else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithoutReservation') {
                 if (event.changes.stations.length > 0) {
-                    key = this.obtainChanedStationId(event.changes.stations);
-                    if (key !== undefined) {
-                        absoluteValue = this.bikeSuccessfulReturnsPerStation.get(key);
-                        if (absoluteValue !== undefined) {
-                            absoluteValue.value++;
-                        }
-                    }
+                    key = this.obtainChangedStationId(event.changes.stations);
+                    this.increaseValue(this.bikeSuccessfulReturnsPerStation, key);
                 }
                 else {
                     key = this.obtainNotChangedStationId(event.changes.users[0]);
-                    absoluteValue = this.bikeFailedReturnsPerStation.get(key);
-                    if (absoluteValue !== undefined) {
-                        absoluteValue.value++;
-                    }
+                    this.increaseValue(this.bikeFailedReturnsPerStation, key);
                 }
             }
         }
@@ -152,23 +145,23 @@ export class RentalsAndReturnsPerStation implements Data {
         return undefined;
     }
     
-    public getBikeFailedRentalsOfStation(stationId: number): A| undefined {
-        let value: AbsoluteValue = this.bikeFailedRentalsPerStation.get(stationId);
+    public getBikeFailedRentalsOfStation(stationId: number): number | undefined {
+        let absoluteValue: AbsoluteValue = this.bikeFailedRentalsPerStation.get(stationId);
         return absoluteValue.value;
     }
     
     public getBikeSuccessfulRentalsOfStation(stationId: number): number | undefined {
-        let value: AbsoluteValue = this.bikeSuccessfulRentalsPerStation.get(stationId);
+        let absoluteValue: AbsoluteValue = this.bikeSuccessfulRentalsPerStation.get(stationId);
         return absoluteValue.value;
     }
     
     public getBikeFailedReturnsOfStation(stationId: number): number | undefined {
-        let value: AbsoluteValue = this.bikeFailedReturnsPerStation.get(stationId);
+        let absoluteValue: AbsoluteValue = this.bikeFailedReturnsPerStation.get(stationId);
         return absoluteValue.value; 
     }
     
     public getBikeSuccessfulReturnsOfStation(stationId: number): number | undefined {
-        let value: AbsoluteValue = this.bikeSuccessfulReturnsPerStation.get(stationId);
+        let absoluteValue: AbsoluteValue = this.bikeSuccessfulReturnsPerStation.get(stationId);
         return absoluteValue.value;
     }
   
@@ -177,28 +170,28 @@ export class RentalsAndReturnsPerStation implements Data {
       switch(type) {
           case "Failed bike returns": {
               this.bikeFailedReturnsPerStation.forEach( (absoluteValue, key) => 
-                  str += 'Station'+key+absoluteValue.name+':'+absolutevalue.value+'\n');
+                  str += 'Station'+key+absoluteValue.name+':'+absoluteValue.value+'\n');
               break;
           }
               
           case "Failed bike rentals": {
               this.bikeFailedRentalsPerStation.forEach( (absoluteValue, key) => 
-                  str += 'Station'+key+absoluteValue.name+':'+absolutevalue.value+'\n');
+                  str += 'Station'+key+absoluteValue.name+':'+absoluteValue.value+'\n');
               break; 
           }
               
           case "Successful bike reutrns": {
               this.bikeSuccessfulReturnsPerStation.forEach( (absoluteValue, key) => 
-                  str += 'Station'+key+absoluteValue.name+':'+absolutevalue.value+'\n');
+                  str += 'Station'+key+absoluteValue.name+':'+absoluteValue.value+'\n');
               break;
           }
           case "Successful bike rentals": {
-              this.bikeSuccessfulRentalsPerStation.this.bikeSuccessfulRentalsPerStation.forEach( (value, key) => console.log('Station', key, 'Bike successful rentals', value));
+              this.bikeSuccessfulRentalsPerStation.forEach( (value, key) => console.log('Station', key, 'Bike successful rentals', value));
               break;
           }
               
       }
-      return src;
+      return str;
     
   }
   

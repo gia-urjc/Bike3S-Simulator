@@ -3,6 +3,7 @@ import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
+import { Calculator } from "../systemDataCalculators/Calculator";
 import { ReservationCalculator } from "../systemDataCalculators/ReservationCalculator";
 import { RentalAndReturnCalculator } from "../systemDataCalculators/RentalAndReturnCalculator";
 import { CsvGenerator } from "./CsvGenerator";
@@ -33,15 +34,15 @@ export class DataGenerator {
         this.data.set(RentalsAndReturnsPerStation.name, new RentalsAndReturnsPerStation());
         
         this.data.forEach( (value, key) => {
-            if (value.actionType == 'reservation') {
-                this.reservationCalculator.subscribe(value);
+            if (value.getFact.Type() == 'RESERVATION') {
+                this.calculators.get(ReservationCalculator.name).subscribe(value);
             }
-            else if (value.actionType === 'rentalAndReturn') {
-                this.rentalAndReturnCalculator.subscribe(value);
+            else if (value.getFactType() === 'RENTAL_AND_RETURN') {
+                this.calculators.get(RentalAndReturnCalculator.name).subscribe(value);
             }
         });
         
-        this.calculators.get(ReservationCalculator.name).init(this.path).then( () => {
+        this.calculators.get(ReservationCalculator.name).calculate(this.path).then( () => {
             this.counter++; 
             this.calculateAbsoluteValues();     
         });
@@ -57,11 +58,11 @@ export class DataGenerator {
     private async calculateAbsoluteValues(): Promise<void> {
         if (this.counter === this.INICIALIZATION) {
             this.counter = 0;
-            this.calculators.forEach( (value, key)) => {
-                value.calculate().then( () => {
+            this.calculators.forEach((value, key) => {
+                value.calculate().then(() => {
                     this.counter++;
                     this.write();
-                });
+                })
             });
             
          }
