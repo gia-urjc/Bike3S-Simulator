@@ -18,9 +18,9 @@ export class ReservationsPerUser implements Observer {
         this.slotSuccessfulReservationsPerUser = new Map<number, number>();
     }
     
-    public async init(path: string): Promise<void> {
+    public async init(path: string, schemaPath?: string | null): Promise<void> {
         try {
-            let history: HistoryReader = await HistoryReader.create(path);
+            let history: HistoryReader = await HistoryReader.create(path, schemaPath);
             let entities: HistoryEntitiesJson = await history.getEntities("users");
             this.users = entities.instances;
               
@@ -37,10 +37,10 @@ export class ReservationsPerUser implements Observer {
         return;
     }
    
-    public static async create(path: string): Promise<ReservationsPerUser> {
+    public static async create(path: string, schemaPath?: string | null): Promise<ReservationsPerUser> {
         let reservationValues = new ReservationsPerUser();
         try {
-            await reservationValues.init(path);
+            await reservationValues.init(path, schemaPath);
         }
         catch {
             console.log('error creating reservations per user data');

@@ -121,7 +121,7 @@ public class UserObedient extends User {
 
         List<Station> stations;
         if (parameters.willReserve) {
-            stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+            stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
         }
         else {
             stations = systemManager.consultStationsWithoutBikeReturnAttempts(this);

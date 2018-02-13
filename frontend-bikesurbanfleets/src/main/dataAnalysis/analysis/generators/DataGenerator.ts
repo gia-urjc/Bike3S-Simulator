@@ -11,13 +11,17 @@ export class DataGenerator {
     private readonly INICIALIZATION: number = 5;
     private readonly CALCULATION: number = 2;
     private path: string;
+    private schemaPath: string | null;
+    private csvPath: string;
     private counter: number;
     private reservationCalculator: ReservationCalculator;
     private rentalAndReturnCalculator: RentalAndReturnCalculator;
     private data: Map<string, any>;
     
-    public constructor(path: string) {
+    public constructor(path: string, csvPath: string, schemaPath?:string) {
         this.path = path;
+        this.schemaPath = schemaPath == null ? null : schemaPath;
+        this.csvPath = csvPath;
         this.counter = 0;
         this.rentalAndReturnCalculator = new RentalAndReturnCalculator();
         this.reservationCalculator = new ReservationCalculator();
@@ -40,27 +44,27 @@ export class DataGenerator {
         this.rentalAndReturnCalculator.subscribe(rentalsAndReturnsPerUser);        
         this.rentalAndReturnCalculator.subscribe(rentalsAndReturnsPerStation);
        
-        this.reservationCalculator.init(this.path).then( () => {
+        this.reservationCalculator.init(this.path, this.schemaPath).then( () => {
             this.counter++; 
             this.calculateAbsoluteValues();     
         });
          
-        reservationsPerUser.init(this.path).then( () => {
+        reservationsPerUser.init(this.path, this.schemaPath).then( () => {
             this.counter++; 
             this.calculateAbsoluteValues();
         });
         
-        rentalsAndReturnsPerUser.init(this.path).then( () => {
+        rentalsAndReturnsPerUser.init(this.path, this.schemaPath).then( () => {
             this.counter++;        
             this.calculateAbsoluteValues();
         });
         
-        reservationsPerStation.init(this.path).then( () => { 
+        reservationsPerStation.init(this.path, this.schemaPath).then( () => {
             this.counter++;
             this.calculateAbsoluteValues();
         });
         
-       rentalsAndReturnsPerStation.init(this.path).then( () => {
+       rentalsAndReturnsPerStation.init(this.path, this.schemaPath).then( () => {
             this.counter++;
             this.calculateAbsoluteValues();
         });
@@ -73,15 +77,16 @@ export class DataGenerator {
                 this.counter++;
                 this.writeAndCalculateSystemGlobalData();
             });
-            this.rentalAndReturnCalculator.calculateBikeRentalsAndReturns(this.path).then( () => {
+            this.rentalAndReturnCalculator.calculateBikeRentalsAndReturns(this.path, this.schemaPath).then( () => {
                 this.counter++;
                 this.writeAndCalculateSystemGlobalData();
             });
          }
     }
     
-    public static async generate(path: string): Promise<DataGenerator> {
-        let generator: DataGenerator = new DataGenerator(path);
+    public static async generate(path: string, csvPath: string, schemaPath?: string): Promise<DataGenerator> {
+        console.log(schemaPath);
+        let generator: DataGenerator = new DataGenerator(path, csvPath, schemaPath);
         try {
             await generator.init();
         }
@@ -95,9 +100,9 @@ export class DataGenerator {
         if (this.counter === this.CALCULATION) {
           console.log(this.data.get(ReservationsPerStation.name).getSlotSuccessfulReservationsOfStation(1));
           let globalValues: SystemGlobalValues = new SystemGlobalValues(this.data);
-          await globalValues.init(this.path);
+          await globalValues.init(this.path, this.schemaPath);
           globalValues.calculateGlobalData();
-          let generator: CsvGenerator = new CsvGenerator(this.path, globalValues);
+          let generator: CsvGenerator = new CsvGenerator(this.path, globalValues,this.csvPath, this.schemaPath);
           await generator.generate(this.data);
         }
       return;

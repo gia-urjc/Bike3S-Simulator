@@ -13,8 +13,8 @@ export class ReservationCalculator implements Observable {
       
     }
     
-    public async init(path: string): Promise<void> {
-        let history: HistoryReader = await HistoryReader.create(path);
+    public async init(path: string, schemaPath?:string|null): Promise<void> {
+        let history: HistoryReader = await HistoryReader.create(path, schemaPath);
         try {
             let entities: HistoryEntitiesJson = await history.getEntities("reservations");
    
@@ -27,10 +27,10 @@ export class ReservationCalculator implements Observable {
         return; 
     }
     
-    public static async create(path: string): Promise<ReservationCalculator> {
+    public static async create(path: string, schemaPath?: string | null): Promise<ReservationCalculator> {
         let it = new ReservationCalculator();
         try {
-            await it.init(path);
+            await it.init(path, schemaPath);
         }
         catch(error) {
             console.log('error creating the reservations iterator: ', error);

@@ -68,14 +68,13 @@ namespace Main {
     
     export async function test() {
        try {
-            let data: DataGenerator = await DataGenerator.generate('history');
+            let data: DataGenerator = await DataGenerator.generate('history', 'csvFiles');
         }
         catch(error) {
-           console.log('esto ha petao:', error);
+           console.log('Error: ', error);
         }
         
     }
-    
 }
   
 Main.init();

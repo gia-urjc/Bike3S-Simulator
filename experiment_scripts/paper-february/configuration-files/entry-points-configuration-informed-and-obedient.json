@@ -1,0 +1,124 @@
+{
+    "entryPoints": [
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_INFORMED"
+            },
+            "position": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            },
+            "radius": 100,
+            "totalUsers": 625,
+            "distribution": {
+                "lambda": 0.057870370370370364
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_INFORMED"
+            },
+            "position": {
+                "latitude": 40.418969,
+                "longitude": -3.700819
+            },
+            "radius": 100,
+            "totalUsers": 625,
+            "distribution": {
+                "lambda": 0.057870370370370364
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_INFORMED"
+            },
+            "position": {
+                "latitude": 40.4131931,
+                "longitude": -3.70456
+            },
+            "radius": 100,
+            "totalUsers": 625,
+            "distribution": {
+                "lambda": 0.057870370370370364
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_INFORMED"
+            },
+            "position": {
+                "latitude": 40.4131931,
+                "longitude": -3.7104038
+            },
+            "radius": 100,
+            "totalUsers": 625,
+            "distribution": {
+                "lambda": 0.057870370370370364
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_OBEDIENT"
+            },
+            "position": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            },
+            "radius": 100,
+            "totalUsers": 625,
+            "distribution": {
+                "lambda": 0.057870370370370364
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_OBEDIENT"
+            },
+            "position": {
+                "latitude": 40.418969,
+                "longitude": -3.700819
+            },
+            "radius": 100,
+            "totalUsers": 625,
+            "distribution": {
+                "lambda": 0.057870370370370364
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_OBEDIENT"
+            },
+            "position": {
+                "latitude": 40.4131931,
+                "longitude": -3.70456
+            },
+            "radius": 100,
+            "totalUsers": 625,
+            "distribution": {
+                "lambda": 0.057870370370370364
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_OBEDIENT"
+            },
+            "position": {
+                "latitude": 40.4131931,
+                "longitude": -3.7104038
+            },
+            "radius": 100,
+            "totalUsers": 625,
+            "distribution": {
+                "lambda": 0.057870370370370364
+            }
+        }
+    ]
+}

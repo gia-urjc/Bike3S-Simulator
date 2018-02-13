@@ -47,8 +47,8 @@ export class SystemGlobalValues {
     this.demandSatisfaction = 0;
   }
   
-  public async init(path: string): Promise<void> {
-    let history: HistoryReader = await HistoryReader.create(path);
+  public async init(path: string, schemaPath?: string | null): Promise<void> {
+    let history: HistoryReader = await HistoryReader.create(path, schemaPath);
     let entities: HistoryEntitiesJson = await history.getEntities("users");
     let users: Array<User> = entities.instances;
     this.numberUsers = users.length;

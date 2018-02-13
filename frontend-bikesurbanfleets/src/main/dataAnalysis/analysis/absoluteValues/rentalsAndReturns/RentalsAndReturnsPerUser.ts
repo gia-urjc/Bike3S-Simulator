@@ -20,9 +20,9 @@ export class RentalsAndReturnsPerUser implements Observer {
         this.bikeSuccessfulReturnsPerUser = new Map<number, number>();
     }
     
-    public async init(path: string): Promise<void> {
+    public async init(path: string, schemaPath?:string | null): Promise<void> {
         try {
-            let history: HistoryReader = await HistoryReader.create(path);
+            let history: HistoryReader = await HistoryReader.create(path, schemaPath);
             let entities: HistoryEntitiesJson = await history.getEntities("users");
             this.users = entities.instances;
                 
@@ -39,10 +39,10 @@ export class RentalsAndReturnsPerUser implements Observer {
         return;
     }
 
-    public static async create(path: string): Promise<RentalsAndReturnsPerUser> {
+    public static async create(path: string, schemaPath?: string | null): Promise<RentalsAndReturnsPerUser> {
         let rentalsAndReturnsValues = new RentalsAndReturnsPerUser();
         try {
-            await rentalsAndReturnsValues.init(path);
+            await rentalsAndReturnsValues.init(path, schemaPath);
         }
         catch(error) {
             console.log(error);

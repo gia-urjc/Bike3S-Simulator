@@ -10,10 +10,10 @@ export class RentalAndReturnCalculator implements Observable {
         this.observers = new Array<Observer>();
     }
     
-    public async calculateBikeRentalsAndReturns(path: string): Promise<void> {
+    public async calculateBikeRentalsAndReturns(path: string, schemaPath?: string | null): Promise<void> {
         let it: HistoryIterator; 
         try {
-            it = await HistoryIterator.create(path);
+            it = await HistoryIterator.create(path, schemaPath);
             let timeEntry: TimeEntry = await it.nextTimeEntry();
        
             while(timeEntry !== undefined) {

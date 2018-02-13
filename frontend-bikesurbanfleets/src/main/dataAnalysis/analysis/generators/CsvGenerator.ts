@@ -15,10 +15,12 @@ export class CsvGenerator {
 	private stationData: Array<JsonObject>;
 	private userData: Array<JsonObject>;
     private path: string;
+    private schemaPath: string | null;
     private globalValuesFields: Array<string>;
     private globalValues: JsonObject;
+    private csvPath: string;
   
-  public constructor(path: string, globalValues: SystemGlobalValues) {
+  public constructor(path: string, globalValues: SystemGlobalValues, csvPath:string, schemaPath?: string| null) {
     this.titles = new Array();
     this.stationData = new Array();
     this.userData = new Array();
@@ -28,6 +30,8 @@ export class CsvGenerator {
     this.globalValues.hire_efficiency = globalValues.getRentalEfficiency();
     this.globalValues.return_efficiency = globalValues.getReturnEfficiency();
     this.path = path;
+    this.schemaPath = schemaPath == null ? null : schemaPath;
+    this.csvPath = csvPath;
   }
 
 	public async generate(data: Map<string, any>): Promise<void> {
@@ -51,7 +55,7 @@ export class CsvGenerator {
 		this.globalValuesFields.push('hire_efficiency');
 		this.globalValuesFields.push('return_efficiency');
     
-    let history: HistoryReader = await HistoryReader.create(this.path);
+    let history: HistoryReader = await HistoryReader.create(this.path, this.schemaPath);
     let entities: HistoryEntitiesJson = await history.getEntities('stations');    
     let stations: Array<Station> = <Station[]> entities.instances;
     entities = await history.getEntities('users');
@@ -129,20 +133,27 @@ export class CsvGenerator {
 
 	public transformToCsv(): void {
         let csv = json2csv({ data: this.stationData, fields: this.titles, withBOM: true });
-        fs.writeFile ('stations.csv', csv, (err) => {
+        this.checkFolders();
+        fs.writeFile (`${this.csvPath}/stations.csv`, csv, (err) => {
           if (err) throw err;
           console.log('stations file saved');
         });
         csv = json2csv({ data: this.userData, fields: this.titles, withBOM: true });
-        fs.writeFile ('users.csv', csv, (err) => {
+        fs.writeFile (`${this.csvPath}/users.csv`, csv, (err) => {
           if (err) throw err;
           console.log('user file saved');
         });
         csv = json2csv({data: [this.globalValues], fields: this.globalValuesFields, withBOM: true });
-        fs.writeFile('global_values.csv', csv, (err) => {
+        fs.writeFile(`${this.csvPath}/global_values.csv`, csv, (err) => {
             if (err) throw err;
             console.log('global values file saved');
         });
 	}
+
+	private checkFolders(): void {
+        if(!fs.existsSync(this.csvPath)) {
+            fs.mkdirSync(this.csvPath);
+        }
+    }
 
 }  

@@ -19,9 +19,9 @@ export class RentalsAndReturnsPerStation implements Observer {
         this.bikeSuccessfulReturnsPerStation = new Map<number, number>();
     }
     
-    public async init(path: string): Promise<void> {
+    public async init(path: string, schemaPath?: string | null): Promise<void> {
         try {
-            let history: HistoryReader = await HistoryReader.create(path);
+            let history: HistoryReader = await HistoryReader.create(path, schemaPath);
             let entities: HistoryEntitiesJson = await history.getEntities("stations");
             this.stations = <Station[]> entities.instances;
                 
@@ -38,10 +38,10 @@ export class RentalsAndReturnsPerStation implements Observer {
         return;
     }
     
-    public static async create(path: string): Promise<RentalsAndReturnsPerStation> {
+    public static async create(path: string, schemaPath?: string | null): Promise<RentalsAndReturnsPerStation> {
         let stationValues = new RentalsAndReturnsPerStation();
         try {
-            await stationValues.init(path);
+            await stationValues.init(path, schemaPath);
         }
         catch(error) {
             console.log('error creating station values:', error);

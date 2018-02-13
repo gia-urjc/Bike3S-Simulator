@@ -11,10 +11,10 @@ export class HistoryIterator {
         this.pointer = -1;
     }
 
-    public static async create(path: string): Promise<HistoryIterator> {
+    public static async create(path: string, schemaPath?: string | null): Promise<HistoryIterator> {
         let historyIt: HistoryIterator = new HistoryIterator();
         try {
-            historyIt.history = await HistoryReader.create(path);
+            historyIt.history = await HistoryReader.create(path, schemaPath);
             historyIt.currentFile = await historyIt.history.nextChangeFile();
         }
         catch (error) {

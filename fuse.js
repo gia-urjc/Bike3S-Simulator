@@ -21,12 +21,14 @@ projectRoot.frontend.renderer = () => path.join(projectRoot.frontend.src(), 'ren
 
 projectRoot.schema = () => path.join(projectRoot(), 'schema');
 
-projectRoot.jsonschemaValidator = () => path.join(projectRoot(), 'jsonschema-validator/src');
+projectRoot.tools = () => path.join(projectRoot(), 'tools');
+projectRoot.tools.jsonSchemaValidator = () => path.join(projectRoot.tools(), 'jsonschema-validator/src');
 
 projectRoot.build = () => path.join(projectRoot(), 'build');
 projectRoot.build.schema = () => path.join(projectRoot.build(), 'schema');
 projectRoot.build.frontend = () => path.join(projectRoot.build(), 'frontend');
-projectRoot.build.jsonschemaValidator = () => path.join(projectRoot.build(), 'jsonschema-validator');
+projectRoot.build.jsonSchemaValidator = () => path.join(projectRoot.build(), 'jsonschema-validator');
+projectRoot.build.dataAnalyser = () => path.join(projectRoot.build(), 'data-analyser');
 
 projectRoot.fuseCache = () => path.join(projectRoot(), '.fusebox');
 projectRoot.schemaCache = () => path.join(projectRoot(), '.schema');
@@ -137,17 +139,29 @@ tsc.on('close', (code) => {
 
 Sparky.task('build:jsonschema-validator', () => {
     const fuse = FuseBox.init({
-        homeDir: projectRoot.jsonschemaValidator(),
-        output: path.join(projectRoot.build.jsonschemaValidator(), '$name.js'),
+        homeDir: projectRoot.tools.jsonSchemaValidator(),
+        output: path.join(projectRoot.build.jsonSchemaValidator(), '$name.js'),
         experimentalFeatures: true,
         plugins: [
             JSONPlugin()
         ]
     });
 
-fuse.bundle("jsonschema-validator.js").instructions(`>index.ts`);
+    fuse.bundle("jsonschema-validator.js").instructions(`>index.ts`);
 
-fuse.run();
+    fuse.run();
+});
+
+Sparky.task('build:data-analyser', () => {
+    const fuse = FuseBox.init({
+        homeDir: projectRoot.frontend.src(),
+        output: path.join(projectRoot.build.dataAnalyser(), '$name.js'),
+        experimentalFeatures: true
+    });
+
+    const main = fuse.bundle('data-analyser.js').instructions('> [main/DataAnalyserTool.ts]');
+
+    return fuse.run();
 });
 
 Sparky.task('build:frontend:main', () => {
@@ -158,21 +172,21 @@ Sparky.task('build:frontend:main', () => {
         experimentalFeatures: true,
         cache: !production,
         plugins: [
-            EnvPlugin({ target: production ? 'production' : 'development' }),
+            EnvPlugin({ target: production ? 'production' : 'development' })
         ]
     });
 
-const main = fuse.bundle('main').instructions('> [main/main.ts]');
+    const main = fuse.bundle('main').instructions('> [main/main.ts]');
 
-if (!production) {
-    // main.watch('main/**');
-    return fuse.run().then(() => {
-        const electron = spawn('npm', ['run', 'start:electron'], {
-            cwd: projectRoot(),
-            shell: true, // necessary on windows
-            stdio: 'inherit' // pipe to calling process
-        });
-});
+    if (!production) {
+        // main.watch('main/**');
+        return fuse.run().then(() => {
+            const electron = spawn('npm', ['run', 'start:electron'], {
+                cwd: projectRoot(),
+                shell: true, // necessary on windows
+                stdio: 'inherit' // pipe to calling process
+            });
+    });
 }
 
 return fuse.run();
@@ -236,7 +250,7 @@ Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:
     return Sparky.src(path.join(projectRoot(), 'package.json')).dest(projectRoot.build());
 });
 
-Sparky.task('build:dev', ['clean:build', 'clean:cache', 'build:backend-core', 'build:schema', 'build:frontend', 'build:jsonschema-validator'], () => {});
+Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});
 
 Sparky.task('build:dist', () => {
     production = true;
