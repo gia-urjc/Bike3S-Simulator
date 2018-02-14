@@ -62,15 +62,6 @@ export class RentalsAndReturnsPerStation implements Data {
         return stationValues;
     }
   
-  private increaseValue(data: Map<number, AbsoluteValue>, key: number | undefined): void {
-    if (key !== undefined) {
-      let absoluteValue: AbsoluteValue = data.get(key);
-      if (absoluteValue !== undefined) {  // a gotten map value could be undefined
-          absoluteValue.value++;
-      }
-    }
- }
-    
     public update(timeEntry: TimeEntry): void {
         let events: Array<Event> = timeEntry.events;
             

@@ -1,4 +1,3 @@
-import { AbsoluteValue } from "../AbsoluteValue";
 import { Info } from "../Info";
 
 export class RentalsAndReturnsData implements Data {
@@ -45,6 +44,15 @@ export class RentalsAndReturnsData implements Data {
     return this.failedReturns;
   }
   
-  
+   public increaseSuccessfulRentals(key: number | undefined): void {
+    if (key !== undefined) {
+      let value: number | undefined = this.successfulRentals.get(key);
+      if (value !== undefined) {  // a gotten map value could be undefined
+          value++;
+      }
+    }
+ }
+    
+ 
   
 }
