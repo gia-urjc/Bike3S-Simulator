@@ -3,7 +3,10 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_INFORMED"
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
             },
             "position": {
                 "latitude": 40.419969,
@@ -18,7 +21,10 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_INFORMED"
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
             },
             "position": {
                 "latitude": 40.418969,
@@ -33,7 +39,10 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_INFORMED"
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
             },
             "position": {
                 "latitude": 40.4131931,
@@ -48,7 +57,10 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_INFORMED"
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
             },
             "position": {
                 "latitude": 40.4131931,
@@ -63,7 +75,10 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_OBEDIENT"
+                "typeName": "USER_OBEDIENT",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
             },
             "position": {
                 "latitude": 40.419969,
@@ -78,7 +93,10 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_OBEDIENT"
+                "typeName": "USER_OBEDIENT",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
             },
             "position": {
                 "latitude": 40.418969,
@@ -93,7 +111,10 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_OBEDIENT"
+                "typeName": "USER_OBEDIENT",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
             },
             "position": {
                 "latitude": 40.4131931,
@@ -108,7 +129,10 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_OBEDIENT"
+                "typeName": "USER_OBEDIENT",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
             },
             "position": {
                 "latitude": 40.4131931,
