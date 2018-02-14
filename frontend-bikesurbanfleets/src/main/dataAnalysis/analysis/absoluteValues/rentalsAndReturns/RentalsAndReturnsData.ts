@@ -1,6 +1,9 @@
+import { Entity } from '../../../systemDataTypes/Entities';
+import { Observer } from '../../ObserverPattern';
+import { Data } from '../Data';
 import { Info } from "../Info";
 
-export class RentalsAndReturnsData implements Data {
+export abstract class RentalsAndReturnsData implements Data, Observer {
   private factType: string;
   private entityType: string;
   
@@ -29,30 +32,68 @@ export class RentalsAndReturnsData implements Data {
   }
   
   public getSuccessfulRentals(): Map<number, number> { 
-    return this.successfulRentals;
+    return this.successfulRentals.value;
   }
   
   public getFailedRentals(): Map<number, number> { 
-    return this.failedRentals;
+    return this.failedRentals.value;
   }
   
   public getSuccessfulReturns(): Map<number, number> { 
-    return this.successfulReturns;
+    return this.successfulReturns.value;
   }
   
   public getFailedReturns(): Map<number, number> { 
-    return this.failedReturns;
+    return this.failedReturns.value;
   }
   
-   public increaseSuccessfulRentals(key: number | undefined): void {
+  public increaseSuccessfulRentals(key: number | undefined): void {
     if (key !== undefined) {
       let value: number | undefined = this.successfulRentals.get(key);
       if (value !== undefined) {  // a gotten map value could be undefined
-          value++;
+          this.successfulRentals.set(key, ++value);
       }
     }
- }
+  }
     
- 
-  
+  public increaseFailedRentals(key: number | undefined): void {
+    if (key !== undefined) {
+      let value: number | undefined = this.failedRentals.get(key);
+      if (value !== undefined) {  // a gotten map value could be undefined
+          this.failedRentals.set(key, ++value);
+      }
+    }
+  }
+
+  public increaseSuccessfulReturns(key: number | undefined): void {
+    if (key !== undefined) {
+      let value: number | undefined = this.successfulReturns.get(key);
+      if (value !== undefined) {  // a gotten map value could be undefined
+          this.successfulReturns.set(key, ++value);
+      }
+    }
+  }
+    
+  public increaseFailedReturns(key: number | undefined): void {
+    if (key !== undefined) {
+      let value: number | undefined = this.failedReturns.get(key);
+      if (value !== undefined) {  // a gotten map value could be undefined
+          this.failedReturns.set(key, ++value);
+      }
+    }
+  }
+    
+    public async initData(entities: Array<Entity>): Promise<void> {
+        for(let entity of entities) {
+             this.getFailedRentals().set(entityy.id, 0);
+             this.getSuccessfulRentals().set(entityy.id, 0);
+             this.getFailedReturns().set(entityy.id, 0);            
+             this.getSuccessfulReturns().set(entityy.id, 0);            
+        }
+        }
+    }
+    
+  abstract update(): void;
+
+
 }

@@ -6,48 +6,25 @@ import  { User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { AbsoluteValue } from '../AbsoluteValue';
 import { Data } from '../Data';
+import { RentalsAndReturnsData } from './RentalsAndReturnsData';
 
-export class RentalsAndReturnsPerUser implements Data {
+export class RentalsAndReturnsPerUser extends RentalsAndReturnsData {
     private users: Array<User>;
-    private bikeFailedRentalsPerUser: Map<number, AbsoluteValue>;
-    private bikeSuccessfulRentalsPerUser: Map<number, AbsoluteValue>;
-    private bikeFailedReturnsPerUser: Map<number, AbsoluteValue>;
-    private bikeSuccessfulReturnsPerUser: Map<number, AbsoluteValue>;
-  private factType: string;
-  private entityType: string;
     
     public constructor() {
-        this.factType = "RENTAL_AND_RETURN";
-        this.entityType = "USER";
-        this.bikeFailedRentalsPerUser = new Map<number, AbsoluteValue>();
-        this.bikeSuccessfulRentalsPerUser = new Map<number, AbsoluteValue>();
-        this.bikeFailedReturnsPerUser = new Map<number, AbsoluteValue>();
-        this.bikeSuccessfulReturnsPerUser = new Map<number, AbsoluteValue>();
+        super('USER');
     }
   
-    public getFactType(): string {
-      return this.factType;
-    }
-  
-    public getEntityType(): string {
-      return this.entityType;
-    }
-    
     public async init(path: string): Promise<void> {
         try {
             let history: HistoryReader = await HistoryReader.create(path);
             let entities: HistoryEntitiesJson = await history.getEntities("users");
             this.users = entities.instances;
                 
-            for(let user of this.users) {
-                this.bikeFailedRentalsPerUser.set(user.id, { name: "Failed bike rentals", value: 0 });
-                this.bikeSuccessfulRentalsPerUser.set(user.id, { name: "Successful bike rentals", value: 0 });
-                 this.bikeFailedReturnsPerUser.set(user.id, { name: "Failed bike returns", value: 0 });            
-                this.bikeSuccessfulReturnsPerUser.set(user.id, { name: "Successful bike returns", value: 0 });            
-            }
+            await this.initData(users);
         }
         catch(error) {
-            console.log('error getting users:', error);
+            throw new Error('Error accessing to users: '+error);
         }
         return;
     }
@@ -58,76 +35,47 @@ export class RentalsAndReturnsPerUser implements Data {
             await rentalsAndReturnsValues.init(path);
         }
         catch(error) {
-            console.log(error);
+            throw new Error('Error initializing users of requested data: '+error);
         }
         return rentalsAndReturnsValues;
     }
-
-    public getBikeFailedRentalsOfUser(userId: number): number | undefined {
-        let absoluteValue: AbsoluteValue = this.bikeFailedRentalsPerUser.get(userId);
-        return absoluteValue.value;
-    }
-    
-    public getBikeSuccessfulRentalsOfUser(userId: number): number | undefined {
-        let absoluteValue: AbsoluteValue = this.bikeSuccessfulRentalsPerUser.get(userId);
-        return absoluteValue.value;
-    }
-    
-    public getBikeFailedReturnsOfUser(userId: number): number | undefined {
-        let absoluteValue: AbsoluteValue = this.bikeFailedReturnsPerUser.get(userId);
-        return absoluteValue.value;
-    }
-    
-    public getBikeSuccessfulReturnsOfUser(userId: number): number | undefined {
-        let absoluteValue: AbsoluteValue = this.bikeSuccessfulReturnsPerUser.get(userId);
-        return absoluteValue.value;
-    }
-  
-  private increaseValue(data: Map<number, AbsoluteValue>, key: number): void { 
-      let absoluteValue: AbsoluteValue = data.get(key);
-      if (absoluteValue !== undefined) {  // a gotten map value could be undefined
-          absoluteValue.value++;
-      }
- }
   
     public update(timeEntry: TimeEntry): void {
         let events: Array<Event> = timeEntry.events;
         let key: number;
 
         for(let event of events) {
+            key = event.changes.users[0].id;
+            
             switch(event.name) { 
                 case 'EventUserArrivesAtStationToRentBikeWithReservation': {
-                    key = event.changes.users[0].id;
-                    this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
+                    this.increaseSuccessfulRentals(key);
                     break;
                 }
                 
                 case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
-                    key = event.changes.users[0].id;
-                    this.increaseValue(this.bikeSuccessfulReturnsPerUser, key);
+                    this.increaseSuccessfulReturns(key);
                     break;
                 }
             
                 case 'EventUserArrivesAtStationToRentBikeWithoutReservation': {
-                    key = event.changes.users[0].id;
                     let bike: any = event.changes.users[0].bike;
                     if (bike !== undefined) {
-                        this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
+                        this.increaseSuccessfulRentals(key);
                     }
                     else {
-                      this.increaseValue(this.bikeFailedRentalsPerUser, key);
+                      this.increaseFailedRentals(key);
                     }
                     break;
                 }
     
                 case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
-                    key = event.changes.users[0].id;
                     let bike: any = event.changes.users[0].bike;
                     if (bike !== undefined) {
-                        this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
+                        this.increaseSuccessfulRentals(key);
                     }
                     else {
-                      this.increaseValue(this.bikeFailedRentalsPerUser, key);
+                      this.increaseFailedRentals(key);
                     }
                     break;
                 }
