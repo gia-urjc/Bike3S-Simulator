@@ -3,6 +3,7 @@ import { HistoryEntitiesJson } from '../../../../../../../shared/history';
 import { Observer } from '../../../../ObserverPattern';
 import { Station, Reservation } from '../../../../../systemDataTypes/Entities';
 import { TimeEntry, Event } from '../../../../../systemDataTypes/SystemInternalData';
+import { Data } from "../Data";
 
 interface BikesPerTime {
   time: number;
@@ -33,7 +34,7 @@ export class StationBikesPerTimeList {
   }
 }
 
-export class BikesPerStationInfo implements Observer {
+export class BikesPerStationInfo implements Data {
   private stations: Map<number, StationBikesPerTimeList>;
   private reservations: Array<Reservation>; 
   
@@ -48,7 +49,6 @@ export class BikesPerStationInfo implements Observer {
           let stationInstances = <Station[]> stationEntities.instances;
         
           for(let station of stationInstances) {
-              
             let value: StationBikesPerTimeList = new StationBikesPerTimeList(this.obtainInitAvailableBikesOf(station));
             this.stations.set(station.id, value);
           }
@@ -65,6 +65,7 @@ export class BikesPerStationInfo implements Observer {
       
     let lastPos, reservationId: number;
     let reservation: Reservation;
+    let station: Station;
       
     for(let event of events) {
       let eventStations: Array<Station> = event.changes.stations;
@@ -72,18 +73,15 @@ export class BikesPerStationInfo implements Observer {
       switch(event.name) {
         case "EventUserAppears": {
           if (eventStations !== undefined) {
-            for(let station of eventStations) {
-              // Getting the last bike reservation which has happend at each station
-              lastPos = station.reservations.id.length-1;
-              reservationId = station.reservations.id[lastPos];
-              reservation = this.getReservation(reservationId);
-                
-              // If gotten reservation is active, it means the number of available bikes has decreased
-              if (reservation.state === "ACTIVE") {  // reservationtype = BIKE
-                // Getting the number of available bikes at the time the UserAppears 
-                // event has happened to update it (it's decreased).  
+            // If there are several bike reservations, only the last can be a ctive
+            station = eventStations[eventStations.length-1];
+            lastPos = station.reservations.id.length-1;
+            reservationId = station.reservations.id[lastPos];
+            reservation = this.getReservation(reservationId);
+               
+            if (reservation.state === "ACTIVE") {  // and, of course, reservationtype = BIKE
+                // Decreasing available bikes at the time the UserAppears event's happened 
                 this.stations.get(station.id).substractBike(instant);
-              }
             }
           }
           break;
@@ -91,25 +89,25 @@ export class BikesPerStationInfo implements Observer {
           
         case "EventUserArrivesAtStationToRentBikeWithoutReservation": {
             if (eventStations.length > 0) {
-               for(let station of eventStations) {
-                   // If bike ids have been registered, it means a change has 
-                   // occurred (there's one bike less) -> update number of bikes
-                   if (station.bikes !== undefined) {
-                        this.stations.get(station.id).substractBike(instant);
-                   }
+                station = eventStations[0];
+            
+                // If bike ids have been registered, it means a change has 
+                // occurred (there's one bike less) -> update number of bikes
+                if (station.bikes !== undefined) {  // rental + mayvbe, slot reservations
+                    this.stations.get(station.id).substractBike(instant);
+                    // TODO: if rental has been possible, sure that bike reservations have not been made
+                }
                    
-                    else if (station.reservations !== undefined) { 
-                        // Getting the last bike reservation which has happend at each station
-                        lastPos = station.reservations.id.length-1;
-                        reservationId = station.reservations.id[lastPos];
-                        reservation = this.getReservation(reservationId);
+                else { // (station.reservations !== undefined) -> bike reservations (NOT rental)
+                    // Getting the last changed station registered, wihich can conatins an active bike reservation  
+                    station = eventStations[eventStations.length-1];
+                    lastPos = station.reservations.id.length-1;
+                    reservationId = station.reservations.id[lastPos];
+                    reservation = this.getReservation(reservationId);
                 
-                        // If gotten reservation is active, it means the number of available bikes has decreased
-                        if (reservation.state === "ACTIVE") {  // reservationtype = BIKE
-                            // Getting the number of available bikes at the time the UserAppears 
-                            // event has happened to update it (it's decreased).  
-                            this.stations.get(station.id).substractBike(instant);
-                        }
+                    if (reservation.state === "ACTIVE") {  // and, of course, reservation.type === "BIKE"  
+                        // Decreasing available bikes at the time the UserAppears event''s happened  
+                        this.stations.get(station.id).substractBike(instant);
                     }
                 }
             }
@@ -118,31 +116,28 @@ export class BikesPerStationInfo implements Observer {
           
         case "EventBikeReservationTimeout": {
             let historyReservations: Array<Reservation> = event.changes.reservations;
-            for(let historyReservation of historyReservations) {
-                reservation = this.getReservation(historyReservation.id);
-                // As reservation state is expired, the related station has one more available bike
-                let stationId: number = reservation.station.id;
-                this.stations.get(stationId).addBike(instant);
-            }
+            reservation = this.getReservation(historyReservations[0].id);
+            // As reservation state is expired, the iinvolved station has one more available bike
+            let stationId: number = reservation.station.id;
+            this.stations.get(stationId).addBike(instant);
             break;
         }
           
         case "EventUserArrivesAtStationToReturnBikeWithReservation": {
-            for (let station of eventStations) {
-                this.stations.get(station.id).addBike(instant);
-            }
+            // only a station can have registered changes (the one the user's reached)
+            station = eventStations[0];
+            this.stations.get(station.id).addBike(instant);
             break;
         }
           
         case "EventUserArrivesAtStationToReturnBikeWithoutReservatioon": {
-              if (eventStatiosn.length > 0) {
-                  for (let station of eventStations) {
-                      if (station.bikes !== undefined) {
-                          this.stations.get(station.id).addBike(instant);
-                      }
-//                }
-              }
-          break;
+            if (eventStatiosn.length > 0) {
+                station = eventStations[0];
+                if (station.bikes !== undefined) {
+                    this.stations.get(station.id).addBike(instant);
+                }
+            }
+            break;
         }
               
     }
@@ -158,6 +153,7 @@ export class BikesPerStationInfo implements Observer {
     return counter;
   }
   
+  // TODO: should it return undefined if id doesn't exist?
   private getReservation(id: number): Reservation {
     for(let reservation of this.reservations) {
       if (reservation.id === id) {

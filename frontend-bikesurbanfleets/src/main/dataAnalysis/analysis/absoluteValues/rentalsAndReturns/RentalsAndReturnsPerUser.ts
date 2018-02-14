@@ -92,61 +92,47 @@ export class RentalsAndReturnsPerUser implements Data {
   
     public update(timeEntry: TimeEntry): void {
         let events: Array<Event> = timeEntry.events;
-
         let key: number;
 
         for(let event of events) {
-            if (event.name === 'EventUserArrivesAtStationToRentBikeWithReservation'
-                && event.changes.users.length > 0) {
-                key = event.changes.users[0].id;
-                this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
-            }
+            switch(event.name) { 
+                case 'EventUserArrivesAtStationToRentBikeWithReservation': {
+                    key = event.changes.users[0].id;
+                    this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
+                    break;
+                }
                 
-            else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithReservation'
-                &&  event.changes.users.length > 0) {
-                key = event.changes.users[0].id;
-                this.increaseValue(this.bikeSuccessfulReturnsPerUser, key);
-            }
+                case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
+                    key = event.changes.users[0].id;
+                    this.increaseValue(this.bikeSuccessfulReturnsPerUser, key);
+                    break;
+                }
             
-            else if (event.name === 'EventUserArrivesAtStationToRentBikeWithoutReservation'
-                && event.changes.users.length > 0) {
-                key = event.changes.users[0].id;
-                let bike: any = event.changes.users[0].bike;
-                if (bike !== undefined) {
-                    this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
+                case 'EventUserArrivesAtStationToRentBikeWithoutReservation': {
+                    key = event.changes.users[0].id;
+                    let bike: any = event.changes.users[0].bike;
+                    if (bike !== undefined) {
+                        this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
+                    }
+                    else {
+                      this.increaseValue(this.bikeFailedRentalsPerUser, key);
+                    }
+                    break;
                 }
-                else {
-                  this.increaseValue(this.bikeFailedRentalsPerUser, key);
-                }
-            }
     
-            else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithoutReservation'
-                && event.changes.users.length > 0) {
-                key = event.changes.users[0].id;
-                let bike: any = event.changes.users[0].bike;
-                if (bike !== undefined) {
-                    this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
-                }
-                else {
-                  this.increaseValue(this.bikeFailedRentalsPerUser, key);
+                case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
+                    key = event.changes.users[0].id;
+                    let bike: any = event.changes.users[0].bike;
+                    if (bike !== undefined) {
+                        this.increaseValue(this.bikeSuccessfulRentalsPerUser, key);
+                    }
+                    else {
+                      this.increaseValue(this.bikeFailedRentalsPerUser, key);
+                    }
+                    break;
                 }
             }
         }
     }
-  
-  public toString(): string {
-    let str: string = '';
-    this.bikeFailedReturnsPerUser.forEach( (absoluteValue, key) => 
-        str += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
-    this.bikeFailedRentalsPerUser.forEach( (absoluteValue, key) => 
-        str += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
-    this.bikeSuccessfulReturnsPerUser.forEach( (absoluteValue, key) => 
-        str += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
-    this.bikeSuccessfulRentalsPerUser.forEach( (absoluteValue, key) => 
-        str += 'User: '+key+' '+absoluteValue.name+': '+absoluteValue.value+'\n');
       
-      return str;
-  }
-  
-       
 }
