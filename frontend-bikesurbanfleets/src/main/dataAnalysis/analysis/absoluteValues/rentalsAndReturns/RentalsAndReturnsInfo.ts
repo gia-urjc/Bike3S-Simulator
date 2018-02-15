@@ -1,9 +1,9 @@
 import { Entity } from '../../../systemDataTypes/Entities';
 import { Observer } from '../../ObserverPattern';
-import { Data } from '../Data';
-import { Info } from "../Info";
+import { Info } from '../Info';
+import { Data } from "../Data";
 
-export abstract class RentalsAndReturnsData implements Data, Observer {
+export abstract class RentalsAndReturnsInfo implements Info, Observer {
   private factType: string;
   private entityType: string;
   
@@ -91,6 +91,7 @@ export abstract class RentalsAndReturnsData implements Data, Observer {
              this.getSuccessfulReturns().set(entityy.id, 0);            
         }
         }
+    return;
     }
     
   abstract update(): void;

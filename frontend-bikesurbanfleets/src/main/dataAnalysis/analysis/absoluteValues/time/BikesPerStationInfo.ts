@@ -3,7 +3,7 @@ import { HistoryEntitiesJson } from '../../../../../../../shared/history';
 import { Observer } from '../../../../ObserverPattern';
 import { Station, Reservation } from '../../../../../systemDataTypes/Entities';
 import { TimeEntry, Event } from '../../../../../systemDataTypes/SystemInternalData';
-import { Data } from "../Data";
+import { Info } from "../Info";
 
 interface BikesPerTime {
   time: number;
@@ -34,7 +34,7 @@ export class StationBikesPerTimeList {
   }
 }
 
-export class BikesPerStationInfo implements Data {
+export class BikesPerStationInfo implements Info {
   private stations: Map<number, StationBikesPerTimeList>;
   private reservations: Array<Reservation>; 
   
@@ -54,7 +54,7 @@ export class BikesPerStationInfo implements Data {
           }
       }
       catch(error) {
-          console.log('error getting stations:', error);
+          throw new Error('Error accessing to stations or reservations: '+error);
       }
       return;
   }

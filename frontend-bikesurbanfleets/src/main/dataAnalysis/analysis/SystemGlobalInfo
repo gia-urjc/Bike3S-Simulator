@@ -4,7 +4,7 @@ import { User } from "../systemDataTypes/Entities";
 import { RentalsAndReturnsPerStation } from "./absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { ReservationsPerStation } from "./absoluteValues/reservations/ReservationsPerStation";
 
-export class SystemGlobalValues {
+export class SystemGlobalInfo {
   private numberUsers: number;
   private data: Map<string, any>;
   

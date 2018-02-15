@@ -3,9 +3,9 @@ import { HistoryEntitiesJson } from '../../../../../shared/history';
 import { HistoryIterator } from "../../../HistoryIterator";
 import  { Station, User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
-import { RentalsAndReturnsData } from './RentalsAndReturnsData';
+import { RentalsAndReturnsInfo } from './RentalsAndReturnsInfo';
 
-export class RentalsAndReturnsPerStation extends RentalsAndReturnsData {
+export class RentalsAndReturnsPerStation extends RentalsAndReturnsInfo {
     private stations: Array<Station>;
     
     public constructor() {
@@ -62,7 +62,7 @@ export class RentalsAndReturnsPerStation extends RentalsAndReturnsData {
                     if (stations.length > 0) {
                         // If only stations with reservations have been recorded, key'll be undefined 
                         key = this.obtainChangedStationId(stations);
-                        // If key isn't undefined, successful rentals won't be increased 
+                        // If key is undefined, successful rentals won't be increased 
                         this.increaseSuccessfulRentals(key);
                     }
                     
@@ -75,10 +75,10 @@ export class RentalsAndReturnsPerStation extends RentalsAndReturnsData {
                 }
             
                 case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
-                    if (event.changes.stations.length > 0) {
+                    if (stations.length > 0) {
                         // If only stations with reservations have been recorded, key'll be undefined
                         key = this.obtainChangedStationId(stations);
-                        // If key isn't undefined, successful rentals won't be increased
+                        // If key is undefined, successful rentals won't be increased
                         this.increaseSuccessfulReturns(key);
                     }
                     

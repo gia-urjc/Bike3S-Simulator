@@ -1,30 +1,30 @@
 import { BikesPerStationInfo, StationBikesPerTimeList } from './BikesPerStationInfo';
 
-interface TimeInterval {
+export interface TimeInterval {
     start: number;
     end: number;
 }
-
-interface EmptyState {
-    timeIntervals: Array<TimeInterval>; 
+ 
+export interface EmptyState {
+    timeIntervals: Array<TimeInterval>;  
     totalTime: number;
 }
 
 export class EmptyStationsInfo {
-   private stationsEmptyStateInfo: Map<number, EmptyState>;
+    private emptyStatesPerStation: Map<number, EmptyState>;
    
-   private constructor() {
-       this.stationsEmptyStateInfo = new Map(); 
-   }
+    public constructor() {
+        this.emptyStatesPerStation = new Map(); 
+    }
        
-    private init(stationsInfo: BikesPerStationInfo): void {
+    public init(stationsInfo: BikesPerStationInfo): void {
         stationsInfo.forEach( (stationInfo, stationId)) => {
             let emptyState: EmptyState = this.getEmptyStateOf(stationInfo);
-            this.stationsEmptyStateInfo.set(stationId, emptyState);
+            this.emptyStatesPerStation.set(stationId, emptyState);
         }
     }
     
-    private getEmptyStateOf(stationInfo: StationBikesPerTimeList) {
+    private getEmptyStateOf(stationInfo: StationBikesPerTimeList): EmptyState {
         let intervals: Array<TimeInterval> = new Array();
         let time: number = 0;
         let startTime, endTime: number = -1;
@@ -54,6 +54,10 @@ export class EmptyStationsInfo {
         let emptyStations: EmptyStationsInfo = new EmptyStationsInfo();
         emptyStations.init(stationsInfo);
         return emptyStations;
+    }
+    
+    public getEmptyStatesPerStation(): Map<number, EmptyState> {  
+        return this.emptyStatesPerStation;
     }
 
 }

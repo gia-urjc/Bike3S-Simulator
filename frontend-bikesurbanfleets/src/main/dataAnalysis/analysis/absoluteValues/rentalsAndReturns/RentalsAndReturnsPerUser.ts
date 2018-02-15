@@ -1,14 +1,13 @@
 import { HistoryReader } from '../../../../util';
 import { HistoryEntitiesJson } from '../../../../../shared/history';
 import { HistoryIterator } from "../../../HistoryIterator";
-import { Observer } from '../../ObserverPattern';
 import  { User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { AbsoluteValue } from '../AbsoluteValue';
-import { Data } from '../Data';
-import { RentalsAndReturnsData } from './RentalsAndReturnsData';
+import { Info } from '../Info';
+import { RentalsAndReturnsInfo } from './RentalsAndReturnsInfo';
 
-export class RentalsAndReturnsPerUser extends RentalsAndReturnsData {
+export class RentalsAndReturnsPerUser extends RentalsAndReturnsInfo {
     private users: Array<User>;
     
     public constructor() {

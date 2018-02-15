@@ -22,7 +22,7 @@ export class ReservationCalculator implements Calculator {
         this.reservations = <Reservation[]> entities.instances;
         }
             catch(error) {
-             console.log('error getting reservations: ', error);
+             throw new Error('Error accessing to reservations: '+error);
         }
     
         return; 
@@ -34,7 +34,7 @@ export class ReservationCalculator implements Calculator {
             await it.init(path);
         }
         catch(error) {
-            console.log('error creating the reservations iterator: ', error);
+            throw new Error('Error initializing reservations calculator: '+error);
         }
         return it;
     }

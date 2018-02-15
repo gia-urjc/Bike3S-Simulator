@@ -21,19 +21,25 @@ export class CsvGenerator {
     this.userData = new Array();
     this.path = path;
   }
-
-	public async generate(data: Map<string, any>): Promise<void> {
-  await this.init(data);
-		this.transformToCsv();
-   return;
-	}
+    
+	 public async generate(data: Map<string, any>): Promise<void> {
+      try {
+          await this.init(data);
+          this.transformToCsv();
+      }
+      catch(error) {
+          throw new Error('Error initializing csv generator: '+error);
+      }
+      return;
+	 }
 
 	public async init(data: Map<string, any>): Promise<void> {
 		this.titles.push('id');
-        data.get(ReservationsPerStation.name).forEach( (value, key) => 
-            this.titles.push(value.name));
-        data.get(RentalsAndReturnsPerStation.name).forEach( (value, key) => 
-            this.titles.push(value.name));
+//        data.get(ReservationsPerStation.name).forEach( (value, key) => 
+//            this.titles.push(value.name));
+//        data.get(RentalsAndReturnsPerStation.name).forEach( (value, key) => 
+//            this.titles.push(value.name));
+        
     let history: HistoryReader = await HistoryReader.create(this.path);
     let stationEntities: HistoryEntitiesJson = await history.getEntities('stations');    
     let stations: Array<Station> = <Station[]> stationEntities.instances;
@@ -46,11 +52,10 @@ export class CsvGenerator {
     reservations = data.get(ReservationsPerStation.name);
     rentalsAndReturns = data.get(RentalsAndReturnsPerStation.name);
     for (let station of stations) {
-      
-      let stationJson: JsonObject = {};
-      
-      stationJson.id = station.id;
-      value = reservations.getBikeFailedReservationsOfStation(station.id);
+      let stationJson: JsonObject = {
+          "id": station.id  
+      };
+      value = reservations.getFailedBikeReservations().get(station.id);
       stationJson.bike_failed_reservations = value;
       
       value = reservations.getSlotFailedReservationsOfStation(station.id);

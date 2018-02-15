@@ -1,4 +1,6 @@
-export interface Info {
-	name: string;
-	value: Map<number, number>;
+import { PlainObject } from "../../../../shared/util";
+
+export interface Info extends PlainObject {
+  getFactType(): string;
+  getEntityType(): string;
 }

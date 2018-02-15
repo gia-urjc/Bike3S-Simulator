@@ -23,7 +23,7 @@ export class RentalAndReturnCalculator implements Calculator {
             }
         }
         catch(error) {
-            console.log('error getting time entries:', error);
+            throw new Error('Error getting time entries: '+error);
         }
         return;
     }

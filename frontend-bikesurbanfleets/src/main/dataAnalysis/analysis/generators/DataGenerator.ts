@@ -1,4 +1,4 @@
-import { Data } from '../absoluteValues/Data';
+import { Info } from '../absoluteValues/Info';
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
@@ -9,13 +9,15 @@ import { RentalAndReturnCalculator } from "../systemDataCalculators/RentalAndRet
 import { CsvGenerator } from "./CsvGenerator";
 
 export class DataGenerator {
+    private boolean csv;
     private readonly INICIALIZATION: number = 5;
     private readonly CALCULATION: number = 2;
     
     private path: string;
     private counter: number;
+    
     private calculators: Map<string, Calculator>;
-    private data: Map<string, Data>;
+    private data: Map<string, Info>;
     
     public constructor(path: string) {
         this.path = path;
@@ -33,22 +35,28 @@ export class DataGenerator {
         this.data.set(ReservationsPerStation.constructor.name, new ReservationsPerStation());
         this.data.set(RentalsAndReturnsPerStation.name, new RentalsAndReturnsPerStation());
         
-        this.data.forEach( (value, key) => {
-            if (value.getFact.Type() == 'RESERVATION') {
-                this.calculators.get(ReservationCalculator.name).subscribe(value);
-            }
-            else if (value.getFactType() === 'RENTAL_AND_RETURN') {
-                this.calculators.get(RentalAndReturnCalculator.name).subscribe(value);
+        this.data.forEach( (info, key) => {
+            switch (info.getFactType()) {
+                case: 'RESERVATION': {
+                    this.calculators.get(ReservationCalculator.name).subscribe(info);
+                    break;
+                }
+                    
+                case 'RENTAL_AND_RETURN':
+                case 'EMPTY_STATION': {
+                    this.calculators.get(RentalAndReturnCalculator.name).subscribe(info);
+                    break;
+                }
             }
         });
         
-        this.calculators.get(ReservationCalculator.name).calculate(this.path).then( () => {
+        this.calculators.get(ReservationCalculator.name).init(this.path).then( () => {
             this.counter++; 
             this.calculateAbsoluteValues();     
         });
         
-        this.data.forEach( (value, key) => {
-            value.init(this.path).then( () => {
+        this.data.forEach( (info, key) => {
+            info.init(this.path).then( () => {
                 this.counter++; 
                 this.calculateAbsoluteValues();
             });
@@ -58,14 +66,17 @@ export class DataGenerator {
     private async calculateAbsoluteValues(): Promise<void> {
         if (this.counter === this.INICIALIZATION) {
             this.counter = 0;
-            this.calculators.forEach((value, key) => {
-                value.calculate().then(() => {
+            this.calculators.forEach((calculator, key) => {
+                calculator.calculate().then(() => {
                     this.counter++;
-                    this.write();
+                    if (csv) {
+                        this.write();
+                    }
                 })
             });
             
          }
+        return;
     }
     
     public static async create(path: string): Promise<DataGenerator> {
@@ -74,7 +85,7 @@ export class DataGenerator {
         await generator.generate();
         }
         catch(error) {
-            console.log('error initializing data generator:', error);
+            throw new Error('Error initializing data generator: '+error);
         }
         return generator;
     }
@@ -82,12 +93,17 @@ export class DataGenerator {
     private async write(): Promise<void> {
         if (this.counter === this.CALCULATION) {
           let generator: CsvGenerator = new CsvGenerator(this.path);
-          await generator.generate(this.data);
-        }
+          try {
+              await generator.generate(this.data);
+          }
+          catch(error) {
+              throw new Error('Error generating csv file: '+error);
+          }
+          
       return;
     }
 
-		public getData(): Map<string, Data> {
+		public getData(): Map<string, Info> {
 		return this.data;
 	}
      
