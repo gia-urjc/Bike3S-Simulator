@@ -1,40 +1,35 @@
-import { HistoryReader } from '../../../../util';
-import { HistoryEntitiesJson } from '../../../../../shared/history';
-import { HistoryIterator } from "../../../HistoryIterator";
 import  { User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
-import { AbsoluteValue } from '../AbsoluteValue';
-import { Info } from '../Info';
+import { Observer } from '../../ObserverPattern';
 import { RentalsAndReturnsInfo } from './RentalsAndReturnsInfo';
+import { SystemUsersInfo } from '../../systemEntities/SystemUsersInfo';
 
-export class RentalsAndReturnsPerUser extends RentalsAndReturnsInfo {
-    private users: Array<User>;
+export class RentalsAndReturnsPerUser implements Observer {
+    private usersInfo: SystemUsersInfo;
+    private rentalsAndReturns: RentalsAndReturnsInfo;
     
-    public constructor() {
-        super('USER');
+    public constructor(users: SystemUsersInfo) {
+        this.usersInfo = users;
+        this.rentalsAndReturns = new RentalsAndReturnsInfo('USER');
     }
   
-    public async init(path: string): Promise<void> {
+    public async init() {
         try {
-            let history: HistoryReader = await HistoryReader.create(path);
-            let entities: HistoryEntitiesJson = await history.getEntities("users");
-            this.users = entities.instances;
-                
-            await this.initData(users);
+            await this.rentalsAndReturns.initData(this.usersInfo.getUsers());
         }
         catch(error) {
-            throw new Error('Error accessing to users: '+error);
+            throw new Error('Error initializing data: '+error);
         }
         return;
     }
 
-    public static async create(path: string): Promise<RentalsAndReturnsPerUser> {
+    public static async create() {
         let rentalsAndReturnsValues = new RentalsAndReturnsPerUser();
         try {
-            await rentalsAndReturnsValues.init(path);
+            await rentalsAndReturnsValues.init();
         }
         catch(error) {
-            throw new Error('Error initializing users of requested data: '+error);
+            throw new Error('Error creating requested data: '+error);
         }
         return rentalsAndReturnsValues;
     }
@@ -48,22 +43,22 @@ export class RentalsAndReturnsPerUser extends RentalsAndReturnsInfo {
             
             switch(event.name) { 
                 case 'EventUserArrivesAtStationToRentBikeWithReservation': {
-                    this.increaseSuccessfulRentals(key);
+                    this.rentalsAndReturns.increaseSuccessfulRentals(key);
                     break;
                 }
                 
                 case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
-                    this.increaseSuccessfulReturns(key);
+                    this.rentalsAndReturns.increaseSuccessfulReturns(key);
                     break;
                 }
             
                 case 'EventUserArrivesAtStationToRentBikeWithoutReservation': {
                     let bike: any = event.changes.users[0].bike;
                     if (bike !== undefined) {
-                        this.increaseSuccessfulRentals(key);
+                        this.rentalsAndReturns.increaseSuccessfulRentals(key);
                     }
                     else {
-                      this.increaseFailedRentals(key);
+                      this.rentalsAndReturns.increaseFailedRentals(key);
                     }
                     break;
                 }
@@ -71,15 +66,19 @@ export class RentalsAndReturnsPerUser extends RentalsAndReturnsInfo {
                 case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
                     let bike: any = event.changes.users[0].bike;
                     if (bike !== undefined) {
-                        this.increaseSuccessfulRentals(key);
+                        this.rentalsAndReturns.increaseSuccessfulRentals(key);
                     }
                     else {
-                      this.increaseFailedRentals(key);
+                      this.rentalsAndReturns.increaseFailedRentals(key);
                     }
                     break;
                 }
             }
         }
+    }
+
+    public getRentalsAndReturns(): RentalsAndReturns {
+        return this.rentalsAndReturns;
     }
       
 }

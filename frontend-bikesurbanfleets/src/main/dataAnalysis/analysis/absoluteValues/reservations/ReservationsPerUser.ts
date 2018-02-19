@@ -1,37 +1,34 @@
-import { HistoryReader } from '../../../../util';
-import { HistoryEntitiesJson } from '../../../../../shared/history';
 import  { User, Reservation } from '../../../systemDataTypes/Entities';
+import { Observer } from '../../ObserverPattern';
 import { ReservationsInfo } from './ReservationsInfo';
+import { SystemUsersInfo } from '../../systemEntities/SystemUsersInfo'; 
 
-export class ReservationsPerUser extends ReservationsInfo {
-    private users: Array<User>;
+export class ReservationsPerUser implements Observer {
+    private usersInfo: SystemUsersInfo;
+    private reservations: ReservationsInfo;
     
-    public constructor() {
-        super('USER');
+    public constructor(users: SystemUsersInfo) {
+        this.usersInfo = users;
+        this.reservations = new ReservationsInfo('USER');
     }
     
-    public async init(path: string): Promise<void> {
+    public async init(): Promise<void> {
         try {
-            let history: HistoryReader = await HistoryReader.create(path);
-            let entities: HistoryEntitiesJson = await history.getEntities("users");
-            this.users = entities.instances;
-            
-            this.initData(this.users);
+            this.reservations.initData(this.usersInfo.getUsers());
         }
-              
         catch(error) {
-            throw new Error('Error accessing to users: '+error);
+            throw new Error('Error initializing data: '+error);
         }
         return;
     }
    
-    public static async create(path: string): Promise<ReservationsPerUser> {
+    public static async create(): Promise<ReservationsPerUser> {
         let reservationValues = new ReservationsPerUser();
         try {
-            await reservationValues.init(path);
+            await reservationValues.init();
         }
         catch(error) {
-            throw new Error('Error initializing users of requested data'+error);
+            throw new Error('Error creating requested data'+error);
         }
         return reservationValues;
     }
@@ -42,26 +39,27 @@ export class ReservationsPerUser extends ReservationsInfo {
         switch (reservation.type) { 
             case 'BIKE': { 
                 if (reservation.state === 'FAILED') {
-                    this.increaseFailedBikeReservations(key);
+                    this.reservations.increaseFailedBikeReservations(key);
                 }
                 else {
-                    this.increaseSuccessfulBikeReservations(key);
+                    this.reservations.increaseSuccessfulBikeReservations(key);
                 }
                 break;
             }
                 
             case 'SLOT': { 
                 if (reservation.state === 'FAILED') {
-                    this.increaseFailedSlotReservations(key);
+                    this.reservations.increaseFailedSlotReservations(key);
                 }
                 else {
-                    this.increaseSuccessfulSlotReservations(key);
+                    this.reservations.increaseSuccessfulSlotReservations(key);
                 }
                 break;
             }
                 
-                default: throw new Error('Reservation type not identified');
-                        
+            default: 
+                throw new Error('Reservation type not identified');
+                    
         }
     }
               

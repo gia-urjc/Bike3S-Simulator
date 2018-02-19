@@ -1,9 +1,8 @@
 import { Entity } from '../../../systemDataTypes/Entities';
-import { Observer } from '../../ObserverPattern';
 import { Info } from '../Info';
 import { Data } from "../Data";
 
-export abstract class RentalsAndReturnsInfo implements Info, Observer {
+export class RentalsAndReturnsInfo implements Info {
   private factType: string;
   private entityType: string;
   
@@ -93,8 +92,5 @@ export abstract class RentalsAndReturnsInfo implements Info, Observer {
         }
     return;
     }
-    
-  abstract update(): void;
-
 
 }

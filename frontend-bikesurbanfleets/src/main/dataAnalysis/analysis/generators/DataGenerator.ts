@@ -19,7 +19,8 @@ export class DataGenerator {
     private calculators: Map<string, Calculator>;
     private data: Map<string, Info>;
     
-    public constructor(path: string) {
+    public constructor(path: string, csv: boolean) {
+        this.csv = csv;
         this.path = path;
         this.counter = 0;
         this.calculators = new Map(); 
@@ -28,7 +29,7 @@ export class DataGenerator {
     
     private async generate(): Promise<void> {
         this.calculators.set(ReservationCalculator.name, new ReservationCalculator());
-                this.calculators.set(RentalAndReturnCalculator.name, new RentalAndReturnCalculator());
+        this.calculators.set(RentalAndReturnCalculator.name, new RentalAndReturnCalculator());
         
         this.data.set(ReservationsPerUser.name, new ReservationsPerUser());
         this.data.set(RentalsAndReturnsPerUser.name, new RentalsAndReturnsPerUser());

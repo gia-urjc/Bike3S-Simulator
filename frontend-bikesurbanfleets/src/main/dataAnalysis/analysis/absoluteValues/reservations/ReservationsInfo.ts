@@ -1,7 +1,7 @@
 import { Entity } from '../../../systemDataTypes/Entities';
 import { Info } from '../Info';
 
-export abstract class ReservationsInfo implements Info {
+export class ReservationsInfo implements Info {
     private factType: string;
     private entityType: string;
     
@@ -20,13 +20,13 @@ export abstract class ReservationsInfo implements Info {
         this.failedSlotReservations = { name: 'Failed slot reservations', value: new Map<number, number>() };
     }
     
-  public getFactType(): string {
-      return this.factType;
-  }
+    public getFactType(): string {
+        return this.factType;
+    }
     
-  public getEntityType(): string {
-      return this.entityType;
-  }
+    public getEntityType(): string {
+        return this.entityType;
+    }
     
     public getSuccessfulBikeReservations(): Map<number, number> {
         return this.successfulBikeReservations;
@@ -45,18 +45,31 @@ export abstract class ReservationsInfo implements Info {
     }
     
     public increaseSuccessfulBikeReservations(key: number): void {
-        
+        let value: number = this.successfulBikeReservations.get(key);        
+        if (value !== undefined) {
+            this.successfulBikeReservations.set(key, ++value);                
+        }
     }
     
     public increaseFailedBikeReservations(key: number): void {
+        let value: number = this.failedBikeReservations(key);        
+        if (value !== undefined) {
+            this.failedBikeReservations.set(key, ++value);                
+        }
     }
     
     public increaseSuccessfulSlotReservations(key: number): void {
-        
+        let value: number = this.successfulSlotReservations.get(key);        
+        if (value !== undefined) {
+            this.successfulSlotReservations.set(key, ++value);                
+        }        
     }
     
     public increaseFailedSlotReservations(): Map<number, number> {
-        return this.successfulBikeReservations;
+        let value: number = this.failedSlotReservations.get(key);        
+        if (value !== undefined) {
+            this.failedSlotReservations.set(key, ++value);                
+        }        
     }
     
     public async initData(entities: Array<Entity>): Promise<void> {
@@ -66,9 +79,7 @@ export abstract class ReservationsInfo implements Info {
             this.getSuccessfulSlotReservations().set(entity.id, 0);
             this.getFailedSlotReservations().set(entity.id, 0);                
         }        
+        return;
     }
-    
-    abstract update(): void;
-    
         
 }

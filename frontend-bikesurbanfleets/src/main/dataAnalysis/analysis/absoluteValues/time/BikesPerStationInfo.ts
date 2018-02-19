@@ -1,9 +1,9 @@
-import { HistoryReader } from '../../../../../../util';
-import { HistoryEntitiesJson } from '../../../../../../../shared/history';
 import { Observer } from '../../../../ObserverPattern';
 import { Station, Reservation } from '../../../../../systemDataTypes/Entities';
 import { TimeEntry, Event } from '../../../../../systemDataTypes/SystemInternalData';
 import { Info } from "../Info";
+import { SystemReservationsInfo } from '../../systemEntities/SystemReservationsInfo';
+import { SystemStationsI nfo } from '../SystemStationsInfo';
 
 interface BikesPerTime {
   time: number;
@@ -34,30 +34,21 @@ export class StationBikesPerTimeList {
   }
 }
 
-export class BikesPerStationInfo implements Info {
+export class BikesPerStationInfo implements Info, Observer {
   private stations: Map<number, StationBikesPerTimeList>;
-  private reservations: Array<Reservation>; 
+  private reservationsInfo: SystemReservationsInfo;
+
+    public constructor(reservations: SystemReservationsInfo) {
+        this.reservationsInfo = reservtions;
+        this.stations = new Map();
+    }
   
-  public async init(path: string): Promise<void> {
-      try {
-          let history: HistoryReader = await HistoryReader.create(path);
-          
-          let reservationEntities: HistoryEntitiesJson = await history.getEntities('reservations');
-          this.reservations = <Reservation[]> reservationEntities.instances;
-          
-          let stationEntities: HistoryEntitiesJson = await history.getEntities('stations');
-          let stationInstances = <Station[]> stationEntities.instances;
-        
-          for(let station of stationInstances) {
+    public async init(stationsInfo: SystemStationsInfo) {
+        for(let station of stationsInfo) {
             let value: StationBikesPerTimeList = new StationBikesPerTimeList(this.obtainInitAvailableBikesOf(station));
             this.stations.set(station.id, value);
-          }
-      }
-      catch(error) {
-          throw new Error('Error accessing to stations or reservations: '+error);
-      }
-      return;
-  }
+        }
+    }
   
   public update(timeEntry: TimeEntry): void {
     let instant: number = timeEntry.time;
@@ -74,7 +65,7 @@ export class BikesPerStationInfo implements Info {
         case "EventUserAppears": {
           if (eventStations !== undefined) {
             // If there are several bike reservations, only the last can be a ctive
-            station = eventStations[eventStations.length-1];
+            station = eventStations[0];
             lastPos = station.reservations.id.length-1;
             reservationId = station.reservations.id[lastPos];
             reservation = this.getReservation(reservationId);
@@ -90,6 +81,7 @@ export class BikesPerStationInfo implements Info {
         case "EventUserArrivesAtStationToRentBikeWithoutReservation": {
             if (eventStations.length > 0) {
                 station = eventStations[0];
+        //  TODO: fix it it is neccessary  to verify each station
             
                 // If bike ids have been registered, it means a change has 
                 // occurred (there's one bike less) -> update number of bikes
@@ -133,13 +125,12 @@ export class BikesPerStationInfo implements Info {
         case "EventUserArrivesAtStationToReturnBikeWithoutReservatioon": {
             if (eventStatiosn.length > 0) {
                 station = eventStations[0];
-                if (station.bikes !== undefined) {
+        // TODO: fix it, it is neccessary to verify each station (it can be a reservation)                if (station.bikes !== undefined) {
                     this.stations.get(station.id).addBike(instant);
                 }
             }
             break;
         }
-              
     }
   }
     
@@ -155,7 +146,7 @@ export class BikesPerStationInfo implements Info {
   
   // TODO: should it return undefined if id doesn't exist?
   private getReservation(id: number): Reservation {
-    for(let reservation of this.reservations) {
+    for(let reservation of this.reservationsInfo.getReservations()) {
       if (reservation.id === id) {
         return reservation;
       }

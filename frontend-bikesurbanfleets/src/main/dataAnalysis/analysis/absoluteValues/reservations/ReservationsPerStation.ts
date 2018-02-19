@@ -1,37 +1,34 @@
-import { HistoryReader } from '../../../../util';
-import { HistoryEntitiesJson } from '../../../../../shared/history';
 import  { Station, Reservation } from '../../../systemDataTypes/Entities';
-import { AbsoluteValue } from '../AbsoluteValue';
-import { Info } from "../Info";
+import { Observer } from '../../ObserverPattern';
+import { ReservationsInfo } from './ReservationsInfo';
+import { SystemStationsInfo } from '../../systemEntities/SystemStationsInfo';
 
-export class ReservationsPerStation implements Info {
-    private stations: Array<Station>;
+export class ReservationsPerStation implements Observer {
+    private stationsInfo: SystemStationsInfo;
+    private reservations: ReservationsInfo;
     
-    public constructor() {
-        super('STATION');
+    public constructor(stations: SystemStationsInfo) {
+        this.stationsInfo = stations;
+        this.reservations = new ReservationsInfo('STATION');
     }
     
-    public async init(path: string): Promise<void> {
+    public async init() {
         try {
-            let history: HistoryReader = await HistoryReader.create(path);
-            let entities: HistoryEntitiesJson = await history.getEntities("stations");
-            this.stations = <Station[]> entities.instances;
-            
-            this.initData(this.stations);
+            this.reservations.initData(this.stationsInfo.getStations());
         }
         catch(error) {
-            throw new Error('Error accessing to stations: '+error);
+            throw new Error('Error initializing data: '+error);
         }
         return;
     }
    
-    public static async create(path: string): Promise<ReservationsPerStation> {
+    public static async create(): Promise<ReservationsPerStation> {
         let reservationValues = new ReservationsPerStation();
         try {
-            await reservationValues.init(path);
+            await reservationValues.init();
         }
         catch(error) {
-            throw new Error('Error initializig station data of requested data: '+error);
+            throw new Error('Error creating requested data: '+error);
         }
         return reservationValues;
     }
@@ -42,27 +39,25 @@ export class ReservationsPerStation implements Info {
         switch (reservation.type) { 
             case 'BIKE': { 
                 if (reservation.state === 'FAILED') {
-                    this.increaseFailedBikeReservations(key);
+                    this.reservations.increaseFailedBikeReservations(key);
                 }
                 else {
-                    this.increaseSuccessfulBikeReservations(key);
+                    this.reservations.increaseSuccessfulBikeReservations(key);
                 }
                 break;
             }
                 
             case 'SLOT': { 
                 if (reservation.state === 'FAILED') {
-                    this.increaseFailedSlotReservations(key);
+                    this.reservations.increaseFailedSlotReservations(key);
                 }
                 else {
-                    this.increaseSuccessfulSlotReservations(key);
+                    this.reservations.increaseSuccessfulSlotReservations(key);
                 }
                 break;
             }
-                
-                default: throw new Error('Reservation type not identified');
-                        
+
+            default:
+                throw new Error('Reservation type not identified');
         }
-    }
-              
 }
