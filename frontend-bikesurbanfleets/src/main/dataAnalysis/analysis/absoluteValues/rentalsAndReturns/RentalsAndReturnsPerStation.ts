@@ -2,20 +2,19 @@ import  { Station, User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { Observer } from '../../ObserverPattern';
 import { RentalsAndReturnsInfo } from './RentalsAndReturnsInfo';
-import { SystemStationsInfo } from '../../systemEntities/SystemStationsInfo'; 
 
 export class RentalsAndReturnsPerStation implements Observer {
-    private stationsInfo: SystemStationsInfo;
+    private stations: Array<Station>;
     private rentalsAndReturns: RentalsAndReturnsInfo;
     
-    public constructor(stations: SystemStationsInfo) {
-        this.stationsInfo = stations;
+    public constructor(stations: Array<Station>) {
+        this.stations = stations;
         this.rentalsAndReturns = new RentalsAndReturnsInfo('STATION');
     }
     
     public async init() {
         try {
-            await this.rentalsAndReturns.initData(this.stationsInfo.getStations());
+            await this.rentalsAndReturns.initData(this.stations);
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);
@@ -99,7 +98,7 @@ export class RentalsAndReturnsPerStation implements Observer {
         let stationPosition: any = user.route.old.points[lastPos];
          
         let stationId: number = -1;
-        for(let station of this.stationsInfo.getStations()) {
+        for(let station of this.stations) {
             if (station.position.latitude === stationPosition.latitude && station.position.longitude === stationPosition.longitude) {
                 stationId = station.id;
                 break; 

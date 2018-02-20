@@ -19,12 +19,12 @@ export class EmptyStationsInfo {
        
     public init(stationsInfo: BikesPerStationInfo): void {
         stationsInfo.forEach( (stationInfo, stationId)) => {
-            let emptyState: EmptyState = this.getEmptyStateOf(stationInfo);
+            let emptyState: EmptyState = this.createEmptyStateFor(stationInfo);
             this.emptyStatesPerStation.set(stationId, emptyState);
         }
     }
     
-    private getEmptyStateOf(stationInfo: StationBikesPerTimeList): EmptyState {
+    private createEmptyStateFor(stationInfo: StationBikesPerTimeList): EmptyState {
         let intervals: Array<TimeInterval> = new Array();
         let time: number = 0;
         let startTime, endTime: number = -1;

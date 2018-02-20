@@ -7,79 +7,94 @@ import { Calculator } from "../systemDataCalculators/Calculator";
 import { ReservationCalculator } from "../systemDataCalculators/ReservationCalculator";
 import { RentalAndReturnCalculator } from "../systemDataCalculators/RentalAndReturnCalculator";
 import { CsvGenerator } from "./CsvGenerator";
+import { Entity } from '../../systemDataTypes/Entities';
 
 export class DataGenerator {
-    private boolean csv;
-    private readonly INICIALIZATION: number = 5;
-    private readonly CALCULATION: number = 2;
-    
+    private readonly RESERVVATION: number = 2;
+    private readonly RENTAL_AND_RETURN: number = 3;
+
+    private boolean csv;    
+    private infoTypes: Array<Info>;  // It indicates the types of info. the analizer must calculate
+
     private path: string;
-    private counter: number;
-    
-    private calculators: Map<string, Calculator>;
+    private reservationCounter: number;
+    private rentalAndReturnCounter: number;
+   
     private data: Map<string, Info>;
-    
+    private reservationCalculator: ReservationCalculator;
+    private rentalAndReturnCalculator: RentalAndReturnCalculator;
+
     public constructor(path: string, csv: boolean) {
         this.csv = csv;
         this.path = path;
-        this.counter = 0;
-        this.calculators = new Map(); 
+        this.reservationCounter = 0;
+        this.rentalAndReturnCounter = 0;
         this.data = new Map();
     }
-    
-    private async generate(): Promise<void> {
-        this.calculators.set(ReservationCalculator.name, new ReservationCalculator());
+
+    private async initReservations(reservations: Info) {
+        reservations.init().then( () => {
+            this.reservationCounter++;
+            this.calculateReservations();
+        });
+    }
+
+    public async initRentalsAndReturns(rentalsAndReturns: Info) {
+        rentalsAndReturns.init().then( () => {
+            this.rentalAndReturnCounter++;
+            this.calculateRentalsAndReturns();
+        });
+    }
+
+    pubblic async generate(): Promise<void> {
         this.calculators.set(RentalAndReturnCalculator.name, new RentalAndReturnCalculator());
-        
-        this.data.set(ReservationsPerUser.name, new ReservationsPerUser());
-        this.data.set(RentalsAndReturnsPerUser.name, new RentalsAndReturnsPerUser());
-        this.data.set(ReservationsPerStation.constructor.name, new ReservationsPerStation());
-        this.data.set(RentalsAndReturnsPerStation.name, new RentalsAndReturnsPerStation());
-        
-        this.data.forEach( (info, key) => {
-            switch (info.getFactType()) {
-                case: 'RESERVATION': {
-                    this.calculators.get(ReservationCalculator.name).subscribe(info);
-                    break;
-                }
-                    
-                case 'RENTAL_AND_RETURN':
-                case 'EMPTY_STATION': {
-                    this.calculators.get(RentalAndReturnCalculator.name).subscribe(info);
-                    break;
-                }
-            }
+
+        let systemReservations: SystemReservationsInfo = new SystemReservationsInfo();
+        systemReservations.init().then( () => { 
+            let emptyStations: EmptyStationsInfo = new EmptyStationsInfo(systemReservations.getReservations());
+            this.rentalAndReturnCalculator.subscribe(emptyStations);          
+            this.data.set(EmptyStationsInfo.name, emptyStations);
+            this.reservationCalculator = new ReservationCalculator(systemReservations.getReservations());
+        }); 
+
+        let systemStations: SystemStationsInfo = new SystemStationsInfo();
+        systemStations.init().then( () = > {
+            let reservations: ReservationsPerStation = new ReservationsPerStation(systemStations.getStations());
+            this.reservationCalculator.subscribe(reservations);
+            this.data.set(ReservationsPerStation.name, reservations);
+            this.initReservations(reservations);
+
+            let rentalsAndReturns: RentalsAndReturnsPerStation = new RentalsAndReturnsPerStation(systemStations.getStations()); 
+            this.rentalAndReturnCalculator.subscribe(rentalsAndReturns);
+            this.data.set(RentalsAndReturnsPerStation.name, rentalsAndReturns);  
+            this.initRentalsAndReturns(rentalsAndReturns);
         });
-        
-        this.calculators.get(ReservationCalculator.name).init(this.path).then( () => {
-            this.counter++; 
-            this.calculateAbsoluteValues();     
-        });
-        
-        this.data.forEach( (info, key) => {
-            info.init(this.path).then( () => {
-                this.counter++; 
-                this.calculateAbsoluteValues();
-            });
-        });
+
+        let systemUsers: SystemUsersInfo = new SystemUsersInfo(); 
+        systemUsers.init().then( () => {
+            let reservations: ReservationsPerUser = new ReservationsPerUser(systemUsers.getUsers());
+            this.reservationCalculator.subscribe(reservations);
+            this.data.set(ReservationsPerUser.name, reservations);
+            this.initReservations(reservations);
+
+            let rentalsAndReturns: RentalsAndReturnsPerUser = new RentalsAndReturnsPerUser(systemUsers.getUsers()); 
+            this.rentalAndReturnCalculator.subscribe(rentalsAndReturns);
+            this.data.set(RentalsAndReturnsPerUser.name, rentalsAndReturns);  
+            this.initRentalsAndReturns(rentalsAndReturns);
+        }); 
     }
-    
-    private async calculateAbsoluteValues(): Promise<void> {
-        if (this.counter === this.INICIALIZATION) {
-            this.counter = 0;
-            this.calculators.forEach((calculator, key) => {
-                calculator.calculate().then(() => {
-                    this.counter++;
-                    if (csv) {
-                        this.write();
-                    }
-                })
-            });
-            
-         }
-        return;
+
+    private async calculateReservations(): Promise<void> {
+        if (reservationCounter === RESERVATIONS) {
+      // TODO: calculate must be async
+            this.reservationCalculator.calculate();
+        }
     }
-    
+
+    private async calculateRentalsAndReturns(): Promise<void> {
+    }
+
+
     public static async create(path: string): Promise<DataGenerator> {
         let generator: DataGenerator = new DataGenerator(path);
         try {

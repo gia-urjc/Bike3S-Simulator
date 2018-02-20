@@ -2,8 +2,6 @@ import { Observer } from '../../../../ObserverPattern';
 import { Station, Reservation } from '../../../../../systemDataTypes/Entities';
 import { TimeEntry, Event } from '../../../../../systemDataTypes/SystemInternalData';
 import { Info } from "../Info";
-import { SystemReservationsInfo } from '../../systemEntities/SystemReservationsInfo';
-import { SystemStationsI nfo } from '../SystemStationsInfo';
 
 interface BikesPerTime {
   time: number;
@@ -36,15 +34,15 @@ export class StationBikesPerTimeList {
 
 export class BikesPerStationInfo implements Info, Observer {
   private stations: Map<number, StationBikesPerTimeList>;
-  private reservationsInfo: SystemReservationsInfo;
+  private reservations: Array<Reservation>;
 
-    public constructor(reservations: SystemReservationsInfo) {
-        this.reservationsInfo = reservtions;
+    public constructor(reservations: Array<Reservation>) {
+        this.reservations = reservations;
         this.stations = new Map();
     }
   
-    public async init(stationsInfo: SystemStationsInfo) {
-        for(let station of stationsInfo) {
+    public async init(systemStations: Array<Station>) {
+        for(let station of systemStations) {
             let value: StationBikesPerTimeList = new StationBikesPerTimeList(this.obtainInitAvailableBikesOf(station));
             this.stations.set(station.id, value);
         }
@@ -81,17 +79,14 @@ export class BikesPerStationInfo implements Info, Observer {
         case "EventUserArrivesAtStationToRentBikeWithoutReservation": {
             if (eventStations.length > 0) {
                 station = eventStations[0];
-        //  TODO: fix it it is neccessary  to verify each station
+        //  TODO: make a method?
             
-                // If bike ids have been registered, it means a change has 
-                // occurred (there's one bike less) -> update number of bikes
+                // If bike ids have been registered, a change has occurred (there's 1 bike less)
                 if (station.bikes !== undefined) {  // rental + mayvbe, slot reservations
                     this.stations.get(station.id).substractBike(instant);
-                    // TODO: if rental has been possible, sure that bike reservations have not been made
                 }
-                   
                 else { // (station.reservations !== undefined) -> bike reservations (NOT rental)
-                    // Getting the last changed station registered, wihich can conatins an active bike reservation  
+                    // Getting the last changed station registered, wihich can conatin an active bike reservation  
                     station = eventStations[eventStations.length-1];
                     lastPos = station.reservations.id.length-1;
                     reservationId = station.reservations.id[lastPos];
@@ -125,7 +120,7 @@ export class BikesPerStationInfo implements Info, Observer {
         case "EventUserArrivesAtStationToReturnBikeWithoutReservatioon": {
             if (eventStatiosn.length > 0) {
                 station = eventStations[0];
-        // TODO: fix it, it is neccessary to verify each station (it can be a reservation)                if (station.bikes !== undefined) {
+                if (station.bikes !== undefined) {
                     this.stations.get(station.id).addBike(instant);
                 }
             }
@@ -146,7 +141,7 @@ export class BikesPerStationInfo implements Info, Observer {
   
   // TODO: should it return undefined if id doesn't exist?
   private getReservation(id: number): Reservation {
-    for(let reservation of this.reservationsInfo.getReservations()) {
+    for(let reservation of this.reservations) {
       if (reservation.id === id) {
         return reservation;
       }

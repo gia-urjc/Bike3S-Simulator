@@ -1,20 +1,19 @@
 import  { User, Reservation } from '../../../systemDataTypes/Entities';
 import { Observer } from '../../ObserverPattern';
 import { ReservationsInfo } from './ReservationsInfo';
-import { SystemUsersInfo } from '../../systemEntities/SystemUsersInfo'; 
 
 export class ReservationsPerUser implements Observer {
-    private usersInfo: SystemUsersInfo;
+    private users: Array<User>;
     private reservations: ReservationsInfo;
     
-    public constructor(users: SystemUsersInfo) {
-        this.usersInfo = users;
+    public constructor(users: Array<User>) {
+        this.users = users;
         this.reservations = new ReservationsInfo('USER');
     }
     
     public async init(): Promise<void> {
         try {
-            this.reservations.initData(this.usersInfo.getUsers());
+            this.reservations.initData(this.users);
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);

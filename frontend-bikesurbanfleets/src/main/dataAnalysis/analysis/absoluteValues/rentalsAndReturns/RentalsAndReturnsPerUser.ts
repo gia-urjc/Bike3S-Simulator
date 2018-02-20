@@ -2,20 +2,19 @@ import  { User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { Observer } from '../../ObserverPattern';
 import { RentalsAndReturnsInfo } from './RentalsAndReturnsInfo';
-import { SystemUsersInfo } from '../../systemEntities/SystemUsersInfo';
 
 export class RentalsAndReturnsPerUser implements Observer {
-    private usersInfo: SystemUsersInfo;
+    private users: Array<User>;
     private rentalsAndReturns: RentalsAndReturnsInfo;
     
-    public constructor(users: SystemUsersInfo) {
-        this.usersInfo = users;
+    public constructor(users: Array<User>) {
+        this.users = users;
         this.rentalsAndReturns = new RentalsAndReturnsInfo('USER');
     }
   
     public async init() {
         try {
-            await this.rentalsAndReturns.initData(this.usersInfo.getUsers());
+            await this.rentalsAndReturns.initData(this.users);
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);

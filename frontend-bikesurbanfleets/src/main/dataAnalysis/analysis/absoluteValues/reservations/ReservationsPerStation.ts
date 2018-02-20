@@ -1,20 +1,19 @@
 import  { Station, Reservation } from '../../../systemDataTypes/Entities';
 import { Observer } from '../../ObserverPattern';
 import { ReservationsInfo } from './ReservationsInfo';
-import { SystemStationsInfo } from '../../systemEntities/SystemStationsInfo';
 
 export class ReservationsPerStation implements Observer {
-    private stationsInfo: SystemStationsInfo;
+    private stations: Array<Station>;
     private reservations: ReservationsInfo;
     
-    public constructor(stations: SystemStationsInfo) {
-        this.stationsInfo = stations;
+    public constructor(stations: Array<Station>) {
+        this.stations = stations;
         this.reservations = new ReservationsInfo('STATION');
     }
     
     public async init() {
         try {
-            this.reservations.initData(this.stationsInfo.getStations());
+            this.reservations.initData(this.stations);
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);
