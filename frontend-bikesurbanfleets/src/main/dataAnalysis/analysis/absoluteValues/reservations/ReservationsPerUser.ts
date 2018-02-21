@@ -58,10 +58,12 @@ export class ReservationsPerUser implements Observer {
                 
             default: 
                 throw new Error('Reservation type not identified');
-                    
         }
     }
+    
+    public getReservations(): ReservationsInfo {
+        return this.reservations;
+    }
               
-}
-        
+}     
         

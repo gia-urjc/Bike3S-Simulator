@@ -4,19 +4,21 @@ import { HistoryIterator } from '../../HistoryIterator';
 import { Reservation } from '../../systemDataTypes/Entities';
 import { Observer, Observable } from '../ObserverPattern';
 import { Calculator } from "./Calculator";
-import { Sy stemReservationsInfo } from '../systemEntities/SystemReservationsInfo';
 
 export class ReservationCalculator implements Calculator {
-    private reservations: SystemReservationsInfo;
+    private reservations: Array<Reservation>;
     private observers: Array<Observer>;
     
-    public constructor(reservations: SystemReservationsInfo) {
-        this.reservationsInfo = reservations;
+    public constructor() {
         this.observers = new Array<Observer>();
     }
     
+    public setReservations(reservations: Array<Reservation>): void {
+        this.reservations = reservations;
+    }
+    
     public async calculate(): Promise<void> {
-        for (let reservation of this.reservationsInfo.getReservations()) {
+        for (let reservation of this.reservations) {
             this.notify(reservation);
         }
         return;

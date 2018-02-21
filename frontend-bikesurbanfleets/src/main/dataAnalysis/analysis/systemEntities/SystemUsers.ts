@@ -2,7 +2,7 @@ import { HistoryReader } from '../../../../util';
 import { HistoryEntitiesJson } from '../../../../../shared/history';
 import  { User } from '../../../systemDataTypes/Entities';
 
-export class SystemUsersInfo {
+export class SystemUsers {
     private users: Array<User>;
     
     public async init(path: string): Promise<void> {

@@ -32,7 +32,7 @@ export class StationBikesPerTimeList {
   }
 }
 
-export class BikesPerStationInfo implements Info, Observer {
+export class BikesPerStation implements Info, Observer {
   private stations: Map<number, StationBikesPerTimeList>;
   private reservations: Array<Reservation>;
 

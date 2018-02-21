@@ -3,7 +3,7 @@ import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { Observer } from '../../ObserverPattern';
 import { RentalsAndReturnsInfo } from './RentalsAndReturnsInfo';
 
-export class RentalsAndReturnsPerStation implements Observer {
+export class RentalsAndReturnsPerStation implements Observer, Info {
     private stations: Array<Station>;
     private rentalsAndReturns: RentalsAndReturnsInfo;
     
@@ -58,8 +58,10 @@ export class RentalsAndReturnsPerStation implements Observer {
                     if (stations.length > 0) {
                         // If only stations with reservations have been recorded, key'll be undefined 
                         key = this.obtainChangedStationId(stations);
-                        // If key is undefined, successful rentals won't be increased 
-                        this.rentalsAndReturns.increaseSuccessfulRentals(key);
+                        // If key is undefined, successful rentals won't be increased
+                        if (key  !== undefined) { 
+                            this.rentalsAndReturns.increaseSuccessfulRentals(key);
+                        }
                     }
                     
                     // If there're not registered stations, it means rental hasn't been possible
@@ -75,13 +77,15 @@ export class RentalsAndReturnsPerStation implements Observer {
                         // If only stations with reservations have been recorded, key'll be undefined
                         key = this.obtainChangedStationId(stations);
                         // If key is undefined, successful returns won't be increased
-                        this.rentalsAndReturns.increaseSuccessfulReturns(key);
+                        if (key !== undefined) {
+                            this.rentalsAndReturns.increaseSuccessfulReturns(key);
+                        }
                     }
                     
                     // If there're not registered stations, it means rental hasn't been possible
                     else {
                         key = this.obtainNotChangedStationId(event.changes.users[0]);
-                        this.rentalsAndReturns.increaseValue(this.bikeFailedReturnsPerStation, key);
+                        this.rentalsAndReturns.increaseFailedBikeReturns(key);
                     }
                     break;
                 }
@@ -119,6 +123,10 @@ export class RentalsAndReturnsPerStation implements Observer {
             }
         }
         return undefined;
+    }
+    
+    public getRentalsAndReturns(): RentalsAndReturnsInfo {
+        return this.rentalsAndReturns;
     }
 
 

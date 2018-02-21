@@ -33,9 +33,11 @@ export class CsvGenerator {
       return;
 	 }
 
-	public async init(data: Map<string, any>): Promise<void> {
-		this.titles.push('id');
-//        data.get(ReservationsPerStation.name).forEach( (value, key) => 
+	 public async init(data: Map<string, any>): Promise<void> {
+		  this.titles.push('id');
+        
+    let reservations: ReservationsInfo = new ReservationsInfo();
+          
 //            this.titles.push(value.name));
 //        data.get(RentalsAndReturnsPerStation.name).forEach( (value, key) => 
 //            this.titles.push(value.name));

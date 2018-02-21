@@ -2,7 +2,7 @@ import { HistoryReader } from '../../../../../../util';
 import { HistoryEntitiesJson } from '../../../../../../../shared/history';
 import { Reservation } from '../../../../../systemDataTypes/Entities';
 
-export class SystemReservationsInfo {
+export class SystemReservations {
     private reservations: Array<Reservation>;
 
     public async init(path: string): Promise<void> {

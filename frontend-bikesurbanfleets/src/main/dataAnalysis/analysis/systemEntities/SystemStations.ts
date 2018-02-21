@@ -2,7 +2,7 @@ import { HistoryReader } from '../../../../util';
 import { HistoryEntitiesJson } from '../../../../../shared/history';
 import  { Station } from '../../../systemDataTypes/Entities';
 
-export class SystemStationsInfo {
+export class SystemStations {
     private stations: Array<Station>;
 	
     public async init(path: string): Promise<void> {

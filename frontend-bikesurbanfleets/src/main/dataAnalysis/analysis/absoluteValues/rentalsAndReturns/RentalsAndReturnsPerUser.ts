@@ -3,7 +3,7 @@ import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { Observer } from '../../ObserverPattern';
 import { RentalsAndReturnsInfo } from './RentalsAndReturnsInfo';
 
-export class RentalsAndReturnsPerUser implements Observer {
+export class RentalsAndReturnsPerUser implements Observer, Info {
     private users: Array<User>;
     private rentalsAndReturns: RentalsAndReturnsInfo;
     
@@ -76,7 +76,7 @@ export class RentalsAndReturnsPerUser implements Observer {
         }
     }
 
-    public getRentalsAndReturns(): RentalsAndReturns {
+    public getRentalsAndReturns(): RentalsAndReturnsInfo {
         return this.rentalsAndReturns;
     }
       
