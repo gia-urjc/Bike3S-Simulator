@@ -10,15 +10,17 @@ import { SystemStations } from "../systemEntities/SystemStations";
 import { CsvGenerator } from "./CsvGenerator";
 
 export class DataGenerator {
-    private readonly RESERVVATIONS: number = 3;  // 3 data related to reservations must be initialized
-    private readonly RENTALS_AND_RETURNS: number = 3;  // 3 data related to rentals and returns must be initialized
-        private readonly CALCULATION: number = 2;  // both calculators must have calculated its data before writing them 
+    private readonly RESERVVATIONS: number = 2;  // 2 data related to reservations must be initialized
+    private readonly RENTALS_AND_RETURNS: number = 2;  // 2 data related to rentals and returns must be initialized
+    private readonly CALCULATION: number = 2;  // both calculators must have calculated its data before writing them 
+    private readonly BIKES_PER_STATION: number = 2;  // this data needs to be initialized with both reservation and station information
 
     private csv: boolean;  // it indicates if a csv file must be generated    
     private path: string;  // it's the path of history files
     private reservationCounter: number;  // number of data related to reservations which have been initialized
     private rentalAndReturnCounter: number;  // number of data related to rentals and returns which have been initialized
     private calculationCounter: number;  // number of calculators which have calculated its data
+    private bikesPerStationCounter: number; 
    
     private data: Map<string, Info>;  // it contains all the results of the data analysis
     private reservationCalculator: ReservationCalculator;
@@ -32,6 +34,7 @@ export class DataGenerator {
         this.data = new Map();
         this.rentalAndReturnCalculator = new RentalAndReturnCalculator();
         this.reservationCalculator = new ReservationCalculator();
+        this.bikesPerStationCounter = 0;
     }
 
     private async initReservations(reservations: Info) {
@@ -51,19 +54,23 @@ export class DataGenerator {
     }
 
     public async generate(): Promise<void> {
-        let bikesPerStation: BikesPerStation; 
-
+        let bikesPerStation: BikesPerStation = new BikesPerStation();
+         
+        // Getting reservations' initial state information and initializing data of analysis which need it
         let systemReservations: SystemReservations = new SystemReservations();
         systemReservations.init(this.path).then( () => { 
-            bikesPerStation = new BikesPerStation(systemReservations.getReservations());
-            this.rentalAndReturnCalculator.subscribe(emptyStations);          
-            this.data.set(EmptyStationsInfo.name, emptyStations);
+            bikesPerStation.set(systemReservations.getReservations());
+            this.bikesPerStationCounter++;
+            this.rentalAndReturnCalculator.subscribe(bikesPerStation);          
+            this.data.set(BikesPerStation.name, bikesPerStation);
+            this.calculateRentalsAndReturns();
             
             this.reservationCalculator.setReservations(systemReservations.getReservations());
             this.reservationCounter++;
             this.calculateReservations();
         });
-             
+        
+        // Getting stations' initial state information and initializing data of analysis which need it     
        let systemStations: SystemStations = new SystemStations();
         systemStations.init(this.path).then( () => {
             let reservations: ReservationsPerStation = new ReservationsPerStation(systemStations.getStations());
@@ -77,11 +84,12 @@ export class DataGenerator {
             this.initRentalsAndReturns(rentalsAndReturns);  // it's async
             
             bikesPerStation.init(systemStations.getStations()).then( () => {
-                this.rentalAndReturnCounter++;
+                this.bikesperStationCounter++;
                 this.calculateRentalsAndReturns();
             });
         });
-
+        
+        // Getting users' initial state information and initializing data of analysis which need it
         let systemUsers: SystemUsersInfo = new SystemUsersInfo(); 
         systemUsers.init(this.path).then( () => {
             let reservations: ReservationsPerUser = new ReservationsPerUser(systemUsers.getUsers());
@@ -100,15 +108,17 @@ export class DataGenerator {
     private async calculateReservations(): Promise<void> {
         if (this.reservationCounter === this.RESERVATIONS) {
             this.reservationCalculator.calculate().then( () => {
-                this.writeCounter++;
-                this.write();
+                if (csv) {
+                    this.writeCounter++;
+                    this.write();
+                }
             });
         }
         return;
     }
 
     private async calculateRentalsAndReturns(): Promise<void> {
-        if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS) {
+        if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStation === this.BIKES_PER_STATION) {
             this.rentalAndReturnCalculator.calculate().then( () => {
                 if (csv) {
                     this.writeCounter++;
