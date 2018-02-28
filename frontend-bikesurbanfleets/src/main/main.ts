@@ -65,18 +65,8 @@ namespace Main {
             if (window === null) createWindow();
         });
     }
-    
-    export async function test() {
-       try {
-            let data: DataGenerator = await DataGenerator.create('history');
-        }
-        catch(error) {
-           console.log('esto ha petao:', error);
-        }
-        
-    }
-    
+       
 }
   
 Main.init();
-Main.test();
+

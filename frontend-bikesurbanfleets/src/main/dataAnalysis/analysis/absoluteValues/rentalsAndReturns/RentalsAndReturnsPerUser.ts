@@ -2,6 +2,7 @@ import  { User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { Observer } from '../../ObserverPattern';
 import { RentalsAndReturnsInfo } from './RentalsAndReturnsInfo';
+import { Info } from '../Info';
 
 export class RentalsAndReturnsPerUser implements Observer, Info {
     private users: Array<User>;
@@ -9,7 +10,7 @@ export class RentalsAndReturnsPerUser implements Observer, Info {
     
     public constructor(users: Array<User>) {
         this.users = users;
-        this.rentalsAndReturns = new RentalsAndReturnsInfo('USER');
+        this.rentalsAndReturns = new RentalsAndReturnsInfo();
     }
   
     public async init() {
@@ -22,8 +23,8 @@ export class RentalsAndReturnsPerUser implements Observer, Info {
         return;
     }
 
-    public static async create() {
-        let rentalsAndReturnsValues = new RentalsAndReturnsPerUser();
+    public static async create(users: Array<User>) {
+        let rentalsAndReturnsValues = new RentalsAndReturnsPerUser(users);
         try {
             await rentalsAndReturnsValues.init();
         }

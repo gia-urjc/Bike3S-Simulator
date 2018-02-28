@@ -4,7 +4,7 @@ import {TimeEntry, Event} from './systemDataTypes/SystemInternalData';
 
 export class HistoryIterator {
     private history: HistoryReader;
-    private currentFile: Array<HistoryTimeEntry>;
+    private currentFile: Array<HistoryTimeEntry> | undefined;
     private pointer: number;
 
     private constructor() {
@@ -23,8 +23,8 @@ export class HistoryIterator {
         return historyIt;
     }
 
-    public async nextTimeEntry(): Promise<TimeEntry> {
-        let timeEntry: TimeEntry = undefined;
+    public async nextTimeEntry(): Promise<TimeEntry | undefined> {
+        let timeEntry: TimeEntry | undefined = undefined;
         if (this.currentFile !== undefined) {
             this.pointer++;
             timeEntry = this.currentFile[this.pointer];

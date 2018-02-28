@@ -2,6 +2,7 @@ import  { Station, User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { Observer } from '../../ObserverPattern';
 import { RentalsAndReturnsInfo } from './RentalsAndReturnsInfo';
+import { Info } from '../Info';
 
 export class RentalsAndReturnsPerStation implements Observer, Info {
     private stations: Array<Station>;
@@ -9,7 +10,7 @@ export class RentalsAndReturnsPerStation implements Observer, Info {
     
     public constructor(stations: Array<Station>) {
         this.stations = stations;
-        this.rentalsAndReturns = new RentalsAndReturnsInfo('STATION');
+        this.rentalsAndReturns = new RentalsAndReturnsInfo();
     }
     
     public async init() {
@@ -22,8 +23,8 @@ export class RentalsAndReturnsPerStation implements Observer, Info {
         return;
     }
     
-    public static async create() {
-        let stationValues = new RentalsAndReturnsPerStation();
+    public static async create(stations: Array<Station>) {
+        let stationValues = new RentalsAndReturnsPerStation(stations);
         try {
             await stationValues.init();
         }
@@ -44,13 +45,17 @@ export class RentalsAndReturnsPerStation implements Observer, Info {
             switch(event.name) {
                 case 'EventUserArrivesAtStationToRentBikeWithReservation': { 
                     key = this.obtainChangedStationId(stations);
-                    this.rentalsAndReturns.increaseSuccessfulRentals(key);
+                    if (key !== undefined) {  // it's sure key isn't undefined because the user has a bike reservation  
+                        this.rentalsAndReturns.increaseSuccessfulRentals(key);
+                    }
                     break;
                 }
             
                 case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
                     key = this.obtainChangedStationId(stations);
-                    this.rentalsAndReturns.increaseSuccessfulReturns(key);
+                    if (key !== undefined) {  // it's sure key isn't undefined because the user has a bike reservation
+                        this.rentalsAndReturns.increaseSuccessfulReturns(key);
+                    }
                     break;
                 }
                 
@@ -85,7 +90,7 @@ export class RentalsAndReturnsPerStation implements Observer, Info {
                     // If there're not registered stations, it means rental hasn't been possible
                     else {
                         key = this.obtainNotChangedStationId(event.changes.users[0]);
-                        this.rentalsAndReturns.increaseFailedBikeReturns(key);
+                        this.rentalsAndReturns.increaseFailedReturns(key);
                     }
                     break;
                 }
@@ -108,7 +113,6 @@ export class RentalsAndReturnsPerStation implements Observer, Info {
                 break; 
             }
         }
-
         return stationId;
     }
     
@@ -128,6 +132,5 @@ export class RentalsAndReturnsPerStation implements Observer, Info {
     public getRentalsAndReturns(): RentalsAndReturnsInfo {
         return this.rentalsAndReturns;
     }
-
 
 }

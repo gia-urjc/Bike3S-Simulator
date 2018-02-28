@@ -8,7 +8,7 @@ export class ReservationsPerUser implements Observer {
     
     public constructor(users: Array<User>) {
         this.users = users;
-        this.reservations = new ReservationsInfo('USER');
+        this.reservations = new ReservationsInfo();
     }
     
     public async init(): Promise<void> {
@@ -21,8 +21,8 @@ export class ReservationsPerUser implements Observer {
         return;
     }
    
-    public static async create(): Promise<ReservationsPerUser> {
-        let reservationValues = new ReservationsPerUser();
+    public static async create(users: Array<User>): Promise<ReservationsPerUser> {
+        let reservationValues = new ReservationsPerUser(users);
         try {
             await reservationValues.init();
         }

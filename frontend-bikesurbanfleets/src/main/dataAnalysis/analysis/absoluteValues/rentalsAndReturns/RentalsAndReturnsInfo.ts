@@ -61,12 +61,21 @@ export class RentalsAndReturnsInfo {
     
     public async initData(entities: Array<Entity>): Promise<void> {
         for(let entity of entities) {
-             this.failedRentals.value.set(entityy.id, 0);
-             this.successfulRentals.value.set(entityy.id, 0);
-             this.failedReturns.value.set(entityy.id, 0);            
-             this.successfulReturns.value.set(entityy.id, 0);            
+             this.failedRentals.value.set(entity.id, 0);
+             this.successfulRentals.value.set(entity.id, 0);
+             this.failedReturns.value.set(entity.id, 0);            
+             this.successfulReturns.value.set(entity.id, 0);            
         }
         return;
     }
-
+    
+    public getNames(): Array<string> {
+        let names: Array<string> = new Array();
+        names.push(successfulRentals.name);
+        names.push(failedRentals.name);
+        names.push(successfulReturns.name);
+        names.push(failedReturns.name);
+        return names;
+    }
+  
 }

@@ -1,6 +1,6 @@
-import { HistoryReader } from '../../../../util';
-import { HistoryEntitiesJson } from '../../../../../shared/history';
-import  { Station } from '../../../systemDataTypes/Entities';
+import { HistoryEntitiesJson } from "../../../../shared/history";
+import { HistoryReader } from "../../../util";
+import { Station } from "../../systemDataTypes/Entities";
 
 export class SystemStations {
     private stations: Array<Station>;

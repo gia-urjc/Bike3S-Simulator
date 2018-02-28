@@ -8,7 +8,7 @@ export class ReservationsPerStation implements Observer {
     
     public constructor(stations: Array<Station>) {
         this.stations = stations;
-        this.reservations = new ReservationsInfo('STATION');
+        this.reservations = new ReservationsInfo();
     }
     
     public async init() {
@@ -21,8 +21,8 @@ export class ReservationsPerStation implements Observer {
         return;
     }
    
-    public static async create(): Promise<ReservationsPerStation> {
-        let reservationValues = new ReservationsPerStation();
+    public static async create(stations: Array<Station>): Promise<ReservationsPerStation> {
+        let reservationValues = new ReservationsPerStation(stations);
         try {
             await reservationValues.init();
         }
@@ -59,8 +59,9 @@ export class ReservationsPerStation implements Observer {
             default:
                 throw new Error('Reservation type not identified');
         }
+    }
         
-        public getReservations(): ReservationsInfo {
-            return this.reservations;
-        }
+    public getReservations(): ReservationsInfo {
+        return this.reservations;
+    }
 }

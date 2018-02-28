@@ -2,8 +2,11 @@ import { HistoryEntitiesJson } from "../../../../shared/history";
 import { JsonObject } from "../../../../shared/util";
 import { HistoryReader } from "../../../util";
 import { Station, User } from "../../systemDataTypes/Entities";
+import { Info } from "../absoluteValues/Info";
+import { RentalsAndReturnsInfo } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsInfo";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
+import { ReservationsInfo } from "../absoluteValues/reservations/ReservationsInfo";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
 import * as json2csv from 'json2csv';
@@ -11,12 +14,16 @@ import * as fs from 'fs';
 
 export class CsvGenerator {
   private titles: Array<string>;
-	private stationData: Array<JsonObject>;
-	private userData: Array<JsonObject>;
+  private reservationsInfo: ReservationsInfo;
+  private rentalsAndReturnsInfo: RentalsAndReturnsInfo; 
+	  private stationData: Array<JsonObject>;
+  private userData: Array<JsonObject>;
   private path: string;
   
   public constructor(path: string) {
     this.titles = new Array();
+    this.reservationsInfo = new ReservationsInfo();
+    this.rentalsAndReturnsInfo = new RentalsAndReturnsInfo();
     this.stationData = new Array();
     this.userData = new Array();
     this.path = path;
@@ -33,10 +40,9 @@ export class CsvGenerator {
       return;
 	 }
 
-	 public async init(data: Map<string, any>): Promise<void> {
-		  this.titles.push('id');
-        
-    let reservations: ReservationsInfo = new ReservationsInfo();
+	 public async init(data: Map<string, Info>): Promise<void> {
+      this.titles.push('id');
+      this.reservationsInfo.getNames().forEach( (name) => this.titles.push(name));
           
 //            this.titles.push(value.name));
 //        data.get(RentalsAndReturnsPerStation.name).forEach( (value, key) => 

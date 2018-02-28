@@ -3,14 +3,17 @@ import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
+import { BikesPerStation } from "../absoluteValues/time/BikesPerStation";
+import { EmptyStations } from "../absoluteValues/time/EmptyStations";
 import { ReservationCalculator } from "../calculators/ReservationCalculator";
 import { RentalAndReturnCalculator } from "../calculators/RentalAndReturnCalculator";
 import { SystemReservations } from "../systemEntities/SystemReservations";
 import { SystemStations } from "../systemEntities/SystemStations";
+import { SystemUsers } from "../systemEntities/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
 
 export class DataGenerator {
-    private readonly RESERVVATIONS: number = 2;  // 2 data related to reservations must be initialized
+    private readonly RESERVATIONS: number = 2;  // 2 data related to reservations must be initialized
     private readonly RENTALS_AND_RETURNS: number = 2;  // 2 data related to rentals and returns must be initialized
     private readonly CALCULATION: number = 2;  // both calculators must have calculated its data before writing them 
     private readonly BIKES_PER_STATION: number = 2;  // this data needs to be initialized with both reservation and station information
@@ -23,6 +26,7 @@ export class DataGenerator {
     private bikesPerStationCounter: number; 
    
     private data: Map<string, Info>;  // it contains all the results of the data analysis
+    private bikesPerStation: BikesPerStation;
     private reservationCalculator: ReservationCalculator;
     private rentalAndReturnCalculator: RentalAndReturnCalculator;
 
@@ -32,7 +36,8 @@ export class DataGenerator {
         this.reservationCounter = 0;
         this.rentalAndReturnCounter = 0;
         this.data = new Map();
-        this.rentalAndReturnCalculator = new RentalAndReturnCalculator();
+        this.bikesPerStation = new BikesPerStation();
+        this.rentalAndReturnCalculator = new RentalAndReturnCalculator(this.path);
         this.reservationCalculator = new ReservationCalculator();
         this.bikesPerStationCounter = 0;
     }
@@ -54,15 +59,13 @@ export class DataGenerator {
     }
 
     public async generate(): Promise<void> {
-        let bikesPerStation: BikesPerStation = new BikesPerStation();
-         
         // Getting reservations' initial state information and initializing data of analysis which need it
         let systemReservations: SystemReservations = new SystemReservations();
         systemReservations.init(this.path).then( () => { 
-            bikesPerStation.set(systemReservations.getReservations());
+            this.bikesPerStation.setReservations(systemReservations.getReservations());
             this.bikesPerStationCounter++;
-            this.rentalAndReturnCalculator.subscribe(bikesPerStation);          
-            this.data.set(BikesPerStation.name, bikesPerStation);
+            this.rentalAndReturnCalculator.subscribe(this.bikesPerStation);          
+
             this.calculateRentalsAndReturns();
             
             this.reservationCalculator.setReservations(systemReservations.getReservations());
@@ -83,14 +86,14 @@ export class DataGenerator {
             this.data.set(RentalsAndReturnsPerStation.name, rentalsAndReturns);  
             this.initRentalsAndReturns(rentalsAndReturns);  // it's async
             
-            bikesPerStation.init(systemStations.getStations()).then( () => {
-                this.bikesperStationCounter++;
+            this.bikesPerStation.init(systemStations.getStations()).then( () => {
+                this.bikesPerStationCounter++;
                 this.calculateRentalsAndReturns();
             });
         });
         
         // Getting users' initial state information and initializing data of analysis which need it
-        let systemUsers: SystemUsersInfo = new SystemUsersInfo(); 
+        let systemUsers: SystemUsers = new SystemUsers(); 
         systemUsers.init(this.path).then( () => {
             let reservations: ReservationsPerUser = new ReservationsPerUser(systemUsers.getUsers());
             this.reservationCalculator.subscribe(reservations);
@@ -108,8 +111,8 @@ export class DataGenerator {
     private async calculateReservations(): Promise<void> {
         if (this.reservationCounter === this.RESERVATIONS) {
             this.reservationCalculator.calculate().then( () => {
-                if (csv) {
-                    this.writeCounter++;
+                if (this.csv) {
+                    this.calculationCounter++;
                     this.write();
                 }
             });
@@ -118,19 +121,22 @@ export class DataGenerator {
     }
 
     private async calculateRentalsAndReturns(): Promise<void> {
-        if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStation === this.BIKES_PER_STATION) {
+        if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStationCounter === this.BIKES_PER_STATION) {
             this.rentalAndReturnCalculator.calculate().then( () => {
-                if (csv) {
-                    this.writeCounter++;
+                let emptyStations: EmptyStations = new EmptyStations();
+                emptyStations.init(this.bikesPerStation);
+                this.data.set(EmptyStations.name, emptyStations);
+                
+                if (this.csv) {
+                    this.calculationCounter++;
                     this.write();
                 }
             });
         }
     }
 
-
-    public static async create(path: string): Promise<DataGenerator> {
-        let generator: DataGenerator = new DataGenerator(path);
+    public static async create(path: string, csv: boolean): Promise<DataGenerator> {
+        let generator: DataGenerator = new DataGenerator(path, csv);
         try {
         await generator.generate();
         }

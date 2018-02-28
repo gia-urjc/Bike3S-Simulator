@@ -1,6 +1,6 @@
-import { HistoryReader } from '../../../../util';
-import { HistoryEntitiesJson } from '../../../../../shared/history';
-import  { User } from '../../../systemDataTypes/Entities';
+import { HistoryEntitiesJson } from "../../../../shared/history";
+import { HistoryReader } from "../../../util";
+import { User } from "../../systemDataTypes/Entities";
 
 export class SystemUsers {
     private users: Array<User>;
