@@ -1,8 +1,9 @@
 import { sAnyOf } from 'json-schema-builder-ts/dist/operators/schematical';
 import {sBoolean, sConst, sEnum, sInteger, sNumber, sObject} from 'json-schema-builder-ts/dist/types';
 import { GeoPoint, UInt } from './index';
+import {Percentage} from '../common-config/common-config';
 
-const Percentage = sNumber().min(0).max(100);
+
 
 const typeParameters = {
     USER_RANDOM: {},

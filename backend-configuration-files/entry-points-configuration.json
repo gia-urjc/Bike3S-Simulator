@@ -12,18 +12,56 @@
             "timeInstant": 1
         },
         {
-            "entryPointType": "POISSON",
+            "entryPointType": "SINGLEUSER",
             "userType": {
                 "typeName": "USER_RANDOM"
             },
             "position": {
+                "latitude": 40.42750,
+                "longitude": -3.71384
+            },
+            "timeInstant": 50
+        },
+        {
+            "entryPointType": "POISSON",
+            "userTypeByPercentage": [
+                { 
+                    "percentage": 30,
+                    "userType": {
+                        "typeName": "USER_RANDOM"
+                    }
+                },
+                {
+                    "percentage": 60,
+                    "userType": {
+                        "typeName": "USER_UNINFORMED"
+                    }
+                },
+                {
+                    "percentage": 10,
+                    "userType": {
+                        "typeName": "USER_OBEDIENT",
+                        "parameters": {
+                              "willReserve": true,
+                              "minReservationAttempts": 3,
+                              "minReservationTimeouts": 2,
+                              "minRentalAttempts": 2,
+                              "bikeReservationPercentage": 100,
+                              "slotReservationPercentage": 100,
+                              "reservationTimeoutPercentage": 100,
+                              "failedReservationPercentage": 100
+                        }
+                    }
+                }
+            ],
+            "position": {
                 "latitude": 40.409431,
                 "longitude": -3.692046
             },
+            "totalUsers": 1000,
             "radius": 100.0,
-            "totalUsers": 100,
             "distribution": {
-                "lambda": 0.0033333
+                "lambda": 0.083333333
             }
         }
     ]    
