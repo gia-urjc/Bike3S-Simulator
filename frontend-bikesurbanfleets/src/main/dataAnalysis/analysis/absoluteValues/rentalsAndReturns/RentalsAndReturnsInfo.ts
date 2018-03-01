@@ -3,16 +3,21 @@ import { Info } from '../Info';
 import { Data } from "../Data";
 
 export class RentalsAndReturnsInfo {
+    private readonly SUCCESSFUL_RENTALS: string = 'Successful_bike_rentals'; 
+    private readonly FAILED_RENTALS: string = 'Failed_bike_rentals';
+    private readonly SUCCESSFUL_RETURNS: string = 'Successful_bike_returns';
+    private readonly FAILED_RETURNS: string = 'Failed_bike_returns';
+    
   private successfulRentals: Data; 
   private failedRentals: Data;
   private successfulReturns: Data;
   private failedReturns: Data;
   
   public constructor() {
-    this.successfulRentals = { name: 'Successful bike rentals', value: new Map<number, number>() };
-    this.failedRentals = { name: 'Failed bike rentals', value: new Map<number, number>() };
-    this.successfulReturns = { name: 'Successful bike returns', value: new Map<number, number>() };
-        this.failedReturns = { name: 'Failed bike returns', value: new Map<number, number>() };
+    this.successfulRentals = { name: this.SUCCESSFUL_RENTALS, value: new Map<number, number>() };
+    this.failedRentals = { name: this.FAILED_RENTALS, value: new Map<number, number>() };
+    this.successfulReturns = { name: this.SUCCESSFUL_RETURNS, value: new Map<number, number>() };
+        this.failedReturns = { name: this.FAILED_RETURNS, value: new Map<number, number>() };
   }
   
   public getSuccessfulRentals(): Data { 
@@ -69,12 +74,12 @@ export class RentalsAndReturnsInfo {
         return;
     }
     
-    public getNames(): Array<string> {
+    public static getNames(): Array<string> {
         let names: Array<string> = new Array();
-        names.push(successfulRentals.name);
-        names.push(failedRentals.name);
-        names.push(successfulReturns.name);
-        names.push(failedReturns.name);
+        names.push(this.SUCCESSFUL_RENTALS);
+        names.push(this.FAILED_RENTALS);
+        names.push(this.SUCCESSFUL_RETURNS);
+        names.push(this.FAILED_RETURNS);
         return names;
     }
   

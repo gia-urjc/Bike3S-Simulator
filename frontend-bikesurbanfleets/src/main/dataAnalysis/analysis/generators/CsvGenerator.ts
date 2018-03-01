@@ -14,16 +14,12 @@ import * as fs from 'fs';
 
 export class CsvGenerator {
   private titles: Array<string>;
-  private reservationsInfo: ReservationsInfo;
-  private rentalsAndReturnsInfo: RentalsAndReturnsInfo; 
-	  private stationData: Array<JsonObject>;
+  private stationData: Array<JsonObject>;
   private userData: Array<JsonObject>;
   private path: string;
   
   public constructor(path: string) {
     this.titles = new Array();
-    this.reservationsInfo = new ReservationsInfo();
-    this.rentalsAndReturnsInfo = new RentalsAndReturnsInfo();
     this.stationData = new Array();
     this.userData = new Array();
     this.path = path;
@@ -42,19 +38,16 @@ export class CsvGenerator {
 
 	 public async init(data: Map<string, Info>): Promise<void> {
       this.titles.push('id');
-      this.reservationsInfo.getNames().forEach( (name) => this.titles.push(name));
+      ReservationsInfo.getNames().forEach( (name) => this.titles.push(name));
+      RentalsAndReturnsInfo.getNames().forEach( (name) => this.titles.push(name));
           
-//            this.titles.push(value.name));
-//        data.get(RentalsAndReturnsPerStation.name).forEach( (value, key) => 
-//            this.titles.push(value.name));
-        
     let history: HistoryReader = await HistoryReader.create(this.path);
-    let stationEntities: HistoryEntitiesJson = await history.getEntities('stations');    
-    let stations: Array<Station> = <Station[]> stationEntities.instances;
-    let userEntities: HistoryEntitiesJson = await history.getEntities('users');
-    let users: Array<User> = <User[]> userEntities.instances;
+    let historyStations: HistoryEntitiesJson = await history.getEntities('stations');    
+    let stations: Array<Station> = <Station[]> historyStations.instances;
+    let historyUsers: HistoryEntitiesJson = await history.getEntities('users');
+    let users: Array<User> = <User[]> historyUsers.instances;
     
-    let reservations, rentalsAndReturns: any;
+    let reservations, rentalsAndReturns: Info;
     let value: number;
     
     reservations = data.get(ReservationsPerStation.name);

@@ -3,16 +3,21 @@ import { Data } from "../Data";
 import { Info } from '../Info';
 
 export class ReservationsInfo implements Info {
+    private readonly S_B_R = 'Successful_bike_reservations';
+    private readonly F_B_R = 'Failed_bike_reservations';
+    private readonly S_S_R = 'Successful_slot_reservations';
+    private readonly F_S_R = 'Failed_slot_reservations';
+    
     private successfulBikeReservations: Data;
     private failedBikeReservations: Data;
     private successfulSlotReservations: Data;
     private failedSlotReservations: Data;
     
     public constructor() {
-        this.successfulBikeReservations = { name: 'Successful bike reservations', value: new Map<number, number>() };
-        this.failedBikeReservations = { name: 'Failed bike reservations', value: new Map<number, number>() };
-        this.successfulSlotReservations = { name: 'Successful slot reservations', value: new Map<number, number>() };
-        this.failedSlotReservations = { name: 'Failed slot reservations', value: new Map<number, number>() };
+        this.successfulBikeReservations = { name: this.S_B_R, value: new Map<number, number>() };
+        this.failedBikeReservations = { name: this.F_B_R, value: new Map<number, number>() };
+        this.successfulSlotReservations = { name: this.S_S_R, value: new Map<number, number>() };
+        this.failedSlotReservations = { name: this.F_S_R, value: new Map<number, number>() };
     }
     
     public getSuccessfulBikeReservations(): Data {
@@ -67,6 +72,15 @@ export class ReservationsInfo implements Info {
             this.failedSlotReservations.value.set(entity.id, 0);                
         }        
         return;
+    }
+    
+    public static getNames(): Array<string> {
+        let names: Array<string> = new Array();
+        names.push(this.S_B_R);
+        names.push(this.F_B_R);
+        names.push(this.S_S_R);
+        names.push(this.F_S_R);
+        return names;
     }
     
        
