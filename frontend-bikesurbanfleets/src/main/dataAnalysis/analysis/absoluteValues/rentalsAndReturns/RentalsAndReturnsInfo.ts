@@ -3,10 +3,10 @@ import { Info } from '../Info';
 import { Data } from "../Data";
 
 export class RentalsAndReturnsInfo {
-    private readonly SUCCESSFUL_RENTALS: string = 'Successful_bike_rentals'; 
-    private readonly FAILED_RENTALS: string = 'Failed_bike_rentals';
-    private readonly SUCCESSFUL_RETURNS: string = 'Successful_bike_returns';
-    private readonly FAILED_RETURNS: string = 'Failed_bike_returns';
+    private static readonly SUCCESSFUL_RENTALS: string = 'Successful_bike_rentals'; 
+    private static readonly FAILED_RENTALS: string = 'Failed_bike_rentals';
+    private static readonly SUCCESSFUL_RETURNS: string = 'Successful_bike_returns';
+    private static readonly FAILED_RETURNS: string = 'Failed_bike_returns';
     
   private successfulRentals: Data; 
   private failedRentals: Data;
@@ -14,10 +14,10 @@ export class RentalsAndReturnsInfo {
   private failedReturns: Data;
   
   public constructor() {
-    this.successfulRentals = { name: this.SUCCESSFUL_RENTALS, value: new Map<number, number>() };
-    this.failedRentals = { name: this.FAILED_RENTALS, value: new Map<number, number>() };
-    this.successfulReturns = { name: this.SUCCESSFUL_RETURNS, value: new Map<number, number>() };
-        this.failedReturns = { name: this.FAILED_RETURNS, value: new Map<number, number>() };
+    this.successfulRentals = { name: RentalsAndReturnsInfo.SUCCESSFUL_RENTALS, value: new Map<number, number>() };
+    this.failedRentals = { name: RentalsAndReturnsInfo.FAILED_RENTALS, value: new Map<number, number>() };
+    this.successfulReturns = { name: RentalsAndReturnsInfo.SUCCESSFUL_RETURNS, value: new Map<number, number>() };
+        this.failedReturns = { name: RentalsAndReturnsInfo.FAILED_RETURNS, value: new Map<number, number>() };
   }
   
   public getSuccessfulRentals(): Data { 
@@ -76,11 +76,20 @@ export class RentalsAndReturnsInfo {
     
     public static getNames(): Array<string> {
         let names: Array<string> = new Array();
-        names.push(this.SUCCESSFUL_RENTALS);
-        names.push(this.FAILED_RENTALS);
-        names.push(this.SUCCESSFUL_RETURNS);
-        names.push(this.FAILED_RETURNS);
+        names.push(RentalsAndReturnsInfo.SUCCESSFUL_RENTALS);
+        names.push(RentalsAndReturnsInfo.FAILED_RENTALS);
+        names.push(RentalsAndReturnsInfo.SUCCESSFUL_RETURNS);
+        names.push(RentalsAndReturnsInfo.FAILED_RETURNS);
         return names;
+    }
+    
+    public getData(): Array<Data> {
+        let data: Array<Data> = new Array();
+        data.push(this.successfulRentals);
+        data.push(this.failedRentals);
+        data.push(this.successfulReturns);
+        data.push(this.failedReturns);
+        return data;
     }
   
 }

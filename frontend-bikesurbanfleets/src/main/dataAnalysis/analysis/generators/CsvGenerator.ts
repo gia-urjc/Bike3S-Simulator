@@ -1,7 +1,7 @@
 import { HistoryEntitiesJson } from "../../../../shared/history";
 import { JsonObject } from "../../../../shared/util";
 import { HistoryReader } from "../../../util";
-import { Station, User } from "../../systemDataTypes/Entities";
+import { Station, User, Entity } from "../../systemDataTypes/Entities";
 import { Info } from "../absoluteValues/Info";
 import { RentalsAndReturnsInfo } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsInfo";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
@@ -35,84 +35,56 @@ export class CsvGenerator {
       }
       return;
 	 }
+     
+  public createJsonFor(entities: Array<Entity>, data: Array<JsonObject>, reservations: Info, rentalsAndReturns: Info): void {
+    let i: number = 1;  // title index
+    let j: number = 0;  // data index
+      
+    for (let entity of entities) {
+        let jsonObj: JsonObject = {};
+        
+        jsonObj.id = entity.id;
+        
+        while (j < 4) {   // adding reservations' data
+            jsonObj[this.titles[i]] = reservations.getReservations().getData()[j];
+            i++;
+            j++;
+        }
+        
+        j = 0;
+        while (j < 4) {   // adding rentals and returns' data
+            jsonObj[this.titles[i]] = rentalsAndReturns.getRentalsAndReturns().getData()[j];
+            i++;   
+            j++;
+        }
+        data.push(jsonObj);
+    }
+  } 
 
 	 public async init(data: Map<string, Info>): Promise<void> {
       this.titles.push('id');
       ReservationsInfo.getNames().forEach( (name) => this.titles.push(name));
       RentalsAndReturnsInfo.getNames().forEach( (name) => this.titles.push(name));
           
-    let history: HistoryReader = await HistoryReader.create(this.path);
-    let historyStations: HistoryEntitiesJson = await history.getEntities('stations');    
-    let stations: Array<Station> = <Station[]> historyStations.instances;
-    let historyUsers: HistoryEntitiesJson = await history.getEntities('users');
-    let users: Array<User> = <User[]> historyUsers.instances;
-    
-    let reservations, rentalsAndReturns: Info;
-    let value: number;
-    
-    reservations = data.get(ReservationsPerStation.name);
-    rentalsAndReturns = data.get(RentalsAndReturnsPerStation.name);
-    for (let station of stations) {
-      let stationJson: JsonObject = {
-          "id": station.id  
-      };
-      value = reservations.getFailedBikeReservations().get(station.id);
-      stationJson.bike_failed_reservations = value;
-      
-      value = reservations.getSlotFailedReservationsOfStation(station.id);
-      stationJson.slot_failed_reservations = value;
-      
-      value = reservations.getBikeSuccessfulReservationsOfStation(station.id);
-      stationJson.bike_successful_reservations = value;
-      
-      value = reservations.getSlotSuccessfulReservationsOfStation(station.id);
-      stationJson.slot_successful_reservations = value;
-      
-      value = rentalsAndReturns.getBikeFailedRentalsOfStation(station.id);
-      stationJson.bike_failed_rentals = value;
-      
-      value = rentalsAndReturns.getBikeFailedReturnsOfStation(station.id);
-      stationJson.bike_failed_returns = value;
-      
-      value = rentalsAndReturns.getBikeSuccessfulRentalsOfStation(station.id);
-      stationJson.bike_successful_rentals = value;
-      
-      value = rentalsAndReturns.getBikeSuccessfulReturnsOfStation(station.id);
-      stationJson.bike_successful_returns = value;
-      
-      this.stationData.push(stationJson);
-      
-    }
-    
-    reservations = data.get(ReservationsPerUser.name);
-    reservations.print();
-    rentalsAndReturns = data.get(RentalsAndReturnsPerUser.name);
-    for (let user of users) {
-      let userJson: JsonObject = {};
-      
-      userJson.id = user.id;
-      value = reservations.getBikeFailedReservationsOfUser(user.id);
-      userJson.bike_failed_reservations = value;
-      value = reservations.getSlotFailedReservationsOfUser(user.id);
-      userJson.slot_failed_reservations = value;
-      value = reservations.getBikeSuccessfulReservationsOfUser(user.id);
-      userJson.bike_successful_reservations = value;
-      value = reservations.getSlotSuccessfulReservationsOfUser(user.id);
-      userJson.slot_successful_reservations = value;
-      
-      value = rentalsAndReturns.getBikeFailedRentalsOfUser(user.id);
-      userJson.bike_failed_rentals = value;
-      value = rentalsAndReturns.getBikeFailedReturnsOfUser(user.id);
-      userJson.bike_failed_returns = value;
-      value = rentalsAndReturns.getBikeSuccessfulRentalsOfUser(user.id);
-      userJson.bike_successful_rentals = value;
-      value = rentalsAndReturns.getBikeSuccessfulReturnsOfUser(user.id);
-      userJson.bike_successful_returns = value;
-      
-      this.userData.push(userJson);
-      
-    }
-    return;
+      let history: HistoryReader = await HistoryReader.create(this.path);
+         
+      let historyStations: HistoryEntitiesJson = await history.getEntities('stations');    
+      let stations: Array<Station> = <Station[]> historyStations.instances;
+         
+      let reservations: Info | undefined = data.get(ReservationsPerStation.name);
+      let rentalsAndReturns: Info | undefined = data.get(RentalsAndReturnsPerStation.name);
+      if (reservations && rentalsAndReturns) {
+        this.createJsonFor(stations, this.stationData, reservations, rentalsAndReturns);
+      }
+         
+      let historyUsers: HistoryEntitiesJson = await history.getEntities('users');
+      let users: Array<User> = <User[]> historyUsers.instances;
+             
+      reservations = data.get(ReservationsPerUser.name);
+      rentalsAndReturns = data.get(RentalsAndReturnsPerUser.name);
+      if (reservations && rentalsAndReturns) {   
+        this.createJsonFor(users, this.userData, reservations, rentalsAndReturns);
+      }
 	}
 
 	public transformToCsv(): void {

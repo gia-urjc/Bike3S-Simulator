@@ -3,10 +3,10 @@ import { Data } from "../Data";
 import { Info } from '../Info';
 
 export class ReservationsInfo implements Info {
-    private readonly S_B_R = 'Successful_bike_reservations';
-    private readonly F_B_R = 'Failed_bike_reservations';
-    private readonly S_S_R = 'Successful_slot_reservations';
-    private readonly F_S_R = 'Failed_slot_reservations';
+    private static readonly S_B_R = 'Successful_bike_reservations';
+    private static readonly F_B_R = 'Failed_bike_reservations';
+    private static readonly S_S_R = 'Successful_slot_reservations';
+    private static readonly F_S_R = 'Failed_slot_reservations';
     
     private successfulBikeReservations: Data;
     private failedBikeReservations: Data;
@@ -14,10 +14,10 @@ export class ReservationsInfo implements Info {
     private failedSlotReservations: Data;
     
     public constructor() {
-        this.successfulBikeReservations = { name: this.S_B_R, value: new Map<number, number>() };
-        this.failedBikeReservations = { name: this.F_B_R, value: new Map<number, number>() };
-        this.successfulSlotReservations = { name: this.S_S_R, value: new Map<number, number>() };
-        this.failedSlotReservations = { name: this.F_S_R, value: new Map<number, number>() };
+        this.successfulBikeReservations = { name: ReservationsInfo.S_B_R, value: new Map<number, number>() };
+        this.failedBikeReservations = { name: ReservationsInfo.F_B_R, value: new Map<number, number>() };
+        this.successfulSlotReservations = { name: ReservationsInfo.S_S_R, value: new Map<number, number>() };
+        this.failedSlotReservations = { name: ReservationsInfo.F_S_R, value: new Map<number, number>() };
     }
     
     public getSuccessfulBikeReservations(): Data {
@@ -76,12 +76,20 @@ export class ReservationsInfo implements Info {
     
     public static getNames(): Array<string> {
         let names: Array<string> = new Array();
-        names.push(this.S_B_R);
-        names.push(this.F_B_R);
-        names.push(this.S_S_R);
-        names.push(this.F_S_R);
+        names.push(ReservationsInfo.S_B_R);
+        names.push(ReservationsInfo.F_B_R);
+        names.push(ReservationsInfo.S_S_R);
+        names.push(ReservationsInfo.F_S_R);
         return names;
     }
     
+    public getData(): Array<Data> { 
+        let data: Array<Data> = new Array();
+        data.push(this.successfulBikeReservations);
+        data.push(this.failedBikeReservations);
+        data.push(this.successfulSlotReservations);
+        data.push(this.failedSlotReservations);
+        return data;
+    }
        
 }
