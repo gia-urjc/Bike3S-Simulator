@@ -2,11 +2,11 @@ import { HistoryEntitiesJson } from "../../../../shared/history";
 import { JsonObject } from "../../../../shared/util";
 import { HistoryReader } from "../../../util";
 import { Station, User, Entity } from "../../systemDataTypes/Entities";
-import { Info } from "../absoluteValues/Info";
-import { RentalsAndReturnsInfo } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsInfo";
+import { Data } from "../absoluteValues/Data";
+import { RentalsAndReturnsData } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsData";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
-import { ReservationsInfo } from "../absoluteValues/reservations/ReservationsInfo";
+import { ReservationsData } from "../absoluteValues/reservations/ReservationsData";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
 import * as json2csv from 'json2csv';
@@ -36,7 +36,7 @@ export class CsvGenerator {
       return;
 	 }
      
-  public createJsonFor(entities: Array<Entity>, data: Array<JsonObject>, reservations: Info, rentalsAndReturns: Info): void {
+  public createJsonFor(entities: Array<Entity>, data: Array<JsonObject>, reservations: Data, rentalsAndReturns: Data): void {
     let i: number = 1;  // title index
     let j: number = 0;  // data index
       
@@ -61,18 +61,18 @@ export class CsvGenerator {
     }
   } 
 
-	 public async init(data: Map<string, Info>): Promise<void> {
+	 public async init(data: Map<string, Data>): Promise<void> {
       this.titles.push('id');
-      ReservationsInfo.getNames().forEach( (name) => this.titles.push(name));
-      RentalsAndReturnsInfo.getNames().forEach( (name) => this.titles.push(name));
+      ReservationsData.NAMES.forEach( (name) => this.titles.push(name));
+      RentalsAndReturnsData.NAMES.forEach( (name) => this.titles.push(name));
           
       let history: HistoryReader = await HistoryReader.create(this.path);
          
       let historyStations: HistoryEntitiesJson = await history.getEntities('stations');    
       let stations: Array<Station> = <Station[]> historyStations.instances;
          
-      let reservations: Info | undefined = data.get(ReservationsPerStation.name);
-      let rentalsAndReturns: Info | undefined = data.get(RentalsAndReturnsPerStation.name);
+      let reservations: Data | undefined = data.get(ReservationsPerStation.name);
+      let rentalsAndReturns: Data | undefined = data.get(RentalsAndReturnsPerStation.name);
       if (reservations && rentalsAndReturns) {
         this.createJsonFor(stations, this.stationData, reservations, rentalsAndReturns);
       }

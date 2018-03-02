@@ -1,4 +1,5 @@
-import { Info } from '../absoluteValues/Info';
+import { Data } from '../absoluteValues/Data';
+import { SystemInfo } from "../absoluteValues/SystemInfo";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
@@ -25,7 +26,7 @@ export class DataGenerator {
     private calculationCounter: number;  // number of calculators which have calculated its data
     private bikesPerStationCounter: number; 
    
-    private data: Map<string, Info>;  // it contains all the results of the data analysis
+    private info: Map<string, SystemInfo>;  // it contains all the results of the data analysis
     private bikesPerStation: BikesPerStation;
     private reservationCalculator: ReservationCalculator;
     private rentalAndReturnCalculator: RentalAndReturnCalculator;
@@ -35,14 +36,14 @@ export class DataGenerator {
         this.path = path;
         this.reservationCounter = 0;
         this.rentalAndReturnCounter = 0;
-        this.data = new Map();
+        this.info = new Map();
         this.bikesPerStation = new BikesPerStation();
         this.rentalAndReturnCalculator = new RentalAndReturnCalculator(this.path);
         this.reservationCalculator = new ReservationCalculator();
         this.bikesPerStationCounter = 0;
     }
 
-    private async initReservations(reservations: Info) {
+    private async initReservations(reservations: SystemInfo) {
         reservations.init().then( () => {
             this.reservationCounter++;
             this.calculateReservations();
@@ -50,7 +51,7 @@ export class DataGenerator {
         return;
     }
 
-    private async initRentalsAndReturns(rentalsAndReturns: Info) {
+    private async initRentalsAndReturns(rentalsAndReturns: SystemInfo) {
         rentalsAndReturns.init().then( () => {
             this.rentalAndReturnCounter++;
             this.calculateRentalsAndReturns();
@@ -78,12 +79,12 @@ export class DataGenerator {
         systemStations.init(this.path).then( () => {
             let reservations: ReservationsPerStation = new ReservationsPerStation(systemStations.getStations());
             this.reservationCalculator.subscribe(reservations);
-            this.data.set(ReservationsPerStation.name, reservations);
+            this.info.set(ReservationsPerStation.name, reservations);
             this.initReservations(reservations);  // it's async
 
             let rentalsAndReturns: RentalsAndReturnsPerStation = new RentalsAndReturnsPerStation(systemStations.getStations()); 
             this.rentalAndReturnCalculator.subscribe(rentalsAndReturns);
-            this.data.set(RentalsAndReturnsPerStation.name, rentalsAndReturns);  
+            this.info.set(RentalsAndReturnsPerStation.name, rentalsAndReturns);  
             this.initRentalsAndReturns(rentalsAndReturns);  // it's async
             
             this.bikesPerStation.init(systemStations.getStations()).then( () => {
@@ -97,12 +98,12 @@ export class DataGenerator {
         systemUsers.init(this.path).then( () => {
             let reservations: ReservationsPerUser = new ReservationsPerUser(systemUsers.getUsers());
             this.reservationCalculator.subscribe(reservations);
-            this.data.set(ReservationsPerUser.name, reservations);
+            this.info.set(ReservationsPerUser.name, reservations);
             this.initReservations(reservations);
 
             let rentalsAndReturns: RentalsAndReturnsPerUser = new RentalsAndReturnsPerUser(systemUsers.getUsers()); 
             this.rentalAndReturnCalculator.subscribe(rentalsAndReturns);
-            this.data.set(RentalsAndReturnsPerUser.name, rentalsAndReturns);  
+            this.info.set(RentalsAndReturnsPerUser.name, rentalsAndReturns);  
             this.initRentalsAndReturns(rentalsAndReturns);
         });
         return; 
@@ -123,9 +124,9 @@ export class DataGenerator {
     private async calculateRentalsAndReturns(): Promise<void> {
         if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStationCounter === this.BIKES_PER_STATION) {
             this.rentalAndReturnCalculator.calculate().then( () => {
-                let emptyStations: EmptyStations = new EmptyStations();
-                emptyStations.init(this.bikesPerStation);
-                this.data.set(EmptyStations.name, emptyStations);
+                let emptyStations: EmptyStations = new EmptyStations(this.bikesPerStation);
+                emptyStations.init();
+                this.info.set(EmptyStations.name, emptyStations);
                 
                 if (this.csv) {
                     this.calculationCounter++;
@@ -150,7 +151,7 @@ export class DataGenerator {
         if (this.calculationCounter === this.CALCULATION) {
           let generator: CsvGenerator = new CsvGenerator(this.path);
           try {
-              await generator.generate(this.data);
+              await generator.generate(this.info);
           }
           catch(error) {
               throw new Error('Error generating csv file: '+error);
@@ -159,8 +160,8 @@ export class DataGenerator {
         return;
     }
 
-    public getData(): Map<string, Info> {
-		return this.data;
+    public getInfo(): Map<string, SystemInfo> {
+		return this.info;
 	}
      
 }

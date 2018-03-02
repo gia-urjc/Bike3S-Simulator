@@ -1,21 +1,22 @@
 import  { User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
-import { Observer } from '../../ObserverPattern';
-import { RentalsAndReturnsInfo } from './RentalsAndReturnsInfo';
-import { Info } from '../Info';
+import { Observer } from "../../ObserverPattern";
+import { Data } from "../Data";
+import { SystemInfo } from "../SystemInfo";
+import { RentalsAndReturnsData } from './RentalsAndReturnsData';
 
-export class RentalsAndReturnsPerUser implements Observer, Info {
-    private users: Array<User>;
-    private rentalsAndReturns: RentalsAndReturnsInfo;
+export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
+    basicData: Array<User>;
+    data: Data;
     
     public constructor(users: Array<User>) {
-        this.users = users;
-        this.rentalsAndReturns = new RentalsAndReturnsInfo();
+        this.basicData = users;
+        this.data = new RentalsAndReturnsData();
     }
   
     public async init() {
         try {
-            await this.rentalsAndReturns.initData(this.users);
+            await this.data.initData(this.basicData);
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);
@@ -43,22 +44,22 @@ export class RentalsAndReturnsPerUser implements Observer, Info {
             
             switch(event.name) { 
                 case 'EventUserArrivesAtStationToRentBikeWithReservation': {
-                    this.rentalsAndReturns.increaseSuccessfulRentals(key);
+                    this.data.increaseSuccessfulRentals(key);
                     break;
                 }
                 
                 case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
-                    this.rentalsAndReturns.increaseSuccessfulReturns(key);
+                    this.data.increaseSuccessfulReturns(key);
                     break;
                 }
             
                 case 'EventUserArrivesAtStationToRentBikeWithoutReservation': {
                     let bike: any = event.changes.users[0].bike;
                     if (bike !== undefined) {
-                        this.rentalsAndReturns.increaseSuccessfulRentals(key);
+                        this.data.increaseSuccessfulRentals(key);
                     }
                     else {
-                      this.rentalsAndReturns.increaseFailedRentals(key);
+                      this.data.increaseFailedRentals(key);
                     }
                     break;
                 }
@@ -66,10 +67,10 @@ export class RentalsAndReturnsPerUser implements Observer, Info {
                 case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
                     let bike: any = event.changes.users[0].bike;
                     if (bike !== undefined) {
-                        this.rentalsAndReturns.increaseSuccessfulRentals(key);
+                        this.data.increaseSuccessfulRentals(key);
                     }
                     else {
-                      this.rentalsAndReturns.increaseFailedRentals(key);
+                      this.data.increaseFailedRentals(key);
                     }
                     break;
                 }
@@ -77,8 +78,8 @@ export class RentalsAndReturnsPerUser implements Observer, Info {
         }
     }
 
-    public getRentalsAndReturns(): RentalsAndReturnsInfo {
-        return this.rentalsAndReturns;
+    public getRentalsAndReturns(): Data {
+        return this.data;
     }
       
 }

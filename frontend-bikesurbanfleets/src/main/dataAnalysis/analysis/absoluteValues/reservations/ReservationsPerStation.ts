@@ -1,19 +1,21 @@
 import  { Station, Reservation } from '../../../systemDataTypes/Entities';
 import { Observer } from '../../ObserverPattern';
-import { ReservationsInfo } from './ReservationsInfo';
+import { Data } from "../Data";
+import { SystemInfo } from "../SystemInfo";
+import { ReservationsData } from './ReservationsData';
 
-export class ReservationsPerStation implements Observer {
-    private stations: Array<Station>;
-    private reservations: ReservationsInfo;
+export class ReservationsPerStation implements SystemInfo, Observer {
+    basicData: Array<Station>;
+    data: Data;
     
     public constructor(stations: Array<Station>) {
-        this.stations = stations;
-        this.reservations = new ReservationsInfo();
+        this.basicData = stations;
+        this.data = new ReservationsData();
     }
     
     public async init() {
         try {
-            this.reservations.initData(this.stations);
+            this.data.init(this.basicData);
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);
@@ -38,20 +40,20 @@ export class ReservationsPerStation implements Observer {
         switch (reservation.type) { 
             case 'BIKE': { 
                 if (reservation.state === 'FAILED') {
-                    this.reservations.increaseFailedBikeReservations(key);
+                    this.data.increaseFailedBikeReservations(key);
                 }
                 else {
-                    this.reservations.increaseSuccessfulBikeReservations(key);
+                    this.data.increaseSuccessfulBikeReservations(key);
                 }
                 break;
             }
                 
             case 'SLOT': { 
                 if (reservation.state === 'FAILED') {
-                    this.reservations.increaseFailedSlotReservations(key);
+                    this.data.increaseFailedSlotReservations(key);
                 }
                 else {
-                    this.reservations.increaseSuccessfulSlotReservations(key);
+                    this.data.increaseSuccessfulSlotReservations(key);
                 }
                 break;
             }
@@ -61,7 +63,7 @@ export class ReservationsPerStation implements Observer {
         }
     }
         
-    public getReservations(): ReservationsInfo {
-        return this.reservations;
+    public getData(): Data {
+        return this.data;
     }
 }

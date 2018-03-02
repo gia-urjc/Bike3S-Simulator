@@ -1,4 +1,6 @@
-import { Info } from "../Info";
+import { AbsoluteValue } from "../AbsoluteValue";
+import { Data } from "../Data";
+import { SystemInfo } from "../SystemInfo";
 import { BikesPerStation, StationBikesPerTimeList } from './BikesPerStation';
 
 export interface TimeInterval {
@@ -6,26 +8,33 @@ export interface TimeInterval {
     end: number;
 }
  
-export interface EmptyState {
+export interface EmptyStateAbsoluteValue extends  AbsoluteValue {
     timeIntervals: Array<TimeInterval>;  
     totalTime: number;
 }
 
-export class EmptyStations implements Info {
-    private emptyStatesPerStation: Map<number, EmptyState>;
+export class EmptyStateData implements Data {
+    static readonly NAMES: Array<string> = ['Time intervals', 'Total time'];
+    absoluteValues: Map<number, AbsoluteValue>;    
+}
+
+export class EmptyStations implements SystemInfo {
+    basicData: BikesPerStation;
+    data: Data;
    
-    public constructor() {
-        this.emptyStatesPerStation = new Map(); 
+    public constructor(stationsInfo: BikesPerStation) {
+        this.basicData = stationsInfo;
+        this.data = new EmptyStateData(); 
     }
        
-    public init(stationsInfo: BikesPerStation): void {
-        stationsInfo.getStations().forEach( (stationInfo, stationId) => {
-            let emptyState: EmptyState = this.createEmptyStateFor(stationInfo);
-            this.emptyStatesPerStation.set(stationId, emptyState);
+    public init(): void {
+        this.basicData.getStations().forEach( (stationInfo, stationId) => {
+            let emptyState: EmptyStateAbsoluteValue = this.createEmptyStateFor(stationInfo);
+            this.data.absoluteValues.set(stationId, emptyState);
         });
     }
     
-    private createEmptyStateFor(stationInfo: StationBikesPerTimeList): EmptyState {
+    private createEmptyStateFor(stationInfo: StationBikesPerTimeList): EmptyStateAbsoluteValue {
         let intervals: Array<TimeInterval> = new Array();
         let time: number = 0;
         let startTime: number = -1;
@@ -53,13 +62,13 @@ export class EmptyStations implements Info {
     }
     
     public static create(stationsInfo: BikesPerStation): EmptyStations {
-        let emptyStations: EmptyStations = new EmptyStations();
-        emptyStations.init(stationsInfo);
+        let emptyStations: EmptyStations = new EmptyStations(stationsInfo);
+        emptyStations.init();
         return emptyStations;
     }
     
-    public getEmptyStatesPerStation(): Map<number, EmptyState> {  
-        return this.emptyStatesPerStation;
+    public getData(): Data {  
+        return this.data;
     }
 
 }
