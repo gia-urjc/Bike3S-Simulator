@@ -13,5 +13,3 @@ export const Station = sObject({
         sArray(sAnyOf(Bike, sNull())).min(rData('1/capacity')).max(rData('1/capacity'))
     ),
 }).require.all().restrict();
-
-export const Percentage = sNumber().min(0).max(100);
