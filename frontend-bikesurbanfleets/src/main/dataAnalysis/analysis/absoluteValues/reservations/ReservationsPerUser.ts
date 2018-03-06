@@ -67,5 +67,5 @@ export class ReservationsPerUser implements SystemInfo, Observer {
         return this.data;
     }
               
-}     
-        
+}    
+      

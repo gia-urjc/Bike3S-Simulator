@@ -7,7 +7,7 @@ import { RentalsAndReturnsData } from './RentalsAndReturnsData';
 
 export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
     basicData: Array<User>;
-    data: Data;
+    data: RentalsAndReturnsData;
     
     public constructor(users: Array<User>) {
         this.basicData = users;
@@ -78,7 +78,7 @@ export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
         }
     }
 
-    public getRentalsAndReturns(): Data {
+    public getData(): RentalsAndReturnsData {
         return this.data;
     }
       

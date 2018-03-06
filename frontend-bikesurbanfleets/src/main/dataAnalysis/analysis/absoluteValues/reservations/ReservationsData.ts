@@ -8,7 +8,7 @@ export class ReservationsData implements Data {
     absoluteValues: Map<number, AbsoluteValue>;
     
     public constructor() {
-        this.absoluteValues = new Map();
+        this. absoluteValues = new Map();
     }
     
     public increaseSuccessfulBikeReservations(key: number): void {

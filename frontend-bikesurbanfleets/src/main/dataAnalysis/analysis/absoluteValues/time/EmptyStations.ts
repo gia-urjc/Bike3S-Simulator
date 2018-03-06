@@ -8,7 +8,7 @@ export interface TimeInterval {
     end: number;
 }
  
-export interface EmptyStateAbsoluteValue extends  AbsoluteValue {
+export interface EmptyStateAbsoluteValue extends AbsoluteValue {
     timeIntervals: Array<TimeInterval>;  
     totalTime: number;
 }
