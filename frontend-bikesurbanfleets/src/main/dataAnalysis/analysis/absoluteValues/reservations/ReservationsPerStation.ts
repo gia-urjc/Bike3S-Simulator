@@ -2,7 +2,7 @@ import  { Station, Reservation } from '../../../systemDataTypes/Entities';
 import { Observer } from '../../ObserverPattern';
 import { Data } from "../Data";
 import { SystemInfo } from "../SystemInfo";
-import { ReservationsData } from './ReservationsData';
+import { ReservationData } from './ReservationData';
 
 export class ReservationsPerStation implements SystemInfo, Observer {
     basicData: Array<Station>;
@@ -10,7 +10,7 @@ export class ReservationsPerStation implements SystemInfo, Observer {
     
     public constructor(stations: Array<Station>) {
         this.basicData = stations;
-        this.data = new ReservationsData();
+        this.data = new ReservationData();
     }
     
     public async init() {

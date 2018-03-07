@@ -5,12 +5,12 @@ import { Station, User, Entity } from "../../systemDataTypes/Entities";
 import { AbsoluteValue } from "../absoluteValues/AbsoluteValue";
 //import { Data } from "../absoluteValues/Data";
 import { SystemInfo } from "../absoluteValues/SystemInfo";
-import { RentalsAndReturnsAbsoluteValues } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsAbsoluteValues";
-import { RentalsAndReturnsData } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsData";
+import { RentalAndReturnAbsoluteValue } from "../absoluteValues/rentalsAndReturns/RentalAndReturnAbsoluteValue";
+import { RentalAndReturnData } from "../absoluteValues/rentalsAndReturns/RentalAndReturnData";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
-import { ReservationsAbsoluteValues } from "../absoluteValues/reservations/ReservationsAbsoluteValues";
-import { ReservationsData } from "../absoluteValues/reservations/ReservationsData";
+import { ReservationAbsoluteValue } from "../absoluteValues/reservations/ReservationAbsoluteValue";
+import { ReservationData } from "../absoluteValues/reservations/ReservationData";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
 import * as json2csv from 'json2csv';
@@ -51,10 +51,8 @@ export class CsvGenerator {
         
         while (j < 4) {   // adding reservations' data
             let reservationValues: AbsoluteValue | undefined = reservations.getData().absoluteValues.get(entity.id);
-            let absValueList: Array<number>; 
             if (reservationValues !== undefined) {
-                absValueList = reservationValues.getAbsoluteValuesAsArray();
-                
+                let absValueList: Array<number>= reservationValues.getAbsoluteValuesAsArray();
                 jsonObj[this.titles[i]] = absValueList[j]; 
                 i++;
                 j++;
@@ -64,10 +62,8 @@ export class CsvGenerator {
         j = 0;
         while (j < 4) {   // adding rentals and returns' data
             let rentalAndReturnValues: AbsoluteValue | undefined = rentalsAndReturns.getData().absoluteValues.get(entity.id);
-            let absValueList: Array<number>; 
             if (rentalAndReturnValues !== undefined) {
-                absValueList = rentalAndReturnValues.getAbsoluteValuesAsArray();
-            
+                let absValueList: Array<number> = rentalAndReturnValues.getAbsoluteValuesAsArray();
                 jsonObj[this.titles[i]] = absValueList[j];
                 i++;   
                 j++;
@@ -79,8 +75,8 @@ export class CsvGenerator {
 
 	 public async init(info: Map<string, SystemInfo>): Promise<void> {
       this.titles.push('id');
-      ReservationsData.NAMES.forEach( (name) => this.titles.push(name));
-      RentalsAndReturnsData.NAMES.forEach( (name) => this.titles.push(name));
+      ReservationData.NAMES.forEach( (name) => this.titles.push(name));
+      RentalAndReturnData.NAMES.forEach( (name) => this.titles.push(name));
           
       let history: HistoryReader = await HistoryReader.create(this.path);
          

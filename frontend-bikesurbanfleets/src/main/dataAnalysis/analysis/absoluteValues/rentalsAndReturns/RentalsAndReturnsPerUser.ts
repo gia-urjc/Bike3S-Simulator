@@ -3,15 +3,15 @@ import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { Observer } from "../../ObserverPattern";
 import { Data } from "../Data";
 import { SystemInfo } from "../SystemInfo";
-import { RentalsAndReturnsData } from './RentalsAndReturnsData';
+import { RentalAndReturnData } from './RentalAndReturnData';
 
 export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
     basicData: Array<User>;
-    data: RentalsAndReturnsData;
+    data: RentalAndReturnData;
     
     public constructor(users: Array<User>) {
         this.basicData = users;
-        this.data = new RentalsAndReturnsData();
+        this.data = new RentalAndReturnData();
     }
   
     public async init() {
@@ -78,7 +78,7 @@ export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
         }
     }
 
-    public getData(): RentalsAndReturnsData {
+    public getData(): RentalAndReturnData {
         return this.data;
     }
       

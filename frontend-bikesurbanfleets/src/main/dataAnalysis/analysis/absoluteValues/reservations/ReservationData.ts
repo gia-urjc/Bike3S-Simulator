@@ -1,9 +1,9 @@
 import { Entity } from '../../../systemDataTypes/Entities';
 import { Data } from '../Data';
 import { AbsoluteValue } from '../AbsoluteValue';
-import { ReservationsAbsoluteValues } from "./ReservationsAbsoluteValues";
+import { ReservationAbsoluteValue } from "./ReservationAbsoluteValue";
 
-export class ReservationsData implements Data {
+export class ReservationData implements Data {
     static readonly NAMES: Array<string> = ['Successful bike reservations', 'Failed bike reservations', 'Successful slot reservations', 'Failed slot reservations'];
     absoluteValues: Map<number, AbsoluteValue>;
     
@@ -41,7 +41,7 @@ export class ReservationsData implements Data {
    
     public async init(entities: Array<Entity>): Promise<void> {
         for(let entity of entities) {
-            this.absoluteValues.set(entity.id, new ReservationsAbsoluteValues());                
+            this.absoluteValues.set(entity.id, new ReservationAbsoluteValue());                
         }        
         return;
     }

@@ -1,9 +1,9 @@
 import { Entity } from '../../../systemDataTypes/Entities';
 import { Data } from '../Data';
 import { AbsoluteValue } from '../AbsoluteValue';
-import { RentalsAndReturnsAbsoluteValues } from "./RentalsAndReturnsAbsoluteValues";
+import { RentalAndReturnAbsoluteValue } from "./RentalAndReturnAbsoluteValue";
 
-export class RentalsAndReturnsData implements Data {
+export class RentalAndReturnData implements Data {
     static readonly NAMES: Array<string> = ['Successful bike rentals', 'Failed bike rentals', 'Successful bike returns','Failed bike returns'];
     absoluteValues: Map<number, AbsoluteValue>;
     
@@ -41,7 +41,7 @@ export class RentalsAndReturnsData implements Data {
     
     public async initData(entities: Array<Entity>): Promise<void> {
         for(let entity of entities) {
-            this.absoluteValues.set(entity.id, new RentalsAndReturnsAbsoluteValues);
+            this.absoluteValues.set(entity.id, new RentalAndReturnAbsoluteValue);
         }
         return;
     }

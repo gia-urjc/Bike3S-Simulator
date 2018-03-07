@@ -18,7 +18,7 @@ export class EmptyStateData implements Data {
     absoluteValues: Map<number, AbsoluteValue>;    
 }
 
-export class EmptyStations implements SystemInfo {
+export class EmptyStationInfo implements SystemInfo {
     basicData: BikesPerStation;
     data: Data;
    
@@ -27,11 +27,12 @@ export class EmptyStations implements SystemInfo {
         this.data = new EmptyStateData(); 
     }
        
-    public init(): void {
+    public async init(): Promise<void> {
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
             let emptyState: EmptyStateAbsoluteValue = this.createEmptyStateFor(stationInfo);
             this.data.absoluteValues.set(stationId, emptyState);
         });
+        return;
     }
     
     private createEmptyStateFor(stationInfo: StationBikesPerTimeList): EmptyStateAbsoluteValue {
@@ -61,8 +62,8 @@ export class EmptyStations implements SystemInfo {
         return {timeIntervals: intervals, totalTime: time};
     }
     
-    public static create(stationsInfo: BikesPerStation): EmptyStations {
-        let emptyStations: EmptyStations = new EmptyStations(stationsInfo);
+    public static create(stationsInfo: BikesPerStation): EmptyStationInfo {
+        let emptyStations: EmptyStationInfo = new EmptyStationInfo(stationsInfo);
         emptyStations.init();
         return emptyStations;
     }

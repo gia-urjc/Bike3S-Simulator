@@ -3,7 +3,7 @@ import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { Observer } from "../../ObserverPattern";
 import { Data } from "../Data";
 import { SystemInfo } from "../SystemInfo";
-import { RentalsAndReturnsData } from './RentalsAndReturnsData';
+import { RentalAndReturnData } from './RentalAndReturnData';
 
 export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
     basicData: Array<Station>;
@@ -11,7 +11,7 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
     
     public constructor(stations: Array<Station>) {
         this.basicData = stations;
-        this.data = new RentalsAndReturnsData();
+        this.data = new RentalAndReturnData();
     }
     
     public async init() {

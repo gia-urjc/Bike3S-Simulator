@@ -1,6 +1,6 @@
 import { AbsoluteValue } from "../AbsoluteValue";
 
-export class RentalsAndReturnsAbsoluteValues implements AbsoluteValue {
+export class RentalAndReturnAbsoluteValue implements AbsoluteValue {
   successfulRentals: number; 
   failedRentals: number;
   successfulReturns: number;

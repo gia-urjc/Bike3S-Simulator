@@ -5,7 +5,7 @@ import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/Re
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
 import { BikesPerStation } from "../absoluteValues/time/BikesPerStation";
-import { EmptyStations } from "../absoluteValues/time/EmptyStations";
+import { EmptyStationInfo } from "../absoluteValues/time/EmptyStationInfo";
 import { ReservationCalculator } from "../calculators/ReservationCalculator";
 import { RentalAndReturnCalculator } from "../calculators/RentalAndReturnCalculator";
 import { SystemReservations } from "../systemEntities/SystemReservations";
@@ -124,9 +124,9 @@ export class DataGenerator {
     private async calculateRentalsAndReturns(): Promise<void> {
         if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStationCounter === this.BIKES_PER_STATION) {
             this.rentalAndReturnCalculator.calculate().then( () => {
-                let emptyStations: EmptyStations = new EmptyStations(this.bikesPerStation);
+                let emptyStations: EmptyStationInfo = new EmptyStationInfo(this.bikesPerStation);
                 emptyStations.init();
-                this.info.set(EmptyStations.name, emptyStations);
+                this.info.set(EmptyStationInfo.name, emptyStations);
                 
                 if (this.csv) {
                     this.calculationCounter++;
