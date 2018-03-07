@@ -67,10 +67,10 @@ export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
                 case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
                     let bike: any = event.changes.users[0].bike;
                     if (bike !== undefined) {
-                        this.data.increaseSuccessfulRentals(key);
+                        this.data.increaseSuccessfulReturns(key);
                     }
                     else {
-                      this.data.increaseFailedRentals(key);
+                      this.data.increaseFailedReturns(key);
                     }
                     break;
                 }

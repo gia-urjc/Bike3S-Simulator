@@ -5,7 +5,18 @@ import { settingsPathGenerator } from '../shared/settings';
 import { Settings } from './settings';
 import { HistoryReader } from './util';
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
+import { AbsoluteValue } from "./dataAnalysis/analysis/absoluteValues/AbsoluteValue";
+import { RentalAndReturnAbsoluteValue } from "./dataAnalysis/analysis/absoluteValues/rentalsAndReturns/RentalAndReturnAbsoluteValue";
+import { RentalsAndReturnsPerStation } from "./dataAnalysis/analysis/absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
+import { RentalsAndReturnsPerUser } from "./dataAnalysis/analysis/absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
+import { ReservationsPerStation } from "./dataAnalysis/analysis/absoluteValues/reservations/ReservationsPerStation";
+import { ReservationsPerUser } from "./dataAnalysis/analysis/absoluteValues/reservations/ReservationsPerUser";
+import { RentalAndReturnCalculator } from "./dataAnalysis/analysis/calculators/RentalAndReturnCalculator";
+import { ReservationCalculator } from "./dataAnalysis/analysis/calculators/ReservationCalculator";
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
+import { SystemReservations } from "./dataAnalysis/analysis/systemEntities/SystemReservations";
+import { SystemStations } from "./dataAnalysis/analysis/systemEntities/SystemStations";
+import { SystemUsers } from "./dataAnalysis/analysis/systemEntities/SystemUsers";
 
 namespace Main {
     let window: Electron.BrowserWindow | null;
@@ -65,8 +76,32 @@ namespace Main {
             if (window === null) createWindow();
         });
     }
+    
+    export async function testRentals(): Promise<void> {
+        let s: SystemStations = new SystemStations();
+        let res: SystemReservations = new SystemReservations();
+        let u: SystemUsers = new SystemUsers(); 
+        try {
+        await s.init('history');
+        await res.init('history');
+            await u.init('history');
+        } catch(error) { console.log(error); }
+        try {
+        let r: RentalsAndReturnsPerStation= await RentalsAndReturnsPerStation.create(s.getStations());
+        let c: RentalAndReturnCalculator = new RentalAndReturnCalculator('history');
+        //c.setReservations(res.getReservations());
+        c.subscribe(r);
+        await c.calculate();
+        
+        let v: AbsoluteValue | undefined = r.getData().absoluteValues.get(10);
+        if (v !== undefined) {
+        console.log('station 10: ');
+        v.getAbsoluteValuesAsArray().forEach( (n) => console.log(n+' '));
+        }
+        } catch(error) { console.log(error); }
+    }
        
 }
   
 Main.init();
-
+Main.testRentals();

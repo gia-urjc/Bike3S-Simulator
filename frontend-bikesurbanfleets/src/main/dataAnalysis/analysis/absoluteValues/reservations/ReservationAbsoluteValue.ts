@@ -6,6 +6,13 @@ export class ReservationAbsoluteValue implements AbsoluteValue {
     successfulSlotReservations: number;
     failedSlotReservations: number;
     
+    public constructor() {
+        this.successfulBikeReservations = 0;
+        this.failedBikeReservations = 0;
+        this.successfulSlotReservations = 0;
+        this.failedSlotReservations = 0;
+    }
+    
     getAbsoluteValuesAsArray(): Array<number> {
         let array: Array<number> = new Array();
         array.push(this.successfulBikeReservations);
