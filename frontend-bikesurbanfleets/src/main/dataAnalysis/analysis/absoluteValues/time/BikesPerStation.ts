@@ -5,12 +5,12 @@ import { Data } from "../Data";
 
 interface BikesPerTime {
   time: number;
-  availableBikes: number;
+   availableBikes: number;
 }
 
 export class StationBikesPerTimeList {
     private bikesPerTimeList: Array<BikesPerTime>;
- 
+    
   public constructor(bikes: number) {
     this.bikesPerTimeList = new Array();
     let value: BikesPerTime = {time: 0, availableBikes: bikes};
@@ -19,14 +19,16 @@ export class StationBikesPerTimeList {
   
   public addBike(time: number): void {
     let lastPos: number = this.bikesPerTimeList.length-1;
-    let bikes: number = this.bikesPerTimeList[lastPos].availableBikes; 
+    let bikes: number = this.bikesPerTimeList[lastPos].availableBikes;
+      console.log(bikes);
     let value: BikesPerTime = {time: time, availableBikes: ++bikes};
     this.bikesPerTimeList.push(value);
+    console.log(this.bikesPerTimeList[this.bikesPerTimeList.length-1].availablebikes);
   }
   
   public substractBike(time: number): void {
     let lastPos: number = this.bikesPerTimeList.length-1;
-    let bikes: number = this.bikesPerTimeList[lastPos].availableBikes; 
+    let bikes: number = this.bikesPerTimeList[lastPos].availableBikes;
     let value: BikesPerTime = {time: time, availableBikes: --bikes};
     this.bikesPerTimeList.push(value);
   }
@@ -59,7 +61,8 @@ export class BikesPerStation implements Observer {
     let instant: number = timeEntry.time;
     let events: Array<Event> = timeEntry.events;
       
-    let lastPos, reservationId: number;
+    let lastPos: number;
+    let reservationId: number;
     let reservation: Reservation | undefined;
     let station: Station;
       
@@ -71,8 +74,8 @@ export class BikesPerStation implements Observer {
           if (eventStations !== undefined) {
             // If there are several bike reservations, only the last can be a ctive
             station = eventStations[0];
-            lastPos = station.reservations.id.length-1;
-            reservationId = station.reservations.id[lastPos];
+            lastPos = station.reservations.new.id.length-1;
+            reservationId = station.reservations.new.id[lastPos];
             reservation = this.getReservation(reservationId);
                
             if (reservation !== undefined && reservation.state === "ACTIVE") {  // and, of course, reservationtype = BIKE
@@ -84,6 +87,15 @@ export class BikesPerStation implements Observer {
             }
           }
           break;
+        }
+              
+        case "EventUserArrivesAtStationToRentBikeWithReservation": {
+            station = eventStations[0];
+            let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
+            if (bikesList !== undefined) {
+                bikesList.substractBike(instant);
+            }
+            break;
         }
           
         case "EventUserArrivesAtStationToRentBikeWithoutReservation": {
@@ -98,10 +110,8 @@ export class BikesPerStation implements Observer {
                     }
                 }
                 else { // (station.reservations !== undefined) -> bike reservations (NOT rental)
-                    // Getting the last changed station registered, wihich can conatin an active bike reservation  
-                    station = eventStations[eventStations.length-1];
-                    lastPos = station.reservations.id.length-1;
-                    reservationId = station.reservations.id[lastPos];
+                    lastPos = station.reservations.new.id.length-1;
+                    reservationId = station.reservations.new.id[lastPos];
                     reservation = this.getReservation(reservationId);
                 
                     if (reservation !== undefined && reservation.state === "ACTIVE") {  // and, of course, reservation.type === "BIKE"  

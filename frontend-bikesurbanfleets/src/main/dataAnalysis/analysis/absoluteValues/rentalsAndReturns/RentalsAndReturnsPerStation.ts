@@ -47,7 +47,6 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
                 case 'EventUserArrivesAtStationToRentBikeWithReservation': { 
                     key = this.obtainChangedStationId(eventStations);
                     if (key !== undefined) {  // it's sure key isn't undefined because the user has a bike reservation
-                        if(key==10) console.log("rent with res: "+eventStations[0].bikes);  
                         this.data.increaseSuccessfulRentals(key);
                     }
                     break;
@@ -56,7 +55,6 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
                 case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
                     key = this.obtainChangedStationId(eventStations);
                     if (key !== undefined) {  // it's sure key isn't undefined because the user has a bike reservation
-                                                if(key==10) console.log("return with res: "+eventStations[0].bikes);
                         this.data.increaseSuccessfulReturns(key);
                     }
                     break;
@@ -68,14 +66,12 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
                         key = this.obtainChangedStationId(eventStations);
                         // If key is undefined, successful rentals won't be increased
                         if (key  !== undefined) {
-                        if(key==10) console.log("rent without res: "+eventStations[0].bikes);                             
                             this.data.increaseSuccessfulRentals(key);
                         }
                     }
                     
                     // If there're not registered stations, it means rental hasn't been possible
                     else {
-                                                if(key==10) console.log("rent without res: "+eventStations);
                         key = this.obtainNotChangedStationId(event.changes.users[0]);
                         this.data.increaseFailedRentals(key);
                     }
@@ -88,14 +84,12 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
                         key = this.obtainChangedStationId(eventStations);
                         // If key is undefined, successful returns won't be increased
                         if (key !== undefined) {
-                                                    if(key==10) console.log("return without res: "+eventStations[0].bikes);
                             this.data.increaseSuccessfulReturns(key);
                         }
                     }
                     
                     // If there're not registered stations, it means rental hasn't been possible
                     else {
-                                                if(key==10) console.log("return without res: "+eventStations);
                         key = this.obtainNotChangedStationId(event.changes.users[0]);
                         this.data.increaseFailedReturns(key);
                     }

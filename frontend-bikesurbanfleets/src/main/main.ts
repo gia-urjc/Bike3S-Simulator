@@ -11,6 +11,7 @@ import { RentalsAndReturnsPerStation } from "./dataAnalysis/analysis/absoluteVal
 import { RentalsAndReturnsPerUser } from "./dataAnalysis/analysis/absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "./dataAnalysis/analysis/absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "./dataAnalysis/analysis/absoluteValues/reservations/ReservationsPerUser";
+import { BikesPerStation, StationBikesPerTimeList } from "./dataAnalysis/analysis/absoluteValues/time/BikesPerStation";
 import { RentalAndReturnCalculator } from "./dataAnalysis/analysis/calculators/RentalAndReturnCalculator";
 import { ReservationCalculator } from "./dataAnalysis/analysis/calculators/ReservationCalculator";
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
@@ -84,21 +85,20 @@ namespace Main {
         try {
         await s.init('history');
         await res.init('history');
-            await u.init('history');
+        await u.init('history');
         } catch(error) { console.log(error); }
+        let d: BikesPerStation = new BikesPerStation();
+        d.setReservations(res.getReservations());
         try {
-        let r: RentalsAndReturnsPerStation= await RentalsAndReturnsPerStation.create(s.getStations());
-        let c: RentalAndReturnCalculator = new RentalAndReturnCalculator('history');
-        //c.setReservations(res.getReservations());
-        c.subscribe(r);
-        await c.calculate();
-        
-        let v: AbsoluteValue | undefined = r.getData().absoluteValues.get(10);
-        if (v !== undefined) {
-        console.log('station 10: ');
-        v.getAbsoluteValuesAsArray().forEach( (n) => console.log(n+' '));
-        }
-        } catch(error) { console.log(error); }
+            d.init(s.getStations());
+            let c: RentalAndReturnCalculator = new RentalAndReturnCalculator('history');
+            c.subscribe(d);
+            c.calculate(); 
+            let v: StationBikesPerTimeList | undefined = d.getStations().get(4);
+            if (v !== undefined) {
+                v.getList().forEach( (info) => console.log(info.time+' '+info.availableBikes));
+            }
+        } catch(e) { console.log(e); }
     }
        
 }
