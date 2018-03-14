@@ -251,6 +251,7 @@ Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:
 });
 
 Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});
+Sparky.task('configure:dev', ['build:dev-backend'], () => {});
 
 Sparky.task('build:dist', () => {
     production = true;

@@ -1,30 +1,72 @@
 {
     "entryPoints": [
         {
-            "entryPointType": "SINGLEUSER",
+            "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_RANDOM"
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
             },
             "position": {
-                "latitude": 40.42750,
-                "longitude": -3.71384
+                "latitude": 40.419969,
+                "longitude": -3.709819
             },
-            "timeInstant": 1
+            "radius": 100,
+            "distribution": {
+                "lambda": 0.01666666666667
+            }
         },
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_RANDOM"
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
             },
             "position": {
-                "latitude": 40.409431,
-                "longitude": -3.692046
+                "latitude": 40.418969,
+                "longitude": -3.700819
             },
-            "radius": 100.0,
-            "totalUsers": 100,
+            "radius": 100,
             "distribution": {
-                "lambda": 0.0033333
+                "lambda": 0.01666666666667
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
+            },
+            "position": {
+                "latitude": 40.4131931,
+                "longitude": -3.70456
+            },
+            "radius": 100,
+            "distribution": {
+                "lambda": 0.01666666666667
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2
+                }
+            },
+            "position": {
+                "latitude": 40.4131931,
+                "longitude": -3.7104038
+            },
+            "radius": 100,
+            "distribution": {
+                "lambda": 0.01666666666667
             }
         }
-    ]    
+    ]
 }
