@@ -108,6 +108,7 @@ export class VisualizationEngine {
 
     private async load(): Promise<void> {
         await this.ajax.history.init('history');
+        await this.ajax.history.restart();
         await this.createEntities();
 
         this.nChangeFiles = await this.ajax.history.numberOFChangeFiles();

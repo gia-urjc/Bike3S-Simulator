@@ -44,6 +44,7 @@
         "csvtojson": "^1.1.9",
         "font-awesome": "^4.7.0",
         "fs-extra": "^4.0.3",
+        "jquery": "^3.3.1",
         "json2csv": "^3.11.5",
         "leaflet": "^1.2.0",
         "lodash": "^4.17.4",
@@ -56,6 +57,7 @@
     "devDependencies": {
         "@types/commander": "^2.12.2",
         "@types/fs-extra": "^4.0.7",
+        "@types/jquery": "^3.3.1",
         "@types/leaflet": "^1.2.3",
         "@types/lodash": "^4.14.91",
         "@types/moment": "^2.13.0",

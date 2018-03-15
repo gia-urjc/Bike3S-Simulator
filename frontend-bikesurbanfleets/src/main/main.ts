@@ -6,35 +6,46 @@ import { Settings } from './settings';
 import { HistoryReader } from './util';
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
+import { ipcMain, ipcRenderer } from 'electron';
 
 namespace Main {
-    let window: Electron.BrowserWindow | null;
+    let visualization: Electron.BrowserWindow | null;
+    let menu: Electron.BrowserWindow | null;
 
-    function createWindow() {
-        window = new BrowserWindow({ width: 800, height: 600 });
+    export function initWindowsListeners() {
+        ipcMain.on('open-visualization', function (event: any, arg: any) {
+            initVisualization();
+        })
+    }
 
-        window.loadURL(urlFormat({
+    function createMenuWindow() {
+        menu = new BrowserWindow({ width: 300, height: 650, resizable: false, fullscreenable: true});
+
+        menu.loadURL(urlFormat({
             pathname: join(app.getAppPath(), 'frontend', 'index.html'),
             protocol: 'file',
             slashes: true
         }));
 
-        window.on('closed', () => window = null);
+        menu.on('closed', () => visualization = null);
 
-        window.webContents.on('will-navigate', (event, url) => {
+        menu.webContents.on('will-navigate', (event, url) => {
             event.preventDefault(); // prevents dragging images or other documents into browser window
             shell.openExternal(url); // opens links (or dragged documents) in external browser
         });
 
-        if (process.env.target === 'development') {
-            window.webContents.openDevTools();
-        }
+        //menu.webContents.openDevTools();
+
+        menu.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/menu');
     }
 
-    export function init() {
+    export function initMenu() {
+        HistoryReader.enableIpc();
+        Settings.enableIpc();
+
         app.on('ready', async () => {
-            HistoryReader.enableIpc();
-            Settings.enableIpc();
+            //HistoryReader.enableIpc();
+            //Settings.enableIpc();
             //SchemaFormGenerator.enableIpc();
 
             if (process.env.target === 'development') {
@@ -53,7 +64,10 @@ namespace Main {
                 });
             }
 
-            createWindow();
+            createMenuWindow();
+            if (menu !== null) {
+                menu.setTitle("Bike Sharing System Simulator");
+            }
         });
 
         app.on('window-all-closed', async () => {
@@ -62,7 +76,58 @@ namespace Main {
         });
 
         app.on('activate', () => {
-            if (window === null) createWindow();
+            if (menu === null) createMenuWindow();
+        });
+    }
+
+    function createVisualizationWindow() {
+        visualization = new BrowserWindow({ width: 800, height: 600 });
+
+        visualization.loadURL(urlFormat({
+            pathname: join(app.getAppPath(), 'frontend', 'index.html'),
+            protocol: 'file',
+            slashes: true
+        }));
+
+        visualization.on('closed', async () => {
+            visualization = null;
+            HistoryReader.stopIpc();
+        });
+
+        visualization.webContents.on('will-navigate', (event, url) => {
+            event.preventDefault(); // prevents dragging images or other documents into browser window
+            shell.openExternal(url); // opens links (or dragged documents) in external browser
+        });
+
+        if (process.env.target === 'development') {
+            visualization.webContents.openDevTools();
+        }
+
+        visualization.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/visualization');
+    }
+
+    export async function initVisualization() {
+        if (process.env.target === 'development') {
+            const extensions = await Settings.get(settingsPathGenerator().development.extensions());
+            Object.entries(extensions).forEach(([name, extensionPath]) => {
+                if (!extensionPath) {
+                    console.log(`Empty path for browser extension ${name}`);
+                    return;
+                }
+
+                try {
+                    BrowserWindow.addDevToolsExtension(extensionPath);
+                } catch (e) {
+                    console.log(`Couldn't load browser extension ${name} from path ${extensionPath}`);
+                }
+            });
+        }
+
+        createVisualizationWindow();
+
+        app.on('window-all-closed', async () => {
+            await Settings.write();
+            if (process.platform !== 'darwin') app.quit();
         });
     }
     
@@ -76,6 +141,6 @@ namespace Main {
         
     }
 }
-  
-Main.init();
-Main.test();
+
+Main.initMenu();
+Main.initWindowsListeners();

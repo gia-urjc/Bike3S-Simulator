@@ -10,3 +10,15 @@
     width: 6rem;
     font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
+
+.visualitation-button {
+    transition: background-color 0.5s ease;
+    background: white;
+    font-size: 14px;
+    border-color: black;
+    margin-left: 5px;
+}
+
+.visualitation-button:hover {
+    background: lightgrey;
+}

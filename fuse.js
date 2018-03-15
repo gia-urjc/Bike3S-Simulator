@@ -84,7 +84,7 @@ maven.on('close', (code) => {
     dirs.forEach(dirName => {
         fs.readdirSync(dirName).filter((file) => file.endsWith('jar-with-dependencies.jar')).forEach((file) => {
         const target = path.join(dirName, file);
-    const destination = path.join(projectRoot.build(), file.replace('-jar-with-dependencies', ''));
+        const destination = path.join(projectRoot.build(), file.replace('-jar-with-dependencies', ''));
 
     fs.copySync(target, destination);
 
@@ -215,24 +215,28 @@ Sparky.task('build:frontend:renderer', () => {
         ]
     });
 
-const rendererEntrypoint = 'renderer/renderer.ts';
+    const rendererEntrypoint = 'renderer/renderer.ts';
 
-const vendor = fuse.bundle('vendor').instructions(`~ ${rendererEntrypoint}`);
-const renderer = fuse.bundle('renderer').instructions(`!> [${rendererEntrypoint}]`);
+    const vendor = fuse.bundle('vendor').instructions(`~ ${rendererEntrypoint}`);
+    const renderer = fuse.bundle('renderer').instructions(`!> [${rendererEntrypoint}]`);
 
-/*if (!production) {
-    fuse.dev({ root: false }, (server) => {
-        const app = server.httpServer.app;
-        app.use('/renderer/', express.static(projectRoot.build.frontend()));
-        app.get('*', (request, response) => {
-            response.send(path.join(projectRoot.build.frontend(), 'index.html'));
+    /*if (!production) {
+        fuse.dev({ root: false }, (server) => {
+            const app = server.httpServer.app;
+            app.use('/renderer/', express.static(projectRoot.build.frontend()));
+            app.get('*', (request, response) => {
+                response.send(path.join(projectRoot.build.frontend(), 'index.html'));
+            });
+            // TODO: make the server close on electron window close (note: apparently not possible)
         });
-        // TODO: make the server close on electron window close (note: apparently not possible)
-    });
-    renderer.hmr().watch('renderer/**');
-}*/
+        renderer.hmr().watch('renderer/**');
+    }*/
+    const globalCss = path.join(projectRoot.frontend.renderer(), 'styles.css');
+    const destination = path.join(projectRoot.build.frontend(), 'styles.css');
+    fs.copySync(globalCss, destination)
 
-return fuse.run();
+
+    return fuse.run();
 });
 
 Sparky.task('copy:assets', async () => {

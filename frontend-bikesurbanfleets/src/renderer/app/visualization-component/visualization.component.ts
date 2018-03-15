@@ -1,16 +1,17 @@
-import { Component, Inject } from '@angular/core';
+import {Component, Inject, OnDestroy} from '@angular/core';
 import { Layer } from 'leaflet';
 import * as moment from 'moment';
 
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
 import { STATE, VisualizationEngine } from './visualization.engine';
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
     selector: 'visualization',
     template: require('./visualization.component.html'),
     styles: [require('./visualization.component.css')],
 })
-export class Visualization {
+export class Visualization{
 
     private static readonly REFRESH_RATE = 200;
 
@@ -32,11 +33,17 @@ export class Visualization {
         return this.activeLayers.delete(layer);
     }
 
-    constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
+    constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol, private modalService: NgbModal) {}
 
     ngOnInit() {
         Visualization.activeLayers = new Set();
         this.engine = new VisualizationEngine(this.ajax, Visualization.activeLayers, Visualization.REFRESH_RATE);
+    }
+
+    open(content: any) {
+        this.modalService.open(content).result.then((result) => {
+            console.log(content);
+        });
     }
 
     is(...states: Array<STATE>): boolean;

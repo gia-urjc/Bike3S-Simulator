@@ -27,6 +27,7 @@ export default class HistoryReader {
 
     private static entityFileSchema: any;
     private static changeFileSchema: any;
+    private static channels: Array<Channel>;
 
     private historyPath: string;
     private changeFiles: Array<string>;
@@ -53,24 +54,30 @@ export default class HistoryReader {
         IpcUtil.openChannel('history-init', async (historyPath: string) => {
             const reader = await this.create(historyPath);
 
-            const channels = [
+            this.channels = [
                 new Channel('history-entities', async (type) => await reader.getEntities(type)),
                 new Channel('history-get', async (n) => await reader.changeFile(n)),
                 new Channel('history-previous', async () => await reader.previousChangeFile()),
                 new Channel('history-next', async () => await reader.nextChangeFile()),
                 new Channel('history-nchanges', async () => reader.numberOfChangeFiles),
                 new Channel('history-range', async () => reader.timeRange),
+                new Channel('history-restart', async () => reader.restart())
             ];
 
-            channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
+            this.channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
 
             IpcUtil.openChannel('history-close', async () => {
-                IpcUtil.closeChannels('history-close', ...channels.map((channel) => channel.name));
+                IpcUtil.closeChannels('history-close', ...this.channels.map((channel) => channel.name));
                 this.enableIpc();
             });
 
             IpcUtil.closeChannel('history-init');
         });
+    }
+
+    static stopIpc(): void {
+        IpcUtil.closeChannels(...this.channels.map((channel) => channel.name));
+        this.enableIpc();
     }
 
     private constructor(path: string, pathSchema?: string|null) {
@@ -152,6 +159,11 @@ export default class HistoryReader {
         }
 
         return file;
+    }
+
+    restart(): void {
+        this.currentIndex = -1;
+        return;
     }
 
     get numberOfChangeFiles(): number {
