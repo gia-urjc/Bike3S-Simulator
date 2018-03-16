@@ -34,7 +34,7 @@ export default class HistoryReader {
     private currentIndex: number;
 
     static async create(path: string, schemaPath?:string|null): Promise<HistoryReader> {
-        let reader = new HistoryReader(path, schemaPath);
+        let reader = new HistoryReader(path);
         if(schemaPath == null) {
             HistoryReader.entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
             HistoryReader.changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));;
@@ -80,14 +80,9 @@ export default class HistoryReader {
         this.enableIpc();
     }
 
-    private constructor(path: string, pathSchema?: string|null) {
+    private constructor(path: string) {
         this.currentIndex = -1;
-        if(pathSchema == null) {
-            this.historyPath = paths.join(app.getAppPath(), path);
-        }
-        else {
-            this.historyPath = path;
-        }
+        this.historyPath = path;
     }
 
     clipToRange(start: number, end: number = this.timeRange.end): void {

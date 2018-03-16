@@ -4,7 +4,7 @@ import * as moment from 'moment';
 
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
 import { STATE, VisualizationEngine } from './visualization.engine';
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+const { dialog } = (window as any).require('electron').remote;
 
 @Component({
     selector: 'visualization',
@@ -16,6 +16,8 @@ export class Visualization{
     private static readonly REFRESH_RATE = 200;
 
     private static activeLayers: Set<Layer>;
+
+    private loaded: boolean;
 
     readonly STATE = STATE; // make STATE available in template
 
@@ -33,18 +35,24 @@ export class Visualization{
         return this.activeLayers.delete(layer);
     }
 
-    constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol, private modalService: NgbModal) {}
+    constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
 
     ngOnInit() {
         Visualization.activeLayers = new Set();
         this.engine = new VisualizationEngine(this.ajax, Visualization.activeLayers, Visualization.REFRESH_RATE);
     }
 
-    open(content: any) {
-        this.modalService.open(content).result.then((result) => {
-            console.log(content);
-        });
+
+    async selectHistoryFolder() {
+        let historyPath: string = dialog.showOpenDialog({properties: ['openDirectory']})[0];
+        if(this.loaded) {
+            this.ajax.history.setReady(false);
+            this.engine =  new VisualizationEngine(this.ajax, Visualization.activeLayers, Visualization.REFRESH_RATE);
+        }
+        this.engine.init(historyPath);
+        this.loaded = true;
     }
+
 
     is(...states: Array<STATE>): boolean;
     is(...states: Array<[STATE, boolean]>): boolean;

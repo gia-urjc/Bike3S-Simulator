@@ -9,6 +9,7 @@ export interface HistoryAjax {
     nextChangeFile(): Promise<Array<HistoryTimeEntry>>,
     restart(): Promise<void>,
     getChangeFile(n: number): Promise<Array<HistoryTimeEntry>>,
+    setReady(ready: boolean): void
 }
 
 export interface FormSchemaAjax {

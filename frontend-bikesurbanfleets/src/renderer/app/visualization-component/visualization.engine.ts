@@ -88,11 +88,13 @@ export class VisualizationEngine {
             if (this.speedControl.errors) return;
             this.speed = parseInt(value);
         });
+    }
 
+    init(historyPath: string) {
         this.updateState(STATE.LOADING);
-        this.load()
+        this.load(historyPath)
             .then(() => this.updateState(STATE.START))
-            .catch((error) => console.error(error));
+            .catch((error) => console.log(error));
     }
 
     private registerReference(reference: Entity | null, host: Entity, property: string) {
@@ -106,8 +108,8 @@ export class VisualizationEngine {
         this.referencedEntities.set(reference, referenceMap);
     }
 
-    private async load(): Promise<void> {
-        await this.ajax.history.init('history');
+    private async load(historyPath: string): Promise<void> {
+        await this.ajax.history.init(historyPath);
         await this.ajax.history.restart();
         await this.createEntities();
 

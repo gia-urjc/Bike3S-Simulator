@@ -69,6 +69,10 @@ class ElectronHistory implements HistoryAjax {
     async restart(): Promise<void> {
         return await readIpc('history-restart');
     }
+
+    setReady(ready: boolean): void {
+        this.ready = false;
+    }
 }
 
 class ElectronSettings implements SettingsAjax {
