@@ -88,6 +88,8 @@ export class VisualizationEngine {
             if (this.speedControl.errors) return;
             this.speed = parseInt(value);
         });
+
+        this.updateState(STATE.LOADING)
     }
 
     init(historyPath: string) {
@@ -109,8 +111,13 @@ export class VisualizationEngine {
     }
 
     private async load(historyPath: string): Promise<void> {
+
+        this.movingEntities = [];
+        this.referencedEntities = new Map();
+        this.fromEnd = false;
+        this.speed = 10;
+
         await this.ajax.history.init(historyPath);
-        await this.ajax.history.restart();
         await this.createEntities();
 
         this.nChangeFiles = await this.ajax.history.numberOFChangeFiles();

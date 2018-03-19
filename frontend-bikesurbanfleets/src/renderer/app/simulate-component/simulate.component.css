@@ -1,0 +1,11 @@
+.browse-button {
+    margin-top: 30px;
+}
+
+.row {
+    padding: 25px;
+}
+
+ngb-tabset {
+    font-size: 14px;
+}

@@ -16,8 +16,8 @@ export class MenuComponent implements OnInit{
         });
     }
 
-    openVisualization() {
-        ipcRenderer.send('open-visualization');
+    openWindow(windowName: String) {
+        ipcRenderer.send(windowName);
     }
 
 

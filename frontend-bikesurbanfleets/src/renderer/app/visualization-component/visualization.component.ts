@@ -1,9 +1,10 @@
-import {Component, Inject, OnDestroy} from '@angular/core';
+import {Component, Inject, OnDestroy, ViewContainerRef} from '@angular/core';
 import { Layer } from 'leaflet';
 import * as moment from 'moment';
 
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
 import { STATE, VisualizationEngine } from './visualization.engine';
+import {ToasterService} from "angular2-toaster";
 const { dialog } = (window as any).require('electron').remote;
 
 @Component({
@@ -35,7 +36,8 @@ export class Visualization{
         return this.activeLayers.delete(layer);
     }
 
-    constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
+    constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {
+    }
 
     ngOnInit() {
         Visualization.activeLayers = new Set();
@@ -46,8 +48,8 @@ export class Visualization{
     async selectHistoryFolder() {
         let historyPath: string = dialog.showOpenDialog({properties: ['openDirectory']})[0];
         if(this.loaded) {
-            this.ajax.history.setReady(false);
-            this.engine =  new VisualizationEngine(this.ajax, Visualization.activeLayers, Visualization.REFRESH_RATE);
+            await this.ajax.history.closeHistory();
+            Visualization.activeLayers.clear();
         }
         this.engine.init(historyPath);
         this.loaded = true;

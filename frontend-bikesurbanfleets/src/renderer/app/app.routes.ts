@@ -2,6 +2,7 @@ import {RouterModule, Routes} from "@angular/router";
 import {Visualization} from "./visualization-component/visualization.component";
 import {MenuComponent} from "./menu-component/menu.component";
 import {NgModule} from "@angular/core";
+import {SimulateComponent} from "./simulate-component/simulate.component";
 
 export const routes:Routes = [
     {
@@ -11,6 +12,10 @@ export const routes:Routes = [
     {
         path: 'visualization',
         component: Visualization
+    },
+    {
+        path: 'simulate',
+        component: SimulateComponent
     }
 ];
 

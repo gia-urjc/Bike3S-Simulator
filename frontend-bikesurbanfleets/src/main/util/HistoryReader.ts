@@ -60,8 +60,7 @@ export default class HistoryReader {
                 new Channel('history-previous', async () => await reader.previousChangeFile()),
                 new Channel('history-next', async () => await reader.nextChangeFile()),
                 new Channel('history-nchanges', async () => reader.numberOfChangeFiles),
-                new Channel('history-range', async () => reader.timeRange),
-                new Channel('history-restart', async () => reader.restart())
+                new Channel('history-range', async () => reader.timeRange)
             ];
 
             this.channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
@@ -76,7 +75,7 @@ export default class HistoryReader {
     }
 
     static stopIpc(): void {
-        IpcUtil.closeChannels(...this.channels.map((channel) => channel.name));
+        IpcUtil.closeChannels('history-close', ...this.channels.map((channel) => channel.name));
         this.enableIpc();
     }
 
@@ -154,11 +153,6 @@ export default class HistoryReader {
         }
 
         return file;
-    }
-
-    restart(): void {
-        this.currentIndex = -1;
-        return;
     }
 
     get numberOfChangeFiles(): number {

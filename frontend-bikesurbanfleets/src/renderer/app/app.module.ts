@@ -14,6 +14,7 @@ import { MenuComponent } from './menu-component/menu.component';
 import {SchemaformComponent} from './schemaform-component/schemaform.component';
 import {Bootstrap4FrameworkModule, JsonSchemaFormModule} from 'angular2-json-schema-form';
 import {AppRoutingModule} from "./app.routes";
+import {SimulateComponent} from "./simulate-component/simulate.component";
 
 @NgModule({
     imports: [
@@ -26,16 +27,17 @@ import {AppRoutingModule} from "./app.routes";
         Bootstrap4FrameworkModule,
         JsonSchemaFormModule.forRoot(Bootstrap4FrameworkModule),
         AppRoutingModule,
-        NgbModalModule
+        NgbModalModule,
     ],
     declarations: [
         AppComponent,
         MapComponent,
         Visualization,
         SchemaformComponent,
-        MenuComponent
+        MenuComponent,
+        SimulateComponent
     ],
-    bootstrap: [ AppComponent ],
+    bootstrap: [AppComponent],
     providers: [{
         provide: 'AjaxProtocol',
         useClass: ElectronAjax

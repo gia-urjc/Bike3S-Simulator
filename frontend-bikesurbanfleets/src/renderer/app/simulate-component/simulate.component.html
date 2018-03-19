@@ -1,0 +1,50 @@
+<ngb-tabset>
+    <ngb-tab title="Generate Users">
+        <ng-template ngbTabContent>
+            <form>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <label for="globalConfigurationInput">Global Configuration Path</label>
+                        <input type="text" class="form-control" id="globalConfigurationInput" placeholder="Global Configuration Path">
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="browse-button btn btn-default">Select File</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <label for="stationsConfigurationInput">Stations Configuration Path</label>
+                        <input type="text" class="form-control" id="stationsConfigurationInput" placeholder="Global Configuration Path">
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="browse-button btn btn-default">Select File</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <label for="entryPointsConfigurationInput">Entry Point Configuration Path</label>
+                        <input type="text" class="form-control" id="entryPointsConfigurationInput" placeholder="Global Configuration Path">
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="browse-button btn btn-default">Select File</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <label for="usersOutput">Generated users output Path</label>
+                        <input type="text" class="form-control" id="usersOutput" placeholder="Global Configuration Path">
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="browse-button btn btn-default">Select Folder</button>
+                    </div>
+                </div>
+                <button class="btn btn-default">Submit</button>
+            </form>
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab title="Simulate">
+        <ng-template ngbTabContent>
+            Simulate
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>

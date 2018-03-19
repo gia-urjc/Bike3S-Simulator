@@ -11,12 +11,23 @@ import { ipcMain, ipcRenderer } from 'electron';
 namespace Main {
     let visualization: Electron.BrowserWindow | null;
     let menu: Electron.BrowserWindow | null;
+    let simulate: Electron.BrowserWindow | null;
 
     export function initWindowsListeners() {
-        ipcMain.on('open-visualization', function (event: any, arg: any) {
-            initVisualization();
+        ipcMain.on('open-visualization', (event: any, arg: any) => {
+            createVisualizationWindow();
+        });
+
+        ipcMain.on('open-simulate', (event: any, arg: any) => {
+            createSimulateWindow();
         })
     }
+
+    /*===================
+     *
+     *  MENU WINDOW
+     *
+     ===================*/
 
     function createMenuWindow() {
         menu = new BrowserWindow({ width: 300, height: 650, resizable: false, fullscreenable: true});
@@ -80,6 +91,13 @@ namespace Main {
         });
     }
 
+    /*===================
+     *
+     *  VISUALITATION WINDOW
+     *
+     ===================*/
+
+
     function createVisualizationWindow() {
         visualization = new BrowserWindow({ width: 800, height: 600 });
 
@@ -106,29 +124,36 @@ namespace Main {
         visualization.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/visualization');
     }
 
-    export async function initVisualization() {
-        if (process.env.target === 'development') {
-            const extensions = await Settings.get(settingsPathGenerator().development.extensions());
-            Object.entries(extensions).forEach(([name, extensionPath]) => {
-                if (!extensionPath) {
-                    console.log(`Empty path for browser extension ${name}`);
-                    return;
-                }
+    /*===================
+     *
+     *  SIMULATE WINDOW
+     *
+     ===================*/
 
-                try {
-                    BrowserWindow.addDevToolsExtension(extensionPath);
-                } catch (e) {
-                    console.log(`Couldn't load browser extension ${name} from path ${extensionPath}`);
-                }
-            });
+    function createSimulateWindow() {
+        simulate = new BrowserWindow({ width: 800, height: 600 });
+
+        simulate.loadURL(urlFormat({
+            pathname: join(app.getAppPath(), 'frontend', 'index.html'),
+            protocol: 'file',
+            slashes: true
+        }));
+
+        simulate.on('closed', async () => {
+            visualization = null;
+            HistoryReader.stopIpc();
+        });
+
+        simulate.webContents.on('will-navigate', (event, url) => {
+            event.preventDefault(); // prevents dragging images or other documents into browser window
+            shell.openExternal(url); // opens links (or dragged documents) in external browser
+        });
+
+        if (process.env.target === 'development') {
+            simulate.webContents.openDevTools();
         }
 
-        createVisualizationWindow();
-
-        app.on('window-all-closed', async () => {
-            await Settings.write();
-            if (process.platform !== 'darwin') app.quit();
-        });
+        simulate.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/simulate');
     }
     
     export async function test() {
