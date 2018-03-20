@@ -16,7 +16,9 @@ import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
 import es.urjc.ia.bikesurbanfleets.users.UserFactory;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;
+import org.apache.commons.math3.util.Precision;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -74,10 +76,24 @@ public class SimulationEngine {
         History.init(globalInfo.getHistoryOutputPath());
         Debug.init();
 
+        // Those variables are used to control de percentage of the simulation done
+        int totalUsers = eventsQueue.size();
+        double percentage = 0;
+
+        System.out.println("Percentage: " + percentage);
+
         while (!eventsQueue.isEmpty()) {
             Event event = eventsQueue.poll();  // retrieves and removes first element
+
+            if(Debug.DEBUG_MODE) {
+                System.out.println(event.toString());
+            }
+            else if(event.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
+                percentage += (((double) 1 /(double) totalUsers) * 100);
+                System.out.println("Percentage: " + Precision.round(percentage, 2));
+            }
+
             List<Event> newEvents = event.execute();
-            System.out.println(event.toString());
             eventsQueue.addAll(newEvents);
             History.registerEvent(event);
         }

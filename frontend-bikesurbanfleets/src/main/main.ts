@@ -7,11 +7,12 @@ import { HistoryReader } from './util';
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 import { ipcMain, ipcRenderer } from 'electron';
+import BackendCalls from "./util/BackendCalls";
 
-namespace Main {
+export namespace Main {
     let visualization: Electron.BrowserWindow | null;
     let menu: Electron.BrowserWindow | null;
-    let simulate: Electron.BrowserWindow | null;
+    export let simulate: Electron.BrowserWindow | null;
 
     export function initWindowsListeners() {
         ipcMain.on('open-visualization', (event: any, arg: any) => {
@@ -53,6 +54,7 @@ namespace Main {
     export function initMenu() {
         HistoryReader.enableIpc();
         Settings.enableIpc();
+        BackendCalls.enableIpc();
 
         app.on('ready', async () => {
             //HistoryReader.enableIpc();
@@ -126,7 +128,7 @@ namespace Main {
 
     /*===================
      *
-     *  SIMULATE WINDOW
+     *  S WINDOW
      *
      ===================*/
 

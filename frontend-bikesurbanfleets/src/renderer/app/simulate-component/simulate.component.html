@@ -5,40 +5,31 @@
                 <div class="row">
                     <div class="col-sm-10">
                         <label for="globalConfigurationInput">Global Configuration Path</label>
-                        <input type="text" class="form-control" id="globalConfigurationInput" placeholder="Global Configuration Path">
+                        <input type="text" [(ngModel)]="globalConfiguration" name="global_conf_1" class="form-control" id="globalConfigurationInput" placeholder="Global Configuration Path">
                     </div>
                     <div class="col-sm-2">
-                        <button class="browse-button btn btn-default">Select File</button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-10">
-                        <label for="stationsConfigurationInput">Stations Configuration Path</label>
-                        <input type="text" class="form-control" id="stationsConfigurationInput" placeholder="Global Configuration Path">
-                    </div>
-                    <div class="col-sm-2">
-                        <button class="browse-button btn btn-default">Select File</button>
+                        <button class="browse-button btn btn-default" (click)="globalConfiguration = selectFile()">Select File</button>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-10">
                         <label for="entryPointsConfigurationInput">Entry Point Configuration Path</label>
-                        <input type="text" class="form-control" id="entryPointsConfigurationInput" placeholder="Global Configuration Path">
+                        <input type="text" [(ngModel)]="entryPointConfiguration" name="entry_points" class="form-control" id="entryPointsConfigurationInput" placeholder="Entry Point Configuration Path">
                     </div>
                     <div class="col-sm-2">
-                        <button class="browse-button btn btn-default">Select File</button>
+                        <button class="browse-button btn btn-default" (click)="entryPointConfiguration = selectFile()">Select File</button>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-10">
                         <label for="usersOutput">Generated users output Path</label>
-                        <input type="text" class="form-control" id="usersOutput" placeholder="Global Configuration Path">
+                        <input [(ngModel)]="usersOutputFolder" name="users_output" type="text" class="form-control" id="usersOutput" placeholder="Generated users output Path">
                     </div>
                     <div class="col-sm-2">
-                        <button class="browse-button btn btn-default">Select Folder</button>
+                        <button class="browse-button btn btn-default" (click)="usersOutputFolder = selectFolder(s)">Select Folder</button>
                     </div>
                 </div>
-                <button class="btn btn-default">Submit</button>
+                <button class="btn btn-default" (click)="generateUsers()">Submit</button>
             </form>
         </ng-template>
     </ngb-tab>

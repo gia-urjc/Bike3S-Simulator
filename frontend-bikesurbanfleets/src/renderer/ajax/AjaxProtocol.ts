@@ -1,5 +1,6 @@
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
+import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
 
 export interface HistoryAjax {
     init(path: string): Promise<void>,
@@ -12,10 +13,17 @@ export interface HistoryAjax {
 }
 
 export interface FormSchemaAjax {
-    init(): Promise<void>
-    getSchemaFormEntryPointAndUserTypes(): Promise<any>
-    getSchemaByTypes(dataTypes: any): Promise<any>
-    getStationSchema(): Promise<any>
+    init(): Promise<void>,
+    getSchemaFormEntryPointAndUserTypes(): Promise<any>,
+    getSchemaByTypes(dataTypes: any): Promise<any>,
+    getStationSchema(): Promise<any>,
+}
+
+export interface BackendAjax {
+    init(): Promise<void>,
+    generateUsers(args: UserGeneratorArgs): Promise<void>
+    simulate(args: CoreSimulatorArgs): Promise<void>
+    closeBackend(): Promise<void>
 }
 
 export interface SettingsAjax {
@@ -26,5 +34,6 @@ export interface SettingsAjax {
 export interface AjaxProtocol {
     history: HistoryAjax,
     settings: SettingsAjax,
-    formSchema: FormSchemaAjax
+    formSchema: FormSchemaAjax,
+    backend: BackendAjax
 }

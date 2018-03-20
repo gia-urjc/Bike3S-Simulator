@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Event } from 'electron';
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
-import {AjaxProtocol, FormSchemaAjax, HistoryAjax, SettingsAjax} from './AjaxProtocol';
+import {AjaxProtocol, BackendAjax, FormSchemaAjax, HistoryAjax, SettingsAjax} from './AjaxProtocol';
 import {EntryPointDataType} from "../../shared/configuration";
+import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
 
 // https://github.com/electron/electron/issues/7300#issuecomment-274269710
 const { ipcRenderer } = (window as any).require('electron');
@@ -102,16 +103,39 @@ class ElectronFormSchema implements FormSchemaAjax {
     }
 }
 
+class ElectronBackendCalls implements BackendAjax {
+
+    async init(): Promise<void> {
+        return await readIpc('backend-call-init');
+    }
+
+    async generateUsers(args: UserGeneratorArgs): Promise<void> {
+        return await readIpc('backend-call-generate-users', args);
+    }
+
+    async simulate(args: CoreSimulatorArgs): Promise<void> {
+        return await readIpc('backend-call-core-simulation', args);
+    }
+
+    async closeBackend(): Promise<void> {
+        return await readIpc('backend-call-close');
+    }
+
+
+}
+
 @Injectable()
 export class ElectronAjax implements AjaxProtocol {
 
     history: HistoryAjax;
     settings: SettingsAjax;
     formSchema: FormSchemaAjax;
+    backend: ElectronBackendCalls;
 
     constructor() {
         this.history = new ElectronHistory();
         this.settings = new ElectronSettings();
         this.formSchema = new ElectronFormSchema();
+        this.backend = new ElectronBackendCalls();
     }
 }

@@ -13,7 +13,7 @@ public class JsonValidation {
     private final static String OK_VALIDATION = "OK";
 
 
-    public static String validate(String schemaDir, String jsonDir, String jsValidatorDir) throws IOException, InterruptedException {
+    public static String validate(String schemaDir, String jsonDir, String jsValidatorDir) throws IOException, InterruptedException, Exception {
 
         if(!checkNode()) {
             return NODE_ERROR;
@@ -26,13 +26,18 @@ public class JsonValidation {
         BufferedReader in = new BufferedReader(new InputStreamReader(validationProcess.getInputStream()));
         String line;
         String output = "";
+        boolean correct = false;
         while ((line = in.readLine()) != null) {
             if(line.equals(OK_VALIDATION)) {
                 output += line;
+                correct = true;
             }
             else {
                 output += line + "\n";
             }
+        }
+        if(!correct) {
+            throw new Exception(output);
         }
         validationProcess.waitFor();
         return output;
