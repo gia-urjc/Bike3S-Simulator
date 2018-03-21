@@ -20,10 +20,8 @@ export class StationBikesPerTimeList {
   public addBike(time: number): void {
     let lastPos: number = this.bikesPerTimeList.length-1;
     let bikes: number = this.bikesPerTimeList[lastPos].availableBikes;
-      console.log(bikes);
-    let value: BikesPerTime = {time: time, availableBikes: ++bikes};
-    this.bikesPerTimeList.push(value);
-    console.log(this.bikesPerTimeList[this.bikesPerTimeList.length-1].availablebikes);
+    this.bikesPerTimeList.push({time: time, availableBikes: ++bikes});
+      //console.log(this.bikesPerTimeList[this.bikesPerTimeList.length-1]);
   }
   
   public substractBike(time: number): void {
@@ -69,18 +67,19 @@ export class BikesPerStation implements Observer {
     for(let event of events) {
       let eventStations: Array<Station> = event.changes.stations;
         
-      switch(event.name) {
+       switch(event.name) {
         case "EventUserAppears": {
           if (eventStations !== undefined) {
-            // If there are several bike reservations, only the last can be a ctive
-            station = eventStations[0];
+            // If there are several bike reservations, only the last can be active
+            station = eventStations[eventStations.length-1];
             lastPos = station.reservations.new.id.length-1;
             reservationId = station.reservations.new.id[lastPos];
             reservation = this.getReservation(reservationId);
-               
+                
             if (reservation !== undefined && reservation.state === "ACTIVE") {  // and, of course, reservationtype = BIKE
                 // Decreasing available bikes at the time the UserAppears event's happened
-                let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
+                let stationId: number = reservation.station.id;
+                let bikesList: StationBikesPerTimeList | undefined = this.stations.get(stationId);
                 if (bikesList !== undefined) {
                     bikesList.substractBike(instant);
                 }
@@ -89,19 +88,12 @@ export class BikesPerStation implements Observer {
           break;
         }
               
-        case "EventUserArrivesAtStationToRentBikeWithReservation": {
-            station = eventStations[0];
-            let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
-            if (bikesList !== undefined) {
-                bikesList.substractBike(instant);
-            }
-            break;
-        }
+        // "EventUserArrivesAtStationToRentBikeWithReservation" mustn't be analized because the bike was already unavailable when the reservation was made in user appearance 
           
         case "EventUserArrivesAtStationToRentBikeWithoutReservation": {
             if (eventStations.length > 0) {
                 station = eventStations[0];
-            
+                    
                 // If bike ids have been registered, a change has occurred (there's 1 bike less)
                 if (station.bikes !== undefined) {  // rental + mayvbe, slot reservations
                     let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
@@ -109,14 +101,18 @@ export class BikesPerStation implements Observer {
                         bikesList.substractBike(instant);
                     }
                 }
-                else { // (station.reservations !== undefined) -> bike reservations (NOT rental)
+                
+                else { // (station.reservations !== undefined)
+                    if (eventStations.length > 1) {
+                        station = eventStations[eventStations.length-1];
+                    }
                     lastPos = station.reservations.new.id.length-1;
                     reservationId = station.reservations.new.id[lastPos];
                     reservation = this.getReservation(reservationId);
-                
                     if (reservation !== undefined && reservation.state === "ACTIVE") {  // and, of course, reservation.type === "BIKE"  
-                        // Decreasing available bikes at the time the UserAppears event''s happened  
-                        let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
+                        // Decreasing available bikes at the time the UserAppears event''s happened
+                        let stationId: number = reservation.stationId;  
+                        let bikesList: StationBikesPerTimeList | undefined = this.stations.get(stationId);
                         if (bikesList !== undefined) {
                             bikesList.substractBike(instant);
                         }
@@ -168,7 +164,7 @@ export class BikesPerStation implements Observer {
     
   private obtainInitAvailableBikesOf(station: Station): number {
     let counter: number = 0;
-    station.bikes.id.forEach( (bikeId) => {
+    station.bikes.id.forEach( (bikeId: number) => {
         if (bikeId !== null) { 
             counter++;
         }
