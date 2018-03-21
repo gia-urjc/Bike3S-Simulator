@@ -82,6 +82,8 @@ export class BikesPerStation implements Observer {
                 let bikesList: StationBikesPerTimeList | undefined = this.stations.get(stationId);
                 if (bikesList !== undefined) {
                     bikesList.substractBike(instant);
+                    if(stationId == 0)
+                        console.log(stationId+": "+bikesList.getList()[bikesList.getList().length-1]);
                 }
             }
           }
@@ -99,22 +101,25 @@ export class BikesPerStation implements Observer {
                     let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
                     if (bikesList !== undefined) {
                         bikesList.substractBike(instant);
+                        if(station.id == 10)
+                        console.log("rents bike: "+station.id+": "+bikesList.getList()[bikesList.getList().length-1].availableBikes);
                     }
                 }
                 
                 else { // (station.reservations !== undefined)
-                    if (eventStations.length > 1) {
-                        station = eventStations[eventStations.length-1];
-                    }
+                    station = eventStations[eventStations.length-1];
+                    
                     lastPos = station.reservations.new.id.length-1;
                     reservationId = station.reservations.new.id[lastPos];
                     reservation = this.getReservation(reservationId);
                     if (reservation !== undefined && reservation.state === "ACTIVE") {  // and, of course, reservation.type === "BIKE"  
                         // Decreasing available bikes at the time the UserAppears event''s happened
-                        let stationId: number = reservation.stationId;  
+                        let stationId: number = reservation.station.id;  
                         let bikesList: StationBikesPerTimeList | undefined = this.stations.get(stationId);
                         if (bikesList !== undefined) {
                             bikesList.substractBike(instant);
+                            if(stationId == 0)
+                        console.log("reserves bike: "+stationId+": "+bikesList.getList()[bikesList.getList().length-1].availableBikes);
                         }
                     }
                 }
@@ -131,6 +136,8 @@ export class BikesPerStation implements Observer {
                 let bikesList: StationBikesPerTimeList | undefined = this.stations.get(stationId);
                 if (bikesList !== undefined) {
                     bikesList.addBike(instant);
+                    if(stationId == 10)
+                        console.log("timeout: "+stationId+": "+bikesList.getList()[bikesList.getList().length-1].availableBikes);
                 }
             }
             break;
@@ -142,17 +149,21 @@ export class BikesPerStation implements Observer {
             let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
             if (bikesList !== undefined) {
                 bikesList.addBike(instant);
+                      if(station.id == 10)
+                        console.log("return with r: "+station.id+": "+bikesList.getList()[bikesList.getList().length-1].availableBikes);
             }
             break;
         }
           
-        case "EventUserArrivesAtStationToReturnBikeWithoutReservatioon": {
+        case "EventUserArrivesAtStationToReturnBikeWithoutReservation": {
             if (eventStations.length > 0) {
                 station = eventStations[0];
                 if (station.bikes !== undefined) {
                     let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
                     if (bikesList !== undefined) {
                         bikesList.addBike(instant);
+                       if(station.id == 10)
+                        console.log("timeout: "+station.id+": "+bikesList.getList()[bikesList.getList().length-1].availableBikes);
                     }
                 }
             }
