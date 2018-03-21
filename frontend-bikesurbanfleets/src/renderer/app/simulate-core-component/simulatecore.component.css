@@ -6,6 +6,10 @@
     display: none;
 }
 
+.row {
+    padding: 15px;
+}
+
 textarea {
     resize: none;
     background-color: #292929;

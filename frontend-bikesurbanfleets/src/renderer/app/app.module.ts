@@ -15,6 +15,8 @@ import {SchemaformComponent} from './schemaform-component/schemaform.component';
 import {Bootstrap4FrameworkModule, JsonSchemaFormModule} from 'angular2-json-schema-form';
 import {AppRoutingModule} from "./app.routes";
 import {SimulateComponent} from "./simulate-component/simulate.component";
+import {SimulatecoreComponent} from "./simulate-core-component/simulatecore.component";
+import {SimulateusergenComponent} from "./simulate-usergen-component/simulateusergen.component";
 
 @NgModule({
     imports: [
@@ -35,7 +37,9 @@ import {SimulateComponent} from "./simulate-component/simulate.component";
         Visualization,
         SchemaformComponent,
         MenuComponent,
-        SimulateComponent
+        SimulateComponent,
+        SimulatecoreComponent,
+        SimulateusergenComponent
     ],
     bootstrap: [AppComponent],
     providers: [{

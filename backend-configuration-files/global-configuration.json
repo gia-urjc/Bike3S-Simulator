@@ -16,5 +16,4 @@
     },
     "map": "../backend-configuration-files/maps/madrid.osm",
     "historyOutputPath": "../build/history"
-
 }

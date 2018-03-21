@@ -14,7 +14,7 @@ export default class BackendCalls {
 
     /*
     *   =================
-    *   Channels  |
+    *   Channels        |
     *   =================
     */
     private static channels: Channel[] = [];
@@ -73,77 +73,88 @@ export default class BackendCalls {
         this.window = Main.simulate;
     }
 
-    async generateUsers(args: UserGeneratorArgs) {
-        let rootPath = app.getAppPath();
-        let errorMessage: string;
-        
-        const userGen = spawn('java', [
-            '-jar',
-            `bikesurbanfleets-config-usersgenerator-1.0.jar`,
-            `-entryPointsSchema`, this.entryPointSchema,
-            `-globalSchema`, this.globalSchemaPath,
-            `-entryPointsInput`, args.entryPointsConf,
-            `-globalInput`, args.globalConf,
-            `-output`, args.outputUsers + "/users-configuration.json",
-            `-validator`, this.jsonSchemaValidator
-        ], {
-            cwd: rootPath,
-            shell: false
-        });
+    generateUsers(args: UserGeneratorArgs): Promise<void>{
+        return new Promise((resolve: any, reject: any) => {
 
-        userGen.stderr.on('data', (data) => {
-           if(this.window) {
-               this.window.webContents.send('error', data.toString());
-           }
-        });
+            let rootPath = app.getAppPath();
 
-        userGen.on('close', (code) => {
-            if (code === 0) {
-                return;
-            }
-            else {
-                throw new Error("Fail executing bikesurbanfleets-config-usersgenerator-1.0.jar")
-            }
+            const userGen = spawn('java', [
+                '-jar',
+                `bikesurbanfleets-config-usersgenerator-1.0.jar`,
+                `-entryPointsSchema`, this.entryPointSchema,
+                `-globalSchema`, this.globalSchemaPath,
+                `-entryPointsInput`, args.entryPointsConf,
+                `-globalInput`, args.globalConf,
+                `-output`, args.outputUsers + "/users-configuration.json",
+                `-validator`, this.jsonSchemaValidator
+            ], {
+                cwd: rootPath,
+                shell: false
+            });
+
+            userGen.stderr.on('data', (data) => {
+                if(this.window) {
+                    this.window.webContents.send('user-gen-error', data.toString());
+                }
+            });
+
+            userGen.stdout.on('data', (data) => {
+                if(this.window) {
+                    this.window.webContents.send('user-gen-data', data.toString());
+                }
+            });
+
+            userGen.on('close', (code) => {
+                if (code === 0) {
+                    console.log('User generation finished');
+                    resolve();
+                }
+                else {
+                    reject("Fail executing bikesurbanfleets-config-usersgenerator-1.0.jar");
+                }
+            });
         });
     }
 
-    async simulate(args: CoreSimulatorArgs) {
-        let rootPath = app.getAppPath();
-        const sim = spawn('java', [
-            '-jar',
-            'bikesurbanfleets-core-1.0.jar',
-            `-globalSchema ${this.globalSchemaPath}`,
-            `-usersSchema ${this.usersConfigSchema}`,
-            `-stationsSchema ${this.stationsSchema}`,
-            `-globalConfig ${args.globalConf}`,
-            `-usersConfig ${args.usersConf}`,
-            `-stationsConfig ${args.stationsConf}`,
-            `-validator ${this.jsonSchemaValidator}`
-        ], {
-            cwd: rootPath,
-            shell: true,
-            stdio: 'inherit'
-        });
+    simulate(args: CoreSimulatorArgs): Promise<void> {
+        return new Promise((resolve: any, reject: any) => {
+            let rootPath = app.getAppPath();
+            const sim = spawn('java', [
+                '-jar',
+                'bikesurbanfleets-core-1.0.jar',
+                `-globalSchema ${this.globalSchemaPath}`,
+                `-usersSchema ${this.usersConfigSchema}`,
+                `-stationsSchema ${this.stationsSchema}`,
+                `-globalConfig ${args.globalConf}`,
+                `-usersConfig ${args.usersConf}`,
+                `-stationsConfig ${args.stationsConf}`,
+                `-validator ${this.jsonSchemaValidator}`
+            ], {
+                cwd: rootPath,
+                shell: true
+            });
 
-        sim.on('error', (error) => {
-            if(this.window) {
-                this.window.webContents.send('error', error);
-            }
-        });
+            sim.stderr.on('error', (error) => {
+                if(this.window) {
+                    this.window.webContents.send('core-error', error);
+                }
+            });
 
-        sim.on('data', (data) => {
-            if (this.window) {
-                this.window.webContents.send('percentage', data);
-            }
-        });
+            sim.stdout.on('data', (data) => {
+                if (this.window) {
+                    this.window.webContents.send('core-data', data);
+                }
+            });
 
-        sim.on('close', (code) => {
-            if (code === 0) {
-                return;
-            }
-            else {
-                throw new Error("Fail executing bikesurbanfleets-core-1.0.jar")
-            }
+            sim.on('close', (code) => {
+                if (code === 0) {
+                    console.log("Simulation Finished");
+                    resolve();
+                }
+                else {
+                    reject("Fail executing bikesurbanfleets-core-1.0.jar")
+                }
+            });
         });
     }
 

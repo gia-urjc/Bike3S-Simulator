@@ -107,7 +107,7 @@ public class Application {
                     System.out.println(ANSI_GREEN + "Validation configuration input: OK" + ANSI_RESET);
                     result = true;
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (Exception e) {
                 System.out.println(ANSI_RED + "Fail executing validation" + ANSI_RESET);
                 e.printStackTrace();
             }
