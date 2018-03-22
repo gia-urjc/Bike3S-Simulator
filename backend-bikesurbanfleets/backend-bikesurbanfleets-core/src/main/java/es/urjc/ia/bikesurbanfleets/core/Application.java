@@ -38,6 +38,7 @@ public class Application {
         options.addOption("globalConfig", true, "Directory to the global configuration file");
         options.addOption("usersConfig", true, "Directory to the users configuration file");
         options.addOption("stationsConfig", true, "Directory to the stations configuration file");
+        options.addOption("historyOutput", true, "History Path for the simulation");
         options.addOption("validator", true, "Directory to the js validator");
     
         CommandLineParser parser = new DefaultParser();
@@ -61,6 +62,7 @@ public class Application {
         String globalConfig = cmd.getOptionValue("globalConfig");
         String usersConfig = cmd.getOptionValue("usersConfig");
         String stationsConfig = cmd.getOptionValue("stationsConfig");
+        String historyOutputPath = cmd.getOptionValue("historyOutput");
         String validator = cmd.getOptionValue("validator");
         
         if(checkParams(globalSchema, usersSchema, stationsSchema, globalConfig, usersConfig, stationsConfig, validator)) {
@@ -70,6 +72,9 @@ public class Application {
                 UsersInfo usersInfo = jsonReader.readUsersConfiguration();
                 StationsInfo stationsInfo = jsonReader.readStationsConfiguration();
                 System.out.println("DEBUG MODE: " + globalInfo.isDebugMode());
+                if(historyOutputPath != null) {
+                    globalInfo.setHistoryOutputPath(historyOutputPath);
+                }
                 SystemManager systemManager = jsonReader.createSystemManager(stationsInfo, globalInfo);
                 SimulationEngine simulation = new SimulationEngine(globalInfo, stationsInfo, usersInfo, systemManager);
                 simulation.run();

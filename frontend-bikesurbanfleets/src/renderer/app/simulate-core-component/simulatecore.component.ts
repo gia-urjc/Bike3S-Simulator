@@ -57,8 +57,8 @@ export class SimulatecoreComponent{
         this.exceptions += error;
     }
 
-    addConsoleMessage(message: string) {
-        this.stdout += message;
+    addConsoleMessage(message: any) {
+        console.log(message.toString());
     }
 
     async runSimulation() {

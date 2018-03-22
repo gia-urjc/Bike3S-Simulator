@@ -128,6 +128,7 @@ export default class BackendCalls {
                 `-globalConfig ${args.globalConf}`,
                 `-usersConfig ${args.usersConf}`,
                 `-stationsConfig ${args.stationsConf}`,
+                `-historyOutput ${args.outputHistory}`,
                 `-validator ${this.jsonSchemaValidator}`
             ], {
                 cwd: rootPath,
@@ -136,12 +137,14 @@ export default class BackendCalls {
 
             sim.stderr.on('error', (error) => {
                 if(this.window) {
+                    console.log(error.toString());
                     this.window.webContents.send('core-error', error);
                 }
             });
 
             sim.stdout.on('data', (data) => {
                 if (this.window) {
+                    console.log(data.toString());
                     this.window.webContents.send('core-data', data);
                 }
             });

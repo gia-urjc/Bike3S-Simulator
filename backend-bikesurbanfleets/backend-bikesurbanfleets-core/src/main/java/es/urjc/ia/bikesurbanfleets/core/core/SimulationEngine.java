@@ -67,7 +67,6 @@ public class SimulationEngine {
         eventUserAppearsList.stream()
                 .map(EventUser::getUser)
                 .forEach(user -> user.setSystemManager(systemManager));
-
         return eventUserAppearsList;
     }
 
@@ -85,9 +84,14 @@ public class SimulationEngine {
         while (!eventsQueue.isEmpty()) {
             Event event = eventsQueue.poll();  // retrieves and removes first element
 
-            System.out.println(event.toString());
-            percentage += (((double) 1 /(double) totalUsers) * 100);
-            System.out.println("Percentage: " + Precision.round(percentage, 2));
+            if(event.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
+                percentage += (((double) 1 /(double) totalUsers) * 100);
+                System.out.println("Percentage: " + Precision.round(percentage, 2));
+            }
+
+            if(Debug.DEBUG_MODE) {
+                System.out.println(event.toString());
+            }
 
             List<Event> newEvents = event.execute();
             eventsQueue.addAll(newEvents);

@@ -74,6 +74,10 @@ public class GlobalInfo {
         return historyOutputPath;
     }
 
+    public void setHistoryOutputPath(String historyOutputPath) {
+        this.historyOutputPath = historyOutputPath;
+    }
+
     public boolean getLinearDistance() {
         return linearDistance;
     }

@@ -68,11 +68,12 @@ public class History {
      * @param outPath It contains the path where the history will be stored
      */
     public static void init(String outPath) throws IOException {
-        outputPath = Paths.get(outPath);
+        if(outPath != null) {
+            outputPath = Paths.get(outPath);
+        }
         File outputDirectory = new File(outPath);
         FileUtils.deleteDirectory(outputDirectory);
         outputDirectory.mkdirs();
-
     }
 
     /**

@@ -48,11 +48,11 @@
     <div class="modal-body">
         <div *ngIf="errors">
             <p>Console errors</p>
-            <textarea id="exceptions-textarea" name="exceptions-textarea" readonly rows="8" cols="73">{{exceptions}}</textarea>
+            <textarea id="exceptions-textarea-core" name="exceptions-textarea" readonly rows="8" cols="73">{{exceptions}}</textarea>
         </div>
         <div *ngIf="!errors">
             <p>Console Output</p>
-            <textarea id="stdout-textarea" name="exceptions-textarea" readonly rows="8" cols="73">{{stdout}}</textarea>
+            <textarea id="stdout-textarea-core" name="exceptions-textarea" readonly rows="8" cols="73">{{stdout}}</textarea>
         </div>
     </div>
     <div class="modal-footer">

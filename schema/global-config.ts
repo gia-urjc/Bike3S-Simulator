@@ -13,6 +13,5 @@ export default new JsonSchema(options, sObject({
         northWest: GeoPoint,
         southEast: GeoPoint,
     }).require.all().restrict(),
-    map: sString().pattern(/.+\.osm/),
-    historyOutputPath: sString().pattern(/.+/)
+    map: sString().pattern(/.+\.osm/)
 }).require.all().restrict());

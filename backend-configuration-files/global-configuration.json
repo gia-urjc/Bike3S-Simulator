@@ -14,6 +14,5 @@
             "longitude": -3.69826
         }
     },
-    "map": "../backend-configuration-files/maps/madrid.osm",
-    "historyOutputPath": "../build/history"
+    "map": "../backend-configuration-files/maps/madrid.osm"
 }

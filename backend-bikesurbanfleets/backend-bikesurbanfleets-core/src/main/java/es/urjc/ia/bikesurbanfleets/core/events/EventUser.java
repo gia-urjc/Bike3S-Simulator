@@ -149,7 +149,9 @@ public abstract class EventUser implements Event {
         Station destination = user.getDestinationStation();
         user.setDestination(destination);
         int arrivalTime = user.timeToReach();
-        System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
+        if(Debug.DEBUG_MODE) {
+            System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
+        }
         if (user.decidesToReserveBikeAtSameStationAfterTimeout()) {
             debugEventLog("User decides to manage bike reservation at the same station");
             newEvents = manageBikeReservation(destination);
@@ -175,8 +177,10 @@ public abstract class EventUser implements Event {
             user.setDestination(destination);
 
             int arrivalTime = user.timeToReach();
-            System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
+            if(Debug.DEBUG_MODE) {
+                System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
 
+            }
             if (user.decidesToReserveBikeAtNewDecidedStation()) {
                 debugEventLog("User decides to reserve bike at new decided station");
                 newEvents = manageBikeReservation(destination);
@@ -230,8 +234,9 @@ public abstract class EventUser implements Event {
         Station destination = user.getDestinationStation();
         user.setDestination(destination);
         int arrivalTime = user.timeToReach();
-        System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
-
+        if(Debug.DEBUG_MODE) {
+            System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
+        }
         if (user.decidesToReserveSlotAtSameStationAfterTimeout()) {
             debugEventLog("User decides to manage slot reservation at the same station");
             newEvents = manageSlotReservation(destination);
@@ -248,7 +253,10 @@ public abstract class EventUser implements Event {
         user.setDestination(destination);
 
         int arrivalTime = user.timeToReach();
-        System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
+
+        if(Debug.DEBUG_MODE) {
+            System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
+        }
 
         if (user.decidesToReserveSlotAtNewDecidedStation()) {
             debugEventLog("User decides to reserve slot at new decided station");
