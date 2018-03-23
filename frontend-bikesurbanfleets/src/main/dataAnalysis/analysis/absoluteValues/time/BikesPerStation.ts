@@ -21,7 +21,6 @@ export class StationBikesPerTimeList {
     let lastPos: number = this.bikesPerTimeList.length-1;
     let bikes: number = this.bikesPerTimeList[lastPos].availableBikes;
     this.bikesPerTimeList.push({time: time, availableBikes: ++bikes});
-      //console.log(this.bikesPerTimeList[this.bikesPerTimeList.length-1]);
   }
   
   public substractBike(time: number): void {
@@ -82,8 +81,6 @@ export class BikesPerStation implements Observer {
                 let bikesList: StationBikesPerTimeList | undefined = this.stations.get(stationId);
                 if (bikesList !== undefined) {
                     bikesList.substractBike(instant);
-                    if(stationId == 0)
-                        console.log(stationId+": "+bikesList.getList()[bikesList.getList().length-1]);
                 }
             }
           }
@@ -101,8 +98,6 @@ export class BikesPerStation implements Observer {
                     let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
                     if (bikesList !== undefined) {
                         bikesList.substractBike(instant);
-                        if(station.id == 10)
-                        console.log("rents bike: "+station.id+": "+bikesList.getList()[bikesList.getList().length-1].availableBikes);
                     }
                 }
                 
@@ -118,8 +113,6 @@ export class BikesPerStation implements Observer {
                         let bikesList: StationBikesPerTimeList | undefined = this.stations.get(stationId);
                         if (bikesList !== undefined) {
                             bikesList.substractBike(instant);
-                            if(stationId == 0)
-                        console.log("reserves bike: "+stationId+": "+bikesList.getList()[bikesList.getList().length-1].availableBikes);
                         }
                     }
                 }
@@ -136,8 +129,6 @@ export class BikesPerStation implements Observer {
                 let bikesList: StationBikesPerTimeList | undefined = this.stations.get(stationId);
                 if (bikesList !== undefined) {
                     bikesList.addBike(instant);
-                    if(stationId == 10)
-                        console.log("timeout: "+stationId+": "+bikesList.getList()[bikesList.getList().length-1].availableBikes);
                 }
             }
             break;
@@ -149,9 +140,7 @@ export class BikesPerStation implements Observer {
             let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
             if (bikesList !== undefined) {
                 bikesList.addBike(instant);
-                      if(station.id == 10)
-                        console.log("return with r: "+station.id+": "+bikesList.getList()[bikesList.getList().length-1].availableBikes);
-            }
+               }
             break;
         }
           
@@ -162,8 +151,6 @@ export class BikesPerStation implements Observer {
                     let bikesList: StationBikesPerTimeList | undefined = this.stations.get(station.id);
                     if (bikesList !== undefined) {
                         bikesList.addBike(instant);
-                       if(station.id == 10)
-                        console.log("timeout: "+station.id+": "+bikesList.getList()[bikesList.getList().length-1].availableBikes);
                     }
                 }
             }

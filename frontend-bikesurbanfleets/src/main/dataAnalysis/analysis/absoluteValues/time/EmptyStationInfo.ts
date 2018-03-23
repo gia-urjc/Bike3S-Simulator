@@ -15,7 +15,11 @@ export interface EmptyStateAbsoluteValue extends AbsoluteValue {
 
 export class EmptyStateData implements Data {
     static readonly NAMES: Array<string> = ['Time intervals', 'Total time'];
-    absoluteValues: Map<number, AbsoluteValue>;    
+    absoluteValues: Map<number, AbsoluteValue>;
+    
+    constructor() {
+       this.absoluteValues = new Map<number, AbsoluteValue>();
+    }
 }
 
 export class EmptyStationInfo implements SystemInfo {
@@ -27,7 +31,7 @@ export class EmptyStationInfo implements SystemInfo {
         this.data = new EmptyStateData(); 
     }
        
-    public async init(): Promise<void> {
+     public async init(): Promise<void> {
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
             let emptyState: EmptyStateAbsoluteValue = this.createEmptyStateFor(stationInfo);
             this.data.absoluteValues.set(stationId, emptyState);

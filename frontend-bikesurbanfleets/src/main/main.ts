@@ -6,12 +6,14 @@ import { Settings } from './settings';
 import { HistoryReader } from './util';
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
 import { AbsoluteValue } from "./dataAnalysis/analysis/absoluteValues/AbsoluteValue";
+import { Data } from "./dataAnalysis/analysis/absoluteValues/Data";
 import { RentalAndReturnAbsoluteValue } from "./dataAnalysis/analysis/absoluteValues/rentalsAndReturns/RentalAndReturnAbsoluteValue";
 import { RentalsAndReturnsPerStation } from "./dataAnalysis/analysis/absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "./dataAnalysis/analysis/absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "./dataAnalysis/analysis/absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "./dataAnalysis/analysis/absoluteValues/reservations/ReservationsPerUser";
 import { BikesPerStation, StationBikesPerTimeList } from "./dataAnalysis/analysis/absoluteValues/time/BikesPerStation";
+import { EmptyStationInfo } from "./dataAnalysis/analysis/absoluteValues/time/EmptyStationInfo";
 import { RentalAndReturnCalculator } from "./dataAnalysis/analysis/calculators/RentalAndReturnCalculator";
 import { ReservationCalculator } from "./dataAnalysis/analysis/calculators/ReservationCalculator";
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
@@ -93,10 +95,14 @@ namespace Main {
             d.init(s.getStations());
             let c: RentalAndReturnCalculator = new RentalAndReturnCalculator('history');
             c.subscribe(d);
-            c.calculate(); 
-            let v: StationBikesPerTimeList | undefined = d.getStations().get(4);
+            await c.calculate(); 
+            let v: StationBikesPerTimeList | undefined = d.getStations().get(7);
             if (v !== undefined) {
                 v.getList().forEach( (info) => console.log(info.time+' '+info.availableBikes));
+                let info: EmptyStationInfo = new EmptyStationInfo(d);
+                await info.init();
+                let  stations: Data = info.getData();
+                console.log(stations.absoluteValues.get(18));
             }
         } catch(e) { console.log(e); }
     }
