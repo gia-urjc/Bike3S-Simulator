@@ -13,9 +13,24 @@ export class ReservationsPerStation implements SystemInfo, Observer {
         this.data = new ReservationData();
     }
     
+<<<<<<< HEAD
     public async init() {
         try {
             this.data.init(this.basicData);
+=======
+    public async init(path: string, schemaPath?: string | null): Promise<void> {
+        try {
+            let history: HistoryReader = await HistoryReader.create(path, schemaPath);
+            let entities: HistoryEntitiesJson = await history.getEntities("stations");
+            this.stations = <Station[]> entities.instances;
+        
+            for(let station of this.stations) {
+                this.bikeFailedReservationsPerStation.set(station.id, 0);
+                this.slotFailedReservationsPerStation.set(station.id, 0);            
+                this.bikeSuccessfulReservationsPerStation.set(station.id, 0);
+                this.slotSuccessfulReservationsPerStation.set(station.id, 0);
+            }
+>>>>>>> d86b148f5d966d645a819dde4afc777d22832467
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);
@@ -23,6 +38,7 @@ export class ReservationsPerStation implements SystemInfo, Observer {
         return;
     }
    
+<<<<<<< HEAD
     public static async create(stations: Array<Station>): Promise<ReservationsPerStation> {
         let reservationValues = new ReservationsPerStation(stations);
         try {
@@ -31,6 +47,11 @@ export class ReservationsPerStation implements SystemInfo, Observer {
         catch(error) {
             throw new Error('Error creating requested data: '+error);
         }
+=======
+    public static async create(path: string, schemaPath?: string | null): Promise<ReservationsPerStation> {
+        let reservationValues = new ReservationsPerStation();
+        await reservationValues.init(path, schemaPath);
+>>>>>>> d86b148f5d966d645a819dde4afc777d22832467
         return reservationValues;
     }
     

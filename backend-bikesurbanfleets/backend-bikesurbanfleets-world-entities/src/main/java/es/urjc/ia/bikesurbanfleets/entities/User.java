@@ -8,7 +8,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrati
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.entities.history.HistoricUser;
+import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
 import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
@@ -101,10 +101,10 @@ public abstract class User implements Entity {
         this.destinationStation = null;
         this.systemManager = null;
         this.reservation = null;
-        this.memory = new UserMemory();
+        this.memory = new UserMemory(this);
 
         History.registerEntity(this);
-        this.memory = new UserMemory();
+        this.memory = new UserMemory(this);
     }
 
     @Override
@@ -149,11 +149,6 @@ public abstract class User implements Entity {
     public boolean hasReservedSlot() {
         return reservedSlot;
     }
-
-    // TODO: getter possibly unnecessary
-    /*public Reservation getReservation() {
-        return this.reservation;
-    }*/
 
     public Station getDestinationStation() {
         return destinationStation;

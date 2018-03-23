@@ -9,13 +9,20 @@ import es.urjc.ia.bikesurbanfleets.entities.User;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@AssociatedType(UserType.USER_UNIFORMED)
-public class UserUniform extends User{
+/**
+ * This class represents a user who doesn't know anything about the state of the system.
+ * This user always chooses the closest destination station and the shortest route to reach it.
+ * This user decides to leave the system randomly when a reservation fails if reservations are active
+ *
+ * @author IAgroup
+ *
+ */
+@AssociatedType(UserType.USER_UNINFORMED)
+public class UserUninformed extends User {
 
-    public UserUniform() {
+    public UserUninformed() {
         super();
     }
 
@@ -24,12 +31,10 @@ public class UserUniform extends User{
         return systemManager.getRandom().nextBoolean();
     }
 
-
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
         return systemManager.getRandom().nextBoolean();
     }
-
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
@@ -38,54 +43,80 @@ public class UserUniform extends User{
 
     @Override
     public Station determineStationToRentBike(int instant) {
-        List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+
         Station destination = null;
+        List<Station> stations;
+        stations = systemManager.consultStationsWithoutBikeRentalAttemptsOrdered(this);
 
-        if (!stations.isEmpty()) {
-            List<Station> recommendedStations = systemManager.getRecommendationSystem()
-                    .recommendByLinearDistance(this.getPosition(), stations);
-
-            destination = recommendedStations.get(0).getPosition().equals(this.getPosition()) && recommendedStations.size() > 1
-                    ? recommendedStations.get(1) : recommendedStations.get(0);
+        int index = 0;
+        while(index < stations.size()) {
+            Station stationToCheck = stations.get(index);
+            if(stationToCheck.getPosition().equals(this.getPosition())) {
+                stations.remove(stationToCheck);
+                break;
+            }
+            index++;
         }
 
+        if(!stations.isEmpty()) {
+            destination = stations.get(0);
+        }
+
+        return destination;
+    }
+
+    @Override
+    public Station determineStationToReturnBike(int instant) {
+
+        List<Station> stations;
+        stations = systemManager.consultStationsWithoutBikeReturnAttemptsOrdered(this);
+
+        Station destination;
+
+        int index = 0;
+        while(index < stations.size()) {
+            Station stationToCheck = stations.get(index);
+            if(stationToCheck.getPosition().equals(this.getPosition())) {
+                stations.remove(stationToCheck);
+                break;
+            }
+            index++;
+        }
+
+        if(!stations.isEmpty()) {
+            destination = stations.get(0);
+        }
+        else{
+            stations = systemManager.consultOrderedStationsByDistance(this);
+
+            Station firstStation = stations.get(0);
+            if(firstStation.getPosition().equals(this.getPosition())) {
+                stations.remove(0);
+            }
+            destination = stations.get(0);
+        }
         return destination;
 
     }
 
     @Override
-    public Station determineStationToReturnBike(int instant) {
-        List<Station> stations = systemManager.consultStationsWithoutSlotReservationAttempt(this, instant);
-
-        if (stations.isEmpty()) {
-            stations = new ArrayList<>(systemManager.consultStations());
-        }
-
-        List<Station> recommendedStations = systemManager.getRecommendationSystem()
-                .recommendByLinearDistance(this.getPosition(), stations);
-        // TODO: what happens if recommended stations size is 1?
-        return recommendedStations.get(0).getPosition().equals(this.getPosition())
-                ? recommendedStations.get(1) : recommendedStations.get(0);
-    }
-
-    @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-        return systemManager.getRandom().nextBoolean();
+        return false;
     }
 
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-        return systemManager.getRandom().nextBoolean();
+        return false;
     }
 
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        return systemManager.getRandom().nextBoolean();
+        return false;
     }
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-        return systemManager.getRandom().nextBoolean();
+        return false;
     }
 
     @Override
@@ -100,12 +131,12 @@ public class UserUniform extends User{
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
-        return systemManager.getRandom().nextBoolean();
+        return false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        return systemManager.getRandom().nextBoolean();
+        return false;
     }
 
     @Override
@@ -116,4 +147,5 @@ public class UserUniform extends User{
         int index = systemManager.getRandom().nextInt(0, routes.size());
         return routes.get(index);
     }
+
 }

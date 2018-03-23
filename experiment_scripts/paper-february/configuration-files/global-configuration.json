@@ -1,0 +1,19 @@
+{
+    "reservationTime": 2000,
+    "totalSimulationTime": 86400,
+    "debugMode": false,
+    "randomSeed": 201,
+    "linearDistance": true,
+    "boundingBox": {
+        "northWest": {
+            "latitude": 40.4215886,
+            "longitude": -3.7134038
+        },
+        "southEast": {
+            "latitude": 40.4121931,
+            "longitude": -3.69826
+        }
+    },
+    "map": "../backend-configuration-files/maps/madrid.osm",
+    "historyOutputPath": "/home/darwin/Mis_proyectos/IAgroup/experiment_scripts/paper-february/temp/history"
+}

@@ -23,10 +23,10 @@ import java.util.List;
  * 
  * @author IAgroup
  */
-@AssociatedType(UserType.USER_STATIONS_BALANCER)
-public class UserStationsBalancer extends User {
+@AssociatedType(UserType.USER_AVAILABLE_RESOURCES)
+public class UserAvailableResources extends User {
 
-    public class UserStationsBalancerParameters {
+    public class UserAvailableResourcesParameters {
         /**
          * It is the time in seconds until which the user will decide to continue walking
          * or cycling towards the previously chosen station without making a new reservation
@@ -70,7 +70,7 @@ public class UserStationsBalancer extends User {
          */
         private int failedReservationPercentage;
 
-        private UserStationsBalancerParameters() {}
+        private UserAvailableResourcesParameters() {}
 
         @Override
         public String toString() {
@@ -86,9 +86,9 @@ public class UserStationsBalancer extends User {
         }
     }
 
-    private UserStationsBalancerParameters parameters;
+    private UserAvailableResourcesParameters parameters;
     
-    public UserStationsBalancer(UserStationsBalancerParameters parameters) {
+    public UserAvailableResources(UserAvailableResourcesParameters parameters) {
         super();
         this.parameters = parameters;
     }
@@ -111,27 +111,42 @@ public class UserStationsBalancer extends User {
     @Override
     public Station determineStationToRentBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
+        Station destination = null;
         
-     if (stations.isEmpty()) {
-         stations = new ArrayList<>(systemManager.consultStations());
+     if (!stations.isEmpty()) {
+         List<Station> recommendedStations = systemManager.getRecommendationSystem()
+                .recommendByNumberOfBikes(this.getPosition(), stations);
+         
+         if (!recommendedStations.isEmpty()) {
+        	 destination = recommendedStations.get(0);
+         }
      }
-
-        return systemManager.getRecommendationSystem()
-                .recommendByNumberOfBikes(this.getPosition(), stations).get(0);
+     return destination;
     }
 
     @Override
      public Station determineStationToReturnBike(int instant) {
         List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-        Station destination = null;
+        List<Station> recommendedStations;
+        Station destination;
         
-        if (!stations.isEmpty()) {
-            destination = systemManager.getRecommendationSystem()
-                    .recommendByNumberOfSlots(this.getPosition(), stations).get(0);
-        }
-
-        return destination;
-        }
+        if (stations.isEmpty()) {
+        	   stations = new ArrayList<Station>(systemManager.consultStations());        
+    	  	}
+    
+    			recommendedStations = systemManager.getRecommendationSystem()
+            .recommendByNumberOfSlots(this.getPosition(), stations);
+    			
+    			if (!recommendedStations.isEmpty()) {
+    				destination = recommendedStations.get(0);
+							}
+    			else {
+    				recommendedStations = systemManager.consultStations();
+    	        	int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);
+    	        	destination = recommendedStations.get(index);
+    			}
+       return destination;
+    }
     
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {

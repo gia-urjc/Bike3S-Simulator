@@ -25,15 +25,23 @@ export default class HistoryReader {
         verbose: true,
     });
 
-    private static entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
-    private static changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));
+    private static entityFileSchema: any;
+    private static changeFileSchema: any;
 
     private historyPath: string;
     private changeFiles: Array<string>;
     private currentIndex: number;
 
-    static async create(path: string): Promise<HistoryReader> {
-        let reader = new HistoryReader(path);
+    static async create(path: string, schemaPath?:string|null): Promise<HistoryReader> {
+        let reader = new HistoryReader(path, schemaPath);
+        if(schemaPath == null) {
+            HistoryReader.entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
+            HistoryReader.changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));;
+        }
+        else {
+            HistoryReader.entityFileSchema = fs.readJsonSync(paths.join(schemaPath, 'entities.json'));
+            HistoryReader.changeFileSchema = fs.readJsonSync(paths.join(schemaPath, 'timeentries.json'))
+        }
         reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities').sort((a, b) => {
             const [x, y] = [a, b].map((s) => parseInt(s.split('-')[0]));
             return x - y;
@@ -65,9 +73,14 @@ export default class HistoryReader {
         });
     }
 
-    private constructor(path: string) {
+    private constructor(path: string, pathSchema?: string|null) {
         this.currentIndex = -1;
-        this.historyPath = paths.join(app.getAppPath(), path);
+        if(pathSchema == null) {
+            this.historyPath = paths.join(app.getAppPath(), path);
+        }
+        else {
+            this.historyPath = path;
+        }
     }
 
     clipToRange(start: number, end: number = this.timeRange.end): void {

@@ -14,9 +14,24 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
         this.data = new RentalAndReturnData();
     }
     
+<<<<<<< HEAD
     public async init() {
         try {
             await this.data.initData(this.basicData);
+=======
+    public async init(path: string, schemaPath?: string | null): Promise<void> {
+        try {
+            let history: HistoryReader = await HistoryReader.create(path, schemaPath);
+            let entities: HistoryEntitiesJson = await history.getEntities("stations");
+            this.stations = <Station[]> entities.instances;
+                
+            for(let station of this.stations) {
+                this.bikeFailedRentalsPerStation.set(station.id, 0);
+                this.bikeSuccessfulRentalsPerStation.set(station.id, 0);
+                this.bikeFailedReturnsPerStation.set(station.id, 0);            
+                this.bikeSuccessfulReturnsPerStation.set(station.id, 0);            
+            }
+>>>>>>> d86b148f5d966d645a819dde4afc777d22832467
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);
@@ -24,10 +39,17 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
         return;
     }
     
+<<<<<<< HEAD
     public static async create(stations: Array<Station>) {
         let stationValues = new RentalsAndReturnsPerStation(stations);
         try {
             await stationValues.init();
+=======
+    public static async create(path: string, schemaPath?: string | null): Promise<RentalsAndReturnsPerStation> {
+        let stationValues = new RentalsAndReturnsPerStation();
+        try {
+            await stationValues.init(path, schemaPath);
+>>>>>>> d86b148f5d966d645a819dde4afc777d22832467
         }
         catch(error) {
             throw new Error('Error creating requested data: '+error);

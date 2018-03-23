@@ -72,6 +72,7 @@ public class Debug {
         if(!Files.exists(DEBUG_PATH)) {
             Files.createDirectory(DEBUG_PATH.toAbsolutePath());
         }
+
         if(!Files.exists(entityLogPath)) {
             Files.createDirectory(entityLogPath.toAbsolutePath());
         }

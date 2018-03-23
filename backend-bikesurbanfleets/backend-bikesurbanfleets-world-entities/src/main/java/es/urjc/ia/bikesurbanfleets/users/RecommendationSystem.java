@@ -3,9 +3,10 @@ package es.urjc.ia.bikesurbanfleets.users;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
+import es.urjc.ia.bikesurbanfleets.entities.comparators.ComparatorByProportionBetweenDistanceAndBikes;
+import es.urjc.ia.bikesurbanfleets.entities.comparators.ComparatorByDistance;
+import es.urjc.ia.bikesurbanfleets.entities.comparators.ComparatorByProportionBetweenDistanceAndSlots;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,15 +30,21 @@ public class RecommendationSystem {
      * It is the maximum distance in meters between the recommended stations and the indicated 
      * geographical point.
      */
-    private final int MAX_DISTANCE = 25000;
+    private final int MAX_DISTANCE = 600;
     
     /**
      * It alloows to manage routes. 
      */
     private GraphManager graph;
     
-    public RecommendationSystem(GraphManager graph) {
+    /**
+     * It establishes the way of recommending by distnace (linear or real distance)
+     */
+    private boolean linearDistance;
+    
+    public RecommendationSystem(GraphManager graph, boolean linearDistance) {
         this.graph = graph;
+        this.linearDistance = linearDistance;
     }
 
     /**
@@ -49,48 +56,66 @@ public class RecommendationSystem {
      * that don't exceed the preset maximum distance from the specified geographical point.      
      * @return an unordered list of stations from which the system will prepare its recommendations.
      */
-    private List<Station> validStationsByLinearDistanceToRentBike(GeoPoint point, List<Station> stations) {
-        return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= MAX_DISTANCE && station.availableBikes() > 0)
-                .collect(Collectors.toList());
-    }
-    
-    private List<Station> validStationsByLinearDistanceToReturnBike(GeoPoint point, List<Station> stations) {
-        return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= MAX_DISTANCE && station.availableSlots() > 0)
-                .collect(Collectors.toList());
-    }
- 
-    /**
-     * It verifies which stations have real routes of less than MAX_DISTANCE meters 
-          * to the indicated geographical point. 
-     * @param point It's the user current position or the geographical coordinates of a 
-     * place the user wants to reach.
-     * @param stations It's the initial set of stations within it has to filter those 
-     * that don't exceed the preset maximum distance from the specified geographical point.      
-     * @return an unordered list of stations from which the system will prepare its recommendations.
-     */
-    private List<Station> validStationsByRealRouteDistance(GeoPoint point, List<Station> stations) {
-        List<Station> validStations = new ArrayList<>();
-        
-        for(Station station: stations) {
-            List<GeoRoute> routes;
-            
-            try {
-                routes = graph.obtainAllRoutesBetween(station.getPosition(), point);
-            }
-            catch(Exception e) {
-                continue;
-            }
-            
-            List<GeoRoute> validRoutes = routes.stream().filter(route -> route.getTotalDistance() <= MAX_DISTANCE)
+    private List<Station> validStationsToRentBike(GeoPoint point, List<Station> stations) {
+    	List<Station> validStations;
+    	if (linearDistance) {
+            validStations = stations.stream().filter(station -> station.getPosition()
+                    .distanceTo(point) <= MAX_DISTANCE && station.availableBikes() > 0)
                     .collect(Collectors.toList());
-            
-            if (!validRoutes.isEmpty()) {
-                validStations.add(station);
             }
-        }
-        return validStations;
+            else {
+                validStations = new ArrayList<>();
+                List<GeoRoute> routes;
+                for(Station station: stations) {
+                    try {
+                        routes = graph.obtainAllRoutesBetween(station.getPosition(), point);
+                    }
+                    catch(Exception e) {
+                        continue;
+                    }
+
+                    List<GeoRoute> validRoutes = routes.stream().filter(route -> route
+                         .getTotalDistance() <= MAX_DISTANCE && station.availableBikes() > 0)
+                     .collect(Collectors.toList());
+
+                    if (!validRoutes.isEmpty()) {
+                        validStations.add(station);
+                    }
+                }
+    	}
+    	return validStations;
     }
-    
+
+    private List<Station> validStationsToReturnBike(GeoPoint point, List<Station> stations) {
+    	List<Station> validStations;
+     if (linearDistance) {
+        validStations = stations.stream().filter(station -> station
+        		.getPosition().distanceTo(point) <= MAX_DISTANCE && station.availableSlots() > 0)
+                .collect(Collectors.toList());
+     }
+     else {
+    	 validStations = new ArrayList<>();
+         List<GeoRoute> routes;            
+         for(Station station: stations) {
+             try {
+                 routes = graph.obtainAllRoutesBetween(station.getPosition(), point);
+             }
+             catch(Exception e) {
+                 continue;
+             }
+                
+             List<GeoRoute> validRoutes = routes.stream().filter(route -> route
+            		 .getTotalDistance() <= MAX_DISTANCE && station.availableSlots() > 0)
+                 .collect(Collectors.toList());
+                
+             if (!validRoutes.isEmpty()) {
+                 validStations.add(station);
+             }
+         }
+     }
+     return validStations;
+    }
+
     /**
      * It recommends stations by the nunmber of available bikes they have: first, it recommends 
      * those which have the most bikes available and finally, those with the least bikes available.
@@ -102,7 +127,7 @@ public class RecommendationSystem {
      */
     public List<Station> recommendByNumberOfBikes(GeoPoint point, List<Station> stations) {
         Comparator<Station> byNumberOfBikes = (s1, s2) -> Integer.compare(s2.availableBikes(), s1.availableBikes());
-        return validStationsByLinearDistanceToRentBike(point, stations).stream().sorted(byNumberOfBikes).collect(Collectors.toList());
+        return validStationsToRentBike(point, stations).stream().sorted(byNumberOfBikes).collect(Collectors.toList());
     }
     
     /**
@@ -116,24 +141,7 @@ public class RecommendationSystem {
      */
     public List<Station> recommendByNumberOfSlots(GeoPoint point, List<Station> stations) {
         Comparator<Station> byNumberOfSlots = (s1, s2) -> Integer.compare(s2.availableSlots(), s1.availableSlots());
-        return validStationsByLinearDistanceToReturnBike(point, stations).stream().sorted(byNumberOfSlots).collect(Collectors.toList());
-    }
-    
-    /**
-     * It recommends stations by the linear distance they are from the specified geographical 
-     * point: first, it recommends those which are closest to the point and finally,
-     * those wich are the most distant to taht same point.
-     * @param point It's the user current position or the geographical coordinates of a 
-     * place the user wants to reach.
-     * @param stations It's the list of stations that has to be ordered by the linear distance 
-     * between them and the specified geographical point.  
-     * @return a list of stations ordered asscending by the linear distance from them to 
-     * the specified geographical point.
-     */
-    public List<Station> recommendByLinearDistance(GeoPoint point, List<Station> stations) {
-        Comparator<Station> byLinearDistance = (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point),
-                s2.getPosition().distanceTo(point));
-        return validStationsByLinearDistanceToRentBike(point, stations).stream().sorted(byLinearDistance).collect(Collectors.toList());
+        return validStationsToReturnBike(point, stations).stream().sorted(byNumberOfSlots).collect(Collectors.toList());
     }
     
     /**
@@ -148,9 +156,13 @@ public class RecommendationSystem {
      * @return a list of stations ordered asscending by the previously described proportion.  
      */
     public List<Station> recommendByProportionBetweenDistanceAndBikes(GeoPoint point, List<Station> stations) {
-        Comparator<Station> byProportion = (s1, s2) -> Double.compare(s1.getPosition()
-                .distanceTo(point)/s1.availableBikes(), s2.getPosition().distanceTo(point)/s2.availableBikes());
-        return validStationsByLinearDistanceToRentBike(point, stations).stream().sorted(byProportion).collect(Collectors.toList());
+        Comparator<Station> byProportion = new ComparatorByProportionBetweenDistanceAndBikes(graph, linearDistance, point);
+        List<Station> recommendedStations = validStationsToRentBike(point, stations)
+        		.stream().sorted(byProportion).collect(Collectors.toList());
+        if (recommendedStations.get(0).getPosition().equals(point)) {
+        	recommendedStations.remove(0);
+        }
+        return recommendedStations;
     }
     
     /**
@@ -165,26 +177,92 @@ public class RecommendationSystem {
      * @return a list of stations ordered asscending by the previously described proportion.  
      */
     public List<Station> recommendByProportionBetweenDistanceAndSlots(GeoPoint point, List<Station> stations) {
-        Comparator<Station> byProportion = (s1, s2) -> Double.compare(s1.getPosition()
-                .distanceTo(point)/s1.availableSlots(), s2.getPosition().distanceTo(point)/s2.availableSlots());
-        return validStationsByLinearDistanceToRentBike(point, stations).stream().sorted(byProportion)
-                .collect(Collectors.toList());
+    	  Comparator<Station> byProportion = new ComparatorByProportionBetweenDistanceAndSlots(graph, linearDistance, point);
+          List<Station> recommendedStations = validStationsToReturnBike(point, stations)
+          		.stream().sorted(byProportion).collect(Collectors.toList());
+          if (recommendedStations.get(0).getPosition().equals(point)) {
+          	recommendedStations.remove(0);
+          }
+          return recommendedStations;
+      }
+    
+    /**
+     * It recommends stations by the distance (linear or real depending on a global configuration 
+     * parameter) they are from the specified geographical point: first, it recommends 
+     * those which are closest to the point and finally, those wich are the most 
+     * distant to taht same point.
+     * @param point It's the user current position or the geographical coordinates of a 
+     * place the user wants to reach.
+     * @param stations It's the list of stations that has to be ordered by the linear distance 
+     * between them and the specified geographical point.  
+     * @return a list of stations ordered asscending by the linear distance from them to 
+     * the specified geographical point.
+     */
+    public List<Station> recommendToRentBikeByDistance(GeoPoint point, List<Station> stations) {
+        Comparator<Station> byDistance = new ComparatorByDistance(graph, linearDistance, point);
+        List<Station> recommendedStations = validStationsToRentBike(point, stations)
+        		.stream().sorted(byDistance).collect(Collectors.toList());
+        if(recommendedStations.isEmpty()) {
+            return new ArrayList<>();
+        }
+        if (recommendedStations.get(0).getPosition().equals(point)) {
+        	recommendedStations.remove(0);
+        }
+        return recommendedStations;
     }
     
-    public List<Station> recommendByRealRouteDistance(GeoPoint point, List<Station> stations) {
-        Comparator<Station> byRealRouteDistance = (s1, s2) -> {
-            double shortestRouteS1 = Double.MAX_VALUE;
-            double shortestRouteS2 = Double.MIN_VALUE;
-            try {
-                shortestRouteS1 = graph.obtainShortestRouteBetween(s1.getPosition(), point).getTotalDistance();
-                shortestRouteS2 = graph.obtainShortestRouteBetween(s2.getPosition(), point).getTotalDistance();
-            } catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
-                e.printStackTrace();
-            }
-            return Double.compare(shortestRouteS1, shortestRouteS2);
-        };
-        return validStationsByRealRouteDistance(point, stations).stream().sorted(byRealRouteDistance)
-                .collect(Collectors.toList());
+    public List<Station> recommendToReturnBikeByDistance(GeoPoint point, List<Station> stations) {
+        Comparator<Station> byDistance = new ComparatorByDistance(graph, linearDistance, point);
+        List<Station> recommendedStations = validStationsToReturnBike(point, stations)
+        		.stream().sorted(byDistance).collect(Collectors.toList());
+        if(recommendedStations.isEmpty()) {
+            return new ArrayList<>();
+        }
+        if (recommendedStations.get(0).getPosition().equals(point) ) {
+        	recommendedStations.remove(0);
+        }
+        return recommendedStations;
     }
+    
+    public List<Station> recommendByAvailableBikesRatio(GeoPoint point, List<Station> stations) {
+    	Comparator<Station> byBikesRatio = (s1, s2) -> Double.compare((double)s2.availableBikes()/(double)s2
+    			.getCapacity(), (double)s1.availableBikes()/(double)s1.getCapacity());
+
+        int index = 0;
+        while(index < stations.size()) {
+            Station stationToRemove = stations.get(index);
+            if(stationToRemove.getPosition().equals(point)) {
+                stations.remove(index);
+                break;
+            }
+            index++;
+        }
+
+    	List<Station> recommendedStations = validStationsToRentBike(point, stations)
+    			.stream().sorted(byBikesRatio).collect(Collectors.toList());
+
+        return recommendedStations;
+    }
+    
+    public List<Station> recommendByAvailableSlotsRatio(GeoPoint point, List<Station> stations) {
+    	Comparator<Station> bySlotsRatio = (s1, s2) -> Double.compare((double)s2.availableSlots()/(double)s2
+    			.getCapacity(), (double) s1.availableSlots()/(double) s1.getCapacity());
+
+        int index = 0;
+        while(index < stations.size()) {
+            Station stationToRemove = stations.get(index);
+            if(stationToRemove.getPosition().equals(point)) {
+                stations.remove(index);
+                break;
+            }
+            index++;
+        }
+
+    	List<Station> recommendedStations = validStationsToReturnBike(point, stations)
+    			.stream().sorted(bySlotsRatio).collect(Collectors.toList());
+
+    	return recommendedStations;
+    }
+    
 
 }

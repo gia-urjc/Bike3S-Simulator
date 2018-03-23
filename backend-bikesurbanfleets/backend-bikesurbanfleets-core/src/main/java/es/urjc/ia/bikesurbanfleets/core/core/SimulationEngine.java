@@ -3,14 +3,15 @@ package es.urjc.ia.bikesurbanfleets.core.core;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
-import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersInfo;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUser;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.history.History;
+import es.urjc.ia.bikesurbanfleets.history.entities.HistoricReservation;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
 import es.urjc.ia.bikesurbanfleets.users.UserFactory;
@@ -46,6 +47,9 @@ public class SimulationEngine {
         this.eventsQueue = new PriorityQueue<>(processUsers());
         Reservation.VALID_TIME = globalInfo.getReservationTime();
         Debug.DEBUG_MODE = globalInfo.isDebugMode();
+
+        //needed if there's no reservations in the system
+        History.reservationClass(HistoricReservation.class);
     }
 
     private List<EventUserAppears> processUsers() {
@@ -73,6 +77,7 @@ public class SimulationEngine {
         while (!eventsQueue.isEmpty()) {
             Event event = eventsQueue.poll();  // retrieves and removes first element
             List<Event> newEvents = event.execute();
+            System.out.println(event.toString());
             eventsQueue.addAll(newEvents);
             History.registerEvent(event);
         }

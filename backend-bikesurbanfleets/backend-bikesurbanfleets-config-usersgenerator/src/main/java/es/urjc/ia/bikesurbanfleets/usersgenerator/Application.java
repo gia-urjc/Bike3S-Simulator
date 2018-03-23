@@ -1,11 +1,9 @@
 package es.urjc.ia.bikesurbanfleets.usersgenerator;
 
-import com.google.gson.Gson;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.config.EntryPointInfo;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint;
-import jdk.nashorn.internal.objects.Global;
 import org.apache.commons.cli.*;
 
 public class Application {

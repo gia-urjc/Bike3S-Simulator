@@ -2,7 +2,7 @@ package es.urjc.ia.bikesurbanfleets.entities;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
-import es.urjc.ia.bikesurbanfleets.entities.history.HistoricBike;
+import es.urjc.ia.bikesurbanfleets.history.entities.HistoricBike;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
 

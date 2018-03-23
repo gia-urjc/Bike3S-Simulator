@@ -1,6 +1,5 @@
 package es.urjc.ia.bikesurbanfleets.common.interfaces;
 
-import java.io.IOException;
 import java.util.List;
 /**
  * This interface provides the common behaviour of events.

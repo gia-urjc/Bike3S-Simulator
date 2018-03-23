@@ -39,7 +39,7 @@ public class JsonValidation {
     }
 
     private static boolean checkNode() throws IOException, InterruptedException {
-        ProcessBuilder pb = new ProcessBuilder(new ArrayList<>(Arrays.asList("node", "-help")));
+        ProcessBuilder pb = new ProcessBuilder(new ArrayList<>(Arrays.asList("node", "-v")));
         Process p = pb.start();
         int exitValue = p.waitFor();
         return exitValue == 0;

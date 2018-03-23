@@ -12,8 +12,10 @@ import { SystemReservations } from "../systemEntities/SystemReservations";
 import { SystemStations } from "../systemEntities/SystemStations";
 import { SystemUsers } from "../systemEntities/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
+import {SystemGlobalValues} from '../SystemGlobalValues';
 
 export class DataGenerator {
+<<<<<<< HEAD
     private readonly RESERVATIONS: number = 2;  // 2 data related to reservations must be initialized
     private readonly RENTALS_AND_RETURNS: number = 2;  // 2 data related to rentals and returns must be initialized
     private readonly CALCULATION: number = 2;  // both calculators must have calculated its data before writing them 
@@ -39,9 +41,28 @@ export class DataGenerator {
         this.info = new Map();
         this.bikesPerStation = new BikesPerStation();
         this.rentalAndReturnCalculator = new RentalAndReturnCalculator(this.path);
+=======
+    private readonly INICIALIZATION: number = 5;
+    private readonly CALCULATION: number = 2;
+    private path: string;
+    private schemaPath: string | null;
+    private csvPath: string;
+    private counter: number;
+    private reservationCalculator: ReservationCalculator;
+    private rentalAndReturnCalculator: RentalAndReturnCalculator;
+    private data: Map<string, any>;
+    
+    public constructor(path: string, csvPath: string, schemaPath?:string) {
+        this.path = path;
+        this.schemaPath = schemaPath == null ? null : schemaPath;
+        this.csvPath = csvPath;
+        this.counter = 0;
+        this.rentalAndReturnCalculator = new RentalAndReturnCalculator();
+>>>>>>> d86b148f5d966d645a819dde4afc777d22832467
         this.reservationCalculator = new ReservationCalculator();
         this.bikesPerStationCounter = 0;
     }
+<<<<<<< HEAD
 
     private async initReservations(reservations: SystemInfo) {
         reservations.init().then( () => {
@@ -105,9 +126,52 @@ export class DataGenerator {
             this.rentalAndReturnCalculator.subscribe(rentalsAndReturns);
             this.info.set(RentalsAndReturnsPerUser.name, rentalsAndReturns);  
             this.initRentalsAndReturns(rentalsAndReturns);
+=======
+    
+    private async init(): Promise<void> {
+        let reservationsPerUser: ReservationsPerUser = new ReservationsPerUser();
+        let rentalsAndReturnsPerUser: RentalsAndReturnsPerUser = new RentalsAndReturnsPerUser();
+        let reservationsPerStation: ReservationsPerStation = new ReservationsPerStation();
+        let rentalsAndReturnsPerStation: RentalsAndReturnsPerStation = new RentalsAndReturnsPerStation();
+        
+        this.data.set(reservationsPerUser.constructor.name, reservationsPerUser);
+        this.data.set(rentalsAndReturnsPerUser.constructor.name, rentalsAndReturnsPerUser);
+        this.data.set(reservationsPerStation.constructor.name, reservationsPerStation);
+        this.data.set(rentalsAndReturnsPerStation.constructor.name, rentalsAndReturnsPerStation);
+        
+        this.reservationCalculator.subscribe(reservationsPerUser);
+        this.reservationCalculator.subscribe(reservationsPerStation);
+        this.rentalAndReturnCalculator.subscribe(rentalsAndReturnsPerUser);        
+        this.rentalAndReturnCalculator.subscribe(rentalsAndReturnsPerStation);
+       
+        this.reservationCalculator.init(this.path, this.schemaPath).then( () => {
+            this.counter++; 
+            this.calculateAbsoluteValues();     
+        });
+         
+        reservationsPerUser.init(this.path, this.schemaPath).then( () => {
+            this.counter++; 
+            this.calculateAbsoluteValues();
+        });
+        
+        rentalsAndReturnsPerUser.init(this.path, this.schemaPath).then( () => {
+            this.counter++;        
+            this.calculateAbsoluteValues();
+        });
+        
+        reservationsPerStation.init(this.path, this.schemaPath).then( () => {
+            this.counter++;
+            this.calculateAbsoluteValues();
+        });
+        
+       rentalsAndReturnsPerStation.init(this.path, this.schemaPath).then( () => {
+            this.counter++;
+            this.calculateAbsoluteValues();
+>>>>>>> d86b148f5d966d645a819dde4afc777d22832467
         });
         return; 
     }
+<<<<<<< HEAD
 
     private async calculateReservations(): Promise<void> {
         if (this.reservationCounter === this.RESERVATIONS) {
@@ -132,14 +196,36 @@ export class DataGenerator {
                     this.calculationCounter++;
                     this.write();
                 }
+=======
+    
+    private async calculateAbsoluteValues(): Promise<void> {
+        if (this.counter === this.INICIALIZATION) {
+            this.counter = 0;
+            this.reservationCalculator.calculateReservations().then( () => {
+                this.counter++;
+                this.writeAndCalculateSystemGlobalData();
+            });
+            this.rentalAndReturnCalculator.calculateBikeRentalsAndReturns(this.path, this.schemaPath).then( () => {
+                this.counter++;
+                this.writeAndCalculateSystemGlobalData();
+>>>>>>> d86b148f5d966d645a819dde4afc777d22832467
             });
         }
     }
+<<<<<<< HEAD
 
     public static async create(path: string, csv: boolean): Promise<DataGenerator> {
         let generator: DataGenerator = new DataGenerator(path, csv);
         try {
         await generator.generate();
+=======
+    
+    public static async generate(path: string, csvPath: string, schemaPath?: string): Promise<DataGenerator> {
+        console.log(schemaPath);
+        let generator: DataGenerator = new DataGenerator(path, csvPath, schemaPath);
+        try {
+            await generator.init();
+>>>>>>> d86b148f5d966d645a819dde4afc777d22832467
         }
         catch(error) {
             throw new Error('Error initializing data generator: '+error);
@@ -147,6 +233,7 @@ export class DataGenerator {
         return generator;
     }
     
+<<<<<<< HEAD
     private async write(): Promise<void> {
         if (this.calculationCounter === this.CALCULATION) {
           let generator: CsvGenerator = new CsvGenerator(this.path);
@@ -156,12 +243,27 @@ export class DataGenerator {
           catch(error) {
               throw new Error('Error generating csv file: '+error);
           }
+=======
+    private async writeAndCalculateSystemGlobalData(): Promise<void> {
+        if (this.counter === this.CALCULATION) {
+          console.log(this.data.get(ReservationsPerStation.name).getSlotSuccessfulReservationsOfStation(1));
+          let globalValues: SystemGlobalValues = new SystemGlobalValues(this.data);
+          await globalValues.init(this.path, this.schemaPath);
+          globalValues.calculateGlobalData();
+          let generator: CsvGenerator = new CsvGenerator(this.path, globalValues,this.csvPath, this.schemaPath);
+          await generator.generate(this.data);
+>>>>>>> d86b148f5d966d645a819dde4afc777d22832467
         }
         return;
     }
 
+<<<<<<< HEAD
     public getInfo(): Map<string, SystemInfo> {
 		return this.info;
+=======
+    public getData(): Map<string, any> {
+		return this.data;
+>>>>>>> d86b148f5d966d645a819dde4afc777d22832467
 	}
      
 }

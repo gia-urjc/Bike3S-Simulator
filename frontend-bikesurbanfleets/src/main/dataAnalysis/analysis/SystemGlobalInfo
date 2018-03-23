@@ -25,8 +25,9 @@ export class SystemGlobalInfo {
   
   private demandSatisfaction: number;
   private rentalEfficiency: number;
+  private returnEfficiency: number;
   
-  public constructor(data) {
+  public constructor(data: any) {
     this.data = data;
     this.totalRentals = 0;
     this.totalReturns = 0; 
@@ -46,12 +47,12 @@ export class SystemGlobalInfo {
     this.demandSatisfaction = 0;
   }
   
-  public async init(path): Promise<void> {
-    let history: HistoryReader = await HistoryReader.create(path);
+  public async init(path: string, schemaPath?: string | null): Promise<void> {
+    let history: HistoryReader = await HistoryReader.create(path, schemaPath);
     let entities: HistoryEntitiesJson = await history.getEntities("users");
     let users: Array<User> = entities.instances;
     this.numberUsers = users.length;
-  
+    return;
   }
   
   
@@ -74,11 +75,21 @@ export class SystemGlobalInfo {
     this.totalRentals = this.successfulRentals + this.failedRentals;
     this.totalReturns = this.successfulReturns + this.failedReturns;
     
-    this.demandSatisfaction = this.successfulRentals / this.numberUsers;  
-    this.rentalEfficiency = this.successfulRentals / this.totalRentals;
-  
+    this.demandSatisfaction = this.successfulRentals / this.numberUsers;  // DS = SH / N
+    this.rentalEfficiency = this.successfulRentals / (this.numberUsers + this.failedRentals);  // HE = SH / (N+FH)
+    this.returnEfficiency = this.successfulReturns / (this.successfulRentals + this.failedReturns); // RE = SR / (SH+FR)
   }
-  
-  
+
+  public getDemandSatisfaction(): number {
+    return this.demandSatisfaction;
+  }
+
+  public getRentalEfficiency(): number {
+    return this.rentalEfficiency;
+  }
+
+  public getReturnEfficiency(): number {
+    return this.returnEfficiency;
+  }
    
 }
