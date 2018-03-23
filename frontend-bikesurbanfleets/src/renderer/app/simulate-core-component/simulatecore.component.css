@@ -10,6 +10,10 @@
     padding: 15px;
 }
 
+.submit-button {
+    margin-left: 14px;
+}
+
 textarea {
     resize: none;
     background-color: #292929;
@@ -19,4 +23,8 @@ textarea {
 
 ngb-tabset {
     font-size: 14px;
+}
+
+body {
+    overflow-x: hidden;
 }

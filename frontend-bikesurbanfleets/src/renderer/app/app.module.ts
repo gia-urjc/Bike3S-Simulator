@@ -3,7 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule }  from '@angular/platform-browser';
 
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import {NgbModal, NgbModalModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbModalModule, NgbModule, NgbProgressbarModule} from '@ng-bootstrap/ng-bootstrap';
 import { NgFontAwesomeModule } from 'ng-font-awesome';
 
 import { ElectronAjax } from '../ajax/ElectronAjax';
@@ -17,6 +17,7 @@ import {AppRoutingModule} from "./app.routes";
 import {SimulateComponent} from "./simulate-component/simulate.component";
 import {SimulatecoreComponent} from "./simulate-core-component/simulatecore.component";
 import {SimulateusergenComponent} from "./simulate-usergen-component/simulateusergen.component";
+import {SimulationspinnerComponent} from "./simulation-spinner-component/simulationspinner.component";
 
 @NgModule({
     imports: [
@@ -30,6 +31,7 @@ import {SimulateusergenComponent} from "./simulate-usergen-component/simulateuse
         JsonSchemaFormModule.forRoot(Bootstrap4FrameworkModule),
         AppRoutingModule,
         NgbModalModule,
+        NgbProgressbarModule,
     ],
     declarations: [
         AppComponent,
@@ -39,7 +41,8 @@ import {SimulateusergenComponent} from "./simulate-usergen-component/simulateuse
         MenuComponent,
         SimulateComponent,
         SimulatecoreComponent,
-        SimulateusergenComponent
+        SimulateusergenComponent,
+        SimulationspinnerComponent
     ],
     bootstrap: [AppComponent],
     providers: [{

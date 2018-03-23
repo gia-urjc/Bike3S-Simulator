@@ -35,7 +35,7 @@
             <button class="browse-button btn btn-default" (click)="historyOutputPath = selectFolder(s)">Select Folder</button>
         </div>
     </div>
-    <button class="btn btn-default" (click)="runSimulation()">Submit</button>
+    <button class="submit-button btn btn-default" (click)="runSimulation()">Submit</button>
 </form>
 
 <ng-template #content let-c="close" let-d="dismiss">
@@ -50,10 +50,10 @@
             <p>Console errors</p>
             <textarea id="exceptions-textarea-core" name="exceptions-textarea" readonly rows="8" cols="73">{{exceptions}}</textarea>
         </div>
-        <div *ngIf="!errors">
-            <p>Console Output</p>
-            <textarea id="stdout-textarea-core" name="exceptions-textarea" readonly rows="8" cols="73">{{stdout}}</textarea>
+        <div *ngIf="!finished">
+            <simulationspinner-component></simulationspinner-component>
         </div>
+        <p><ngb-progressbar id="progress-bar" type="success" [value]="percentage" [striped]="true" [animated]="true">{{percentage}}</ngb-progressbar></p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>

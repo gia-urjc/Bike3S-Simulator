@@ -79,14 +79,14 @@ public class SimulationEngine {
         int totalUsers = eventsQueue.size();
         double percentage = 0;
 
-        System.out.println("Percentage: " + percentage);
+            System.out.println("Percentage: " + percentage);
 
         while (!eventsQueue.isEmpty()) {
             Event event = eventsQueue.poll();  // retrieves and removes first element
 
             if(event.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
                 percentage += (((double) 1 /(double) totalUsers) * 100);
-                System.out.println("Percentage: " + Precision.round(percentage, 2));
+                System.out.println("Percentage: " + Precision.round(percentage, 2) + "\n");
             }
 
             if(Debug.DEBUG_MODE) {

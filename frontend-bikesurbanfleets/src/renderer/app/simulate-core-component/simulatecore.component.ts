@@ -17,17 +17,20 @@ export class SimulatecoreComponent{
     private usersConfiguration: string;
     private stationsConfiguration: string;
     private historyOutputPath: string;
+    private percentage: number;
 
     private resultMessage: string;
     private exceptions: string;
-    private stdout: string;
     private errors: boolean;
+    private finished: boolean;
 
     constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol, private modalService: NgbModal) {}
 
     async ngOnInit() {
         this.resultMessage = "";
         this.exceptions = "";
+        this.percentage = 0;
+        this.finished = false;
 
         ipcRenderer.on('core-error' , (event: Event, data: string) => this.addErrors(data));
         ipcRenderer.on('core-data', (event: Event, data: string) => this.addConsoleMessage(data));
@@ -58,14 +61,24 @@ export class SimulatecoreComponent{
     }
 
     addConsoleMessage(message: any) {
-        console.log(message.toString());
+        let consoleMessage = message.toString();
+        let consoleMessageList = consoleMessage.split('\n');
+        consoleMessageList.forEach((indMessage: string) => {
+            if(indMessage.includes("Percentage: ")) {
+                let percentageStr = indMessage.replace('Percentage: ', '');
+                let percentage: number = parseFloat(percentageStr);
+                this.percentage = percentage;
+                $('#progress-bar').trigger('click');
+            }
+        });
     }
 
     async runSimulation() {
         this.errors = false;
         this.resultMessage = "Simulation in progress...";
         this.exceptions = "";
-        this.stdout = "";
+        this.percentage = 0;
+        this.finished = false;
         let args: CoreSimulatorArgs = {
             globalConf: this.globalConfiguration,
             usersConf: this.usersConfiguration,
@@ -77,6 +90,7 @@ export class SimulatecoreComponent{
         if(!this.errors) {
             this.resultMessage = "Simulation completed";
         }
+        this.finished = true;
     }
 
 }
