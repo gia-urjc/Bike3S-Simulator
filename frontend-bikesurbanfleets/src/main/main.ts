@@ -50,7 +50,9 @@ export namespace Main {
             slashes: true
         }));
 
-        menu.on('closed', () => visualization = null);
+        menu.on('closed', () => {
+            app.exit();
+        });
 
         menu.webContents.on('will-navigate', (event, url) => {
             event.preventDefault(); // prevents dragging images or other documents into browser window
@@ -125,9 +127,6 @@ export namespace Main {
         visualization.on('close', async (event) => {
             event.preventDefault();
             if(visualization !== null) visualization.hide();
-        });
-
-        visualization.on('closed', async () => {
             HistoryReader.stopIpc();
         });
 
@@ -166,9 +165,6 @@ export namespace Main {
         simulate.on('close', async (event) => {
             event.preventDefault();
             if(simulate !== null) simulate.hide();
-        });
-
-        simulate.on('closed', async () => {
             HistoryReader.stopIpc();
         });
 
