@@ -4,7 +4,6 @@ import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
 import { Settings } from './settings';
 import { HistoryReader } from './util';
-import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 import { ipcMain, ipcRenderer } from 'electron';
 import BackendCalls from "./util/BackendCalls";
@@ -13,14 +12,26 @@ export namespace Main {
     let visualization: Electron.BrowserWindow | null;
     let menu: Electron.BrowserWindow | null;
     export let simulate: Electron.BrowserWindow | null;
+    let configuration: Electron.BrowserWindow | null;
 
     export function initWindowsListeners() {
+
+        createVisualizationWindow();
+
+        createSimulateWindow();
+
+        createConfigurationWindow();
+
         ipcMain.on('open-visualization', (event: any, arg: any) => {
-            createVisualizationWindow();
+            if(visualization !== null) visualization.show();
         });
 
         ipcMain.on('open-simulate', (event: any, arg: any) => {
-            createSimulateWindow();
+            if(simulate !== null) simulate.show();
+        });
+
+        ipcMain.on('open-configuration', (event: any, arg: any) => {
+            if(configuration !== null) configuration.show();
         })
     }
 
@@ -60,6 +71,8 @@ export namespace Main {
             //HistoryReader.enableIpc();
             //Settings.enableIpc();
             //SchemaFormGenerator.enableIpc();
+
+            Main.initWindowsListeners();
 
             if (process.env.target === 'development') {
                 const extensions = await Settings.get(settingsPathGenerator().development.extensions());
@@ -101,7 +114,7 @@ export namespace Main {
 
 
     function createVisualizationWindow() {
-        visualization = new BrowserWindow({ width: 800, height: 600 });
+        visualization = new BrowserWindow({ width: 800, height: 600, show: false });
 
         visualization.loadURL(urlFormat({
             pathname: join(app.getAppPath(), 'frontend', 'index.html'),
@@ -109,8 +122,12 @@ export namespace Main {
             slashes: true
         }));
 
+        visualization.on('close', async (event) => {
+            event.preventDefault();
+            if(visualization !== null) visualization.hide();
+        });
+
         visualization.on('closed', async () => {
-            visualization = null;
             HistoryReader.stopIpc();
         });
 
@@ -128,7 +145,7 @@ export namespace Main {
 
     /*===================
      *
-     *  S WINDOW
+     *  SIMULATE WINDOW
      *
      ===================*/
 
@@ -136,7 +153,8 @@ export namespace Main {
         simulate = new BrowserWindow({
             width: 1200, height: 600,
             minHeight: 600, minWidth: 1200,
-            resizable: false, fullscreenable: false
+            resizable: false, fullscreenable: false,
+            show: false
         });
 
         simulate.loadURL(urlFormat({
@@ -145,10 +163,15 @@ export namespace Main {
             slashes: true
         }));
 
+        simulate.on('close', async (event) => {
+            event.preventDefault();
+            if(simulate !== null) simulate.hide();
+        });
+
         simulate.on('closed', async () => {
-            visualization = null;
             HistoryReader.stopIpc();
         });
+
 
         simulate.webContents.on('will-navigate', (event, url) => {
             event.preventDefault(); // prevents dragging images or other documents into browser window
@@ -161,17 +184,53 @@ export namespace Main {
 
         simulate.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/simulate');
     }
-    
+
+    /*===================
+     *
+     *  CONFIGURATION WINDOW
+     *
+     ===================*/
+
+    function createConfigurationWindow() {
+        configuration = new BrowserWindow({
+            width: 1200, height: 600,
+            minHeight: 600, minWidth: 1200,
+            resizable: true, fullscreenable: true,
+            show: false
+        });
+
+        configuration.loadURL(urlFormat({
+            pathname: join(app.getAppPath(), 'frontend', 'index.html'),
+            protocol: 'file',
+            slashes: true
+        }));
+
+        configuration.on('close', async (event) => {
+            event.preventDefault();
+            if(configuration !== null) configuration.hide();
+        });
+
+        configuration.webContents.on('will-navigate', (event, url) => {
+            event.preventDefault(); // prevents dragging images or other documents into browser window
+            shell.openExternal(url); // opens links (or dragged documents) in external browser
+        });
+
+        //if (process.env.target === 'development') {
+        //    simulate.webContents.openDevTools();
+        //}
+
+        configuration.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/configuration');
+    }
+
     export async function test() {
-       try {
+        try {
             let data: DataGenerator = await DataGenerator.generate('history', 'csvFiles');
         }
         catch(error) {
-           console.log('Error: ', error);
+            console.log('Error: ', error);
         }
-        
+
     }
 }
 
 Main.initMenu();
-Main.initWindowsListeners();

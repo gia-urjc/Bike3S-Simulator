@@ -1,0 +1,39 @@
+<div class="window">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card conf">
+                    <div class="card-body">
+                        <div>
+                            <button class="btn btn-default">Add Station</button>
+                            <button class="btn btn-default">Add Entry Point</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <map-view [markers]="constructor.activeLayers"></map-view>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card conf">
+                    <ngb-tabset>
+                        <ngb-tab title="General Configuration">
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    Test
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                        <ngb-tab title="Added entities">
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    All entities
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                    </ngb-tabset>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

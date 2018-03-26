@@ -3,6 +3,7 @@ import {Visualization} from "./visualization-component/visualization.component";
 import {MenuComponent} from "./menu-component/menu.component";
 import {NgModule} from "@angular/core";
 import {SimulateComponent} from "./simulate-component/simulate.component";
+import {ConfigurationComponent} from "./configuration-component/configuration.component";
 
 export const routes:Routes = [
     {
@@ -16,6 +17,10 @@ export const routes:Routes = [
     {
         path: 'simulate',
         component: SimulateComponent
+    },
+    {
+        path: 'configuration',
+        component: ConfigurationComponent
     }
 ];
 

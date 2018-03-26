@@ -8,10 +8,4 @@ import * as $ from "jquery";
 })
 export class SimulateComponent {
 
-    ngOnInit() {
-        $('body').css({
-            "background": "#F0F0F0"
-        });
-    }
-
 }

@@ -18,6 +18,7 @@ import {SimulateComponent} from "./simulate-component/simulate.component";
 import {SimulatecoreComponent} from "./simulate-core-component/simulatecore.component";
 import {SimulateusergenComponent} from "./simulate-usergen-component/simulateusergen.component";
 import {SimulationspinnerComponent} from "./simulation-spinner-component/simulationspinner.component";
+import {ConfigurationComponent} from "./configuration-component/configuration.component";
 
 @NgModule({
     imports: [
@@ -42,7 +43,8 @@ import {SimulationspinnerComponent} from "./simulation-spinner-component/simulat
         SimulateComponent,
         SimulatecoreComponent,
         SimulateusergenComponent,
-        SimulationspinnerComponent
+        SimulationspinnerComponent,
+        ConfigurationComponent
     ],
     bootstrap: [AppComponent],
     providers: [{

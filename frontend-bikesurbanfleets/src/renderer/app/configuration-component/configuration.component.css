@@ -1,0 +1,30 @@
+.window {
+    background-color: #F0F0F0;
+    height: 100vh;
+}
+
+.tab-content {
+    height: 82vh;
+}
+
+button {
+    font-size: 14px;
+}
+
+.container-fluid {
+    font-size: 14px;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.conf {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.tab-content {
+    margin: 15px;
+    overflow-y: scroll;
+}
