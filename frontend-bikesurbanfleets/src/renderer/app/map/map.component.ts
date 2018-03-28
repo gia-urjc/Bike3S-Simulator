@@ -10,6 +10,7 @@ import { LayerEntry } from './util';
     template: require('./map.component.html'),
 })
 export class MapComponent implements OnInit {
+    
     layerControl: { baseLayers: Control.LayersObject };
     options: MapOptions;
 

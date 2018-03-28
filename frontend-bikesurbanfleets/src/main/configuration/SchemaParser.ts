@@ -62,4 +62,12 @@ export default class {
         console.log(finalStationSchema);
         return finalStationSchema;
     }
+
+    static async getGlobalSchema(configSch: SchemaConfig): Promise<SchemaConfig | undefined> {
+        let finalGlobalSchema: any = _.cloneDeep(configSch);
+        delete finalGlobalSchema.$schema;
+        delete finalGlobalSchema.properties.reservationTime.maximum; //TODO reference from total time
+        console.log(finalGlobalSchema);
+        return finalGlobalSchema;
+    }
 }

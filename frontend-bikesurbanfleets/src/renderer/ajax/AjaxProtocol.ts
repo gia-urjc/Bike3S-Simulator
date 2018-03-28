@@ -17,6 +17,7 @@ export interface FormSchemaAjax {
     getSchemaFormEntryPointAndUserTypes(): Promise<any>,
     getSchemaByTypes(dataTypes: any): Promise<any>,
     getStationSchema(): Promise<any>,
+    getGlobalSchema(): Promise<any>
 }
 
 export interface BackendAjax {

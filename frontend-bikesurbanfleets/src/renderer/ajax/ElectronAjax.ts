@@ -101,6 +101,11 @@ class ElectronFormSchema implements FormSchemaAjax {
     async getStationSchema(): Promise<any> {
         return await readIpc('form-schema-station');
     }
+
+    async getGlobalSchema(): Promise<any> {
+        return await readIpc('form-schema-global');
+    }
+
 }
 
 class ElectronBackendCalls implements BackendAjax {

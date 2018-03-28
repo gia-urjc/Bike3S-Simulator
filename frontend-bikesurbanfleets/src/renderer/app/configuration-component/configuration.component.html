@@ -20,7 +20,9 @@
                         <ngb-tab title="General Configuration">
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
-                                    Test
+                                    <div id="globalForm">
+                                        <schema-form [data]="globalData" [schema]="globalSchema" (dataSubmited)="globalConfigUpdated($event)"></schema-form>
+                                    </div>
                                 </div>
                             </ng-template>
                         </ngb-tab>

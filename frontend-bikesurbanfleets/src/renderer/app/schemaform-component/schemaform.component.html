@@ -1,6 +1,8 @@
-<json-schema-form
-        *ngIf="schema !== undefined"
-        [schema]="schema"
-        [(ngModel)]="data"
-        (onSubmit)="submitForm($event)">
-</json-schema-form>
+<div id="json-form">
+    <json-schema-form
+            *ngIf="schema !== undefined"
+            [schema]="schema"
+            [(ngModel)]="data"
+            (onSubmit)="updateData($event)">
+    </json-schema-form>
+</div>

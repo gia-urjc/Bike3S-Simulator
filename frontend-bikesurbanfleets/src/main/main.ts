@@ -7,6 +7,7 @@ import { HistoryReader } from './util';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 import { ipcMain, ipcRenderer } from 'electron';
 import BackendCalls from "./util/BackendCalls";
+import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;
@@ -68,6 +69,7 @@ export namespace Main {
         HistoryReader.enableIpc();
         Settings.enableIpc();
         BackendCalls.enableIpc();
+        SchemaFormGenerator.enableIpc();
 
         app.on('ready', async () => {
             //HistoryReader.enableIpc();
@@ -165,7 +167,6 @@ export namespace Main {
         simulate.on('close', async (event) => {
             event.preventDefault();
             if(simulate !== null) simulate.hide();
-            HistoryReader.stopIpc();
         });
 
 

@@ -75,8 +75,10 @@ export default class HistoryReader {
     }
 
     static stopIpc(): void {
-        IpcUtil.closeChannels('history-close', ...this.channels.map((channel) => channel.name));
-        this.enableIpc();
+        if(this.channels !== undefined) {
+            IpcUtil.closeChannels('history-close', ...this.channels.map((channel) => channel.name));
+            this.enableIpc();
+        }
     }
 
     private constructor(path: string) {

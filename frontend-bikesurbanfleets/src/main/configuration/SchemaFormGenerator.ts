@@ -11,7 +11,10 @@ class Channel {
 
 export default class SchemaFormGenerator{
 
-    private static configurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/initial-config.json'));
+    private static globalConfigurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/global-config.json'));
+    private static stationConfigurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config.json'));
+    private static entryPointsConfSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-config.json'));
+
 
     static create() {
         return new SchemaFormGenerator();
@@ -23,7 +26,8 @@ export default class SchemaFormGenerator{
             const channels = [
                 new Channel('form-schema-entry-user-type', async () => this.schemaFormEntryPointAndUserTypes()),
                 new Channel('form-schema-entry-point-by-type', async (dataTypes: EntryPointDataType) => this.schemaFormEntryPointByTypes(dataTypes)),
-                new Channel('form-schema-station', async () => this.schemaFormStation())
+                new Channel('form-schema-station', async () => this.schemaFormStation()),
+                new Channel('form-schema-global', async () => this.schemaFormGlobal())
             ];
 
             channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
@@ -39,8 +43,8 @@ export default class SchemaFormGenerator{
 
     public static async schemaFormEntryPointAndUserTypes(): Promise<SchemaConfig> {
         let schema: SchemaConfig;
-        let entryPointTypes: Array<string> = await SchemaParser.readEntryPointTypes(this.configurationSchema);
-        let userTypes: Array<string> = await SchemaParser.readUserTypes(this.configurationSchema);
+        let entryPointTypes: Array<string> = await SchemaParser.readEntryPointTypes(this.entryPointsConfSchema);
+        let userTypes: Array<string> = await SchemaParser.readUserTypes(this.entryPointsConfSchema);
         schema = {
             type: "object",
             properties: {
@@ -59,7 +63,7 @@ export default class SchemaFormGenerator{
     }
 
     public static async schemaFormEntryPointByTypes(dataTypes: EntryPointDataType): Promise<SchemaConfig | undefined> {
-        let entryPointSchema = await SchemaParser.getEntryPointSchema(this.configurationSchema, dataTypes.entryPointType, dataTypes.userType);
+        let entryPointSchema = await SchemaParser.getEntryPointSchema(this.entryPointsConfSchema, dataTypes.entryPointType, dataTypes.userType);
         if(entryPointSchema !== undefined) {
             return entryPointSchema;
         }
@@ -69,12 +73,23 @@ export default class SchemaFormGenerator{
     }
 
     public static async schemaFormStation(): Promise<SchemaConfig | undefined> {
-        let stationSchema = await SchemaParser.getStationSchema(this.configurationSchema);
+        let stationSchema = await SchemaParser.getStationSchema(this.stationConfigurationSchema);
         if(stationSchema !== undefined) {
             return stationSchema
         }
         else {
             throw new Error("Station is not valid or is not defined in schemas");
+        }
+    }
+
+    public static async schemaFormGlobal(): Promise<SchemaConfig | undefined> {
+        let globalSchema = await SchemaParser.getGlobalSchema(this.globalConfigurationSchema);
+        console.log('Schema Global called');
+        if(globalSchema !== undefined) {
+            return globalSchema;
+        }
+        else {
+            throw new Error("Global configuration schema error");
         }
     }
 }
