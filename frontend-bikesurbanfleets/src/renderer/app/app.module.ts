@@ -19,6 +19,7 @@ import {SimulatecoreComponent} from "./simulate-core-component/simulatecore.comp
 import {SimulateusergenComponent} from "./simulate-usergen-component/simulateusergen.component";
 import {SimulationspinnerComponent} from "./simulation-spinner-component/simulationspinner.component";
 import {ConfigurationComponent} from "./configuration-component/configuration.component";
+import {LeafletDrawModule} from "@asymmetrik/ngx-leaflet-draw";
 
 @NgModule({
     imports: [
@@ -28,6 +29,7 @@ import {ConfigurationComponent} from "./configuration-component/configuration.co
         ReactiveFormsModule,
         NgFontAwesomeModule,
         LeafletModule.forRoot(),
+        LeafletDrawModule.forRoot(),
         Bootstrap4FrameworkModule,
         JsonSchemaFormModule.forRoot(Bootstrap4FrameworkModule),
         AppRoutingModule,

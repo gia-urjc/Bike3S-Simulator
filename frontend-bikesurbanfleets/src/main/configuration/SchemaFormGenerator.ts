@@ -56,7 +56,8 @@ export default class SchemaFormGenerator{
                     type: "string",
                     enum: userTypes
                 }
-            }
+            },
+            required: ["entryPointType", "userType"]
         };
         console.log(schema);
         return schema;

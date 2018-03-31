@@ -1,9 +1,10 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { Control, latLng, MapOptions, Marker } from 'leaflet';
+import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Control, latLng, Map, MapOptions, Marker} from 'leaflet';
 import { SettingsLayerEntry } from '../../../shared/settings/definitions';
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
 import * as layers from './layers';
 import { LayerEntry } from './util';
+
 
 @Component({
     selector: 'map-view',
@@ -13,8 +14,15 @@ export class MapComponent implements OnInit {
     
     layerControl: { baseLayers: Control.LayersObject };
     options: MapOptions;
+    map: Map;
+
+    @Input() isVisualitation: boolean;
+
+    @Input() drawOptions: any;
 
     @Input() markers: Array<Marker> = [];
+
+    @Output('getMapController') getMapController = new EventEmitter<Map>();
 
     constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol) {}
 
@@ -55,5 +63,10 @@ export class MapComponent implements OnInit {
 
             this.layerControl.baseLayers[map.name] = map.layer;
         }
+    }
+
+    emitMap(map: Map) {
+        this.map = map;
+        this.getMapController.emit(this.map);
     }
 }

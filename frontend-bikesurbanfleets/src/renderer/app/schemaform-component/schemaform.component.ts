@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import * as $ from "jquery";
 
 @Component({
     selector: 'schema-form',
@@ -9,28 +8,30 @@ import * as $ from "jquery";
 export class SchemaformComponent implements OnInit {
 
     @Input()
-    schema: any;
-
-    @Input()
-    data: any;
-
-    @Input()
     form: any;
 
     @Output('dataSubmited')
     dataSubmited = new EventEmitter<any>();
 
+    @Output('onDataChange')
+    dataChange = new EventEmitter<any>();
+
     constructor() {
     }
 
     ngOnInit(): void {
+    }
+
+    resetForm() {
         console.log(this.form);
     }
 
-    updateData(isValid: boolean) {
-        if(isValid) {
-            this.dataSubmited.emit(this.data);
-        }
+    submit(data: any) {
+        this.dataSubmited.emit(data);
+    }
+
+    sendData(data: any) {
+        
     }
 
 }

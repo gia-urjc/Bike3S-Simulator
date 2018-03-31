@@ -11,22 +11,22 @@
                     </div>
                 </div>
                 <div class="card">
-                    <map-view [markers]="constructor.activeLayers"></map-view>
+                    <map-view (getMapController)="getMapController($event)" [markers]="constructor.activeLayers" [isVisualitation]="false" [drawOptions]="drawOptions"></map-view>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="card conf">
                     <ngb-tabset>
-                        <ngb-tab title="General Configuration">
+                        <ngb-tab id="global-form" title="General Configuration">
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
                                     <div id="globalForm">
-                                        <schema-form [data]="globalData" [schema]="globalSchema" (dataSubmited)="globalConfigUpdated($event)"></schema-form>
+                                        <schema-form #globalSchemaForm [form]="globalForm" (dataSubmited)="globalFormSubmit($event)"></schema-form>
                                     </div>
                                 </div>
                             </ng-template>
                         </ngb-tab>
-                        <ngb-tab title="Added entities">
+                        <ngb-tab id="added-entities" title="Added entities">
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
                                     All entities
@@ -39,3 +39,55 @@
         </div>
     </div>
 </div>
+
+<ng-template data-backdrop="static" data-keyboard="false" id="form-select-entry-point" #selecEntryPointType let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Select Entry Point and User Type</h4>
+        <button type="button" class="close" aria-label="Close" (click)="c('Close click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <schema-form #globalSchemaForm [form]="selectEntryPointForm" (dataSubmited)="selectEntryPointSubmit($event)"></schema-form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+    </div>
+    <button class="hidden-button" id="form-select-entry-point-close" (click)="d('External close')"></button>
+</ng-template>
+
+<ng-template data-backdrop="static" data-keyboard="false" id="form-entry-point" #entryPoint let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Entry Point parameters</h4>
+        <button type="button" class="close" aria-label="Close" (click)="c('Close click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <schema-form #globalSchemaForm [form]="entryPointForm" (dataSubmited)="entryPointSubmit($event)"></schema-form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+    </div>
+    <button class="hidden-button" id="form-entry-point-close" (click)="d('External close')"></button>
+</ng-template>
+
+<ng-template data-backdrop="static" data-keyboard="false" id="form-station" #stationModal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Create Station</h4>
+        <button type="button" class="close" aria-label="Close" (click)="c('Close click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <schema-form #globalSchemaForm [form]="stationForm" (dataSubmited)="stationSubmit($event)"></schema-form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+    </div>
+    <button class="hidden-button" id="form-station-close" (click)="d('External close')"></button>
+</ng-template>
+
+<button class="hidden-button" id="form-select-entry-point-button" (click)="openFormEntryPoint(selecEntryPointType)">Open modal</button>
+<button class="hidden-button" id="form-entry-point-button" (click)="openFormEntryPoint(entryPoint)">Open modal</button>
+<button class="hidden-button" id="form-station-button" (click)="openStationForm(stationModal)">Open modal</button>

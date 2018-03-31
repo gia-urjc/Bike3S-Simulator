@@ -5,6 +5,8 @@ export type SchemaConfig = {
     properties?: any;
     enum?: string;
     items?: SchemaConfig;
+    required?: Array<String>;
+    additionalProperties?: boolean;
 }
 
 export interface EntryPointDataType {

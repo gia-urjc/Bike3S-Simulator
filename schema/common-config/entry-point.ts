@@ -16,8 +16,8 @@ export default sAnyOf(
         userType: UserProperties,
         position: GeoPoint,
         timeRange: sObject({
-            start: UInt,
             end: UInt,
+            start: UInt
         }).require.all().restrict(),
         radius: sNumber().xMin(0),
         totalUsers: sInteger().xMin(0)
@@ -27,5 +27,5 @@ export default sAnyOf(
         userType: UserProperties,
         position: GeoPoint,
         timeInstant: UInt
-    })
+    }).require('entryPointType', 'userType', 'position', 'timeInstant')
 );

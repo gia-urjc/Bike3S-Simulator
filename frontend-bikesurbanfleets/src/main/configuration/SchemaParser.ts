@@ -44,6 +44,11 @@ export default class {
                         delete finalEntryPointSchema.properties.userType;
 
                         finalEntryPointSchema.properties.userType = userSchema;
+                        userSchema.additionalProperties = true;
+                        if(finalEntryPointSchema.required !== undefined) {
+                            _.pull(finalEntryPointSchema.required, 'entryPointType');
+                        }
+                        finalEntryPointSchema.additionalProperties = true;
                         return finalEntryPointSchema;
                     }
                 }
