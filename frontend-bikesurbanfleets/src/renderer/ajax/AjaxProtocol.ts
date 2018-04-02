@@ -1,6 +1,7 @@
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
+import {JsonInfo, default as JsonLoader, JsonSchemaGroup} from "../../main/json-loader/JsonLoader";
 
 export interface HistoryAjax {
     init(path: string): Promise<void>,
@@ -20,6 +21,13 @@ export interface FormSchemaAjax {
     getGlobalSchema(): Promise<any>
 }
 
+export interface JsonLoaderAjax {
+    init(): Promise<void>,
+    getAllSchemas(): Promise<JsonSchemaGroup>,
+    writeJson(jsonInfo: JsonInfo): Promise<boolean>
+    close(): Promise<void>
+}
+
 export interface BackendAjax {
     init(): Promise<void>,
     generateUsers(args: UserGeneratorArgs): Promise<void>
@@ -36,5 +44,6 @@ export interface AjaxProtocol {
     history: HistoryAjax,
     settings: SettingsAjax,
     formSchema: FormSchemaAjax,
-    backend: BackendAjax
+    backend: BackendAjax,
+    jsonLoader: JsonLoaderAjax
 }

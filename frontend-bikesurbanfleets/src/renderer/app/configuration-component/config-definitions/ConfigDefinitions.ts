@@ -32,6 +32,10 @@ export class Station{
         return this.stationInfo;
     }
 
+    public getMarker(): Marker {
+        return this.marker;
+    }
+
     public getIcon(): DivIcon {
         const size = 30;
         const slotRatio = (this.stationInfo.capacity - this.stationInfo.bikes) / this.stationInfo.capacity * 100;

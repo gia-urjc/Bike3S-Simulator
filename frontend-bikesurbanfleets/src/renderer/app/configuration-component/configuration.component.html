@@ -1,12 +1,11 @@
 <div class="window">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-8">
                 <div class="card conf">
                     <div class="card-body">
                         <div>
-                            <button class="btn btn-default">Add Station</button>
-                            <button class="btn btn-default">Add Entry Point</button>
+                            <button (click)="generateConfiguration()" class="btn btn-default">Generate Configuration</button>
                         </div>
                     </div>
                 </div>
@@ -14,7 +13,7 @@
                     <map-view (getMapController)="getMapController($event)" [markers]="constructor.activeLayers" [isVisualitation]="false" [drawOptions]="drawOptions"></map-view>
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="card conf">
                     <ngb-tabset>
                         <ngb-tab id="global-form" title="General Configuration">
@@ -26,10 +25,17 @@
                                 </div>
                             </ng-template>
                         </ngb-tab>
-                        <ngb-tab id="added-entities" title="Added entities">
+                        <ngb-tab id="added-entities" title="Entry Points">
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
-                                    All entities
+                                    <json-tree-view #jsonTreeEp [data]="finalEntryPoints"></json-tree-view>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                        <ngb-tab id="added-stations" title="Stations">
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    <json-tree-view [data]="finalStations"></json-tree-view>
                                 </div>
                             </ng-template>
                         </ngb-tab>

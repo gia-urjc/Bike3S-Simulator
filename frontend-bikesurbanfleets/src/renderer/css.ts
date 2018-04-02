@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
+import 'jsoneditor/dist/jsoneditor.min.css';
 
 import { icon, Marker } from 'leaflet';
 

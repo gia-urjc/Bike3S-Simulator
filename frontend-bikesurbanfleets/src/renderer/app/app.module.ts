@@ -20,6 +20,8 @@ import {SimulateusergenComponent} from "./simulate-usergen-component/simulateuse
 import {SimulationspinnerComponent} from "./simulation-spinner-component/simulationspinner.component";
 import {ConfigurationComponent} from "./configuration-component/configuration.component";
 import {LeafletDrawModule} from "@asymmetrik/ngx-leaflet-draw";
+import {JsonTreeViewComponent} from "./jsoneditor-component/jsoneditor.component";
+import {ConfigurationSaveComponent} from "./configuration-save-component/configurationsave.component";
 
 @NgModule({
     imports: [
@@ -34,7 +36,7 @@ import {LeafletDrawModule} from "@asymmetrik/ngx-leaflet-draw";
         JsonSchemaFormModule.forRoot(Bootstrap4FrameworkModule),
         AppRoutingModule,
         NgbModalModule,
-        NgbProgressbarModule,
+        NgbProgressbarModule
     ],
     declarations: [
         AppComponent,
@@ -46,12 +48,17 @@ import {LeafletDrawModule} from "@asymmetrik/ngx-leaflet-draw";
         SimulatecoreComponent,
         SimulateusergenComponent,
         SimulationspinnerComponent,
-        ConfigurationComponent
+        ConfigurationComponent,
+        JsonTreeViewComponent,
+        ConfigurationSaveComponent
     ],
     bootstrap: [AppComponent],
     providers: [{
         provide: 'AjaxProtocol',
         useClass: ElectronAjax
-    }, NgbModal]
+    }, NgbModal],
+    entryComponents: [
+        ConfigurationSaveComponent
+    ]
 })
 export class AppModule {}

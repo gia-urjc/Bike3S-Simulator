@@ -1,13 +1,15 @@
 import {Component, Inject, ViewChild} from "@angular/core";
 import {AjaxProtocol} from "../../ajax/AjaxProtocol";
 import {Layer, Rectangle, FeatureGroup, Circle, Marker} from "leaflet";
-import {SchemaformComponent} from "../schemaform-component/schemaform.component";
 import {LeafletDrawFunctions, FormJsonSchema, EntryPoint, Station} from "./config-definitions";
-import * as $ from "jquery";
 import {ConfigurationLeaflethandler} from "./configuration.leaflethandler";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {EntryPointDataType} from "../../../shared/configuration";
-const { dialog } = (window as any).require('electron').remote;
+import {ConfigurationUtils} from "./configuration.utils";
+const  {dialog} = (window as any).require('electron').remote;
+import {SchemaformComponent} from "../schemaform-component/schemaform.component";
+import * as $ from "jquery";
+import {ConfigurationSaveComponent} from "../configuration-save-component/configurationsave.component";
 
 
 @Component({
@@ -26,7 +28,7 @@ export class ConfigurationComponent {
     stationForm: FormJsonSchema;
 
     /*
-    * Auxiliar variables
+    * Aux variables
     */
     lastSelectedEntryPointType: any;
     lastStation = {
@@ -42,21 +44,30 @@ export class ConfigurationComponent {
             southEast: { latitude: 0, longitude:0 }
         }
     };
-    entryPoints: Map<Circle, EntryPoint> = new Map<Circle, EntryPoint>();
-    stations: Map<Marker, Station> = new Map<Marker, Station>();
+    entryPoints: Array<EntryPoint> = new Array<any>();
+    stations: Array<Station> = new Array<any>();
+
+    /*
+    * Final configurations
+    */
+    finalEntryPoints = {
+        "entryPoints": new Array<any>()
+    };
+    finalStations = {
+        "stations": new Array<any>()
+    };
+
+    @ViewChild('globalSchemaForm') gsForm: SchemaformComponent;
 
     /*
     * Map control variables
     */
-    hasBoundingBox = false;                                 // Check if bounding box drawing
+    hasBoundingBox = false;                                 // Bounding box exist if true
     featureGroup: FeatureGroup = new FeatureGroup();        // List of drawn element
     drawOptions: any;                                       // Draw options for leaflet-draw
     map: L.Map;                                             // showed Map
     lastCircleAdded: Circle;                                // Last circle added
     lastMarkerAdded: Marker;                                // Last Marker added
-
-    //Global Form component
-    @ViewChild('globalSchemaForm') gsForm: SchemaformComponent;
 
     constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol,
                 private modalService: NgbModal) {}
@@ -93,25 +104,23 @@ export class ConfigurationComponent {
                     ConfigurationLeaflethandler.onDeleteBoundingBoxHandler(this);
                 }
                 if (layer instanceof Circle) {
-                    this.entryPoints.delete(<Circle> layer);
+                    let index = ConfigurationUtils.getEntryPointIndexByCircle(layer, this.entryPoints);
+                    if (index !== null) {
+                        this.entryPoints.splice(index, 1);
+                        this.finalEntryPoints.entryPoints.splice(index, 1);
+                    }
                     this.featureGroup.removeLayer(layer);
                 }
                 if (layer instanceof Marker) {
-                    this.stations.delete(<Marker> layer);
+                    let index = ConfigurationUtils.getStationIndexByMarker(layer, this.stations);
+                    if(index !== null) {
+                        this.stations.splice(index, 1);
+                        this.finalStations.stations.splice(index, 1);
+                    }
                     this.featureGroup.removeLayer(layer);
                 }
             }
-        })
-
-    }
-
-    updateGlobalFormView() {
-        let tab1 = document.getElementById('added-entities');
-        let tab2 = document.getElementById('global-form');
-        if(tab1 !== null && tab2 !== null) {
-            tab1.click();
-            tab2.click();
-        }
+        });
     }
 
     globalFormSubmit($event: any) {
@@ -149,7 +158,8 @@ export class ConfigurationComponent {
         }
         let newEntryPoint = new EntryPoint(entryPoint, this.lastCircleAdded);
         newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
-        this.entryPoints.set(this.lastCircleAdded, newEntryPoint);
+        this.entryPoints.push(newEntryPoint);
+        this.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
         console.log(this.entryPoints);
         $('#form-entry-point-close').trigger('click');
     }
@@ -160,7 +170,8 @@ export class ConfigurationComponent {
             lng: station.position.longitude
         });
         let newStation = new Station(station, this.lastMarkerAdded);
-        this.stations.set(this.lastMarkerAdded, newStation);
+        this.stations.push(newStation);
+        this.finalStations.stations.push(newStation.getStationInfo());
         this.lastMarkerAdded.setIcon(newStation.getIcon());
         $('#form-station-close').trigger('click');
     }
@@ -226,4 +237,27 @@ export class ConfigurationComponent {
             }
         }, () => {});
     }
+
+    updateGlobalFormView() {
+        let tab1 = document.getElementById('added-entities');
+        let tab2 = document.getElementById('global-form');
+        if(tab1 !== null && tab2 !== null) {
+            tab1.click();
+            tab2.click();
+        }
+    }
+
+    generateConfiguration() {
+        let path = this.selectFolder();
+        const modalRef = this.modalService.open(ConfigurationSaveComponent);
+        modalRef.componentInstance.path = path;
+        modalRef.componentInstance.globalConfiguration = this.globalData;
+        modalRef.componentInstance.entryPointConfiguration = this.finalEntryPoints;
+        modalRef.componentInstance.stationConfiguration = this.finalStations;
+    }
+
+    selectFolder(): string {
+        return dialog.showOpenDialog({properties: ['openDirectory']})[0];
+    }
+
 }

@@ -8,6 +8,7 @@ import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator"
 import { ipcMain, ipcRenderer } from 'electron';
 import BackendCalls from "./util/BackendCalls";
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
+import JsonLoader from "./json-loader/JsonLoader";
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;
@@ -70,6 +71,7 @@ export namespace Main {
         Settings.enableIpc();
         BackendCalls.enableIpc();
         SchemaFormGenerator.enableIpc();
+        JsonLoader.enableIpc();
 
         app.on('ready', async () => {
             //HistoryReader.enableIpc();

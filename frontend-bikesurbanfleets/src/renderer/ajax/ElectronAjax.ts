@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Event } from 'electron';
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
-import {AjaxProtocol, BackendAjax, FormSchemaAjax, HistoryAjax, SettingsAjax} from './AjaxProtocol';
+import {AjaxProtocol, BackendAjax, FormSchemaAjax, HistoryAjax, JsonLoaderAjax, SettingsAjax} from './AjaxProtocol';
 import {EntryPointDataType} from "../../shared/configuration";
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
+import {JsonInfo, JsonSchemaGroup} from "../../main/json-loader/JsonLoader";
 
 // https://github.com/electron/electron/issues/7300#issuecomment-274269710
 const { ipcRenderer } = (window as any).require('electron');
@@ -125,8 +126,25 @@ class ElectronBackendCalls implements BackendAjax {
     async closeBackend(): Promise<void> {
         return await readIpc('backend-call-close');
     }
+}
 
+class JsonLoader implements JsonLoaderAjax {
 
+    async init(): Promise<void> {
+        return await readIpc('json-loader-init');
+    }
+
+    async getAllSchemas(): Promise<JsonSchemaGroup> {
+        return await readIpc('get-all-schemas');
+    }
+
+    async writeJson(jsonInfo: JsonInfo): Promise<boolean> {
+        return await readIpc('write-json', jsonInfo);
+    }
+
+    async close(): Promise<void> {
+        return await readIpc('json-loader-close');
+    }
 }
 
 @Injectable()
@@ -136,11 +154,13 @@ export class ElectronAjax implements AjaxProtocol {
     settings: SettingsAjax;
     formSchema: FormSchemaAjax;
     backend: ElectronBackendCalls;
+    jsonLoader: JsonLoaderAjax;
 
     constructor() {
         this.history = new ElectronHistory();
         this.settings = new ElectronSettings();
         this.formSchema = new ElectronFormSchema();
         this.backend = new ElectronBackendCalls();
+        this.jsonLoader = new JsonLoader();
     }
 }
