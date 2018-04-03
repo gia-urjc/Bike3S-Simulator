@@ -5,7 +5,7 @@ namespace Main {
 
     export async function analysis(historyPath: string, csvPath: string, schemaPath: string): Promise<DataGenerator> {
         try {
-            return await DataGenerator.generate(historyPath, csvPath, schemaPath);
+            return await DataGenerator.create(historyPath, csvPath, schemaPath);
         }
         catch(error) {
             console.log('Error: ', error);

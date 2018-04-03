@@ -80,7 +80,7 @@ namespace Main {
         });
     }
     
-<<<<<<< HEAD
+
     export async function testRentals(): Promise<void> {
         let s: SystemStations = new SystemStations();
         let res: SystemReservations = new SystemReservations();
@@ -108,17 +108,6 @@ namespace Main {
         } catch(e) { console.log(e); }
     }
        
-=======
-    export async function test() {
-       try {
-            let data: DataGenerator = await DataGenerator.generate('history', 'csvFiles');
-        }
-        catch(error) {
-           console.log('Error: ', error);
-        }
-        
-    }
->>>>>>> d86b148f5d966d645a819dde4afc777d22832467
 }
   
 Main.init();

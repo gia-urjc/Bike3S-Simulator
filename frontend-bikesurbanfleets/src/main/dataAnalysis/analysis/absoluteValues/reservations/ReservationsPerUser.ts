@@ -13,24 +13,9 @@ export class ReservationsPerUser implements SystemInfo, Observer {
         this.data = new ReservationData();
     }
     
-<<<<<<< HEAD
     public async init(): Promise<void> {
         try {
             this.data.init(this.basicData);
-=======
-    public async init(path: string, schemaPath?: string | null): Promise<void> {
-        try {
-            let history: HistoryReader = await HistoryReader.create(path, schemaPath);
-            let entities: HistoryEntitiesJson = await history.getEntities("users");
-            this.users = entities.instances;
-              
-            for(let user of this.users) {
-                this.bikeFailedReservationsPerUser.set(user.id, 0);
-                this.slotFailedReservationsPerUser.set(user.id, 0);
-                this.bikeSuccessfulReservationsPerUser.set(user.id, 0);
-                this.slotSuccessfulReservationsPerUser.set(user.id, 0);
-            }
->>>>>>> d86b148f5d966d645a819dde4afc777d22832467
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);
@@ -38,17 +23,10 @@ export class ReservationsPerUser implements SystemInfo, Observer {
         return;
     }
    
-<<<<<<< HEAD
     public static async create(users: Array<User>): Promise<ReservationsPerUser> {
         let reservationValues = new ReservationsPerUser(users);
         try {
             await reservationValues.init();
-=======
-    public static async create(path: string, schemaPath?: string | null): Promise<ReservationsPerUser> {
-        let reservationValues = new ReservationsPerUser();
-        try {
-            await reservationValues.init(path, schemaPath);
->>>>>>> d86b148f5d966d645a819dde4afc777d22832467
         }
         catch(error) {
             throw new Error('Error creating requested data'+error);

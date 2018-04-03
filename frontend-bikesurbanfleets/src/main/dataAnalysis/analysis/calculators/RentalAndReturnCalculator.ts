@@ -13,19 +13,11 @@ export class RentalAndReturnCalculator implements Calculator {
         this.path = path;
     }
     
-<<<<<<< HEAD:frontend-bikesurbanfleets/src/main/dataAnalysis/analysis/calculators/RentalAndReturnCalculator.ts
     public async calculate(): Promise<void> {
         let it: HistoryIterator; 
         try {
             it = await HistoryIterator.create(this.path);
             let timeEntry: TimeEntry | undefined = await it.nextTimeEntry();
-=======
-    public async calculateBikeRentalsAndReturns(path: string, schemaPath?: string | null): Promise<void> {
-        let it: HistoryIterator; 
-        try {
-            it = await HistoryIterator.create(path, schemaPath);
-            let timeEntry: TimeEntry = await it.nextTimeEntry();
->>>>>>> d86b148f5d966d645a819dde4afc777d22832467:frontend-bikesurbanfleets/src/main/dataAnalysis/analysis/systemDataCalculators/RentalAndReturnCalculator.ts
        
             while(timeEntry !== undefined) {
                 this.notify(timeEntry);
