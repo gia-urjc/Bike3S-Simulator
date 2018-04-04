@@ -5,14 +5,13 @@ import { Station } from "../../systemDataTypes/Entities";
 export class SystemStations {
     private stations: Array<Station>;
 	
-    public async init(path: string): Promise<void> {
+    public async init(history: HistoryReader): Promise<void> {
         try {
-            let history: HistoryReader = await HistoryReader.create(path);
             let entities: HistoryEntitiesJson = await history.getEntities("stations");
             this.stations = <Station[]> entities.instances;
         }
         catch(error) {
-            throw new Error('Error accessing to stations: '+error);
+            throw new Error('Error getting stations: '+error);
         }
         return;
     }

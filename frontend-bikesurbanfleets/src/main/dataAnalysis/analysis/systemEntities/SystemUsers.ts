@@ -5,14 +5,13 @@ import { User } from "../../systemDataTypes/Entities";
 export class SystemUsers {
     private users: Array<User>;
     
-    public async init(path: string): Promise<void> {
+    public async init(history: HistoryReader): Promise<void> {
         try {
-            let history: HistoryReader = await HistoryReader.create(path);
             let entities: HistoryEntitiesJson = await history.getEntities("users");
             this.users = entities.instances;
         }
         catch(error) {
-            throw new Error('Error accessing to users: '+error);
+            throw new Error('Error getting users: '+error);
         }
         return;
     }

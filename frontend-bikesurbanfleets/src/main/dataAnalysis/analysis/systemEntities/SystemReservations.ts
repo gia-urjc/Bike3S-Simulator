@@ -3,20 +3,20 @@ import { HistoryReader } from "../../../util";
 import { Reservation } from "../../systemDataTypes/Entities";
 
 export class SystemReservations {
-    private reservations: Array<Reservation >;
-
-    public async init(path: string): Promise<void> {
+    private reservations: Array<Reservation>;
+    
+    public async init(history: HistoryReader): Promise<void> {
         try {
-            let history: HistoryReader = await HistoryReader.create(path);
-            let entities: HistoryEntitiesJson = await history.getEntities('reservations');
-            this.reservations = <Reservation[]> entities.instances;
+            let reservationEntities: HistoryEntitiesJson = await history.getEntities('reservations');
+            this.reservations = <Reservation[]> reservationEntities.instances;
         }
         catch(error) {
-            throw new Error('Error accessing to reservations: '+error);
+            throw new Error('Error getting reservations: '+error);
         }
     }
 
     public getReservations(): Array<Reservation> {
         return this.reservations; 
     }
+    
 }

@@ -6,17 +6,20 @@ import { Calculator } from './Calculator';
 
 export class RentalAndReturnCalculator implements Calculator {
     private observers: Array<Observer>;
-    private path: string;
+    private history: HistoryReader;
     
-    public constructor(path: string) {
+    public constructor() {
         this.observers = new Array<Observer>();
-        this.path = path;
+    }
+    
+    public setHistory(history: HistoryReader): void {
+        this.history = history;
     }
     
     public async calculate(): Promise<void> {
         let it: HistoryIterator; 
         try {
-            it = await HistoryIterator.create(this.path);
+            it = await HistoryIterator.create(this.history);
             let timeEntry: TimeEntry | undefined = await it.nextTimeEntry();
        
             while(timeEntry !== undefined) {

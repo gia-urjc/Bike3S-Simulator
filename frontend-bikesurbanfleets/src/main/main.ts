@@ -81,8 +81,8 @@ namespace Main {
     }
     
 
-    export async function testRentals(): Promise<void> {
-        let s: SystemStations = new SystemStations();
+    export async function test(): Promise<void> {
+/*        let s: SystemStations = new SystemStations();
         let res: SystemReservations = new SystemReservations();
         let u: SystemUsers = new SystemUsers(); 
         try {
@@ -106,9 +106,12 @@ namespace Main {
                 console.log(stations.absoluteValues.get(18));
             }
         } catch(e) { console.log(e); }
+ 
+        }*/
+           let generator: DataGenerator = await DataGenerator.create('build/history', 'csvFiles', 'build/schema');
     }
        
 }
   
 Main.init();
-Main.testRentals();
+Main.test();

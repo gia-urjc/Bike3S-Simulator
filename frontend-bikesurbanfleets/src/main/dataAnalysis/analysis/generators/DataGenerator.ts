@@ -1,3 +1,4 @@
+import { HistoryReader } from "../../../util";
 import { Data } from '../absoluteValues/Data';
 import { SystemInfo } from "../absoluteValues/SystemInfo";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
@@ -15,38 +16,52 @@ import { CsvGenerator } from "./CsvGenerator";
 import {SystemGlobalInfo } from '../SystemGlobalInfo';
 
 export class DataGenerator {
-    private readonly RESERVATIONS: number = 2;  // 2 data related to reservations must be initialized
+    private readonly RESERVATIONS: number = 3;  // 3 data related to reservations must be initialized
     private readonly RENTALS_AND_RETURNS: number = 2;  // 2 data related to rentals and returns must be initialized
     private readonly CALCULATION: number = 2;  // both calculators must have calculated its data before writing them 
     private readonly BIKES_PER_STATION: number = 2;  // this data needs to be initialized with both reservation and station information
 
     private csv: boolean;  // it indicates if a csv file must be generated    
-    private path: string;  // it's the path of history files
-    private schemaPath: string | null;
-    private csvPath: string;
+    private historyPath: string;  
+    private schemaPath?: string;
+    private csvPath?: string;
+    
     private reservationCounter: number;  // number of data related to reservations which have been initialized
     private rentalAndReturnCounter: number;  // number of data related to rentals and returns which have been initialized
     private calculationCounter: number;  // number of calculators which have calculated its data
-    private bikesPerStationCounter: number; 
-   
+    private bikesPerStationCounter: number;
+     
+    private history: HistoryReader;
     private info: Map<string, SystemInfo>;  // it contains all the results of the data analysis
     private bikesPerStation: BikesPerStation;
     private reservationCalculator: ReservationCalculator;
     private rentalAndReturnCalculator: RentalAndReturnCalculator;
 
-    public constructor(path: string, csvPath?: string, schemaPath?:string) {
-        this.csv = csvPath == null ? false: true;
-        this.path = path;
-        this.schemaPath = schemaPath == null ? null : schemaPath;
-        this.csvPath = csvPath == null ? null : csvPath;
+    private constructor(historyPath: string, csvPath?: string, schemaPath?: string) {
+        this.csv = csvPath == undefined ? false: true;
+        this.historyPath = historyPath;
+        this.schemaPath = schemaPath == undefined ? undefined : schemaPath;
+        this.csvPath = csvPath == undefined ? undefined : csvPath;
         this.reservationCounter = 0;
         this.rentalAndReturnCounter = 0;
+        this.calculationCounter = 0;
+        this.bikesPerStationCounter = 0;
         this.info = new Map();
         this.bikesPerStation = new BikesPerStation();
-        this.rentalAndReturnCalculator = new RentalAndReturnCalculator(this.path);
+        this.rentalAndReturnCalculator = new RentalAndReturnCalculator();
         this.reservationCalculator = new ReservationCalculator();
-        this.bikesPerStationCounter = 0;
     }
+    
+    private async init(): Promise<void> {
+        try {
+            this.history = await HistoryReader.create(this.historyPath, schemaPath);
+            this.rentalAndReturnCalculator.setHistory(this.history);
+        }
+        catch(error) {
+            throw new Error('Error reading history file: '+error);
+        }
+        return;
+    } 
 
     private async initReservations(reservations: SystemInfo) {
         reservations.init().then( () => {
@@ -65,23 +80,24 @@ export class DataGenerator {
     }
 
     public async generate(): Promise<void> {
-        // Getting reservations' initial state information and initializing data of analysis which need it
+        // Getting reservations' initial state information and initializing analysis data which need it
         let systemReservations: SystemReservations = new SystemReservations();
-        systemReservations.init(this.path).then( () => { 
+        systemReservations.init(this.history).then( () => {
+            console.log("Init System Reservations"); 
             this.bikesPerStation.setReservations(systemReservations.getReservations());
             this.bikesPerStationCounter++;
             this.rentalAndReturnCalculator.subscribe(this.bikesPerStation);          
-
             this.calculateRentalsAndReturns();
             
             this.reservationCalculator.setReservations(systemReservations.getReservations());
             this.reservationCounter++;
             this.calculateReservations();
-        });
+        }); 
         
         // Getting stations' initial state information and initializing data of analysis which need it     
        let systemStations: SystemStations = new SystemStations();
-        systemStations.init(this.path).then( () => {
+        systemStations.init(this.history).then( () => {
+            console.log("Init System stations");
             let reservations: ReservationsPerStation = new ReservationsPerStation(systemStations.getStations());
             this.reservationCalculator.subscribe(reservations);
             this.info.set(ReservationsPerStation.name, reservations);
@@ -100,7 +116,8 @@ export class DataGenerator {
         
         // Getting users' initial state information and initializing data of analysis which need it
         let systemUsers: SystemUsers = new SystemUsers(); 
-        systemUsers.init(this.path).then( () => {
+        systemUsers.init(this.history).then( () => {
+            console.log("Init System Users");
             let reservations: ReservationsPerUser = new ReservationsPerUser(systemUsers.getUsers());
             this.reservationCalculator.subscribe(reservations);
             this.info.set(ReservationsPerUser.name, reservations);
@@ -141,10 +158,11 @@ export class DataGenerator {
         }
     }
     
-    public static async create(path: string, csvPath: string, schemaPath?: string): Promise<DataGenerator> {
-        console.log(schemaPath);
-        let generator: DataGenerator = new DataGenerator(path, csvPath, schemaPath);
+    public static async create(historyPath: string, csvPath?: string, schemaPath?: string): Promise<DataGenerator> {
+        console.log('creating data generator:', historyPath);
+        let generator: DataGenerator = new DataGenerator(historyPath, csvPath, schemaPath);
         try {
+            await generator.init();
             await generator.generate();
         }
         catch(error) {
@@ -156,11 +174,11 @@ export class DataGenerator {
     private async write(): Promise<void> {
         if (this.calculationCounter === this.CALCULATION) {
           let globalValues: SystemGlobalInfo = new SystemGlobalInfo(this.info);
-          await globalValues.init(this.path, this.schemaPath);
+          await globalValues.init(this.historyPath, this.schemaPath);
           globalValues.calculateGlobalData();
-
-          let generator: CsvGenerator = new CsvGenerator(this.path, globalValues, this.csvPath, this.schemaPath);
-          try {
+          if (this.csvPath !== undefined) {
+            let generator: CsvGenerator = new CsvGenerator(this.historyPath, globalValues, this.csvPath, this.schemaPath);
+            try {
               await generator.generate(this.info);
           }
           catch(error) {

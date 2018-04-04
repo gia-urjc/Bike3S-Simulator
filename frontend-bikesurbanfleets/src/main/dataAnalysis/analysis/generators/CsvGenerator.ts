@@ -4,7 +4,6 @@ import { HistoryReader } from "../../../util";
 import { Station, User, Entity } from "../../systemDataTypes/Entities";
 import { SystemGlobalInfo } from "../SystemGlobalInfo";
 import { AbsoluteValue } from "../absoluteValues/AbsoluteValue";
-//import { Data } from "../absoluteValues/Data";
 import { SystemInfo } from "../absoluteValues/SystemInfo";
 import { RentalAndReturnAbsoluteValue } from "../absoluteValues/rentalsAndReturns/RentalAndReturnAbsoluteValue";
 import { RentalAndReturnData } from "../absoluteValues/rentalsAndReturns/RentalAndReturnData";
@@ -18,16 +17,16 @@ import * as json2csv from 'json2csv';
 import * as fs from 'fs';
 
 export class CsvGenerator {
- private titles: Array<string>;
-	private stationData: Array<JsonObject>;
-	private userData: Array<JsonObject>;
-    private path: string;
-    private schemaPath: string | null;
+    private titles: Array<string>;
+   	private stationData: Array<JsonObject>;
+   	private userData: Array<JsonObject>;
+    private historyPath: string;
+    private csvPath: string;
+    private schemaPath: string | undefined;
     private globalValuesFields: Array<string>;
     private globalValues: JsonObject;
-    private csvPath: string;
 
-    public constructor(path: string, globalValues: SystemGlobalInfo, csvPath:string, schemaPath?: string| null) {
+    public constructor(historyPath: string, globalValues: SystemGlobalInfo, csvPath: string, schemaPath?: string) {
     this.titles = new Array();
     this.stationData = new Array();
     this.userData = new Array();
@@ -36,8 +35,8 @@ export class CsvGenerator {
     this.globalValues.demand_satisfaction = globalValues.getDemandSatisfaction();
     this.globalValues.hire_efficiency = globalValues.getRentalEfficiency();
     this.globalValues.return_efficiency = globalValues.getReturnEfficiency();
-    this.path = path;
-    this.schemaPath = schemaPath == null ? null : schemaPath;
+    this.historyPath = historyPath;
+    this.schemaPath = schemaPath == undefined ? undefined : schemaPath;
     this.csvPath = csvPath;
   }
     
@@ -90,7 +89,7 @@ export class CsvGenerator {
       ReservationData.NAMES.forEach( (name) => this.titles.push(name));
       RentalAndReturnData.NAMES.forEach( (name) => this.titles.push(name));
           
-      let history: HistoryReader = await HistoryReader.create(this.path);
+      let history: HistoryReader = await HistoryReader.create(this.historyPath);
          
       let historyStations: HistoryEntitiesJson = await history.getEntities('stations');    
       let stations: Array<Station> = <Station[]> historyStations.instances;
@@ -131,7 +130,7 @@ export class CsvGenerator {
 	}
 
 	private checkFolders(): void {
-        if(!fs.existsSync(this.csvPath)) {
+        if(this.csvPath !== undefined && !fs.existsSync(this.csvPath)) {
             fs.mkdirSync(this.csvPath);
         }
     }
