@@ -58,19 +58,19 @@ export class SystemGlobalInfo {
   
   public calculateGlobalData(): void {
     let reservations: ReservationsPerStation = this.data.get(ReservationsPerStation.name);
-    reservations.getData().forEach( (v, k) => this.successfulBikeReservations += v.absoluteValues.successfulBikeReservations); 
-    reservations.getData().forEach( (v, k) => this.successfulSlotReservations += v.absoluteValues.successfulSlotReservations);
-    reservations.getData().forEach( (v, k) => this.failedBikeReservations += v.absoluteValues.failedBikeReservations);
-    reservations.getData().forEach( (v, k) => this.failedSlotReservations += v.absoluteValues.failedSlotReservations);
+    reservations.getData().absoluteValues.forEach( (v, k) => this.successfulBikeReservations += v.successfulBikeReservations); 
+    reservations.getData().absoluteValues.forEach( (v, k) => this.successfulSlotReservations += v.successfulSlotReservations);
+    reservations.getData().absoluteValues.forEach( (v, k) => this.failedBikeReservations += v.failedBikeReservations);
+    reservations.getData().absoluteValues.forEach( (v, k) => this.failedSlotReservations += v.failedSlotReservations);
     
     this.totalBikeReservations = this.successfulBikeReservations + this.failedBikeReservations;
     this.totalSlotReservations = this.successfulSlotReservations + this.failedSlotReservations;
       
     let rentalsAndReturns: RentalsAndReturnsPerStation = this.data.get(RentalsAndReturnsPerStation.name);
-    rentalsAndReturns.getData().forEach( (v, k) => this.successfulRentals += v.absoluteValues.successfulRentals);
-    rentalsAndReturns.getData().forEach( (v, k) => this.successfulReturns += v.absoluteValues.successfulReturns);
-    rentalsAndReturns.getData().forEach( (v, k) => this.failedRentals += v.absoluteValues.failedRentals);
-    rentalsAndReturns.getData().forEach( (v, k) => this.failedReturns += v.absoluteValues.failedReturns);
+    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => this.successfulRentals += v.successfulRentals);
+    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => this.successfulReturns += v.successfulReturns);
+    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => this.failedRentals += v.failedRentals);
+    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => this.failedReturns += v.failedReturns);
     
     this.totalRentals = this.successfulRentals + this.failedRentals;
     this.totalReturns = this.successfulReturns + this.failedReturns;

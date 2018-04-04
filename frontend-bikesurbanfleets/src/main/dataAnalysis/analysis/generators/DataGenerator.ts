@@ -40,8 +40,8 @@ export class DataGenerator {
     private constructor(historyPath: string, csvPath?: string, schemaPath?: string) {
         this.csv = csvPath == undefined ? false: true;
         this.historyPath = historyPath;
-        this.schemaPath = schemaPath == undefined ? undefined : schemaPath;
-        this.csvPath = csvPath == undefined ? undefined : csvPath;
+        this.schemaPath = schemaPath;
+        this.csvPath = csvPath;
         this.reservationCounter = 0;
         this.rentalAndReturnCounter = 0;
         this.calculationCounter = 0;
@@ -54,7 +54,7 @@ export class DataGenerator {
     
     private async init(): Promise<void> {
         try {
-            this.history = await HistoryReader.create(this.historyPath, schemaPath);
+            this.history = await HistoryReader.create(this.historyPath, this.schemaPath);
             this.rentalAndReturnCalculator.setHistory(this.history);
         }
         catch(error) {
@@ -180,10 +180,11 @@ export class DataGenerator {
             let generator: CsvGenerator = new CsvGenerator(this.historyPath, globalValues, this.csvPath, this.schemaPath);
             try {
               await generator.generate(this.info);
-          }
-          catch(error) {
+            }
+            catch(error) {
               throw new Error('Error generating csv file: '+error);
-          }
+            }
+            }
         }
         return;
     }
