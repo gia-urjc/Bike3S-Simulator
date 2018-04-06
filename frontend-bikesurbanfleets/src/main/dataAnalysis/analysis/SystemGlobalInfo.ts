@@ -1,95 +1,84 @@
 import { HistoryEntitiesJson } from "../../../shared/history";
 import { HistoryReader } from "../../util";
 import { User } from "../systemDataTypes/Entities";
+import { SystemInfo } from "./absoluteValues/SystemInfo";
 import { RentalsAndReturnsPerStation } from "./absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { ReservationsPerStation } from "./absoluteValues/reservations/ReservationsPerStation";
 
 export class SystemGlobalInfo {
+    static readonly NAMES: Array<string> = [
+        'Demand satisfaction',
+        'Hire eficiency',
+        'Return eficiency'
+    ];
   private numberUsers: number;
-  private data: Map<string, any>;
-  
-  private totalRentals: number;
-  private totalReturns: number; 
-  private totalBikeReservations: number;
-  private totalSlotReservations: number;
-  
-  private successfulRentals: number;
-  private successfulReturns: number;
-  private successfulBikeReservations: number;
-  private successfulSlotReservations: number;  
-  
-  private failedRentals: number;
-  private failedReturns: number;
-  private failedBikeReservations: number;
-  private failedSlotReservations: number;
-  
   private demandSatisfaction: number;
-  private rentalEfficiency: number;
+  private hireEfficiency: number;
   private returnEfficiency: number;
   
-  public constructor(data: any) {
-    this.data = data;
-    this.totalRentals = 0;
-    this.totalReturns = 0; 
-    this.totalBikeReservations = 0;
-    this.totalSlotReservations = 0;
-  
-    this.successfulRentals = 0;
-    this.successfulReturns = 0;
-    this.successfulBikeReservations = 0;
-    this.successfulSlotReservations = 0;  
-  
-    this.failedRentals = 0;
-    this.failedReturns = 0;
-    this.failedBikeReservations = 0;
-    this.failedSlotReservations = 0;
-  
-    this.demandSatisfaction = 0;
-  }
-  
-  public async init(path: string, schemaPath?: string | null): Promise<void> {
-    let history: HistoryReader = await HistoryReader.create(path, schemaPath);
-    let entities: HistoryEntitiesJson = await history.getEntities("users");
-    let users: Array<User> = entities.instances;
+  public constructor(users: Array<User>) {
     this.numberUsers = users.length;
-    return;
+    
+    this.demandSatisfaction = 0;
+    this.hireEfficiency = 0;
+    this.returnEfficiency = 0;
   }
+    
+  public calculateGlobalData(reservations: SystemInfo, rentalsAndReturns: SystemInfo): void {
+  /*let totalRentals: number = 0;
+  let totalReturns: number = 0; 
+  let totalBikeReservations: number = 0;
+  let totalSlotReservations: number = 0;*/
   
+  let successfulRentals: number = 0;
+  let successfulReturns: number = 0;
+  let successfulBikeReservations: number = 0;
+  let successfulSlotReservations: number = 0;  
   
-  public calculateGlobalData(): void {
-    let reservations: ReservationsPerStation = this.data.get(ReservationsPerStation.name);
-    reservations.getData().absoluteValues.forEach( (v, k) => this.successfulBikeReservations += v.successfulBikeReservations); 
-    reservations.getData().absoluteValues.forEach( (v, k) => this.successfulSlotReservations += v.successfulSlotReservations);
-    reservations.getData().absoluteValues.forEach( (v, k) => this.failedBikeReservations += v.failedBikeReservations);
-    reservations.getData().absoluteValues.forEach( (v, k) => this.failedSlotReservations += v.failedSlotReservations);
+  let failedRentals: number = 0;
+  let failedReturns: number = 0;
+  let failedBikeReservations: number = 0;
+  let failedSlotReservations: number = 0;
     
-    this.totalBikeReservations = this.successfulBikeReservations + this.failedBikeReservations;
-    this.totalSlotReservations = this.successfulSlotReservations + this.failedSlotReservations;
-      
-    let rentalsAndReturns: RentalsAndReturnsPerStation = this.data.get(RentalsAndReturnsPerStation.name);
-    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => this.successfulRentals += v.successfulRentals);
-    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => this.successfulReturns += v.successfulReturns);
-    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => this.failedRentals += v.failedRentals);
-    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => this.failedReturns += v.failedReturns);
+    reservations.getData().absoluteValues.forEach( (v, k) => successfulBikeReservations += v.successfulBikeReservations); 
+    reservations.getData().absoluteValues.forEach( (v, k) => successfulSlotReservations += v.successfulSlotReservations);
+    reservations.getData().absoluteValues.forEach( (v, k) => failedBikeReservations += v.failedBikeReservations);
+    reservations.getData().absoluteValues.forEach( (v, k) => failedSlotReservations += v.failedSlotReservations);
     
-    this.totalRentals = this.successfulRentals + this.failedRentals;
-    this.totalReturns = this.successfulReturns + this.failedReturns;
+    //totalBikeReservations = successfulBikeReservations + failedBikeReservations;
+    //totalSlotReservations = successfulSlotReservations + failedSlotReservations;
     
-    this.demandSatisfaction = this.successfulRentals / this.numberUsers;  // DS = SH / N
-    this.rentalEfficiency = this.successfulRentals / (this.numberUsers + this.failedRentals);  // HE = SH / (N+FH)
-    this.returnEfficiency = this.successfulReturns / (this.successfulRentals + this.failedReturns); // RE = SR / (SH+FR)
+    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => successfulRentals += v.successfulRentals);
+    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => successfulReturns += v.successfulReturns);
+    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => failedRentals += v.failedRentals);
+    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => failedReturns += v.failedReturns);
+    
+    //totalRentals = successfulRentals + failedRentals;
+    //totalReturns = successfulReturns + failedReturns;
+    
+    this.demandSatisfaction = successfulRentals / this.numberUsers;  // DS = SH / N
+    this.hireEfficiency = successfulRentals / (this.numberUsers + failedRentals);  // HE = SH / (N+FH)
+    this.returnEfficiency = successfulReturns / (successfulRentals + failedReturns); // RE = SR / (SH+FR)
   }
 
   public getDemandSatisfaction(): number {
     return this.demandSatisfaction;
   }
 
-  public getRentalEfficiency(): number {
-    return this.rentalEfficiency;
+  public getHireEfficiency(): number {
+    return this.hireEfficiency;
   }
 
   public getReturnEfficiency(): number {
     return this.returnEfficiency;
   }
+
+  public getDataAsArray(): Array<number> {
+      let array: Array<number> = new Array();
+      array.push(this.demandSatisfaction);
+      array.push(this.hireEfficiency);
+      array.push(this.returnEfficiency);
+      return array;
+  }   
    
 }
