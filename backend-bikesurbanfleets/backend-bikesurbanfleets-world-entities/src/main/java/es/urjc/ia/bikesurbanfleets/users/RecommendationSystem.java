@@ -3,6 +3,7 @@ package es.urjc.ia.bikesurbanfleets.users;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
+import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.entities.Station;
 import es.urjc.ia.bikesurbanfleets.entities.comparators.ComparatorByProportionBetweenDistanceAndBikes;
 import es.urjc.ia.bikesurbanfleets.entities.comparators.ComparatorByDistance;
@@ -32,6 +33,11 @@ public class RecommendationSystem {
      */
     private final int MAX_DISTANCE = 600;
     
+    /** 
+     * It indicates the number of stations to consider when  choosing one randomly in recommendation by ratio between available resources and station capacity.
+     */
+    private final int N_STATIONS = 5;
+    
     /**
      * It alloows to manage routes. 
      */
@@ -42,9 +48,12 @@ public class RecommendationSystem {
      */
     private boolean linearDistance;
     
-    public RecommendationSystem(GraphManager graph, boolean linearDistance) {
+    private SimulationRandom random;
+    
+    public RecommendationSystem(GraphManager graph, boolean linearDistance, SimulationRandom  random) {
         this.graph = graph;
         this.linearDistance = linearDistance;
+        this.random = random;
     }
 
     /**
@@ -127,7 +136,9 @@ public class RecommendationSystem {
      */
     public List<Station> recommendByNumberOfBikes(GeoPoint point, List<Station> stations) {
         Comparator<Station> byNumberOfBikes = (s1, s2) -> Integer.compare(s2.availableBikes(), s1.availableBikes());
-        return validStationsToRentBike(point, stations).stream().sorted(byNumberOfBikes).collect(Collectors.toList());
+        List<Station> recommendedStations = validStationsToRentBike(point, stations).stream().sorted(byNumberOfBikes).collect(Collectors.toList());
+        filterUserCurrentStation(point, recommendedStations);
+        return recommendedStations;
     }
     
     /**
@@ -141,7 +152,9 @@ public class RecommendationSystem {
      */
     public List<Station> recommendByNumberOfSlots(GeoPoint point, List<Station> stations) {
         Comparator<Station> byNumberOfSlots = (s1, s2) -> Integer.compare(s2.availableSlots(), s1.availableSlots());
-        return validStationsToReturnBike(point, stations).stream().sorted(byNumberOfSlots).collect(Collectors.toList());
+        List<Station> recommendedStations = validStationsToReturnBike(point, stations).stream().sorted(byNumberOfSlots).collect(Collectors.toList());
+        filterUserCurrentStation(point, recommendedStations);
+        return recommendedStations;
     }
     
     /**
@@ -202,9 +215,7 @@ public class RecommendationSystem {
         Comparator<Station> byDistance = new ComparatorByDistance(graph, linearDistance, point);
         List<Station> recommendedStations = validStationsToRentBike(point, stations)
         		.stream().sorted(byDistance).collect(Collectors.toList());
-        if(recommendedStations.isEmpty()) {
-            return new ArrayList<>();
-        }
+        //Carlos
         if (recommendedStations.get(0).getPosition().equals(point)) {
         	recommendedStations.remove(0);
         }
@@ -215,20 +226,14 @@ public class RecommendationSystem {
         Comparator<Station> byDistance = new ComparatorByDistance(graph, linearDistance, point);
         List<Station> recommendedStations = validStationsToReturnBike(point, stations)
         		.stream().sorted(byDistance).collect(Collectors.toList());
-        if(recommendedStations.isEmpty()) {
-            return new ArrayList<>();
-        }
         if (recommendedStations.get(0).getPosition().equals(point) ) {
         	recommendedStations.remove(0);
         }
         return recommendedStations;
     }
     
-    public List<Station> recommendByAvailableBikesRatio(GeoPoint point, List<Station> stations) {
-    	Comparator<Station> byBikesRatio = (s1, s2) -> Double.compare((double)s2.availableBikes()/(double)s2
-    			.getCapacity(), (double)s1.availableBikes()/(double)s1.getCapacity());
-
-        int index = 0;
+    private void filterUserCurrentStation(GeoPoint point, List<Station> stations) {
+    	int index = 0;
         while(index < stations.size()) {
             Station stationToRemove = stations.get(index);
             if(stationToRemove.getPosition().equals(point)) {
@@ -238,8 +243,39 @@ public class RecommendationSystem {
             index++;
         }
 
-    	List<Station> recommendedStations = validStationsToRentBike(point, stations)
+    }
+
+    private void balanceWhenRenting(List<Station> stations) {
+    	int percentage = random.nextInt(0, 101);
+    	for(int i=N_STATIONS-1; i>0; i--) {
+    		if (percentage/100 <= stations.get(i).availableBikes()/stations.get(i).getCapacity()) {
+    			stations.add(0, stations.get(i));
+    			break;
+    		}
+    	}
+    			
+    }
+    
+    private void balanceWhenReturning(List<Station> stations) {
+    	int percentage = random.nextInt(0, 101);
+    	for(int i=N_STATIONS-1; i>0; i--) {
+    		if (percentage/100 <= stations.get(i).availableSlots()/stations.get(i).getCapacity()) {
+    			stations.add(0, stations.get(i));
+    			break;
+    		}
+    	}
+    }
+    
+    public List<Station> recommendByAvailableBikesRatio(GeoPoint point, List<Station> stations) {
+    	Comparator<Station> byBikesRatio = (s1, s2) -> Double.compare((double)s2.availableBikes()/(double)s2
+    			.getCapacity(), (double)s1.availableBikes()/(double)s1.getCapacity());
+    	
+    	filterUserCurrentStation(point, stations);
+    	
+     List<Station> recommendedStations = validStationsToRentBike(point, stations)
     			.stream().sorted(byBikesRatio).collect(Collectors.toList());
+    	
+    	balanceWhenRenting(recommendedStations);
 
         return recommendedStations;
     }
@@ -247,22 +283,15 @@ public class RecommendationSystem {
     public List<Station> recommendByAvailableSlotsRatio(GeoPoint point, List<Station> stations) {
     	Comparator<Station> bySlotsRatio = (s1, s2) -> Double.compare((double)s2.availableSlots()/(double)s2
     			.getCapacity(), (double) s1.availableSlots()/(double) s1.getCapacity());
-
-        int index = 0;
-        while(index < stations.size()) {
-            Station stationToRemove = stations.get(index);
-            if(stationToRemove.getPosition().equals(point)) {
-                stations.remove(index);
-                break;
-            }
-            index++;
-        }
+    	
+    	filterUserCurrentStation(point, stations);
 
     	List<Station> recommendedStations = validStationsToReturnBike(point, stations)
     			.stream().sorted(bySlotsRatio).collect(Collectors.toList());
+    	
+    	balanceWhenReturning(recommendedStations);
 
     	return recommendedStations;
     }
     
-
 }

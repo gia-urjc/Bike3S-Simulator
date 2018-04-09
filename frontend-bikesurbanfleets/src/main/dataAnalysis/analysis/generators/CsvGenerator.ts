@@ -11,6 +11,7 @@ import { ReservationAbsoluteValue } from "../absoluteValues/reservations/Reserva
 import { ReservationData } from "../absoluteValues/reservations/ReservationData";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
+import { EmptyStationInfo } from "../absoluteValues/time/EmptyStationInfo";
 import * as json2csv from 'json2csv';
 import * as fs from 'fs';
 
@@ -18,17 +19,21 @@ export class CsvGenerator {
     private csvPath: string;
     private entityInfoTitles: Array<string>;
     private globalInfoTitles: Array<string>;
+    private emptyStationTitles: Array<string>;
    	private stationData: Array<JsonObject>;
    	private userData: Array<JsonObject>;
     private globalInfo: JsonObject;
+    private emptyStationData: Array<JsonObject>;
     
     public constructor(csvPath: string) {
         this.csvPath = csvPath;
         this.entityInfoTitles = new Array();
         this.globalInfoTitles = new Array();
+        this.emptyStationTitles = new Array();
         this.stationData = new Array();
         this.userData = new Array();
         this.globalInfo = {};
+        this.emptyStationData = new Array();
   }
     
   public createJsonFor(entities: Array<Entity>, data: Array<JsonObject>, reservations: SystemInfo, rentalsAndReturns: SystemInfo): void {
@@ -98,6 +103,20 @@ export class CsvGenerator {
         }
         return;
     }
+    
+    private async initEmptyStationInfo(info: Map<string, SystemInfo>): Promise<void> {
+        let emptyStations: SystemInfo | undefined = info.get(EmptyStationInfo.name);
+        if (emptyStations !== undefined) {
+            emptyStations.getData().NAMES.forEach( (name) => this.emptyStationTitles.push(name));
+            emptyStations.getData().absoluteValues.forEach( (v, k) => {
+                let jsonObj: JsonObject = {};
+                jsonObj[this.emptyStationTitles[0]] = v.timeIntervals;
+                jsonObj[this.emptyStationTitles[1]] = v.totalTime;
+                this.emptyStationData.push(jsonObj);
+            });
+        }
+        return;
+    }
 
 	   public async generate(entityInfo: Map<string, SystemInfo>, globalInfo: SystemGlobalInfo, stations: Array<Station>, users: Array<User>): Promise<void> {
          await this.initEntityInfoTitles();
@@ -113,6 +132,10 @@ export class CsvGenerator {
          this.initGlobalInfo(globalInfo).then( () => { 
              this.transformGlobalInfoJsonToCsv();
          });
+           
+           this.initEmptyStationInfo(entityInfo).then( () => {
+               this.transformEmptyStationJsonToCsv();
+           });
          return;
    	}
 
@@ -142,11 +165,20 @@ export class CsvGenerator {
             console.log('global values file saved');
         });
     }
+    
+    private transformEmptyStationJsonToCsv(): void {
+        let csv = json2csv({data: this.emptyStationData, fields: this.emptyStationTitles, withBOM: true });
+        this.checkFolders();
+        fs.writeFile(`${this.csvPath}/empty_stations.csv`, csv, (err) => {
+            if (err) throw err;
+            console.log('empty stations file saved');
+        });        
+    }
 
 	private checkFolders(): void {
         if(!fs.existsSync(this.csvPath)) {
             fs.mkdirSync(this.csvPath);
         }
     }
-
+    
 }  

@@ -1,4 +1,4 @@
-import { AbsoluteValue } from "../AbsoluteValue";
+ import { AbsoluteValue } from "../AbsoluteValue";
 import { Data } from "../Data";
 import { SystemInfo } from "../SystemInfo";
 import { BikesPerStation, StationBikesPerTimeList } from './BikesPerStation';

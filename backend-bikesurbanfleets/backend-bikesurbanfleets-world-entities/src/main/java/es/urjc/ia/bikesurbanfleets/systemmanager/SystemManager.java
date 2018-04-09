@@ -76,7 +76,7 @@ public class SystemManager {
         this.graphManager = createGraphManager(mapPath);
         this.random = SimulationRandom.getGeneralInstance();
         this.bbox = bbox;
-        this.recommendationSystem = new RecommendationSystem(graphManager, linearDistance);
+        this.recommendationSystem = new RecommendationSystem(graphManager, linearDistance, random);
         this.linearDistance = linearDistance;
     }
 
