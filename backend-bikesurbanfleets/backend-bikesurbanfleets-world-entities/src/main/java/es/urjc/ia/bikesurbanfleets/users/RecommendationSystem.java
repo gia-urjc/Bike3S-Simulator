@@ -215,7 +215,6 @@ public class RecommendationSystem {
         Comparator<Station> byDistance = new ComparatorByDistance(graph, linearDistance, point);
         List<Station> recommendedStations = validStationsToRentBike(point, stations)
         		.stream().sorted(byDistance).collect(Collectors.toList());
-        //Carlos
         if (recommendedStations.get(0).getPosition().equals(point)) {
         	recommendedStations.remove(0);
         }

@@ -173,7 +173,6 @@ export class DataGenerator {
     }
     
     public static async create(historyPath: string, csvPath?: string, schemaPath?: string): Promise<DataGenerator> {
-        console.log('creating data generator:', historyPath);
         let generator: DataGenerator = new DataGenerator(historyPath, csvPath, schemaPath);
         try {
             await generator.init();

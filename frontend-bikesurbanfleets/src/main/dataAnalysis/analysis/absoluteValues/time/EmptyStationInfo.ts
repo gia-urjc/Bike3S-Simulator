@@ -1,16 +1,38 @@
- import { AbsoluteValue } from "../AbsoluteValue";
+import { AbsoluteValue } from "../AbsoluteValue";
 import { Data } from "../Data";
 import { SystemInfo } from "../SystemInfo";
 import { BikesPerStation, StationBikesPerTimeList } from './BikesPerStation';
 
-export interface TimeInterval {
+export class TimeInterval {
     start: number;
     end: number;
+    
+    public constructor(start: number, end: number) {
+        this.start = start;
+        this.end = end;
+    }
+    
+    public toString(): string {
+        return "("+this.start+", "+this.end+")";
+    }
 }
  
-export interface EmptyStateAbsoluteValue extends AbsoluteValue {
+export class EmptyStateAbsoluteValue implements AbsoluteValue {
     timeIntervals: Array<TimeInterval>;  
     totalTime: number;
+    
+    public constructor(intervals: Array<TimeInterval>, time: number) {
+        this.timeIntervals = intervals;
+        this.totalTime = time;
+    }
+    
+    public intervalsToString(): string {
+        let str: string = "";
+        this.timeIntervals.forEach( (interval) => {
+           str += interval.toString()+" "; 
+        });
+        return str;
+    }
 }
 
 export class EmptyStateData implements Data {
@@ -55,7 +77,7 @@ export class EmptyStationInfo implements SystemInfo {
                 // TODO: add 1 instant to time if it is the last stationInfo data
                 if (bikesPerTime.availableBikes !== 0) {
                     endTime = bikesPerTime.time;
-                    let interval: TimeInterval = {start: startTime, end: endTime};
+                    let interval: TimeInterval = new TimeInterval(startTime, endTime);
                     intervals.push(interval);
                     time += interval.end - interval.start;
                     startTime = -1;
@@ -63,7 +85,7 @@ export class EmptyStationInfo implements SystemInfo {
                 }
             }
         });
-        return {timeIntervals: intervals, totalTime: time};
+        return new EmptyStateAbsoluteValue(intervals, time);
     }
     
     public static create(stationsInfo: BikesPerStation): EmptyStationInfo {

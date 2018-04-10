@@ -15,7 +15,6 @@ export class HistoryIterator {
     public static async create(history: HistoryReader): Promise<HistoryIterator> {
         let historyIt: HistoryIterator = new HistoryIterator(history);
         try {
-            //console.log('iterator', path);
             historyIt.currentFile = await historyIt.history.nextChangeFile();
         }
         catch(error) {

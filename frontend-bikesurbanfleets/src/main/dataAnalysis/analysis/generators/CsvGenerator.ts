@@ -11,7 +11,7 @@ import { ReservationAbsoluteValue } from "../absoluteValues/reservations/Reserva
 import { ReservationData } from "../absoluteValues/reservations/ReservationData";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
-import { EmptyStationInfo } from "../absoluteValues/time/EmptyStationInfo";
+import { EmptyStationInfo, EmptyStateData } from "../absoluteValues/time/EmptyStationInfo";
 import * as json2csv from 'json2csv';
 import * as fs from 'fs';
 
@@ -107,10 +107,12 @@ export class CsvGenerator {
     private async initEmptyStationInfo(info: Map<string, SystemInfo>): Promise<void> {
         let emptyStations: SystemInfo | undefined = info.get(EmptyStationInfo.name);
         if (emptyStations !== undefined) {
-            emptyStations.getData().NAMES.forEach( (name) => this.emptyStationTitles.push(name));
+             EmptyStateData.NAMES.forEach( (name) => {
+             this.emptyStationTitles.push(name);
+            });
             emptyStations.getData().absoluteValues.forEach( (v, k) => {
                 let jsonObj: JsonObject = {};
-                jsonObj[this.emptyStationTitles[0]] = v.timeIntervals;
+                jsonObj[this.emptyStationTitles[0]] = v.intervalsToString();
                 jsonObj[this.emptyStationTitles[1]] = v.totalTime;
                 this.emptyStationData.push(jsonObj);
             });

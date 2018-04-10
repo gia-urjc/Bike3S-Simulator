@@ -82,17 +82,17 @@ public class UserObedient extends User {
     
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
-        return getMemory().getCounterReservationTimeouts() == parameters.minReservationTimeouts ? true : false;
+        return getMemory().getReservationTimeoutsCounter() == parameters.minReservationTimeouts ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
-        return getMemory().getCounterReservationAttempts() == parameters.minReservationAttempts ? true : false;
+        return getMemory().getReservationAttemptsCounter() == parameters.minReservationAttempts ? true : false;
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
-        return getMemory().getCounterRentingAttempts() == parameters.minRentalAttempts ? true : false;
+        return getMemory().getRentalAttemptsCounter() == parameters.minRentalAttempts ? true : false;
     }
     
     @Override

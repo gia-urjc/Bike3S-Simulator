@@ -108,21 +108,21 @@ public class UserInformed extends User {
     @Override
     public boolean decidesToLeaveSystemAfterTimeout(int instant) {
         return parameters.willReserve ?
-                getMemory().getCounterReservationTimeouts() == parameters.minReservationTimeouts : systemManager.getRandom().nextBoolean();
+                getMemory().getReservationTimeoutsCounter() == parameters.minReservationTimeouts : systemManager.getRandom().nextBoolean();
     }
 
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
         return parameters.willReserve ?
-                getMemory().getCounterReservationAttempts() == parameters.minReservationAttempts : systemManager.getRandom().nextBoolean();
+                getMemory().getReservationAttemptsCounter() == parameters.minReservationAttempts : systemManager.getRandom().nextBoolean();
     }
 
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
         return parameters.willReserve ?
-                getMemory().getCounterRentingAttempts() == parameters.minRentalAttempts : systemManager.getRandom().nextBoolean();
+                getMemory().getRentalAttemptsCounter() == parameters.minRentalAttempts : systemManager.getRandom().nextBoolean();
     }
 
     @Override
