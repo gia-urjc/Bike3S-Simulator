@@ -19,7 +19,7 @@ We should create two Run Configurations. One to generate users, and the other to
 
 #### Users generator configuration 
 - Click on `Run` &rarr; `Edit Configuration`.
-- Select the button `+` &rarr; `Application`.
+- Select the button `+` &rarr; `Application` and name this Run Configuration as you want.
 - Select in Main class the `Application.java` of the `backend-bikesurbanfleets-config-usersgenerator`
 - Inside `Program arguments`, copy and paste the next arguments: [Users generator arguments](bikesurbanfleets-config-usergenerator_Args.md)
 - Select on `Use classpath of module` the module: `bikesurbanfleets-config-usersgenerator`.
@@ -30,7 +30,7 @@ We should create two Run Configurations. One to generate users, and the other to
 #### Core configuration 
 - Click on `Run` &rarr; `Edit Configuration`.
 - Select the button `+` &rarr; `Application`.
-- Select in Main class the `Application.java` of the `backend-bikesurbanfleets-core`
+- Select in Main class the `Application.java` of the `backend-bikesurbanfleets-core` and name this Run Configuration as you want.
 - Inside `Program arguments`, copy and paste the next arguments: [Users generator arguments](bikesurbanfleets-core_Args.md)
 - Select on `Use classpath of module` the module: `bikesurbanfleets-core`.
 - Click `Apply`, then click `Ok`.  
