@@ -16,4 +16,8 @@
 The module `bikesurbanfleets-config-usergenerator` generates users, and the module `bikesurbanfleets-core` simulates. 
 We should create two Run Configurations. One to generate users, and the other to simulate, to run our code with the IDE.
 
+- Click on `Run` &rarr; `Edit Configuration`.
+- Select `Default` &rarr; `Application`.
+- 
+
 
