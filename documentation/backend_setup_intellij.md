@@ -31,7 +31,7 @@ We should create two Run Configurations. One to generate users, and the other to
 - Click on `Run` &rarr; `Edit Configuration`.
 - Select the button `+` &rarr; `Application`.
 - Select in Main class the `Application.java` of the `backend-bikesurbanfleets-core` and name this Run Configuration as you want.
-- Inside `Program arguments`, copy and paste the next arguments: [Users generator arguments](bikesurbanfleets-core_Args.md)
+- Inside `Program arguments`, copy and paste the next arguments: [Core arguments](bikesurbanfleets-core_Args.md)
 - Select on `Use classpath of module` the module: `bikesurbanfleets-core`.
 - Click `Apply`, then click `Ok`.  
 
