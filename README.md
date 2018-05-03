@@ -58,10 +58,10 @@ Below are recommended setups for common IDEs for **backend** and **frontend**.
 ### Backend - Eclipse Link
 
 ## Frontend
-## Frontend - WebStorm Link
-## Frontend - VisualStudio Link
+### Frontend - WebStorm Link
+### Frontend - VisualStudio Link
 
-### Build From Command Line
+## Build From Command Line
 
 # Distribute
 To create a distributable package of the software run `npm run distribute` from the project root. It will compile and
