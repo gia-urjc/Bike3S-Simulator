@@ -1,6 +1,7 @@
 .idea/
 *.iml
 *.csv
+*.swp
 .project
 .classpath
 .vscode/

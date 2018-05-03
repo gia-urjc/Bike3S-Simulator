@@ -1,6 +1,6 @@
 ENVIRONMENT CONFIGURATION 
 
-1. Before run bikesurbanfleets-core, it's necessary to generate objects
+bikesurbanfleets-core args
 
 ARGUMENTS:
 	-globalSchema ../build/schema/global-config.json
@@ -11,7 +11,8 @@ ARGUMENTS:
 	-stationsConfig ../backend-configuration-files/stations-configuration.json
 	-validator ../build/jsonschema-validator/jsonschema-validator.js
 
-2. After that run the core
+bikesurbanfleets-users-generator args
+
 ARGUMENTS 
 	-entryPointsSchema ../build/schema/entrypoints-config.json
 	-globalSchema ../build/schema/global-config.json
