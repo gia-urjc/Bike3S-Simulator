@@ -25,7 +25,7 @@ This project is development environment agnostic. You can use an IDE or just the
 ## General overview of the software architecture
 The project is separated in two principal parts, a **backend** and a **frontend**.
 
-***Image of the architecture***
+![It shows the architecture of the software. It shows two clear parts: backend and frontend](https://raw.githubusercontent.com/stimonm/IAgroup/master/documentation/images/Arquitecture_6.png?token=AGuPV_juVi0iCwu7FYTgolD1aklk7irCks5a9FrLwA%3D%3D?raw=true "Software arquitecture")
 
 The **backend** is related with all the simulation logic. Backend is implemented in Java.
 
