@@ -16,8 +16,10 @@
 The module `bikesurbanfleets-config-usergenerator` generates users, and the module `bikesurbanfleets-core` simulates. 
 We should create two Run Configurations. One to generate users, and the other to simulate, to run our code with the IDE.
 
+**Users generator configuration** 
 - Click on `Run` &rarr; `Edit Configuration`.
 - Select `Default` &rarr; `Application`.
-- 
+- Select in Main class the `Application.java` of the `backend-bikesurbanfleets-config-usersgenerator`
+- Inside Program arguments, copy and paste the next arguments: [Users generator arguments](bikesurbanfleets-config-usergenerator_Args.md "Users generator arguments")
 
 
