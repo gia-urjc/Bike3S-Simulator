@@ -1,6 +1,6 @@
 # Bike3S - A Bike Sharing System Simulator
 
-## What is B3S
+## What is Bike3S
 Bike3S is a simulator created with the idea of test differents situations in real bike sharing systems. 
 Bike sharing systems allow to citizens move between different places. Bike3S give us the posibility to
 simulate and recreate situations, use different types of users, try algorithms and use recomendation
