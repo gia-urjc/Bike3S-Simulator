@@ -35,3 +35,4 @@ We should create two Run Configurations. One to generate users, and the other to
 - Select on `Use classpath of module` the module: `bikesurbanfleets-core`.
 - Click `Apply`, then click `Ok`.  
 
+![Gif with instructions to import the project](gifs/backend_intellij_3.gif)
