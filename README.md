@@ -53,15 +53,15 @@ npm install && node fuse configure:dev
 Below are recommended setups for common IDEs for **backend** and **frontend**.
 
 ## Backend
-### Backend - IntelliJ IDEA Link
-
-### Backend - Eclipse Link
+[Backend Setup - IntelliJ IDEA](documentation/backend_setup_intellij.md)
+[Backend Setup - Eclipse](documentation/backend_setup_eclipse.md)
 
 ## Frontend
-### Frontend - WebStorm Link
-### Frontend - VisualStudio Link
+[Frontend Setup - Webstorm](documentation/frontend_setup_webstorm.md)
+[Frontend Setup - VScode](documentation/frontend_setup_vscode.md)
 
 ## Build From Command Line
+If you want to use any text editor, you can. It's not necessary any IDE to compile, build or distribute this project.
 
 # Distribute
 To create a distributable package of the software run `npm run distribute` from the project root. It will compile and
