@@ -6,7 +6,7 @@ Bike sharing systems allow to citizens move between different places. Bike3S giv
 simulate and recreate situations, use different types of users, try algorithms and use recomendation
 systems... 
 
-The motivation of this project is search ways to rebalance the system with recomendations and incentives.
+The motivation of this project is to search ways to rebalance the system with recomendations and incentives.
 
  
 # Prerequisites
