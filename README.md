@@ -52,8 +52,6 @@ npm install && node fuse configure:dev
 
 Below are recommended setups for common IDEs for **backend** and **frontend**.
 
-Now you should configure your IDE for the **backend**, **frontend** or both.
-
 ### Backend - IntelliJ IDEA
 
 
