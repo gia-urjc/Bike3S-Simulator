@@ -9,7 +9,7 @@
  
  ![Gif with instructions to import the project](gifs/backend_intellij_1.gif "Instructions 1")
 
-2. As you can se this project is separated in modules. 
+2. As you can see this project is separated in modules. 
 
 ![Modules image](images/modules_intellij.png "Instructions 2")
 
