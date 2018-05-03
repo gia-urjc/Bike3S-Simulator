@@ -1,7 +1,7 @@
 # Backend Setup - IntelliJ IDEA
 ## Instructions
 
-1. ### Import the project
+### 1. Import the project
  - Open IntelliJ IDEA. 
  - Select Import Project.
  - The folder you should select is `/backend-bikesurbanfleets/`
@@ -9,14 +9,15 @@
  
  ![Gif with instructions to import the project](gifs/backend_intellij_1.gif)
 
-2. As you can see this project is separated in modules. 
+### 2. Run the project with IntelliJ
+As you can see this project is separated in modules. 
 
 ![Modules image](images/modules_intellij.png)
 
 The module `bikesurbanfleets-config-usergenerator` generates users, and the module `bikesurbanfleets-core` simulates. 
 We should create two Run Configurations. One to generate users, and the other to simulate, to run our code with the IDE.
 
-**Users generator configuration** 
+#### Users generator configuration 
 - Click on `Run` &rarr; `Edit Configuration`.
 - Select the button `+` &rarr; `Application`.
 - Select in Main class the `Application.java` of the `backend-bikesurbanfleets-config-usersgenerator`
@@ -26,7 +27,7 @@ We should create two Run Configurations. One to generate users, and the other to
 
 ![Gif with instructions to import the project](gifs/backend_intellij_2.gif)
 
-**Core configuration** 
+#### Core configuration 
 - Click on `Run` &rarr; `Edit Configuration`.
 - Select the button `+` &rarr; `Application`.
 - Select in Main class the `Application.java` of the `backend-bikesurbanfleets-core`
