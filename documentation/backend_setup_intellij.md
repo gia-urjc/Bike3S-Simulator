@@ -12,3 +12,8 @@
 2. As you can se this project is separated in modules. 
 
 ![Modules image](images/modules_intellij.png "Instructions 2")
+
+The module `bikesurbanfleets-config-usergenerator` generates users, and the module `bikesurbanfleets-core` simulates. 
+We should create two Run Configurations. One to generate users, and the other to simulate, to run our code with the IDE.
+
+
