@@ -20,10 +20,17 @@ We should create two Run Configurations. One to generate users, and the other to
 - Click on `Run` &rarr; `Edit Configuration`.
 - Select the button `+` &rarr; `Application`.
 - Select in Main class the `Application.java` of the `backend-bikesurbanfleets-config-usersgenerator`
-- Inside Program arguments, copy and paste the next arguments: [Users generator arguments](bikesurbanfleets-config-usergenerator_Args.md)
+- Inside `Program arguments`, copy and paste the next arguments: [Users generator arguments](bikesurbanfleets-config-usergenerator_Args.md)
 - Select on `Use classpath of module` the module: `bikesurbanfleets-config-usersgenerator`.
 - Click `Apply`, then click `Ok`.  
 
 ![Gif with instructions to import the project](gifs/backend_intellij_2.gif)
 
+**Core configuration** 
+- Click on `Run` &rarr; `Edit Configuration`.
+- Select the button `+` &rarr; `Application`.
+- Select in Main class the `Application.java` of the `backend-bikesurbanfleets-core`
+- Inside `Program arguments`, copy and paste the next arguments: [Users generator arguments](bikesurbanfleets-core_Args.md)
+- Select on `Use classpath of module` the module: `bikesurbanfleets-core`.
+- Click `Apply`, then click `Ok`.  
 
