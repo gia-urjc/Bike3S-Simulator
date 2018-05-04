@@ -4,4 +4,5 @@ export interface Observer {
 
 export interface Observable {
     notify(data: any): void;
+    subscribe(observer: Observer): void;
 }

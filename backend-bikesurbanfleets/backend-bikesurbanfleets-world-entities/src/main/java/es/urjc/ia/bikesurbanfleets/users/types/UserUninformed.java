@@ -43,10 +43,8 @@ public class UserUninformed extends User {
 
     @Override
     public Station determineStationToRentBike(int instant) {
-
         Station destination = null;
-        List<Station> stations;
-        stations = systemManager.consultStationsWithoutBikeRentalAttemptsOrdered(this);
+        List<Station> stations = systemManager.consultOrderedStationsWithoutBikeRentalAttempts(this);
 
         int index = 0;
         while(index < stations.size()) {
@@ -69,7 +67,7 @@ public class UserUninformed extends User {
     public Station determineStationToReturnBike(int instant) {
 
         List<Station> stations;
-        stations = systemManager.consultStationsWithoutBikeReturnAttemptsOrdered(this);
+        stations = systemManager.consultOrderedStationsWithoutBikeReturnAttempts(this);
 
         Station destination;
 

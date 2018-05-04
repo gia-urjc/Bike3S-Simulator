@@ -4,27 +4,27 @@ import {TimeEntry, Event} from './systemDataTypes/SystemInternalData';
 
 export class HistoryIterator {
     private history: HistoryReader;
-    private currentFile: Array<HistoryTimeEntry>;
-    private pointer: number;
+    private currentFile: Array<HistoryTimeEntry> | undefined;
+    private pointer: number;   // pointer to the time entry is being currently  read
 
-    private constructor() {
-        this.pointer = -1;
-    }
-
-    public static async create(path: string, schemaPath?: string | null): Promise<HistoryIterator> {
-        let historyIt: HistoryIterator = new HistoryIterator();
+    public static async create(history: HistoryReader): Promise<HistoryIterator> {
+        let historyIt: HistoryIterator = new HistoryIterator(history);
         try {
-            historyIt.history = await HistoryReader.create(path, schemaPath);
             historyIt.currentFile = await historyIt.history.nextChangeFile();
         }
-        catch (error) {
-            console.log('There is no available files:', error);
+        catch(error) {
+            throw new Error('Error creating history iterator:'+error);
         }
         return historyIt;
     }
 
-    public async nextTimeEntry(): Promise<TimeEntry> {
-        let timeEntry: TimeEntry = undefined;
+    private constructor(history: HistoryReader) {
+        this.history = history;
+        this.pointer = -1;
+    }
+
+    public async nextTimeEntry(): Promise<TimeEntry | undefined> {
+        let timeEntry: TimeEntry | undefined = undefined;
         if (this.currentFile !== undefined) {
             this.pointer++;
             timeEntry = this.currentFile[this.pointer];

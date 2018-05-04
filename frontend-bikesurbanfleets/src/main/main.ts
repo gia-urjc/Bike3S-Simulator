@@ -7,8 +7,8 @@ import { HistoryReader } from './util';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 import { ipcMain, ipcRenderer } from 'electron';
 import BackendCalls from "./util/BackendCalls";
-import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
 import JsonLoader from "./json-loader/JsonLoader";
+import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;
@@ -89,7 +89,7 @@ export namespace Main {
                     }
 
                     try {
-                        BrowserWindow.addDevToolsExtension(extensionPath);
+                        BrowserWindow.addDevToolsExtension(<string> extensionPath);
                     } catch (e) {
                         console.log(`Couldn't load browser extension ${name} from path ${extensionPath}`);
                     }
@@ -98,7 +98,7 @@ export namespace Main {
 
             createMenuWindow();
             if (menu !== null) {
-                menu.setTitle("Bike Sharing System Simulator");
+                menu.setTitle("Bike3S - Bike Sharing System Simulator");
             }
         });
 
@@ -221,15 +221,13 @@ export namespace Main {
         configuration.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/configuration');
     }
 
-    export async function test() {
-        try {
-            let data: DataGenerator = await DataGenerator.generate('history', 'csvFiles');
-        }
-        catch(error) {
-            console.log('Error: ', error);
-        }
+    
 
+    export async function test(): Promise<void> {
+       let generator: DataGenerator = await DataGenerator.create('build/history', 'csvFiles', 'build/schema');
     }
+       
 }
 
 Main.initMenu();
+Main.test();

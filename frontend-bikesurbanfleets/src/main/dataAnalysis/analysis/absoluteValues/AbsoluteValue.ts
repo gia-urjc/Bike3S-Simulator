@@ -1,4 +1,5 @@
-export interface AbsoluteValue {
-	name: string;
-	value: Map<number, number>;
+import { PlainObject } from "../../../../shared/util";
+
+export interface AbsoluteValue extends PlainObject {
+    
 }

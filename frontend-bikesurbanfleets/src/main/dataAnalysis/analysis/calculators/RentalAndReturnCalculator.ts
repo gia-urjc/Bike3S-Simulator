@@ -2,19 +2,25 @@ import { HistoryReader } from '../../../util';
 import { HistoryIterator } from '../../HistoryIterator';
 import { TimeEntry } from '../../systemDataTypes/SystemInternalData';
 import { Observer, Observable } from '../ObserverPattern';
+import { Calculator } from './Calculator';
 
-export class RentalAndReturnCalculator implements Observable {
+export class RentalAndReturnCalculator implements Calculator {
     private observers: Array<Observer>;
+    private history: HistoryReader;
     
     public constructor() {
         this.observers = new Array<Observer>();
     }
     
-    public async calculateBikeRentalsAndReturns(path: string, schemaPath?: string | null): Promise<void> {
+    public setHistory(history: HistoryReader): void {
+        this.history = history;
+    }
+    
+    public async calculate(): Promise<void> {
         let it: HistoryIterator; 
         try {
-            it = await HistoryIterator.create(path, schemaPath);
-            let timeEntry: TimeEntry = await it.nextTimeEntry();
+            it = await HistoryIterator.create(this.history);
+            let timeEntry: TimeEntry | undefined = await it.nextTimeEntry();
        
             while(timeEntry !== undefined) {
                 this.notify(timeEntry);
@@ -22,7 +28,7 @@ export class RentalAndReturnCalculator implements Observable {
             }
         }
         catch(error) {
-            console.log('error getting time entries:', error);
+            throw new Error('Error getting time entries: '+error);
         }
         return;
     }

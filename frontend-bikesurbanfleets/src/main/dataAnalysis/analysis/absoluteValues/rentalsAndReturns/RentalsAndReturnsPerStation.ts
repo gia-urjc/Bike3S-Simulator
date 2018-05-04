@@ -1,195 +1,138 @@
-import { HistoryReader } from '../../../../util';
-import { HistoryEntitiesJson } from '../../../../../shared/history';
-import { HistoryIterator } from "../../../HistoryIterator";
-import { Observer } from '../../ObserverPattern';
-import  { Station } from '../../../systemDataTypes/Entities';
+import  { Station, User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
+import { Observer } from "../../ObserverPattern";
+import { Data } from "../Data";
+import { SystemInfo } from "../SystemInfo";
+import { RentalAndReturnData } from './RentalAndReturnData';
 
-export class RentalsAndReturnsPerStation implements Observer {
-    private stations: Array<Station>;
-    private bikeFailedRentalsPerStation: Map<number, number>;
-    private bikeSuccessfulRentalsPerStation: Map<number, number>;
-    private bikeFailedReturnsPerStation: Map<number, number>;
-    private bikeSuccessfulReturnsPerStation: Map<number, number>;
-    
-    public constructor() {
-        this.bikeFailedRentalsPerStation= new Map<number, number>();
-        this.bikeSuccessfulRentalsPerStation = new Map<number, number>();
-        this.bikeFailedReturnsPerStation = new Map<number, number>();
-        this.bikeSuccessfulReturnsPerStation = new Map<number, number>();
-    }
-    
-    public async init(path: string, schemaPath?: string | null): Promise<void> {
+export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
+    basicData: Array<Station>;
+    data: Data;
+
+    public static async create(stations: Array<Station>) {
+        let stationValues = new RentalsAndReturnsPerStation(stations);
         try {
-            let history: HistoryReader = await HistoryReader.create(path, schemaPath);
-            let entities: HistoryEntitiesJson = await history.getEntities("stations");
-            this.stations = <Station[]> entities.instances;
-                
-            for(let station of this.stations) {
-                this.bikeFailedRentalsPerStation.set(station.id, 0);
-                this.bikeSuccessfulRentalsPerStation.set(station.id, 0);
-                this.bikeFailedReturnsPerStation.set(station.id, 0);            
-                this.bikeSuccessfulReturnsPerStation.set(station.id, 0);            
-            }
+            await stationValues.init();
         }
         catch(error) {
-            console.log('error getting stations when initializing rentals and returns values:', error);
-        }
-        return;
-    }
-    
-    public static async create(path: string, schemaPath?: string | null): Promise<RentalsAndReturnsPerStation> {
-        let stationValues = new RentalsAndReturnsPerStation();
-        try {
-            await stationValues.init(path, schemaPath);
-        }
-        catch(error) {
-            console.log('error creating station values:', error);
+            throw new Error('Error creating requested data: '+error);
         }
         return stationValues;
     }
-    
+
+
+    public constructor(stations: Array<Station>) {
+        this.basicData = stations;
+        this.data = new RentalAndReturnData();
+    }
+
+    public async init() {
+        try {
+           await this.data.initData(this.basicData);
+        }
+        catch(error) {
+            throw new Error('Error initializing data: '+error);
+        }
+        return;
+    }
+
     public update(timeEntry: TimeEntry): void {
         let events: Array<Event> = timeEntry.events;
-        let stationPosition, routeLastPoint: any;
-        
-        let key: number;
-        let value: number | undefined; 
+        let key: number | undefined;
+        let eventStations: Array<Station>;
         
         for (let event of events) {
-                
-            if (event.name === 'EventUserArrivesAtStationToRentBikeWithReservation' 
-                && event.changes.stations.length > 0) {
-                if (event.changes.stations.length === 1) {
-                    key = event.changes.stations[0].id;
-                }
-                else {
-                    stationPosition = event.changes.users[0].position.new;
-                    key = this.getStationId(stationPosition);
-                }
-    
-                value = this.bikeSuccessfulRentalsPerStation.get(key);
-                if (value !== undefined) {
-                    this.bikeSuccessfulRentalsPerStation.set(key, ++value);
-                }
-            }
+            eventStations = event.changes.stations;
             
-            else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithReservation'
-                && event.changes.stations.length > 0) {
-                if (event.changes.stations.length === 1) {
-                    key = event.changes.stations[0].id;
-                }
-                else {
-                    routeLastPoint = event.changes.users[0].route.old.points.length-1; 
-                    stationPosition = event.changes.users[0].route.old.points[routeLastPoint];
-                    key = this.getStationId(stationPosition);
-                }
-                
-                value = this.bikeSuccessfulReturnsPerStation.get(key);
-                if (value !== undefined) {
-                    this.bikeSuccessfulReturnsPerStation.set(key, ++value);
-                }
-            }
-                
-            else if (event.name === 'EventUserArrivesAtStationToRentBikeWithoutReservation') {
-                if(event.changes.users[0] === undefined) {
-                    console.log(timeEntry);     
-                }
-                routeLastPoint = event.changes.users[0].route.old.points.length-1;            
-                stationPosition = event.changes.users[0].route.old.points[routeLastPoint];
-                key = this.getStationId(stationPosition);
-                    
-                if (event.changes.stations.length > 0) {   
-                    value = this.bikeSuccessfulRentalsPerStation.get(key);
-                    if (value !== undefined) {
-                        this.bikeSuccessfulRentalsPerStation.set(key, ++value);
+            switch(event.name) {
+                case 'EventUserArrivesAtStationToRentBikeWithReservation': { 
+                    key = this.obtainChangedStationId(eventStations);
+                    if (key !== undefined) {  // it's sure key isn't undefined because the user has a bike reservation
+                        this.data.increaseSuccessfulRentals(key);
                     }
+                    break;
                 }
-                else {
-                    value = this.bikeFailedRentalsPerStation.get(key);
-                    if (value !== undefined) {
-                        this.bikeFailedRentalsPerStation.set(key, ++value);
-                    }
-                }
-            }
             
-            else if (event.name === 'EventUserArrivesAtStationToReturnBikeWithoutReservation') {
-                routeLastPoint = event.changes.users[0].route.old.points.length-1; 
-                stationPosition = event.changes.users[0].route.old.points[routeLastPoint];
-                key = this.getStationId(stationPosition);
-                    
-                if (event.changes.stations.length > 0) {
-                    value = this.bikeSuccessfulReturnsPerStation.get(key);
-                    if (value !== undefined) {
-                        this.bikeSuccessfulReturnsPerStation.set(key, ++value);
+                case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
+                    key = this.obtainChangedStationId(eventStations);
+                    if (key !== undefined) {  // it's sure key isn't undefined because the user has a bike reservation
+                        this.data.increaseSuccessfulReturns(key);
                     }
+                    break;
                 }
-                else {
-                    value = this.bikeFailedReturnsPerStation.get(key);
-                    if (value !== undefined) {
-                        this.bikeFailedReturnsPerStation.set(key, ++value);
+                
+                case 'EventUserArrivesAtStationToRentBikeWithoutReservation': {
+                    if (eventStations.length > 0) {
+                        // If only stations with reservations have been recorded, key'll be undefined 
+                        key = this.obtainChangedStationId(eventStations);
+                        // If key is undefined, successful rentals won't be increased
+                        if (key  !== undefined) {
+                            this.data.increaseSuccessfulRentals(key);
+                        }
                     }
+                    
+                    // If there're not registered stations, it means rental hasn't been possible
+                    else {
+                        key = this.obtainNotChangedStationId(event.changes.users[0]);
+                        this.data.increaseFailedRentals(key);
+                    }
+                    break;
+                }
+            
+                case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
+                    if (eventStations.length > 0) {
+                        // If only stations with reservations have been recorded, key'll be undefined
+                        key = this.obtainChangedStationId(eventStations);
+                        // If key is undefined, successful returns won't be increased
+                        if (key !== undefined) {
+                            this.data.increaseSuccessfulReturns(key);
+                        }
+                    }
+                    
+                    // If there're not registered stations, it means rental hasn't been possible
+                    else {
+                        key = this.obtainNotChangedStationId(event.changes.users[0]);
+                        this.data.increaseFailedReturns(key);
+                    }
+                    break;
                 }
             }
         }
     }
     
-    /* This meth<od is used for events of type bike rental or return without reservation,
-     * where involved station may not change its state (user can't rent or return a bike) 
-     * and, then, its id isn't registered.  
-     */ 
-    private getStationId(stationPosition: any): number {
-        let stationId: number = -1;
-        for(let station of this.stations) {
+    /**
+     * It finds out the station id from the last point of the route travelled by a user,
+     * looking for which station is at that point.       
+     */
+    private obtainNotChangedStationId(user: User): number {
+        let lastPos: number = user.route.old.points.length-1;
+        let stationPosition: any = user.route.old.points[lastPos];
+         
+        let stationId = -1;
+        for(let station of this.basicData) {
             if (station.position.latitude === stationPosition.latitude && station.position.longitude === stationPosition.longitude) {
                 stationId = station.id;
                 break; 
             }
         }
-
         return stationId;
     }
     
-    public getBikeFailedRentalsOfStation(stationId: number): number | undefined {
-        return this.bikeFailedRentalsPerStation.get(stationId);
+    /**
+     * It finds out the station id lokking for a change registered on the station 
+     * bikes; if only changes in reservations have been registered, it returns undefined    
+     */
+    private obtainChangedStationId(stations: Array<Station>): number | undefined {
+        for (let station of stations) {
+            if (station.bikes !== undefined) {
+                return station.id;
+            }
+        }
+        return undefined;
     }
     
-    public getBikeSuccessfulRentalsOfStation(stationId: number): number | undefined {
-        return this.bikeSuccessfulRentalsPerStation.get(stationId);
+    public getData(): Data {
+        return this.data;
     }
-    
-    public getBikeFailedReturnsOfStation(stationId: number): number | undefined {
-        return this.bikeFailedReturnsPerStation.get(stationId);
-    }
-    
-    public getBikeSuccessfulReturnsOfStation(stationId: number): number | undefined {
-        return this.bikeSuccessfulReturnsPerStation.get(stationId);
-    }
-  
-  public print(): void {
-    this.bikeFailedReturnsPerStation.forEach( (value, key) => console.log('Station', key, 'Bike failed returns', value));
-    this.bikeFailedRentalsPerStation.forEach( (value, key) => console.log('Station', key, 'Bike failed rentals' ,value));
-    this.bikeSuccessfulReturnsPerStation.forEach( (value, key) => console.log('Station', key, 'Bike successful returns', value));
-    this.bikeSuccessfulRentalsPerStation.forEach( (value, key) => console.log('Station', key, 'Bike successful rentals', value));
-  }
-  
-  public getBikeSuccessfulRentals(): Map<number, number> {
-    return this.bikeSuccessfulRentalsPerStation;
-  }
-  
-  public getBikeSuccessfulReturns(): Map<number, number> {
-    return this.bikeSuccessfulReturnsPerStation;
-  }
-  
-  public getBikeFailedRentals(): Map<number, number> {
-    return this.bikeFailedRentalsPerStation;
-  }
-  
-  public getBikeFailedReturns(): Map<number, number> {
-    return this.bikeFailedReturnsPerStation;
-  }
-
-
-
 
 }

@@ -7,6 +7,17 @@ import { Observer, Observable } from '../ObserverPattern';
 export class ReservationCalculator implements Observable {
     private reservations: Array<Reservation>;
     private observers: Array<Observer>;
+
+    public static async create(path: string, schemaPath?: string | null): Promise<ReservationCalculator> {
+        let it = new ReservationCalculator();
+        try {
+            await it.init(path, schemaPath);
+        }
+        catch(error) {
+            console.log('error creating the reservations iterator: ', error);
+        }
+        return it;
+    }
     
     public constructor() {
         this.observers = new Array<Observer>();
@@ -25,17 +36,6 @@ export class ReservationCalculator implements Observable {
         }
     
         return; 
-    }
-    
-    public static async create(path: string, schemaPath?: string | null): Promise<ReservationCalculator> {
-        let it = new ReservationCalculator();
-        try {
-            await it.init(path, schemaPath);
-        }
-        catch(error) {
-            console.log('error creating the reservations iterator: ', error);
-        }
-        return it;
     }
     
     public async calculateReservations(): Promise<boolean> {
