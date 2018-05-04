@@ -2,6 +2,7 @@
 *.iml
 *.csv
 *.swp
+*.DS_Store
 .project
 .classpath
 .vscode/
