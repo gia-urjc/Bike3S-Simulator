@@ -1,7 +1,8 @@
 {
-    "name": "bike-rental-simulator",
-    "version": "0.0.1",
+    "name": "Bike3S",
+    "version": "0.5.0",
     "main": "frontend/main.js",
+    "author": "URJC",
     "scripts": {
         "install": "napa LeaVerou/conic-gradient",
         "start:electron": "electron ./build",
@@ -9,8 +10,8 @@
         "debug:frontend": "node fuse build:dev"
     },
     "build": {
-        "win": {
-            "target": "7z",
+        "appId": "es.urjc.bike3s",
+        "squirrelWindows": {
             "files": {
                 "from": "build"
             }
@@ -62,17 +63,18 @@
         "@types/commander": "^2.12.2",
         "@types/fs-extra": "^4.0.7",
         "@types/jquery": "^3.3.1",
+        "@types/jsoneditor": "^5.5.2",
         "@types/leaflet": "^1.2.3",
         "@types/leaflet-draw": "^0.4.11",
         "@types/lodash": "^4.14.91",
         "@types/moment": "^2.13.0",
         "@types/node": "^8.5.1",
         "@types/reflect-metadata": "0.0.5",
-        "@types/jsoneditor": "^5.5.2",
         "angular-ide": "^0.9.39",
         "commander": "^2.12.2",
         "electron": "^1.8.1",
-        "electron-builder": "^19.49.2",
+        "electron-builder": "^20.11.1",
+        "electron-installer-squirrel-windows": "^1.3.0",
         "express": "^4.16.2",
         "fliplog": "^1.0.4",
         "fuse-box": "^2.4.0",

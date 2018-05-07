@@ -18,6 +18,7 @@ projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfleets
 projectRoot.frontend.src = () => path.join(projectRoot.frontend(), 'src');
 projectRoot.frontend.main = () => path.join(projectRoot.frontend.src(), 'main');
 projectRoot.frontend.renderer = () => path.join(projectRoot.frontend.src(), 'renderer');
+projectRoot.frontend.assets = () => path.join(projectRoot.frontend(), 'assets');
 
 projectRoot.schema = () => path.join(projectRoot(), 'schema');
 
@@ -33,9 +34,9 @@ projectRoot.build.dataAnalyser = () => path.join(projectRoot.build(), 'data-anal
 projectRoot.fuseCache = () => path.join(projectRoot(), '.fusebox');
 projectRoot.schemaCache = () => path.join(projectRoot(), '.schema');
 
-const production = false;
+let production = false;
 
-const schemaBuildPath = projectRoot.build.schema();
+let schemaBuildPath = projectRoot.build.schema();
 
 
 Sparky.task('clean:backend', () => new Promise((resolve, reject) => {
@@ -53,13 +54,12 @@ maven.on('error', (error) => {
 
 maven.on('close', (code) => {
     if (code === 0) {
-    log.time().green('finished cleaning and install of backend maven dependencies').echo();
-    resolve();
-} else {
-    log.time().red(`maven finished with error code ${code}`).echo();
-    reject();
-}
-});
+        log.time().green('finished cleaning and install of backend maven dependencies').echo();
+        resolve();
+    } else {
+        log.time().red(`maven finished with error code ${code}`).echo();
+        reject();
+    }});
 }));
 
 Sparky.task('build:backend', () => new Promise((resolve, reject) => {
@@ -231,10 +231,16 @@ Sparky.task('build:frontend:renderer', () => {
         });
         renderer.hmr().watch('renderer/**');
     }*/
+
+    //Global css file to build
     const globalCss = path.join(projectRoot.frontend.renderer(), 'styles.css');
     const destination = path.join(projectRoot.build.frontend(), 'styles.css');
-    fs.copySync(globalCss, destination)
+    fs.copySync(globalCss, destination);
 
+    //Icon to build
+    const originIcon = path.join(projectRoot.frontend.assets(), 'icon.ico');
+    const destinationIcon = path.join(projectRoot.build(), 'icon.ico');
+    fs.copySync(originIcon, destinationIcon);
 
     return fuse.run();
 });
@@ -246,23 +252,33 @@ Sparky.task('copy:assets', async () => {
 Sparky.task('clean:build', () => Sparky.src(projectRoot.build()).clean(projectRoot.build()));
 
 Sparky.task('clean:cache:fuse', () => Sparky.src(projectRoot.fuseCache()).clean(projectRoot.fuseCache()));
+
 Sparky.task('clean:cache:schema', () => Sparky.src(projectRoot.schemaCache()).clean(projectRoot.schemaCache()));
 
 Sparky.task('clean:cache', ['clean:cache:fuse', 'clean:cache:schema'], () => {});
+
 
 Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:frontend:main'], () => {
     return Sparky.src(path.join(projectRoot(), 'package.json')).dest(projectRoot.build());
 });
 
 Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});
+
+
 Sparky.task('configure:dev', ['build:dev-backend'], () => {});
 
 Sparky.task('build:dist', () => {
     production = true;
-return Sparky.start('build:dev');
+    Sparky.start('build:dev-backend')
+        .then(() => {
+            return Sparky.start('build:frontend');
+        })
+        .catch((error) => {
+            console.error(error);
+        })
 });
 
 Sparky.task('build:schema:forBackend', () => {
     schemaBuildPath = path.join(projectRoot.backend(), 'schema');
-return Sparky.start('build:schema');
+    return Sparky.start('build:schema');
 });

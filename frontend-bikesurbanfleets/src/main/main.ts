@@ -25,15 +25,24 @@ export namespace Main {
         createConfigurationWindow();
 
         ipcMain.on('open-visualization', (event: any, arg: any) => {
-            if(visualization !== null) visualization.show();
+            if(visualization !== null) {
+                visualization.setTitle("Visualization");
+                visualization.show();
+            }
         });
 
         ipcMain.on('open-simulate', (event: any, arg: any) => {
-            if(simulate !== null) simulate.show();
+            if(simulate !== null) {
+                simulate.setTitle("Simulator");
+                simulate.show();
+            }
         });
 
         ipcMain.on('open-configuration', (event: any, arg: any) => {
-            if(configuration !== null) configuration.show();
+            if(configuration !== null) {
+                configuration.setTitle("Configuration Creator");
+                configuration.show();
+            }
         })
     }
 
@@ -121,6 +130,7 @@ export namespace Main {
 
     function createVisualizationWindow() {
         visualization = new BrowserWindow({ width: 800, height: 600, show: false });
+        visualization.setTitle("Visualization");
 
         visualization.loadURL(urlFormat({
             pathname: join(app.getAppPath(), 'frontend', 'index.html'),
