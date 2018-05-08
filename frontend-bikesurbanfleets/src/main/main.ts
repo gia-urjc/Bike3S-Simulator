@@ -70,8 +70,6 @@ export namespace Main {
             shell.openExternal(url); // opens links (or dragged documents) in external browser
         });
 
-        //menu.webContents.openDevTools();
-
         menu.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/menu');
     }
 
@@ -240,4 +238,6 @@ export namespace Main {
 }
 
 Main.initMenu();
-Main.test();
+if (process.env.target === 'development') {
+    Main.test();
+}

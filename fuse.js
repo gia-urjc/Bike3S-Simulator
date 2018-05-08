@@ -242,6 +242,10 @@ Sparky.task('build:frontend:renderer', () => {
     const destinationIcon = path.join(projectRoot.build(), 'icon.ico');
     fs.copySync(originIcon, destinationIcon);
 
+    const originPackageLock = path.join(projectRoot(), 'package-lock.json');
+    const destinationPackageLock = path.join(projectRoot.build(), 'package-lock.json');
+    fs.copySync(originPackageLock, destinationPackageLock);
+
     return fuse.run();
 });
 

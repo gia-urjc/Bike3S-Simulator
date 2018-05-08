@@ -2,21 +2,24 @@
     "name": "Bike3S",
     "version": "0.5.0",
     "main": "frontend/main.js",
-    "author": "URJC",
+    "author": "URJC <contact@ia.urjc.es>",
+    "homepage": "https://github.com/stimonm/Bike3S",
     "scripts": {
-        "install": "napa LeaVerou/conic-gradient",
         "start:electron": "electron ./build",
-        "distribute": "node fuse build:dist && build",
+        "distribute": "node fuse build:dist && cd build && npm install && build",
         "debug:frontend": "node fuse build:dev"
     },
     "build": {
         "appId": "es.urjc.bike3s",
-        "squirrelWindows": {
-            "files": {
-                "from": "build"
-            }
+        "win": {
+            "target": "msi",
+            "icon": "icon.ico"
         },
-        "asar": false
+        "linux": {
+            "target": "deb",
+            "icon": "256x256.png"
+        },
+        "asar": true
     },
     "dependencies": {
         "@angular/animations": "^5.1.0",
@@ -56,6 +59,8 @@
         "lodash": "^4.17.4",
         "moment": "^2.20.1",
         "ng-font-awesome": "github:tao-cumplido/ng-font-awesome",
+        "conic-gradient": "github:LeaVerou/conic-gradient",
+        "popper.js": "^1.14.3",
         "rxjs": "^5.5.5",
         "zone.js": "^0.8.18"
     },

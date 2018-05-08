@@ -72,8 +72,9 @@ public class History {
             outputPath = Paths.get(outPath);
         }
         File outputDirectory = new File(outPath);
-        FileUtils.deleteDirectory(outputDirectory);
-        outputDirectory.mkdirs();
+        if(outputDirectory.exists() && outputDirectory.isDirectory()) {
+            outputDirectory.mkdirs();
+        }
     }
 
     /**
