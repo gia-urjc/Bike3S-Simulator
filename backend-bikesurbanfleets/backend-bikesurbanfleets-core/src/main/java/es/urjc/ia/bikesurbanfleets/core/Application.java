@@ -1,6 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.core;
 
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
+import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
 import es.urjc.ia.bikesurbanfleets.core.config.ConfigJsonReader;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsInfo;
@@ -8,7 +9,10 @@ import es.urjc.ia.bikesurbanfleets.core.config.UsersInfo;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
 import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -22,12 +26,6 @@ import org.apache.commons.cli.ParseException;
  */
 
 public class Application {
-    
-    private static final String ANSI_RED = "\u001B[31m";
-    private static final String ANSI_GREEN = "\u001B[32m";
-    private static final String ANSI_RESET = "\u001B[0m";
-    private static final String ANSI_YELLOW = "\u001B[33m";
-    
     
     private static CommandLine commandParser(String[] args) throws ParseException {
         
@@ -46,7 +44,7 @@ public class Application {
         
     }
     
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, ValidationException {
         
         CommandLine cmd;
         try {
@@ -55,82 +53,104 @@ public class Application {
             System.out.println("Error reading params");
             throw e1;
         }
+
+        Map<String, String> params = new HashMap<>();
+        params.put("globalSchema",  cmd.getOptionValue("globalSchema");
+        params.put("usersSchema", cmd.getOptionValue("usersSchema"));
+        params.put("stationsSchema", cmd.getOptionValue("stationsSchema"));
+        params.put("globalConfig", cmd.getOptionValue("globalConfig"));
+        params.put("usersConfig", cmd.getOptionValue("usersConfig"));
+        params.put("stationsConfig", cmd.getOptionValue("stationsConfig"));
+        params.put("historyOutputPath", cmd.getOptionValue("historyOutputPath"));
+        params.put("validator", cmd.getOptionValue("validator"));
         
-        String globalSchema = cmd.getOptionValue("globalSchema");
-        String usersSchema = cmd.getOptionValue("usersSchema");
-        String stationsSchema = cmd.getOptionValue("stationsSchema");
-        String globalConfig = cmd.getOptionValue("globalConfig");
-        String usersConfig = cmd.getOptionValue("usersConfig");
-        String stationsConfig = cmd.getOptionValue("stationsConfig");
-        String historyOutputPath = cmd.getOptionValue("historyOutput");
-        String validator = cmd.getOptionValue("validator");
-        
-        if(checkParams(globalSchema, usersSchema, stationsSchema, globalConfig, usersConfig, stationsConfig, validator)) {
-            ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
-            try {
-                GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
-                UsersInfo usersInfo = jsonReader.readUsersConfiguration();
-                StationsInfo stationsInfo = jsonReader.readStationsConfiguration();
-                System.out.println("DEBUG MODE: " + globalInfo.isDebugMode());
-                if(historyOutputPath != null) {
-                    globalInfo.setHistoryOutputPath(historyOutputPath);
-                }
-                SystemManager systemManager = jsonReader.createSystemManager(stationsInfo, globalInfo);
-                SimulationEngine simulation = new SimulationEngine(globalInfo, stationsInfo, usersInfo, systemManager);
-                simulation.run();
-            } catch (Exception e) {
-                e.printStackTrace();
+        checkParams(params);
+        ConfigJsonReader jsonReader = new ConfigJsonReader(params.get("globalConfig"),
+                params.get("stationsConfig"), params.get("usersConfig"));
+
+        try {
+            GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
+            UsersInfo usersInfo = jsonReader.readUsersConfiguration();
+            StationsInfo stationsInfo = jsonReader.readStationsConfiguration();
+            System.out.println("DEBUG MODE: " + globalInfo.isDebugMode());
+            if(params.get("historyOutputPath") != null) {
+                globalInfo.setHistoryOutputPath(params.get("historyOutputPath"));
             }
+            SystemManager systemManager = jsonReader.createSystemManager(stationsInfo, globalInfo);
+            SimulationEngine simulation = new SimulationEngine(globalInfo, stationsInfo, usersInfo, systemManager);
+            simulation.run();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private static boolean checkParams(String globalSchema, String usersSchema, String stationsSchema, String globalConfig, String usersConfig, String stationsConfig, String validator) {
-        boolean result = false;
-        if(globalSchema != null && usersSchema != null && stationsSchema != null
-                && globalConfig != null && stationsConfig != null && validator != null) {
+
+    private static boolean checkParams(Map<String, String> params) throws ValidationException {
+
+        String exMessage = null; // Message for exceptions
+        if(hasAllSchemasAndConfig(params)) {
             try {
 
-                String globalConfigValidation = JsonValidation.validate(globalSchema, globalConfig, validator);
-                String usersConfigValidation = JsonValidation.validate(usersSchema, usersConfig, validator);
-                String stationsConfigValidation = JsonValidation.validate(stationsSchema, stationsConfig, validator);
+                ValidationParams vParams = new ValidationParams();
+                vParams.setSchemaDir(params.get("globalSchema"))
+                        .setJsonDir(params.get("globalConfig"))
+                        .setJsValidatorDir(params.get("validator"));
 
-                if((!globalConfigValidation.equals("OK") || !usersConfigValidation.equals("OK") || !stationsConfigValidation.equals("OK"))
-                        && (!globalConfig.equals("NODE_NOT_INSTALLED"))) {
-                    System.out.println(ANSI_RED +"JSON has errors" + ANSI_RESET);
-                    System.out.println(ANSI_RED + "Global configuration errors" + ANSI_RESET);
-                    System.out.println(globalConfigValidation);
-                    System.out.println(ANSI_RED + "Stations configuration errors" + ANSI_RESET);
-                    System.out.println(stationsConfigValidation);
-                    System.out.println(ANSI_RED + "Users configuration errors" + ANSI_RESET);
-                    System.out.println(usersConfigValidation);
-                    result = true;
-                    return false;
+                String globalConfigValidation = validate(vParams);
+
+                vParams.setSchemaDir(params.get("usersSchema")).setJsonDir(params.get("usersConfig"));
+                String usersConfigValidation = validate(vParams);
+
+                vParams.setSchemaDir(params.get("stationsSchema")).setJsonDir(params.get("stationsConfig"));
+                String stationsConfigValidation = validate(vParams);
+
+                if((!globalConfigValidation.equals("OK")
+                        || !usersConfigValidation.equals("OK") || !stationsConfigValidation.equals("OK"))
+                        && (!globalConfigValidation.equals("NODE_NOT_INSTALLED"))) {
+
+                    exMessage = "JSON has errors \n Global configuration errors \n" + globalConfigValidation + "\n" +
+                            "Stations configuration errors \n" + stationsConfigValidation + "\n" +
+                            "Users configuration errors \n" + usersConfigValidation;
+
                 } else if (globalConfigValidation.equals("NODE_NOT_INSALLED")) {
-                    System.out.println(ANSI_RED + "Node is necessary to execute validator: " + validator + ". \n"
-                            + "Verify if node is installed or install node" + ANSI_RESET);
-                } else if(globalConfigValidation.equals("OK") && stationsConfigValidation.equals("OK") && usersConfigValidation.equals("OK")) {
-                    System.out.println(ANSI_GREEN + "Validation configuration input: OK" + ANSI_RESET);
-                    result = true;
+
+                    exMessage += "Node is necessary to execute validator: " + params.get("validator") + ". \n" +
+                            "Verify if node is installed or install node";
+
+                } else if(globalConfigValidation.equals("OK") && stationsConfigValidation.equals("OK")
+                        && usersConfigValidation.equals("OK")) {
+
+                    exMessage += "Validation configuration input: OK\n";
                 }
             } catch (Exception e) {
-                System.out.println(ANSI_RED + "Fail executing validation" + ANSI_RESET);
-                e.printStackTrace();
+
+                exMessage = "Fail executing validation + \n" + e.toString();
             }
         }
         else if(globalConfig == null || stationsConfig == null || usersConfig == null) {
-            System.out.println(ANSI_RED + "You should specify a configuration file" + ANSI_RESET);
-            result = false;
+            exMessage = "You should specify a configuration file";
         }
         else if((globalSchema == null || usersSchema == null || stationsSchema == null) && validator != null) {
-            System.out.println(ANSI_RED + "You should specify all schema paths" + ANSI_RESET);
-            result = false;
+            exMessage = "You should specify all schema paths";
+
         }
         else if(validator == null) {
-            System.out.println(ANSI_YELLOW + "Warning, you don't specify a validator, configuration file will not be validated"
-                    + " on backend" + ANSI_RESET);
-            result = true;
+            exMessage = "Warning, you don't specify a validator, configuration file will not be validated on backend";
         }
-        return result;
+
+        if(exMessage != null) {
+            throw new ValidationException(exMessage);
+        }
     }
-    
+
+    public static boolean hasAllSchemasAndConfig(Map<String, String> params) {
+        return params.get("globalSchema") != null && params.get("usersSchema") != null
+                && params.get("stationsSchema") != null && params.get("globalConfig") != null
+                && params.get("stationsConfig") != null && params.get("validator") != null;
+    }
+
+    public static String validate(ValidationParams vParams) throws Exception {
+        return JsonValidation.validate(vParams);
+    }
+
 }
