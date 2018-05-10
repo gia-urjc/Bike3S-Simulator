@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
+import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.config.EntryPointInfo;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint;
 
@@ -38,8 +39,10 @@ public class ConfigurationIO {
     }
 
     public EntryPointInfo readPreConfigEntryPoints(String entryPointConfigPath) throws Exception {
-        if(pathJsonValidator != null){
-            String resultValidation = JsonValidation.validate(entryPointSchema, entryPointConfigPath, pathJsonValidator);
+        if(pathJsonValidator != null) {
+            ValidationParams vParams = new ValidationParams();
+            vParams.setSchemaDir(entryPointSchema).setJsonDir(entryPointConfigPath).setJsValidatorDir(pathJsonValidator);
+            String resultValidation = JsonValidation.validate(vParams);
             if(!resultValidation.equals("OK")) {
                 System.out.println(ANSI_RED + "ValidationInput " + resultValidation);
                 throw new Exception(resultValidation);
@@ -50,8 +53,10 @@ public class ConfigurationIO {
     }
 
     public GlobalInfo readPreConfigGlobalInfo(String globalConfigPath) throws Exception {
-        if(pathJsonValidator != null){
-            String resultValidation = JsonValidation.validate(globalConfigSchema, globalConfigPath, pathJsonValidator);
+        if(pathJsonValidator != null) {
+            ValidationParams vParams = new ValidationParams();
+            vParams.setSchemaDir(globalConfigSchema).setJsonDir(globalConfigPath).setJsValidatorDir(pathJsonValidator);
+            String resultValidation = JsonValidation.validate(vParams);
             if(!resultValidation.equals("OK")) {
                 System.out.println(ANSI_RED + "ValidationInput " + resultValidation);
                 throw new Exception(resultValidation);
