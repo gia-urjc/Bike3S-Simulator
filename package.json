@@ -19,7 +19,7 @@
             "target": "deb",
             "icon": "256x256.png"
         },
-        "asar": true
+        "asar": false
     },
     "dependencies": {
         "@angular/animations": "^5.1.0",

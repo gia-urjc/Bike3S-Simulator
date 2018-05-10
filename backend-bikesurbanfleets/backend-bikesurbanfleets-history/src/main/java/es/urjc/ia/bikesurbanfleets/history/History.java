@@ -71,7 +71,7 @@ public class History {
         if(outPath != null) {
             outputPath = Paths.get(outPath);
         }
-        File outputDirectory = new File(outPath);
+        File outputDirectory = new File(outputPath.toString());
         if(outputDirectory.exists() && outputDirectory.isDirectory()) {
             outputDirectory.mkdirs();
         }

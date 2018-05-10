@@ -77,6 +77,7 @@ export default class BackendCalls {
         return new Promise((resolve: any, reject: any) => {
 
             let rootPath = app.getAppPath();
+            console.log(rootPath);
 
             const userGen = spawn('java', [
                 '-jar',
@@ -119,6 +120,8 @@ export default class BackendCalls {
     simulate(args: CoreSimulatorArgs): Promise<void> {
         return new Promise((resolve: any, reject: any) => {
             let rootPath = app.getAppPath();
+            console.log(rootPath);
+
             const sim = spawn('java', [
                 '-jar',
                 'bikesurbanfleets-core-1.0.jar',
@@ -135,7 +138,7 @@ export default class BackendCalls {
                 shell: true
             });
 
-            sim.stderr.on('error', (error) => {
+            sim.stderr.on('data', (error) => {
                 if(this.window) {
                     console.log(error.toString());
                     this.window.webContents.send('core-error', error);

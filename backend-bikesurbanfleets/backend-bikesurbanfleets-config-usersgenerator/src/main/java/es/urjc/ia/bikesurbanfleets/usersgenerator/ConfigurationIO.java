@@ -14,11 +14,6 @@ import java.util.List;
 
 public class ConfigurationIO {
 
-    private static final String ANSI_RED = "\u001B[31m";
-    private static final String ANSI_GREEN = "\u001B[32m";
-    private static final String ANSI_RESET = "\u001B[0m";
-    private static final String ANSI_YELLOW = "\u001B[33m";
-
     private Gson gson;
     private String pathJsonValidator;
     private String entryPointSchema;
@@ -27,8 +22,8 @@ public class ConfigurationIO {
     public ConfigurationIO() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.pathJsonValidator = null;
-        System.out.println(ANSI_YELLOW + "Warning: You're not using an schema validator, if you generate users not " +
-                "defined in the schema the configuration file will not work" + ANSI_RESET);
+        System.out.println("Warning: You're not using an schema validator, if you generate users not " +
+                "defined in the schema the configuration file will not work");
     }
 
     public ConfigurationIO(String pathSchemaValidator, String entryPointSchema, String globalConfigSchema) {
@@ -44,10 +39,10 @@ public class ConfigurationIO {
             vParams.setSchemaDir(entryPointSchema).setJsonDir(entryPointConfigPath).setJsValidatorDir(pathJsonValidator);
             String resultValidation = JsonValidation.validate(vParams);
             if(!resultValidation.equals("OK")) {
-                System.out.println(ANSI_RED + "ValidationInput " + resultValidation);
+                System.out.println("ValidationInput " + resultValidation);
                 throw new Exception(resultValidation);
             }
-            System.out.println("Validation Entry Points configuration input: " + ANSI_GREEN + resultValidation + ANSI_RESET);
+            System.out.println("Validation Entry Points configuration input: "+ resultValidation);
         }
         return gson.fromJson(new JsonReader(new FileReader(entryPointConfigPath)), EntryPointInfo.class);
     }
@@ -58,10 +53,10 @@ public class ConfigurationIO {
             vParams.setSchemaDir(globalConfigSchema).setJsonDir(globalConfigPath).setJsValidatorDir(pathJsonValidator);
             String resultValidation = JsonValidation.validate(vParams);
             if(!resultValidation.equals("OK")) {
-                System.out.println(ANSI_RED + "ValidationInput " + resultValidation);
+                System.out.println("ValidationInput " + resultValidation);
                 throw new Exception(resultValidation);
             }
-            System.out.println("Validation global configuration input: " + ANSI_GREEN + resultValidation + ANSI_RESET);
+            System.out.println("Validation global configuration input: "+ resultValidation);
         }
         return gson.fromJson(new JsonReader(new FileReader(globalConfigPath)), GlobalInfo.class);
     }
@@ -82,7 +77,7 @@ public class ConfigurationIO {
         FileWriter file = new FileWriter(outputConfPath);
         gson.toJson(confJson, file);
         file.close();
-        System.out.println(ANSI_GREEN + "Configuration created without problems in:" + ANSI_RESET);
+        System.out.println("Configuration created without problems in:");
         System.out.println(outputConfPath);
     }
 

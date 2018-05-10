@@ -232,19 +232,24 @@ Sparky.task('build:frontend:renderer', () => {
         renderer.hmr().watch('renderer/**');
     }*/
 
+    const originPackageLock = path.join(projectRoot(), 'package-lock.json');
+    const destinationPackageLock = path.join(projectRoot.build(), 'package-lock.json');
+    fs.copySync(originPackageLock, destinationPackageLock);
+
     //Global css file to build
     const globalCss = path.join(projectRoot.frontend.renderer(), 'styles.css');
     const destination = path.join(projectRoot.build.frontend(), 'styles.css');
     fs.copySync(globalCss, destination);
 
-    //Icon to build
-    const originIcon = path.join(projectRoot.frontend.assets(), 'icon.ico');
-    const destinationIcon = path.join(projectRoot.build(), 'icon.ico');
-    fs.copySync(originIcon, destinationIcon);
+    //Icons to build - Windows
+    const originIconWin = path.join(projectRoot.frontend.assets(), 'icon.ico');
+    const destinationIconWin = path.join(projectRoot.build(), 'icon.ico');
+    fs.copySync(originIconWin, destinationIconWin);
 
-    const originPackageLock = path.join(projectRoot(), 'package-lock.json');
-    const destinationPackageLock = path.join(projectRoot.build(), 'package-lock.json');
-    fs.copySync(originPackageLock, destinationPackageLock);
+    //Icons to build - Debian
+    const originIconDeb = path.join(projectRoot.frontend.assets(), '256x256.png');
+    const destinationIconDeb = path.join(projectRoot.build(), '256x256.png');
+    fs.copySync(originIconDeb, destinationIconDeb);
 
     return fuse.run();
 });

@@ -40,7 +40,7 @@ public class Application {
         options.addOption("globalConfig", true, "Directory to the global configuration file");
         options.addOption("usersConfig", true, "Directory to the users configuration file");
         options.addOption("stationsConfig", true, "Directory to the stations configuration file");
-        options.addOption("historyOutputPath", true, "History Path for the simulation");
+        options.addOption("historyOutput", true, "History Path for the simulation");
         options.addOption("validator", true, "Directory to the js validator");
     
         CommandLineParser parser = new DefaultParser();
@@ -48,7 +48,7 @@ public class Application {
         
     }
     
-    public static void main(String[] args) throws ParseException, ValidationException {
+    public static void main(String[] args) throws Exception {
         
         CommandLine cmd;
         try {
@@ -64,7 +64,7 @@ public class Application {
         globalConfig = cmd.getOptionValue("globalConfig");
         usersConfig = cmd.getOptionValue("usersConfig");
         stationsConfig = cmd.getOptionValue("stationsConfig");
-        historyOutputPath = cmd.getOptionValue("historyOutputPath");
+        historyOutputPath = cmd.getOptionValue("historyOutput");
         validator = cmd.getOptionValue("validator");
         
         checkParams(); // If not valid, throws exception
@@ -87,43 +87,41 @@ public class Application {
     }
 
 
-    private static void checkParams() throws ValidationException {
+    private static void checkParams() throws Exception {
 
         String exMessage = null; // Message for exceptions
         if(hasAllSchemasAndConfig()) {
-            try {
 
-                ValidationParams vParams = new ValidationParams();
-                vParams.setSchemaDir(globalSchema).setJsonDir(globalConfig).setJsValidatorDir(validator);
-                String globalConfigValidation = validate(vParams);
+            ValidationParams vParams = new ValidationParams();
+            vParams.setSchemaDir(globalSchema).setJsonDir(globalConfig).setJsValidatorDir(validator);
+            String globalConfigValidation = validate(vParams);
 
-                vParams.setSchemaDir(usersSchema).setJsonDir(usersConfig);
-                String usersConfigValidation = validate(vParams);
+            vParams.setSchemaDir(usersSchema).setJsonDir(usersConfig);
+            String usersConfigValidation = validate(vParams);
 
-                vParams.setSchemaDir(stationsSchema).setJsonDir(stationsConfig);
-                String stationsConfigValidation = validate(vParams);
+            vParams.setSchemaDir(stationsSchema).setJsonDir(stationsConfig);
+            String stationsConfigValidation = validate(vParams);
 
-                if((!globalConfigValidation.equals("OK")
-                        || !usersConfigValidation.equals("OK") || !stationsConfigValidation.equals("OK"))
-                        && (!globalConfigValidation.equals("NODE_NOT_INSTALLED"))) {
+            System.out.println(globalConfigValidation);
+            System.out.println(usersConfigValidation);
+            System.out.println(stationsConfigValidation);
 
-                    exMessage = "JSON has errors \n Global configuration errors \n" + globalConfigValidation + "\n" +
-                            "Stations configuration errors \n" + stationsConfigValidation + "\n" +
-                            "Users configuration errors \n" + usersConfigValidation;
+            if((!globalConfigValidation.equals("OK")
+                    || !usersConfigValidation.equals("OK") || !stationsConfigValidation.equals("OK"))) {
 
-                } else if (globalConfigValidation.equals("NODE_NOT_INSALLED")) {
+                exMessage = "JSON has errors \n Global configuration errors \n" + globalConfigValidation + "\n" +
+                        "Stations configuration errors \n" + stationsConfigValidation + "\n" +
+                        "Users configuration errors \n" + usersConfigValidation;
 
-                    exMessage += "Node is necessary to execute validator: " + validator + ". \n" +
-                            "Verify if node is installed or install node";
+            } else if (globalConfigValidation.equals("NODE_NOT_INSALLED")) {
 
-                } else if(globalConfigValidation.equals("OK") && stationsConfigValidation.equals("OK")
-                        && usersConfigValidation.equals("OK")) {
+                exMessage = "Node is necessary to execute validator: " + validator + ". \n" +
+                        "Verify if node is installed or install node";
 
-                    exMessage += "Validation configuration input: OK\n";
-                }
-            } catch (Exception e) {
+            } else if(globalConfigValidation.equals("OK") && stationsConfigValidation.equals("OK")
+                    && usersConfigValidation.equals("OK")) {
 
-                exMessage = "Fail executing validation + \n" + e.toString();
+                System.out.println("Validation configuration input: OK\n");
             }
         }
         else if(globalConfig == null || stationsConfig == null || usersConfig == null) {
@@ -137,7 +135,8 @@ public class Application {
             exMessage = "Warning, you don't specify a validator, configuration file will not be validated on backend";
         }
 
-        if(exMessage == null) {
+        if(exMessage != null) {
+            System.out.println("Exception");
             throw new ValidationException(exMessage);
         }
     }

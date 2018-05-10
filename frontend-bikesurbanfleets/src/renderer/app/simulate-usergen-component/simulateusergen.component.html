@@ -26,7 +26,7 @@
             <button class="browse-button btn btn-default" (click)="usersOutputFolder = selectFolder(s)">Select Folder</button>
         </div>
     </div>
-    <button class="submit-button btn btn-default" (click)="generateUsers()">Submit</button>
+    <button class="submit-button btn btn-default" (click)="generateUsers()">Generate Users</button>
 </form>
 
 <ng-template #content let-c="close" let-d="dismiss">
@@ -39,11 +39,11 @@
     <div class="modal-body">
         <div *ngIf="errors">
             <p>Console errors</p>
-            <textarea id="exceptions-textarea" name="exceptions-textarea" readonly rows="8" cols="73">{{exceptions}}</textarea>
+            <textarea id="exceptions-textarea" name="exceptions-textarea" readonly rows="8" cols="63">{{exceptions}}</textarea>
         </div>
         <div *ngIf="!errors">
             <p>Console Output</p>
-            <textarea id="stdout-textarea" name="exceptions-textarea" readonly rows="8" cols="73">{{stdout}}</textarea>
+            <textarea id="stdout-textarea" name="exceptions-textarea" readonly rows="8" cols="63">{{stdout}}</textarea>
         </div>
     </div>
     <div class="modal-footer">
