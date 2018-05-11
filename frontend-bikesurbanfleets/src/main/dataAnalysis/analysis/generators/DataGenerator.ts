@@ -1,5 +1,7 @@
 import { HistoryReader } from "../../../util";
 import { Data } from '../absoluteValues/Data';
+
+import { Iterator } from '../iterators/Iterator';
 import { SystemInfo } from "../absoluteValues/SystemInfo";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
@@ -7,8 +9,8 @@ import { ReservationsPerStation } from "../absoluteValues/reservations/Reservati
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
 import { BikesPerStation } from "../absoluteValues/time/BikesPerStation";
 import { EmptyStationInfo } from "../absoluteValues/time/EmptyStationInfo";
-import { ReservationCalculator } from "../calculators/ReservationCalculator";
-import { RentalAndReturnCalculator } from "../calculators/RentalAndReturnCalculator";
+import { ReservationIterator } from "../iterators/ReservationIterator";
+import { TimeEntryIterator } from "../iterators/TimeEntryIterator";
 import { SystemReservations } from "../systemEntities/SystemReservations";
 import { SystemStations } from "../systemEntities/SystemStations";
 import { SystemUsers } from "../systemEntities/SystemUsers";
@@ -39,23 +41,11 @@ export class DataGenerator {
     private info: Map<string, SystemInfo>;  // it contains all the results of the data analysis
     private globalInfo: SystemGlobalInfo; 
     private bikesPerStation: BikesPerStation;
-    private reservationCalculator: ReservationCalculator;
-    private rentalAndReturnCalculator: RentalAndReturnCalculator;
-
-    public static async create(historyPath: string, csvPath?: string, schemaPath?: string): Promise<DataGenerator> {
-        let generator: DataGenerator = new DataGenerator(historyPath, csvPath, schemaPath);
-        try {
-            await generator.init();
-            await generator.generate();
-        }
-        catch(error) {
-            throw new Error('Error initializing data generator: '+error);
-        }
-        return generator;
-    }
+    private iterators: Map<string, Iterator>;
+    
 
     private constructor(historyPath: string, csvPath?: string, schemaPath?: string) {
-        this.csv = csvPath === undefined ? false: true;
+        this.csv = csvPath == undefined ? false: true;
         this.historyPath = historyPath;
         this.schemaPath = schemaPath;
         this.csvPath = csvPath;
@@ -65,8 +55,7 @@ export class DataGenerator {
         this.bikesPerStationCounter = 0;
         this.info = new Map();
         this.bikesPerStation = new BikesPerStation();
-        this.rentalAndReturnCalculator = new RentalAndReturnCalculator();
-        this.reservationCalculator = new ReservationCalculator();
+        this.iterators = new Map();
         this.systemStations = new SystemStations();
         this.systemUsers = new SystemUsers();
         this.systemReservations = new SystemReservations();
@@ -75,7 +64,6 @@ export class DataGenerator {
     private async init(): Promise<void> {
         try {
             this.history = await HistoryReader.create(this.historyPath, this.schemaPath);
-            this.rentalAndReturnCalculator.setHistory(this.history);
         }
         catch(error) {
             throw new Error('Error reading history file: '+error);
@@ -100,14 +88,20 @@ export class DataGenerator {
     }
 
     public async generate(): Promise<void> {
+        let reservationIterator: ReservationIterator = new ReservationIterator();  
+        let timeEntryIterator: TimeEntryIterator = new TimeEntryIterator();
+        timeEntryIterator.setHistory(this.history);
+        this.iterators.set(ReservationIterator.name, reservationIterator);
+        this.iterators.set(TimeEntryIterator.name, timeEntryIterator);
+        
         // Getting reservations' initial state information and initializing analysis data which need it
         this.systemReservations.init(this.history).then( () => {
             this.bikesPerStation.setReservations(this.systemReservations.getReservations());
             this.bikesPerStationCounter++;
-            this.rentalAndReturnCalculator.subscribe(this.bikesPerStation);          
+            timeEntryIterator.subscribe(this.bikesPerStation);          
             this.calculateRentalsAndReturns();
             
-            this.reservationCalculator.setReservations(this.systemReservations.getReservations());
+            reservationIterator.setReservations(this.systemReservations.getReservations());
             this.reservationCounter++;
             this.calculateReservations();
         }); 
@@ -115,12 +109,12 @@ export class DataGenerator {
         // Getting stations' initial state information and initializing data of analysis which need it     
         this.systemStations.init(this.history).then( () => {
             let reservations: ReservationsPerStation = new ReservationsPerStation(this.systemStations.getStations());
-            this.reservationCalculator.subscribe(reservations);
+            reservationIterator.subscribe(reservations);
             this.info.set(ReservationsPerStation.name, reservations);
             this.initReservations(reservations);  // it's async
 
             let rentalsAndReturns: RentalsAndReturnsPerStation = new RentalsAndReturnsPerStation(this.systemStations.getStations()); 
-            this.rentalAndReturnCalculator.subscribe(rentalsAndReturns);
+            timeEntryIterator.subscribe(rentalsAndReturns);
             this.info.set(RentalsAndReturnsPerStation.name, rentalsAndReturns);  
             this.initRentalsAndReturns(rentalsAndReturns);  // it's async
             
@@ -133,12 +127,12 @@ export class DataGenerator {
         // Getting users' initial state information and initializing data of analysis which need it
         this.systemUsers.init(this.history).then( () => {
             let reservations: ReservationsPerUser = new ReservationsPerUser(this.systemUsers.getUsers());
-            this.reservationCalculator.subscribe(reservations);
+            reservationIterator.subscribe(reservations);
             this.info.set(ReservationsPerUser.name, reservations);
             this.initReservations(reservations);
 
             let rentalsAndReturns: RentalsAndReturnsPerUser = new RentalsAndReturnsPerUser(this.systemUsers.getUsers()); 
-            this.rentalAndReturnCalculator.subscribe(rentalsAndReturns);
+            timeEntryIterator.subscribe(rentalsAndReturns);
             this.info.set(RentalsAndReturnsPerUser.name, rentalsAndReturns);  
             this.initRentalsAndReturns(rentalsAndReturns);
         });
@@ -147,7 +141,7 @@ export class DataGenerator {
 
     private async calculateReservations(): Promise<void> {
         if (this.reservationCounter === this.RESERVATIONS) {
-            this.reservationCalculator.calculate().then( () => {
+            this.iterators.get(ReservationIterator.name).iterate().then( () => {
             this.calculationCounter++;
                 this.calculateGlobalInfo();
             });
@@ -157,7 +151,7 @@ export class DataGenerator {
 
     private async calculateRentalsAndReturns(): Promise<void> {
         if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStationCounter === this.BIKES_PER_STATION) {
-            this.rentalAndReturnCalculator.calculate().then( () => {
+            this.iterators.get(TimeEntryIterator.name).iterate().then( () => {
                 let emptyStations: EmptyStationInfo = new EmptyStationInfo(this.bikesPerStation);
                 emptyStations.init();
                 this.info.set(EmptyStationInfo.name, emptyStations);
@@ -174,6 +168,9 @@ export class DataGenerator {
             this.globalInfo = new SystemGlobalInfo(this.systemUsers.getUsers());
             let reservations: SystemInfo | undefined = this.info.get(ReservationsPerStation.name);
             let rentalsAndReturns: SystemInfo | undefined = this.info.get(RentalsAndReturnsPerStation.name);
+            
+            rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => console.log(v.failedRentals));
+                console.log(rentalsAndReturns.getData().absoluteValues.get(4).failedRentals);
             if(reservations && rentalsAndReturns) {
                 this.globalInfo.calculateGlobalData(reservations, rentalsAndReturns);
                 if (this.csv) {
@@ -182,6 +179,18 @@ export class DataGenerator {
             }
         }
         return;
+    }
+    
+    public static async create(historyPath: string, csvPath?: string, schemaPath?: string): Promise<DataGenerator> {
+        let generator: DataGenerator = new DataGenerator(historyPath, csvPath, schemaPath);
+        try {
+            await generator.init();
+            await generator.generate();
+        }
+        catch(error) {
+            throw new Error('Error initializing data generator: '+error);
+        }
+        return generator;
     }
    
     private async write(): Promise<void> {
@@ -198,7 +207,7 @@ export class DataGenerator {
     }
 
     public getInfo(): Map<string, SystemInfo> {
-		return this.info;
-	}
+        return this.info;
+    }
      
 }
