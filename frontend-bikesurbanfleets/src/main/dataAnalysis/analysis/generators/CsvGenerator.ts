@@ -16,6 +16,7 @@ import * as json2csv from 'json2csv';
 import * as fs from 'fs';
 
 export class CsvGenerator {
+	private static readonly NUM_DATA: number = 4;
     private csvPath: string;
     private entityInfoTitles: Array<string>;
     private globalInfoTitles: Array<string>;
@@ -45,7 +46,7 @@ export class CsvGenerator {
         
         jsonObj.id = entity.id;
         
-        while (j < 4) {   // adding reservations' data
+        while (j < NUM_DATA) {   // adding reservations' data
             let reservationValues: AbsoluteValue | undefined = reservations.getData().absoluteValues.get(entity.id);
             if (reservationValues !== undefined) {
                 let absValueList: Array<number> = reservationValues.getAbsoluteValuesAsArray();
@@ -56,7 +57,7 @@ export class CsvGenerator {
         }
         
         j = 0;
-        while (j < 4) {   // adding rentals and returns' data
+        while (j < NUM_DATA) {   // adding rentals and returns' data
             let rentalAndReturnValues: AbsoluteValue | undefined = rentalsAndReturns.getData().absoluteValues.get(entity.id);
             if (rentalAndReturnValues !== undefined) {
                 let absValueList: Array<number> = rentalAndReturnValues.getAbsoluteValuesAsArray();
@@ -66,6 +67,8 @@ export class CsvGenerator {
             }
         }
         data.push(jsonObj);
+		i = 1;
+		j = 0;
     }
   }
 
