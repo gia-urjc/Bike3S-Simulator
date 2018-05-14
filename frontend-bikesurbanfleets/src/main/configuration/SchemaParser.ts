@@ -64,7 +64,6 @@ export default class {
         delete finalStationSchema.properties.bikes.anyOf;
         finalStationSchema.properties.bikes = finalBikeSchema;
         delete finalStationSchema.properties.bikes.maximum;
-        console.log(finalStationSchema);
         return finalStationSchema;
     }
 
@@ -72,7 +71,6 @@ export default class {
         let finalGlobalSchema: any = _.cloneDeep(configSch);
         delete finalGlobalSchema.$schema;
         delete finalGlobalSchema.properties.reservationTime.maximum; //TODO reference from total time
-        console.log(finalGlobalSchema);
         return finalGlobalSchema;
     }
 }

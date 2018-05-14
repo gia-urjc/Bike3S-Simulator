@@ -59,7 +59,6 @@ export default class SchemaFormGenerator{
             },
             required: ["entryPointType", "userType"]
         };
-        console.log(schema);
         return schema;
     }
 
@@ -85,7 +84,6 @@ export default class SchemaFormGenerator{
 
     public static async schemaFormGlobal(): Promise<SchemaConfig | undefined> {
         let globalSchema = await SchemaParser.getGlobalSchema(this.globalConfigurationSchema);
-        console.log('Schema Global called');
         if(globalSchema !== undefined) {
             return globalSchema;
         }

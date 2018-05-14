@@ -2,9 +2,9 @@ import { HistoryReader } from '../../../util';
 import { HistoryIterator } from '../../HistoryIterator';
 import { TimeEntry } from '../../systemDataTypes/SystemInternalData';
 import { Observer, Observable } from '../ObserverPattern';
-import { Calculator } from './Calculator';
+import { Iterator } from './Iterator';
 
-export class RentalAndReturnCalculator implements Calculator {
+export class TimeEntryIterator implements Iterator {
     private observers: Array<Observer>;
     private history: HistoryReader;
     
@@ -16,7 +16,7 @@ export class RentalAndReturnCalculator implements Calculator {
         this.history = history;
     }
     
-    public async calculate(): Promise<void> {
+    public async iterate(): Promise<void> {
         let it: HistoryIterator; 
         try {
             it = await HistoryIterator.create(this.history);
