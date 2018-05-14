@@ -19,11 +19,13 @@ public class ConfigurationIO {
     private String entryPointSchema;
     private String globalConfigSchema;
 
-    public ConfigurationIO() {
+    public ConfigurationIO(boolean callFromFrontend) {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.pathJsonValidator = null;
-        System.out.println("Warning: You're not using an schema validator, if you generate users not " +
-                "defined in the schema the configuration file will not work");
+        if(!callFromFrontend) {
+            System.out.println("Warning: You're not using an schema validator, if you generate users not " +
+                    "defined in the schema the configuration file will not work");
+        }
     }
 
     public ConfigurationIO(String pathSchemaValidator, String entryPointSchema, String globalConfigSchema) {

@@ -18,6 +18,7 @@ public class Application {
         options.addOption("globalInput", true, "Directory to the input entry points configuration file");
         options.addOption("output", true, "Directory to the output users configuration file");
         options.addOption("validator", true, "Directory to the js validator");
+        options.addOption("callFromFrontend", false, "Backend has been called by frontend");
 
         CommandLineParser parser = new DefaultParser();
         return parser.parse(options, args);
@@ -40,6 +41,8 @@ public class Application {
         String globalInput = cmd.getOptionValue("globalInput");
         String configOutput = cmd.getOptionValue("output");
         String validator = cmd.getOptionValue("validator");
+        boolean callFromFrontend = cmd.hasOption("callFromFrontend");
+
         ConfigurationIO configurationIO;
         EntryPointInfo entryPointInfo;
         GlobalInfo globalInfo;
@@ -57,7 +60,7 @@ public class Application {
             }
         }
         else if(entryPointInput != null && globalInput != null && configOutput != null) {
-            configurationIO = new ConfigurationIO();
+            configurationIO = new ConfigurationIO(callFromFrontend);
             try {
                 entryPointInfo = configurationIO.readPreConfigEntryPoints(entryPointInput);
                 globalInfo = configurationIO.readPreConfigGlobalInfo(globalInput);

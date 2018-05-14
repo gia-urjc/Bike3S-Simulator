@@ -68,9 +68,9 @@ export class SimulateusergenComponent {
         this.exceptions = "";
         this.stdout = "";
         let args: UserGeneratorArgs = {
-            globalConf: this.globalConfiguration,
-            entryPointsConf: this.entryPointConfiguration,
-            outputUsers: this.usersOutputFolder
+            globalConfPath: this.globalConfiguration,
+            entryPointsConfPath: this.entryPointConfiguration,
+            outputUsersPath: this.usersOutputFolder
         };
         $('#modal-button').trigger('click');
         await this.ajax.backend.generateUsers(args);

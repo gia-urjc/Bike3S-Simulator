@@ -1,4 +1,6 @@
 import * as paths from 'path';
+import * as Ajv from 'ajv';
+import * as fs from 'fs-extra';
 import { spawn } from 'child_process'
 import { app } from 'electron';
 import { IpcUtil } from './index';
@@ -10,6 +12,12 @@ class Channel {
     constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
 }
 
+interface ValidationInfo {
+    result: boolean,
+    errors: string
+}
+
+
 export default class BackendCalls {
 
     /*
@@ -18,7 +26,7 @@ export default class BackendCalls {
     *   =================
     */
     private static channels: Channel[] = [];
-    private window: Electron.BrowserWindow | null;
+    private readonly window: Electron.BrowserWindow | null;
 
     /*
     *   =================
@@ -26,10 +34,10 @@ export default class BackendCalls {
     *   =================
     */
 
-    private globalSchemaPath = paths.join(app.getAppPath(), 'schema/global-config.json');
-    private stationsSchema = paths.join(app.getAppPath(), 'schema/stations-config.json');
-    private entryPointSchema = paths.join(app.getAppPath(), 'schema/entrypoints-config.json');
-    private usersConfigSchema = paths.join(app.getAppPath(), 'schema/users-config.json');
+    private globalSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/global-config.json'));
+    private stationsSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config.json'));
+    private entryPointSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-config.json'));
+    private usersConfigSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/users-config.json'));
 
     /*
     *   =================
@@ -39,12 +47,11 @@ export default class BackendCalls {
 
     private jsonSchemaValidator = paths.join(app.getAppPath(), 'jsonschema-validator/jsonschema-validator.js')
 
-    static async create(): Promise<BackendCalls> {
-        let backendCalls = new BackendCalls();
-        return backendCalls;
+    public static async create(): Promise<BackendCalls> {
+        return new BackendCalls();
     }
 
-    static enableIpc(): void {
+    public static enableIpc(): void {
         IpcUtil.openChannel('backend-call-init', async () => {
             const backendCalls = await BackendCalls.create();
 
@@ -64,7 +71,7 @@ export default class BackendCalls {
         });
     }
 
-    static stopIpc(): void {
+    public static stopIpc(): void {
         IpcUtil.closeChannels('backend-call-close', ...this.channels.map((channel) => channel.name));
         this.enableIpc();
     }
@@ -73,36 +80,65 @@ export default class BackendCalls {
         this.window = Main.simulate;
     }
 
-    generateUsers(args: UserGeneratorArgs): Promise<void>{
+    private validateConfiguration(schemaFile: string, configurationFile: string): ValidationInfo {
+        let ajv = new Ajv({$data: true});
+        let valid = ajv.validate(schemaFile, configurationFile);
+        console.log(valid);
+
+        if(valid) {
+            return {result: true, errors: ajv.errorsText()};
+        }
+        return {result: false, errors: ajv.errorsText()};
+    }
+
+    private sendInfoToGui(channel: string, message: string): void {
+        if(this.window) {
+            this.window.webContents.send(channel, message);
+        }
+    }
+
+    public generateUsers(args: UserGeneratorArgs): Promise<void>{
         return new Promise((resolve: any, reject: any) => {
 
             let rootPath = app.getAppPath();
             console.log(rootPath);
 
+            let entryPointsConf = fs.readJsonSync(args.entryPointsConfPath);
+
+            // Entry Point Validation
+            let entryPointsValidation = this.validateConfiguration(this.entryPointSchema, entryPointsConf);
+            if(!entryPointsValidation.result) {
+                this.sendInfoToGui('user-gen-error', entryPointsValidation.errors);
+                reject("Error validating Entry Points: " + entryPointsValidation.errors);
+            }
+
+            let globalConf = fs.readJsonSync(args.globalConfPath);
+
+            //Global Configuration Validation
+            let globalValidation = this.validateConfiguration(this.globalSchema, globalConf);
+            if(!globalValidation.result) {
+                this.sendInfoToGui('user-gen-error', globalValidation.errors);
+                reject("Error validating Global Configuration" + globalValidation.errors);
+            }
+
             const userGen = spawn('java', [
                 '-jar',
                 `bikesurbanfleets-config-usersgenerator-1.0.jar`,
-                `-entryPointsSchema`, this.entryPointSchema,
-                `-globalSchema`, this.globalSchemaPath,
-                `-entryPointsInput`, args.entryPointsConf,
-                `-globalInput`, args.globalConf,
-                `-output`, args.outputUsers + "/users-configuration.json",
-                `-validator`, this.jsonSchemaValidator
+                `-entryPointsInput`, args.entryPointsConfPath,
+                `-globalInput`, args.globalConfPath,
+                `-output`, args.outputUsersPath + "/users-configuration.json",
+                `-callFromFrontend`
             ], {
                 cwd: rootPath,
                 shell: false
             });
 
             userGen.stderr.on('data', (data) => {
-                if(this.window) {
-                    this.window.webContents.send('user-gen-error', data.toString());
-                }
+                this.sendInfoToGui('user-gen-error', data.toString());
             });
 
             userGen.stdout.on('data', (data) => {
-                if(this.window) {
-                    this.window.webContents.send('user-gen-data', data.toString());
-                }
+                this.sendInfoToGui('user-gen-data', data.toString());
             });
 
             userGen.on('close', (code) => {
@@ -117,39 +153,62 @@ export default class BackendCalls {
         });
     }
 
-    simulate(args: CoreSimulatorArgs): Promise<void> {
+    public simulate(args: CoreSimulatorArgs): Promise<void> {
         return new Promise((resolve: any, reject: any) => {
             let rootPath = app.getAppPath();
             console.log(rootPath);
 
+            let globalConf = fs.readJsonSync(args.globalConfPath);
+
+            //Global Configuration Validation
+            let globalValidation = this.validateConfiguration(this.globalSchema , globalConf);
+            console.log(globalValidation);
+            if(!globalValidation.result) {
+                this.sendInfoToGui('core-error', globalValidation.errors);
+                reject("Error validating Global Configuration" + globalValidation.errors);
+            }
+
+            let stationsConf = fs.readJsonSync(args.stationsConfPath);
+
+            //Stations Configuration Validation
+            let stationsValidation = this.validateConfiguration(this.stationsSchema, stationsConf);
+            console.log(stationsValidation);
+            if(!stationsValidation.result) {
+              this.sendInfoToGui('core-error', stationsValidation.errors);
+              reject("Error validating stations" + stationsValidation.errors);
+            }
+
+            let usersConf = fs.readJsonSync(args.usersConfPath);
+
+            //User generation validation
+            let usersValidation = this.validateConfiguration(this.usersConfigSchema, usersConf);
+            console.log(usersValidation);
+            if(!usersValidation.result) {
+                this.sendInfoToGui('core-error', usersValidation.errors);
+                reject("Error validating users", + usersValidation.errors);
+            }
+
             const sim = spawn('java', [
                 '-jar',
                 'bikesurbanfleets-core-1.0.jar',
-                `-globalSchema ${this.globalSchemaPath}`,
-                `-usersSchema ${this.usersConfigSchema}`,
-                `-stationsSchema ${this.stationsSchema}`,
-                `-globalConfig ${args.globalConf}`,
-                `-usersConfig ${args.usersConf}`,
-                `-stationsConfig ${args.stationsConf}`,
-                `-historyOutput ${args.outputHistory}`,
-                `-validator ${this.jsonSchemaValidator}`
+                `-globalConfig ${args.globalConfPath}`,
+                `-usersConfig ${args.usersConfPath}`,
+                `-stationsConfig ${args.stationsConfPath}`,
+                `-historyOutput ${args.outputHistoryPath}`,
+                `-callFromFrontend`
             ], {
                 cwd: rootPath,
                 shell: true
             });
 
             sim.stderr.on('data', (error) => {
-                if(this.window) {
-                    console.log(error.toString());
-                    this.window.webContents.send('core-error', error);
-                }
+                console.log(error);
+                this.sendInfoToGui('core-error', error.toString());
             });
 
             sim.stdout.on('data', (data) => {
-                if (this.window) {
-                    console.log(data.toString());
-                    this.window.webContents.send('core-data', data);
-                }
+                console.log(data);
+                this.sendInfoToGui('core-data', data.toString());
             });
 
             sim.on('close', (code) => {
@@ -163,7 +222,6 @@ export default class BackendCalls {
             });
         });
     }
-
 
 
 }

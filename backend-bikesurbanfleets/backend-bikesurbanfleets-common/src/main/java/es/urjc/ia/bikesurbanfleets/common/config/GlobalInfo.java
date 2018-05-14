@@ -4,6 +4,9 @@ import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 
 public class GlobalInfo {
 
+    public static final String HOME_DIR = System.getProperty("user.home");
+    public static final String AUX_DIR = HOME_DIR + "/.Bike3S";
+
     /**
      * It is the time period during a reservation is valid or active.
      */

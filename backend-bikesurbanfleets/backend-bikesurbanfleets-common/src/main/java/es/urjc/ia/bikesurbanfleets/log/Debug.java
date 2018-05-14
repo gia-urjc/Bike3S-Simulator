@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.log;
 
+import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import org.apache.commons.io.FileUtils;
@@ -14,7 +15,7 @@ public class Debug {
 
     public static boolean DEBUG_MODE;
     private static FileWriterMap fileWriterMap = new FileWriterMap();
-    private static final Path DEBUG_PATH = Paths.get( "debug_logs");
+    private static final Path DEBUG_PATH = Paths.get(GlobalInfo.AUX_DIR + "/debug_logs");
 
     public static void init() throws IOException {
         if(DEBUG_MODE) {

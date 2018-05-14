@@ -8,6 +8,7 @@ import com.graphhopper.reader.osm.GraphHopperOSM;
 import com.graphhopper.routing.util.EncodingManager;
 import com.graphhopper.util.PointList;
 import com.graphhopper.util.shapes.GHPoint3D;
+import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import org.apache.commons.io.FileUtils;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class GraphHopperIntegration implements GraphManager {
 
-    private final String GRAPHHOPPER_DIR = "graphhopper_files";
+    private final String GRAPHHOPPER_DIR = GlobalInfo.AUX_DIR + "/graphhopper_files";
 
     private GraphHopper hopper;
     private GHResponse rsp;

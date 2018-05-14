@@ -16,6 +16,9 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 
 
 public class Application {
@@ -29,6 +32,7 @@ public class Application {
     private static String stationsConfig;
     private static String historyOutputPath;
     private static String validator;
+    private static boolean callFromFrontend;
 
     
     private static CommandLine commandParser(String[] args) throws ParseException {
@@ -42,6 +46,7 @@ public class Application {
         options.addOption("stationsConfig", true, "Directory to the stations configuration file");
         options.addOption("historyOutput", true, "History Path for the simulation");
         options.addOption("validator", true, "Directory to the js validator");
+        options.addOption("callFromFrontend", false, "Backend has been called by frontend");
     
         CommandLineParser parser = new DefaultParser();
         return parser.parse(options, args);
@@ -49,7 +54,12 @@ public class Application {
     }
     
     public static void main(String[] args) throws Exception {
-        
+
+        //Create auxiliary folder
+        File auxiliaryDir = new File(GlobalInfo.AUX_DIR);
+        FileUtils.deleteDirectory(auxiliaryDir);
+        auxiliaryDir.mkdirs();
+
         CommandLine cmd;
         try {
             cmd = commandParser(args);
@@ -66,6 +76,7 @@ public class Application {
         stationsConfig = cmd.getOptionValue("stationsConfig");
         historyOutputPath = cmd.getOptionValue("historyOutput");
         validator = cmd.getOptionValue("validator");
+        callFromFrontend = cmd.hasOption("callFromFrontend");
         
         checkParams(); // If not valid, throws exception
         ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
@@ -90,6 +101,7 @@ public class Application {
     private static void checkParams() throws Exception {
 
         String exMessage = null; // Message for exceptions
+        String warningMessage = null;
         if(hasAllSchemasAndConfig()) {
 
             ValidationParams vParams = new ValidationParams();
@@ -131,13 +143,17 @@ public class Application {
             exMessage = "You should specify all schema paths";
 
         }
-        else if(validator == null) {
-            exMessage = "Warning, you don't specify a validator, configuration file will not be validated on backend";
+        else if(validator == null && !callFromFrontend) {
+            warningMessage = "Warning: you don't specify a validator, configuration file will not be validated on backend";
         }
 
         if(exMessage != null) {
             System.out.println("Exception");
             throw new ValidationException(exMessage);
+        }
+
+        if(warningMessage != null) {
+            System.out.println(warningMessage);
         }
     }
 

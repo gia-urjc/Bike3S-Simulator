@@ -1,12 +1,12 @@
 export interface UserGeneratorArgs {
-    globalConf: string,
-    entryPointsConf: string,
-    outputUsers: string
+    globalConfPath: string,
+    entryPointsConfPath: string,
+    outputUsersPath: string
 }
 
 export interface CoreSimulatorArgs {
-    globalConf: string,
-    stationsConf: string,
-    usersConf: string,
-    outputHistory: string
+    globalConfPath: string,
+    stationsConfPath: string,
+    usersConfPath: string,
+    outputHistoryPath: string
 }

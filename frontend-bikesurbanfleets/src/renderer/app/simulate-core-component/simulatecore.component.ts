@@ -80,10 +80,10 @@ export class SimulatecoreComponent{
         this.percentage = 0;
         this.finished = false;
         let args: CoreSimulatorArgs = {
-            globalConf: this.globalConfiguration,
-            usersConf: this.usersConfiguration,
-            stationsConf: this.stationsConfiguration,
-            outputHistory: this.historyOutputPath
+            globalConfPath: this.globalConfiguration,
+            usersConfPath: this.usersConfiguration,
+            stationsConfPath: this.stationsConfiguration,
+            outputHistoryPath: this.historyOutputPath
         };
         $('#modal-button').trigger('click');
         await this.ajax.backend.simulate(args);
