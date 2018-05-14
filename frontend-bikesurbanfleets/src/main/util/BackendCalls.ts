@@ -93,6 +93,7 @@ export default class BackendCalls {
 
     private sendInfoToGui(channel: string, message: string): void {
         if(this.window) {
+            console.log(message.toString());
             this.window.webContents.send(channel, message);
         }
     }
@@ -202,12 +203,10 @@ export default class BackendCalls {
             });
 
             sim.stderr.on('data', (error) => {
-                console.log(error);
                 this.sendInfoToGui('core-error', error.toString());
             });
 
             sim.stdout.on('data', (data) => {
-                console.log(data);
                 this.sendInfoToGui('core-data', data.toString());
             });
 
