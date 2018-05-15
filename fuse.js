@@ -232,14 +232,14 @@ Sparky.task('build:frontend:renderer', () => {
         renderer.hmr().watch('renderer/**');
     }*/
 
-    const originPackageLock = path.join(projectRoot(), 'package-lock.json');
-    const destinationPackageLock = path.join(projectRoot.build(), 'package-lock.json');
-    fs.copySync(originPackageLock, destinationPackageLock);
-
     //Global css file to build
     const globalCss = path.join(projectRoot.frontend.renderer(), 'styles.css');
     const destination = path.join(projectRoot.build.frontend(), 'styles.css');
     fs.copySync(globalCss, destination);
+
+    const packageProdOrig = path.join(projectRoot(), 'package_production.json');
+    const packageProdDest = path.join(projectRoot.build(), 'package.json');
+    fs.copySync(packageProdOrig, packageProdDest);
 
     //Icons to build - Windows
     const originIconWin = path.join(projectRoot.frontend.assets(), 'icon.ico');
@@ -247,8 +247,8 @@ Sparky.task('build:frontend:renderer', () => {
     fs.copySync(originIconWin, destinationIconWin);
 
     //Icons to build - Debian
-    const originIconDeb = path.join(projectRoot.frontend.assets(), '256x256.png');
-    const destinationIconDeb = path.join(projectRoot.build(), '256x256.png');
+    const originIconDeb = path.join(projectRoot.frontend.assets(), 'icon.icns');
+    const destinationIconDeb = path.join(projectRoot.build(), 'icon.icns');
     fs.copySync(originIconDeb, destinationIconDeb);
 
     return fuse.run();
@@ -268,7 +268,7 @@ Sparky.task('clean:cache', ['clean:cache:fuse', 'clean:cache:schema'], () => {})
 
 
 Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:frontend:main'], () => {
-    return Sparky.src(path.join(projectRoot(), 'package.json')).dest(projectRoot.build());
+
 });
 
 Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});

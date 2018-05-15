@@ -14,5 +14,5 @@
             "longitude": -3.69826
         }
     },
-    "map": "../backend-configuration-files/maps/madrid.osm"
+    "map": "/home/darwin/my_projects/Bike3S/backend-configuration-files/maps/madrid.osm"
 }
