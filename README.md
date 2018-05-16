@@ -65,7 +65,7 @@ VS Code.
 ## Build From Command Line
 To build the backend execute:
 ```
-node fuse build:backend
+node fuse build:dev-backend
 ```
 To build the frontend and execute the GUI:
 ```
