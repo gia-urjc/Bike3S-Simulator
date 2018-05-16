@@ -162,8 +162,9 @@ export default class BackendCalls {
             let globalConf = fs.readJsonSync(args.globalConfPath);
 
             //Global Configuration Validation
+            console.log(this.globalSchema);
+            console.log(globalConf);
             let globalValidation = this.validateConfiguration(this.globalSchema , globalConf);
-            console.log(globalValidation);
             if(!globalValidation.result) {
                 this.sendInfoToGui('core-error', globalValidation.errors);
                 reject("Error validating Global Configuration" + globalValidation.errors);
@@ -172,6 +173,8 @@ export default class BackendCalls {
             let stationsConf = fs.readJsonSync(args.stationsConfPath);
 
             //Stations Configuration Validation
+            console.log(this.stationsSchema);
+            console.log(stationsConf);
             let stationsValidation = this.validateConfiguration(this.stationsSchema, stationsConf);
             console.log(stationsValidation);
             if(!stationsValidation.result) {
@@ -182,6 +185,8 @@ export default class BackendCalls {
             let usersConf = fs.readJsonSync(args.usersConfPath);
 
             //User generation validation
+            console.log(this.usersConfigSchema);
+            console.log(usersConf);
             let usersValidation = this.validateConfiguration(this.usersConfigSchema, usersConf);
             console.log(usersValidation);
             if(!usersValidation.result) {
