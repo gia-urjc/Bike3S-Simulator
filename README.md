@@ -37,8 +37,6 @@ Angular, and use Electron.
 The folder `/frontend-bikesurbanfleets` contains this part of the project.
 
 ## Setup
-This project is development environment agnostic. You can use an IDE or just the command line.
-
 The easiest option is to use the Ultimate Edition of IDEA since it is the only IDE from IntelliJ that allows having
 modules of different technologies in one project. Alternatively the free community edition of IDEA can be used to
 develop the Java part in IDEA and the frontend might be developed in a free webdevelopment-tailored editor like Atom or
