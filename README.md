@@ -53,6 +53,7 @@ npm install && node fuse configure:dev
 Below are recommended setups for common IDEs for **backend** and **frontend**.
 
 ## Backend
+
 [Backend Setup - IntelliJ IDEA](documentation/backend_setup_intellij.md)
 
 [Backend Setup - Eclipse](documentation/backend_setup_eclipse.md)
@@ -63,10 +64,25 @@ Below are recommended setups for common IDEs for **backend** and **frontend**.
 [Frontend Setup - VScode](documentation/frontend_setup_vscode.md)
 
 ## Build From Command Line
-If you want to use any text editor, you can. It's not necessary any IDE to compile, build or distribute this project.
+To build the backend execute:
+```
+node fuse build:backend
+```
+
+To build the frontend and execute the GUI:
+```
+node fuse build:frontend
+```
+
+To build all the project:
+```
+node fuse build:dist
+```
 
 # Distribute
-To create a distributable package of the software run `npm run distribute` from the project root. It will compile and
-bundle all the parts together.
+To distribute an executable or installer for your OS, just run
+```
+npm run distribute
+```
 
 # Fundamentals
