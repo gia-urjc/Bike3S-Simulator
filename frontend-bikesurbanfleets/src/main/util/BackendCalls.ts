@@ -204,6 +204,7 @@ export default class BackendCalls {
             }
 
             const sim = spawn('java', [
+                '-DLogFilePath=${HOME}/.Bike3S/',
                 '-jar',
                 'bikesurbanfleets-core-1.0.jar',
                 `-globalConfig ${args.globalConfPath}`,
