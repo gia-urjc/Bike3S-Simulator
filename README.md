@@ -37,10 +37,6 @@ Angular, and use Electron.
 The folder `/frontend-bikesurbanfleets` contains this part of the project.
 
 ## Setup
-The easiest option is to use the Ultimate Edition of IDEA since it is the only IDE from IntelliJ that allows having
-modules of different technologies in one project. Alternatively the free community edition of IDEA can be used to
-develop the Java part in IDEA and the frontend might be developed in a free webdevelopment-tailored editor like Atom or
-VS Code.
 
 1. First of all, be sure you have all the [Prerequisites](#prerequisites) installed and working in your system.
 2. Execute this in the project directory.
@@ -49,6 +45,11 @@ npm install && node fuse configure:dev
 ```
 
 Below are recommended setups for common IDEs for **backend** and **frontend**.
+
+The easiest option is to use the Ultimate Edition of IDEA since it is the only IDE from IntelliJ that allows having
+modules of different technologies in one project. Alternatively the free community edition of IDEA can be used to
+develop the Java part in IDEA and the frontend might be developed in a free webdevelopment-tailored editor like Atom or
+VS Code.
 
 ## Backend
 
