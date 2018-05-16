@@ -68,8 +68,6 @@ To build the backend execute:
 ```
 node fuse build:backend
 ```
-The executable is generated in `build/dist/`
-
 To build the frontend and execute the GUI:
 ```
 node fuse build:frontend
