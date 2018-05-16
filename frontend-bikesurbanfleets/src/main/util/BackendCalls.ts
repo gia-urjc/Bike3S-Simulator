@@ -155,11 +155,24 @@ export default class BackendCalls {
     }
 
     public simulate(args: CoreSimulatorArgs): Promise<void> {
-        return new Promise((resolve: any, reject: any) => {
+        return new Promise(async (resolve: any, reject: any) => {
             let rootPath = app.getAppPath();
             console.log(rootPath);
+            let globalConf, stationsConf, usersConf: any;
+            try {
+                globalConf = await fs.readJson(args.globalConfPath);
+                stationsConf = await fs.readJson(args.stationsConfPath);
+                usersConf = await fs.readJsonSync(args.usersConfPath);
 
-            let globalConf = fs.readJsonSync(args.globalConfPath);
+            }
+            catch {
+                let errorMessage = "Error reading Configuration Path: \n"
+                    + "Global Configuration: " + args.globalConfPath + "\n"
+                    + "Users Configuration: " + args.usersConfPath + "\n"
+                    + "Stations Configuration: " + args.stationsConfPath + "\n";
+                this.sendInfoToGui('core-error', errorMessage);
+                reject(errorMessage);
+            }
 
             //Global Configuration Validation
             console.log(this.globalSchema);
@@ -170,8 +183,6 @@ export default class BackendCalls {
                 reject("Error validating Global Configuration" + globalValidation.errors);
             }
 
-            let stationsConf = fs.readJsonSync(args.stationsConfPath);
-
             //Stations Configuration Validation
             console.log(this.stationsSchema);
             console.log(stationsConf);
@@ -181,8 +192,6 @@ export default class BackendCalls {
               this.sendInfoToGui('core-error', stationsValidation.errors);
               reject("Error validating stations" + stationsValidation.errors);
             }
-
-            let usersConf = fs.readJsonSync(args.usersConfPath);
 
             //User generation validation
             console.log(this.usersConfigSchema);
