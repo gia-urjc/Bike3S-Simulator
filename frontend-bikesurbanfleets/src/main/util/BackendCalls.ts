@@ -124,11 +124,11 @@ export default class BackendCalls {
 
             const userGen = spawn('java', [
                 '-jar',
-                `bikesurbanfleets-config-usersgenerator-1.0.jar`,
-                `-entryPointsInput`, args.entryPointsConfPath,
-                `-globalInput`, args.globalConfPath,
-                `-output`, args.outputUsersPath + "/users-configuration.json",
-                `-callFromFrontend`
+                'bikesurbanfleets-config-usersgenerator-1.0.jar',
+                '-entryPointsInput', '"' + args.entryPointsConfPath + '"',
+                '-globalInput', '"' + args.globalConfPath + '"',
+                '-output', '"' + args.outputUsersPath + '/users-configuration.json"',
+                '-callFromFrontend'
             ], {
                 cwd: rootPath,
                 shell: false
@@ -207,10 +207,10 @@ export default class BackendCalls {
                 '-DLogFilePath=${HOME}/.Bike3S/',
                 '-jar',
                 'bikesurbanfleets-core-1.0.jar',
-                `-globalConfig ${args.globalConfPath}`,
-                `-usersConfig ${args.usersConfPath}`,
-                `-stationsConfig ${args.stationsConfPath}`,
-                `-historyOutput ${args.outputHistoryPath}`,
+                '-globalConfig', '"' + args.globalConfPath + '"',
+                '-usersConfig', '"' + args.usersConfPath + '"',
+                '-stationsConfig', '"' + args.stationsConfPath + '"',
+                '-historyOutput', '"' + args.outputHistoryPath + '"',
                 `-callFromFrontend`
             ], {
                 cwd: rootPath,
