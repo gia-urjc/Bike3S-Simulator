@@ -9,14 +9,14 @@ class Channel {
 }
 
 export interface JsonSchemaGroup {
-    globalSchema: any,
-    entryPointSchema: any,
-    stationsSchema: any
+    globalSchema: any;
+    entryPointSchema: any;
+    stationsSchema: any;
 }
 
 export interface JsonInfo {
-    json: any,
-    path: string
+    json: any;
+    path: string;
 }
 
 export default class JsonLoader {
@@ -53,7 +53,7 @@ export default class JsonLoader {
             globalSchema: this.globalConfigurationSchema,
             entryPointSchema: this.entryPointsConfSchema,
             stationsSchema: this.stationConfigurationSchema
-        }
+        };
     }
 
     static async writeJson(jsonInfo: JsonInfo): Promise<boolean> {

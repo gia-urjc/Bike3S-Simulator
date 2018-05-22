@@ -1,12 +1,12 @@
 import { isPlainObject } from 'lodash';
 
 export interface PlainObject {
-    [key: string]: any,
-    [key: number]: any,
+    [key: string]: any;
+    [key: number]: any;
 }
 
 export interface JsonObject {
-    [key: string]: JsonValue
+    [key: string]: JsonValue;
 }
 
 export interface JsonArray extends Array<JsonValue> {}
@@ -16,8 +16,8 @@ export type JsonValue = null | string | number | boolean | JsonArray | JsonObjec
 export namespace Tree {
 
     interface TreeNode {
-        parent: PlainObject,
-        name: string,
+        parent: PlainObject;
+        name: string;
     }
 
     function fetch(tree: PlainObject, path: string): TreeNode {
@@ -64,13 +64,13 @@ export namespace Geo {
     export const RADIUS = 6371e3;
 
     export interface Point {
-        latitude: number,
-        longitude: number,
+        latitude: number;
+        longitude: number;
     }
 
     export interface Route {
-        totalDistance: number,
-        points: Array<Point>,
+        totalDistance: number;
+        points: Array<Point>;
     }
 
     export function toRadians(value: number) {

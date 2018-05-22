@@ -9,8 +9,8 @@ import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { IpcUtil } from './index';
 
 interface TimeRange {
-    start: number,
-    end: number
+    start: number;
+    end: number;
 }
 
 class Channel {
@@ -37,11 +37,11 @@ export default class HistoryReader {
         let reader = new HistoryReader(path);
         if(schemaPath == null) {
             HistoryReader.entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
-            HistoryReader.changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));;
+            HistoryReader.changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));
         }
         else {
             HistoryReader.entityFileSchema = fs.readJsonSync(paths.join(schemaPath, 'entities.json'));
-            HistoryReader.changeFileSchema = fs.readJsonSync(paths.join(schemaPath, 'timeentries.json'))
+            HistoryReader.changeFileSchema = fs.readJsonSync(paths.join(schemaPath, 'timeentries.json'));
         }
         console.log(reader.historyPath);
         reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities').sort((a, b) => {
@@ -171,6 +171,6 @@ export default class HistoryReader {
         return {
             start: range[0],
             end: range[1]
-        }
+        };
     }
 }

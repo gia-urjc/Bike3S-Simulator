@@ -3,5 +3,5 @@ import IpcUtil from './IpcUtil';
 
 export {
     HistoryReader,
-    IpcUtil,
-}
+    IpcUtil
+};

@@ -1,6 +1,6 @@
 import { Geo } from '../../shared/util';
 import { Bike } from './Bike';
-import { Entity } from './Entity'
+import { Entity } from './Entity';
 
 export class Station extends Entity {
 

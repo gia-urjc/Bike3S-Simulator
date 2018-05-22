@@ -7,11 +7,6 @@ import { RentalAndReturnData } from './RentalAndReturnData';
 export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
     basicData: Array<User>;
     data: RentalAndReturnData;
-    
-    public constructor(users: Array<User>) {
-        this.basicData = users;
-        this.data = new RentalAndReturnData();
-    }
 
     public static async create(users: Array<User>) {
         let rentalsAndReturnsValues = new RentalsAndReturnsPerUser(users);
@@ -22,6 +17,11 @@ export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
             throw new Error('Error creating requested data: '+error);
         }
         return rentalsAndReturnsValues;
+    }
+    
+    public constructor(users: Array<User>) {
+        this.basicData = users;
+        this.data = new RentalAndReturnData();
     }
   
     public async init() {

@@ -1,5 +1,5 @@
-import SchemaParser from './SchemaFormGenerator'
+import SchemaParser from './SchemaFormGenerator';
 
 export {
     SchemaParser
-}
+};

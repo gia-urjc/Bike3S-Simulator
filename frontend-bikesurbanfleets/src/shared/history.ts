@@ -2,24 +2,24 @@ import { isPlainObject } from 'lodash';
 import { PlainObject } from './util';
 
 export interface HistoryEntity extends PlainObject {
-    id: number,
+    id: number;
 }
 
 export interface PropertyChange<T> {
-    old: T,
-    new: T,
+    old: T;
+    new: T;
 }
 
 export interface HistoryEntitiesJson {
-    prototype: Array<string>,
-    instances: Array<HistoryEntity>
+    prototype: Array<string>;
+    instances: Array<HistoryEntity>;
 }
 
 export type EntityChanges = {
     id: number,
 } & {
     [key: string]: PropertyChange<any>
-}
+};
 
 export type HistoryTimeEntry = {
     time: number,
@@ -29,7 +29,7 @@ export type HistoryTimeEntry = {
             [key: string]: Array<EntityChanges>
         }
     }>
-}
+};
 
 export enum ReservationType {
     SLOT = 'SLOT',
@@ -44,13 +44,13 @@ export enum ReservationState {
 }
 
 export interface Timestamp {
-    seconds: number,
-    formatted: string,
+    seconds: number;
+    formatted: string;
 }
 
 export interface IdReference {
-    type: string,
-    id: number | Array<number | null>,
+    type: string;
+    id: number | Array<number | null>;
 }
 
 export function isIdReference(property: any): boolean {

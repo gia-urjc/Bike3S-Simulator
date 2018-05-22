@@ -1,7 +1,7 @@
 import * as paths from 'path';
 import * as Ajv from 'ajv';
 import * as fs from 'fs-extra';
-import { spawn } from 'child_process'
+import { spawn } from 'child_process';
 import { app } from 'electron';
 import { IpcUtil } from './index';
 import {Main} from "../main";
@@ -13,8 +13,8 @@ class Channel {
 }
 
 interface ValidationInfo {
-    result: boolean,
-    errors: string
+    result: boolean;
+    errors: string;
 }
 
 
@@ -45,7 +45,7 @@ export default class BackendCalls {
     *   =================
     */
 
-    private jsonSchemaValidator = paths.join(app.getAppPath(), 'jsonschema-validator/jsonschema-validator.js')
+    private jsonSchemaValidator = paths.join(app.getAppPath(), 'jsonschema-validator/jsonschema-validator.js');
 
     public static async create(): Promise<BackendCalls> {
         return new BackendCalls();
@@ -231,7 +231,7 @@ export default class BackendCalls {
                     resolve();
                 }
                 else {
-                    reject("Fail executing bikesurbanfleets-core-1.0.jar")
+                    reject("Fail executing bikesurbanfleets-core-1.0.jar");
                 }
             });
         });

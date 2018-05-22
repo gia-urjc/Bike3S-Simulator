@@ -42,10 +42,23 @@ export class DataGenerator {
     private globalInfo: SystemGlobalInfo; 
     private bikesPerStation: BikesPerStation;
     private iterators: Map<string, Iterator>;
+
+    public static async create(historyPath: string, csvPath?: string, schemaPath?: string): Promise<DataGenerator> {
+        let generator: DataGenerator = new DataGenerator(historyPath, csvPath, schemaPath);
+        try {
+            await generator.init();
+            await generator.generate();
+        }
+        catch(error) {
+            throw new Error('Error initializing data generator: '+error);
+        }
+        return generator;
+    }
+   
     
 
     private constructor(historyPath: string, csvPath?: string, schemaPath?: string) {
-        this.csv = csvPath == undefined ? false: true;
+        this.csv = csvPath === undefined ? false: true;
         this.historyPath = historyPath;
         this.schemaPath = schemaPath;
         this.csvPath = csvPath;
@@ -140,25 +153,40 @@ export class DataGenerator {
     }
 
     private async calculateReservations(): Promise<void> {
-        if (this.reservationCounter === this.RESERVATIONS) {
-            this.iterators.get(ReservationIterator.name).iterate().then( () => {
-            this.calculationCounter++;
-                this.calculateGlobalInfo();
-            });
+        let iterator: Iterator | undefined = this.iterators.get(ReservationIterator.name);
+        if(iterator) {
+            if (this.reservationCounter === this.RESERVATIONS) {
+                iterator.iterate().then( () => {
+                this.calculationCounter++;
+                    this.calculateGlobalInfo();
+                });
+            }
+            return;
         }
-        return;
+        else {
+            throw new Error('Error calculating Reservations. \n'
+            + 'Iterator with name: ' + ReservationIterator.name + ' is undefined');
+        }
     }
 
     private async calculateRentalsAndReturns(): Promise<void> {
-        if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStationCounter === this.BIKES_PER_STATION) {
-            this.iterators.get(TimeEntryIterator.name).iterate().then( () => {
-                let emptyStations: EmptyStationInfo = new EmptyStationInfo(this.bikesPerStation);
-                emptyStations.init();
-                this.info.set(EmptyStationInfo.name, emptyStations);
-                
-                this.calculationCounter++;
-                this.calculateGlobalInfo();
-            });
+        let iterator: Iterator | undefined = this.iterators.get(TimeEntryIterator.name);
+        if(iterator) {
+            if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStationCounter === this.BIKES_PER_STATION) {
+                iterator.iterate().then( () => {
+                    let emptyStations: EmptyStationInfo = new EmptyStationInfo(this.bikesPerStation);
+                    emptyStations.init();
+                    this.info.set(EmptyStationInfo.name, emptyStations);
+                    
+                    this.calculationCounter++;
+                    this.calculateGlobalInfo();
+                });
+            }
+            return;
+        }
+        else {
+            throw new Error('Error calculating Rentals and returns. \n'
+            + 'Iterator with name: ' + TimeEntryIterator.name + ' is undefined');
         }
     }
     
@@ -169,8 +197,6 @@ export class DataGenerator {
             let reservations: SystemInfo | undefined = this.info.get(ReservationsPerStation.name);
             let rentalsAndReturns: SystemInfo | undefined = this.info.get(RentalsAndReturnsPerStation.name);
             
-            rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => console.log(v.failedRentals));
-                console.log(rentalsAndReturns.getData().absoluteValues.get(4).failedRentals);
             if(reservations && rentalsAndReturns) {
                 this.globalInfo.calculateGlobalData(reservations, rentalsAndReturns);
                 if (this.csv) {
@@ -181,18 +207,6 @@ export class DataGenerator {
         return;
     }
     
-    public static async create(historyPath: string, csvPath?: string, schemaPath?: string): Promise<DataGenerator> {
-        let generator: DataGenerator = new DataGenerator(historyPath, csvPath, schemaPath);
-        try {
-            await generator.init();
-            await generator.generate();
-        }
-        catch(error) {
-            throw new Error('Error initializing data generator: '+error);
-        }
-        return generator;
-    }
-   
     private async write(): Promise<void> {
         if (this.calculationCounter === this.CALCULATION + 1 && this.csvPath !== undefined) {
             let generator: CsvGenerator = new CsvGenerator(this.csvPath);
