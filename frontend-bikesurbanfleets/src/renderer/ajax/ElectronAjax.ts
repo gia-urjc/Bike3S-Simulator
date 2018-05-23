@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Event } from 'electron';
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
-import {AjaxProtocol, BackendAjax, FormSchemaAjax, HistoryAjax, JsonLoaderAjax, SettingsAjax} from './AjaxProtocol';
-import {EntryPointDataType} from "../../shared/configuration";
-import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
-import {JsonInfo, JsonSchemaGroup} from "../../main/json-loader/JsonLoader";
+import { AjaxProtocol, BackendAjax, FormSchemaAjax, HistoryAjax, JsonLoaderAjax, SettingsAjax, CsvGeneratorAjax } from './AjaxProtocol';
+import { EntryPointDataType } from "../../shared/configuration";
+import { CoreSimulatorArgs, UserGeneratorArgs } from "../../shared/BackendInterfaces";
+import { JsonInfo, JsonSchemaGroup } from "../../main/json-loader/JsonLoader";
+import { CsvArgs } from '../../main/util/CsvGeneratorController';
 
 // https://github.com/electron/electron/issues/7300#issuecomment-274269710
 const { ipcRenderer } = (window as any).require('electron');
@@ -109,7 +110,7 @@ class ElectronFormSchema implements FormSchemaAjax {
 
 }
 
-class ElectronBackendCalls implements BackendAjax {
+class ElectronBackend implements BackendAjax {
 
     async init(): Promise<void> {
         return await readIpc('backend-call-init');
@@ -147,20 +148,38 @@ class JsonLoader implements JsonLoaderAjax {
     }
 }
 
+class CsvGenerator implements CsvGeneratorAjax {
+
+    async init(): Promise<void> {
+        return await readIpc('csv-generator-init');
+    }
+
+    async writeCsv(args: CsvArgs): Promise<void> {
+        return await readIpc('csv-generator-write', args);
+    }
+
+    async close(): Promise<void> {
+        return await readIpc('csv-generator-close');
+    }
+
+}
+
 @Injectable()
 export class ElectronAjax implements AjaxProtocol {
 
     history: HistoryAjax;
     settings: SettingsAjax;
     formSchema: FormSchemaAjax;
-    backend: ElectronBackendCalls;
+    backend: ElectronBackend;
     jsonLoader: JsonLoaderAjax;
+    csvGenerator: CsvGeneratorAjax;
 
     constructor() {
         this.history = new ElectronHistory();
         this.settings = new ElectronSettings();
         this.formSchema = new ElectronFormSchema();
-        this.backend = new ElectronBackendCalls();
+        this.backend = new ElectronBackend();
         this.jsonLoader = new JsonLoader();
+        this.csvGenerator = new CsvGenerator();
     }
 }

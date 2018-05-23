@@ -1,0 +1,15 @@
+.browse-button {
+    margin-top: 30px;
+}
+
+.hidden-button {
+    display: none;
+}
+
+.row {
+    padding: 15px;
+}
+
+.submit-button {
+    margin-left: 14px;
+}

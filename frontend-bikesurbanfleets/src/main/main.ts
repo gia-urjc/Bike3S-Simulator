@@ -3,18 +3,20 @@ import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
 import { Settings } from './settings';
-import { HistoryReader } from './util';
+import { HistoryReaderController, CsvGeneratorController } from './util';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 import { ipcMain, ipcRenderer } from 'electron';
-import BackendCalls from "./util/BackendCalls";
+import { BackendController } from "./util";
 import JsonLoader from "./json-loader/JsonLoader";
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
+import { CsvGenerator } from './dataAnalysis/analysis/generators/CsvGenerator';
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;
     let menu: Electron.BrowserWindow | null;
     export let simulate: Electron.BrowserWindow | null;
     let configuration: Electron.BrowserWindow | null;
+    let analyse: Electron.BrowserWindow | null;
 
     export function initWindowsListeners() {
 
@@ -23,6 +25,8 @@ export namespace Main {
         createSimulateWindow();
 
         createConfigurationWindow();
+
+        createAnalyseHistoryWindow();
 
         ipcMain.on('open-visualization', (event: any, arg: any) => {
             if(visualization !== null) {
@@ -43,7 +47,14 @@ export namespace Main {
                 configuration.setTitle("Configuration Creator");
                 configuration.show();
             }
-        })
+        });
+
+        ipcMain.on('open-analyse', (event: any, arg: any) => {
+            if(analyse !== null) {
+                analyse.setTitle("Analyse History");
+                analyse.show();
+            }
+        });
     }
 
     /*===================
@@ -74,11 +85,12 @@ export namespace Main {
     }
 
     export function initMenu() {
-        HistoryReader.enableIpc();
+        HistoryReaderController.enableIpc();
         Settings.enableIpc();
-        BackendCalls.enableIpc();
+        BackendController.enableIpc();
         SchemaFormGenerator.enableIpc();
         JsonLoader.enableIpc();
+        CsvGeneratorController.enableIpc();
 
         app.on('ready', async () => {
             //HistoryReader.enableIpc();
@@ -139,7 +151,7 @@ export namespace Main {
         visualization.on('close', async (event) => {
             event.preventDefault();
             if(visualization !== null) visualization.hide();
-            HistoryReader.stopIpc();
+            HistoryReaderController.stopIpc();
         });
 
         visualization.webContents.on('will-navigate', (event, url) => {
@@ -227,6 +239,43 @@ export namespace Main {
         //}
 
         configuration.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/configuration');
+    }
+
+    /*===================
+     *
+     *  Analyse History
+     *
+     ===================*/
+
+     function createAnalyseHistoryWindow() {
+        analyse = new BrowserWindow({
+            width: 1200, height: 600,
+            minHeight: 600, minWidth: 1200,
+            resizable: true, fullscreenable: true,
+            show: false
+        });
+
+        analyse.loadURL(urlFormat({
+            pathname: join(app.getAppPath(), 'frontend', 'index.html'),
+            protocol: 'file',
+            slashes: true
+        }));
+
+        analyse.on('close', async (event) => {
+            event.preventDefault();
+            if(analyse !== null) analyse.hide();
+        });
+
+        analyse.webContents.on('will-navigate', (event, url) => {
+            event.preventDefault(); // prevents dragging images or other documents into browser window
+            shell.openExternal(url); // opens links (or dragged documents) in external browser
+        });
+
+        if (process.env.target === 'development') {
+            analyse.webContents.openDevTools();
+        }
+
+        analyse.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/analyse');
     }
 
     

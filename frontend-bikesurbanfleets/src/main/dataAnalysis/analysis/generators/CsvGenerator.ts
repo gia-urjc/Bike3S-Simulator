@@ -145,7 +145,7 @@ export class CsvGenerator {
    	}
 
 	private transformStationJsonToCsv(): void {
-        let csv = json2csv({ data: this.stationData, fields: this.entityInfoTitles, withBOM: true });
+        let csv = json2csv({ data: this.stationData, fields: this.entityInfoTitles, withBOM: true, del: ';' });
         this.checkFolders();
         fs.writeFile (`${this.csvPath}/stations.csv`, csv, (err) => {
           if (err) throw err;
@@ -154,7 +154,7 @@ export class CsvGenerator {
 	}
     
     private transformUserJsonToCsv(): void {
-        let csv = json2csv({ data: this.userData, fields: this.entityInfoTitles, withBOM: true });
+        let csv = json2csv({ data: this.userData, fields: this.entityInfoTitles, withBOM: true, del: ';' });
         this.checkFolders();
         fs.writeFile (`${this.csvPath}/users.csv`, csv, (err) => {
           if (err) throw err;
@@ -163,7 +163,7 @@ export class CsvGenerator {
     }
 
     private transformGlobalInfoJsonToCsv(): void {
-        let csv = json2csv({data: [this.globalInfo], fields: this.globalInfoTitles, withBOM: true });
+        let csv = json2csv({data: [this.globalInfo], fields: this.globalInfoTitles, withBOM: true, del: ';' });
         this.checkFolders();
         fs.writeFile(`${this.csvPath}/global_values.csv`, csv, (err) => {
             if (err) throw err;
@@ -172,7 +172,7 @@ export class CsvGenerator {
     }
     
     private transformEmptyStationJsonToCsv(): void {
-        let csv = json2csv({data: this.emptyStationData, fields: this.emptyStationTitles, withBOM: true });
+        let csv = json2csv({data: this.emptyStationData, fields: this.emptyStationTitles, withBOM: true, del: ';' });
         this.checkFolders();
         fs.writeFile(`${this.csvPath}/empty_stations.csv`, csv, (err) => {
             if (err) throw err;

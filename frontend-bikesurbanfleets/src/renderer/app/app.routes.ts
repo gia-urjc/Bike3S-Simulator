@@ -4,6 +4,7 @@ import {MenuComponent} from "./menu-component/menu.component";
 import {NgModule} from "@angular/core";
 import {SimulateComponent} from "./simulate-component/simulate.component";
 import {ConfigurationComponent} from "./configuration-component/configuration.component";
+import { AnalyseHistoryComponent } from "./analyse-history-component/analysehistory.component";
 
 export const routes:Routes = [
     {
@@ -21,6 +22,10 @@ export const routes:Routes = [
     {
         path: 'configuration',
         component: ConfigurationComponent
+    },
+    {
+        path: 'analyse',
+        component: AnalyseHistoryComponent,
     }
 ];
 

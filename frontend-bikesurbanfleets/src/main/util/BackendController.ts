@@ -6,11 +6,7 @@ import { app } from 'electron';
 import { IpcUtil } from './index';
 import {Main} from "../main";
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
-
-
-class Channel {
-    constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
-}
+import Channel from './Channel';
 
 interface ValidationInfo {
     result: boolean;
@@ -18,7 +14,7 @@ interface ValidationInfo {
 }
 
 
-export default class BackendCalls {
+export default class BackendController {
 
     /*
     *   =================
@@ -47,13 +43,13 @@ export default class BackendCalls {
 
     private jsonSchemaValidator = paths.join(app.getAppPath(), 'jsonschema-validator/jsonschema-validator.js');
 
-    public static async create(): Promise<BackendCalls> {
-        return new BackendCalls();
+    public static async create(): Promise<BackendController> {
+        return new BackendController();
     }
 
     public static enableIpc(): void {
         IpcUtil.openChannel('backend-call-init', async () => {
-            const backendCalls = await BackendCalls.create();
+            const backendCalls = await BackendController.create();
 
             this.channels = [
                 new Channel('backend-call-generate-users', async (args: UserGeneratorArgs) => await backendCalls.generateUsers(args)),

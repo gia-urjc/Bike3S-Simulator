@@ -7,17 +7,14 @@ import { without } from 'lodash';
 
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { IpcUtil } from './index';
+import Channel from './Channel';
 
 interface TimeRange {
     start: number;
     end: number;
 }
 
-class Channel {
-    constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
-}
-
-export default class HistoryReader {
+export default class HistoryReaderController {
 
     private static ajv = new AJV({
         $data: true,
@@ -33,15 +30,15 @@ export default class HistoryReader {
     private changeFiles: Array<string>;
     private currentIndex: number;
 
-    static async create(path: string, schemaPath?:string|null): Promise<HistoryReader> {
-        let reader = new HistoryReader(path);
+    static async create(path: string, schemaPath?:string|null): Promise<HistoryReaderController> {
+        let reader = new HistoryReaderController(path);
         if(schemaPath == null) {
-            HistoryReader.entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
-            HistoryReader.changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));
+            HistoryReaderController.entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
+            HistoryReaderController.changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));
         }
         else {
-            HistoryReader.entityFileSchema = fs.readJsonSync(paths.join(schemaPath, 'entities.json'));
-            HistoryReader.changeFileSchema = fs.readJsonSync(paths.join(schemaPath, 'timeentries.json'));
+            HistoryReaderController.entityFileSchema = fs.readJsonSync(paths.join(schemaPath, 'entities.json'));
+            HistoryReaderController.changeFileSchema = fs.readJsonSync(paths.join(schemaPath, 'timeentries.json'));
         }
         console.log(reader.historyPath);
         reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities').sort((a, b) => {
@@ -109,8 +106,8 @@ export default class HistoryReader {
     async getEntities(type: string): Promise<HistoryEntitiesJson> {
         const entities = await fs.readJson(paths.join(this.historyPath, `entities/${type}.json`));
 
-        if (!HistoryReader.ajv.validate(HistoryReader.entityFileSchema, entities)) {
-            throw new Error(HistoryReader.ajv.errorsText());
+        if (!HistoryReaderController.ajv.validate(HistoryReaderController.entityFileSchema, entities)) {
+            throw new Error(HistoryReaderController.ajv.errorsText());
         }
 
         return entities;
@@ -123,8 +120,8 @@ export default class HistoryReader {
 
         const file = await fs.readJson(paths.join(this.historyPath, this.changeFiles[--this.currentIndex]));
 
-        if (!HistoryReader.ajv.validate(HistoryReader.changeFileSchema, file)) {
-            throw new Error(HistoryReader.ajv.errorsText());
+        if (!HistoryReaderController.ajv.validate(HistoryReaderController.changeFileSchema, file)) {
+            throw new Error(HistoryReaderController.ajv.errorsText());
         }
 
         return file;
@@ -137,8 +134,8 @@ export default class HistoryReader {
 
         const file = await fs.readJson(paths.join(this.historyPath, this.changeFiles[++this.currentIndex]));
 
-        if (!HistoryReader.ajv.validate(HistoryReader.changeFileSchema, file)) {
-            throw new Error(HistoryReader.ajv.errorsText());
+        if (!HistoryReaderController.ajv.validate(HistoryReaderController.changeFileSchema, file)) {
+            throw new Error(HistoryReaderController.ajv.errorsText());
         }
 
         return file;
@@ -151,8 +148,8 @@ export default class HistoryReader {
 
         const file = await fs.readJson(paths.join(this.historyPath, this.changeFiles[n]));
 
-        if (!HistoryReader.ajv.validate(HistoryReader.changeFileSchema, file)) {
-            throw new Error(HistoryReader.ajv.errorsText());
+        if (!HistoryReaderController.ajv.validate(HistoryReaderController.changeFileSchema, file)) {
+            throw new Error(HistoryReaderController.ajv.errorsText());
         }
 
         return file;

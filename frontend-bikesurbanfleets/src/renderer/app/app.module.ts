@@ -22,6 +22,7 @@ import {ConfigurationComponent} from "./configuration-component/configuration.co
 import {LeafletDrawModule} from "@asymmetrik/ngx-leaflet-draw";
 import {JsonTreeViewComponent} from "./jsoneditor-component/jsoneditor.component";
 import {ConfigurationSaveComponent} from "./configuration-save-component/configurationsave.component";
+import { AnalyseHistoryComponent } from './analyse-history-component/analysehistory.component';
 
 @NgModule({
     imports: [
@@ -50,7 +51,8 @@ import {ConfigurationSaveComponent} from "./configuration-save-component/configu
         SimulationspinnerComponent,
         ConfigurationComponent,
         JsonTreeViewComponent,
-        ConfigurationSaveComponent
+        ConfigurationSaveComponent,
+        AnalyseHistoryComponent
     ],
     bootstrap: [AppComponent],
     providers: [{

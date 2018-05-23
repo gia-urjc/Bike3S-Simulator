@@ -1,4 +1,4 @@
-import { HistoryReader } from "../../../util";
+import { HistoryReaderController } from "../../../util";
 import { Data } from '../absoluteValues/Data';
 
 import { Iterator } from '../iterators/Iterator';
@@ -33,7 +33,7 @@ export class DataGenerator {
     private calculationCounter: number;  // number of calculators which have calculated its data
     private bikesPerStationCounter: number;
     
-    private history: HistoryReader; 
+    private history: HistoryReaderController; 
     private systemStations: SystemStations;
     private systemUsers: SystemUsers;
     private systemReservations: SystemReservations;
@@ -76,7 +76,7 @@ export class DataGenerator {
     
     private async init(): Promise<void> {
         try {
-            this.history = await HistoryReader.create(this.historyPath, this.schemaPath);
+            this.history = await HistoryReaderController.create(this.historyPath, this.schemaPath);
         }
         catch(error) {
             throw new Error('Error reading history file: '+error);
