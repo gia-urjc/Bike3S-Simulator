@@ -2,6 +2,9 @@ import {Component, Inject} from "@angular/core";
 import { AjaxProtocol } from "../../ajax/AjaxProtocol";
 const { dialog } = (window as any).require('electron').remote;
 const { ipcRenderer } = (window as any).require('electron');
+const { currentWindow } = (window as any).require('electron').remote.getCurrentWindow();
+
+
 
 @Component({
     selector: 'analyse-history',
@@ -36,6 +39,7 @@ export class AnalyseHistoryComponent {
             try {
                 await this.ajax.csvGenerator.writeCsv({historyPath: this.historyPath, csvPath: this.csvPath});
                 dialog.showMessageBox({
+                    currentWindow,
                     type: 'info',
                     title: 'CSV files with data generated',
                     message: 'CSV files with data analysed has been generated in: \n' 

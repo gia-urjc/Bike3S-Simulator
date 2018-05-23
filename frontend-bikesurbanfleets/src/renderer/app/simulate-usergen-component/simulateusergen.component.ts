@@ -37,13 +37,13 @@ export class SimulateusergenComponent {
 
     selectFile(): string {
         return dialog.showOpenDialog({
-            properties: ['openFile'],
+            properties: ['openFile', 'createDirectory'],
             filters: [{name: 'JSON Files', extensions: ['json']}]
         })[0];
     }
 
     selectFolder(): string {
-        return dialog.showOpenDialog({properties: ['openDirectory']})[0];
+        return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0];
     }
 
     open(content: any) {
