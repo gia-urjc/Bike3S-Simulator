@@ -4,6 +4,7 @@ import { isArray, isEqual } from 'lodash';
 
 import { IntervalObservable } from '../../rxjs/observable/IntervalObservable';
 import { takeWhile } from '../../rxjs/operators';
+import{ ReplaySubject } from "../../rxjs/ReplaySubject";
 
 import { EntityChanges, HistoryTimeEntry, IdReference, isIdReference } from '../../../shared/history';
 import { Geo, safe } from '../../../shared/util';
