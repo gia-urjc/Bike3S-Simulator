@@ -1,8 +1,9 @@
-package es.urjc.ia.bikesurbanfleets.entities;
+package es.urjc.ia.bikesurbanfleets.infraestructureEntities;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricReservation;
+import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
 

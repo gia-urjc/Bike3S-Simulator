@@ -2,6 +2,7 @@ package es.urjc.ia.bikesurbanfleets.core;
 
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
+import es.urjc.ia.bikesurbanfleets.consultSystems.SystemManager;
 import es.urjc.ia.bikesurbanfleets.core.config.ConfigJsonReader;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsInfo;
@@ -10,7 +11,7 @@ import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 
 
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
-import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;

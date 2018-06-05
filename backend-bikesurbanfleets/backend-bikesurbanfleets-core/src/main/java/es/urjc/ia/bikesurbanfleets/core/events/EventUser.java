@@ -1,13 +1,13 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Bike;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation.ReservationType;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
-import es.urjc.ia.bikesurbanfleets.entities.Reservation.ReservationType;
-import es.urjc.ia.bikesurbanfleets.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.entities.Reservation;
-import es.urjc.ia.bikesurbanfleets.entities.Station;
-import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserMemory;
 
 import java.io.IOException;
@@ -121,7 +121,7 @@ public abstract class EventUser implements Event {
             user.addReservation(reservation);
             user.getMemory().update(UserMemory.FactType.BIKE_FAILED_RESERVATION);
             debugEventLog("User has not been able to reserve bike");
-            if (user.decidesToLeaveSystemAffterFailedReservation(instant)) {
+            if (user.decidesToLeaveSystemAffterFailedReservation()) {
                 user.setPosition(null);
                 debugEventLog("User decides to leave the system");
             } else if (user.decidesToDetermineOtherStationAfterFailedReservation()) {

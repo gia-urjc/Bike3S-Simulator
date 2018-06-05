@@ -3,7 +3,7 @@ package es.urjc.ia.bikesurbanfleets.users;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.entities.User;
+
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.types.*;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.UserProperties;

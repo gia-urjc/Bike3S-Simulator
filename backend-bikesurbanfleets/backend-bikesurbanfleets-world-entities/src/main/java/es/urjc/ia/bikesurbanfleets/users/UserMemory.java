@@ -1,10 +1,13 @@
 package es.urjc.ia.bikesurbanfleets.users;
 
-import es.urjc.ia.bikesurbanfleets.entities.Station;
-import es.urjc.ia.bikesurbanfleets.entities.User;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation.ReservationState;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation.ReservationType;
 
 /**
  * This class keeps track of the number of times that a same event has happend.
@@ -43,7 +46,8 @@ public class UserMemory {
 
     private List<Station> stationsWithRentalFailedAttempts;
     private List<Station> stationsWithReturnFailedAttemptss;
-    
+    private List<Reservation> reservations;
+   
     public UserMemory(User user) {
         this.bikeReservationAttemptsCounter = 0; 
         this.bikeReservationTimeoutsCounter = 0;
@@ -52,6 +56,10 @@ public class UserMemory {
         this.user = user;
         this.stationsWithRentalFailedAttempts = new ArrayList<>();
         this.stationsWithReturnFailedAttemptss = new ArrayList<>();
+        this.reservations = new ArrayList();
+    }
+    public List<Reservation> getReservations() {
+    	return reservations;
     }
 
     public int getReservationAttemptsCounter() {
@@ -95,6 +103,31 @@ public class UserMemory {
             break;
             default: throw new IllegalArgumentException(fact.toString() + "is not defined in update method");
         }
+    }
+    
+    /**
+    * It obtains the stations for which a user has tried to make a bike reservation in an specific moment.
+    * @param user it is the user who has tried to reserve a bike.
+    * @param timeInstant it is the moment at which he has decided he wants to reserve a bike
+    * and he has been trying it.
+    * @return a list of stations for which the bike reservation has failed because of unavailable bikes.
+    */    
+    public List<Station> getStationsWithBikeReservationAttempts(int timeInstant) {
+        return reservations.stream()
+                .filter(reservation -> reservation.getType() == ReservationType.BIKE)
+                .filter(reservation -> reservation.getState() == ReservationState.FAILED)
+                .filter(reservation -> reservation.getStartInstant() == timeInstant)
+                .map(Reservation::getStation)
+                .collect(Collectors.toList());
+    }
+    
+    public List<Station> getStationsWithSlotReservationAttempts(int timeInstant) {
+        return reservations.stream()
+                .filter(reservation -> reservation.getType() == ReservationType.SLOT)
+                .filter(reservation -> reservation.getState() == ReservationState.FAILED)
+                .filter(reservation -> reservation.getStartInstant() == timeInstant)
+                .map(Reservation::getStation)
+                .collect(Collectors.toList());
     }
 
 }

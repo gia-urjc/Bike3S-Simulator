@@ -3,14 +3,14 @@ package es.urjc.ia.bikesurbanfleets.history.entities;
 import com.google.gson.annotations.Expose;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.entities.Reservation;
-import es.urjc.ia.bikesurbanfleets.entities.Station;
-import es.urjc.ia.bikesurbanfleets.entities.User;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.HistoricEntity;
 import es.urjc.ia.bikesurbanfleets.history.History.IdReference;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Bike;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
 import es.urjc.ia.bikesurbanfleets.history.JsonIdentifier;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
+import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
 import java.util.stream.Collectors;

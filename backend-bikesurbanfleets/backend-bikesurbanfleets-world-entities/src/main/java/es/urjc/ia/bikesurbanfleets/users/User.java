@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.entities;
+package es.urjc.ia.bikesurbanfleets.users;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
@@ -8,11 +8,15 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrati
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.SystemManager;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Bike;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
-import es.urjc.ia.bikesurbanfleets.systemmanager.SystemManager;
-import es.urjc.ia.bikesurbanfleets.users.UserMemory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +88,16 @@ public abstract class User implements Entity {
     private UserMemory memory;
 
     protected SystemManager systemManager;
+    
+    /**
+     * It tries to convince the user to rent or return a bike in a specific station to help balance the system. 
+     */
+    protected RecommendationSystem recommendationSystem;
+    
+    /**
+     * It informs the user about the state and distance of the different stations.
+     */
+    protected InformationSystem informationSystem;
 
     public User() {
         this.id = idGenerator.next();
@@ -115,6 +129,7 @@ public abstract class User implements Entity {
     public void addReservation(Reservation reservation) {
         systemManager.addReservation(reservation);
         this.reservation = reservation;
+        this.memory.getReservations().add(reservation);
     }
 
     public void setSystemManager(SystemManager systemManager) {
@@ -357,21 +372,21 @@ public abstract class User implements Entity {
      * @param instant: itt is the time instant when h'll make this decision.
      * @return true if he decides to leave the system and false in other case (he decides to continue at system).
      */
-    public abstract boolean decidesToLeaveSystemAfterTimeout(int instant);
+    public abstract boolean decidesToLeaveSystemAfterTimeout();
 
     /**
      * User decides if he'll leave the system after not being able to make a bike reservation.
      * @param instant: itt is the time instant when h'll make this decision.
      * @return true if he decides to leave the system and false in other case (he decides to continue at system).
      */
-    public abstract boolean decidesToLeaveSystemAffterFailedReservation(int instant);
+    public abstract boolean decidesToLeaveSystemAffterFailedReservation();
 
     /**
      * User decides if he'll leave the system when there're no avalable bikes at station.
      * @param instant: itt is the time instant when h'll make this decision.
      * @return true if he decides to leave the system and false in other case (he decides to continue at system).
      */
-    public abstract boolean decidesToLeaveSystemWhenBikesUnavailable(int instant);
+    public abstract boolean decidesToLeaveSystemWhenBikesUnavailable();
 
     /**
      * User decides to which station he wants to go to rent a bike.

@@ -5,10 +5,10 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationExce
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.entities.Station;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
+import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
-import es.urjc.ia.bikesurbanfleets.entities.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +77,7 @@ public class UserDistanceRestriction extends User {
          * It is a distance restriction: this user dosn't go to destination stations which are
          * farer than this distance.
          */
-        private double maxDistance;
+        private int maxDistance;
 
         @Override
         public String toString() {
@@ -102,91 +102,37 @@ public class UserDistanceRestriction extends User {
     }
     
     @Override
-    public boolean decidesToLeaveSystemAfterTimeout(int instant) {
+    public boolean decidesToLeaveSystemAfterTimeout() {
         return getMemory().getReservationTimeoutsCounter() == parameters.minReservationTimeouts ? true : false;
     }
 
     @Override
-    public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
+    public boolean decidesToLeaveSystemAffterFailedReservation() {
         return getMemory().getReservationAttemptsCounter() == parameters.minReservationAttempts ? true : false;
     }
 
     @Override
-    public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
+    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
         return getMemory().getRentalAttemptsCounter() == parameters.minRentalAttempts ? true : false;
     }
     
     @Override
     public Station determineStationToRentBike(int instant) {
-        List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-        Station destination = null;
-        
-     if (!stations.isEmpty()) {
-         List<Station> recommendedStations = systemManager.getRecommendationSystem()
-             .recommendByProportionBetweenDistanceAndBikes(this.getPosition(), stations);
-         
-         if (!recommendedStations.isEmpty()) {
-     
-	         try {
-	        	 destination = recommendedStations.stream().filter(station -> {
-					boolean lessThan = false;
-	        		 try {
-						lessThan = systemManager.getGraphManager().obtainShortestRouteBetween(station.getPosition(), this
-										 .getPosition()).getTotalDistance() <= parameters.maxDistance;
-					} catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
-						e.printStackTrace();
-					}
-	        		return lessThan;
-				}).findFirst().get();
-	         }
-	         catch (Exception e) {
-	        	 destination = null;
-	         }
-         }
-     }
-     
-     return destination;
+     Station destination = null;
+     List<Station> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), maxDistance);
+      if (!recommendedStations.isEmpty()) {
+     	 destination = recommendedStations.get(0);
+      }
+      return destination;
     }
 
     @Override
      public Station determineStationToReturnBike(int instant) {
-        List<Station> stations = systemManager.consultStationsWithoutBikeReservationAttempt(this, instant);
-        List<Station> recommendedStations, restrictedStations;
-        Station destination=null;
-        
-        if (stations.isEmpty()) {
-            stations = new ArrayList<Station>(systemManager.consultStations());
-        }
-
-        recommendedStations = systemManager.getRecommendationSystem()
-                .recommendByProportionBetweenDistanceAndSlots(this.getPosition(), stations);
-        
+        Station destination = null;
+        List<Station> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition(), maxDistance);
         if (!recommendedStations.isEmpty()) {
-        	try {
-        		restrictedStations = recommendedStations.stream().filter(station -> {
-					boolean lessThan = false;
-        			try {
-						lessThan = systemManager
-								.getGraphManager().obtainShortestRouteBetween(station.getPosition(), this.getPosition()).getTotalDistance() <= parameters.maxDistance;
-					} catch (GraphHopperIntegrationException | GeoRouteCreationException e) {
-												e.printStackTrace();
-					}
-        			return lessThan;
-				}).collect(Collectors.toList());
-        	
-        	if (!restrictedStations.isEmpty()) {
-		        	destination = restrictedStations.get(0);
-		        }
-		        else {
-		            destination = recommendedStations.get(0);
-		        }
-	        	}
-	        	catch(Exception e) {
-	        		e.printStackTrace();
-	        	}
-           
+        	destination = recommendedStations.get(0);
         }
-	       
         else {
         	recommendedStations = systemManager.consultStations();
         	int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);

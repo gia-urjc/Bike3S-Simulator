@@ -1,8 +1,9 @@
 package es.urjc.ia.bikesurbanfleets.core.config;
 
 import com.google.gson.annotations.JsonAdapter;
-import es.urjc.ia.bikesurbanfleets.entities.Station;
-import es.urjc.ia.bikesurbanfleets.entities.deserializers.StationDeserializer;
+
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.deserializers.StationDeserializer;
 
 import java.util.List;
 

@@ -1,10 +1,10 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
-import es.urjc.ia.bikesurbanfleets.entities.Reservation;
-import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserMemory;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class EventBikeReservationTimeout extends EventUser {
         user.cancelsBikeReservation(user.getDestinationStation());
         user.getMemory().update(UserMemory.FactType.BIKE_RESERVATION_TIMEOUT);
         debugEventLog();
-        if (user.decidesToLeaveSystemAfterTimeout(instant)) {
+        if (user.decidesToLeaveSystemAfterTimeout()) {
             user.setPosition(null);
             user.setRoute(null);
             debugEventLog("User leaves the system");

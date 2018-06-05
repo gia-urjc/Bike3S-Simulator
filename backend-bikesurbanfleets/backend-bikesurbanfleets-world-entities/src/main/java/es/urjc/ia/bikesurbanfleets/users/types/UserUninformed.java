@@ -4,12 +4,15 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.entities.Station;
-import es.urjc.ia.bikesurbanfleets.entities.User;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
+import es.urjc.ia.bikesurbanfleets.infraestructureEntities.comparators.ComparatorByDistance;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
+import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a user who doesn't know anything about the state of the system.
@@ -27,74 +30,44 @@ public class UserUninformed extends User {
     }
 
     @Override
-    public boolean decidesToLeaveSystemAfterTimeout(int instant) {
+    public boolean decidesToLeaveSystemAfterTimeout() {
         return systemManager.getRandom().nextBoolean();
     }
 
     @Override
-    public boolean decidesToLeaveSystemAffterFailedReservation(int instant) {
+    public boolean decidesToLeaveSystemAffterFailedReservation() {
         return systemManager.getRandom().nextBoolean();
     }
 
     @Override
-    public boolean decidesToLeaveSystemWhenBikesUnavailable(int instant) {
+    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
         return systemManager.getRandom().nextBoolean();
     }
 
     @Override
     public Station determineStationToRentBike(int instant) {
         Station destination = null;
-        List<Station> stations = systemManager.consultOrderedStationsWithoutBikeRentalAttempts(this);
-
-        int index = 0;
-        while(index < stations.size()) {
-            Station stationToCheck = stations.get(index);
-            if(stationToCheck.getPosition().equals(this.getPosition())) {
-                stations.remove(stationToCheck);
-                break;
-            }
-            index++;
+        List<Station> stations = new ArrayList<>(systemManager.consultStations());
+        List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(instant);
+        stations.removeAll(triedStations);
+        stations.stream().sorted(new ComparatorByDistance(this.getPosition())).collect(Collectors.toList());
+        if (!stations.isEmpty()) {
+        	destination = stations.get(0);
         }
-
-        if(!stations.isEmpty()) {
-            destination = stations.get(0);
-        }
-
         return destination;
     }
 
     @Override
     public Station determineStationToReturnBike(int instant) {
-
-        List<Station> stations;
-        stations = systemManager.consultOrderedStationsWithoutBikeReturnAttempts(this);
-
-        Station destination;
-
-        int index = 0;
-        while(index < stations.size()) {
-            Station stationToCheck = stations.get(index);
-            if(stationToCheck.getPosition().equals(this.getPosition())) {
-                stations.remove(stationToCheck);
-                break;
-            }
-            index++;
-        }
-
-        if(!stations.isEmpty()) {
-            destination = stations.get(0);
-        }
-        else{
-            stations = systemManager.consultOrderedStationsByDistance(this);
-
-            Station firstStation = stations.get(0);
-            if(firstStation.getPosition().equals(this.getPosition())) {
-                stations.remove(0);
-            }
-            destination = stations.get(0);
+        Station destination = null;
+        List<Station> stations = new ArrayList(systemManager.consultStations());
+        List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(instant);
+        stations.removeAll(triedStations);
+        stations.stream().sorted(new ComparatorByDistance(this.getPosition())).collect(Collectors.toList());
+        if (!stations.isEmpty()) {
+        	destination = stations.get(0);
         }
         return destination;
-
     }
 
     @Override
