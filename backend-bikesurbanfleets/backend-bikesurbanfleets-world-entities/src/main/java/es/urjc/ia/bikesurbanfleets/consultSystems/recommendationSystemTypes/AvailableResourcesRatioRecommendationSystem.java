@@ -28,7 +28,6 @@ public class AvailableResourcesRatioRecommendationSystem extends RecommendationS
      * It is the maximum distance in meters between the recommended stations and the indicated 
      * geographical point.
      */
-	
 	private final int MAX_DISTANCE = 800; 
 
     /** 

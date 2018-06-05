@@ -3,6 +3,7 @@ package es.urjc.ia.bikesurbanfleets.consultSystems;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphHopperIntegration;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
+import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Bike;
