@@ -43,11 +43,6 @@ public class GlobalInfo {
      */
     private String historyOutputPath;
 
-    /**
-     *
-     */
-    private boolean linearDistance;
-
 
     public int getReservationTime() {
         return reservationTime;
@@ -79,10 +74,6 @@ public class GlobalInfo {
 
     public void setHistoryOutputPath(String historyOutputPath) {
         this.historyOutputPath = historyOutputPath;
-    }
-
-    public boolean getLinearDistance() {
-        return linearDistance;
     }
 
 }
