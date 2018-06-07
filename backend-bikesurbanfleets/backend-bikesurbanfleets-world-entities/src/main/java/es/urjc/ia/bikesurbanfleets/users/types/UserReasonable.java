@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
+import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
@@ -90,8 +91,8 @@ public class UserReasonable extends User {
 
     private UserReasonableParameters parameters;
 
-    public UserReasonable(UserReasonableParameters parameters) {
-        super();
+    public UserReasonable(UserReasonableParameters parameters, SimulationServices services) {
+        super(services);
         this.parameters = parameters;
     }
     

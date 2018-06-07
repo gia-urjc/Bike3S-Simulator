@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
+import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
@@ -24,8 +25,8 @@ import java.util.List;
 @AssociatedType(UserType.USER_RANDOM)
 public class UserRandom extends User {
 
-    public UserRandom() {
-        super();
+    public UserRandom(SimulationServices services) {
+        super(services);
     }
 
     @Override
@@ -46,10 +47,10 @@ public class UserRandom extends User {
     @Override
     public Station determineStationToRentBike() {
     	List<Station> stations = new ArrayList(infraestructureManager.consultStations());
-     List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
-     stations.removeAll(triedStations);
-     int index = infraestructureManager.getRandom().nextInt(0, stations.size());
-     return stations.get(index);
+        List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
+        stations.removeAll(triedStations);
+        int index = infraestructureManager.getRandom().nextInt(0, stations.size());
+        return stations.get(index);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class UserRandom extends User {
         stations.removeAll(triedStations);
         int index = infraestructureManager.getRandom().nextInt(0, stations.size());
         return stations.get(index);    
-			}
+    }
 		
     
     @Override

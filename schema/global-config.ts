@@ -1,5 +1,5 @@
 import {GeoPoint, options, UInt} from "./common";
-import {sBoolean, sInteger, sObject, sString} from "json-schema-builder-ts/dist/types";
+import {sBoolean, sEnum, sInteger, sNumber, sObject, sString} from "json-schema-builder-ts/dist/types";
 import {JsonSchema} from "json-schema-builder-ts";
 import {rData} from "json-schema-builder-ts/dist/references";
 
@@ -13,5 +13,8 @@ export default new JsonSchema(options, sObject({
         northWest: GeoPoint,
         southEast: GeoPoint,
     }).require.all().restrict(),
-    map: sString().pattern(/\.osm/)
+    map: sString().pattern(/\.osm/),
+    recommendationSystemType: sEnum('AVAILABLE_RESOURCES_RATIO'),
+    graphManagerType: sEnum('GRAPH_HOPPER'),
+    maxDistanceRecommendation: sNumber().min(0)
 }).require.all().restrict());

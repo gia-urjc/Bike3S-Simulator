@@ -1,4 +1,5 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
+import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
@@ -97,8 +98,8 @@ public class UserDistanceRestriction extends User {
 
     private UserDistanceRestrictionParameters parameters;
 
-    public UserDistanceRestriction(UserDistanceRestrictionParameters parameters) {
-        super();
+    public UserDistanceRestriction(UserDistanceRestrictionParameters parameters, SimulationServices services) {
+        super(services);
         this.parameters = parameters;
     }
     

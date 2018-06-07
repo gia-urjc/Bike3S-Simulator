@@ -7,7 +7,7 @@ public interface UserInfo {
 	int getId();
 	GeoPoint getPosition();
 	double getAverageVelocity();
-		boolean hasReservedBike(); 
+	boolean hasReservedBike();
 	boolean hasReservedSlot();
 	ReservationInfo consultReservation();
 	BikeInfo consultBike();

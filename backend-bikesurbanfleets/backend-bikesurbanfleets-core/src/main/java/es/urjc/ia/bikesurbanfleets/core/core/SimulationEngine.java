@@ -1,11 +1,14 @@
 package es.urjc.ia.bikesurbanfleets.core.core;
 
 
+import es.urjc.bikesurbanfleets.services.GraphManagerType;
+import es.urjc.bikesurbanfleets.services.RecomSystemType;
+import es.urjc.bikesurbanfleets.services.SimulationServiceConfigData;
+import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersConfig;
-import es.urjc.ia.bikesurbanfleets.core.events.EventUser;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.history.History;
@@ -18,7 +21,6 @@ import es.urjc.ia.bikesurbanfleets.users.UserFactory;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;
 import org.apache.commons.math3.util.Precision;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -35,18 +37,26 @@ public class SimulationEngine {
     private GlobalInfo globalInfo;
     private StationsConfig stationsInfo;
     private UsersConfig usersInfo;
-    private InfraestructureManager systemManager;
 
     /**
      * It creates an event queue where its events are sorted by the time instant when they'll occur.
      */
     public SimulationEngine(GlobalInfo globalInfo, StationsConfig stationsInfo, UsersConfig usersInfo,
-                            InfraestructureManager systemManager) {
+                            InfraestructureManager infraestructureManager) throws Exception {
         this.globalInfo = globalInfo;
         this.stationsInfo = stationsInfo;
         this.usersInfo = usersInfo;
-        this.systemManager = systemManager;
-        this.eventsQueue = new PriorityQueue<>(processUsers());
+        SimulationServiceConfigData servicesConfigData = new SimulationServiceConfigData();
+        servicesConfigData.setBbox(globalInfo.getBoundingBox())
+            .setGraphManagerType(GraphManagerType.valueOf(globalInfo.getGraphManagerType()))
+            .setMapDir(globalInfo.getMap())
+            .setRecomSystemType(RecomSystemType.valueOf(globalInfo.getRecommendationSystemType()))
+            .setStations(stationsInfo.getStations())
+            .setMaxDistance(globalInfo.getMaxDistanceRecommendation());
+
+        SimulationServices services = new SimulationServices(servicesConfigData);
+
+        this.eventsQueue = new PriorityQueue<>(processUsers(services));
         Reservation.VALID_TIME = globalInfo.getReservationTime();
         Debug.DEBUG_MODE = globalInfo.isDebugMode();
 
@@ -54,19 +64,16 @@ public class SimulationEngine {
         History.reservationClass(HistoricReservation.class);
     }
 
-    private List<EventUserAppears> processUsers() {
+    private List<EventUserAppears> processUsers(SimulationServices services) {
         List<EventUserAppears> eventUserAppearsList = new ArrayList<>();
         UserFactory userFactory = new UserFactory();
         for (SingleUser singleUser: usersInfo.getUsers()) {
-            User user = userFactory.createUser(singleUser.getUserType());
+            User user = userFactory.createUser(singleUser.getUserType(), services);
             int instant = singleUser.getTimeInstant();
             GeoPoint position = singleUser.getPosition();
             eventUserAppearsList.add(new EventUserAppears(instant, user, position));
         }
 
-        eventUserAppearsList.stream()
-                .map(EventUser::getUser)
-                .forEach(user -> user.setSystemManager(systemManager));
         return eventUserAppearsList;
     }
 

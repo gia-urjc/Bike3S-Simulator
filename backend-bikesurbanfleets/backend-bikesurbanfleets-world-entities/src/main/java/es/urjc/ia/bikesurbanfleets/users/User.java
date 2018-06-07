@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users;
 
+import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
@@ -13,6 +14,7 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.UserInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
@@ -92,29 +94,37 @@ public abstract class User implements Entity, UserInfo {
      */
     private UserMemory memory;
 
-    protected InfraestructureManager infraestructureManager;
-    
     /**
-     * It tries to convince the user to rent or return a bike in a specific station to help balance the system. 
+     * Gives to the user infraestructure information
+     */
+    protected InfraestructureManager infraestructureManager;
+
+    /**
+     * It tries to convince the user to rent or return a bike in a specific station to help balance the system.
      */
     protected RecommendationSystem recommendationSystem;
-    
+
     /**
      * It informs the user about the state and distance of the different stations.
      */
     protected InformationSystem informationSystem;
-    
-    /** 
+
+    /**
      * It provides the user the availables routes between twoe geographical points.
      */
-    private GraphManager graph;
+    protected GraphManager graph;
+
+    /**
+    * Different comparators for stations
+    */
+    protected StationComparator stationComparator;
     
     /**
      * It is the time instant of the simulation.
      */
     private int instant;
 
-    public User() {
+    public User(SimulationServices services) {
         this.id = idGenerator.next();
 
         this.position = null;
@@ -128,9 +138,13 @@ public abstract class User implements Entity, UserInfo {
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
-        this.infraestructureManager = null;
         this.reservation = null;
         this.memory = new UserMemory(this);
+        this.infraestructureManager = services.getInfrastructureManager();
+        this.recommendationSystem = services.getRecommendationSystem();
+        this.informationSystem = services.getInformationSystem();
+        this.graph = services.getGraphManager();
+        this.stationComparator = services.getStationComparator();
 
         History.registerEntity(this);
         this.memory = new UserMemory(this);
@@ -155,21 +169,12 @@ public abstract class User implements Entity, UserInfo {
     	this.instant = instant;
     }
 
-    public void setSystemManager(InfraestructureManager systemManager) {
-        this.infraestructureManager = systemManager;
-    }
-
     public GeoPoint getPosition() {
         return position;
     }
 
     public void setPosition(GeoPoint position) {
         this.position = position;
-    }
-
-    public void setPosition(Double latitude, Double longitude) {
-        this.position.setLatitude(latitude);
-        this.position.setLongitude(longitude);
     }
 
     public Bike getBike() {
@@ -387,35 +392,30 @@ public abstract class User implements Entity, UserInfo {
 
     /**
      * User decides if he'll leave the system when bike reservation timeout happens.
-     * @param instant: itt is the time instant when h'll make this decision.
      * @return true if he decides to leave the system and false in other case (he decides to continue at system).
      */
     public abstract boolean decidesToLeaveSystemAfterTimeout();
 
     /**
      * User decides if he'll leave the system after not being able to make a bike reservation.
-     * @param instant: itt is the time instant when h'll make this decision.
      * @return true if he decides to leave the system and false in other case (he decides to continue at system).
      */
     public abstract boolean decidesToLeaveSystemAffterFailedReservation();
 
     /**
      * User decides if he'll leave the system when there're no avalable bikes at station.
-     * @param instant: itt is the time instant when h'll make this decision.
      * @return true if he decides to leave the system and false in other case (he decides to continue at system).
      */
     public abstract boolean decidesToLeaveSystemWhenBikesUnavailable();
 
     /**
      * User decides to which station he wants to go to rent a bike.
-     * @param instant: it is the time instant when he needs to make this decision.
      * @return station where user has decided to go.
      */
     public abstract StationInfo determineStationToRentBike();
 
     /**
      * User decides to which station he wants to go to return his bike.
-     * @param instant is the time instant when he needs to make this decision.
      * @return station where user has decided to go.
      */
     public abstract StationInfo determineStationToReturnBike();

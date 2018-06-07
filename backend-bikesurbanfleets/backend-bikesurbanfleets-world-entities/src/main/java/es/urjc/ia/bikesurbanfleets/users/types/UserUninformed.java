@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
+import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
@@ -25,8 +26,8 @@ import java.util.stream.Collectors;
 @AssociatedType(UserType.USER_UNINFORMED)
 public class UserUninformed extends User {
 
-    public UserUninformed() {
-        super();
+    public UserUninformed(SimulationServices services) {
+        super(services);
     }
 
     @Override

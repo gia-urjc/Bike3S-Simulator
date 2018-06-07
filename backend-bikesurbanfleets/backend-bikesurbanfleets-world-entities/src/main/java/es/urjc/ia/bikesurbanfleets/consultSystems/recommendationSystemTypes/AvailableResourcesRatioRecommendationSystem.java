@@ -26,7 +26,7 @@ public class AvailableResourcesRatioRecommendationSystem extends RecommendationS
      * It is the maximum distance in meters between the recommended stations and the indicated 
      * geographical point.
      */
-	private final int MAX_DISTANCE = 800; 
+	private int maxDistance = 800;
 
     /** 
      * It indicates the number of stations to consider when choosing one randomly in recommendation by ratio between available resources and station capacity.
@@ -39,10 +39,14 @@ public class AvailableResourcesRatioRecommendationSystem extends RecommendationS
         this.infraestructureManager = infraestructureManager;
     }
 
+    public AvailableResourcesRatioRecommendationSystem(InfraestructureManager infraestructureManager, Integer maxDistance) {
+    	this.infraestructureManager = infraestructureManager;
+    	this.maxDistance = maxDistance;
+	}
+
     /**
      * It verifies which stations are less than MAX_DISTANCE meters in a straight line from  
-     * * the user position 
-     * @param point It's the user current position 
+     * * the user position
      * @return an unordered list of stations which are nearer than MAX_DISTANCE meters from the user
      */
      private List<StationInfo> validStationsToRentBike(List<StationInfo> stations) {
@@ -56,12 +60,12 @@ public class AvailableResourcesRatioRecommendationSystem extends RecommendationS
     }
     
     private List<StationInfo> fartherStations(GeoPoint point, List<StationInfo> stations) {
-    	return stations.stream().filter( station -> station.getPosition().distanceTo(point) > MAX_DISTANCE)
+    	return stations.stream().filter( station -> station.getPosition().distanceTo(point) > maxDistance)
     			.collect(Collectors.toList());
     }
 
     private List<StationInfo> nearerStations(GeoPoint point, List<StationInfo> stations) {
-    	return stations.stream().filter( station -> station.getPosition().distanceTo(point) <= MAX_DISTANCE)
+    	return stations.stream().filter( station -> station.getPosition().distanceTo(point) <= maxDistance)
     			.collect(Collectors.toList());
     }
     

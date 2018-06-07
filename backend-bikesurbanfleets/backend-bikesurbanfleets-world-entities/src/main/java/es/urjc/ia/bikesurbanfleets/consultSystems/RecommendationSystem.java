@@ -11,5 +11,5 @@ public abstract class RecommendationSystem {
 	private InfraestructureManager infraestructureManager;
 	
 	public abstract List<StationInfo> recommendToRent(GeoPoint	point);
- public abstract List<StationInfo> recommendToReturn(GeoPoint point);
+ 	public abstract List<StationInfo> recommendToReturn(GeoPoint point);
 }

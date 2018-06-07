@@ -16,14 +16,14 @@ public class StationComparator {
 	private Comparator<StationInfo> byProportionBetweenDistanceAndSlots;
 	
 	public StationComparator() {
-		byDistance = (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point), s2
-				.getPosition().distanceTo(point));
+		byDistance = (s1, s2) -> Double.compare(s1.getPosition().distanceTo(this.point), s2
+				.getPosition().distanceTo(this.point));
 		byAvailableBikes = (s1, s2) -> Integer.compare(s2.availableBikes(), s1.availableBikes()); 
 		byAvailableSlots = (s1, s2) -> Integer.compare(s2.availableBikes(), s1.availableBikes());
 		byProportionBetweenDistanceAndBikes = (s1, s2) -> Double.compare(s1.getPosition()
-				.distanceTo(point)/s1.availableBikes(), s2.getPosition().distanceTo(point)/s2.availableBikes());
+				.distanceTo(this.point)/s1.availableBikes(), s2.getPosition().distanceTo(this.point)/s2.availableBikes());
 		byProportionBetweenDistanceAndSlots =  (s1, s2) -> Double.compare(s1.getPosition()
-				.distanceTo(point)/s1.availableSlots(), s2.getPosition().distanceTo(point)/s2.availableSlots());
+				.distanceTo(this.point)/s1.availableSlots(), s2.getPosition().distanceTo(this.point)/s2.availableSlots());
 	}
 
 	public Comparator<StationInfo> byDistance(GeoPoint point) {
