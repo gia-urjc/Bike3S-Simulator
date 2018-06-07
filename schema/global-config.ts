@@ -2,6 +2,7 @@ import {GeoPoint, options, UInt} from "./common";
 import {sBoolean, sEnum, sInteger, sNumber, sObject, sString} from "json-schema-builder-ts/dist/types";
 import {JsonSchema} from "json-schema-builder-ts";
 import {rData} from "json-schema-builder-ts/dist/references";
+import {sAnyOf} from "json-schema-builder-ts/dist/operators/schematical";
 
 export default new JsonSchema(options, sObject({
     totalSimulationTime: UInt,
