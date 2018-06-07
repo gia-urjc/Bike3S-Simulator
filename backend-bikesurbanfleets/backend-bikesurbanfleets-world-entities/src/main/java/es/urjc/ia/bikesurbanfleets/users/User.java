@@ -2,19 +2,24 @@ package es.urjc.ia.bikesurbanfleets.users;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
+import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
+import es.urjc.ia.bikesurbanfleets.common.interfaces.BikeInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
+import es.urjc.ia.bikesurbanfleets.common.interfaces.ReservationInfo;
+import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
+import es.urjc.ia.bikesurbanfleets.common.interfaces.UserInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.SystemManager;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Bike;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
+import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
 
@@ -29,7 +34,7 @@ import java.util.List;
  * @author IAgroup
   */
 @HistoryReference(HistoricUser.class)
-public abstract class User implements Entity {
+public abstract class User implements Entity, UserInfo {
 
     private static IdGenerator idGenerator = new IdGenerator();
 
@@ -87,7 +92,7 @@ public abstract class User implements Entity {
      */
     private UserMemory memory;
 
-    protected SystemManager systemManager;
+    protected InfraestructureManager infraestructureManager;
     
     /**
      * It tries to convince the user to rent or return a bike in a specific station to help balance the system. 
@@ -98,6 +103,16 @@ public abstract class User implements Entity {
      * It informs the user about the state and distance of the different stations.
      */
     protected InformationSystem informationSystem;
+    
+    /** 
+     * It provides the user the availables routes between twoe geographical points.
+     */
+    private GraphManager graph;
+    
+    /**
+     * It is the time instant of the simulation.
+     */
+    private int instant;
 
     public User() {
         this.id = idGenerator.next();
@@ -113,7 +128,7 @@ public abstract class User implements Entity {
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
-        this.systemManager = null;
+        this.infraestructureManager = null;
         this.reservation = null;
         this.memory = new UserMemory(this);
 
@@ -127,13 +142,21 @@ public abstract class User implements Entity {
     }
 
     public void addReservation(Reservation reservation) {
-        systemManager.addReservation(reservation);
+        infraestructureManager.addReservation(reservation);
         this.reservation = reservation;
         this.memory.getReservations().add(reservation);
     }
+    
+    public int getInstant() {
+    	return instant;
+    }
+    
+    public void setInstant(int instant) {
+    	this.instant = instant;
+    }
 
-    public void setSystemManager(SystemManager systemManager) {
-        this.systemManager = systemManager;
+    public void setSystemManager(InfraestructureManager systemManager) {
+        this.infraestructureManager = systemManager;
     }
 
     public GeoPoint getPosition() {
@@ -152,6 +175,14 @@ public abstract class User implements Entity {
     public Bike getBike() {
         return bike;
     }
+    
+    public BikeInfo consultBike() {
+    	return bike;
+    }
+    
+    public ReservationInfo consultReservation() {
+    	return reservation;
+    }
 
     public boolean hasBike() {
         return bike != null ? true : false;
@@ -167,6 +198,10 @@ public abstract class User implements Entity {
 
     public Station getDestinationStation() {
         return destinationStation;
+    }
+    
+    public StationInfo consultDestinationStation() {
+    	return destinationStation;
     }
 
     public void setDestination(Station destinationStation) throws Exception {
@@ -199,25 +234,8 @@ public abstract class User implements Entity {
         return cyclingVelocity;
     }
 
-    public List<Reservation> getReservations() {
-        if (systemManager == null) return new ArrayList<>();
-        return systemManager.consultReservations(this);
-    }
-
     public UserMemory getMemory() {
         return this.memory;
-    }
-
-    /**
-     * It considers that the real distance is the one of the sortest available
-     * route between the user position and his destination station.
-     * @param stationPosition It is the geographical coordinates of the user destination station.
-     * @return the real distance to reach the destination station.
-     * @throws GeoRouteCreationException
-     * @throws GraphHopperIntegrationException
-     */
-    public double minRealDistanceTo(GeoPoint stationPosition) throws GraphHopperIntegrationException, GeoRouteCreationException {
-        return systemManager.getGraphManager().obtainShortestRouteBetween(this.getPosition(), stationPosition).getTotalDistance();
     }
 
     /**
@@ -345,7 +363,7 @@ public abstract class User implements Entity {
     }
 
     public List<GeoRoute> calculateRoutes(GeoPoint position) throws GeoRouteCreationException, GraphHopperIntegrationException {
-        return this.systemManager.getGraphManager().obtainAllRoutesBetween(this.getPosition(), position);
+        return graph.obtainAllRoutesBetween(this.getPosition(), position);
     }
 
     public GeoPoint reachedPointUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
@@ -393,14 +411,14 @@ public abstract class User implements Entity {
      * @param instant: it is the time instant when he needs to make this decision.
      * @return station where user has decided to go.
      */
-    public abstract Station determineStationToRentBike(int instant);
+    public abstract StationInfo determineStationToRentBike();
 
     /**
      * User decides to which station he wants to go to return his bike.
      * @param instant is the time instant when he needs to make this decision.
      * @return station where user has decided to go.
      */
-    public abstract Station determineStationToReturnBike(int instant);
+    public abstract StationInfo determineStationToReturnBike();
 
     /**
      * User decides if he'll try to make again a bike reservation at the previosly

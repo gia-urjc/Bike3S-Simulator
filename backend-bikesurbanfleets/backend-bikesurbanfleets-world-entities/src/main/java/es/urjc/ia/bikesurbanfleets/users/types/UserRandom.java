@@ -4,7 +4,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -30,76 +30,76 @@ public class UserRandom extends User {
 
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
-    public Station determineStationToRentBike(int instant) {
-    	List<Station> stations = new ArrayList(systemManager.consultStations());
-     List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(instant);
+    public Station determineStationToRentBike() {
+    	List<Station> stations = new ArrayList(infraestructureManager.consultStations());
+     List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
      stations.removeAll(triedStations);
-     int index = systemManager.getRandom().nextInt(0, stations.size());
+     int index = infraestructureManager.getRandom().nextInt(0, stations.size());
      return stations.get(index);
     }
 
     @Override
-    public Station determineStationToReturnBike(int instant) {
-        List<Station> stations = new ArrayList(systemManager.consultStations());
-        List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(instant);
+    public Station determineStationToReturnBike() {
+        List<Station> stations = new ArrayList(infraestructureManager.consultStations());
+        List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(getInstant());
         stations.removeAll(triedStations);
-        int index = systemManager.getRandom().nextInt(0, stations.size());
+        int index = infraestructureManager.getRandom().nextInt(0, stations.size());
         return stations.get(index);    
 			}
 		
     
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
     
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
     public GeoPoint decidesNextPoint() {
-        return systemManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
+        return infraestructureManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
     }
 
     @Override
     public boolean decidesToReturnBike() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
@@ -107,7 +107,7 @@ public class UserRandom extends User {
         if (routes.isEmpty()) {
             throw new GeoRouteException("Route is not valid");
         }
-        int index = systemManager.getRandom().nextInt(0, routes.size());
+        int index = infraestructureManager.getRandom().nextInt(0, routes.size());
         return routes.get(index);
     }
 

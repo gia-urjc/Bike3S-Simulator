@@ -3,15 +3,15 @@ package es.urjc.ia.bikesurbanfleets.core.core;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
-import es.urjc.ia.bikesurbanfleets.consultSystems.SystemManager;
-import es.urjc.ia.bikesurbanfleets.core.config.StationsInfo;
-import es.urjc.ia.bikesurbanfleets.core.config.UsersInfo;
+import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
+import es.urjc.ia.bikesurbanfleets.core.config.UsersConfig;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUser;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricReservation;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation;
+import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserFactory;
@@ -33,15 +33,15 @@ public class SimulationEngine {
 
     private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
     private GlobalInfo globalInfo;
-    private StationsInfo stationsInfo;
-    private UsersInfo usersInfo;
-    private SystemManager systemManager;
+    private StationsConfig stationsInfo;
+    private UsersConfig usersInfo;
+    private InfraestructureManager systemManager;
 
     /**
      * It creates an event queue where its events are sorted by the time instant when they'll occur.
      */
-    public SimulationEngine(GlobalInfo globalInfo, StationsInfo stationsInfo, UsersInfo usersInfo,
-                            SystemManager systemManager) {
+    public SimulationEngine(GlobalInfo globalInfo, StationsConfig stationsInfo, UsersConfig usersInfo,
+                            InfraestructureManager systemManager) {
         this.globalInfo = globalInfo;
         this.stationsInfo = stationsInfo;
         this.usersInfo = usersInfo;

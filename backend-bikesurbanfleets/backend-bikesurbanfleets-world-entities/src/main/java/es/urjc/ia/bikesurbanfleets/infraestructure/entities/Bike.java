@@ -1,5 +1,6 @@
-package es.urjc.ia.bikesurbanfleets.infraestructureEntities;
+package es.urjc.ia.bikesurbanfleets.infraestructure.entities;
 
+import es.urjc.ia.bikesurbanfleets.common.interfaces.BikeInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricBike;
@@ -13,7 +14,7 @@ import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
  *
  */
 @HistoryReference(HistoricBike.class)
-public class Bike implements Entity {
+public class Bike implements Entity, BikeInfo {
 
     private static IdGenerator idGenerator = new IdGenerator();
 

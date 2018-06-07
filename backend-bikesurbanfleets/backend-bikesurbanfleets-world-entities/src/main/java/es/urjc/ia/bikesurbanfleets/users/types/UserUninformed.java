@@ -5,8 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.comparators.ComparatorByDistance;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -32,26 +31,26 @@ public class UserUninformed extends User {
 
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
-    public Station determineStationToRentBike(int instant) {
-        Station destination = null;
-        List<Station> stations = systemManager.consultStations();
-        List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(instant);
+    public StationInfo determineStationToRentBike() {
+        StationInfo destination = null;
+        List<StationInfo> stations = infraestructureManager.consultStations();
+        List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
         stations.removeAll(triedStations);
-        stations.stream().sorted(new ComparatorByDistance(this.getPosition())).collect(Collectors.toList());
+        stations.stream().sorted(stationComparator.byDistance(this.getPosition())).collect(Collectors.toList());
         if (!stations.isEmpty()) {
         	destination = stations.get(0);
         }
@@ -59,12 +58,12 @@ public class UserUninformed extends User {
     }
 
     @Override
-    public Station determineStationToReturnBike(int instant) {
+    public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> stations = new ArrayList(systemManager.consultStations());
-        List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(instant);
+        List<Station> stations = new ArrayList(infraestructureManager.consultStations());
+        List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(getInstant());
         stations.removeAll(triedStations);
-        stations.stream().sorted(new ComparatorByDistance(this.getPosition())).collect(Collectors.toList());
+        stations.stream().sorted(stationComparator.byDistance(this.getPosition())).collect(Collectors.toList());
         if (!stations.isEmpty()) {
         	destination = stations.get(0);
         }
@@ -93,12 +92,12 @@ public class UserUninformed extends User {
 
     @Override
     public GeoPoint decidesNextPoint() {
-        return systemManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
+        return infraestructureManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
     }
 
     @Override
     public boolean decidesToReturnBike() {
-        return systemManager.getRandom().nextBoolean();
+        return infraestructureManager.getRandom().nextBoolean();
     }
 
     @Override
@@ -116,7 +115,7 @@ public class UserUninformed extends User {
         if (routes.isEmpty()) {
             throw new GeoRouteException("Route is not valid");
         }
-        int index = systemManager.getRandom().nextInt(0, routes.size());
+        int index = infraestructureManager.getRandom().nextInt(0, routes.size());
         return routes.get(index);
     }
 

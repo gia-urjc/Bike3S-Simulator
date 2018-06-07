@@ -1,10 +1,10 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Bike;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation.ReservationType;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation.ReservationType;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.users.User;
@@ -171,7 +171,7 @@ public abstract class EventUser implements Event {
      */
     public List<Event> manageBikeReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        Station destination = user.determineStationToRentBike(instant);
+        Station destination = (Station)user.determineStationToRentBike();
 
         if (destination != null) {
             user.setDestination(destination);
@@ -249,7 +249,7 @@ public abstract class EventUser implements Event {
 
     public List<Event> manageSlotReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        Station destination = user.determineStationToReturnBike(instant);
+        Station destination = (Station)user.determineStationToReturnBike();
         user.setDestination(destination);
 
         int arrivalTime = user.timeToReach();

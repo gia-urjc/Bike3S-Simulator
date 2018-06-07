@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.infraestructureEntities;
+package es.urjc.ia.bikesurbanfleets.infraestructure.entities;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;

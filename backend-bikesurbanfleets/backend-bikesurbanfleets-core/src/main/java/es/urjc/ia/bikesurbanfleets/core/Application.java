@@ -2,15 +2,15 @@ package es.urjc.ia.bikesurbanfleets.core;
 
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
-import es.urjc.ia.bikesurbanfleets.consultSystems.SystemManager;
 import es.urjc.ia.bikesurbanfleets.core.config.ConfigJsonReader;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
-import es.urjc.ia.bikesurbanfleets.core.config.StationsInfo;
-import es.urjc.ia.bikesurbanfleets.core.config.UsersInfo;
+import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
+import es.urjc.ia.bikesurbanfleets.core.config.UsersConfig;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 
 
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
+import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -84,13 +84,13 @@ public class Application {
 
         try {
             GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
-            UsersInfo usersInfo = jsonReader.readUsersConfiguration();
-            StationsInfo stationsInfo = jsonReader.readStationsConfiguration();
+            UsersConfig usersInfo = jsonReader.readUsersConfiguration();
+            StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
             System.out.println("DEBUG MODE: " + globalInfo.isDebugMode());
             if(historyOutputPath != null) {
                 globalInfo.setHistoryOutputPath(historyOutputPath);
             }
-            SystemManager systemManager = jsonReader.createSystemManager(stationsInfo, globalInfo);
+            InfraestructureManager systemManager = jsonReader.createSystemManager(stationsInfo, globalInfo);
             SimulationEngine simulation = new SimulationEngine(globalInfo, stationsInfo, usersInfo, systemManager);
             simulation.run();
         } catch (Exception e) {

@@ -3,8 +3,9 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
+import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -31,19 +32,19 @@ public class UserObedient extends User {
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
          */
-        private int minReservationAttempts = systemManager.getRandom().nextInt(3, 7);
+        private int minReservationAttempts = infraestructureManager.getRandom().nextInt(3, 7);
 
         /**
          * It is the number of times that a reservation timeout event musts occurs before the
          * user decides to leave the system.
          */
-        private int minReservationTimeouts = systemManager.getRandom().nextInt(2, 5);
+        private int minReservationTimeouts = infraestructureManager.getRandom().nextInt(2, 5);
 
         /**
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentalAttempts = systemManager.getRandom().nextInt(4, 8);
+        private int minRentalAttempts = infraestructureManager.getRandom().nextInt(4, 8);
 
         /**
          * It determines the rate with which the user will decide to go directly to a station
@@ -96,9 +97,9 @@ public class UserObedient extends User {
     }
     
     @Override
-    public Station determineStationToRentBike(int instant) {
-    	Station destination = null;
-     List<Station> recommendedStations = recommendationSystem.recommendToRent(this.getPosition());
+    public StationInfo determineStationToRentBike() {
+    	StationInfo destination = null;
+     List<StationInfo> recommendedStations = recommendationSystem.recommendToRent(this.getPosition());
      if (!recommendedStations.isEmpty()) {
          destination = recommendedStations.get(0);
      }
@@ -106,14 +107,14 @@ public class UserObedient extends User {
     }
 
     @Override
-    public Station determineStationToReturnBike(int instant) {
-        Station destination = null;
-        List<Station> recommendedStations = recommendationSystem.recommendToReturn(this.getPosition());
+    public StationInfo determineStationToReturnBike() {
+        StationInfo destination = null;
+        List<StationInfo> recommendedStations = recommendationSystem.recommendToReturn(this.getPosition());
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
         } else {
-            recommendedStations = systemManager.consultStations();
-            int index = systemManager.getRandom().nextInt(0, recommendedStations.size()-1);
+            recommendedStations = infraestructureManager.consultStations();
+            int index = infraestructureManager.getRandom().nextInt(0, recommendedStations.size()-1);
             destination = recommendedStations.get(index);
         }
 
@@ -142,24 +143,24 @@ public class UserObedient extends User {
 
     @Override
     public GeoPoint decidesNextPoint() {
-        return systemManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
+        return infraestructureManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
     }
 
     @Override
     public boolean decidesToReturnBike() {
-        int percentage = systemManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
         return percentage < parameters.bikeReturnPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
-        int percentage = systemManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
         return percentage < parameters.reservationTimeoutPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        int percentage = systemManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
         return percentage < parameters.failedReservationPercentage ? true : false;
     }
     

@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems;
+package es.urjc.ia.bikesurbanfleets.infraestructure;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphHopperIntegration;
@@ -6,12 +6,9 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Bike;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation.ReservationState;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation.ReservationType;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.comparators.ComparatorByDistance;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
 import java.io.IOException;
@@ -26,12 +23,17 @@ import java.util.stream.Collectors;
  * It provides all the usable methods by the user at the system.
  * @author IAgroup
  */
-public class SystemManager {
+public class InfraestructureManager {
 
     /**
      * These are all the stations at the system.
      */
     private List<Station> stations;
+    
+    /**
+     * These is the stations information for the consult agents
+     */
+    private List<StationInfo> stationsInfo;
     
     /**
      * These are all the bikes from all stations at the system.
@@ -44,11 +46,6 @@ public class SystemManager {
     private List<Reservation> reservations;
     
     /**
-     * It provides the neccesary methods to manage a graph.
-     */
-    private GraphManager graphManager;
-    
-    /**
      * It is a global random instance with an specific seed.
      */
     private SimulationRandom random;
@@ -58,24 +55,12 @@ public class SystemManager {
      */
     private BoundingBox bbox;
     
-    /**
-     * It  indicates if the recommendation system recommends by linear distance or by 
-     * real distance (the distance of the shortest route).
-     */
-    private boolean linearDistance;
-    
-    public SystemManager(List<Station> stations, String mapPath, BoundingBox bbox, boolean linearDistance) throws IOException {
+    public InfraestructureManager(List<Station> stations, BoundingBox bbox) throws IOException {
         this.stations = new ArrayList<>(stations);
+        this.stationsInfo = new ArrayList<>(stations);
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         this.reservations = new ArrayList<>();
-        this.graphManager = createGraphManager(mapPath);
-        this.random = SimulationRandom.getGeneralInstance();
         this.bbox = bbox;
-        this.linearDistance = linearDistance;
-    }
-
-    private GraphHopperIntegration createGraphManager(String mapPath) throws IOException {
-        return new GraphHopperIntegration(mapPath);
     }
     
     /**
@@ -98,24 +83,13 @@ public class SystemManager {
         return reservations.stream().filter(reservation -> reservation.getUser().getId() == user.getId()).collect(Collectors.toList());
     }
 
-    public List<Station> consultStations() {
-        return stations;
-    }
-    
-    public GraphManager getGraphManager() {
-        return graphManager;
+    public List<StationInfo> consultStations() {
+        return stationsInfo;
     }
     
     public SimulationRandom getRandom() {
         return random;
     }
-    
-    public List<Station> consultOrderedStationsByDistance(User user) {
-        Comparator<Station> byDistance = new ComparatorByDistance(user.getPosition());
-        List<Station> stations = new ArrayList<>(this.stations);
-        return stations.stream().sorted(byDistance).collect(Collectors.toList());
-    }
-
     public GeoPoint generateBoundingBoxRandomPoint(SimulationRandom random) {
         return bbox.randomPoint(random);
     }

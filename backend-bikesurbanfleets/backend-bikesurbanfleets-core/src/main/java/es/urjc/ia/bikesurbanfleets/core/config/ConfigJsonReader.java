@@ -3,7 +3,7 @@ package es.urjc.ia.bikesurbanfleets.core.config;
 import com.google.gson.Gson;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.consultSystems.SystemManager;
+import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -41,17 +41,17 @@ public class ConfigJsonReader {
         }
     }
 
-    public StationsInfo readStationsConfiguration() throws IOException {
+    public StationsConfig readStationsConfiguration() throws IOException {
         try (FileReader reader = new FileReader(stationConfFile)) {
-            StationsInfo stationsInfo = gson.fromJson(reader, StationsInfo.class);
-            return stationsInfo;
+            StationsConfig stationsConfig = gson.fromJson(reader, StationsConfig.class);
+            return stationsConfig;
         }
     }
 
-    public UsersInfo readUsersConfiguration() throws IOException {
+    public UsersConfig readUsersConfiguration() throws IOException {
         try (FileReader reader = new FileReader(usersConfFile)) {
-            UsersInfo usersInfo = gson.fromJson(reader, UsersInfo.class);
-            return usersInfo;
+            UsersConfig usersConfig = gson.fromJson(reader, UsersConfig.class);
+            return usersConfig;
         }
     }
 
@@ -59,8 +59,8 @@ public class ConfigJsonReader {
      * It creates a system manager object from the simulation configuration object.
      * @return the created system manager object.
      */
-    public SystemManager createSystemManager(StationsInfo stationsInfo, GlobalInfo globalInfo) throws IOException {
-        return new SystemManager(stationsInfo.getStations(), globalInfo.getMap(), globalInfo.getBoundingBox(), globalInfo.getLinearDistance());
+    public InfraestructureManager createSystemManager(StationsConfig stationsInfo, GlobalInfo globalInfo) throws IOException {
+        return new InfraestructureManager(stationsInfo.getStations(), globalInfo.getBoundingBox());
     }
 
 }

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Station;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation.ReservationState;
-import es.urjc.ia.bikesurbanfleets.infraestructureEntities.Reservation.ReservationType;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation.ReservationState;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation.ReservationType;
 
 /**
  * This class keeps track of the number of times that a same event has happend.
