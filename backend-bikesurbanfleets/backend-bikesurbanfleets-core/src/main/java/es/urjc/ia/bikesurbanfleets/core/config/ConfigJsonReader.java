@@ -61,6 +61,7 @@ public class ConfigJsonReader {
      */
     public InfraestructureManager createInfraestructureManager(StationsConfig stationsInfo, GlobalInfo globalInfo) throws IOException {
         return new InfraestructureManager(stationsInfo.getStations(), globalInfo.getBoundingBox());
+
     }
 
 }

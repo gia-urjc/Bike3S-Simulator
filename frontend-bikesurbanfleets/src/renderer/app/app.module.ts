@@ -23,6 +23,7 @@ import {LeafletDrawModule} from "@asymmetrik/ngx-leaflet-draw";
 import {JsonTreeViewComponent} from "./jsoneditor-component/jsoneditor.component";
 import {ConfigurationSaveComponent} from "./configuration-save-component/configurationsave.component";
 import { AnalyseHistoryComponent } from './analyse-history-component/analysehistory.component';
+import {FlexLayoutModule} from "@angular/flex-layout";
 
 @NgModule({
     imports: [
@@ -37,7 +38,8 @@ import { AnalyseHistoryComponent } from './analyse-history-component/analysehist
         JsonSchemaFormModule.forRoot(Bootstrap4FrameworkModule),
         AppRoutingModule,
         NgbModalModule,
-        NgbProgressbarModule
+        NgbProgressbarModule,
+        FlexLayoutModule,
     ],
     declarations: [
         AppComponent,

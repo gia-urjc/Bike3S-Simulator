@@ -8,7 +8,6 @@ export default new JsonSchema(options, sObject({
     debugMode: sBoolean(),
     reservationTime: sInteger().min(0).max(rData('1/totalSimulationTime')),
     randomSeed: sInteger(),
-    linearDistance: sBoolean(),
     boundingBox: sObject({
         northWest: GeoPoint,
         southEast: GeoPoint,

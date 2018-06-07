@@ -42,7 +42,6 @@ public class GlobalInfo {
      * Path  where history files stored
      */
     private String historyOutputPath;
-
     /**
      * Recommendation system that will be used by the agents
      */
@@ -57,7 +56,6 @@ public class GlobalInfo {
      * Max distance for recommendation system
      */
     private int maxDistanceRecommendation;
-
 
     public int getReservationTime() {
         return reservationTime;
@@ -102,4 +100,5 @@ public class GlobalInfo {
     public int getMaxDistanceRecommendation() {
         return maxDistanceRecommendation;
     }
+
 }

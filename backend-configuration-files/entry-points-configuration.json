@@ -14,7 +14,7 @@
             },
             "radius": 100,
             "distribution": {
-                "lambda": 0.01666666666667
+                "lambda": 1
             }
         },
         {
@@ -31,7 +31,7 @@
             },
             "radius": 100,
             "distribution": {
-                "lambda": 0.01666666666667
+                "lambda": 1
             }
         },
         {
@@ -48,7 +48,7 @@
             },
             "radius": 100,
             "distribution": {
-                "lambda": 0.01666666666667
+                "lambda": 1
             }
         },
         {
@@ -65,7 +65,7 @@
             },
             "radius": 100,
             "distribution": {
-                "lambda": 0.01666666666667
+                "lambda": 1
             }
         }
     ]
