@@ -38,19 +38,19 @@ public class UserInformed extends User {
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
          */
-        private int minReservationAttempts = infraestructureManager.getRandom().nextInt(2, 4);
+        private int minReservationAttempts = infraestructure.getRandom().nextInt(2, 4);
 
         /**
          * It is the number of times that a reservation timeout event musts occurs before the
          * user decides to leave the system.
          */
-        private int minReservationTimeouts = infraestructureManager.getRandom().nextInt(1, 3);
+        private int minReservationTimeouts = infraestructure.getRandom().nextInt(1, 3);
 
         /**
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentalAttempts = infraestructureManager.getRandom().nextInt(3, 6);
+        private int minRentalAttempts = infraestructure.getRandom().nextInt(3, 6);
 
         /**
          * It determines the rate with which the user will reserve a bike.
@@ -109,21 +109,21 @@ public class UserInformed extends User {
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
         return parameters.willReserve ?
-                getMemory().getReservationTimeoutsCounter() == parameters.minReservationTimeouts : infraestructureManager.getRandom().nextBoolean();
+                getMemory().getReservationTimeoutsCounter() == parameters.minReservationTimeouts : infraestructure.getRandom().nextBoolean();
     }
 
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
         return parameters.willReserve ?
-                getMemory().getReservationAttemptsCounter() == parameters.minReservationAttempts : infraestructureManager.getRandom().nextBoolean();
+                getMemory().getReservationAttemptsCounter() == parameters.minReservationAttempts : infraestructure.getRandom().nextBoolean();
     }
 
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable() {
         return parameters.willReserve ?
-                getMemory().getRentalAttemptsCounter() == parameters.minRentalAttempts : infraestructureManager.getRandom().nextBoolean();
+                getMemory().getRentalAttemptsCounter() == parameters.minRentalAttempts : infraestructure.getRandom().nextBoolean();
     }
 
     @Override
@@ -143,11 +143,6 @@ public class UserInformed extends User {
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
         }
-        else {
-            recommendedStations= infraestructureManager.consultStations();
-            int index = infraestructureManager.getRandom().nextInt(0, recommendedStations.size()-1);
-            destination = recommendedStations.get(index);
-        }
         return destination;
     }
 
@@ -159,7 +154,7 @@ public class UserInformed extends User {
 
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructure.getRandom().nextInt(0, 100);
         return parameters.willReserve && percentage < parameters.bikeReservationPercentage;
     }
 
@@ -171,29 +166,29 @@ public class UserInformed extends User {
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructure.getRandom().nextInt(0, 100);
         return parameters.willReserve && percentage < parameters.slotReservationPercentage;
     }
 
     @Override
     public GeoPoint decidesNextPoint() {
-        return infraestructureManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
+        return infraestructure.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
     }
 
     @Override
     public boolean decidesToReturnBike() {
-        return infraestructureManager.getRandom().nextBoolean();
+        return infraestructure.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
-        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructure.getRandom().nextInt(0, 100);
         return parameters.willReserve && percentage < parameters.reservationTimeoutPercentage;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructure.getRandom().nextInt(0, 100);
         return parameters.willReserve && percentage < parameters.failedReservationPercentage;
     }
 
@@ -202,7 +197,7 @@ public class UserInformed extends User {
         if (routes.isEmpty()) {
             throw new GeoRouteException("Route is not valid");
         }
-        int index = infraestructureManager.getRandom().nextInt(0, routes.size());
+        int index = infraestructure.getRandom().nextInt(0, routes.size());
         return routes.get(index);
     }
 

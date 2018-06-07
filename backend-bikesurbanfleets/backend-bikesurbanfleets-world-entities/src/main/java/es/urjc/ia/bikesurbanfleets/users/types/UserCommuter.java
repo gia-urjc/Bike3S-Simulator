@@ -58,19 +58,19 @@ public class UserCommuter extends User {
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
          */
-        private int minReservationAttempts = infraestructureManager.getRandom().nextInt(3, 6);
+        private int minReservationAttempts = infraestructure.getRandom().nextInt(3, 6);
 
         /**
          * It is the number of times that a reservation timeout event musts occurs before the
          * user decides to leave the system.
          */
-        private int minReservationTimeouts = infraestructureManager.getRandom().nextInt(3, 6);
+        private int minReservationTimeouts = infraestructure.getRandom().nextInt(3, 6);
 
         /**
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentingAttempts = infraestructureManager.getRandom().nextInt(4, 7);
+        private int minRentingAttempts = infraestructure.getRandom().nextInt(4, 7);
 
         @Override
         public String toString() {
@@ -122,14 +122,9 @@ public class UserCommuter extends User {
     @Override
      public StationInfo determineStationToReturnBike() {
     		List<StationInfo> recommendedStations = informationSystem.recommendToReturnBikeByDistance(this.getPosition());
-    		StationInfo destination;
+    		StationInfo destination = null;
       if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0);
-        }
-        else {
-        	recommendedStations = infraestructureManager.consultStations();
-        	int index = infraestructureManager.getRandom().nextInt(0, recommendedStations.size()-1);
-        	destination = recommendedStations.get(index);
         }
         return destination;
     }
@@ -142,7 +137,7 @@ public class UserCommuter extends User {
     
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructure.getRandom().nextInt(0, 100);
         return percentage < parameters.bikeReservationPercentage ? true : false;
     }
 
@@ -154,7 +149,7 @@ public class UserCommuter extends User {
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructure.getRandom().nextInt(0, 100);
         return percentage < parameters.slotReservationPercentage ? true : false;
     }
 

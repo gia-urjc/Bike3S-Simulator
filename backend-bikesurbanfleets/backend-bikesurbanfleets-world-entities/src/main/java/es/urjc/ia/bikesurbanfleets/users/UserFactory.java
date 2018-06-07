@@ -47,8 +47,8 @@ public class UserFactory {
                 return new UserAvailableResources(gson.fromJson(parameters,
                         UserAvailableResources.UserAvailableResourcesParameters.class));
             case USER_REASONABLE:
-                return new UserReasonable(gson.fromJson(parameters,
-                        UserReasonable.UserReasonableParameters.class));
+                return new UserDistanceResourcesRatio(gson.fromJson(parameters,
+                        UserDistanceResourcesRatio.UserReasonableParameters.class));
             case USER_DISTANCE_RESTRICTION:
                 return new UserDistanceRestriction(gson.fromJson(parameters,
                         UserDistanceRestriction.UserDistanceRestrictionParameters.class));

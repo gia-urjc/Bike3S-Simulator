@@ -4,6 +4,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-public class AvailableResourcesRatioRecommendationSystem extends RecommendationSystem {
+public class RecommendationSystemByAvailableResourcesRatio extends RecommendationSystem {
 
     /**
      * It is the maximum distance in meters between the recommended stations and the indicated 
@@ -33,10 +34,18 @@ public class AvailableResourcesRatioRecommendationSystem extends RecommendationS
      */
     private final int N_STATIONS = 5;
     
-    private InfraestructureManager infraestructureManager;
+    /**
+     * It provides information about the infraestructure state.
+     */
+    private InfraestructureManager infraestructure;
     
-    public AvailableResourcesRatioRecommendationSystem(InfraestructureManager infraestructureManager) {
-        this.infraestructureManager = infraestructureManager;
+    /**
+     * It contains several comparators to sort stations.
+     */
+    private StationComparator stationComparator;
+    
+    public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager) {
+        this.infraestructure = infraestructureManager;
     }
 
     /**
@@ -72,7 +81,7 @@ public class AvailableResourcesRatioRecommendationSystem extends RecommendationS
     		ratioSum += stations.get(i).availableBikes() / stations.get(i).getCapacity();
     	}
     	
-    	double random = infraestructureManager.getRandom().nextDouble(0, ratioSum);
+    	double random = infraestructure.getRandom().nextDouble(0, ratioSum);
     	double ratio;
     	for (i=0; i<N_STATIONS; i++) {
     		ratio = stations.get(i).availableBikes() / stations.get(i).getCapacity();
@@ -93,7 +102,7 @@ public class AvailableResourcesRatioRecommendationSystem extends RecommendationS
     		ratioSum += stations.get(i).availableSlots() / stations.get(i).getCapacity();
     	}
     	
-    	double random = infraestructureManager.getRandom().nextDouble(0, ratioSum);
+    	double random = infraestructure.getRandom().nextDouble(0, ratioSum);
     	double ratio;
     	for (i=0; i<N_STATIONS; i++) {
     		ratio = stations.get(i).availableSlots() / stations.get(i).getCapacity();
@@ -108,14 +117,12 @@ public class AvailableResourcesRatioRecommendationSystem extends RecommendationS
     }
     
     @Override
-    public List<StationInfo> recommendToRent(GeoPoint point) {
-    	List<StationInfo> stations = validStationsToRentBike(infraestructureManager.consultStations());
+    public List<StationInfo> recommendStationToRentBike(GeoPoint point) {
+    	List<StationInfo> stations = validStationsToRentBike(infraestructure.consultStations());
     	List<StationInfo> nearer = nearerStations(point, stations);
     	List<StationInfo> farther = fartherStations(point, stations);
     	
-    	Comparator<StationInfo> byBikesRatio = (s1, s2) -> Double.compare((double)s2.availableBikes()/(double)s2
-    			.getCapacity(), (double)s1.availableBikes()/(double)s1.getCapacity());
-    	
+    	Comparator<StationInfo> byBikesRatio = stationComparator.byBikesCapacityRatio(); 
      nearer = nearer.stream().sorted(byBikesRatio).collect(Collectors.toList());
      farther = farther.stream().sorted(byBikesRatio).collect(Collectors.toList());
      
@@ -123,16 +130,14 @@ public class AvailableResourcesRatioRecommendationSystem extends RecommendationS
      return rebalanceWhenRenting(stations);
     }
  
-    public List<StationInfo> recommendToReturn(GeoPoint point) {
-    	List<StationInfo> stations = validStationsToReturnBike(infraestructureManager.consultStations());
+    public List<StationInfo> recommendStationToReturnBike(GeoPoint point) {
+    	List<StationInfo> stations = validStationsToReturnBike(infraestructure.consultStations());
     	List<StationInfo> nearer = nearerStations(point, stations);
     	List<StationInfo> farther = fartherStations(point, stations);
     	
-    	Comparator<StationInfo> byBikesRatio = (s1, s2) -> Double.compare((double)s2.availableSlots()/(double)s2
-    			.getCapacity(), (double)s1.availableBikes()/(double)s1.getCapacity());
-    	
-     nearer = nearer.stream().sorted(byBikesRatio).collect(Collectors.toList());
-     farther = farther.stream().sorted(byBikesRatio).collect(Collectors.toList());
+    	Comparator<StationInfo> bySlotsRatio = stationComparator.bySlotsCapacityRatio(); 
+     nearer = nearer.stream().sorted(bySlotsRatio).collect(Collectors.toList());
+     farther = farther.stream().sorted(bySlotsRatio).collect(Collectors.toList());
      
      nearer.addAll(farther);
      return rebalanceWhenReturning(stations);

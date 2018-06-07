@@ -11,6 +11,7 @@ import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,26 +32,28 @@ public class UserUninformed extends User {
 
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
-        return infraestructureManager.getRandom().nextBoolean();
+        return infraestructure.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
-        return infraestructureManager.getRandom().nextBoolean();
+        return infraestructure.getRandom().nextBoolean();
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        return infraestructureManager.getRandom().nextBoolean();
+        return infraestructure.getRandom().nextBoolean();
     }
 
     @Override
     public StationInfo determineStationToRentBike() {
         StationInfo destination = null;
-        List<StationInfo> stations = infraestructureManager.consultStations();
+        List<StationInfo> stations = infraestructure.consultStations();
         List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
         stations.removeAll(triedStations);
-        stations.stream().sorted(stationComparator.byDistance(this.getPosition())).collect(Collectors.toList());
+        
+        Comparator<StationInfo> criteria = services.getStationComparator().byDistance(this.getPosition());
+        stations.stream().sorted(criteria).collect(Collectors.toList());
         if (!stations.isEmpty()) {
         	destination = stations.get(0);
         }
@@ -60,10 +63,12 @@ public class UserUninformed extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> stations = new ArrayList(infraestructureManager.consultStations());
+        List<Station> stations = new ArrayList(infraestructure.consultStations());
         List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(getInstant());
         stations.removeAll(triedStations);
-        stations.stream().sorted(stationComparator.byDistance(this.getPosition())).collect(Collectors.toList());
+        
+        Comparator<StationInfo> criteria = services.getStationComparator().byDistance(this.getPosition());
+        stations.stream().sorted(criteria).collect(Collectors.toList());
         if (!stations.isEmpty()) {
         	destination = stations.get(0);
         }
@@ -92,12 +97,12 @@ public class UserUninformed extends User {
 
     @Override
     public GeoPoint decidesNextPoint() {
-        return infraestructureManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
+        return infraestructure.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
     }
 
     @Override
     public boolean decidesToReturnBike() {
-        return infraestructureManager.getRandom().nextBoolean();
+        return infraestructure.getRandom().nextBoolean();
     }
 
     @Override
@@ -115,7 +120,7 @@ public class UserUninformed extends User {
         if (routes.isEmpty()) {
             throw new GeoRouteException("Route is not valid");
         }
-        int index = infraestructureManager.getRandom().nextInt(0, routes.size());
+        int index = infraestructure.getRandom().nextInt(0, routes.size());
         return routes.get(index);
     }
 

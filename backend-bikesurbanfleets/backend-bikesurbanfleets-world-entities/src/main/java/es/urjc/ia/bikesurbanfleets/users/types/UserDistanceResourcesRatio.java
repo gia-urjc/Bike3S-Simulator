@@ -26,7 +26,7 @@ import java.util.List;
  *
  */
 @AssociatedType(UserType.USER_REASONABLE)
-public class UserReasonable extends User {
+public class UserDistanceResourcesRatio extends User {
 
     public class UserReasonableParameters {
         /**
@@ -40,19 +40,19 @@ public class UserReasonable extends User {
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
          */
-        private int minReservationAttempts = infraestructureManager.getRandom().nextInt(2, 5);
+        private int minReservationAttempts = infraestructure.getRandom().nextInt(2, 5);
 
         /**
          * It is the number of times that a reservation timeout event musts occurs before the
          * user decides to leave the system.
          */
-        private int minReservationTimeouts = infraestructureManager.getRandom().nextInt(1, 3);
+        private int minReservationTimeouts = infraestructure.getRandom().nextInt(1, 3);
 
         /**
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentalAttempts = infraestructureManager.getRandom().nextInt(3, 5);
+        private int minRentalAttempts = infraestructure.getRandom().nextInt(3, 5);
 
         /**
          * It determines the rate with which the user will decide to go directly to a station
@@ -90,7 +90,7 @@ public class UserReasonable extends User {
 
     private UserReasonableParameters parameters;
 
-    public UserReasonable(UserReasonableParameters parameters) {
+    public UserDistanceResourcesRatio(UserReasonableParameters parameters) {
         super();
         this.parameters = parameters;
     }
@@ -127,11 +127,6 @@ public class UserReasonable extends User {
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0);
         }
-        else {
-        	recommendedStations= infraestructureManager.consultStations();
-        	int index = infraestructureManager.getRandom().nextInt(0, recommendedStations.size()-1);
-        	destination = recommendedStations.get(index);
-        }
         return destination;
    }
     
@@ -159,24 +154,24 @@ public class UserReasonable extends User {
 
     @Override
     public GeoPoint decidesNextPoint() {
-        return infraestructureManager.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
+        return infraestructure.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
     }
 
     @Override
     public boolean decidesToReturnBike() {
-        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructure.getRandom().nextInt(0, 100);
         return percentage < parameters.bikeReturnPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
-        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructure.getRandom().nextInt(0, 100);
         return percentage < parameters.reservationTimeoutPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        int percentage = infraestructureManager.getRandom().nextInt(0, 100);
+        int percentage = infraestructure.getRandom().nextInt(0, 100);
         return percentage < parameters.failedReservationPercentage ? true : false;
     }
     

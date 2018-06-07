@@ -92,7 +92,7 @@ public abstract class User implements Entity, UserInfo {
      */
     private UserMemory memory;
 
-    protected InfraestructureManager infraestructureManager;
+    protected InfraestructureManager infraestructure;
     
     /**
      * It tries to convince the user to rent or return a bike in a specific station to help balance the system. 
@@ -107,7 +107,12 @@ public abstract class User implements Entity, UserInfo {
     /** 
      * It provides the user the availables routes between twoe geographical points.
      */
-    private GraphManager graph;
+    protected GraphManager graph;
+    
+    /**
+     * It provides facilities of general purpose.
+     */
+    protected SimulationServices services;
     
     /**
      * It is the time instant of the simulation.
@@ -128,7 +133,7 @@ public abstract class User implements Entity, UserInfo {
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
-        this.infraestructureManager = null;
+        this.infraestructure = null;
         this.reservation = null;
         this.memory = new UserMemory(this);
 
@@ -142,7 +147,7 @@ public abstract class User implements Entity, UserInfo {
     }
 
     public void addReservation(Reservation reservation) {
-        infraestructureManager.addReservation(reservation);
+        infraestructure.addReservation(reservation);
         this.reservation = reservation;
         this.memory.getReservations().add(reservation);
     }
@@ -156,7 +161,7 @@ public abstract class User implements Entity, UserInfo {
     }
 
     public void setSystemManager(InfraestructureManager systemManager) {
-        this.infraestructureManager = systemManager;
+        this.infraestructure = systemManager;
     }
 
     public GeoPoint getPosition() {
