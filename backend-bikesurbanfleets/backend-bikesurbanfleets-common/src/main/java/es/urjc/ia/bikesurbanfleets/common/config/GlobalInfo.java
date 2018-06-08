@@ -42,12 +42,20 @@ public class GlobalInfo {
      * Path  where history files stored
      */
     private String historyOutputPath;
+    /**
+     * Recommendation system that will be used by the agents
+     */
+    private String recommendationSystemType;
 
     /**
-     *
+     * Graph implementation that will be used by the agents to get routes between points
      */
-    private boolean linearDistance;
+    private String graphManagerType;
 
+    /**
+     * Max distance for recommendation system
+     */
+    private int maxDistanceRecommendation;
 
     public int getReservationTime() {
         return reservationTime;
@@ -81,8 +89,16 @@ public class GlobalInfo {
         this.historyOutputPath = historyOutputPath;
     }
 
-    public boolean getLinearDistance() {
-        return linearDistance;
+    public String getRecommendationSystemType() {
+        return recommendationSystemType;
+    }
+
+    public String getGraphManagerType() {
+        return graphManagerType;
+    }
+
+    public int getMaxDistanceRecommendation() {
+        return maxDistanceRecommendation;
     }
 
 }

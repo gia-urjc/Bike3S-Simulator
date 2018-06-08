@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
+import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
@@ -76,8 +77,8 @@ public class UserObedient extends User {
 
     private UserObedientParameters parameters;
     
-    public UserObedient(UserObedientParameters parameters) {
-        super();
+    public UserObedient(UserObedientParameters parameters, SimulationServices services) {
+        super(services);
         this.parameters = parameters;
     }
     

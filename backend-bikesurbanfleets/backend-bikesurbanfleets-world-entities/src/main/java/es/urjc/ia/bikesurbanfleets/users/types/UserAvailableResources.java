@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
+import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
@@ -89,8 +90,8 @@ public class UserAvailableResources extends User {
 
     private UserAvailableResourcesParameters parameters;
     
-    public UserAvailableResources(UserAvailableResourcesParameters parameters) {
-        super();
+    public UserAvailableResources(UserAvailableResourcesParameters parameters, SimulationServices services) {
+        super(services);
         this.parameters = parameters;
     }
     
@@ -125,7 +126,16 @@ public class UserAvailableResources extends User {
     			StationInfo destination = null;
     			if (!recommendedStations.isEmpty()) {
     				destination = recommendedStations.get(0);
+<<<<<<< HEAD
 							}
+=======
+                }
+    			else {
+    				recommendedStations = infraestructureManager.consultStations();
+    	        	int index = infraestructureManager.getRandom().nextInt(0, recommendedStations.size()-1);
+    	        	destination = recommendedStations.get(index);
+    			}
+>>>>>>> 48c9fcd4cec4edab3b8320b44391719f3f019ac2
        return destination;
     }
     

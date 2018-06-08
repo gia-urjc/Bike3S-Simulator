@@ -90,8 +90,8 @@ public class Application {
             if(historyOutputPath != null) {
                 globalInfo.setHistoryOutputPath(historyOutputPath);
             }
-            InfraestructureManager systemManager = jsonReader.createSystemManager(stationsInfo, globalInfo);
-            SimulationEngine simulation = new SimulationEngine(globalInfo, stationsInfo, usersInfo, systemManager);
+            InfraestructureManager infraestructureManager = jsonReader.createInfraestructureManager(stationsInfo, globalInfo);
+            SimulationEngine simulation = new SimulationEngine(globalInfo, stationsInfo, usersInfo, infraestructureManager);
             simulation.run();
         } catch (Exception e) {
             e.printStackTrace();

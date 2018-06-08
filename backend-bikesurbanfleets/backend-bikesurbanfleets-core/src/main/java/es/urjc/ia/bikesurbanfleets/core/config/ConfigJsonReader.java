@@ -59,8 +59,9 @@ public class ConfigJsonReader {
      * It creates a system manager object from the simulation configuration object.
      * @return the created system manager object.
      */
-    public InfraestructureManager createSystemManager(StationsConfig stationsInfo, GlobalInfo globalInfo) throws IOException {
+    public InfraestructureManager createInfraestructureManager(StationsConfig stationsInfo, GlobalInfo globalInfo) throws IOException {
         return new InfraestructureManager(stationsInfo.getStations(), globalInfo.getBoundingBox());
+
     }
 
 }

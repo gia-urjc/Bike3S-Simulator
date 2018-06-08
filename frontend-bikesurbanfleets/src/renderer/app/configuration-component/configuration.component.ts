@@ -257,7 +257,7 @@ export class ConfigurationComponent {
     }
 
     selectFolder(): string {
-        return dialog.showOpenDialog({properties: ['openDirectory']})[0];
+        return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0];
     }
 
 }

@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
+import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
@@ -90,8 +91,13 @@ public class UserDistanceResourcesRatio extends User {
 
     private UserReasonableParameters parameters;
 
+<<<<<<< HEAD:backend-bikesurbanfleets/backend-bikesurbanfleets-world-entities/src/main/java/es/urjc/ia/bikesurbanfleets/users/types/UserDistanceResourcesRatio.java
     public UserDistanceResourcesRatio(UserReasonableParameters parameters) {
         super();
+=======
+    public UserReasonable(UserReasonableParameters parameters, SimulationServices services) {
+        super(services);
+>>>>>>> 48c9fcd4cec4edab3b8320b44391719f3f019ac2:backend-bikesurbanfleets/backend-bikesurbanfleets-world-entities/src/main/java/es/urjc/ia/bikesurbanfleets/users/types/UserReasonable.java
         this.parameters = parameters;
     }
     

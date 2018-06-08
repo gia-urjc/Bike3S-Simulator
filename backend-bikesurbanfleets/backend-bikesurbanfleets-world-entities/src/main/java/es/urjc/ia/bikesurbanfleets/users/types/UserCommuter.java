@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
+import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
@@ -89,8 +90,8 @@ public class UserCommuter extends User {
     }
     private UserEmployeeParameters parameters;
     
-    public UserCommuter(UserEmployeeParameters parameters) {
-        super();
+    public UserCommuter(UserEmployeeParameters parameters, SimulationServices services) {
+        super(services);
         this.parameters = parameters;
     }
     

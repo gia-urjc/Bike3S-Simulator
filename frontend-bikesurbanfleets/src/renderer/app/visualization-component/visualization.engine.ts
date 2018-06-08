@@ -4,6 +4,7 @@ import { isArray, isEqual } from 'lodash';
 
 import { IntervalObservable } from '../../rxjs/observable/IntervalObservable';
 import { takeWhile } from '../../rxjs/operators';
+import{ ReplaySubject } from "../../rxjs/ReplaySubject";
 
 import { EntityChanges, HistoryTimeEntry, IdReference, isIdReference } from '../../../shared/history';
 import { Geo, safe } from '../../../shared/util';
@@ -14,13 +15,13 @@ import { breakPoint, LeafletUtil } from './util';
 import * as EntityConstructors from './entities';
 
 interface DisplayData {
-    marker: Marker,
-    route: Geo.Route | null,
-    speed: number,
-    routeIndex: number,
-    distances: Array<number>,
-    distanceFromLastPoint: number,
-    popup: Popup,
+    marker: Marker;
+    route: Geo.Route | null;
+    speed: number;
+    routeIndex: number;
+    distances: Array<number>;
+    distanceFromLastPoint: number;
+    popup: Popup;
 }
 
 const DisplayKey = Symbol('DisplayData');
@@ -89,7 +90,7 @@ export class VisualizationEngine {
             this.speed = parseInt(value);
         });
 
-        this.updateState(STATE.LOADING)
+        this.updateState(STATE.LOADING);
     }
 
     init(historyPath: string) {
