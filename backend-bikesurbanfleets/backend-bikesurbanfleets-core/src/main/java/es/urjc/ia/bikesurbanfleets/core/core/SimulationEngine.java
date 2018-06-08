@@ -2,7 +2,7 @@ package es.urjc.ia.bikesurbanfleets.core.core;
 
 
 import es.urjc.bikesurbanfleets.services.GraphManagerType;
-import es.urjc.bikesurbanfleets.services.RecomSystemType;
+import es.urjc.bikesurbanfleets.services.RecommendationSystemType;
 import es.urjc.bikesurbanfleets.services.SimulationServiceConfigData;
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
@@ -50,7 +50,7 @@ public class SimulationEngine {
         servicesConfigData.setBbox(globalInfo.getBoundingBox())
             .setGraphManagerType(GraphManagerType.valueOf(globalInfo.getGraphManagerType()))
             .setMapDir(globalInfo.getMap())
-            .setRecomSystemType(RecomSystemType.valueOf(globalInfo.getRecommendationSystemType()))
+            .setRecomSystemType(RecommendationSystemType.valueOf(globalInfo.getRecommendationSystemType()))
             .setStations(stationsInfo.getStations())
             .setMaxDistance(globalInfo.getMaxDistanceRecommendation());
 

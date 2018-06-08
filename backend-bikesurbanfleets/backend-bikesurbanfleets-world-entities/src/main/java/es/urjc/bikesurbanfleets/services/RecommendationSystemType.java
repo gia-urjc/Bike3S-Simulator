@@ -1,5 +1,5 @@
 package es.urjc.bikesurbanfleets.services;
 
-public enum RecomSystemType {
+public enum RecommendationSystemType {
     AVAILABLE_RESOURCES_RATIO
 }

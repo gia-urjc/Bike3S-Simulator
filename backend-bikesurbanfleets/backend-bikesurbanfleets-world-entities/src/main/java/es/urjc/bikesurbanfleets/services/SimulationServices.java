@@ -16,12 +16,12 @@ import java.util.List;
 
 public class SimulationServices {
 
-    private final String INIT_EXCEPTION_MESSAGE = "Simulation Service is not started correctly." +
+    private final String INIT_EXCEPTION_MESSAGE = "Simulation Service is not correctly started." +
             " You should init all the services";
     private final String GRAPH_HOPPER_EXC_MESSAGE = "You need to set a map for " +
-            "Graphhopper integration";
-    private final String GRAPH_MANAGER_EXC_MESSAGE = "Graph manager is not initialized correctly";
-    private final String RECOM_SYSTEM_EXC_MESSAGE = "Recommendation System is not initialized correctly";
+            "GraphHopper integration";
+    private final String GRAPH_MANAGER_EXC_MESSAGE = "Graph manager is not correctly initialized";
+    private final String RECOM_SYSTEM_EXC_MESSAGE = "Recommendation System is not correctly initialized";
 
     private InfraestructureManager infrastructureManager;
     private RecommendationSystem recommendationSystem;
@@ -32,19 +32,19 @@ public class SimulationServices {
     public SimulationServices(SimulationServiceConfigData configData)
             throws IOException, GraphHopperIntegrationException {
         this.infrastructureManager = new InfraestructureManager(configData.getStations(), configData.getBbox());
-        this.informationSystem = new InformationSystem(this.infrastructureManager);
-        this.recommendationSystem = initRecommendationSystem(configData.getRecomSystemType(), configData.getMaxDistance());
         this.graphManager = initGraphManager(configData.getGraphManagerType(), configData.getMapDir());
         this.stationComparator = new StationComparator();
+        this.informationSystem = new InformationSystem(this.infrastructureManager, this.stationComparator);
+        this.recommendationSystem = initRecommendationSystem(configData.getRecomSystemType(), configData.getMaxDistance());
     }
 
-    private RecommendationSystem initRecommendationSystem(RecomSystemType type, Integer maxDistance) throws IllegalStateException {
+    private RecommendationSystem initRecommendationSystem(RecommendationSystemType type, Integer maxDistance) throws IllegalStateException {
         switch(type) {
             case AVAILABLE_RESOURCES_RATIO:
                 if(maxDistance == null) {
-                    return new RecommendationSystemByAvailableResourcesRatio(this.infrastructureManager);
+                    return new RecommendationSystemByAvailableResourcesRatio(this.infrastructureManager, this.stationComparator);
                 }
-                return new RecommendationSystemByAvailableResourcesRatio(this.infrastructureManager, maxDistance);
+                return new RecommendationSystemByAvailableResourcesRatio(this.infrastructureManager, maxDistance, this.stationComparator);
         }
         throw new IllegalStateException(RECOM_SYSTEM_EXC_MESSAGE);
     }

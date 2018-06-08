@@ -27,30 +27,26 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
      * It is the maximum distance in meters between the recommended stations and the indicated 
      * geographical point.
      */
-	private int maxDistance = 800;
+	private int maxDistance = 650;
 
     /** 
      * It indicates the number of stations to consider when choosing one randomly in recommendation by ratio between available resources and station capacity.
      */
     private final int N_STATIONS = 5;
-    
-    /**
-     * It provides information about the infraestructure state.
-     */
-    private InfraestructureManager infraestructure;
-    
     /**
      * It contains several comparators to sort stations.
      */
     private StationComparator stationComparator;
     
-    public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager) {
-        this.infraestructure = infraestructureManager;
-    }
-
-    public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager, Integer maxDistance) {
-    	this.infraestructure = infraestructureManager;
+    public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager, StationComparator stationComparator) {
+    	super(infraestructureManager);
+    	this.stationComparator = stationComparator;
+	}
+    
+    public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager, Integer maxDistance, StationComparator stationComparator) {
+    	super(infraestructureManager);
     	this.maxDistance = maxDistance;
+    	this.stationComparator = stationComparator;
 	}
 
     /**
@@ -85,7 +81,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
     		ratioSum += stations.get(i).availableBikes() / stations.get(i).getCapacity();
     	}
     	
-    	double random = infraestructure.getRandom().nextDouble(0, ratioSum);
+    	double random = infraestructureManager.getRandom().nextDouble(0, ratioSum);
     	double ratio;
     	for (i=0; i<N_STATIONS; i++) {
     		ratio = stations.get(i).availableBikes() / stations.get(i).getCapacity();
@@ -106,7 +102,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
     		ratioSum += stations.get(i).availableSlots() / stations.get(i).getCapacity();
     	}
     	
-    	double random = infraestructure.getRandom().nextDouble(0, ratioSum);
+    	double random = infraestructureManager.getRandom().nextDouble(0, ratioSum);
     	double ratio;
     	for (i=0; i<N_STATIONS; i++) {
     		ratio = stations.get(i).availableSlots() / stations.get(i).getCapacity();
@@ -122,7 +118,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
     
     @Override
     public List<StationInfo> recommendStationToRentBike(GeoPoint point) {
-    	List<StationInfo> stations = validStationsToRentBike(infraestructure.consultStations());
+    	List<StationInfo> stations = validStationsToRentBike(infraestructureManager.consultStations());
     	List<StationInfo> nearer = nearerStations(point, stations);
     	List<StationInfo> farther = fartherStations(point, stations);
     	
@@ -135,7 +131,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
     }
  
     public List<StationInfo> recommendStationToReturnBike(GeoPoint point) {
-    	List<StationInfo> stations = validStationsToReturnBike(infraestructure.consultStations());
+    	List<StationInfo> stations = validStationsToReturnBike(infraestructureManager.consultStations());
     	List<StationInfo> nearer = nearerStations(point, stations);
     	List<StationInfo> farther = fartherStations(point, stations);
     	

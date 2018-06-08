@@ -17,8 +17,9 @@ public class InformationSystem {
 	private InfraestructureManager infraestructureManager;
 	private StationComparator stationComparator;
 	
-    public InformationSystem(InfraestructureManager infraestructureManager) {
+    public InformationSystem(InfraestructureManager infraestructureManager, StationComparator stationComparator) {
     	this.infraestructureManager = infraestructureManager;
+    	this.stationComparator = stationComparator;
     }
     
     private List<StationInfo> validStationInfosToRentBike(GeoPoint point, int maxDistance, List<StationInfo> stations) {

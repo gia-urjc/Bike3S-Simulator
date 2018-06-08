@@ -11,7 +11,7 @@ public class SimulationServiceConfigData {
     private BoundingBox bbox;
 
     private GraphManagerType graphManagerType;
-    private RecomSystemType recomSystemType;
+    private RecommendationSystemType recomSystemType;
     private String mapDir;
     private Integer maxDistance;
 
@@ -26,11 +26,11 @@ public class SimulationServiceConfigData {
         return this;
     }
 
-    public RecomSystemType getRecomSystemType() {
+    public RecommendationSystemType getRecomSystemType() {
         return recomSystemType;
     }
 
-    public SimulationServiceConfigData setRecomSystemType(RecomSystemType recomSystemType) {
+    public SimulationServiceConfigData setRecomSystemType(RecommendationSystemType recomSystemType) {
         this.recomSystemType = recomSystemType;
         return this;
     }

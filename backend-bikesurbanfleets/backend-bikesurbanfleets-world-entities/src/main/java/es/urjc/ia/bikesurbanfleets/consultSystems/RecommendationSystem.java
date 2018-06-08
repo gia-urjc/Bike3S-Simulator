@@ -8,9 +8,16 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
 public abstract class RecommendationSystem {
-	private InfraestructureManager infraestructureManager;
 	
-
+	/**
+     * It provides information about the infraestructure state.
+     */
+   protected InfraestructureManager infraestructureManager;
+   
+   public RecommendationSystem(InfraestructureManager infraestructureManager) {
+	   this.infraestructureManager = infraestructureManager; 	
+   }
+	
 	public abstract List<StationInfo> recommendStationToRentBike(GeoPoint	point);
  	public abstract List<StationInfo> recommendStationToReturnBike(GeoPoint point);
 
