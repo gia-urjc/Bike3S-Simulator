@@ -122,20 +122,11 @@ public class UserAvailableResources extends User {
 
     @Override
      public StationInfo determineStationToReturnBike() {
-    			List<StationInfo> recommendedStations = informationSystem.getStationsOrderedByNumberOfSlots();
-    			StationInfo destination = null;
-    			if (!recommendedStations.isEmpty()) {
-    				destination = recommendedStations.get(0);
-<<<<<<< HEAD
-							}
-=======
-                }
-    			else {
-    				recommendedStations = infraestructureManager.consultStations();
-    	        	int index = infraestructureManager.getRandom().nextInt(0, recommendedStations.size()-1);
-    	        	destination = recommendedStations.get(index);
-    			}
->>>>>>> 48c9fcd4cec4edab3b8320b44391719f3f019ac2
+            List<StationInfo> recommendedStations = informationSystem.getStationsOrderedByNumberOfSlots();
+            StationInfo destination = null;
+            if (!recommendedStations.isEmpty()) {
+                destination = recommendedStations.get(0);
+            }
        return destination;
     }
     

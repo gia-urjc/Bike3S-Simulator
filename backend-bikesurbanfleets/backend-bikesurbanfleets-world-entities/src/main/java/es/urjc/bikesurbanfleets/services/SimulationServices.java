@@ -7,7 +7,7 @@ import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.AvailableResourcesRatioRecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.RecommendationSystemByAvailableResourcesRatio;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -42,9 +42,9 @@ public class SimulationServices {
         switch(type) {
             case AVAILABLE_RESOURCES_RATIO:
                 if(maxDistance == null) {
-                    return new AvailableResourcesRatioRecommendationSystem(this.infrastructureManager);
+                    return new RecommendationSystemByAvailableResourcesRatio(this.infrastructureManager);
                 }
-                return new AvailableResourcesRatioRecommendationSystem(this.infrastructureManager, maxDistance);
+                return new RecommendationSystemByAvailableResourcesRatio(this.infrastructureManager, maxDistance);
         }
         throw new IllegalStateException(RECOM_SYSTEM_EXC_MESSAGE);
     }

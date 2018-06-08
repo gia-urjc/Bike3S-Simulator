@@ -48,8 +48,8 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
         this.infraestructure = infraestructureManager;
     }
 
-    public AvailableResourcesRatioRecommendationSystem(InfraestructureManager infraestructureManager, Integer maxDistance) {
-    	this.infraestructureManager = infraestructureManager;
+    public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager, Integer maxDistance) {
+    	this.infraestructure = infraestructureManager;
     	this.maxDistance = maxDistance;
 	}
 

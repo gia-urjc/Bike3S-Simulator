@@ -13,5 +13,6 @@
             "longitude": -3.69826
         }
     },
-    "map": "../backend-configuration-files/maps/madrid.osm"
+    "map": "../backend-configuration-files/maps/madrid.osm",
+    "recommendationSystemType": "AVAILABLE_RESOURCES_RATIO"
 }

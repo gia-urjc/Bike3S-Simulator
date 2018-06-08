@@ -94,16 +94,9 @@ public abstract class User implements Entity, UserInfo {
      */
     private UserMemory memory;
 
-<<<<<<< HEAD
-    protected InfraestructureManager infraestructure;
-    
-=======
-    /**
-     * Gives to the user infraestructure information
-     */
-    protected InfraestructureManager infraestructureManager;
 
->>>>>>> 48c9fcd4cec4edab3b8320b44391719f3f019ac2
+    protected InfraestructureManager infraestructure;
+
     /**
      * It tries to convince the user to rent or return a bike in a specific station to help balance the system.
      */
@@ -118,19 +111,17 @@ public abstract class User implements Entity, UserInfo {
      * It provides the user the availables routes between twoe geographical points.
      */
     protected GraphManager graph;
-<<<<<<< HEAD
-    
+
     /**
      * It provides facilities of general purpose.
      */
     protected SimulationServices services;
-=======
+
 
     /**
     * Different comparators for stations
     */
     protected StationComparator stationComparator;
->>>>>>> 48c9fcd4cec4edab3b8320b44391719f3f019ac2
     
     /**
      * It is the time instant of the simulation.
@@ -151,13 +142,10 @@ public abstract class User implements Entity, UserInfo {
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
-<<<<<<< HEAD
-        this.infraestructure = null;
-=======
->>>>>>> 48c9fcd4cec4edab3b8320b44391719f3f019ac2
+
         this.reservation = null;
         this.memory = new UserMemory(this);
-        this.infraestructureManager = services.getInfrastructureManager();
+        this.infraestructure = services.getInfrastructureManager();
         this.recommendationSystem = services.getRecommendationSystem();
         this.informationSystem = services.getInformationSystem();
         this.graph = services.getGraphManager();
@@ -186,13 +174,7 @@ public abstract class User implements Entity, UserInfo {
     	this.instant = instant;
     }
 
-<<<<<<< HEAD
-    public void setSystemManager(InfraestructureManager systemManager) {
-        this.infraestructure = systemManager;
-    }
 
-=======
->>>>>>> 48c9fcd4cec4edab3b8320b44391719f3f019ac2
     public GeoPoint getPosition() {
         return position;
     }

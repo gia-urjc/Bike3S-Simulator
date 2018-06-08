@@ -107,7 +107,6 @@ public class UserMemory {
     
     /**
     * It obtains the stations for which a user has tried to make a bike reservation in an specific moment.
-    * @param user it is the user who has tried to reserve a bike.
     * @param timeInstant it is the moment at which he has decided he wants to reserve a bike
     * and he has been trying it.
     * @return a list of stations for which the bike reservation has failed because of unavailable bikes.

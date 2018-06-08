@@ -46,19 +46,11 @@ public class UserRandom extends User {
 
     @Override
     public Station determineStationToRentBike() {
-<<<<<<< HEAD
     	List<Station> stations = new ArrayList(infraestructure.consultStations());
-     List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
-     stations.removeAll(triedStations);
-     int index = infraestructure.getRandom().nextInt(0, stations.size());
-     return stations.get(index);
-=======
-    	List<Station> stations = new ArrayList(infraestructureManager.consultStations());
-        List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
-        stations.removeAll(triedStations);
-        int index = infraestructureManager.getRandom().nextInt(0, stations.size());
-        return stations.get(index);
->>>>>>> 48c9fcd4cec4edab3b8320b44391719f3f019ac2
+    	List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
+    	stations.removeAll(triedStations);
+    	int index = infraestructure.getRandom().nextInt(0, stations.size());
+    	return stations.get(index);
     }
 
     @Override
