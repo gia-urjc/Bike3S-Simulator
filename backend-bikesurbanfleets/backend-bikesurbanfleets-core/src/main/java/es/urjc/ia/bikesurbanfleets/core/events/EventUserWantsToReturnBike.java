@@ -26,6 +26,7 @@ public class EventUserWantsToReturnBike extends EventUser {
 
     @Override
     public List<Event> execute() throws Exception {
+    	user.setInstant(this.instant);
         user.setPosition(actualPosition);
         debugEventLog();
         return manageSlotReservationDecisionAtOtherStation();

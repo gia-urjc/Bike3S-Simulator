@@ -35,8 +35,7 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
     @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        // user.setPosition(station.getPosition());
-        reservation.resolve(instant);
+        user.setInstant(this.instant);
         user.returnBikeWithReservationTo(station);
         user.setPosition(null);
         user.setRoute(null);

@@ -28,8 +28,8 @@ public class EventSlotReservationTimeout extends EventUser {
 
     @Override
     public List<Event> execute() throws Exception {
-        List<Event> newEvents;
-
+    			List<Event> newEvents;
+    			user.setInstant(this.instant);
         user.setPosition(positionTimeOut);
         reservation.expire();
         user.cancelsSlotReservation(user.getDestinationStation());

@@ -28,6 +28,7 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
     @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
+        user.setInstant(this.instant);
         debugEventLog();
         if(!user.returnBikeWithoutReservationTo(station)) {
             user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);

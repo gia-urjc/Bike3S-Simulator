@@ -161,7 +161,8 @@ public class UserObedient extends User {
     }
     
     @Override
-    public GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException {
+    public GeoRoute determineRoute() throws GeoRouteException {
+    	List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
         if (routes.isEmpty()) {
             throw new GeoRouteException("Route is not valid");
         }

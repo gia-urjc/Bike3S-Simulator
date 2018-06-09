@@ -4,6 +4,7 @@ import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
+import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
@@ -177,13 +178,11 @@ public class UserAvailableResources extends User {
     }
     
     @Override
-    public GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException {
-    	 
-        if (routes.isEmpty()) {
-            throw new GeoRouteException("Route is not valid");
-        }
+    public GeoRoute determineRoute() throws GeoRouteException, GraphHopperIntegrationException {
+    	List<GeoRoute> routes = calculateRoutes(getDestinationStation().getPosition());
         // The route in first list position is the shortest.
         return routes.get(0);
+ 
     }
 
     @Override

@@ -35,6 +35,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
     @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();;
+        user.setInstant(this.instant);
         user.setPosition(station.getPosition());
         reservation.resolve(instant);
         user.removeBikeWithReservationFrom(station);
@@ -44,7 +45,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
             newEvents = manageSlotReservationDecisionAtOtherStation();
         } else {   // user rides his bike to a point which is not a station
             GeoPoint point = user.decidesNextPoint();
-            user.setDestination(point);
+            user.setDestinationPoint(point);
             int arrivalTime = user.timeToReach();
             debugEventLog("User decides take a ride");
             newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));

@@ -6,6 +6,7 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation.ReservationType;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserMemory;
@@ -148,10 +149,15 @@ public abstract class EventUser implements Event {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.getDestinationStation();
         user.setDestination(destination);
+        user.setDestinationPoint(destination.getPosition());
+        GeoRoute route = user.determineRoute();
+        user.setRoute(route);
         int arrivalTime = user.timeToReach();
+        
         if(Debug.DEBUG_MODE) {
             System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
         }
+        
         if (user.decidesToReserveBikeAtSameStationAfterTimeout()) {
             debugEventLog("User decides to manage bike reservation at the same station");
             newEvents = manageBikeReservation(destination);
@@ -175,6 +181,9 @@ public abstract class EventUser implements Event {
 
         if (destination != null) {
             user.setDestination(destination);
+            user.setDestinationPoint(destination.getPosition());
+            GeoRoute route = user.determineRoute(); 
+            user.setRoute(route);
 
             int arrivalTime = user.timeToReach();
             if(Debug.DEBUG_MODE) {
@@ -216,7 +225,7 @@ public abstract class EventUser implements Event {
             destination.getReservations().add(reservation);
             user.addReservation(reservation);
             debugEventLog("User has not been able to reserve a slot");
-            //aq:
+            
             if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user waljs to the initially chosen station
                 debugEventLog("User decides to go to the initially chosen station without slot reservation");
                 newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
@@ -233,6 +242,9 @@ public abstract class EventUser implements Event {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.getDestinationStation();
         user.setDestination(destination);
+        user.setDestinationPoint(destination.getPosition());
+        GeoRoute route = user.determineRoute();
+        user.setRoute(route);
         int arrivalTime = user.timeToReach();
         if(Debug.DEBUG_MODE) {
             System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
@@ -251,7 +263,9 @@ public abstract class EventUser implements Event {
         List<Event> newEvents = new ArrayList<>();
         Station destination = (Station)user.determineStationToReturnBike();
         user.setDestination(destination);
-
+        user.setDestinationPoint(destination.getPosition());
+        GeoRoute route = user.determineRoute();
+        user.setRoute(route);
         int arrivalTime = user.timeToReach();
 
         if(Debug.DEBUG_MODE) {

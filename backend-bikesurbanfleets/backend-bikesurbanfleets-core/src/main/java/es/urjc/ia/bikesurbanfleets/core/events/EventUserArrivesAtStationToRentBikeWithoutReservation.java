@@ -3,6 +3,7 @@ package es.urjc.ia.bikesurbanfleets.core.events;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserMemory;
@@ -29,6 +30,7 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
     @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
+        user.setInstant(this.instant);
         user.setPosition(station.getPosition());
         debugEventLog();
         if (user.removeBikeWithoutReservationFrom(station)) {
@@ -38,7 +40,9 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
                 newEvents = manageSlotReservationDecisionAtOtherStation();
             } else {   // user rides his bike to a point which is not a station
                 GeoPoint point = user.decidesNextPoint();
-                user.setDestination(point);
+                user.setDestinationPoint(point);
+                GeoRoute route = user.determineRoute();
+                user.setRoute(route);
                 int arrivalTime = user.timeToReach();
                 debugEventLog("User decides to take a ride");
                 newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));

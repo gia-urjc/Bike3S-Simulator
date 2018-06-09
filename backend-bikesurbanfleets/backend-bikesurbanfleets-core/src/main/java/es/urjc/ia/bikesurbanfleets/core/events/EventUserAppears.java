@@ -22,6 +22,7 @@ public class EventUserAppears extends EventUser {
 
     @Override
     public List<Event> execute() throws Exception {
+    	user.setInstant(this.instant);
         user.setPosition(position);
         debugEventLog();
         return manageBikeReservationDecisionAtOtherStation();

@@ -30,6 +30,7 @@ public class EventBikeReservationTimeout extends EventUser {
     @Override
     public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
+        user.setInstant(this.instant);
         user.setPosition(positionTimeOut);
         reservation.expire();
         user.cancelsBikeReservation(user.getDestinationStation());

@@ -4,6 +4,7 @@ import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
+import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
@@ -177,7 +178,8 @@ public class UserDistanceResourcesRatio extends User {
     }
     
     @Override
-    public GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException {
+    public GeoRoute determineRoute() throws GeoRouteException, GraphHopperIntegrationException {
+    	List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
         if (routes.isEmpty()) {
             throw new GeoRouteException("Route is not valid");
         }

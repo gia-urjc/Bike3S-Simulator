@@ -57,7 +57,12 @@ public abstract class User implements Entity, UserInfo {
      * It is the station to which user has decided to go at this moment.
      */
     private Station destinationStation;
-
+    
+/**
+ * It is the place in the city the user wants to cycle to.
+ */
+    private GeoPoint destinationPoint;
+    
     /**
      * Speed in meters per second at which user walks.
      */
@@ -217,16 +222,14 @@ public abstract class User implements Entity, UserInfo {
 
     public void setDestination(Station destinationStation) throws Exception {
         this.destinationStation = destinationStation;
-        List<GeoRoute> allRoutes = calculateRoutes(destinationStation.getPosition());
-        GeoRoute chosenRoute = determineRoute(allRoutes);
-        this.route = chosenRoute;
     }
-
-    public void setDestination(GeoPoint destination) throws Exception {
-        List<GeoRoute> allRoutes = calculateRoutes(destination);
-        GeoRoute chosenRoute = determineRoute(allRoutes);
-        this.route = chosenRoute;
-
+    
+    public GeoPoint getDestinationPoint() {
+    	return destinationPoint;
+    }
+    
+    public void setDestinationPoint(GeoPoint point) {
+    	this.setDestinationPoint(point);
     }
 
     public GeoRoute getRoute() {
@@ -479,7 +482,7 @@ public abstract class User implements Entity, UserInfo {
      * @param routes It's a list of possible routes to the chosen destination.
      * @return the route which the user will follow.
      */
-    public abstract GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException;
+    public abstract GeoRoute determineRoute() throws GeoRouteException, GraphHopperIntegrationException;
 
     /**
      * When user hasn't been able to make a reservation at the destination station,

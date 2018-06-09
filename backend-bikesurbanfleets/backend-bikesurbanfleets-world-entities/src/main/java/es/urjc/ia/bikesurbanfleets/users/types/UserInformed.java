@@ -194,10 +194,8 @@ public class UserInformed extends User {
     }
 
     @Override
-    public GeoRoute determineRoute(List<GeoRoute> routes) throws GeoRouteException {
-        if (routes.isEmpty()) {
-            throw new GeoRouteException("Route is not valid");
-        }
+    public GeoRoute determineRoute() throws GeoRouteException {
+    	List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
         int index = infraestructure.getRandom().nextInt(0, routes.size());
         return routes.get(index);
     }
