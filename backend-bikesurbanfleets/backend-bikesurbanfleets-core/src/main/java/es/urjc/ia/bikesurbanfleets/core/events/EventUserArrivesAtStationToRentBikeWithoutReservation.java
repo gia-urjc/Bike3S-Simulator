@@ -43,6 +43,7 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
                 user.setDestinationPoint(point);
                 GeoRoute route = user.determineRoute();
                 user.setRoute(route);
+                //TODO: put destinationStation to null ??
                 int arrivalTime = user.timeToReach();
                 debugEventLog("User decides to take a ride");
                 newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));

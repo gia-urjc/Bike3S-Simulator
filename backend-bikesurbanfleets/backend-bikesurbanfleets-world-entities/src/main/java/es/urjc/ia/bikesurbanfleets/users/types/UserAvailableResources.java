@@ -3,6 +3,7 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
+import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
@@ -113,21 +114,25 @@ public class UserAvailableResources extends User {
     
     @Override
     public StationInfo determineStationToRentBike() {
-     List<StationInfo> recommendedStations = informationSystem.getStationsOrderedByNumberOfBikes();
-     StationInfo destination = null;
-     if (!recommendedStations.isEmpty()) {
-    	 destination = recommendedStations.get(0);
-     }
-     return destination;
+        List<StationInfo> recommendedStations = informationSystem.getStationsOrderedByNumberOfBikes();
+        StationInfo destination = null;
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        if (!recommendedStations.isEmpty()) {
+            destination = recommendedStations.get(0);
+        }
+        return destination;
     }
 
     @Override
      public StationInfo determineStationToReturnBike() {
-            List<StationInfo> recommendedStations = informationSystem.getStationsOrderedByNumberOfSlots();
-            StationInfo destination = null;
-            if (!recommendedStations.isEmpty()) {
-                destination = recommendedStations.get(0);
-            }
+        List<StationInfo> recommendedStations = informationSystem.getStationsOrderedByNumberOfSlots();
+        StationInfo destination = null;
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        if (!recommendedStations.isEmpty()) {
+            destination = recommendedStations.get(0);
+        }
        return destination;
     }
     
@@ -178,11 +183,15 @@ public class UserAvailableResources extends User {
     }
     
     @Override
-    public GeoRoute determineRoute() throws GeoRouteException, GraphHopperIntegrationException {
-    	List<GeoRoute> routes = calculateRoutes(getDestinationStation().getPosition());
-        // The route in first list position is the shortest.
-        return routes.get(0);
- 
+    public GeoRoute determineRoute() {
+        List<GeoRoute> routes = null;
+        try {
+            routes = calculateRoutes(getDestinationStation().getPosition());
+        }
+        catch(Exception e) {
+            System.err.println("Exception calculating routes \n" + e.toString());
+        }
+        return routes != null ? routes.get(0) : null;
     }
 
     @Override

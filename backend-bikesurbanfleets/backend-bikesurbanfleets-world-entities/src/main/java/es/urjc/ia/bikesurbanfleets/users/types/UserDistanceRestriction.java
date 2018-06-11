@@ -120,18 +120,22 @@ public class UserDistanceRestriction extends User {
     
     @Override
     public StationInfo determineStationToRentBike() {
-     StationInfo destination = null;
-     List<StationInfo> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), parameters.maxDistance);
-      if (!recommendedStations.isEmpty()) {
-     	 destination = recommendedStations.get(0);
-      }
-      return destination;
+        StationInfo destination = null;
+        List<StationInfo> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), parameters.maxDistance);
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        if (!recommendedStations.isEmpty()) {
+            destination = recommendedStations.get(0);
+        }
+        return destination;
     }
 
     @Override
      public StationInfo determineStationToReturnBike() {
         StationInfo destination = null;
-        List<StationInfo> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition() );
+        List<StationInfo> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition());
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0);
         }
@@ -187,10 +191,17 @@ public class UserDistanceRestriction extends User {
      * The user chooses the shortest route because he wants to arrive at work as fast as possible.
      */
     @Override
-    public GeoRoute determineRoute() throws GeoRouteException, GraphHopperIntegrationException {
-    	List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
+    public GeoRoute determineRoute() {
+        List<GeoRoute> routes = null;
+        try {
+            routes = calculateRoutes(getDestinationPoint());
+        }
+        catch(Exception e) {
+            System.err.println("Exception calculating routes \n" + e.toString());
+
+        }
         // The route in first list position is the shortest.
-        return routes.get(0);
+        return routes != null ? routes.get(0) : null;
     }
 
     @Override

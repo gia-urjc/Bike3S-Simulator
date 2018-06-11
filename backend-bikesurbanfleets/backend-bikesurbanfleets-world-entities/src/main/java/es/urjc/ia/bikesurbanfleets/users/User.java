@@ -150,6 +150,7 @@ public abstract class User implements Entity, UserInfo {
 
         this.reservation = null;
         this.memory = new UserMemory(this);
+        this.services = services;
         this.infraestructure = services.getInfrastructureManager();
         this.recommendationSystem = services.getRecommendationSystem();
         this.informationSystem = services.getInformationSystem();
@@ -229,7 +230,7 @@ public abstract class User implements Entity, UserInfo {
     }
     
     public void setDestinationPoint(GeoPoint point) {
-    	this.setDestinationPoint(point);
+    	this.destinationPoint = point;
     }
 
     public GeoRoute getRoute() {
@@ -479,10 +480,9 @@ public abstract class User implements Entity, UserInfo {
 
     /**
      * The user chooses the route which he'll travel to arrive at  selected destination.
-     * @param routes It's a list of possible routes to the chosen destination.
      * @return the route which the user will follow.
      */
-    public abstract GeoRoute determineRoute() throws GeoRouteException, GraphHopperIntegrationException;
+    public abstract GeoRoute determineRoute();
 
     /**
      * When user hasn't been able to make a reservation at the destination station,

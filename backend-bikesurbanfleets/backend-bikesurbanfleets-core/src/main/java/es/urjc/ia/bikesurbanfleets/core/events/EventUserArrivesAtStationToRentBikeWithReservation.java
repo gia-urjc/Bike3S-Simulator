@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
@@ -46,6 +47,8 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         } else {   // user rides his bike to a point which is not a station
             GeoPoint point = user.decidesNextPoint();
             user.setDestinationPoint(point);
+            GeoRoute route = user.determineRoute();
+            user.setRoute(route);
             int arrivalTime = user.timeToReach();
             debugEventLog("User decides take a ride");
             newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));

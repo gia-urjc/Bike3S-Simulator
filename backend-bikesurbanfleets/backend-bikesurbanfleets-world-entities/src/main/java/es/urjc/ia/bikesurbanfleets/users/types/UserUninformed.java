@@ -52,6 +52,9 @@ public class UserUninformed extends User {
         List<StationInfo> stations = infraestructure.consultStations();
         List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
         stations.removeAll(triedStations);
+
+        //Remove station if the user is in this station
+        stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         
         Comparator<StationInfo> criteria = services.getStationComparator().byDistance(this.getPosition());
         stations.stream().sorted(criteria).collect(Collectors.toList());
@@ -67,7 +70,9 @@ public class UserUninformed extends User {
         List<Station> stations = new ArrayList(infraestructure.consultStations());
         List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(getInstant());
         stations.removeAll(triedStations);
-        
+
+        //Remove station if the user is in this station
+        stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         Comparator<StationInfo> criteria = services.getStationComparator().byDistance(this.getPosition());
         stations.stream().sorted(criteria).collect(Collectors.toList());
         if (!stations.isEmpty()) {
@@ -117,13 +122,22 @@ public class UserUninformed extends User {
     }
 
     @Override
-    public GeoRoute determineRoute() throws GeoRouteException {
-        List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
-                if (routes.isEmpty()) {
-            throw new GeoRouteException("Route is not valid");
+    public GeoRoute determineRoute() {
+        List<GeoRoute> routes = null;
+        try {
+            routes = calculateRoutes(getDestinationPoint());
         }
-        int index = infraestructure.getRandom().nextInt(0, routes.size());
-        return routes.get(index);
+        catch (Exception e) {
+            System.err.println("Exception calculating routes \n" + e.toString());
+        }
+
+        if(routes != null) {
+            int index = infraestructure.getRandom().nextInt(0, routes.size());
+            return routes.get(index);
+        }
+        else {
+            return null;
+        }
     }
 
 }

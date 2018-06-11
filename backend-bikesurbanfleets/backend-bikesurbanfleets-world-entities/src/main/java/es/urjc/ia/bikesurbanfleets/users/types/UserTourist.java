@@ -134,6 +134,9 @@ public class UserTourist extends User {
     public StationInfo determineStationToRentBike() {
         List<StationInfo> recommendedStations = informationSystem.recommendToRentBikeByDistance(this.getPosition());
         StationInfo destination = null;
+
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
              List<StationInfo> nearestStations = new ArrayList<>();
 	                
@@ -144,8 +147,8 @@ public class UserTourist extends User {
                  nearestStations.add(recommendedStations.get(i));
              }
 	         
-	            int index = infraestructure.getRandom().nextInt(0, end-1);
-	            destination = nearestStations.get(index);
+            int index = infraestructure.getRandom().nextInt(0, end-1);
+            destination = nearestStations.get(index);
         }
         return destination;
     }
@@ -155,15 +158,18 @@ public class UserTourist extends User {
      */
     @Override
     public StationInfo determineStationToReturnBike() {
-    	List<StationInfo> recommendedStations = informationSystem.recommendToReturnBikeByDistance(this.getPosition());
-     int end = parameters.SELECTION_STATIONS_SET < recommendedStations.size() 
-         ? parameters.SELECTION_STATIONS_SET : recommendedStations.size();
-       List<StationInfo> nearestStations = new ArrayList<>();
-       for(int i = 0; i < end; i++) {
+        List<StationInfo> recommendedStations = informationSystem.recommendToReturnBikeByDistance(this.getPosition());
+
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        int end = parameters.SELECTION_STATIONS_SET < recommendedStations.size()
+            ? parameters.SELECTION_STATIONS_SET : recommendedStations.size();
+        List<StationInfo> nearestStations = new ArrayList<>();
+        for(int i = 0; i < end; i++) {
             nearestStations.add(recommendedStations.get(i));
-       }
-       int index = infraestructure.getRandom().nextInt(0, end-1);
-       return nearestStations.get(index);
+        }
+        int index = infraestructure.getRandom().nextInt(0, end-1);
+        return nearestStations.get(index);
     }
 
     @Override
@@ -213,16 +219,26 @@ public class UserTourist extends User {
     }
     
     @Override
-    public GeoRoute determineRoute() throws GeoRouteException {
-    	List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
-        if (routes.isEmpty()) {
-            throw new GeoRouteException("Route is not valid");
+    public GeoRoute determineRoute() {
+        List<GeoRoute> routes = null;
+
+    	try {
+            routes = calculateRoutes(getDestinationPoint());
         }
-        if(!hasBike()) {
-            return routes.get(0);    
+        catch(Exception e) {
+            System.err.println("Exception calculating routes \n" + e.toString());
+        }
+
+        if(routes != null) {
+            if(!hasBike()) {
+                return routes.get(0);
+            }
+            else {
+                return routes.get(routes.size() - 1);
+            }
         }
         else {
-            return routes.get(routes.size() - 1);
+    	    return null;
         }
     }
 

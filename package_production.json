@@ -26,7 +26,7 @@
         ]
     },
     "dependencies": {
-    	"ajv": "^5.0.0",
+    	"ajv": "^6.0.0",
         "angular-in-memory-web-api": "^0.5.2",
         "angular2-toaster": "^5.0.1",
         "csvtojson": "^1.1.9",

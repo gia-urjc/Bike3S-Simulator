@@ -99,18 +99,22 @@ public class UserObedient extends User {
     
     @Override
     public StationInfo determineStationToRentBike() {
-    	StationInfo destination = null;
-     List<StationInfo> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
-     if (!recommendedStations.isEmpty()) {
-         destination = recommendedStations.get(0);
-     }
-     return destination;
+        StationInfo destination = null;
+        List<StationInfo> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        if (!recommendedStations.isEmpty()) {
+            destination = recommendedStations.get(0);
+        }
+        return destination;
     }
 
     @Override
     public StationInfo determineStationToReturnBike() {
         StationInfo destination = null;
         List<StationInfo> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
         }
@@ -161,13 +165,16 @@ public class UserObedient extends User {
     }
     
     @Override
-    public GeoRoute determineRoute() throws GeoRouteException {
-    	List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
-        if (routes.isEmpty()) {
-            throw new GeoRouteException("Route is not valid");
+    public GeoRoute determineRoute(){
+        List<GeoRoute> routes = null;
+        try {
+            routes = calculateRoutes(getDestinationPoint());
+        }
+        catch(Exception e) {
+            System.err.println("Exception calculating routes \n" + e.toString());
         }
         // The route in first list position is the shortest.
-        return routes.get(0);
+        return routes != null ? routes.get(0) : null;
     }
 
     @Override

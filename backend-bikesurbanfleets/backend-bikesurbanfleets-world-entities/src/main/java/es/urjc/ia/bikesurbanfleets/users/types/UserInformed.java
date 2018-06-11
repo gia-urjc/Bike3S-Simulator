@@ -12,6 +12,7 @@ import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -129,8 +130,10 @@ public class UserInformed extends User {
 
     @Override
     public StationInfo determineStationToRentBike() {
-        List<StationInfo> recommendedStations = informationSystem.recommendToRentBikeByDistance(this.getPosition());
         StationInfo destination = null;
+        List<StationInfo> recommendedStations = informationSystem.recommendToRentBikeByDistance(this.getPosition());
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
         }
@@ -139,8 +142,10 @@ public class UserInformed extends User {
 
     @Override
     public StationInfo determineStationToReturnBike() {
-        List<StationInfo> recommendedStations = informationSystem.recommendToReturnBikeByDistance(this.getPosition());
         StationInfo destination = null;
+        List<StationInfo> recommendedStations = informationSystem.recommendToReturnBikeByDistance(this.getPosition());
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
         }
@@ -194,10 +199,23 @@ public class UserInformed extends User {
     }
 
     @Override
-    public GeoRoute determineRoute() throws GeoRouteException {
-    	List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
-        int index = infraestructure.getRandom().nextInt(0, routes.size());
-        return routes.get(index);
+    public GeoRoute determineRoute() {
+        List<GeoRoute> routes = null;
+        try {
+            routes = calculateRoutes(getDestinationPoint());
+
+        }
+        catch(Exception e) {
+            System.err.println("Exception calculating routes \n" + e.toString());
+        }
+
+        if(routes != null) {
+            int index = infraestructure.getRandom().nextInt(0, routes.size());
+            return routes.get(index);
+        }
+        else {
+            return null;
+        }
     }
 
 }

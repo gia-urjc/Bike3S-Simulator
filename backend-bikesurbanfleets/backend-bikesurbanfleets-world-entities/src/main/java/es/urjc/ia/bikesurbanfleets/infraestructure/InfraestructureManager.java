@@ -73,7 +73,9 @@ public class InfraestructureManager {
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         this.bikesInfo = new ArrayList(this.bikes);
         this.reservations = new ArrayList<>();
+        this.reservationsInfo = new ArrayList<>();
         this.bbox = bbox;
+        this.random = SimulationRandom.getGeneralInstance();
     }
     
     /**
@@ -98,7 +100,7 @@ public class InfraestructureManager {
     }
 
     public List<StationInfo> consultStations() {
-        return stationsInfo;
+        return new ArrayList<>(stationsInfo);
     }
     
     public SimulationRandom getRandom() {

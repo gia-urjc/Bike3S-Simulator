@@ -177,7 +177,7 @@ public abstract class EventUser implements Event {
      */
     public List<Event> manageBikeReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        Station destination = (Station)user.determineStationToRentBike();
+        Station destination = (Station) user.determineStationToRentBike();
 
         if (destination != null) {
             user.setDestination(destination);

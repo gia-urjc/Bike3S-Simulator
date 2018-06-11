@@ -115,6 +115,8 @@ public class UserCommuter extends User {
     public StationInfo determineStationToRentBike() {
         List<StationInfo> recommendedStations = informationSystem.recommendToRentBikeByDistance(this.getPosition());
         StationInfo destination = null;
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
         destination = recommendedStations.get(0);
         }
@@ -123,10 +125,12 @@ public class UserCommuter extends User {
         
     @Override
      public StationInfo determineStationToReturnBike() {
-    		List<StationInfo> recommendedStations = informationSystem.recommendToReturnBikeByDistance(this.getPosition());
-    		StationInfo destination = null;
-      if (!recommendedStations.isEmpty()) {
-        	destination = recommendedStations.get(0);
+        List<StationInfo> recommendedStations = informationSystem.recommendToReturnBikeByDistance(this.getPosition());
+        StationInfo destination = null;
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        if (!recommendedStations.isEmpty()) {
+            destination = recommendedStations.get(0);
         }
         return destination;
     }
@@ -178,10 +182,15 @@ public class UserCommuter extends User {
         }
     
     @Override
-    public GeoRoute determineRoute() throws GeoRouteException, GraphHopperIntegrationException {
-    	List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
-        // The route in first list position is the shortest.
-        return routes.get(0);
+    public GeoRoute determineRoute() {
+        List<GeoRoute> routes = null;
+        try {
+            routes = calculateRoutes(getDestinationPoint());
+        }
+        catch(Exception e) {
+            System.err.println("Exception calculating routes \n" + e.toString());
+        }
+        return routes != null ? routes.get(0) : null;
    }
 
     @Override

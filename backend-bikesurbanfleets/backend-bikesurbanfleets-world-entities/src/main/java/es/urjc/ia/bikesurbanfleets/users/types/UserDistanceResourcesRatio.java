@@ -114,18 +114,22 @@ public class UserDistanceResourcesRatio extends User {
     
     @Override
     public StationInfo determineStationToRentBike() {
-         List<StationInfo> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition());
-         StationInfo destination = null;
-         if (!recommendedStations.isEmpty()) {
-        	 destination = recommendedStations.get(0);
-         }
-          return destination;
+        List<StationInfo> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition());
+        StationInfo destination = null;
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        if (!recommendedStations.isEmpty()) {
+            destination = recommendedStations.get(0);
+        }
+        return destination;
     }
 
     @Override
      public StationInfo determineStationToReturnBike() {
         List<StationInfo> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition());
         StationInfo destination = null;
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0);
         }
@@ -178,13 +182,16 @@ public class UserDistanceResourcesRatio extends User {
     }
     
     @Override
-    public GeoRoute determineRoute() throws GeoRouteException, GraphHopperIntegrationException {
-    	List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
-        if (routes.isEmpty()) {
-            throw new GeoRouteException("Route is not valid");
+    public GeoRoute determineRoute() {
+        List<GeoRoute> routes = null;
+    	try {
+            routes = calculateRoutes(getDestinationPoint());
+        }
+        catch(Exception e) {
+            System.err.println("Exception calculating routes \n" + e.toString());
         }
         // The route in first list position is the shortest.
-        return routes.get(0);
+        return routes != null ? routes.get(0) : null;
     }
 
     @Override

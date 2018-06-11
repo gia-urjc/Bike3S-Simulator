@@ -49,8 +49,19 @@ public class UserRandom extends User {
     	List<Station> stations = new ArrayList(infraestructure.consultStations());
     	List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
     	stations.removeAll(triedStations);
-    	int index = infraestructure.getRandom().nextInt(0, stations.size());
-    	return stations.get(index);
+        //Remove station if the user is in this station
+        stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        if(!stations.isEmpty()) {
+            int index = infraestructure.getRandom().nextInt(0, stations.size());
+            return stations.get(index);
+        }
+        //The user wants a bike but tried in all stations
+        else {
+            List<Station> allStations = new ArrayList(infraestructure.consultStations());
+            allStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+            int index = infraestructure.getRandom().nextInt(0, allStations.size());
+            return allStations.get(index);
+        }
     }
 
     @Override
@@ -58,8 +69,10 @@ public class UserRandom extends User {
         List<Station> stations = new ArrayList(infraestructure.consultStations());
         List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(getInstant());
         stations.removeAll(triedStations);
+        //Remove station if the user is in this station
+        stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         int index = infraestructure.getRandom().nextInt(0, stations.size());
-        return stations.get(index);    
+        return stations.get(index);
     }
 		
     
@@ -104,13 +117,22 @@ public class UserRandom extends User {
     }
 
     @Override
-    public GeoRoute determineRoute() throws GeoRouteException {
-    	List<GeoRoute> routes = calculateRoutes(getDestinationPoint());
-        if (routes.isEmpty()) {
-            throw new GeoRouteException("Route is not valid");
+    public GeoRoute determineRoute() {
+        List<GeoRoute> routes = null;
+    	try {
+            routes = calculateRoutes(getDestinationPoint());
         }
-        int index = infraestructure.getRandom().nextInt(0, routes.size());
-        return routes.get(index);
+        catch(Exception e) {
+            System.err.println("Exception calculating routes \n" + e.toString());
+        }
+
+        if(routes != null) {
+            int index = infraestructure.getRandom().nextInt(0, routes.size());
+            return routes != null ? routes.get(index) : null;
+        }
+        else {
+    	    return null;
+        }
     }
 
 }
