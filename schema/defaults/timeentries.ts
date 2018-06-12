@@ -1,6 +1,6 @@
 import { JsonSchema } from 'json-schema-builder-ts';
 import { sArray, sInteger, sObject, sString } from 'json-schema-builder-ts/dist/types';
-import { options, UInt } from './common';
+import { options, UInt } from '../common/index';
 
 const PropertyChange = sObject({
     old: {},

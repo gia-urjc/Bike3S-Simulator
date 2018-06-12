@@ -20,7 +20,7 @@
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
                                     <div id="globalForm">
-                                        <schema-form #globalSchemaForm [form]="globalForm" (dataSubmited)="globalFormSubmit($event)"></schema-form>
+                                        <schema-form #globalSchemaForm [form]="globalForm" (dataSubmited)="globalFormSubmit($event)" (isValid)="isGlobalFormValid($event)"></schema-form>
                                     </div>
                                 </div>
                             </ng-template>

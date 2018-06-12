@@ -15,6 +15,15 @@ public class SimulationRandom {
     private static SimulationRandom generalInstance = null;
     private static SimulationRandom userCreationInstance = null;
 
+    public static void init() {
+        if (generalInstance != null || userCreationInstance != null) {
+            throw new IllegalStateException("Instances have already been initialized.");
+        }
+
+        generalInstance = new SimulationRandom();
+        userCreationInstance = new SimulationRandom();
+    }
+
     public static void init(long seed) {
         if (generalInstance != null || userCreationInstance != null) {
             throw new IllegalStateException("Instances have already been initialized.");
@@ -35,6 +44,10 @@ public class SimulationRandom {
     }
 
     private Random random;
+
+    private SimulationRandom() {
+        this.random = new Random();
+    }
 
     private SimulationRandom(long seed) {
         this.random = new Random(seed);

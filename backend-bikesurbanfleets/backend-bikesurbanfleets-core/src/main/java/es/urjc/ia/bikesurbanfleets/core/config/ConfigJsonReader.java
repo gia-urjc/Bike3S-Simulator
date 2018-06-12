@@ -36,7 +36,12 @@ public class ConfigJsonReader {
     public GlobalInfo readGlobalConfiguration() throws IOException {
         try (FileReader reader = new FileReader(globalConfFile)) {
             GlobalInfo globalInfo = gson.fromJson(reader, GlobalInfo.class);
-            SimulationRandom.init(globalInfo.getRandomSeed());
+            if(globalInfo.getRandomSeed() == 0) {
+                SimulationRandom.init();
+            }
+            else {
+                SimulationRandom.init(globalInfo.getRandomSeed());
+            }
             return globalInfo;
         }
     }

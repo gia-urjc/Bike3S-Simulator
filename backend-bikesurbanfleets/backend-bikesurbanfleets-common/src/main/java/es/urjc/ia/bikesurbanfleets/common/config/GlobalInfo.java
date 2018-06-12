@@ -21,7 +21,7 @@ public class GlobalInfo {
     /**
      * If true, user log files will be generated for debug purposes
      */
-    private boolean debugMode;
+    private boolean debugMode = false;
 
     /**
      * It is the seed which initializes the random instance.

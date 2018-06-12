@@ -32,7 +32,7 @@ projectRoot.build.jsonSchemaValidator = () => path.join(projectRoot.build(), 'js
 projectRoot.build.dataAnalyser = () => path.join(projectRoot.build(), 'data-analyser');
 
 projectRoot.fuseCache = () => path.join(projectRoot(), '.fusebox');
-projectRoot.schemaCache = () => path.join(projectRoot(), '.schema');
+projectRoot.schemaCacheDefaults = () => path.join(projectRoot(), '.schema/defaults');
 
 let production = false;
 
@@ -108,33 +108,33 @@ Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, 
         stdio: 'inherit'
     });
 
-tsc.on('error', (error) => {
-    log.red(error).echo();
-});
-
-tsc.on('close', (code) => {
-    if (code === 0) {
-    log.time().green('compiling schemas').echo();
-
-    fs.readdirSync(projectRoot.schemaCache()).filter((file) => file.endsWith('.js')).forEach((file) => {
-        const schema = require(path.join(projectRoot.schemaCache(), file)).default;
-    const out = path.join(schemaBuildPath, `${file.slice(0, -3)}.json`);
-
-    schema.errors.forEach((error) => {
+    tsc.on('error', (error) => {
         log.red(error).echo();
-});
+    });
 
-    schema.write(out);
+    tsc.on('close', (code) => {
+        if (code === 0) {
+        log.time().green('compiling schemas').echo();
 
-    log.time().green(`written schema to ${out}`).echo();
-});
+        fs.readdirSync(projectRoot.schemaCacheDefaults()).filter((file) => file.endsWith('.js')).forEach((file) => {
+            const schema = require(path.join(projectRoot.schemaCacheDefaults(), file)).default;
+            const out = path.join(schemaBuildPath, `${file.slice(0, -3)}.json`);
 
-    resolve();
-} else {
-    log.time().red(`tsc finished with error code ${code}`).echo();
-    reject();
-}
-});
+            schema.errors.forEach((error) => {
+                log.red(error).echo();
+            });
+
+            schema.write(out);
+
+            log.time().green(`written schema to ${out}`).echo();
+        });
+
+        resolve();
+        } else {
+            log.time().red(`tsc finished with error code ${code}`).echo();
+            reject();
+        }
+    });
 }));
 
 Sparky.task('build:jsonschema-validator', () => {
@@ -262,7 +262,7 @@ Sparky.task('clean:build', () => Sparky.src(projectRoot.build()).clean(projectRo
 
 Sparky.task('clean:cache:fuse', () => Sparky.src(projectRoot.fuseCache()).clean(projectRoot.fuseCache()));
 
-Sparky.task('clean:cache:schema', () => Sparky.src(projectRoot.schemaCache()).clean(projectRoot.schemaCache()));
+Sparky.task('clean:cache:schema', () => Sparky.src(projectRoot.schemaCacheDefaults()).clean(projectRoot.schemaCacheDefaults()));
 
 Sparky.task('clean:cache', ['clean:cache:fuse', 'clean:cache:schema'], () => {});
 

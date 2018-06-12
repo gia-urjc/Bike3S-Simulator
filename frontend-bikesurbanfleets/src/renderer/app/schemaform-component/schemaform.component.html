@@ -3,6 +3,7 @@
             *ngIf="form !== undefined"
             [form]="form"
             (onSubmit)="submit($event)"
-            (isValid)="sendData($event)" >
+            (isValid)="valid($event)"
+            (onChanges)="changed($event)">
     </json-schema-form>
 </div>

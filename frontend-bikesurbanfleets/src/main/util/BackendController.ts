@@ -30,10 +30,10 @@ export default class BackendController {
     *   =================
     */
 
-    private globalSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/global-config.json'));
-    private stationsSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config.json'));
-    private entryPointSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-config.json'));
-    private usersConfigSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/users-config.json'));
+    private globalSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/global-schemas-and-form-definitions.json'));
+    private stationsSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-schemas-and-form-definitions.json'));
+    private entryPointSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-schemas-and-form-definitions.json'));
+    private usersConfigSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/users-schemas-and-form-definitions.json'));
 
     /*
     *   =================
@@ -122,7 +122,7 @@ export default class BackendController {
 
             const userGen = spawn('java', [
                 '-jar',
-                'bikesurbanfleets-config-usersgenerator-1.0.jar',
+                'bikesurbanfleets-schemas-and-form-definitions-usersgenerator-1.0.jar',
                 '-entryPointsInput', '"' + args.entryPointsConfPath + '"',
                 '-globalInput', '"' + args.globalConfPath + '"',
                 '-output', '"' + args.outputUsersPath + '/users-configuration.json"',
@@ -146,7 +146,7 @@ export default class BackendController {
                     resolve();
                 }
                 else {
-                    reject("Fail executing bikesurbanfleets-config-usersgenerator-1.0.jar");
+                    reject("Fail executing bikesurbanfleets-schemas-and-form-definitions-usersgenerator-1.0.jar");
                 }
             });
         });

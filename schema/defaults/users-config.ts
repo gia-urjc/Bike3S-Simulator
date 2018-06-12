@@ -1,8 +1,8 @@
-import {options} from "./common";
 import {sArray, sObject} from "json-schema-builder-ts/dist/types";
-import {EntryPoint, Station} from "./common-config";
+import {options} from "../common";
 import {JsonSchema} from "json-schema-builder-ts";
+import {SingleUser} from "../common/users";
 
 export default new JsonSchema(options, sObject({
-    entryPoints: sArray(EntryPoint)
+    initialUsers: sArray(SingleUser),
 }).require.all().restrict());

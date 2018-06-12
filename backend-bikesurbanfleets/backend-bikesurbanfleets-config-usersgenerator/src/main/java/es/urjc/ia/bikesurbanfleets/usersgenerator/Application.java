@@ -53,7 +53,12 @@ public class Application {
                 entryPointInfo = configurationIO.readPreConfigEntryPoints(entryPointInput);
                 globalInfo = configurationIO.readPreConfigGlobalInfo(globalInput);
                 EntryPoint.TOTAL_SIMULATION_TIME = globalInfo.getTotalSimulationTime();
-                SimulationRandom.init(globalInfo.getRandomSeed());
+                if(globalInfo.getRandomSeed() == 0) {
+                    SimulationRandom.init();
+                }
+                else {
+                    SimulationRandom.init(globalInfo.getRandomSeed());
+                }
                 configurationIO.writeFinalConfig(entryPointInput, configOutput, entryPointInfo);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -65,7 +70,12 @@ public class Application {
                 entryPointInfo = configurationIO.readPreConfigEntryPoints(entryPointInput);
                 globalInfo = configurationIO.readPreConfigGlobalInfo(globalInput);
                 EntryPoint.TOTAL_SIMULATION_TIME = globalInfo.getTotalSimulationTime();
-                SimulationRandom.init(globalInfo.getRandomSeed());
+                if(globalInfo.getRandomSeed() == 0) {
+                    SimulationRandom.init();
+                }
+                else {
+                    SimulationRandom.init(globalInfo.getRandomSeed());
+                }
                 configurationIO.writeFinalConfig(entryPointInput, configOutput, entryPointInfo);
             } catch (Exception e) {
                 e.printStackTrace();

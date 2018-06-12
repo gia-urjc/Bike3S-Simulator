@@ -125,7 +125,12 @@ export class ConfigurationComponent {
 
     globalFormSubmit($event: any) {
         this.globalData = $event;
-        dialog.showMessageBox({message: 'Global Configuration Updated', type: 'info'});
+        console.log('Global Configuration Updated');
+        console.log(this.globalData);
+    }
+
+    isGlobalFormValid($event: any) {
+        console.log('Is global Form Valid?: ' + $event);
     }
 
     selectEntryPointSubmit(data: EntryPointDataType) {
@@ -177,11 +182,13 @@ export class ConfigurationComponent {
     }
 
     async globalFormInit() {
-        this.ajax.formSchema.getGlobalSchema().then((schema) => {
+        this.ajax.formSchema.getGlobalSchema().then((data) => {
+            console.log(data);
             this.globalForm = {
-                schema: schema,
+                schema: JSON.parse(data),
                 data: this.globalData
             };
+            console.log(this.globalForm);
             return;
         });
     }
@@ -189,7 +196,7 @@ export class ConfigurationComponent {
     async selectEntryPointFormInit(): Promise<void> {
         this.ajax.formSchema.getSchemaFormEntryPointAndUserTypes().then((schema) => {
             this.selectEntryPointForm = {
-                schema: schema,
+                schema:schema,
                 data: null
             };
             return;
@@ -202,9 +209,8 @@ export class ConfigurationComponent {
             radius: 0
         };
         let schema = await this.ajax.formSchema.getSchemaByTypes(selected);
-        console.log(schema);
         this.entryPointForm = {
-            schema: schema,
+            schema: JSON.parse(schema),
             data: entryPointData
         };
         return entryPointData;
@@ -213,11 +219,11 @@ export class ConfigurationComponent {
     async stationFormInit(): Promise<void> {
         this.ajax.formSchema.getStationSchema().then((schema) => {
             this.stationForm = {
-                schema: schema,
+                schema: JSON.parse(schema),
                 data: this.lastStation
             };
             return;
-        })
+        });
     }
 
     openFormEntryPoint(modalRef: any) {

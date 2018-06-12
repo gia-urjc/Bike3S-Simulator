@@ -22,4 +22,4 @@ export {
     UInt,
     UserProperties,
     UserType
-}
+};

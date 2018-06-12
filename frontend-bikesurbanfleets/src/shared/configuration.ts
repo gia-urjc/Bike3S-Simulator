@@ -7,11 +7,11 @@ export type SchemaConfig = {
     items?: SchemaConfig;
     required?: Array<String>;
     additionalProperties?: boolean;
-}
+};
 
 export interface EntryPointDataType {
-    entryPointType: string,
-    userType: string
+    entryPointType: string;
+    userType: string;
 }
 export interface BaseConfiguration  extends PlainObject {
     reservationTime: number;
@@ -20,7 +20,7 @@ export interface BaseConfiguration  extends PlainObject {
     boundingBox: {
         northWest: Geo.Point;
         southEast: Geo.Point;
-    }
+    };
     map: string;
     historyOutputPath: string;
     entryPoints: BaseEntryPoint;

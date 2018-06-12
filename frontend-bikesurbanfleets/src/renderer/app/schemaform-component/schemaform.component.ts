@@ -13,8 +13,10 @@ export class SchemaformComponent implements OnInit {
     @Output('dataSubmited')
     dataSubmited = new EventEmitter<any>();
 
-    @Output('onDataChange')
-    dataChange = new EventEmitter<any>();
+    @Output('isValid')
+    isValid = new EventEmitter<any>();
+
+    actualData: any;
 
     constructor() {
     }
@@ -30,8 +32,15 @@ export class SchemaformComponent implements OnInit {
         this.dataSubmited.emit(data);
     }
 
-    sendData(data: any) {
-        
+    valid(isValid: any) {
+        this.isValid.emit(isValid);
+        if(isValid) {
+            this.dataSubmited.emit(this.actualData);
+        }
+    }
+
+    changed(data: any) {
+        this.actualData = data;
     }
 
 }
