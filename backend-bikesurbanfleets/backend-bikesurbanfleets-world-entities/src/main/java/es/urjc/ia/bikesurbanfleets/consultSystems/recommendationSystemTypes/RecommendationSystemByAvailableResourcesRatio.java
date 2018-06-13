@@ -77,13 +77,14 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
     private List<StationInfo> rebalanceWhenRenting(List<StationInfo> stations) {
     	double ratioSum = 0.0;
     	int i;
-    	for (i=0; i<N_STATIONS; i++) {
+    	int n_stations = stations.size() > N_STATIONS ? N_STATIONS : stations.size();
+    	for (i=0; i<n_stations; i++) {
     		ratioSum += stations.get(i).availableBikes() / stations.get(i).getCapacity();
     	}
     	
     	double random = infraestructureManager.getRandom().nextDouble(0, ratioSum);
     	double ratio;
-    	for (i=0; i<N_STATIONS; i++) {
+    	for (i=0; i<n_stations; i++) {
     		ratio = stations.get(i).availableBikes() / stations.get(i).getCapacity();
     		if (random <= ratio) {
     			break;
@@ -98,13 +99,14 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
     private List<StationInfo> rebalanceWhenReturning(List<StationInfo> stations) {
     	double ratioSum = 0.0;
     	int i;
-    	for (i=0; i<N_STATIONS; i++) {
+		int n_stations = stations.size() > N_STATIONS ? N_STATIONS : stations.size();
+    	for (i=0; i<n_stations; i++) {
     		ratioSum += stations.get(i).availableSlots() / stations.get(i).getCapacity();
     	}
     	
     	double random = infraestructureManager.getRandom().nextDouble(0, ratioSum);
     	double ratio;
-    	for (i=0; i<N_STATIONS; i++) {
+    	for (i=0; i<n_stations; i++) {
     		ratio = stations.get(i).availableSlots() / stations.get(i).getCapacity();
     		if (random <= ratio) {
     			break;
@@ -121,26 +123,34 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
     	List<StationInfo> stations = validStationsToRentBike(infraestructureManager.consultStations());
     	List<StationInfo> nearer = nearerStations(point, stations);
     	List<StationInfo> farther = fartherStations(point, stations);
-    	
+        if (stations.size() == 0) {
+            nearer = nearerStations(point, infraestructureManager.consultStations());
+            stations = nearer;
+        }
+
     	Comparator<StationInfo> byBikesRatio = stationComparator.byBikesCapacityRatio(); 
-     nearer = nearer.stream().sorted(byBikesRatio).collect(Collectors.toList());
-     farther = farther.stream().sorted(byBikesRatio).collect(Collectors.toList());
+     	nearer = nearer.stream().sorted(byBikesRatio).collect(Collectors.toList());
+     	farther = farther.stream().sorted(byBikesRatio).collect(Collectors.toList());
      
-     nearer.addAll(farther);
-     return rebalanceWhenRenting(stations);
+     	nearer.addAll(farther);
+     	return rebalanceWhenRenting(stations);
     }
  
     public List<StationInfo> recommendStationToReturnBike(GeoPoint point) {
     	List<StationInfo> stations = validStationsToReturnBike(infraestructureManager.consultStations());
     	List<StationInfo> nearer = nearerStations(point, stations);
     	List<StationInfo> farther = fartherStations(point, stations);
+        if (stations.size() == 0) {
+            nearer = nearerStations(point, infraestructureManager.consultStations());
+            stations = nearer;
+        }
     	
     	Comparator<StationInfo> bySlotsRatio = stationComparator.bySlotsCapacityRatio(); 
-     nearer = nearer.stream().sorted(bySlotsRatio).collect(Collectors.toList());
-     farther = farther.stream().sorted(bySlotsRatio).collect(Collectors.toList());
+     	nearer = nearer.stream().sorted(bySlotsRatio).collect(Collectors.toList());
+     	farther = farther.stream().sorted(bySlotsRatio).collect(Collectors.toList());
      
-     nearer.addAll(farther);
-     return rebalanceWhenReturning(stations);
+     	nearer.addAll(farther);
+     	return rebalanceWhenReturning(stations);
     }
    
 }

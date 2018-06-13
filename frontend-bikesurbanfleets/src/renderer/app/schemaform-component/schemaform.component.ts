@@ -13,6 +13,9 @@ export class SchemaformComponent implements OnInit {
     @Output('dataSubmited')
     dataSubmited = new EventEmitter<any>();
 
+    @Output('automaticSubmit')
+    automaticSubmit = new EventEmitter<any>();
+
     @Output('isValid')
     isValid = new EventEmitter<any>();
 
@@ -35,7 +38,7 @@ export class SchemaformComponent implements OnInit {
     valid(isValid: any) {
         this.isValid.emit(isValid);
         if(isValid) {
-            this.dataSubmited.emit(this.actualData);
+            this.automaticSubmit.emit(this.actualData);
         }
     }
 
