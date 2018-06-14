@@ -54,14 +54,14 @@ VS Code.
 ## Backend
 
 [Backend Setup - IntelliJ IDEA](documentation/backend_setup_intellij.md)
-
+<!---
 [Backend Setup - Eclipse](documentation/backend_setup_eclipse.md)
 
 ## Frontend
 [Frontend Setup - Webstorm](documentation/frontend_setup_webstorm.md)
 
 [Frontend Setup - VScode](documentation/frontend_setup_vscode.md)
-
+-->
 ## Build From Command Line
 To build the backend execute:
 ```
