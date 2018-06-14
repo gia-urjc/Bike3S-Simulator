@@ -124,11 +124,6 @@ public abstract class User implements Entity, UserInfo {
 
 
     /**
-    * Different comparators for stations
-    */
-    protected StationComparator stationComparator;
-    
-    /**
      * It is the time instant of the simulation.
      */
     private int instant;
@@ -155,8 +150,6 @@ public abstract class User implements Entity, UserInfo {
         this.recommendationSystem = services.getRecommendationSystem();
         this.informationSystem = services.getInformationSystem();
         this.graph = services.getGraphManager();
-        this.stationComparator = services.getStationComparator();
-
         History.registerEntity(this);
         this.memory = new UserMemory(this);
     }
@@ -217,11 +210,7 @@ public abstract class User implements Entity, UserInfo {
         return destinationStation;
     }
     
-    public StationInfo consultDestinationStation() {
-    	return destinationStation;
-    }
-
-    public void setDestination(Station destinationStation) throws Exception {
+    public void setDestinationStation(Station destinationStation) throws Exception {
         this.destinationStation = destinationStation;
     }
     

@@ -77,7 +77,7 @@ public class UserCommuter extends User {
                     ", MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
-                    ", minRentingAttempts=" + minRentingAttempts +
+                    ", minRentalAttempts=" + minRentalAttempts +
                     '}';
         }
 
@@ -102,7 +102,7 @@ public class UserCommuter extends User {
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        return getMemory().getRentalAttemptsCounter() == parameters.minRentingAttempts ? true : false;
+        return getMemory().getRentalAttemptsCounter() == parameters.minRentalAttempts ? true : false;
     }
     
     @Override

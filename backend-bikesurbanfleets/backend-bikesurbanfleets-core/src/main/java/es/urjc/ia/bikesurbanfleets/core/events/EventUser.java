@@ -148,7 +148,7 @@ public abstract class EventUser implements Event {
     public List<Event> manageBikeReservationDecisionAtSameStationAfterTimeout() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.getDestinationStation();
-        user.setDestination(destination);
+        user.setDestinationStation(destination);
         user.setDestinationPoint(destination.getPosition());
         GeoRoute route = user.determineRoute();
         user.setRoute(route);
@@ -180,7 +180,7 @@ public abstract class EventUser implements Event {
         Station destination = (Station) user.determineStationToRentBike();
 
         if (destination != null) {
-            user.setDestination(destination);
+            user.setDestinationStation(destination);
             user.setDestinationPoint(destination.getPosition());
             GeoRoute route = user.determineRoute(); 
             user.setRoute(route);
@@ -241,7 +241,7 @@ public abstract class EventUser implements Event {
     public List<Event> manageSlotReservationDecisionAtSameStationAfterTimeout() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.getDestinationStation();
-        user.setDestination(destination);
+        user.setDestinationStation(destination);
         user.setDestinationPoint(destination.getPosition());
         GeoRoute route = user.determineRoute();
         user.setRoute(route);
@@ -262,7 +262,7 @@ public abstract class EventUser implements Event {
     public List<Event> manageSlotReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = (Station)user.determineStationToReturnBike();
-        user.setDestination(destination);
+        user.setDestinationStation(destination);
         user.setDestinationPoint(destination.getPosition());
         GeoRoute route = user.determineRoute();
         user.setRoute(route);
