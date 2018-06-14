@@ -31,32 +31,31 @@ export const typeParameters = {
     USER_DISTANCE_RESTRICTION: {
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,
-        minRentingAttempts: UInt,
+        minRentalAttempts: UInt,
         bikeReturnPercentage: Percentage,
         reservationTimeoutPercentage: Percentage,
         failedReservationPercentage: Percentage,
         maxDistance: sNumber()
     },
-    USER_EMPLOYEE: {
-        companyStreet: GeoPoint,
-        minReservationAttempts: UInt,
-        minReservationTimeOuts: UInt,
-        minRentingAttempts: UInt,
-        bikeReservationPercentage: Percentage,
-        slotReservationPercentage: Percentage
-    },
     USER_REASONABLE: {
         minReservationAttempts: UInt,
         minReservationTimeOuts: UInt,
-        minRentingAttempts: UInt,
+        minRentalAttempts: UInt,
         bikeReturnPercentage: Percentage,
         reservationTimeoutPercentage: Percentage,
         failedReservationPercentage: Percentage
     },
-    USER_STATIONS_BALANCER: {
+    USER_COMMUTER: {
         minReservationAttempts: UInt,
-        minReservationTimeOuts: UInt,
-        minRentingAttempts: UInt,
+        minReservationTimeouts: UInt,
+        minRentalAttempts: UInt,
+        bikeReservationPercentage: Percentage,
+        slotReservationPercentage: Percentage,
+    },
+    USER_AVAILABLE_RESOURCES: {
+        minReservationAttempts: UInt,
+        minReservationTimeouts: UInt,
+        minRentalAttempts: UInt,
         bikeReturnPercentage: Percentage,
         reservationTimeoutPercentage: Percentage,
         failedReservationPercentage: Percentage
@@ -65,7 +64,7 @@ export const typeParameters = {
         touristDestination: GeoPoint,
         minReservationAttempts: UInt,
         minReservationTimeOuts: UInt,
-        minRentingAttempts: UInt,
+        minRentalAttempts: UInt,
         bikeReservationPercentage: Percentage,
         slotReservationPercentage: Percentage,
         reservationTimeoutPercentage: Percentage,

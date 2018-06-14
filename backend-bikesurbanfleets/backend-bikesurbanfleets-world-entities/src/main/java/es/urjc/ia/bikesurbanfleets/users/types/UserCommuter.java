@@ -34,11 +34,6 @@ public class UserCommuter extends User {
     public class UserEmployeeParameters {
 
         /**
-         * It is the street of the building where the user works or studies.
-         */
-        private GeoPoint destinationStreet;
-
-        /**
          * It determines the rate with which the user will reserve a bike.
          */
         private int bikeReservationPercentage;
@@ -72,12 +67,11 @@ public class UserCommuter extends User {
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentingAttempts = infraestructure.getRandom().nextInt(4, 7);
+        private int minRentalAttempts = infraestructure.getRandom().nextInt(4, 7);
 
         @Override
         public String toString() {
             return "UserEmployeeParameters{" +
-                    "destinationStreet=" + destinationStreet +
                     ", bikeReservationPercentage=" + bikeReservationPercentage +
                     ", slotReservationPercentage=" + slotReservationPercentage +
                     ", MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +

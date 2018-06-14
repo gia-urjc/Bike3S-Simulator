@@ -125,9 +125,14 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
     	List<StationInfo> farther = fartherStations(point, stations);
         if (stations.size() == 0) {
             nearer = nearerStations(point, infraestructureManager.consultStations());
-            stations = nearer;
+            if (nearer.size() == 0) {
+                farther = fartherStations(point, infraestructureManager.consultStations());
+                stations = farther;
+            }
+            else {
+                stations = nearer;
+            }
         }
-
     	Comparator<StationInfo> byBikesRatio = stationComparator.byBikesCapacityRatio(); 
      	nearer = nearer.stream().sorted(byBikesRatio).collect(Collectors.toList());
      	farther = farther.stream().sorted(byBikesRatio).collect(Collectors.toList());
@@ -142,9 +147,14 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
     	List<StationInfo> farther = fartherStations(point, stations);
         if (stations.size() == 0) {
             nearer = nearerStations(point, infraestructureManager.consultStations());
-            stations = nearer;
+            if (nearer.size() == 0) {
+                farther = fartherStations(point, infraestructureManager.consultStations());
+                stations = farther;
+            }
+            else {
+                stations = nearer;
+            }
         }
-    	
     	Comparator<StationInfo> bySlotsRatio = stationComparator.bySlotsCapacityRatio(); 
      	nearer = nearer.stream().sorted(bySlotsRatio).collect(Collectors.toList());
      	farther = farther.stream().sorted(bySlotsRatio).collect(Collectors.toList());
