@@ -242,6 +242,10 @@ public abstract class User implements Entity, UserInfo {
         return this.memory;
     }
 
+    public StationInfo consultDestinationStation() {
+        return destinationStation;
+    }
+
     /**
      * The user's average velocity in m/s
      * @return user walking velocity if he hasn't a bike at that moment and cycling velocity in other case
