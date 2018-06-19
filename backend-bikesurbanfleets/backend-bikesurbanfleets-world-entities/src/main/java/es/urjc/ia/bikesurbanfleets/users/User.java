@@ -326,9 +326,8 @@ public abstract class User implements Entity, UserInfo {
      * @param station: it is the station where user goes to rent a bike.
      */
 
-    public boolean removeBikeWithReservationFrom(Station station) {
+    public void removeBikeWithReservationFrom(Station station) {
         if (hasBike()) {
-            return false;
         }
         if (hasReservedBike()) {
             // first, reservation is cancelled to let a bike available at station to make sure one bike is available for take away
