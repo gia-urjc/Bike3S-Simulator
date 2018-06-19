@@ -293,16 +293,17 @@ public abstract class User implements Entity, UserInfo {
     public void cancelsBikeReservation(Station station) {
         this.reservedBike = false;
         station.cancelsBikeReservation(reservation);
+        this.reservation = null;
     }
 
     /**
      * User cancels his slot reservation at the specified station.
      * @param station: it is station for which user wants to cancel his slot reservation.
      */
-
     public void cancelsSlotReservation(Station station) {
         this.reservedSlot = false;
         station.cancelsSlotReservation();
+        this.reservation = null;
     }
 
     /**
