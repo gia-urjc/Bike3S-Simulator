@@ -1,9 +1,9 @@
 package es.urjc.ia.bikesurbanfleets.consultSystems;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -14,12 +14,31 @@ public abstract class RecommendationSystem {
      */
    protected InfraestructureManager infraestructureManager;
    
+   /**
+    * It filters stations which have not available bikes.  
+    * @return a list of stations with available bikes.
+    */
+    protected List<Station> validStationsToRentBike(List<Station> stations) {
+   	return stations.stream().filter(station -> station.availableBikes() > 0)
+          .collect(Collectors.toList());
+   }
+    
+    /**
+     * It filters stations which have not available bikes.  
+     * @return a list of stations with available bikes.
+     */
+   protected List<Station> validStationsToReturnBike(List<Station> stations) {
+   	return stations.stream().filter( (station) ->	station.availableSlots() > 0)
+        .collect(Collectors.toList());
+   }
+   
+ 
    public RecommendationSystem(InfraestructureManager infraestructureManager) {
 	   this.infraestructureManager = infraestructureManager; 	
    }
 	
-	public abstract List<StationInfo> recommendStationToRentBike(GeoPoint	point);
- 	public abstract List<StationInfo> recommendStationToReturnBike(GeoPoint point);
+	public abstract List<Station> recommendStationToRentBike(GeoPoint	point);
+ 	public abstract List<Station> recommendStationToReturnBike(GeoPoint point);
 
 
 }

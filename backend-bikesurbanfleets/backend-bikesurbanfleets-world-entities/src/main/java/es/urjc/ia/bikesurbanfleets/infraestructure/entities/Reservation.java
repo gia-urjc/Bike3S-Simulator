@@ -1,10 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.infraestructure.entities;
 
-import es.urjc.ia.bikesurbanfleets.common.interfaces.BikeInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.ReservationInfo;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.UserInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricReservation;
 import es.urjc.ia.bikesurbanfleets.users.User;
@@ -23,7 +19,7 @@ import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
  */
 
 @HistoryReference(HistoricReservation.class)
-public class Reservation implements Entity, ReservationInfo {
+public class Reservation implements Entity {
 
     public enum ReservationType {
         SLOT, BIKE
@@ -116,19 +112,7 @@ public class Reservation implements Entity, ReservationInfo {
         return bike;
     }
     
-    public StationInfo consultStation() {
-    	return station;
-    }
-    
-    public UserInfo consultUser() {
-    	return user;
-    }
-    
-    public BikeInfo consultBike() {
-    	return bike;
-    }
-
-    /**
+        /**
      * Set reservation state to expired and updates reservation end instant
      */
     public void expire() {

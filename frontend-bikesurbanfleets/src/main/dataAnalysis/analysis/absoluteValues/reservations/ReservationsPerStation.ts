@@ -24,7 +24,7 @@ export class ReservationsPerStation implements SystemInfo, Observer {
         this.data = new ReservationData();
     }
 
-    public async init() {
+    public async init(): Promise<void> {
         try {
             this.data.init(this.basicData);
         }

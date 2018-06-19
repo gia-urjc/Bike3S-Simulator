@@ -1,9 +1,9 @@
 package es.urjc.ia.bikesurbanfleets.consultSystems;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import 	es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,18 +22,18 @@ public class InformationSystem {
     	this.stationComparator = stationComparator;
     }
     
-    private List<StationInfo> validStationInfosToRentBike(GeoPoint point, int maxDistance, List<StationInfo> stations) {
+    private List<Station> validStationInfosToRentBike(GeoPoint point, int maxDistance, List<Station> stations) {
     	return stations.stream().filter(station -> station.getPosition()
             .distanceTo(point) <= maxDistance && station.availableBikes() > 0)
             .collect(Collectors.toList());
     }
     
-    private List<StationInfo> validStationInfosToRentBike(List<StationInfo> stations) {
+    private List<Station> validStationInfosToRentBike(List<Station> stations) {
     	return stations.stream().filter(station -> station.availableBikes() > 0)
            .collect(Collectors.toList());
     }
 
-    private List<StationInfo> validStationInfosToReturnBike(List<StationInfo> stations) {
+    private List<Station> validStationInfosToReturnBike(List<Station> stations) {
     	return stations.stream().filter( station ->	station.availableSlots() > 0)
             .collect(Collectors.toList());
     }
@@ -45,13 +45,13 @@ public class InformationSystem {
      * place the user wants to reach.
      * @return a list of stations ordered descending by the number of available bikes.
      */
-    public List<StationInfo> getStationsOrderedByNumberOfBikes(GeoPoint point, int maxDistance) {
-    	List<StationInfo> stations = infraestructureManager.consultStations();
+    public List<Station> getStationsOrderedByNumberOfBikes(GeoPoint point, int maxDistance) {
+    	List<Station> stations = infraestructureManager.consultStations();
         return validStationInfosToRentBike(point, maxDistance, stations).stream().sorted(stationComparator.byAvailableBikes()).collect(Collectors.toList());
     }
     
-    public List<StationInfo> getStationsOrderedByNumberOfBikes() {
-    	List<StationInfo> stations = infraestructureManager.consultStations();
+    public List<Station> getStationsOrderedByNumberOfBikes() {
+    	List<Station> stations = infraestructureManager.consultStations();
         return validStationInfosToRentBike(stations).stream().sorted(stationComparator.byAvailableBikes()).collect(Collectors.toList());
     }
     
@@ -60,8 +60,8 @@ public class InformationSystem {
      * those which have the most slots available and finally, those with the least slots available.
      * @return a list of stations ordered descending by the number of available slots.
      */
-    public List<StationInfo> getStationsOrderedByNumberOfSlots() {
-    	List<StationInfo> stations = infraestructureManager.consultStations();
+    public List<Station> getStationsOrderedByNumberOfSlots() {
+    	List<Station> stations = infraestructureManager.consultStations();
         return validStationInfosToReturnBike(stations).stream().sorted(stationComparator.byAvailableSlots()).collect(Collectors.toList());
     }
     
@@ -74,14 +74,14 @@ public class InformationSystem {
      * place the user wants to reach.
      * @return a list of stations ordered asscending by the previously described proportion.  
      */
-    public List<StationInfo> recommendByProportionBetweenDistanceAndBikes(GeoPoint point, int maxDistance) {
-    	List<StationInfo> stations = infraestructureManager.consultStations();
+    public List<Station> recommendByProportionBetweenDistanceAndBikes(GeoPoint point, int maxDistance) {
+    	List<Station> stations = infraestructureManager.consultStations();
         return validStationInfosToRentBike(point, maxDistance, stations)
             .stream().sorted(stationComparator.byProportionBetweenDistanceAndBikes(point)).collect(Collectors.toList());
     }
     
-    public List<StationInfo> recommendByProportionBetweenDistanceAndBikes(GeoPoint point) {
-    	List<StationInfo> stations = infraestructureManager.consultStations();
+    public List<Station> recommendByProportionBetweenDistanceAndBikes(GeoPoint point) {
+    	List<Station> stations = infraestructureManager.consultStations();
         return validStationInfosToRentBike(stations)
             .stream().sorted(stationComparator.byProportionBetweenDistanceAndBikes(point)).collect(Collectors.toList());
         }
@@ -95,8 +95,8 @@ public class InformationSystem {
      * place the user wants to reach.
      * @return a list of stations ordered asscending by the previously described proportion.  
      */
-    public List<StationInfo> recommendByProportionBetweenDistanceAndSlots(GeoPoint point) {
-    	List<StationInfo> stations = infraestructureManager.consultStations();
+    public List<Station> recommendByProportionBetweenDistanceAndSlots(GeoPoint point) {
+    	List<Station> stations = infraestructureManager.consultStations();
     	return validStationInfosToReturnBike(stations)
           		.stream().sorted(stationComparator.byProportionBetweenDistanceAndSlots(point)).collect(Collectors.toList());
     }
@@ -111,20 +111,20 @@ public class InformationSystem {
      * @return a list of stations ordered asscending by the linear distance from them to 
      * the specified geographical point.
      */
-    public List<StationInfo> recommendToRentBikeByDistance(GeoPoint point, int maxDistance) {
-    	List<StationInfo> stations = infraestructureManager.consultStations();
+    public List<Station> recommendToRentBikeByDistance(GeoPoint point, int maxDistance) {
+    	List<Station> stations = infraestructureManager.consultStations();
      return validStationInfosToRentBike(point, maxDistance, stations)
         		.stream().sorted(stationComparator.byDistance(point)).collect(Collectors.toList());
     }
     
-    public List<StationInfo> recommendToRentBikeByDistance(GeoPoint point) {
-    	List<StationInfo> stations = infraestructureManager.consultStations();
+    public List<Station> recommendToRentBikeByDistance(GeoPoint point) {
+    	List<Station> stations = infraestructureManager.consultStations();
      return validStationInfosToRentBike(stations)
         		.stream().sorted(stationComparator.byDistance(point)).collect(Collectors.toList());
     }
 
-    public List<StationInfo> recommendToReturnBikeByDistance(GeoPoint point) {
-    	List<StationInfo> stations = infraestructureManager.consultStations();
+    public List<Station> recommendToReturnBikeByDistance(GeoPoint point) {
+    	List<Station> stations = infraestructureManager.consultStations();
      return validStationInfosToReturnBike(stations)
         		.stream().sorted(stationComparator.byDistance(point)).collect(Collectors.toList());
     }

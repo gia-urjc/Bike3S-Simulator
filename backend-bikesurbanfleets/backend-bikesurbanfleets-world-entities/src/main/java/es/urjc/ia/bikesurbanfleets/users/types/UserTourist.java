@@ -4,7 +4,6 @@ import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
@@ -131,14 +130,14 @@ public class UserTourist extends User {
      * It randomly chooses a station among the pre-established number of nearest stations.
      */
     @Override
-    public StationInfo determineStationToRentBike() {
-        List<StationInfo> recommendedStations = informationSystem.recommendToRentBikeByDistance(this.getPosition());
-        StationInfo destination = null;
+    public Station determineStationToRentBike() {
+        List<Station> recommendedStations = informationSystem.recommendToRentBikeByDistance(this.getPosition());
+        Station destination = null;
 
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
-             List<StationInfo> nearestStations = new ArrayList<>();
+             List<Station> nearestStations = new ArrayList<>();
 	                
              int end = parameters.SELECTION_STATIONS_SET < recommendedStations.size() 
                  ? parameters.SELECTION_STATIONS_SET : recommendedStations.size();
@@ -157,14 +156,14 @@ public class UserTourist extends User {
      * It randomly chooses a station among the pre-established number of nearest stations.
      */
     @Override
-    public StationInfo determineStationToReturnBike() {
-        List<StationInfo> recommendedStations = informationSystem.recommendToReturnBikeByDistance(this.getPosition());
+    public Station determineStationToReturnBike() {
+        List<Station> recommendedStations = informationSystem.recommendToReturnBikeByDistance(this.getPosition());
 
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         int end = parameters.SELECTION_STATIONS_SET < recommendedStations.size()
             ? parameters.SELECTION_STATIONS_SET : recommendedStations.size();
-        List<StationInfo> nearestStations = new ArrayList<>();
+        List<Station> nearestStations = new ArrayList<>();
         for(int i = 0; i < end; i++) {
             nearestStations.add(recommendedStations.get(i));
         }

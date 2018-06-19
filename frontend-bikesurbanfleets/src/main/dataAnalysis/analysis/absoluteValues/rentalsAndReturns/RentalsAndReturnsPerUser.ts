@@ -24,7 +24,7 @@ export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
         this.data = new RentalAndReturnData();
     }
   
-    public async init() {
+    public async init(): Promise<void> {
         try {
             await this.data.initData(this.basicData);
         }

@@ -4,7 +4,6 @@ import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
@@ -98,9 +97,9 @@ public class UserObedient extends User {
     }
     
     @Override
-    public StationInfo determineStationToRentBike() {
-        StationInfo destination = null;
-        List<StationInfo> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
+    public Station determineStationToRentBike() {
+        Station destination = null;
+        List<Station> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
@@ -110,9 +109,9 @@ public class UserObedient extends User {
     }
 
     @Override
-    public StationInfo determineStationToReturnBike() {
-        StationInfo destination = null;
-        List<StationInfo> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
+    public Station determineStationToReturnBike() {
+        Station destination = null;
+        List<Station> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {

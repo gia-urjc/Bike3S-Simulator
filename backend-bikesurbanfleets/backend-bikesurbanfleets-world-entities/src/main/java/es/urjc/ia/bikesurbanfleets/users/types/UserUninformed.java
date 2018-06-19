@@ -4,7 +4,6 @@ import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
@@ -47,16 +46,16 @@ public class UserUninformed extends User {
     }
 
     @Override
-    public StationInfo determineStationToRentBike() {
-        StationInfo destination = null;
-        List<StationInfo> stations = infraestructure.consultStations();
+    public Station determineStationToRentBike() {
+        Station destination = null;
+        List<Station> stations = infraestructure.consultStations();
         List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
         stations.removeAll(triedStations);
 
         //Remove station if the user is in this station
         stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         
-        Comparator<StationInfo> criteria = services.getStationComparator().byDistance(this.getPosition());
+        Comparator<Station> criteria = services.getStationComparator().byDistance(this.getPosition());
         stations.stream().sorted(criteria).collect(Collectors.toList());
         if (!stations.isEmpty()) {
         	destination = stations.get(0);
@@ -73,7 +72,7 @@ public class UserUninformed extends User {
 
         //Remove station if the user is in this station
         stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
-        Comparator<StationInfo> criteria = services.getStationComparator().byDistance(this.getPosition());
+        Comparator<Station> criteria = services.getStationComparator().byDistance(this.getPosition());
         stations.stream().sorted(criteria).collect(Collectors.toList());
         if (!stations.isEmpty()) {
         	destination = stations.get(0);

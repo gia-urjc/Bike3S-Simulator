@@ -5,7 +5,6 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
@@ -119,9 +118,9 @@ public class UserDistanceRestriction extends User {
     }
     
     @Override
-    public StationInfo determineStationToRentBike() {
-        StationInfo destination = null;
-        List<StationInfo> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), parameters.maxDistance);
+    public Station determineStationToRentBike() {
+        Station destination = null;
+        List<Station> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), parameters.maxDistance);
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
@@ -131,9 +130,9 @@ public class UserDistanceRestriction extends User {
     }
 
     @Override
-     public StationInfo determineStationToReturnBike() {
-        StationInfo destination = null;
-        List<StationInfo> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition());
+     public Station determineStationToReturnBike() {
+        Station destination = null;
+        List<Station> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition());
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {

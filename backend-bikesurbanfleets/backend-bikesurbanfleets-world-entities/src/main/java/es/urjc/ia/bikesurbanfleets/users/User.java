@@ -7,11 +7,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.BikeInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.ReservationInfo;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.UserInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
@@ -36,7 +32,7 @@ import java.util.List;
  * @author IAgroup
   */
 @HistoryReference(HistoricUser.class)
-public abstract class User implements Entity, UserInfo {
+public abstract class User implements Entity {
 
     private static IdGenerator idGenerator = new IdGenerator();
 
@@ -185,16 +181,7 @@ public abstract class User implements Entity, UserInfo {
     public Bike getBike() {
         return bike;
     }
-    
-    public BikeInfo consultBike() {
-    	return bike;
-    }
-    
-    public ReservationInfo consultReservation() {
-    	return reservation;
-    }
-
-    public boolean hasBike() {
+        public boolean hasBike() {
         return bike != null ? true : false;
     }
 
@@ -240,10 +227,6 @@ public abstract class User implements Entity, UserInfo {
 
     public UserMemory getMemory() {
         return this.memory;
-    }
-
-    public StationInfo consultDestinationStation() {
-        return destinationStation;
     }
 
     /**
@@ -334,7 +317,6 @@ public abstract class User implements Entity, UserInfo {
             cancelsBikeReservation(station);
         }
         this.bike = station.removeBikeWithReservation(reservation);
-        return true;
     }
 
     /**
@@ -415,13 +397,13 @@ public abstract class User implements Entity, UserInfo {
      * User decides to which station he wants to go to rent a bike.
      * @return station where user has decided to go.
      */
-    public abstract StationInfo determineStationToRentBike();
+    public abstract Station determineStationToRentBike();
 
     /**
      * User decides to which station he wants to go to return his bike.
      * @return station where user has decided to go.
      */
-    public abstract StationInfo determineStationToReturnBike();
+    public abstract Station determineStationToReturnBike();
 
     /**
      * User decides if he'll try to make again a bike reservation at the previosly
