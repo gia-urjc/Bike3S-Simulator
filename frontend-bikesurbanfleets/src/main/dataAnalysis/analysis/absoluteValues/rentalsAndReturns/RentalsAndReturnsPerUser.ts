@@ -37,6 +37,7 @@ export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
     public update(timeEntry: TimeEntry): void {
         let events: Array<Event> = timeEntry.events;
         let key: number;
+        console.log('Rentals And returns per user');
 
         for(let event of events) {
             key = event.changes.users[0].id;

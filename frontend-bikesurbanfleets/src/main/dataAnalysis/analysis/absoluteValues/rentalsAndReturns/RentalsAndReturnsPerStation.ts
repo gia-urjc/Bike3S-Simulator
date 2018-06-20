@@ -40,6 +40,7 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
         let events: Array<Event> = timeEntry.events;
         let key: number | undefined;
         let eventStations: Array<Station>;
+        console.log('Rentals And returns per Station');
         
         for (let event of events) {
             eventStations = event.changes.stations;
@@ -62,6 +63,7 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
                 }
                 
                 case 'EventUserArrivesAtStationToRentBikeWithoutReservation': {
+                    console.log(eventStations);
                     if (eventStations.length > 0) {
                         // If only stations with reservations have been recorded, key'll be undefined 
                         key = this.obtainChangedStationId(eventStations);
@@ -105,8 +107,15 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
      * looking for which station is at that point.       
      */
     private obtainNotChangedStationId(user: User): number {
-        let lastPos: number = user.route.old.points.length-1;
-        let stationPosition: any = user.route.old.points[lastPos];
+        let stationPosition: any;
+        if (user.route !== undefined) {
+            let lastPos: number = user.route.old.points.length-1;
+            stationPosition = user.route.old.points[lastPos];
+        } 
+        else {
+            stationPosition = user.position.new;
+        }
+        
          
         let stationId = -1;
         for(let station of this.basicData) {

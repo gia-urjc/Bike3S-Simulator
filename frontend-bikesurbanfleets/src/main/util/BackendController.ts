@@ -120,16 +120,18 @@ export default class BackendController {
                 reject("Error validating Global Configuration" + globalValidation.errors);
             }
 
-            const userGen = spawn('java', [
-                '-jar',
-                'bikesurbanfleets-config-usersgenerator-1.0.jar',
-                '-entryPointsInput', '"' + args.entryPointsConfPath + '"',
-                '-globalInput', '"' + args.globalConfPath + '"',
-                '-output', '"' + args.outputUsersPath + '/users-configuration.json"',
-                '-callFromFrontend'
-            ], {
+            let command = 'java ' +
+                '-jar ' +
+                'bikesurbanfleets-config-usersgenerator-1.0.jar ' +
+                '-entryPointsInput ' + '"' + args.entryPointsConfPath + '" ' +
+                '-globalInput ' + '"' + args.globalConfPath  + '" ' +
+                '-output ' + '"' + args.outputUsersPath + '/users-configuration.json" ' +
+                '-callFromFrontend';
+
+
+            const userGen = spawn(command, [], {
                 cwd: rootPath,
-                shell: false
+                shell: true
             });
 
             userGen.stderr.on('data', (data) => {
@@ -161,7 +163,6 @@ export default class BackendController {
                 globalConf = await fs.readJson(args.globalConfPath);
                 stationsConf = await fs.readJson(args.stationsConfPath);
                 usersConf = await fs.readJsonSync(args.usersConfPath);
-
             }
             catch {
                 let errorMessage = "Error reading Configuration Path: \n"
@@ -201,16 +202,18 @@ export default class BackendController {
                 reject("Error validating users", + usersValidation.errors);
             }
 
-            const sim = spawn('java', [
-                '-DLogFilePath=${HOME}/.Bike3S/',
-                '-jar',
-                'bikesurbanfleets-core-1.0.jar',
-                '-globalConfig', '"' + args.globalConfPath + '"',
-                '-usersConfig', '"' + args.usersConfPath + '"',
-                '-stationsConfig', '"' + args.stationsConfPath + '"',
-                '-historyOutput', '"' + args.outputHistoryPath + '"',
-                `-callFromFrontend`
-            ], {
+            // Command should be in an unique string with quotation marks to make it compatible with MacOs 
+            let command = "java " +
+                "-DLogFilePath=${HOME}/.Bike3S/ " + 
+                "-jar " +
+                "bikesurbanfleets-core-1.0.jar " +
+                "-globalConfig " + '"' + args.globalConfPath + '" ' +
+                "-usersConfig " + '"' + args.usersConfPath + '" ' +
+                "-stationsConfig " + '"' + args.stationsConfPath + '" ' + 
+                "-historyOutput " + '"' + args.outputHistoryPath + '" '+ 
+                "-callFromFrontend";
+
+            const sim = spawn(command, [], {
                 cwd: rootPath,
                 shell: true
             });

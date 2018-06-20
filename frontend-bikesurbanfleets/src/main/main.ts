@@ -93,9 +93,6 @@ export namespace Main {
         CsvGeneratorController.enableIpc();
 
         app.on('ready', async () => {
-            //HistoryReader.enableIpc();
-            //Settings.enableIpc();
-            //SchemaFormGenerator.enableIpc();
 
             Main.initWindowsListeners();
 

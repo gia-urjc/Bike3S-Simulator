@@ -77,28 +77,28 @@ maven.on('error', (error) => {
 
 maven.on('close', (code) => {
     if (code === 0) {
-    let dirs = fs.readdirSync(projectRoot.backendRoot());
-    dirs = dirs.filter(dirName => dirName.startsWith("backend-bikesurbanfleets"))
-.map(dirName => path.join(projectRoot.backendRoot(), `${dirName}/target`));
+        let dirs = fs.readdirSync(projectRoot.backendRoot());
+        dirs = dirs.filter(dirName => dirName.startsWith("backend-bikesurbanfleets"))
+            .map(dirName => path.join(projectRoot.backendRoot(), `${dirName}/target`));
 
-    dirs.forEach(dirName => {
-        fs.readdirSync(dirName).filter((file) => file.endsWith('jar-with-dependencies.jar')).forEach((file) => {
-        const target = path.join(dirName, file);
-        const destination = path.join(projectRoot.build(), file.replace('-jar-with-dependencies', ''));
+        dirs.forEach(dirName => {
+                fs.readdirSync(dirName).filter((file) => file.endsWith('jar-with-dependencies.jar')).forEach((file) => {
+                const target = path.join(dirName, file);
+                const destination = path.join(projectRoot.build(), file.replace('-jar-with-dependencies', ''));
 
-    fs.copySync(target, destination);
+                fs.copySync(target, destination);
 
-    log.time().green(`finished packaging ${file}`).echo();
-})
-});
+                log.time().green(`finished packaging ${file}`).echo();
+            })
+        });
 
-    log.time().green('backend-bikesurbanfleets build finished').echo();
-    resolve();
-} else {
-    log.time().red(`maven finished with error code ${code}`).echo();
-    reject();
-}
-});
+            log.time().green('backend-bikesurbanfleets build finished').echo();
+            resolve();
+        } else {
+            log.time().red(`maven finished with error code ${code}`).echo();
+            reject();
+        }
+    });
 }));
 
 Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, reject) => {

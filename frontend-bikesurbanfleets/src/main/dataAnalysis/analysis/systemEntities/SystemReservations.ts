@@ -1,11 +1,11 @@
 import { HistoryEntitiesJson } from "../../../../shared/history";
-import { HistoryReader } from "../../../util";
+import { HistoryReaderController } from "../../../util";
 import { Reservation } from "../../systemDataTypes/Entities";
 
 export class SystemReservations {
     private reservations: Array<Reservation>;
     
-    public async init(history: HistoryReader): Promise<void> {
+    public async init(history: HistoryReaderController): Promise<void> {
         try {
             let reservationEntities: HistoryEntitiesJson = await history.getEntities('reservations');
             this.reservations = <Reservation[]> reservationEntities.instances;

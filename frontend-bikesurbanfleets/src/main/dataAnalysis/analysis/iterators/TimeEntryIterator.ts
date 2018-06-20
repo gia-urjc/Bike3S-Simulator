@@ -1,4 +1,4 @@
-import { HistoryReader } from '../../../util';
+import { HistoryReaderController } from '../../../util';
 import { HistoryIterator } from '../../HistoryIterator';
 import { TimeEntry } from '../../systemDataTypes/SystemInternalData';
 import { Observer, Observable } from '../ObserverPattern';
@@ -6,13 +6,13 @@ import { Iterator } from './Iterator';
 
 export class TimeEntryIterator implements Iterator {
     private observers: Array<Observer>;
-    private history: HistoryReader;
+    private history: HistoryReaderController;
     
     public constructor() {
         this.observers = new Array<Observer>();
     }
     
-    public setHistory(history: HistoryReader): void {
+    public setHistory(history: HistoryReaderController): void {
         this.history = history;
     }
     
@@ -23,6 +23,7 @@ export class TimeEntryIterator implements Iterator {
             let timeEntry: TimeEntry | undefined = await it.nextTimeEntry();
        
             while(timeEntry !== undefined) {
+                console.log(timeEntry);
                 this.notify(timeEntry);
                 timeEntry = await it.nextTimeEntry();
             }
