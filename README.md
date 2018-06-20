@@ -1,12 +1,13 @@
 # Bike3S - A Bike Sharing System Simulator
 
 ## What is Bike3S
-Bike3S is a simulator created with the idea of test different situations in real bike sharing systems. 
-Bike sharing systems allow to citizens move between different places. Bike3S give us the posibility to
-simulate and recreate situations, use different types of users, try algorithms and use recomendation
-systems... 
+Bike3S is a simulator created for the purpose of testing different behaviours in real bike sharing systems. 
+Bike sharing systems allow citizens to move between different places in an simple and economical way. Bike3S offers us the posibility to
+execute situations using different infraestructure confifurations, user models and balancing algorithms.
+ 
 
-The motivation of this project is to search ways to rebalance the system with recomendations and incentives.
+The motivation of this project is to search strategies to balance the system resources using systems, typically, based on incentives, which recommend the users to rent or return a bike in a certain station to contribute to the system balancing. 
+
 
  
 # Prerequisites
@@ -23,16 +24,16 @@ This project is development environment agnostic. You can use an IDE or just the
 
 
 ## General overview of the software architecture
-The project is separated in two principal parts, a **backend** and a **frontend**.
+The project is separated in two main parts: a **backend** and a **frontend**.
 
 ![It shows the architecture of the software. It shows two clear parts: backend and frontend](documentation/images/Arquitecture_6.png?raw=true "Software arquitecture")
 
-The **backend** is related with all the simulation logic. Backend is implemented in Java.
+The **backend** is related to all the simulation logic and is implemented in Java.
 
-The folder `/backend-bikesurbanfleets` contains this part of the project
+The folder `/backend-bikesurbanfleets` contains this part of the project.
 
-The **frontend** is related with all the GUI and data analysis of the simulations. It is implemented in TypeScript,
-Angular, and use Electron.
+The **frontend** is related to all the GUI and data analysis of the simulations. It is implemented in TypeScript, using
+Angular and Electron.
 
 The folder `/frontend-bikesurbanfleets` contains this part of the project.
 
