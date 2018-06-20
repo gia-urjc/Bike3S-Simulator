@@ -102,7 +102,8 @@ maven.on('close', (code) => {
 }));
 
 Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, reject) => {
-    const tsc = spawn(path.join(projectRoot(), 'node_modules/.bin/tsc'), [], {
+	let command = "'" + path.join(projectRoot(), 'node_modules/.bin/tsc') + "'";	
+    const tsc = spawn(command, [], {
         cwd: projectRoot.schema(),
         shell: true,
         stdio: 'inherit'
