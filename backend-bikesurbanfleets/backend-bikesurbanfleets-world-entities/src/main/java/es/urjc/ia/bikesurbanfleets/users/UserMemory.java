@@ -19,7 +19,8 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation.Reservat
 public class UserMemory {
     
     public enum FactType {
-        BIKE_RESERVATION_TIMEOUT, BIKE_FAILED_RESERVATION, BIKES_UNAVAILABLE, SLOTS_UNAVAILABLE
+        BIKE_RESERVATION_TIMEOUT, BIKE_FAILED_RESERVATION, BIKES_UNAVAILABLE, SLOTS_UNAVAILABLE,
+        SLOT_RESERVATION_TIMEOUT, SLOT_FAILED_RESERVATION
     }
     
     /**
@@ -31,7 +32,17 @@ public class UserMemory {
      * Times that a user's bike reservation has expired (before renting the bike).  
      */
     private int bikeReservationTimeoutsCounter;
+
+    /**
+     * Times that a user has tried to reserve a slot and has not been able to.
+     */
+    private int slotReservationAttemptsCounter;
     
+    /**
+     * Times that a user's slot reservation has expired (before renting the bike).  
+     */
+    private int slotReservationTimeoutsCounter;
+
     /**
      * Times that a user has tried to rent a bike and has not been able to.
      */
@@ -92,6 +103,10 @@ public class UserMemory {
             case BIKE_RESERVATION_TIMEOUT: bikeReservationTimeoutsCounter++;
             break;
             case BIKE_FAILED_RESERVATION: bikeReservationAttemptsCounter++;
+            break;
+            case SLOT_RESERVATION_TIMEOUT: slotReservationTimeoutsCounter++;
+            break;
+            case SLOT_FAILED_RESERVATION: slotReservationAttemptsCounter++;
             break;
             case BIKES_UNAVAILABLE:
                 rentalAttemptsCounter++;

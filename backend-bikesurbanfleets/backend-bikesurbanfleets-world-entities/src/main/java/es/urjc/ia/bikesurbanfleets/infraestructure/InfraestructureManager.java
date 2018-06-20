@@ -63,6 +63,7 @@ public class InfraestructureManager {
      */
     public void addReservation(Reservation reservation) {
         this.reservations.add(reservation);
+        reservation.getUser().getMemory().getReservations().add(reservation);
 
     }
 

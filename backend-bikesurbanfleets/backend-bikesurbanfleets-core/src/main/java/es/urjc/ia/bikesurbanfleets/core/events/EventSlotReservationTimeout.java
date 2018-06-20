@@ -5,6 +5,7 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.users.User;
+import es.urjc.ia.bikesurbanfleets.users.UserMemory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ public class EventSlotReservationTimeout extends EventUser {
         user.setPosition(positionTimeOut);
         reservation.expire();
         user.cancelsSlotReservation(user.getDestinationStation());
+        user.getMemory().update(UserMemory.FactType.SLOT_RESERVATION_TIMEOUT);
 
         debugEventLog();
         if (!user.decidesToDetermineOtherStationAfterTimeout()){

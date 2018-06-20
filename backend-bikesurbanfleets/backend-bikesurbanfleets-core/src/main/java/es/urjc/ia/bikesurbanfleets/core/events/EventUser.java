@@ -100,7 +100,7 @@ public abstract class EventUser implements Event {
      *                     This parameter can be the previous chosen station or a new decided destination station.
      * @return a list of generated events that will occur as a consequence of trying to reserve a bike.
      */
-    public List<Event> manageBikeReservation(Station destination) throws Exception {
+    private List<Event> manageBikeReservation(Station destination) throws Exception {
         List<Event> newEvents = new ArrayList<>();
 
         int arrivalTime = user.timeToReach();
@@ -145,7 +145,7 @@ public abstract class EventUser implements Event {
      *
      * @return a list of generated events that will ocurr as a consequence of making the decision.
      */
-    public List<Event> manageBikeReservationDecisionAtSameStationAfterTimeout() throws Exception {
+    protected List<Event> manageBikeReservationDecisionAtSameStationAfterTimeout() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.getDestinationStation();
         user.setDestinationStation(destination);
@@ -175,9 +175,9 @@ public abstract class EventUser implements Event {
      * @return a list of generated events as a consequence of making the decision.
      * @throws Exception
      */
-    public List<Event> manageBikeReservationDecisionAtOtherStation() throws Exception {
+    protected List<Event> manageBikeReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        Station destination = (Station) user.determineStationToRentBike();
+        Station destination = user.determineStationToRentBike();
 
         if (destination != null) {
             user.setDestinationStation(destination);
@@ -206,7 +206,7 @@ public abstract class EventUser implements Event {
      * @return
      * @throws Exception
      */
-    public List<Event> manageSlotReservation(Station destination) throws Exception {
+    private List<Event> manageSlotReservation(Station destination) throws Exception {
         List<Event> newEvents = new ArrayList<>();
         int arrivalTime = user.timeToReach();
         if (user.reservesSlot(destination)) {  // User has been able to reserve
@@ -224,6 +224,7 @@ public abstract class EventUser implements Event {
             Reservation reservation = new Reservation(instant, ReservationType.SLOT, user, destination);
             destination.getReservations().add(reservation);
             user.addReservation(reservation);
+            user.getMemory().update(UserMemory.FactType.SLOT_FAILED_RESERVATION);
             debugEventLog("User has not been able to reserve a slot");
             
             if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user waljs to the initially chosen station
@@ -238,7 +239,7 @@ public abstract class EventUser implements Event {
         return newEvents;
     }
 
-    public List<Event> manageSlotReservationDecisionAtSameStationAfterTimeout() throws Exception {
+    protected List<Event> manageSlotReservationDecisionAtSameStationAfterTimeout() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.getDestinationStation();
         user.setDestinationStation(destination);
@@ -259,9 +260,9 @@ public abstract class EventUser implements Event {
         return newEvents;
     }
 
-    public List<Event> manageSlotReservationDecisionAtOtherStation() throws Exception {
+    protected List<Event> manageSlotReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        Station destination = (Station)user.determineStationToReturnBike();
+        Station destination = user.determineStationToReturnBike();
         user.setDestinationStation(destination);
         user.setDestinationPoint(destination.getPosition());
         GeoRoute route = user.determineRoute();
