@@ -106,7 +106,7 @@ public class UserCommuter extends User {
     
     @Override
     public Station determineStationToRentBike() {
-        List<Station> recommendedStations = informationSystem.recommendToRentBikeByDistance(this.getPosition());
+        List<Station> recommendedStations = informationSystem.getStationsToRentBikeOrderedByDistance(this.getPosition());
         Station destination = null;
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
@@ -118,7 +118,7 @@ public class UserCommuter extends User {
         
     @Override
      public Station determineStationToReturnBike() {
-        List<Station> recommendedStations = informationSystem.recommendToReturnBikeByDistance(this.getPosition());
+        List<Station> recommendedStations = informationSystem.getStationsToReturnBikeOrderedByDistance(this.getPosition());
         Station destination = null;
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));

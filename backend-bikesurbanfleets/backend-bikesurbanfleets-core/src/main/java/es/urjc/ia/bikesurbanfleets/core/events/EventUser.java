@@ -282,5 +282,12 @@ public abstract class EventUser implements Event {
         }
         return newEvents;
     }
+    
+protected void leaveSystem() {
+	user.setPosition(null);
+	user.setRoute(null);
+	user.setDestinationStation(null);
+	user.setDestinationPoint(null);
+}
 
 }

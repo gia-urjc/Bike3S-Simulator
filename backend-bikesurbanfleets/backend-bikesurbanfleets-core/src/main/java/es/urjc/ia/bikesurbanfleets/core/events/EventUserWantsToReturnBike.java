@@ -12,22 +12,22 @@ import java.util.List;
 public class EventUserWantsToReturnBike extends EventUser {
 
     private List<Entity> entities;
-    private GeoPoint actualPosition;
+    private GeoPoint currentPosition;
 
     public EventUserWantsToReturnBike(int instant, User user, GeoPoint actualPosition) {
         super(instant, user);
         this.entities = new ArrayList<>(Arrays.asList(user));
-        this.actualPosition = actualPosition;
+        this.currentPosition = actualPosition;
     }
 
     public GeoPoint getActualPosition() {
-        return actualPosition;
+        return currentPosition;
     }
 
     @Override
     public List<Event> execute() throws Exception {
     	user.setInstant(this.instant);
-        user.setPosition(actualPosition);
+        user.setPosition(currentPosition);
         debugEventLog();
         return manageSlotReservationDecisionAtOtherStation();
     }

@@ -120,7 +120,7 @@ public class UserDistanceRestriction extends User {
     @Override
     public Station determineStationToRentBike() {
         Station destination = null;
-        List<Station> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndBikes(this.getPosition(), parameters.maxDistance);
+        List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceBikesRatio(this.getPosition(), parameters.maxDistance);
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
@@ -132,7 +132,7 @@ public class UserDistanceRestriction extends User {
     @Override
      public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition());
+        List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceSlotsRatio(this.getPosition());
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {

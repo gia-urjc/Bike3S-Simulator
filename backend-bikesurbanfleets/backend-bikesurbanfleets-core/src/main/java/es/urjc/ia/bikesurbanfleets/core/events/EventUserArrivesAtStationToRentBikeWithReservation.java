@@ -47,6 +47,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         } else {   // user rides his bike to a point which is not a station
             GeoPoint point = user.decidesNextPoint();
             user.setDestinationPoint(point);
+            user.setDestinationStation(null);
             GeoRoute route = user.determineRoute();
             user.setRoute(route);
             int arrivalTime = user.timeToReach();

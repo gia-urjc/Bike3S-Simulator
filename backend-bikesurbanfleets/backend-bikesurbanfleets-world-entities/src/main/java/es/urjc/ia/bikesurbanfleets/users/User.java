@@ -197,7 +197,7 @@ public abstract class User implements Entity {
         return destinationStation;
     }
     
-    public void setDestinationStation(Station destinationStation) throws Exception {
+    public void setDestinationStation(Station destinationStation) {
         this.destinationStation = destinationStation;
     }
     
@@ -310,8 +310,6 @@ public abstract class User implements Entity {
      */
 
     public void removeBikeWithReservationFrom(Station station) {
-        if (hasBike()) {
-        }
         if (hasReservedBike()) {
             // first, reservation is cancelled to let a bike available at station to make sure one bike is available for take away
             cancelsBikeReservation(station);

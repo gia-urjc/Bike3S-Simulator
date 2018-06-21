@@ -41,10 +41,10 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
             } else {   // user rides his bike to a point which is not a station
                 GeoPoint point = user.decidesNextPoint();
                 user.setDestinationPoint(point);
+                user.setDestinationStation(null);
                 GeoRoute route = user.determineRoute();
                 user.setRoute(route);
-                //TODO: put destinationStation to null ??
-                int arrivalTime = user.timeToReach();
+                               int arrivalTime = user.timeToReach();
                 debugEventLog("User decides to take a ride");
                 newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
             }
@@ -52,8 +52,7 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
             user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE);
             debugEventLog("User can't take bikes from the station");
             if (user.decidesToLeaveSystemWhenBikesUnavailable()) {
-                user.setPosition(null);
-                user.setRoute(null);
+                leaveSystem();
                 debugEventLog("User decides to leave the system");
             } else {
                 newEvents = manageBikeReservationDecisionAtOtherStation();

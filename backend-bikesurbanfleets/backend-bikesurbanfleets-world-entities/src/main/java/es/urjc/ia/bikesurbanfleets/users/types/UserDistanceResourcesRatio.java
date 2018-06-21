@@ -113,7 +113,7 @@ public class UserDistanceResourcesRatio extends User {
     
     @Override
     public Station determineStationToRentBike() {
-        List<Station> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition());
+        List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceSlotsRatio(this.getPosition());
         Station destination = null;
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
@@ -125,7 +125,7 @@ public class UserDistanceResourcesRatio extends User {
 
     @Override
      public Station determineStationToReturnBike() {
-        List<Station> recommendedStations = informationSystem.recommendByProportionBetweenDistanceAndSlots(this.getPosition());
+        List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceSlotsRatio(this.getPosition());
         Station destination = null;
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
