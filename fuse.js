@@ -102,12 +102,23 @@ maven.on('close', (code) => {
 }));
 
 Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, reject) => {
-	let command = "'" + path.join(projectRoot(), 'node_modules/.bin/tsc') + "'";	
-    const tsc = spawn(command, [], {
-        cwd: projectRoot.schema(),
-        shell: true,
-        stdio: 'inherit'
-    });
+    let command;
+    let tsc;
+    if(process.platform === 'darwin') {
+        command = "'" + path.join(projectRoot(), 'node_modules/.bin/tsc') + "'";
+        tsc = spawn(command, [], {
+            cwd: projectRoot.schema(),
+            shell: true,
+            stdio: 'inherit'
+        });
+    } 	
+    else {
+        tsc = spawn(path.join(projectRoot(), 'node_modules/.bin/tsc'), [], {
+            cwd: projectRoot.schema(),
+            shell: true,
+            stdio: 'inherit'
+        });
+    }
 
     tsc.on('error', (error) => {
         log.red(error).echo();
