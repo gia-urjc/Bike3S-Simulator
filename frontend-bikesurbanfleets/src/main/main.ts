@@ -82,6 +82,7 @@ export namespace Main {
         });
 
         menu.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/menu');
+		
     }
 
     export function initMenu() {

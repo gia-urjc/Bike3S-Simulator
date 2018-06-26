@@ -39,10 +39,12 @@ export class SimulatecoreComponent{
     }
 
     selectFile(): string {
+		let windowsBar = "\\";
+		let regularExpression = new RegExp('"', 'g');
         return dialog.showOpenDialog({
             properties: ['openFile', 'createDirectory'],
             filters: [{name: 'JSON Files', extensions: ['json']}]
-        })[0];
+        })[0].replace(regularExpression, "/");
     }
 
     selectFolder(): string {
