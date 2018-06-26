@@ -13,10 +13,6 @@
     "postinstall": "electron-builder install-app-deps",
     "build": {
         "appId": "es.urjc.bike3s",
-		"asarUnpack": [
-			"bikesurbanfleets-config-usersgenerator-1.0.jar",
-			"bikesurbanfleets-core-1.0.jar"
-		],
         "win": {
             "target": "msi",
             "icon": "icon.ico"
@@ -27,7 +23,7 @@
         "linux": {
             "target": "deb"
         },
-        "asar": true,
+        "asar": false,
         "files": [
             "!**/node_modules/*"
         ]
