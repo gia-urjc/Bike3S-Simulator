@@ -7,6 +7,9 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * This class is used to create, from configuration file, the system's internal classes 
@@ -34,16 +37,17 @@ public class ConfigJsonReader {
      * @return the created simulationo configuration object.
      */
     public GlobalInfo readGlobalConfiguration() throws IOException {
-        try (FileReader reader = new FileReader(globalConfFile)) {
-            GlobalInfo globalInfo = gson.fromJson(reader, GlobalInfo.class);
-            if(globalInfo.getRandomSeed() == 0) {
-                SimulationRandom.init();
-            }
-            else {
-                SimulationRandom.init(globalInfo.getRandomSeed());
-            }
-            return globalInfo;
+        String globalConfigStr = new String(Files.readAllBytes(Paths.get(globalConfFile)), StandardCharsets.UTF_8);
+        globalConfigStr = globalConfigStr.replace("\\", "/");
+        GlobalInfo globalInfo = gson.fromJson(globalConfigStr, GlobalInfo.class);
+        System.out.println(globalInfo.getMap());
+        if(globalInfo.getRandomSeed() == 0) {
+            SimulationRandom.init();
         }
+        else {
+            SimulationRandom.init(globalInfo.getRandomSeed());
+        }
+        return globalInfo;
     }
 
     public StationsConfig readStationsConfiguration() throws IOException {
