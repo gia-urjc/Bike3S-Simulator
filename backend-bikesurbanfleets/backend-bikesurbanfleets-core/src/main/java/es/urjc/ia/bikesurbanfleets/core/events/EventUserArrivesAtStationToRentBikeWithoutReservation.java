@@ -55,6 +55,7 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
                 user.setPosition(null);
                 user.setRoute(null);
                 debugEventLog("User decides to leave the system");
+                debugClose(user, user.getId());
             } else {
                 newEvents = manageBikeReservationDecisionAtOtherStation();
             }

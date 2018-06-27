@@ -40,6 +40,8 @@ public class EventBikeReservationTimeout extends EventUser {
             user.setPosition(null);
             user.setRoute(null);
             debugEventLog("User leaves the system");
+            debugClose(user, user.getId());
+
         } else if (user.decidesToDetermineOtherStationAfterTimeout()) {
             debugEventLog("User decides to manage bike reservation at other Station");
             newEvents = manageBikeReservationDecisionAtOtherStation();

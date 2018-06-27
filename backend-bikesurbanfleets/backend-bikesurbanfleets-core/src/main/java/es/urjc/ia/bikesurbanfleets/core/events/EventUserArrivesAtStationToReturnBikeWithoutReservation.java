@@ -39,6 +39,7 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
             user.setPosition(null);
             user.setRoute(null);
             debugEventLog("User returns the bike");
+            debugClose(user, user.getId());
             
         }
         return newEvents;

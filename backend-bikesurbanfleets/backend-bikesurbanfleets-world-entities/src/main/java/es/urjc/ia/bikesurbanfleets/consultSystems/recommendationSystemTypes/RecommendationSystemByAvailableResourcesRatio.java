@@ -1,15 +1,11 @@
 package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;

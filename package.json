@@ -3,6 +3,7 @@
   "version": "0.6.0",
   "main": "frontend/main.js",
   "author": "URJC <contact@ia.urjc.es>",
+  "description": "This software can create and analyse Bike Sharing System Simulations",
   "homepage": "https://github.com/stimonm/Bike3S",
   "scripts": {
     "start:electron": "electron ./build",
@@ -12,7 +13,14 @@
   "build": {
     "appId": "es.urjc.bike3s",
     "win": {
-      "target": "msi",
+      "target": [
+        {
+          "target": "nsis"
+        },
+        {
+          "target": "portable"
+        }
+      ],
       "icon": "icon.ico"
     },
     "linux": {

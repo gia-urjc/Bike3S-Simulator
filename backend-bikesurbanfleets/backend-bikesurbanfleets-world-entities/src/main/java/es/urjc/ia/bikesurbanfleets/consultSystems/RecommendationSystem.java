@@ -5,7 +5,6 @@ import java.util.List;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
 public abstract class RecommendationSystem {
 	

@@ -1,8 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.infraestructure;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GraphHopperIntegration;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.BikeInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.ReservationInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
@@ -15,7 +13,6 @@ import es.urjc.ia.bikesurbanfleets.users.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -71,7 +68,7 @@ public class InfraestructureManager {
         this.stations = new ArrayList<>(stations);
         this.stationsInfo = new ArrayList<>(stations);
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
-        this.bikesInfo = new ArrayList(this.bikes);
+        this.bikesInfo = new ArrayList<>(this.bikes);
         this.reservations = new ArrayList<>();
         this.reservationsInfo = new ArrayList<>();
         this.bbox = bbox;

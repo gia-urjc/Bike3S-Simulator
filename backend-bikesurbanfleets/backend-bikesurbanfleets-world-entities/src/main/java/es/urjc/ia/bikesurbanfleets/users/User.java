@@ -14,7 +14,6 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.StationInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.UserInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
@@ -25,7 +24,6 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

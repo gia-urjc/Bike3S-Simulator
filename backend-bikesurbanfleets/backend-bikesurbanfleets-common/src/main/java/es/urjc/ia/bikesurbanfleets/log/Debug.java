@@ -54,15 +54,15 @@ public class Debug {
         }
     }
 
-    public static void closeAllLogs() throws IOException {
+    public static void closeLog(Entity entity, int id) throws IOException {
         if(DEBUG_MODE) {
-            fileWriterMap.closeAllFileWriters();
+            fileWriterMap.closeFileWriter(entity, id);
         }
     }
 
     private static FileWriter createLog(Entity entity) throws IOException {
 
-        Class entityClass = entity.getClass();
+        Class<?> entityClass = entity.getClass();
         while(entityClass.getSuperclass() != Object.class) {
             entityClass = entityClass.getSuperclass();
         }

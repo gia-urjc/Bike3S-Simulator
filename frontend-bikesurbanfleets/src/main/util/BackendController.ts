@@ -100,10 +100,9 @@ export default class BackendController {
         return new Promise( async (resolve: any, reject: any) => {
 
             let rootPath = app.getAppPath();
-            console.log(rootPath);
 			let entryPointsConf, globalConf: any; 
 			try {
-				let entryPointsConf = await fs.readJson(args.entryPointsConfPath);
+				entryPointsConf = await fs.readJson(args.entryPointsConfPath);
 				let globalConfData = await fs.readFile(args.globalConfPath);
 				let globalConfStr = globalConfData.toString();
 				globalConfStr = globalConfStr.replace(/\\/g, "/");
@@ -114,23 +113,21 @@ export default class BackendController {
                     + "Global Configuration: " + args.globalConfPath + "\n"
                     + "Entry Points configuration: " + args.entryPointsConfPath + "\n";
                 this.sendInfoToGui('core-error', errorMessage);
-				console.log(error);
                 reject(errorMessage);
 			}
 			
-			console.log(this.entryPointSchema);
-			console.log(entryPointsConf);
             // Entry Point Validation
             let entryPointsValidation = this.validateConfiguration(this.entryPointSchema, entryPointsConf);
+            console.log("Validation Entry Points: " + entryPointsValidation);
             if(!entryPointsValidation.result) {
                 this.sendInfoToGui('user-gen-error', entryPointsValidation.errors);
                 reject("Error validating Entry Points: " + entryPointsValidation.errors);
             }
-			
-			console.log(this.globalSchema);
-			console.log(globalConf);
+            
+            
             //Global Configuration Validation
             let globalValidation = this.validateConfiguration(this.globalSchema, globalConf);
+            console.log("Global Validation: " + globalValidation.result);
             if(!globalValidation.result) {
                 this.sendInfoToGui('user-gen-error', globalValidation.errors);
                 reject("Error validating Global Configuration" + globalValidation.errors);
@@ -150,12 +147,10 @@ export default class BackendController {
 			});
 
             userGen.stderr.on('data', (data) => {
-				console.log(data.toString());
                 this.sendInfoToGui('user-gen-error', data.toString());
             });
 
             userGen.stdout.on('data', (data) => {
-				console.log(data.toString());
                 this.sendInfoToGui('user-gen-data', data.toString());
             });
 
@@ -174,7 +169,6 @@ export default class BackendController {
     public simulate(args: CoreSimulatorArgs): Promise<void> {
         return new Promise(async (resolve: any, reject: any) => {
             let rootPath = app.getAppPath();
-            console.log(rootPath);
             let globalConf, stationsConf, usersConf: any;
             try {
 				let globalConfData  = await fs.readFile(args.globalConfPath);
@@ -190,34 +184,28 @@ export default class BackendController {
                     + "Users Configuration: " + args.usersConfPath + "\n"
                     + "Stations Configuration: " + args.stationsConfPath + "\n";
                 this.sendInfoToGui('core-error', errorMessage);
-				console.log(error);
                 reject(errorMessage);
             }
 
             //Global Configuration Validation
-            console.log(this.globalSchema);
-            console.log(globalConf);
             let globalValidation = this.validateConfiguration(this.globalSchema , globalConf);
+            console.log("Global Validation: " + globalValidation.result);
             if(!globalValidation.result) {
                 this.sendInfoToGui('core-error', globalValidation.errors);
                 reject("Error validating Global Configuration" + globalValidation.errors);
             }
 
             //Stations Configuration Validation
-            console.log(this.stationsSchema);
-            console.log(stationsConf);
             let stationsValidation = this.validateConfiguration(this.stationsSchema, stationsConf);
-            console.log(stationsValidation);
+            console.log("Stations Validation " + stationsValidation.result);
             if(!stationsValidation.result) {
 				this.sendInfoToGui('core-error', stationsValidation.errors);
 				reject("Error validating stations" + stationsValidation.errors);
             }
 
             //User generation validation
-            console.log(this.usersConfigSchema);
-            console.log(usersConf);
             let usersValidation = this.validateConfiguration(this.usersConfigSchema, usersConf);
-            console.log(usersValidation);
+            console.log("Users Validation " + usersValidation);
             if(!usersValidation.result) {
                 this.sendInfoToGui('core-error', usersValidation.errors);
                 reject("Error validating users", + usersValidation.errors);
@@ -240,12 +228,10 @@ export default class BackendController {
 
 
             sim.stderr.on('data', (error) => {
-                console.log(error.toString());
                 this.sendInfoToGui('core-error', error.toString());
             });
 
             sim.stdout.on('data', (data) => {
-                console.log(data.toString());
                 this.sendInfoToGui('core-data', data.toString());
             });
 
@@ -260,6 +246,5 @@ export default class BackendController {
             });
         });
     }
-
 
 }

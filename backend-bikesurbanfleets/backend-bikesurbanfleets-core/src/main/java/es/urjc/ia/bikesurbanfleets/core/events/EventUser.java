@@ -79,6 +79,10 @@ public abstract class EventUser implements Event {
         Debug.log(user, this);
     }
 
+    public void debugClose(User user, int id) throws IOException {
+        Debug.closeLog(user, id);
+    }
+
 
 
     /*
@@ -125,6 +129,7 @@ public abstract class EventUser implements Event {
             if (user.decidesToLeaveSystemAffterFailedReservation()) {
                 user.setPosition(null);
                 debugEventLog("User decides to leave the system");
+                debugClose(user, user.getId());
             } else if (user.decidesToDetermineOtherStationAfterFailedReservation()) {
                 debugEventLog("User decides to determine other station to manage bike reservation");
                 newEvents = manageBikeReservationDecisionAtOtherStation();

@@ -35,7 +35,6 @@ public class SimulationEngine {
 
     private PriorityQueue<Event> eventsQueue = new PriorityQueue<>();
     private GlobalInfo globalInfo;
-    private StationsConfig stationsInfo;
     private UsersConfig usersInfo;
 
     /**
@@ -44,7 +43,6 @@ public class SimulationEngine {
     public SimulationEngine(GlobalInfo globalInfo, StationsConfig stationsInfo, UsersConfig usersInfo,
                             InfraestructureManager infraestructureManager) throws Exception {
         this.globalInfo = globalInfo;
-        this.stationsInfo = stationsInfo;
         this.usersInfo = usersInfo;
         SimulationServiceConfigData servicesConfigData = new SimulationServiceConfigData();
         servicesConfigData.setBbox(globalInfo.getBoundingBox())
@@ -106,7 +104,6 @@ public class SimulationEngine {
         }
 
         History.close();
-        Debug.closeAllLogs();
     }
 
 }

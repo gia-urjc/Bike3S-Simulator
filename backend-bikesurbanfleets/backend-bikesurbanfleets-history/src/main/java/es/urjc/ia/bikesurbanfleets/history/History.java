@@ -5,7 +5,6 @@ import com.google.gson.annotations.Expose;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.HistoricEntity;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileWriter;
