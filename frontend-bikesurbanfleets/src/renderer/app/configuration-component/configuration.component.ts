@@ -8,9 +8,10 @@ import {EntryPointDataType} from "../../../shared/configuration";
 import {ConfigurationUtils} from "./configuration.utils";
 const  {dialog} = (window as any).require('electron').remote;
 import {SchemaformComponent} from "../schemaform-component/schemaform.component";
-import * as $ from "jquery";
 import {ConfigurationSaveComponent} from "../configuration-save-component/configurationsave.component";
-
+import * as $ from "jquery";
+import * as L from 'leaflet';
+import 'leaflet-draw';
 
 @Component({
     selector: 'configuration',
@@ -74,6 +75,7 @@ export class ConfigurationComponent {
 
     async ngOnInit() {
         this.drawOptions = LeafletDrawFunctions.createLeafletDrawOptions(this.featureGroup);
+        (L as any).drawLocal = LeafletDrawFunctions.createCustomMessages();
         await this.ajax.formSchema.init();
         this.globalFormInit().then();
         this.selectEntryPointFormInit().then();

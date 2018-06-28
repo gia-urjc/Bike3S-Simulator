@@ -60,7 +60,7 @@ export class Station{
                 <strong>Station #${this.stationInfo.bikes}</strong>
             </div>
             <div>Capacity: ${this.stationInfo.capacity}</div>
-        `
+        `;
     }
 
 }
@@ -98,21 +98,28 @@ export class EntryPoint {
             popUp += `
             <div>
                 <strong>λ :</strong> ${this.entryPointInfo.distribution.lambda}
-            </div>`
+            </div>`;
         }
         return popUp;
     }
 }
 
 export interface FormJsonSchema {
-    schema: any,
-    data: any
+    schema: any;
+    data: any;
 }
 
 export namespace LeafletDrawFunctions {
-    export function createLeafletDrawOptions(featureGroup: FeatureGroup) {
+    export function createLeafletDrawOptions(featureGroup: FeatureGroup): any {
         return {
             draw: {
+                toolbar: {
+                    buttons: {
+                        rectangle: 'Create Bounding Box',
+                        circle: 'Create Entry Point',
+                        marker: 'Create Station'
+                    }
+                },
                 polyline: false,
                 polygon: false,
                 rectangle: {
@@ -137,6 +144,115 @@ export namespace LeafletDrawFunctions {
             }
         };
     }
+
+    export function createCustomMessages() {
+        return {
+            draw: {
+                toolbar: {
+                    // #TODO: this should be reorganized where actions are nested in actions
+                    // ex: actions.undo  or actions.cancel
+                    actions: {
+                        title: 'Cancel drawing',
+                        text: 'Cancel'
+                    },
+                    finish: {
+                        title: 'Finish drawing',
+                        text: 'Finish'
+                    },
+                    undo: {
+                        title: 'Delete last point drawn',
+                        text: 'Delete last point'
+                    },
+                    buttons: {
+                        polyline: 'Draw a polyline',
+                        polygon: 'Draw a polygon',
+                        rectangle: 'Create an area for the simulation',
+                        circle: 'Create an entry point',
+                        marker: 'Create a station',
+                        circlemarker: 'Draw a circlemarker'
+                    }
+                },
+                handlers: {
+                    circle: {
+                        tooltip: {
+                            start: 'Click and drag to draw an entry point.'
+                        },
+                        radius: 'Radius'
+                    },
+                    circlemarker: {
+                        tooltip: {
+                            start: 'Click map to place circle marker.'
+                        }
+                    },
+                    marker: {
+                        tooltip: {
+                            start: 'Click map to place a station.'
+                        }
+                    },
+                    polygon: {
+                        tooltip: {
+                            start: 'Click to start drawing shape.',
+                            cont: 'Click to continue drawing shape.',
+                            end: 'Click first point to close this shape.'
+                        }
+                    },
+                    polyline: {
+                        error: '<strong>Error:</strong> shape edges cannot cross!',
+                        tooltip: {
+                            start: 'Click to start drawing line.',
+                            cont: 'Click to continue drawing line.',
+                            end: 'Click last point to finish line.'
+                        }
+                    },
+                    rectangle: {
+                        tooltip: {
+                            start: 'Click and drag to draw an area for the simulation (Bounding Box).'
+                        }
+                    },
+                    simpleshape: {
+                        tooltip: {
+                            end: 'Release mouse to finish drawing.'
+                        }
+                    }
+                }
+            },
+            edit: {
+                toolbar: {
+                    actions: {
+                        save: {
+                            title: 'Save changes',
+                            text: 'Save'
+                        },
+                        cancel: {
+                            title: 'Cancel editing, discards all changes',
+                            text: 'Cancel'
+                        },
+                        clearAll: {
+                            title: 'Clear all layers',
+                            text: 'Clear All'
+                        }
+                    },
+                    buttons: {
+                        edit: 'Edit entities',
+                        editDisabled: 'No entities to edit',
+                        remove: 'Delete entities',
+                        removeDisabled: 'No entities to delete'
+                    }
+                },
+                handlers: {
+                    edit: {
+                        tooltip: {
+                            text: 'Drag handles or markers to edit entities.',
+                            subtext: 'Click cancel to undo changes.'
+                        }
+                    },
+                    remove: {
+                        tooltip: {
+                            text: 'Click on an entity to remove.'
+                        }
+                    }
+                }
+            }
+        };
+    }
 }
-
-
