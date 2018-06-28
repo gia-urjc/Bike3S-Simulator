@@ -26,7 +26,11 @@
             "icon": "icon.ico"
         },
         "linux": {
-            "target": "deb"
+            "target": "deb",
+            "icon": "icon.icns"
+        },
+        "mac": {
+            "icon": "icon.icns"
         },
         "asar": false,
         "files": [
@@ -49,6 +53,6 @@
 		"rxjs": "^5.5.5"
     },
     "devDependencies": {
-        "electron-builder": "^19.56.2"
+        "electron-builder": "^20.17.1"
     }    
 }
