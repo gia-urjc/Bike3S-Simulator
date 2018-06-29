@@ -28,6 +28,15 @@
     </div>
     <div class="row">
         <div class="col-sm-10">
+            <label for="mapInput">Map Path</label>
+            <input [(ngModel)]="mapPath" name="map_path" type="text" class="form-control" id="mapInput" placeholder="Map Path">
+        </div>
+        <div class="col-sm-2">
+            <button class="browse-button btn btn-default" (click)="mapPath = selectMap()">Select File</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10">
             <label for="usersOutput">History output Path</label>
             <input [(ngModel)]="historyOutputPath" name="users_output" type="text" class="form-control" id="usersOutput" placeholder="History output Path">
         </div>

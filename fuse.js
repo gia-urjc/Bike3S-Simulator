@@ -258,10 +258,10 @@ Sparky.task('build:frontend:renderer', () => {
     const destinationIconWin = path.join(projectRoot.build(), 'icon.ico');
     fs.copySync(originIconWin, destinationIconWin);
 
-    //Icons to build - Debian
-    const originIconDeb = path.join(projectRoot.frontend.assets(), 'icon.icns');
-    const destinationIconDeb = path.join(projectRoot.build(), 'icon.icns');
-    fs.copySync(originIconDeb, destinationIconDeb);
+    //Icons to build - Mac And Debian
+    const originIconMac = path.join(projectRoot.frontend.assets(), 'icon.icns');
+    const destinationIconMac = path.join(projectRoot.build(), 'icon.icns');
+    fs.copySync(originIconMac, destinationIconMac);
 
     return fuse.run();
 });

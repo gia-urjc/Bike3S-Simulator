@@ -64,7 +64,7 @@ export namespace Main {
      ===================*/
 
     function createMenuWindow() {
-        menu = new BrowserWindow({ width: 300, height: 650, resizable: true, fullscreenable: true});
+        menu = new BrowserWindow({ width: 300, height: 650, resizable: false, fullscreenable: true});
 
         menu.loadURL(urlFormat({
             pathname: join(app.getAppPath(), 'frontend', 'index.html'),
@@ -157,9 +157,9 @@ export namespace Main {
             shell.openExternal(url); // opens links (or dragged documents) in external browser
         });
 
-        if (process.env.target === 'development') {
-            visualization.webContents.openDevTools();
-        }
+        //if (process.env.target === 'development') {
+        //    visualization.webContents.openDevTools();
+        //}
 
         visualization.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/visualization');
     }
@@ -172,9 +172,8 @@ export namespace Main {
 
     function createSimulateWindow() {
         simulate = new BrowserWindow({
-            width: 1200, height: 600,
-            minHeight: 600, minWidth: 1200,
-            resizable: false, fullscreenable: false,
+            width: 1000, height: 600,
+            resizable: true, fullscreenable: false,
             show: false
         });
 
@@ -211,7 +210,6 @@ export namespace Main {
     function createConfigurationWindow() {
         configuration = new BrowserWindow({
             width: 1200, height: 600,
-            minHeight: 600, minWidth: 1200,
             resizable: true, fullscreenable: true,
             show: false
         });
@@ -247,8 +245,7 @@ export namespace Main {
 
      function createAnalyseHistoryWindow() {
         analyse = new BrowserWindow({
-            width: 1200, height: 600,
-            minHeight: 600, minWidth: 1200,
+            width: 1000, height: 600,
             resizable: true, fullscreenable: true,
             show: false
         });
@@ -269,9 +266,9 @@ export namespace Main {
             shell.openExternal(url); // opens links (or dragged documents) in external browser
         });
 
-        if (process.env.target === 'development') {
-            analyse.webContents.openDevTools();
-        }
+        //if (process.env.target === 'development') {
+        //    analyse.webContents.openDevTools();
+        //}
 
         analyse.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/analyse');
     }

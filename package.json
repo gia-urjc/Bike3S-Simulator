@@ -24,7 +24,13 @@
       "icon": "icon.ico"
     },
     "linux": {
-      "target": "deb",
+      "target": [
+        "deb",
+        "AppImage"
+      ],
+      "icon": "icon.icns"
+    },
+    "mac": {
       "icon": "icon.icns"
     },
     "asar": false,

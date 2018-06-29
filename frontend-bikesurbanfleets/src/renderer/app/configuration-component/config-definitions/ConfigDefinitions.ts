@@ -107,6 +107,7 @@ export class EntryPoint {
 export interface FormJsonSchema {
     schema: any;
     data: any;
+    options?: any;
 }
 
 export namespace LeafletDrawFunctions {

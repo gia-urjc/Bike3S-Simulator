@@ -9,4 +9,5 @@ export interface CoreSimulatorArgs {
     stationsConfPath: string;
     usersConfPath: string;
     outputHistoryPath: string;
+    mapPath: string;
 }

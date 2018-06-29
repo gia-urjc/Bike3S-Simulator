@@ -41,13 +41,13 @@ public class SimulationEngine {
      * It creates an event queue where its events are sorted by the time instant when they'll occur.
      */
     public SimulationEngine(GlobalInfo globalInfo, StationsConfig stationsInfo, UsersConfig usersInfo,
-                            InfraestructureManager infraestructureManager) throws Exception {
+                            String mapPath) throws Exception {
         this.globalInfo = globalInfo;
         this.usersInfo = usersInfo;
         SimulationServiceConfigData servicesConfigData = new SimulationServiceConfigData();
         servicesConfigData.setBbox(globalInfo.getBoundingBox())
             .setGraphManagerType(GraphManagerType.valueOf(globalInfo.getGraphManagerType()))
-            .setMapDir(globalInfo.getMap())
+            .setMapDir(mapPath)
             .setRecomSystemType(RecommendationSystemType.valueOf(globalInfo.getRecommendationSystemType()))
             .setStations(stationsInfo.getStations())
             .setMaxDistance(globalInfo.getMaxDistanceRecommendation());

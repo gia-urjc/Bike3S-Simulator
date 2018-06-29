@@ -24,7 +24,3 @@ textarea {
 ngb-tabset {
     font-size: 14px;
 }
-
-body {
-    overflow-x: hidden;
-}

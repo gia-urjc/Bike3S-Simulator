@@ -74,6 +74,7 @@ export class ConfigurationComponent {
                 private modalService: NgbModal) {}
 
     async ngOnInit() {
+
         this.drawOptions = LeafletDrawFunctions.createLeafletDrawOptions(this.featureGroup);
         (L as any).drawLocal = LeafletDrawFunctions.createCustomMessages();
         await this.ajax.formSchema.init();
@@ -188,7 +189,10 @@ export class ConfigurationComponent {
             console.log(data);
             this.globalForm = {
                 schema: JSON.parse(data),
-                data: this.globalData
+                data: this.globalData,
+                options: {
+                    addSubmit: false
+                }
             };
             console.log(this.globalForm);
             return;
@@ -249,6 +253,7 @@ export class ConfigurationComponent {
     updateGlobalFormView() {
         let tab1 = document.getElementById('added-entities');
         let tab2 = document.getElementById('global-form');
+        console.log("tpm");
         if(tab1 !== null && tab2 !== null) {
             tab1.click();
             tab2.click();

@@ -1,21 +1,23 @@
-<form>
-    <div class="row">
-        <div class="col-sm-10">
-            <label for="historyPathInput">History path:</label>
-            <input type="text" [(ngModel)]="historyPath" name="history_path" class="form-control" id="historyPathInput" placeholder="History Path">
+<div class="window">
+    <form>
+        <div class="row">
+            <div class="col-sm-10">
+                <label for="historyPathInput">History path:</label>
+                <input type="text" [(ngModel)]="historyPath" name="history_path" class="form-control" id="historyPathInput" placeholder="History Path">
+            </div>
+            <div class="col-sm-2">
+                <button class="browse-button btn btn-default" (click)="historyPath = selectFolder()">Select Folder</button>
+            </div>
         </div>
-        <div class="col-sm-2">
-            <button class="browse-button btn btn-default" (click)="historyPath = selectFolder()">Select Folder</button>
+        <div class="row">
+            <div class="col-sm-10">
+                <label for="dataAnalysisPathInput">Data Analysis Output Path:</label>
+                <input type="text" [(ngModel)]="csvPath" name="data_analysis" class="form-control" id="dataAnalysisPathInput" placeholder="Data analysis output Path">
+            </div>
+            <div class="col-sm-2">
+                <button class="browse-button btn btn-default" (click)="csvPath = selectFolder()">Select Folder</button>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-10">
-            <label for="dataAnalysisPathInput">Data Analysis Output Path:</label>
-            <input type="text" [(ngModel)]="csvPath" name="data_analysis" class="form-control" id="dataAnalysisPathInput" placeholder="Data analysis output Path">
-        </div>
-        <div class="col-sm-2">
-            <button class="browse-button btn btn-default" (click)="csvPath = selectFolder()">Select Folder</button>
-        </div>
-    </div>
-    <button class="submit-button btn btn-default" (click)="generateData()">Analyse History</button>
-</form>
+        <button class="submit-button btn btn-default" (click)="generateData()">Analyse History</button>
+    </form>
+</div>

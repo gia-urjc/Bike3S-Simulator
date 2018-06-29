@@ -40,7 +40,6 @@ public class ConfigJsonReader {
         String globalConfigStr = new String(Files.readAllBytes(Paths.get(globalConfFile)), StandardCharsets.UTF_8);
         globalConfigStr = globalConfigStr.replace("\\", "/");
         GlobalInfo globalInfo = gson.fromJson(globalConfigStr, GlobalInfo.class);
-        System.out.println(globalInfo.getMap());
         if(globalInfo.getRandomSeed() == 0) {
             SimulationRandom.init();
         }

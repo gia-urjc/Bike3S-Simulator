@@ -220,6 +220,7 @@ export default class BackendController {
                 '-usersConfig', '"' + args.usersConfPath + '"',
                 '-stationsConfig', '"' + args.stationsConfPath + '"',
                 '-historyOutput', '"' + args.outputHistoryPath + '"',
+                '-mapPath', '"' + args.mapPath + '"',
                 `-callFromFrontend`
             ], {
 				cwd: rootPath,
