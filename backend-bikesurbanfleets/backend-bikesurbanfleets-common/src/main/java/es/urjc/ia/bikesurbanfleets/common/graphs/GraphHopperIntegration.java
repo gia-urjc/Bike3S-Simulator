@@ -92,12 +92,10 @@ public class GraphHopperIntegration implements GraphManager {
     @Override
     public List<GeoRoute> obtainAllRoutesBetween(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperIntegrationException, GeoRouteCreationException {
         if(startPosition.equals(endPosition)) {
-            System.out.println("Error: Same Position");
             List<GeoPoint> pointsNewRoute = new ArrayList<>(Arrays.asList(startPosition, endPosition));
             List<GeoRoute> newRoutes = new ArrayList<>();
             GeoRoute newRoute = new GeoRoute(pointsNewRoute);
             newRoutes.add(newRoute);
-            System.out.println("Error: " + newRoutes.get(0).getPoints().size());
             return newRoutes;
         }
         calculateRoutes(startPosition, endPosition);

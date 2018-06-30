@@ -1,6 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
@@ -34,7 +35,7 @@ public class EventUserWantsToReturnBike extends EventUser {
             newEvents = manageSlotReservationDecisionAtOtherStation();
         }
         catch(Exception e) {
-            System.out.println("Error: " + e);
+            MessageGuiFormatter.showErrorsForGui(e);
             user.setPosition(null);
             user.setRoute(null);
             user.setDestinationPoint(null);

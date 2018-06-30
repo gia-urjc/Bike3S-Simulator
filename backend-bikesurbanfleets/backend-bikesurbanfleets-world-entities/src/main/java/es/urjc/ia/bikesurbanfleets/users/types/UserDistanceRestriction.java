@@ -185,16 +185,9 @@ public class UserDistanceRestriction extends User {
      * The user chooses the shortest route because he wants to arrive at work as fast as possible.
      */
     @Override
-    public GeoRoute determineRoute() {
+    public GeoRoute determineRoute() throws Exception{
         List<GeoRoute> routes = null;
-        try {
-            routes = calculateRoutes(getDestinationPoint());
-        }
-        catch(Exception e) {
-            System.out.println("Error: Exception calculating routes \n" + e.toString());
-        }
-
-        // The route in first list position is the shortest.
+        routes = calculateRoutes(getDestinationPoint());
         return routes != null ? routes.get(0) : null;
     }
 

@@ -473,7 +473,7 @@ public abstract class User implements Entity, UserInfo {
      * The user chooses the route which he'll travel to arrive at  selected destination.
      * @return the route which the user will follow.
      */
-    public abstract GeoRoute determineRoute();
+    public abstract GeoRoute determineRoute() throws Exception;
 
     /**
      * When user hasn't been able to make a reservation at the destination station,

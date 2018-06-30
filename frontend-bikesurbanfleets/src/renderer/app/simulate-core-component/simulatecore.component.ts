@@ -72,15 +72,16 @@ export class SimulatecoreComponent{
         let consoleMessage = message.toString();
         let consoleMessageList = consoleMessage.split('\n');
         consoleMessageList.forEach((indMessage: string) => {
-            if(indMessage.includes("Percentage: ")) {
-                let percentageStr = indMessage.replace('Percentage: ', '');
+            if(indMessage.includes("[Percentage]")) {
+                let percentageStr = indMessage.replace('[Percentage]', '');
                 let percentage: number = parseFloat(percentageStr);
                 this.percentage = percentage;
                 $('#progress-bar').trigger('click');
             }
-            if(indMessage.includes("Error: ")) {
+            if(indMessage.includes("[Error]")) {
                 this.errors = true;
-                this.exceptions += indMessage + "\n";
+                let errorMessage = indMessage.replace('[Error]', '');
+                this.exceptions += errorMessage + "\n";
             }
         });
     }

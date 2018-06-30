@@ -178,15 +178,9 @@ public class UserDistanceResourcesRatio extends User {
     }
     
     @Override
-    public GeoRoute determineRoute() {
+    public GeoRoute determineRoute() throws Exception {
         List<GeoRoute> routes = null;
-    	try {
-            routes = calculateRoutes(getDestinationPoint());
-        }
-        catch(Exception e) {
-            System.out.println("Error: Exception calculating routes \n" + e.toString());
-        }
-        // The route in first list position is the shortest.
+        routes = calculateRoutes(getDestinationPoint());
         return routes != null ? routes.get(0) : null;
     }
 

@@ -121,15 +121,9 @@ public class UserUninformed extends User {
     }
 
     @Override
-    public GeoRoute determineRoute() {
+    public GeoRoute determineRoute() throws Exception{
         List<GeoRoute> routes = null;
-        try {
-            routes = calculateRoutes(getDestinationPoint());
-        }
-        catch (Exception e) {
-            System.out.println("Error: Exception calculating routes \n" + e.toString());
-        }
-
+        routes = calculateRoutes(getDestinationPoint());
         if(routes != null) {
             int index = infraestructure.getRandom().nextInt(0, routes.size());
             return routes.get(index);

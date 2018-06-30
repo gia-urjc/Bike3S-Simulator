@@ -1,6 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.users.User;
@@ -45,7 +46,7 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
             }
         }
         catch(Exception e) {
-            System.out.println("Error: " + e);
+            MessageGuiFormatter.showErrorsForGui(e);
             user.setPosition(null);
             user.setRoute(null);
             user.setDestinationPoint(null);

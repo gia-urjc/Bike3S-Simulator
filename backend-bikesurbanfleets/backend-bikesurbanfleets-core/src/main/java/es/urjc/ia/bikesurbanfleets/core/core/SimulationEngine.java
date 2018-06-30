@@ -1,12 +1,14 @@
 package es.urjc.ia.bikesurbanfleets.core.core;
 
 
+import com.google.protobuf.Message;
 import es.urjc.bikesurbanfleets.services.GraphManagerType;
 import es.urjc.bikesurbanfleets.services.RecommendationSystemType;
 import es.urjc.bikesurbanfleets.services.SimulationServiceConfigData;
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersConfig;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
@@ -84,14 +86,14 @@ public class SimulationEngine {
         int totalUsers = eventsQueue.size();
         double percentage = 0;
 
-            System.out.println("Percentage: " + percentage);
+        MessageGuiFormatter.showPercentageForGui(percentage);
 
         while (!eventsQueue.isEmpty()) {
             Event event = eventsQueue.poll();  // retrieves and removes first element
 
             if(event.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
                 percentage += (((double) 1 /(double) totalUsers) * 100);
-                System.out.println("Percentage: " + Precision.round(percentage, 2) + "\n");
+                MessageGuiFormatter.showPercentageForGui(percentage);
             }
 
             if(Debug.DEBUG_MODE) {

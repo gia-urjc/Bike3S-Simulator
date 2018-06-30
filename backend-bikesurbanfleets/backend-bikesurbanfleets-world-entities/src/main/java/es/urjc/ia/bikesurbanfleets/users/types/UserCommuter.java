@@ -8,6 +8,7 @@ import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -172,14 +173,9 @@ public class UserCommuter extends User {
         }
     
     @Override
-    public GeoRoute determineRoute() {
+    public GeoRoute determineRoute() throws Exception{
         List<GeoRoute> routes = null;
-        try {
-            routes = calculateRoutes(getDestinationPoint());
-        }
-        catch(Exception e) {
-            System.out.println("Error: Exception calculating routes \n" + e.toString());
-        }
+        routes = calculateRoutes(getDestinationPoint());
         return routes != null ? routes.get(0) : null;
    }
 

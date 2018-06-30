@@ -217,16 +217,9 @@ public class UserTourist extends User {
     }
     
     @Override
-    public GeoRoute determineRoute() {
+    public GeoRoute determineRoute() throws Exception{
         List<GeoRoute> routes = null;
-
-    	try {
-            routes = calculateRoutes(getDestinationPoint());
-        }
-        catch(Exception e) {
-            System.out.println("Error: Exception calculating routes \n" + e.toString());
-        }
-
+        routes = calculateRoutes(getDestinationPoint());
         if(routes != null) {
             if(!hasBike()) {
                 return routes.get(0);
