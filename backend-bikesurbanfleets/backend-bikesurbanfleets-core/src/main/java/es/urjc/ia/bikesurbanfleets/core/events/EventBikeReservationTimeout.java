@@ -28,26 +28,35 @@ public class EventBikeReservationTimeout extends EventUser {
     }
 
     @Override
-    public List<Event> execute() throws Exception {
+    public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
-        user.setInstant(this.instant);
-        user.setPosition(positionTimeOut);
-        reservation.expire();
-        user.cancelsBikeReservation(user.getDestinationStation());
-        user.getMemory().update(UserMemory.FactType.BIKE_RESERVATION_TIMEOUT);
-        debugEventLog();
-        if (user.decidesToLeaveSystemAfterTimeout()) {
+        try {
+            user.setInstant(this.instant);
+            user.setPosition(positionTimeOut);
+            reservation.expire();
+            user.cancelsBikeReservation(user.getDestinationStation());
+            user.getMemory().update(UserMemory.FactType.BIKE_RESERVATION_TIMEOUT);
+            debugEventLog();
+            if (user.decidesToLeaveSystemAfterTimeout()) {
+                user.setPosition(null);
+                user.setRoute(null);
+                debugEventLog("User leaves the system");
+                debugClose(user, user.getId());
+
+            } else if (user.decidesToDetermineOtherStationAfterTimeout()) {
+                debugEventLog("User decides to manage bike reservation at other Station");
+                newEvents = manageBikeReservationDecisionAtOtherStation();
+            } else {
+                debugEventLog("User decides to manage bike reservation at the same station");
+                newEvents = manageBikeReservationDecisionAtSameStationAfterTimeout();
+            }
+        }
+        catch(Exception e) {
+            System.out.println("Error: " + e);
             user.setPosition(null);
             user.setRoute(null);
-            debugEventLog("User leaves the system");
-            debugClose(user, user.getId());
-
-        } else if (user.decidesToDetermineOtherStationAfterTimeout()) {
-            debugEventLog("User decides to manage bike reservation at other Station");
-            newEvents = manageBikeReservationDecisionAtOtherStation();
-        } else {
-            debugEventLog("User decides to manage bike reservation at the same station");
-            newEvents = manageBikeReservationDecisionAtSameStationAfterTimeout();
+            user.setDestinationPoint(null);
+            user.setDestinationStation(null);
         }
 
         return newEvents;

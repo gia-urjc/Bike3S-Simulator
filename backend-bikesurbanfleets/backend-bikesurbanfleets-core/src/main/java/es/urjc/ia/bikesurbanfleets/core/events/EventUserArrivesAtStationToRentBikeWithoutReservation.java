@@ -28,38 +28,48 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
     }
 
     @Override
-    public List<Event> execute() throws Exception {
+    public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
-        user.setInstant(this.instant);
-        user.setPosition(station.getPosition());
-        debugEventLog();
-        if (user.removeBikeWithoutReservationFrom(station)) {
-            debugEventLog("User removes Bike without reservation");
-            if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
-                debugEventLog("User decides to return bike to other station");
-                newEvents = manageSlotReservationDecisionAtOtherStation();
-            } else {   // user rides his bike to a point which is not a station
-                GeoPoint point = user.decidesNextPoint();
-                user.setDestinationPoint(point);
-                GeoRoute route = user.determineRoute();
-                user.setRoute(route);
-                //TODO: put destinationStation to null ??
-                int arrivalTime = user.timeToReach();
-                debugEventLog("User decides to take a ride");
-                newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
-            }
-        } else {   // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation
-            user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE);
-            debugEventLog("User can't take bikes from the station");
-            if (user.decidesToLeaveSystemWhenBikesUnavailable()) {
-                user.setPosition(null);
-                user.setRoute(null);
-                debugEventLog("User decides to leave the system");
-                debugClose(user, user.getId());
-            } else {
-                newEvents = manageBikeReservationDecisionAtOtherStation();
+        try {
+            user.setInstant(this.instant);
+            user.setPosition(station.getPosition());
+            debugEventLog();
+            if (user.removeBikeWithoutReservationFrom(station)) {
+                debugEventLog("User removes Bike without reservation");
+                if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
+                    debugEventLog("User decides to return bike to other station");
+                    newEvents = manageSlotReservationDecisionAtOtherStation();
+                } else {   // user rides his bike to a point which is not a station
+                    GeoPoint point = user.decidesNextPoint();
+                    user.setDestinationPoint(point);
+                    GeoRoute route = user.determineRoute();
+                    user.setRoute(route);
+                    //TODO: put destinationStation to null ??
+                    int arrivalTime = user.timeToReach();
+                    debugEventLog("User decides to take a ride");
+                    newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
+                }
+            } else {   // there're not bikes: user decides to go to another station, to reserve a bike or to leave the simulation
+                user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE);
+                debugEventLog("User can't take bikes from the station");
+                if (user.decidesToLeaveSystemWhenBikesUnavailable()) {
+                    user.setPosition(null);
+                    user.setRoute(null);
+                    debugEventLog("User decides to leave the system");
+                    debugClose(user, user.getId());
+                } else {
+                    newEvents = manageBikeReservationDecisionAtOtherStation();
+                }
             }
         }
+        catch(Exception e) {
+            System.out.println("Error: " + e);
+            user.setPosition(null);
+            user.setRoute(null);
+            user.setDestinationPoint(null);
+            user.setDestinationStation(null);
+        }
+
         return newEvents;
     }
 

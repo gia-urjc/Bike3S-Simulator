@@ -202,7 +202,7 @@ public class UserInformed extends User {
 
         }
         catch(Exception e) {
-            System.err.println("Exception calculating routes \n" + e.toString());
+            System.out.println("Error: Exception calculating routes \n" + e.toString());
         }
 
         if(routes != null) {

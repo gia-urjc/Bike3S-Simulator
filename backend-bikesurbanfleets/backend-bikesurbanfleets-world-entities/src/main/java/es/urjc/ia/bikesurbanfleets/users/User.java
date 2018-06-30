@@ -208,7 +208,7 @@ public abstract class User implements Entity, UserInfo {
         return destinationStation;
     }
     
-    public void setDestinationStation(Station destinationStation) throws Exception {
+    public void setDestinationStation(Station destinationStation) {
         this.destinationStation = destinationStation;
     }
     

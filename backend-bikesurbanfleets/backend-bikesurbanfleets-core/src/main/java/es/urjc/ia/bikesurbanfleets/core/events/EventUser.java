@@ -54,7 +54,7 @@ public abstract class EventUser implements Event {
     /**
      * It proccesses the event so that the relevant changes at the system occur.
      */
-    public abstract List<Event> execute() throws Exception;
+    public abstract List<Event> execute();
 
 
     /*

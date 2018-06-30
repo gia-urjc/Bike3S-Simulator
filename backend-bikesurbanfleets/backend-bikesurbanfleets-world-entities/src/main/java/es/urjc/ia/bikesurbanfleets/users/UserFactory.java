@@ -43,13 +43,13 @@ public class UserFactory {
                         UserTourist.UserTouristParameters.class), services);
             case USER_COMMUTER:
                 return new UserCommuter(gson.fromJson(parameters,
-                        UserCommuter.UserEmployeeParameters.class), services);
+                        UserCommuter.UserCommuterParameters.class), services);
             case USER_AVAILABLE_RESOURCES: 
                 return new UserAvailableResources(gson.fromJson(parameters,
                         UserAvailableResources.UserAvailableResourcesParameters.class), services);
             case USER_REASONABLE:
                 return new UserDistanceResourcesRatio(gson.fromJson(parameters,
-                        UserDistanceResourcesRatio.UserReasonableParameters.class), services);
+                        UserDistanceResourcesRatio.UserDistanceResourcesRatioParameters.class), services);
             case USER_DISTANCE_RESTRICTION:
                 return new UserDistanceRestriction(gson.fromJson(parameters,
                         UserDistanceRestriction.UserDistanceRestrictionParameters.class), services);

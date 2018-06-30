@@ -25,11 +25,22 @@ public class EventUserWantsToReturnBike extends EventUser {
     }
 
     @Override
-    public List<Event> execute() throws Exception {
-    	user.setInstant(this.instant);
-        user.setPosition(actualPosition);
-        debugEventLog();
-        return manageSlotReservationDecisionAtOtherStation();
+    public List<Event> execute() {
+        List<Event> newEvents = new ArrayList<>();
+        try {
+            user.setInstant(this.instant);
+            user.setPosition(actualPosition);
+            debugEventLog();
+            newEvents = manageSlotReservationDecisionAtOtherStation();
+        }
+        catch(Exception e) {
+            System.out.println("Error: " + e);
+            user.setPosition(null);
+            user.setRoute(null);
+            user.setDestinationPoint(null);
+            user.setDestinationStation(null);
+        }
+        return newEvents;
     }
 
     @Override

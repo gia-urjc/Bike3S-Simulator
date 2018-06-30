@@ -73,7 +73,7 @@ public class UserAvailableResources extends User {
 
         @Override
         public String toString() {
-            return "UserStationsBalancerParameters{" +
+            return "UserAvailableResourcesParameters{" +
                     "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
@@ -181,19 +181,19 @@ public class UserAvailableResources extends User {
     public GeoRoute determineRoute() {
         List<GeoRoute> routes = null;
         try {
-            routes = calculateRoutes(getDestinationStation().getPosition());
+            routes = calculateRoutes(getDestinationPoint());
         }
         catch(Exception e) {
-            System.err.println("Exception calculating routes \n" + e.toString());
+            System.out.println("Error: calculating routes \n" + e.toString());
         }
+
         return routes != null ? routes.get(0) : null;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "UserDistanceRestriction{" +
+        return "UserAvailableResources{" +
                 "parameters=" + parameters +
                 '}';
     }
-
 }

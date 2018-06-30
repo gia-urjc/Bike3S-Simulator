@@ -27,20 +27,30 @@ public class EventSlotReservationTimeout extends EventUser {
     }
 
     @Override
-    public List<Event> execute() throws Exception {
-    			List<Event> newEvents;
-    			user.setInstant(this.instant);
-        user.setPosition(positionTimeOut);
-        reservation.expire();
-        user.cancelsSlotReservation(user.getDestinationStation());
+    public List<Event> execute()  {
+        List<Event> newEvents = new ArrayList<>();
+        try {
+            user.setInstant(this.instant);
+            user.setPosition(positionTimeOut);
+            reservation.expire();
+            user.cancelsSlotReservation(user.getDestinationStation());
 
-        debugEventLog();
-        if (!user.decidesToDetermineOtherStationAfterTimeout()){
-            debugEventLog("User decides to manage slot reservation at other Station");
-            newEvents = manageSlotReservationDecisionAtSameStationAfterTimeout();
-        } else {
-            debugEventLog("User decides to manage slot reservation at the same Station");
-            newEvents = manageSlotReservationDecisionAtOtherStation();
+            debugEventLog();
+            if (!user.decidesToDetermineOtherStationAfterTimeout()){
+                debugEventLog("User decides to manage slot reservation at other Station");
+                newEvents = manageSlotReservationDecisionAtSameStationAfterTimeout();
+            } else {
+                debugEventLog("User decides to manage slot reservation at the same Station");
+                newEvents = manageSlotReservationDecisionAtOtherStation();
+            }
+
+        }
+        catch(Exception e) {
+            System.out.println("Error: " + e);
+            user.setPosition(null);
+            user.setRoute(null);
+            user.setDestinationPoint(null);
+            user.setDestinationStation(null);
         }
 
         return newEvents;

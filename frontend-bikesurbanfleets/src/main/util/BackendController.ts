@@ -78,10 +78,7 @@ export default class BackendController {
 
     private validateConfiguration(schemaFile: string, configurationFile: string): ValidationInfo {
         let ajv = new Ajv({$data: true});
-        console.log(schemaFile);
-        console.log(configurationFile);
         let valid = ajv.validate(schemaFile, configurationFile);
-        console.log(valid);
 
         if(valid) {
             return {result: true, errors: ajv.errorsText()};
@@ -228,8 +225,9 @@ export default class BackendController {
 			});
 
 
-            sim.stderr.on('data', (error) => {
-                this.sendInfoToGui('core-error', error.toString());
+            sim.stderr.on('data', (data) => {
+                console.log(data);
+                this.sendInfoToGui('core-error', data.toString());
             });
 
             sim.stdout.on('data', (data) => {

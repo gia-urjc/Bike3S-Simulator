@@ -191,9 +191,9 @@ public class UserDistanceRestriction extends User {
             routes = calculateRoutes(getDestinationPoint());
         }
         catch(Exception e) {
-            System.err.println("Exception calculating routes \n" + e.toString());
-
+            System.out.println("Error: Exception calculating routes \n" + e.toString());
         }
+
         // The route in first list position is the shortest.
         return routes != null ? routes.get(0) : null;
     }

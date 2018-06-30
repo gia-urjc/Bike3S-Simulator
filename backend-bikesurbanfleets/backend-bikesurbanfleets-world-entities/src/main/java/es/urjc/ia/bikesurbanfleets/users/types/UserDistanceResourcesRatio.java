@@ -26,7 +26,7 @@ import java.util.List;
 @AssociatedType(UserType.USER_REASONABLE)
 public class UserDistanceResourcesRatio extends User {
 
-    public class UserReasonableParameters {
+    public class UserDistanceResourcesRatioParameters {
         /**
          * It is the time in seconds until which the user will decide to continue walking
          * or cycling towards the previously chosen station without making a new reservation
@@ -70,7 +70,7 @@ public class UserDistanceResourcesRatio extends User {
          */
         private int failedReservationPercentage;
 
-        private UserReasonableParameters() {}
+        private UserDistanceResourcesRatioParameters() {}
 
         @Override
         public String toString() {
@@ -86,9 +86,9 @@ public class UserDistanceResourcesRatio extends User {
         }
     }
 
-    private UserReasonableParameters parameters;
+    private UserDistanceResourcesRatioParameters parameters;
 
-    public UserDistanceResourcesRatio(UserReasonableParameters parameters, SimulationServices services) {
+    public UserDistanceResourcesRatio(UserDistanceResourcesRatioParameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
     }
@@ -184,7 +184,7 @@ public class UserDistanceResourcesRatio extends User {
             routes = calculateRoutes(getDestinationPoint());
         }
         catch(Exception e) {
-            System.err.println("Exception calculating routes \n" + e.toString());
+            System.out.println("Error: Exception calculating routes \n" + e.toString());
         }
         // The route in first list position is the shortest.
         return routes != null ? routes.get(0) : null;

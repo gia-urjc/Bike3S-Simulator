@@ -78,6 +78,10 @@ export class SimulatecoreComponent{
                 this.percentage = percentage;
                 $('#progress-bar').trigger('click');
             }
+            if(indMessage.includes("Error: ")) {
+                this.errors = true;
+                this.exceptions += indMessage + "\n";
+            }
         });
     }
 

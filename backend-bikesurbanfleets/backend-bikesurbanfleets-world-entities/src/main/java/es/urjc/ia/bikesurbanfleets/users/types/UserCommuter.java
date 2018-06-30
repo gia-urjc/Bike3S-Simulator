@@ -27,7 +27,7 @@ import java.util.List;
 @AssociatedType(UserType.USER_COMMUTER)
 public class UserCommuter extends User {
 
-    public class UserEmployeeParameters {
+    public class UserCommuterParameters {
 
         /**
          * It determines the rate with which the user will reserve a bike.
@@ -77,11 +77,11 @@ public class UserCommuter extends User {
                     '}';
         }
 
-        private UserEmployeeParameters() {}
+        private UserCommuterParameters() {}
     }
-    private UserEmployeeParameters parameters;
+    private UserCommuterParameters parameters;
     
-    public UserCommuter(UserEmployeeParameters parameters, SimulationServices services) {
+    public UserCommuter(UserCommuterParameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
     }
@@ -178,7 +178,7 @@ public class UserCommuter extends User {
             routes = calculateRoutes(getDestinationPoint());
         }
         catch(Exception e) {
-            System.err.println("Exception calculating routes \n" + e.toString());
+            System.out.println("Error: Exception calculating routes \n" + e.toString());
         }
         return routes != null ? routes.get(0) : null;
    }

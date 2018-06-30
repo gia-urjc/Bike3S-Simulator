@@ -26,21 +26,30 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
     }
 
     @Override
-    public List<Event> execute() throws Exception {
+    public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
-        user.setInstant(this.instant);
-        debugEventLog();
-        if(!user.returnBikeWithoutReservationTo(station)) {
-            user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);
-            user.setPosition(station.getPosition());
-            debugEventLog("User can't return bike");
-            newEvents = manageSlotReservationDecisionAtOtherStation();
-        } else {
+        try {
+            user.setInstant(this.instant);
+            debugEventLog();
+            if(!user.returnBikeWithoutReservationTo(station)) {
+                user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);
+                user.setPosition(station.getPosition());
+                debugEventLog("User can't return bike");
+                newEvents = manageSlotReservationDecisionAtOtherStation();
+            } else {
+                user.setPosition(null);
+                user.setRoute(null);
+                debugEventLog("User returns the bike");
+                debugClose(user, user.getId());
+
+            }
+        }
+        catch(Exception e) {
+            System.out.println("Error: " + e);
             user.setPosition(null);
             user.setRoute(null);
-            debugEventLog("User returns the bike");
-            debugClose(user, user.getId());
-            
+            user.setDestinationPoint(null);
+            user.setDestinationStation(null);
         }
         return newEvents;
     }
