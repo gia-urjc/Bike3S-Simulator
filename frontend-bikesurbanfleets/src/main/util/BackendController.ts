@@ -13,6 +13,25 @@ interface ValidationInfo {
     errors: string;
 }
 
+interface ArgumentInfo {
+    title: string;
+    argument: string | undefined;
+}
+
+class BackendCoreArguments {
+    globalConfigurationPath: ArgumentInfo;
+    usersConfigurationPath: ArgumentInfo;
+    stationsConfigurationPath: ArgumentInfo;
+    map: ArgumentInfo;
+    historyOuputPath: ArgumentInfo;
+}
+
+class BackendUserGenArguments {
+    globalConfigurationPath: ArgumentInfo;
+    entryPointsPath: ArgumentInfo;
+    usersOutputPath: ArgumentInfo;
+}
+
 
 export default class BackendController {
 
@@ -34,14 +53,6 @@ export default class BackendController {
     private stationsSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config.json'));
     private entryPointSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-config.json'));
     private usersConfigSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/users-config.json'));
-
-    /*
-    *   =================
-    *   json-validator  |
-    *   =================
-    */
-
-    private jsonSchemaValidator = paths.join(app.getAppPath(), 'jsonschema-validator/jsonschema-validator.js');
 
     public static async create(): Promise<BackendController> {
         return new BackendController();
@@ -103,63 +114,63 @@ export default class BackendController {
 				let globalConfData = await fs.readFile(args.globalConfPath);
 				let globalConfStr = globalConfData.toString();
 				globalConfStr = globalConfStr.replace(/\\/g, "/");
-				globalConf = JSON.parse(globalConfStr);
+                globalConf = JSON.parse(globalConfStr);
+                
+                // Entry Point Validation
+                let entryPointsValidation = this.validateConfiguration(this.entryPointSchema, entryPointsConf);
+                console.log("Validation Entry Points: " + entryPointsValidation);
+                if(!entryPointsValidation.result) {
+                    this.sendInfoToGui('user-gen-error', entryPointsValidation.errors);
+                    reject("Error validating Entry Points: " + entryPointsValidation.errors);
+                }
+                
+                
+                //Global Configuration Validation
+                let globalValidation = this.validateConfiguration(this.globalSchema, globalConf);
+                console.log("Global Validation: " + globalValidation.result);
+                if(!globalValidation.result) {
+                    this.sendInfoToGui('user-gen-error', globalValidation.errors);
+                    reject("Error validating Global Configuration" + globalValidation.errors);
+                }
+
+                
+                const userGen = spawn('java', [
+                    '-jar',
+                    'bikesurbanfleets-config-usersgenerator-1.0.jar',
+                    '-entryPointsInput', '"' + args.entryPointsConfPath + '"',
+                    '-globalInput', '"' + args.globalConfPath + '"',
+                    '-output', '"' + args.outputUsersPath + '/users-configuration.json"',
+                    '-callFromFrontend'
+                ], {
+                    cwd: rootPath,
+                    shell: true
+                });
+
+                userGen.stderr.on('data', (data) => {
+                    this.sendInfoToGui('user-gen-error', data.toString());
+                });
+
+                userGen.stdout.on('data', (data) => {
+                    this.sendInfoToGui('user-gen-data', data.toString());
+                });
+
+                userGen.on('close', (code) => {
+                    if (code === 0) {
+                        console.log('User generation finished');
+                        resolve();
+                    }
+                    else {
+                        reject("Fail executing bikesurbanfleets-config-usersgenerator-1.0.jar");
+                    }
+                });
 			}
 			catch(error) {
 				let errorMessage = "Error reading Configuration Path: \n"
                     + "Global Configuration: " + args.globalConfPath + "\n"
                     + "Entry Points configuration: " + args.entryPointsConfPath + "\n";
-                this.sendInfoToGui('core-error', errorMessage);
+                this.sendInfoToGui('user-gen-error', errorMessage);
                 reject(errorMessage);
 			}
-			
-            // Entry Point Validation
-            let entryPointsValidation = this.validateConfiguration(this.entryPointSchema, entryPointsConf);
-            console.log("Validation Entry Points: " + entryPointsValidation);
-            if(!entryPointsValidation.result) {
-                this.sendInfoToGui('user-gen-error', entryPointsValidation.errors);
-                reject("Error validating Entry Points: " + entryPointsValidation.errors);
-            }
-            
-            
-            //Global Configuration Validation
-            let globalValidation = this.validateConfiguration(this.globalSchema, globalConf);
-            console.log("Global Validation: " + globalValidation.result);
-            if(!globalValidation.result) {
-                this.sendInfoToGui('user-gen-error', globalValidation.errors);
-                reject("Error validating Global Configuration" + globalValidation.errors);
-            }
-
-			
-			const userGen = spawn('java', [
-                '-jar',
-                'bikesurbanfleets-config-usersgenerator-1.0.jar',
-                '-entryPointsInput', '"' + args.entryPointsConfPath + '"',
-                '-globalInput', '"' + args.globalConfPath + '"',
-                '-output', '"' + args.outputUsersPath + '/users-configuration.json"',
-                '-callFromFrontend'
-            ], {
-				cwd: rootPath,
-                shell: true
-			});
-
-            userGen.stderr.on('data', (data) => {
-                this.sendInfoToGui('user-gen-error', data.toString());
-            });
-
-            userGen.stdout.on('data', (data) => {
-                this.sendInfoToGui('user-gen-data', data.toString());
-            });
-
-            userGen.on('close', (code) => {
-                if (code === 0) {
-                    console.log('User generation finished');
-                    resolve();
-                }
-                else {
-                    reject("Fail executing bikesurbanfleets-config-usersgenerator-1.0.jar");
-                }
-            });
         });
     }
 
@@ -174,76 +185,78 @@ export default class BackendController {
                 globalConf =  JSON.parse(globalConfStr);
                 stationsConf = await fs.readJson(args.stationsConfPath);
                 usersConf = await fs.readJsonSync(args.usersConfPath);
+
+                //Global Configuration Validation
+                let globalValidation = this.validateConfiguration(this.globalSchema , globalConf);
+                console.log("Global Validation: " + globalValidation.result);
+                if(!globalValidation.result) {
+                    this.sendInfoToGui('core-error', globalValidation.errors);
+                    reject("Error validating Global Configuration" + globalValidation.errors);
+                }
+
+                //Stations Configuration Validation
+                let stationsValidation = this.validateConfiguration(this.stationsSchema, stationsConf);
+                console.log("Stations Validation " + stationsValidation.result);
+                if(!stationsValidation.result) {
+                    this.sendInfoToGui('core-error', stationsValidation.errors);
+                    reject("Error validating stations" + stationsValidation.errors);
+                }
+
+                //User generation validation
+                let usersValidation = this.validateConfiguration(this.usersConfigSchema, usersConf);
+                console.log("Users Validation " + usersValidation);
+                if(!usersValidation.result) {
+                    this.sendInfoToGui('core-error', usersValidation.errors);
+                    reject("Error validating users", + usersValidation.errors);
+                }
+            
+                    
+                const sim = spawn('java', [
+                    '-DLogFilePath=${HOME}/.Bike3S/',
+                    '-jar',
+                    'bikesurbanfleets-core-1.0.jar',
+                    '-globalConfig', '"' + args.globalConfPath + '"',
+                    '-usersConfig', '"' + args.usersConfPath + '"',
+                    '-stationsConfig', '"' + args.stationsConfPath + '"',
+                    '-historyOutput', '"' + args.outputHistoryPath + '"',
+                    '-mapPath', '"' + args.mapPath + '"',
+                    `-callFromFrontend`
+                ], {
+                    cwd: rootPath,
+                    shell: true
+                });
+
+
+                sim.stderr.on('data', (data) => {
+                    this.sendInfoToGui('core-error', data.toString());
+                });
+
+                sim.stdout.on('data', (data) => {
+                    this.sendInfoToGui('core-data', data.toString());
+                });
+
+                sim.on('close', (code) => {
+                    if (code === 0) {
+                        console.log("Simulation Finished");
+                        resolve();
+                    }
+                    else {
+                        reject("Fail executing bikesurbanfleets-core-1.0.jar");
+                    }
+                });
             }
             catch(error) {
                 let errorMessage = "Error reading Configuration Path: \n"
                     + "Global Configuration: " + args.globalConfPath + "\n"
                     + "Users Configuration: " + args.usersConfPath + "\n"
-                    + "Stations Configuration: " + args.stationsConfPath + "\n";
+                    + "Stations Configuration: " + args.stationsConfPath + "\n"
+                    + "Map Path: " + args.mapPath + "\n";
+                    
                 this.sendInfoToGui('core-error', errorMessage);
                 reject(errorMessage);
             }
-
-            //Global Configuration Validation
-            let globalValidation = this.validateConfiguration(this.globalSchema , globalConf);
-            console.log("Global Validation: " + globalValidation.result);
-            if(!globalValidation.result) {
-                this.sendInfoToGui('core-error', globalValidation.errors);
-                reject("Error validating Global Configuration" + globalValidation.errors);
-            }
-
-            //Stations Configuration Validation
-            let stationsValidation = this.validateConfiguration(this.stationsSchema, stationsConf);
-            console.log("Stations Validation " + stationsValidation.result);
-            if(!stationsValidation.result) {
-				this.sendInfoToGui('core-error', stationsValidation.errors);
-				reject("Error validating stations" + stationsValidation.errors);
-            }
-
-            //User generation validation
-            let usersValidation = this.validateConfiguration(this.usersConfigSchema, usersConf);
-            console.log("Users Validation " + usersValidation);
-            if(!usersValidation.result) {
-                this.sendInfoToGui('core-error', usersValidation.errors);
-                reject("Error validating users", + usersValidation.errors);
-            }
-           
-				
-			const sim = spawn('java', [
-                '-DLogFilePath=${HOME}/.Bike3S/',
-                '-jar',
-                'bikesurbanfleets-core-1.0.jar',
-                '-globalConfig', '"' + args.globalConfPath + '"',
-                '-usersConfig', '"' + args.usersConfPath + '"',
-                '-stationsConfig', '"' + args.stationsConfPath + '"',
-                '-historyOutput', '"' + args.outputHistoryPath + '"',
-                '-mapPath', '"' + args.mapPath + '"',
-                `-callFromFrontend`
-            ], {
-				cwd: rootPath,
-                shell: true
-			});
-
-
-            sim.stderr.on('data', (data) => {
-                console.log(data);
-                this.sendInfoToGui('core-error', data.toString());
-            });
-
-            sim.stdout.on('data', (data) => {
-                this.sendInfoToGui('core-data', data.toString());
-            });
-
-            sim.on('close', (code) => {
-                if (code === 0) {
-                    console.log("Simulation Finished");
-                    resolve();
-                }
-                else {
-                    reject("Fail executing bikesurbanfleets-core-1.0.jar");
-                }
-            });
         });
+        
     }
 
 }
