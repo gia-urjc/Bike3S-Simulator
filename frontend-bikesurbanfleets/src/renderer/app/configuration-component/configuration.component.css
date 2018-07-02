@@ -37,3 +37,13 @@ button {
 .hidden-button {
     display: none;
 }
+
+#conf-buttons {
+    display: flex; 
+    justify-content: flex-end
+}
+
+.conf-button {
+    padding-right: 10px;
+    padding-left: 10px;
+}

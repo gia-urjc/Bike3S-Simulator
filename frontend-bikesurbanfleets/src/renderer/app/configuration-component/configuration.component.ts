@@ -35,6 +35,7 @@ export class ConfigurationComponent {
     lastStation = {
         position: { latitude: 0, longitude: 0}
     };
+    globalConfigValid: boolean = false;
 
     /*
     * Variables for configuration
@@ -134,6 +135,7 @@ export class ConfigurationComponent {
 
     isGlobalFormValid($event: any) {
         console.log('Is global Form Valid?: ' + $event);
+        this.globalConfigValid = $event;
     }
 
     selectEntryPointSubmit(data: EntryPointDataType) {
@@ -267,6 +269,7 @@ export class ConfigurationComponent {
         modalRef.componentInstance.globalConfiguration = this.globalData;
         modalRef.componentInstance.entryPointConfiguration = this.finalEntryPoints;
         modalRef.componentInstance.stationConfiguration = this.finalStations;
+        modalRef.componentInstance.globalConfigValid = this.globalConfigValid;
     }
 
     selectFolder(): string {
