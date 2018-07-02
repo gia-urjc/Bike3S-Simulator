@@ -75,7 +75,6 @@ export class ConfigurationComponent {
                 private modalService: NgbModal) {}
 
     async ngOnInit() {
-
         this.drawOptions = LeafletDrawFunctions.createLeafletDrawOptions(this.featureGroup);
         (L as any).drawLocal = LeafletDrawFunctions.createCustomMessages();
         await this.ajax.formSchema.init();
@@ -154,7 +153,6 @@ export class ConfigurationComponent {
 
     entryPointSubmit(entryPoint: any) {
         entryPoint.entryPointType = {};
-        entryPoint.userType = {};
         entryPoint.entryPointType = this.lastSelectedEntryPointType.entryPointType;
         entryPoint.userType.typeName = this.lastSelectedEntryPointType.userType;
         this.lastCircleAdded.setLatLng({

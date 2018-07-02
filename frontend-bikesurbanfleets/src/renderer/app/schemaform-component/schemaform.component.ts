@@ -32,6 +32,7 @@ export class SchemaformComponent implements OnInit {
     }
 
     submit(data: any) {
+        console.log(data);
         this.dataSubmited.emit(data);
     }
 

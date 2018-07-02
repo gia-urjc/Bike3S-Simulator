@@ -12,6 +12,14 @@ button {
     font-size: 12px;
 }
 
+p.help-block {
+    font-size: 12px !important;
+}
+
+.dropdown-item {
+    font-size: 12px;
+}
+
 .tab-content {
     height: 80vh;
 }
@@ -49,12 +57,12 @@ button {
     position: fixed; /* Set the navbar to fixed position */
     top: 35px; /* Position the navbar at the top of the page */
     right: 25px;
-    z-index: 9999;
+    z-index: 1000;
 }
 
 .fixed-button-load {
     position: fixed;
     top: 35px;
-    right: 185px;
-    z-index: 9999;
+    right: 170px;
+    z-index: 1000;
 }

@@ -60,7 +60,7 @@
         </button>
     </div>
     <div class="modal-body">
-        <schema-form #globalSchemaForm [form]="selectEntryPointForm" (dataSubmited)="selectEntryPointSubmit($event)"></schema-form>
+        <schema-form #selectEntryPointFormId [form]="selectEntryPointForm" (dataSubmited)="selectEntryPointSubmit($event)"></schema-form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
@@ -76,7 +76,7 @@
         </button>
     </div>
     <div class="modal-body">
-        <schema-form #globalSchemaForm [form]="entryPointForm" (dataSubmited)="entryPointSubmit($event)"></schema-form>
+        <schema-form #entryPointFormId [form]="entryPointForm" (dataSubmited)="entryPointSubmit($event)"></schema-form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
@@ -92,7 +92,7 @@
         </button>
     </div>
     <div class="modal-body">
-        <schema-form #globalSchemaForm [form]="stationForm" (dataSubmited)="stationSubmit($event)"></schema-form>
+        <schema-form #stationsFormId [form]="stationForm" (dataSubmited)="stationSubmit($event)"></schema-form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
