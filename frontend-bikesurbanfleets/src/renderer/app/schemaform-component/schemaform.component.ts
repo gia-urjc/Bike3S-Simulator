@@ -44,6 +44,7 @@ export class SchemaformComponent implements OnInit {
 
     changed(data: any) {
         this.actualData = data;
+        console.log(data);
     }
 
 }

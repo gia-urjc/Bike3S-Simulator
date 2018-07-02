@@ -1,6 +1,11 @@
 .window {
     background-color: #F0F0F0;
+    font-size: 12px;
     height: 100vh;
+}
+
+button {
+    font-size: 12px !important;
 }
 
 .browse-button {

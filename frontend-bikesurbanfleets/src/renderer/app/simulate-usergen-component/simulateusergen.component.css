@@ -2,6 +2,10 @@
     margin-top: 30px;
 }
 
+button {
+    font-size: 12px;
+}
+
 .hidden-button {
     display: none;
 }

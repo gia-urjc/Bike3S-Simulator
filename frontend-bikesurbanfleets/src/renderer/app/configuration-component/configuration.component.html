@@ -32,28 +32,24 @@
             </div>
             <div class="col-sm-8">
                 <div class="card conf">
-                    <div id="conf-buttons" class="card-body row">
-                        <div ngbDropdown class="conf-button dropup col-xs-3">
-                                <button ngbDropdownToggle type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                    Load Configuration
-                                </button>
-                                <div ngbDropdownMenu class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Load Global Configuration</a>
-                                    <a class="dropdown-item" href="#">Load Entry Points</a>
-                                    <a class="dropdown-item" href="#">Load Stations</a>
-                                </div>
-                        </div>
-                        <div class="conf-button col-xs-3">
-                            <button (click)="generateConfiguration()" class="btn btn-primary">Save Configuration</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
                     <map-view (getMapController)="getMapController($event)" [markers]="constructor.activeLayers" [isVisualitation]="false" [drawOptions]="drawOptions"></map-view>
                 </div>
             </div>
         </div>
     </div>
+        <div ngbDropdown class="fixed-button-load dropup col-xs-3">
+            <button ngbDropdownToggle type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                Load Configuration
+            </button>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a class="dropdown-item" href="#">Load Global Configuration</a>
+                <a class="dropdown-item" href="#">Load Entry Points</a>
+                <a class="dropdown-item" href="#">Load Stations</a>
+            </div>
+        </div>
+        <div class="fixed-button-save col-xs-3">
+            <button (click)="generateConfiguration()" class="btn btn-primary">Save Configuration</button>
+        </div>
 </div>
 
 <ng-template data-backdrop="static" data-keyboard="false" id="form-select-entry-point" #selecEntryPointType let-c="close" let-d="dismiss">
