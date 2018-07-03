@@ -1,13 +1,13 @@
 import {HistoryTimeEntry} from "../../shared/history";
-import {HistoryReader} from '../util';
+import {HistoryReaderController} from '../util';
 import {TimeEntry, Event} from './systemDataTypes/SystemInternalData';
 
 export class HistoryIterator {
-    private history: HistoryReader;
+    private history: HistoryReaderController;
     private currentFile: Array<HistoryTimeEntry> | undefined;
     private pointer: number;   // pointer to the time entry is being currently  read
 
-    public static async create(history: HistoryReader): Promise<HistoryIterator> {
+    public static async create(history: HistoryReaderController): Promise<HistoryIterator> {
         let historyIt: HistoryIterator = new HistoryIterator(history);
         try {
             historyIt.currentFile = await historyIt.history.nextChangeFile();
@@ -18,7 +18,7 @@ export class HistoryIterator {
         return historyIt;
     }
 
-    private constructor(history: HistoryReader) {
+    private constructor(history: HistoryReaderController) {
         this.history = history;
         this.pointer = -1;
     }

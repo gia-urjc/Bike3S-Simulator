@@ -2,18 +2,13 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This class represents a user whose behaviour is the same of UserReasonable with the 
@@ -190,16 +185,9 @@ public class UserDistanceRestriction extends User {
      * The user chooses the shortest route because he wants to arrive at work as fast as possible.
      */
     @Override
-    public GeoRoute determineRoute() {
+    public GeoRoute determineRoute() throws Exception{
         List<GeoRoute> routes = null;
-        try {
-            routes = calculateRoutes(getDestinationPoint());
-        }
-        catch(Exception e) {
-            System.err.println("Exception calculating routes \n" + e.toString());
-
-        }
-        // The route in first list position is the shortest.
+        routes = calculateRoutes(getDestinationPoint());
         return routes != null ? routes.get(0) : null;
     }
 

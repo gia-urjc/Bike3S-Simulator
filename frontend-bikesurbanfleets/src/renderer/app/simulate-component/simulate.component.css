@@ -3,6 +3,10 @@
     height: 100vh;
 }
 
+label {
+    font-size: 12px !important;
+}
+
 .browse-button {
     margin-top: 30px;
 }

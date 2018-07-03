@@ -36,14 +36,14 @@ export class SimulateusergenComponent {
     }
 
     selectFile(): string {
-        return dialog.showOpenDialog({
+		return dialog.showOpenDialog({
             properties: ['openFile', 'createDirectory'],
             filters: [{name: 'JSON Files', extensions: ['json']}]
-        })[0];
+        })[0].replace(/\\/g, "/");
     }
 
     selectFolder(): string {
-        return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0];
+        return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0].replace(/\\/g, "/");
     }
 
     open(content: any) {

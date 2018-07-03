@@ -3,7 +3,6 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
@@ -117,15 +116,9 @@ public class UserRandom extends User {
     }
 
     @Override
-    public GeoRoute determineRoute() {
+    public GeoRoute determineRoute() throws Exception{
         List<GeoRoute> routes = null;
-    	try {
-            routes = calculateRoutes(getDestinationPoint());
-        }
-        catch(Exception e) {
-            System.err.println("Exception calculating routes \n" + e.toString());
-        }
-
+        routes = calculateRoutes(getDestinationPoint());
         if(routes != null) {
             int index = infraestructure.getRandom().nextInt(0, routes.size());
             return routes != null ? routes.get(index) : null;

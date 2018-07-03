@@ -3,15 +3,12 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,7 +26,7 @@ import java.util.List;
 @AssociatedType(UserType.USER_REASONABLE)
 public class UserDistanceResourcesRatio extends User {
 
-    public class UserReasonableParameters {
+    public class UserDistanceResourcesRatioParameters {
         /**
          * It is the time in seconds until which the user will decide to continue walking
          * or cycling towards the previously chosen station without making a new reservation
@@ -73,7 +70,7 @@ public class UserDistanceResourcesRatio extends User {
          */
         private int failedReservationPercentage;
 
-        private UserReasonableParameters() {}
+        private UserDistanceResourcesRatioParameters() {}
 
         @Override
         public String toString() {
@@ -89,9 +86,9 @@ public class UserDistanceResourcesRatio extends User {
         }
     }
 
-    private UserReasonableParameters parameters;
+    private UserDistanceResourcesRatioParameters parameters;
 
-    public UserDistanceResourcesRatio(UserReasonableParameters parameters, SimulationServices services) {
+    public UserDistanceResourcesRatio(UserDistanceResourcesRatioParameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
     }
@@ -181,15 +178,9 @@ public class UserDistanceResourcesRatio extends User {
     }
     
     @Override
-    public GeoRoute determineRoute() {
+    public GeoRoute determineRoute() throws Exception {
         List<GeoRoute> routes = null;
-    	try {
-            routes = calculateRoutes(getDestinationPoint());
-        }
-        catch(Exception e) {
-            System.err.println("Exception calculating routes \n" + e.toString());
-        }
-        // The route in first list position is the shortest.
+        routes = calculateRoutes(getDestinationPoint());
         return routes != null ? routes.get(0) : null;
     }
 

@@ -1,6 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
@@ -28,21 +29,26 @@ public class EventSlotReservationTimeout extends EventUser {
     }
 
     @Override
-    public List<Event> execute() throws Exception {
-    			List<Event> newEvents;
-    			user.setInstant(this.instant);
-        user.setPosition(positionTimeOut);
-        reservation.expire();
-        user.cancelsSlotReservation(user.getDestinationStation());
-        user.getMemory().update(UserMemory.FactType.SLOT_RESERVATION_TIMEOUT);
+    public List<Event> execute()  {
+        List<Event> newEvents = new ArrayList<>();
+        try {
+            user.setInstant(this.instant);
+            user.setPosition(positionTimeOut);
+            reservation.expire();
+            user.cancelsSlotReservation(user.getDestinationStation());
+            user.getMemory().update(UserMemory.FactType.SLOT_RESERVATION_TIMEOUT);
 
-        debugEventLog();
-        if (!user.decidesToDetermineOtherStationAfterTimeout()){
-            debugEventLog("User decides to manage slot reservation at other Station");
-            newEvents = manageSlotReservationDecisionAtSameStationAfterTimeout();
-        } else {
-            debugEventLog("User decides to manage slot reservation at the same Station");
-            newEvents = manageSlotReservationDecisionAtOtherStation();
+            debugEventLog();
+            if (!user.decidesToDetermineOtherStationAfterTimeout()){
+                debugEventLog("User decides to manage slot reservation at other Station");
+                newEvents = manageSlotReservationDecisionAtSameStationAfterTimeout();
+            } else {
+                debugEventLog("User decides to manage slot reservation at the same Station");
+                newEvents = manageSlotReservationDecisionAtOtherStation();
+            }
+        }
+        catch(Exception e) {
+            exceptionTreatment(e);
         }
 
         return newEvents;

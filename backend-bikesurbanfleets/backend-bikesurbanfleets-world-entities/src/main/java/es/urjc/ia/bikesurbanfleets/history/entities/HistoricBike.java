@@ -16,7 +16,7 @@ public class HistoricBike implements HistoricEntity {
 
     @Expose
     private int id;
-
+    
     private boolean reserved;
 
     public HistoricBike(Bike bike) {

@@ -17,6 +17,8 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class GraphHopperIntegration implements GraphManager {
@@ -79,6 +81,9 @@ public class GraphHopperIntegration implements GraphManager {
 
     @Override
     public GeoRoute obtainShortestRouteBetween(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperIntegrationException, GeoRouteCreationException {
+        if(startPosition.equals(endPosition)) {
+            return new GeoRoute(Arrays.asList(startPosition, endPosition));
+        }
         calculateRoutes(startPosition, endPosition);
         PathWrapper path = rsp.getBest();
         return responseGHToRoute(path);
@@ -86,6 +91,13 @@ public class GraphHopperIntegration implements GraphManager {
 
     @Override
     public List<GeoRoute> obtainAllRoutesBetween(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperIntegrationException, GeoRouteCreationException {
+        if(startPosition.equals(endPosition)) {
+            List<GeoPoint> pointsNewRoute = new ArrayList<>(Arrays.asList(startPosition, endPosition));
+            List<GeoRoute> newRoutes = new ArrayList<>();
+            GeoRoute newRoute = new GeoRoute(pointsNewRoute);
+            newRoutes.add(newRoute);
+            return newRoutes;
+        }
         calculateRoutes(startPosition, endPosition);
         List<GeoRoute> routes = new ArrayList<>();
         for(PathWrapper p: rsp.getAll()) {

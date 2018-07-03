@@ -11,6 +11,9 @@ import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class ConfigurationIO {
 
@@ -60,7 +63,9 @@ public class ConfigurationIO {
             }
             System.out.println("Validation global configuration input: "+ resultValidation);
         }
-        return gson.fromJson(new JsonReader(new FileReader(globalConfigPath)), GlobalInfo.class);
+		String globalConfigStr = new String(Files.readAllBytes(Paths.get(globalConfigPath)), StandardCharsets.UTF_8);
+        globalConfigStr = globalConfigStr.replace("\\", "/");
+        return gson.fromJson(globalConfigStr, GlobalInfo.class);
     }
 
     public void writeFinalConfig(String inputConfPath, String outputConfPath, EntryPointInfo entryPoints) throws Exception {

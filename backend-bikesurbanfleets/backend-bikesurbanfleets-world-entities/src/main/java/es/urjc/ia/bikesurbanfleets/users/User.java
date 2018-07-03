@@ -10,7 +10,6 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrati
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
@@ -21,7 +20,6 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -455,7 +453,7 @@ public abstract class User implements Entity {
      * The user chooses the route which he'll travel to arrive at  selected destination.
      * @return the route which the user will follow.
      */
-    public abstract GeoRoute determineRoute();
+    public abstract GeoRoute determineRoute() throws Exception;
 
     /**
      * When user hasn't been able to make a reservation at the destination station,

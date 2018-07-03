@@ -11,7 +11,7 @@ export class MenuComponent implements OnInit{
 
     ngOnInit(): void {
         $('body').css({
-            "background": "linear-gradient(to top, #00467f, #a5cc82)", //Gradient color
+            "background": "linear-gradient(to top, #6a85b6 0%, #bac8e0 100%)", //Gradient color
             "overflow-y": "hidden"
         });
     }

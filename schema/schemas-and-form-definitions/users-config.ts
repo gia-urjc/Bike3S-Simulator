@@ -46,6 +46,7 @@ export const typeParameters = {
         failedReservationPercentage: Percentage
     },
     USER_COMMUTER: {
+        destinationPlace: GeoPoint,
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,
         minRentalAttempts: UInt,

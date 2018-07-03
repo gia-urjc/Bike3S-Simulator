@@ -1,5 +1,5 @@
 import { HistoryEntitiesJson } from "../../../shared/history";
-import { HistoryReader } from "../../util";
+import { HistoryReaderController } from "../../util";
 import { User } from "../systemDataTypes/Entities";
 import { SystemInfo } from "./absoluteValues/SystemInfo";
 import { RentalsAndReturnsPerStation } from "./absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";

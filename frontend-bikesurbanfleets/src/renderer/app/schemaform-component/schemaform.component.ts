@@ -32,6 +32,7 @@ export class SchemaformComponent implements OnInit {
     }
 
     submit(data: any) {
+        console.log(data);
         this.dataSubmited.emit(data);
     }
 
@@ -44,6 +45,7 @@ export class SchemaformComponent implements OnInit {
 
     changed(data: any) {
         this.actualData = data;
+        console.log(data);
     }
 
 }

@@ -26,7 +26,8 @@ This project is development environment agnostic. You can use an IDE or just the
 ## General overview of the software architecture
 The project is separated in two main parts: a **backend** and a **frontend**.
 
-![It shows the architecture of the software. It shows two clear parts: backend and frontend](documentation/images/Arquitecture_6.png?raw=true "Software arquitecture")
+![It shows the architecture of the software. It shows two clear parts: backend and frontend](documentation/images/Arquitecture_10.png?raw=true "Software arquitecture")
+
 
 The **backend** is related to all the simulation logic and is implemented in Java.
 

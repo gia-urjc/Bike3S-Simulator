@@ -1,23 +1,27 @@
 label[_ngcontent-c5]{
-    font-size: 18px;
+    font-size: 12px;
     font-weight: bold;
 }
 
 button {
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .window {
     background-color: #F0F0F0;
-    height: 100vh;
+    font-size: 12px;
+}
+
+p.help-block {
+    font-size: 12px !important;
+}
+
+.dropdown-item {
+    font-size: 12px;
 }
 
 .tab-content {
-    height: 82vh;
-}
-
-.container-fluid {
-    font-size: 14px;
+    height: 80vh;
 }
 
 .card {
@@ -27,6 +31,7 @@ button {
 .conf {
     margin-top: 15px;
     margin-bottom: 15px;
+    font-size: 12px;
 }
 
 .tab-content {
@@ -36,4 +41,28 @@ button {
 
 .hidden-button {
     display: none;
+}
+
+#conf-buttons {
+    display: flex; 
+    justify-content: flex-end
+}
+
+.conf-button {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.fixed-button-save {
+    position: fixed; /* Set the navbar to fixed position */
+    top: 35px; /* Position the navbar at the top of the page */
+    right: 25px;
+    z-index: 1000;
+}
+
+.fixed-button-load {
+    position: fixed;
+    top: 35px;
+    right: 170px;
+    z-index: 1000;
 }

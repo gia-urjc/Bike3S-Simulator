@@ -3,15 +3,13 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * This class represents a user (employee, student, etc) who uses the bike as a public transport 
@@ -30,7 +28,12 @@ import java.util.ArrayList;
 @AssociatedType(UserType.USER_COMMUTER)
 public class UserCommuter extends User {
 
-    public class UserEmployeeParameters {
+    public class UserCommuterParameters {
+
+        /**
+         * Place where user will go to take return the bike
+         */
+        private GeoPoint destinationPlace;
 
         /**
          * It determines the rate with which the user will reserve a bike.
@@ -80,11 +83,11 @@ public class UserCommuter extends User {
                     '}';
         }
 
-        private UserEmployeeParameters() {}
+        private UserCommuterParameters() {}
     }
-    private UserEmployeeParameters parameters;
+    private UserCommuterParameters parameters;
     
-    public UserCommuter(UserEmployeeParameters parameters, SimulationServices services) {
+    public UserCommuter(UserCommuterParameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
     }
@@ -118,7 +121,7 @@ public class UserCommuter extends User {
         
     @Override
      public Station determineStationToReturnBike() {
-        List<Station> recommendedStations = informationSystem.getStationsToReturnBikeOrderedByDistance(this.getPosition());
+        List<Station> recommendedStations = informationSystem.getStationsToReturnBikeOrderedByDistance(parameters.destinationPlace);
         Station destination = null;
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
@@ -175,14 +178,9 @@ public class UserCommuter extends User {
         }
     
     @Override
-    public GeoRoute determineRoute() {
+    public GeoRoute determineRoute() throws Exception{
         List<GeoRoute> routes = null;
-        try {
-            routes = calculateRoutes(getDestinationPoint());
-        }
-        catch(Exception e) {
-            System.err.println("Exception calculating routes \n" + e.toString());
-        }
+        routes = calculateRoutes(getDestinationPoint());
         return routes != null ? routes.get(0) : null;
    }
 

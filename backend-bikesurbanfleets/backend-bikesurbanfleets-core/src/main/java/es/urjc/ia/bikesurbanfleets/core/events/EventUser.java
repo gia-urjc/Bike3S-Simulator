@@ -1,6 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
@@ -10,6 +11,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserMemory;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,7 +56,7 @@ public abstract class EventUser implements Event {
     /**
      * It proccesses the event so that the relevant changes at the system occur.
      */
-    public abstract List<Event> execute() throws Exception;
+    public abstract List<Event> execute();
 
 
     /*
@@ -67,16 +69,34 @@ public abstract class EventUser implements Event {
      * If debug mode is activated in the configuration file, logs will be activated to debug users
      * @throws IOException
      */
-    public void debugEventLog(String message) throws IOException {
-        Debug.log(message, user, this);
+    public void debugEventLog(String message) {
+        try {
+            Debug.log(message, user, this);
+        }
+        catch(IOException e) {
+            MessageGuiFormatter.showErrorsForGui(e);
+        }
     }
 
     /**
      * If debug mode is activated in the configuration file, logs will be activated to debug users
      * @throws IOException
      */
-    public void debugEventLog() throws IOException {
-        Debug.log(user, this);
+    public void debugEventLog() {
+        try {
+            Debug.log(user, this);
+        }
+        catch (IOException e) {
+            MessageGuiFormatter.showErrorsForGui(e);
+        }
+    }
+
+    public void debugClose(User user, int id) {
+        try {
+            Debug.closeLog(user, id);
+        } catch (IOException e) {
+            MessageGuiFormatter.showErrorsForGui(e);
+        }
     }
 
 
@@ -125,6 +145,7 @@ public abstract class EventUser implements Event {
             if (user.decidesToLeaveSystemAffterFailedReservation()) {
                 leaveSystem();
                 debugEventLog("User decides to leave the system");
+                debugClose(user, user.getId());
             } else if (user.decidesToDetermineOtherStationAfterFailedReservation()) {
                 debugEventLog("User decides to determine other station to manage bike reservation");
                 newEvents = manageBikeReservationDecisionAtOtherStation();
@@ -288,6 +309,14 @@ public abstract class EventUser implements Event {
         user.setRoute(null);
         user.setDestinationStation(null);
         user.setDestinationPoint(null);
+    }
+
+    protected void exceptionTreatment(Exception e) {
+        MessageGuiFormatter.showErrorsForGui(e);
+        leaveSystem();
+        debugEventLog("Exception occurred");
+        debugEventLog(ExceptionUtils.getStackTrace(e));
+        debugClose(user, user.getId());
     }
 
 }

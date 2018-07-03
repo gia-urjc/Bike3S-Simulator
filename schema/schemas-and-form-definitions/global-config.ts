@@ -5,15 +5,14 @@ import {rData} from "json-schema-builder-ts/dist/references";
 
 export const GlobalConfig = new JsonSchema(options, sObject({
     totalSimulationTime: UInt,
-    debugMode: sBoolean(),
     reservationTime: sInteger().min(0).max(rData('1/totalSimulationTime')),
     randomSeed: sInteger().min(1),
+    recommendationSystemType: sEnum('AVAILABLE_RESOURCES_RATIO'),
+    graphManagerType: sEnum('GRAPH_HOPPER'),
+    maxDistanceRecommendation: sNumber().min(0),
     boundingBox: sObject({
         northWest: GeoPoint,
         southEast: GeoPoint,
     }).require.all().restrict(),
-    map: sString().pattern(/\.osm/),
-    recommendationSystemType: sEnum('AVAILABLE_RESOURCES_RATIO'),
-    graphManagerType: sEnum('GRAPH_HOPPER'),
-    maxDistanceRecommendation: sNumber().min(0)
-}).require('totalSimulationTime', 'reservationTime', 'boundingBox', 'map', 'recommendationSystemType', 'graphManagerType', 'maxDistanceRecommendation'));
+    debugMode: sBoolean()
+}).require('totalSimulationTime', 'reservationTime', 'boundingBox', 'recommendationSystemType', 'graphManagerType', 'maxDistanceRecommendation'));

@@ -1,20 +1,22 @@
 package es.urjc.ia.bikesurbanfleets.log;
 
-import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.print.attribute.IntegerSyntax;
+
+import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
+
 public class FileWriterMap {
 
-    private Map<Class, Map<Integer, FileWriter>> fileWriterByClass = new HashMap<>();
+    private Map<Class<?>, Map<Integer, FileWriter>> fileWriterByClass = new HashMap<>();
 
 
     public FileWriter createFileWriter(Entity entity, Path pathFile) throws IOException {
-        Class entityClass = getTopHierarchyClass(entity);
+        Class<?> entityClass = getTopHierarchyClass(entity);
         Map<Integer, FileWriter> mapFWriter = this.fileWriterByClass.get(entityClass);
         FileWriter fileWriter = new FileWriter(pathFile.toAbsolutePath().toString(), true);
         if(mapFWriter == null) {
@@ -26,7 +28,7 @@ public class FileWriterMap {
     }
 
     public FileWriter getFileWriter(Entity entity) {
-        Class entityClass = getTopHierarchyClass(entity);
+        Class<?> entityClass = getTopHierarchyClass(entity);
         try {
             return this.fileWriterByClass.get(entityClass).get(entity.getId());
         } catch (NullPointerException e) {
@@ -35,18 +37,16 @@ public class FileWriterMap {
 
     }
 
-    public void closeAllFileWriters() throws IOException {
-        for(Class eClass: fileWriterByClass.keySet()){
-            for(Integer id: fileWriterByClass.get(eClass).keySet()) {
-                FileWriter writer = fileWriterByClass.get(eClass).get(id);
-                writer.close();
-                fileWriterByClass.get(eClass).put(id, null);
-            }
-        }
+    public void closeFileWriter(Entity entity, int id) throws IOException {
+        Class<?> entityClass = getTopHierarchyClass(entity);
+        FileWriter writer = this.fileWriterByClass.get(entityClass).get(id);
+        writer.close();
+        System.out.println("Closed File in Event");
+        this.fileWriterByClass.get(entityClass).remove(id);
     }
 
-    private Class getTopHierarchyClass(Entity entity) {
-        Class entityClass =  entity.getClass();
+    private Class<?> getTopHierarchyClass(Entity entity) {
+        Class<?> entityClass = entity.getClass();
         while(entityClass.getSuperclass() != Object.class) {
             entityClass = entityClass.getSuperclass();
         }

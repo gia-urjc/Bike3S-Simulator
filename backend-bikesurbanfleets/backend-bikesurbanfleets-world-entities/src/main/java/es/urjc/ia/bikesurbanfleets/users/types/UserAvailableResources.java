@@ -3,16 +3,12 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -77,7 +73,7 @@ public class UserAvailableResources extends User {
 
         @Override
         public String toString() {
-            return "UserStationsBalancerParameters{" +
+            return "UserAvailableResourcesParameters{" +
                     "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
@@ -182,22 +178,16 @@ public class UserAvailableResources extends User {
     }
     
     @Override
-    public GeoRoute determineRoute() {
+    public GeoRoute determineRoute() throws Exception{
         List<GeoRoute> routes = null;
-        try {
-            routes = calculateRoutes(getDestinationStation().getPosition());
-        }
-        catch(Exception e) {
-            System.err.println("Exception calculating routes \n" + e.toString());
-        }
+        routes = calculateRoutes(getDestinationPoint());
         return routes != null ? routes.get(0) : null;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "UserDistanceRestriction{" +
+        return "UserAvailableResources{" +
                 "parameters=" + parameters +
                 '}';
     }
-
 }

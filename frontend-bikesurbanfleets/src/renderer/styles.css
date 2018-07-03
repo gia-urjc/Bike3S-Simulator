@@ -2,6 +2,18 @@ body {
     overflow-y: hidden;
 }
 
+input {
+    font-size: 12px !important;
+}
+
+label {
+    font-size: 12px !important;
+}
+
+select {
+    font-size: 12px !important;
+}
+
 .sk-cube-grid {
     width: 100px;
     height: 100px;

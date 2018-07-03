@@ -39,10 +39,10 @@ public class GeoRoute {
         if(geoPointList.size() < 2) {
             throw new GeoRouteCreationException("Routes should have more than two points");
         }
-        else if(geoPointList.get(0).equals(geoPointList.get(geoPointList.size()-1))) {
-            this.points = new ArrayList<>();
-            this.totalDistance = 0;
-        }
+        //else if(geoPointList.get(0).equals(geoPointList.get(geoPointList.size()-1))) {
+        //    this.points = new ArrayList<>();
+        //    this.totalDistance = 0;
+        //}
         else {
             this.points = geoPointList;
             this.intermediateDistances = new ArrayList<>();

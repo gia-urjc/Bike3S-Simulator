@@ -17,6 +17,7 @@ export class SimulatecoreComponent{
     private usersConfiguration: string;
     private stationsConfiguration: string;
     private historyOutputPath: string;
+    private mapPath: string;
     private percentage: number;
 
     private resultMessage: string;
@@ -39,14 +40,21 @@ export class SimulatecoreComponent{
     }
 
     selectFile(): string {
-        return dialog.showOpenDialog({
+		return dialog.showOpenDialog({
             properties: ['openFile', 'createDirectory'],
             filters: [{name: 'JSON Files', extensions: ['json']}]
-        })[0];
+        })[0].replace(/\\/g, "/");
+    }
+
+    selectMap(): string {
+        return dialog.showOpenDialog({
+            properties: ['openFile', 'createDirectory'],
+            filters: [{name: 'OSM Files', extensions: ['osm']}]
+        })[0].replace(/\\/g, "/");
     }
 
     selectFolder(): string {
-        return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0];
+        return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0].replace(/\\/g, "/");
     }
 
     open(content: any) {
@@ -64,11 +72,16 @@ export class SimulatecoreComponent{
         let consoleMessage = message.toString();
         let consoleMessageList = consoleMessage.split('\n');
         consoleMessageList.forEach((indMessage: string) => {
-            if(indMessage.includes("Percentage: ")) {
-                let percentageStr = indMessage.replace('Percentage: ', '');
+            if(indMessage.includes("[Percentage]")) {
+                let percentageStr = indMessage.replace('[Percentage]', '');
                 let percentage: number = parseFloat(percentageStr);
                 this.percentage = percentage;
                 $('#progress-bar').trigger('click');
+            }
+            if(indMessage.includes("[Error]")) {
+                this.errors = true;
+                let errorMessage = indMessage.replace('[Error]', '');
+                this.exceptions += errorMessage + "\n";
             }
         });
     }
@@ -83,8 +96,10 @@ export class SimulatecoreComponent{
             globalConfPath: this.globalConfiguration,
             usersConfPath: this.usersConfiguration,
             stationsConfPath: this.stationsConfiguration,
-            outputHistoryPath: this.historyOutputPath
+            outputHistoryPath: this.historyOutputPath,
+            mapPath: this.mapPath
         };
+        console.log(args);
         $('#modal-button').trigger('click');
         await this.ajax.backend.simulate(args);
         if(!this.errors) {

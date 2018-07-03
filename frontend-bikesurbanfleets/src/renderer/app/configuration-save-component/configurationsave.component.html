@@ -4,9 +4,13 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<div class="modal-body">
-    {{message}}
+<div *ngIf="isError" class="alert alert-danger">
+    <strong>Error!</strong> {{message}}
 </div>
+<div *ngIf="!isError" class="alert alert-success">
+    <strong>Success!</strong> {{message}}
+</div>
+
 <div class="modal-footer">
     <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>

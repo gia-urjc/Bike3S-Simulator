@@ -1,8 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.infraestructure;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GraphHopperIntegration;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
@@ -12,7 +10,6 @@ import es.urjc.ia.bikesurbanfleets.users.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -51,7 +48,7 @@ public class InfraestructureManager {
     
     public InfraestructureManager(List<Station> stations, BoundingBox bbox) throws IOException {
         this.stations = new ArrayList<>(stations);
-       this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
+        this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         this.reservations = new ArrayList<>();
         this.bbox = bbox;
         this.random = SimulationRandom.getGeneralInstance();

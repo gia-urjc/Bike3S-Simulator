@@ -29,11 +29,6 @@ public class GlobalInfo {
     private long randomSeed;
 
     /**
-     * It is the absolute route of the used map.
-     */
-    private String map;
-
-    /**
      * It delimits the simulation area.
      */
     private BoundingBox boundingBox;
@@ -71,10 +66,6 @@ public class GlobalInfo {
 
     public long getRandomSeed() {
         return randomSeed;
-    }
-
-    public String getMap() {
-        return map;
     }
 
     public BoundingBox getBoundingBox() {

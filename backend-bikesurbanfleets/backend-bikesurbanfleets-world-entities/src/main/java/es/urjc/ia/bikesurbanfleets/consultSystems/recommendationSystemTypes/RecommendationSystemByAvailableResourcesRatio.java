@@ -1,8 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;

@@ -67,7 +67,7 @@ public class UserMemory {
         this.user = user;
         this.stationsWithRentalFailedAttempts = new ArrayList<>();
         this.stationsWithReturnFailedAttemptss = new ArrayList<>();
-        this.reservations = new ArrayList();
+        this.reservations = new ArrayList<>();
     }
     public List<Reservation> getReservations() {
     	return reservations;

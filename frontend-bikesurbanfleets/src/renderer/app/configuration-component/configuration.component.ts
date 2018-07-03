@@ -8,9 +8,10 @@ import {EntryPointDataType} from "../../../shared/configuration";
 import {ConfigurationUtils} from "./configuration.utils";
 const  {dialog} = (window as any).require('electron').remote;
 import {SchemaformComponent} from "../schemaform-component/schemaform.component";
-import * as $ from "jquery";
 import {ConfigurationSaveComponent} from "../configuration-save-component/configurationsave.component";
-
+import * as $ from "jquery";
+import * as L from 'leaflet';
+import 'leaflet-draw';
 
 @Component({
     selector: 'configuration',
@@ -34,6 +35,7 @@ export class ConfigurationComponent {
     lastStation = {
         position: { latitude: 0, longitude: 0}
     };
+    globalConfigValid: boolean = false;
 
     /*
     * Variables for configuration
@@ -74,6 +76,7 @@ export class ConfigurationComponent {
 
     async ngOnInit() {
         this.drawOptions = LeafletDrawFunctions.createLeafletDrawOptions(this.featureGroup);
+        (L as any).drawLocal = LeafletDrawFunctions.createCustomMessages();
         await this.ajax.formSchema.init();
         this.globalFormInit().then();
         this.selectEntryPointFormInit().then();
@@ -131,6 +134,7 @@ export class ConfigurationComponent {
 
     isGlobalFormValid($event: any) {
         console.log('Is global Form Valid?: ' + $event);
+        this.globalConfigValid = $event;
     }
 
     selectEntryPointSubmit(data: EntryPointDataType) {
@@ -149,7 +153,6 @@ export class ConfigurationComponent {
 
     entryPointSubmit(entryPoint: any) {
         entryPoint.entryPointType = {};
-        entryPoint.userType = {};
         entryPoint.entryPointType = this.lastSelectedEntryPointType.entryPointType;
         entryPoint.userType.typeName = this.lastSelectedEntryPointType.userType;
         this.lastCircleAdded.setLatLng({
@@ -186,7 +189,10 @@ export class ConfigurationComponent {
             console.log(data);
             this.globalForm = {
                 schema: JSON.parse(data),
-                data: this.globalData
+                data: this.globalData,
+                options: {
+                    addSubmit: false
+                }
             };
             console.log(this.globalForm);
             return;
@@ -247,6 +253,7 @@ export class ConfigurationComponent {
     updateGlobalFormView() {
         let tab1 = document.getElementById('added-entities');
         let tab2 = document.getElementById('global-form');
+        console.log("tpm");
         if(tab1 !== null && tab2 !== null) {
             tab1.click();
             tab2.click();
@@ -260,6 +267,7 @@ export class ConfigurationComponent {
         modalRef.componentInstance.globalConfiguration = this.globalData;
         modalRef.componentInstance.entryPointConfiguration = this.finalEntryPoints;
         modalRef.componentInstance.stationConfiguration = this.finalStations;
+        modalRef.componentInstance.globalConfigValid = this.globalConfigValid;
     }
 
     selectFolder(): string {

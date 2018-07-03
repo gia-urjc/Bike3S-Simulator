@@ -1,6 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.users.User;
@@ -26,19 +27,24 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
     }
 
     @Override
-    public List<Event> execute() throws Exception {
+    public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
-        user.setInstant(this.instant);
-        debugEventLog();
-        if(!user.returnBikeWithoutReservationTo(station)) {
-            user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);
-            user.setPosition(station.getPosition());
-            debugEventLog("User can't return bike");
-            newEvents = manageSlotReservationDecisionAtOtherStation();
-        } else {
-        	leaveSystem();
-            debugEventLog("User returns the bike");
-            
+        try {
+            user.setInstant(this.instant);
+            debugEventLog();
+            if(!user.returnBikeWithoutReservationTo(station)) {
+                user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);
+                user.setPosition(station.getPosition());
+                debugEventLog("User can't return bike");
+                newEvents = manageSlotReservationDecisionAtOtherStation();
+            } else {
+                leaveSystem();
+                debugEventLog("User returns the bike");
+                debugClose(user, user.getId());
+            }
+        }
+        catch(Exception e) {
+            exceptionTreatment(e);
         }
         return newEvents;
     }

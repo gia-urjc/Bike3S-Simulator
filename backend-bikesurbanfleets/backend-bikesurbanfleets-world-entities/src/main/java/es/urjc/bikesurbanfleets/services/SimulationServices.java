@@ -3,16 +3,13 @@ package es.urjc.bikesurbanfleets.services;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphHopperIntegration;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
-import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.RecommendationSystemByAvailableResourcesRatio;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
 import java.io.IOException;
-import java.util.List;
 
 public class SimulationServices {
 
