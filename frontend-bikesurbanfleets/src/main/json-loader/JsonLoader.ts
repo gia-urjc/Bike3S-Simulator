@@ -2,7 +2,6 @@ import {app} from "electron";
 import * as paths from "path";
 import * as fs from "fs-extra";
 import {IpcUtil} from "../util";
-import {EntryPointDataType} from "../../shared/configuration";
 
 class Channel {
     constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
@@ -34,7 +33,8 @@ export default class JsonLoader {
 
             const channels = [
                 new Channel('get-all-schemas', async () => this.getAllSchemas()),
-                new Channel('write-json', async (jsonInfo: JsonInfo) => this.writeJson(jsonInfo))
+                new Channel('write-json', async (jsonInfo: JsonInfo) => this.writeJson(jsonInfo)),
+                new Channel('load-json', async (path: string) => this.loadJson(path))
             ];
 
             channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
@@ -65,4 +65,16 @@ export default class JsonLoader {
             throw new Error(e);
         }
     }
+
+    static async loadJson(path: string): Promise<any> {
+        try {
+            let data = await fs.readJSON(path);
+            return data;
+        }
+        catch (e) {
+            throw new Error(e);
+        }
+    }
+
+    static validateJson(path: s)
 }

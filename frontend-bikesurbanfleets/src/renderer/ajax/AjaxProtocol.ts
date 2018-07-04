@@ -25,6 +25,7 @@ export interface FormSchemaAjax {
 export interface JsonLoaderAjax {
     init(): Promise<void>;
     getAllSchemas(): Promise<JsonSchemaGroup>;
+    loadJson(path: string): Promise<any>;
     writeJson(jsonInfo: JsonInfo): Promise<boolean>;
     close(): Promise<void>;
 }

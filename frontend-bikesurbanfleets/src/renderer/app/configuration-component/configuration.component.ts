@@ -268,6 +268,14 @@ export class ConfigurationComponent {
         modalRef.componentInstance.entryPointConfiguration = this.finalEntryPoints;
         modalRef.componentInstance.stationConfiguration = this.finalStations;
         modalRef.componentInstance.globalConfigValid = this.globalConfigValid;
+        console.log("Global Data");
+        console.log(this.globalData);
+        console.log("Entry Points");
+        console.log(this.finalEntryPoints);
+        console.log("Stations");
+        console.log(this.finalStations);
+        console.log("Features");
+        console.log(this.featureGroup);
     }
 
     selectFolder(): string {
