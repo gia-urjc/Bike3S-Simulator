@@ -9,7 +9,6 @@ import { ipcMain, ipcRenderer } from 'electron';
 import { BackendController } from "./util";
 import JsonLoader from "./json-loader/JsonLoader";
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
-import { CsvGenerator } from './dataAnalysis/analysis/generators/CsvGenerator';
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;
@@ -86,6 +85,7 @@ export namespace Main {
     }
 
     export function initMenu() {
+        
         HistoryReaderController.enableIpc();
         Settings.enableIpc();
         BackendController.enableIpc();

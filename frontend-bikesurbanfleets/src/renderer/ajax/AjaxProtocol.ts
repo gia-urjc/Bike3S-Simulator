@@ -34,6 +34,7 @@ export interface BackendAjax {
     init(): Promise<void>;
     generateUsers(args: UserGeneratorArgs): Promise<void>;
     simulate(args: CoreSimulatorArgs): Promise<void>;
+    cancelSimulation(): Promise<void>;
     closeBackend(): Promise<void>;
 }
 

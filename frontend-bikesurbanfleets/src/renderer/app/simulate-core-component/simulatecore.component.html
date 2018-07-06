@@ -50,9 +50,6 @@
 <ng-template #content let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title">{{resultMessage}}</h4>
-        <button type="button" class="close" aria-label="Close" (click)="c('Close click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
     </div>
     <div class="modal-body">
         <div *ngIf="errors">
@@ -65,7 +62,7 @@
         <p><ngb-progressbar id="progress-bar" type="success" [value]="percentage" [striped]="true" [animated]="true">{{percentage}}</ngb-progressbar></p>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+        <button *ngIf="!finished" type="button" class="btn btn-outline-dark" (click)="cancelSimulation()">Cancel</button>
     </div>
 </ng-template>
 

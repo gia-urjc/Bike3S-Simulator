@@ -171,7 +171,7 @@ Sparky.task('build:data-analyser', () => {
         experimentalFeatures: true
     });
 
-    const main = fuse.bundle('data-analyser.js').instructions('> [main/DataAnalyserTool.ts]');
+    const main = fuse.bundle('data-analyser.js').instructions('>main/DataAnalyserTool.ts');
 
     return fuse.run();
 });
@@ -180,16 +180,17 @@ Sparky.task('build:frontend:main', () => {
     const fuse = FuseBox.init({
         homeDir: projectRoot.frontend.src(),
         output: path.join(projectRoot.build.frontend(), '$name.js'),
-        target: 'server',
         experimentalFeatures: true,
-        cache: !production,
+        ignoreModules: ['electron'],
         plugins: [
-            EnvPlugin({ target: production ? 'production' : 'development' })
+            EnvPlugin({ target: production ? 'production' : 'development' }),
+            JSONPlugin()
         ]
     });
 
-    const main = fuse.bundle('main').instructions('> [main/main.ts]');
+    const main = fuse.bundle('main.js').instructions('>main/main.ts');
 
+    
     if (!production) {
         // main.watch('main/**');
         return fuse.run().then(() => {
@@ -198,10 +199,10 @@ Sparky.task('build:frontend:main', () => {
                 shell: true, // necessary on windows
                 stdio: 'inherit' // pipe to calling process
             });
-    });
-}
+        });
+    }
 
-return fuse.run();
+    return fuse.run();
 });
 
 Sparky.task('build:frontend:renderer', () => {
@@ -223,7 +224,8 @@ Sparky.task('build:frontend:renderer', () => {
             WebIndexPlugin({
                 template: path.join(projectRoot.frontend.renderer(), 'index.html'),
                 path: '.'
-            })
+            }),
+            JSONPlugin()
         ]
     });
 
@@ -249,7 +251,7 @@ Sparky.task('build:frontend:renderer', () => {
     const destination = path.join(projectRoot.build.frontend(), 'styles.css');
     fs.copySync(globalCss, destination);
 
-    const packageProdOrig = path.join(projectRoot(), 'package_production.json');
+    const packageProdOrig = path.join(projectRoot(), 'package.json');
     const packageProdDest = path.join(projectRoot.build(), 'package.json');
     fs.copySync(packageProdOrig, packageProdDest);
 

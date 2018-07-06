@@ -23,7 +23,6 @@ export class TimeEntryIterator implements Iterator {
             let timeEntry: TimeEntry | undefined = await it.nextTimeEntry();
        
             while(timeEntry !== undefined) {
-                console.log(timeEntry);
                 this.notify(timeEntry);
                 timeEntry = await it.nextTimeEntry();
             }

@@ -1,7 +1,7 @@
 import * as paths from 'path';
 import * as Ajv from 'ajv';
 import * as fs from 'fs-extra';
-import { spawn } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 import { app } from 'electron';
 import { IpcUtil } from './index';
 import {Main} from "../main";
@@ -54,6 +54,9 @@ export default class BackendController {
     private entryPointSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-config.json'));
     private usersConfigSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/users-config.json'));
 
+    private userGenProcess?: ChildProcess;
+    private simulationProcess?: ChildProcess;
+
     public static async create(): Promise<BackendController> {
         return new BackendController();
     }
@@ -64,7 +67,8 @@ export default class BackendController {
 
             this.channels = [
                 new Channel('backend-call-generate-users', async (args: UserGeneratorArgs) => await backendCalls.generateUsers(args)),
-                new Channel('backend-call-core-simulation', async (args: CoreSimulatorArgs) => await backendCalls.simulate(args))
+                new Channel('backend-call-core-simulation', async (args: CoreSimulatorArgs) => await backendCalls.simulate(args)),
+                new Channel('backend-call-cancel-simulation', async () => await backendCalls.cancelSimulation())
             ];
 
             this.channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
@@ -134,7 +138,7 @@ export default class BackendController {
                 }
 
                 
-                const userGen = spawn('java', [
+                this.userGenProcess = spawn('java', [
                     '-jar',
                     'bikesurbanfleets-config-usersgenerator-1.0.jar',
                     '-entryPointsInput', '"' + args.entryPointsConfPath + '"',
@@ -146,15 +150,16 @@ export default class BackendController {
                     shell: true
                 });
 
-                userGen.stderr.on('data', (data) => {
+                this.userGenProcess.stderr.on('data', (data) => {
                     this.sendInfoToGui('user-gen-error', data.toString());
                 });
 
-                userGen.stdout.on('data', (data) => {
+                this.userGenProcess.stdout.on('data', (data) => {
                     this.sendInfoToGui('user-gen-data', data.toString());
                 });
 
-                userGen.on('close', (code) => {
+                this.userGenProcess.on('close', (code) => {
+                    this.userGenProcess = undefined;
                     if (code === 0) {
                         console.log('User generation finished');
                         resolve();
@@ -204,14 +209,14 @@ export default class BackendController {
 
                 //User generation validation
                 let usersValidation = this.validateConfiguration(this.usersConfigSchema, usersConf);
-                console.log("Users Validation " + usersValidation);
+                console.log("Users Validation " + usersValidation.result);
                 if(!usersValidation.result) {
                     this.sendInfoToGui('core-error', usersValidation.errors);
                     reject("Error validating users", + usersValidation.errors);
                 }
             
                     
-                const sim = spawn('java', [
+                this.simulationProcess = spawn('java', [
                     '-DLogFilePath=${HOME}/.Bike3S/',
                     '-jar',
                     'bikesurbanfleets-core-1.0.jar',
@@ -227,15 +232,16 @@ export default class BackendController {
                 });
 
 
-                sim.stderr.on('data', (data) => {
+                this.simulationProcess.stderr.on('data', (data) => {
                     this.sendInfoToGui('core-error', data.toString());
                 });
 
-                sim.stdout.on('data', (data) => {
+                this.simulationProcess.stdout.on('data', (data) => {
                     this.sendInfoToGui('core-data', data.toString());
                 });
 
-                sim.on('close', (code) => {
+                this.simulationProcess.on('close', (code) => {
+                    this.simulationProcess = undefined;
                     if (code === 0) {
                         console.log("Simulation Finished");
                         resolve();
@@ -259,4 +265,17 @@ export default class BackendController {
         
     }
 
+    public cancelSimulation(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if(this.simulationProcess) {
+                this.simulationProcess.kill();
+                console.log("Simulation interrupted");
+                resolve();
+            }
+            reject("Proccess is not executing");
+        });
+    }
+
+
+    
 }

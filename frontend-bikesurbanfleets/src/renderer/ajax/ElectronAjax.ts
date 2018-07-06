@@ -124,6 +124,10 @@ class ElectronBackend implements BackendAjax {
         return await readIpc('backend-call-core-simulation', args);
     }
 
+    async cancelSimulation(): Promise<void> {
+        return await readIpc('backend-call-cancel-simulation');
+    }
+
     async closeBackend(): Promise<void> {
         return await readIpc('backend-call-close');
     }
