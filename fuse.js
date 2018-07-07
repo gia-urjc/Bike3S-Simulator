@@ -1,7 +1,7 @@
 process.env.SPARKY_LOG = false;
 
 const { FuseBox, Sparky } = require('fuse-box');
-const { EnvPlugin, CSSPlugin, CSSResourcePlugin, RawPlugin, WebIndexPlugin, JSONPlugin } = require('fuse-box');
+const { EnvPlugin, CSSPlugin, CSSResourcePlugin, RawPlugin, WebIndexPlugin, JSONPlugin, QuantumPlugin } = require('fuse-box');
 
 const log = require('fliplog');
 const express = require('express');
@@ -180,15 +180,23 @@ Sparky.task('build:frontend:main', () => {
     const fuse = FuseBox.init({
         homeDir: projectRoot.frontend.src(),
         output: path.join(projectRoot.build.frontend(), '$name.js'),
+        target: 'server',
         experimentalFeatures: true,
         ignoreModules: ['electron'],
         plugins: [
             EnvPlugin({ target: production ? 'production' : 'development' }),
-            JSONPlugin()
+            JSONPlugin(),
+            production && QuantumPlugin({
+                bakeApiIntoBundle : 'main',
+                target : 'server',
+                treeshake: true,
+                removeExportsInterop: false,
+                uglify: true
+            })
         ]
     });
 
-    const main = fuse.bundle('main.js').instructions('>main/main.ts');
+    const main = fuse.bundle('main').instructions('>main/main.ts');
 
     
     if (!production) {
@@ -225,7 +233,14 @@ Sparky.task('build:frontend:renderer', () => {
                 template: path.join(projectRoot.frontend.renderer(), 'index.html'),
                 path: '.'
             }),
-            JSONPlugin()
+            JSONPlugin(),
+            production && QuantumPlugin({
+                bakeApiIntoBundle : false,
+                target : 'electron',
+                treeshake: true,
+                removeExportsInterop: false,
+                uglify: true
+            })
         ]
     });
 
@@ -251,7 +266,7 @@ Sparky.task('build:frontend:renderer', () => {
     const destination = path.join(projectRoot.build.frontend(), 'styles.css');
     fs.copySync(globalCss, destination);
 
-    const packageProdOrig = path.join(projectRoot(), 'package.json');
+    const packageProdOrig = path.join(projectRoot(), 'package_prod.json');
     const packageProdDest = path.join(projectRoot.build(), 'package.json');
     fs.copySync(packageProdOrig, packageProdDest);
 
