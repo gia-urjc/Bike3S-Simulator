@@ -185,14 +185,7 @@ Sparky.task('build:frontend:main', () => {
         ignoreModules: ['electron'],
         plugins: [
             EnvPlugin({ target: production ? 'production' : 'development' }),
-            JSONPlugin(),
-            production && QuantumPlugin({
-                bakeApiIntoBundle : 'main',
-                target : 'server',
-                treeshake: true,
-                removeExportsInterop: false,
-                uglify: true
-            })
+            JSONPlugin()
         ]
     });
 

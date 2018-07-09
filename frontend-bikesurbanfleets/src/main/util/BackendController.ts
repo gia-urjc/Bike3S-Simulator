@@ -1,12 +1,14 @@
 import * as paths from 'path';
 import * as Ajv from 'ajv';
 import * as fs from 'fs-extra';
+import * as kill from 'tree-kill';
 import { spawn, ChildProcess } from 'child_process';
 import { app } from 'electron';
 import { IpcUtil } from './index';
 import {Main} from "../main";
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
 import Channel from './Channel';
+import { truncate } from 'fs';
 
 interface ValidationInfo {
     result: boolean;
@@ -114,12 +116,9 @@ export default class BackendController {
             let rootPath = app.getAppPath();
 			let entryPointsConf, globalConf: any; 
 			try {
-				entryPointsConf = await fs.readJson(args.entryPointsConfPath);
-				let globalConfData = await fs.readFile(args.globalConfPath);
-				let globalConfStr = globalConfData.toString();
-				globalConfStr = globalConfStr.replace(/\\/g, "/");
-                globalConf = JSON.parse(globalConfStr);
-                
+                entryPointsConf = await fs.readJson(args.entryPointsConfPath);
+                globalConf = await fs.readJson(args.globalConfPath);
+
                 // Entry Point Validation
                 let entryPointsValidation = this.validateConfiguration(this.entryPointSchema, entryPointsConf);
                 console.log("Validation Entry Points: " + entryPointsValidation);
@@ -174,6 +173,7 @@ export default class BackendController {
                     + "Global Configuration: " + args.globalConfPath + "\n"
                     + "Entry Points configuration: " + args.entryPointsConfPath + "\n";
                 this.sendInfoToGui('user-gen-error', errorMessage);
+                this.sendInfoToGui('user-gen-error', 'Exception:' + error);
                 reject(errorMessage);
 			}
         });
@@ -184,10 +184,7 @@ export default class BackendController {
             let rootPath = app.getAppPath();
             let globalConf, stationsConf, usersConf: any;
             try {
-				let globalConfData  = await fs.readFile(args.globalConfPath);
-				let globalConfStr = globalConfData.toString();
-				globalConfStr = globalConfStr.replace(/\\/g, "/");
-                globalConf =  JSON.parse(globalConfStr);
+				globalConf  = await fs.readJson(args.globalConfPath);
                 stationsConf = await fs.readJson(args.stationsConfPath);
                 usersConf = await fs.readJsonSync(args.usersConfPath);
 
@@ -268,14 +265,12 @@ export default class BackendController {
     public cancelSimulation(): Promise<void> {
         return new Promise((resolve, reject) => {
             if(this.simulationProcess) {
-                this.simulationProcess.kill();
+                kill(this.simulationProcess.pid);
                 console.log("Simulation interrupted");
                 resolve();
             }
             reject("Proccess is not executing");
         });
     }
-
-
     
 }

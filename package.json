@@ -79,6 +79,7 @@
     "moment": "^2.20.1",
     "ng-font-awesome": "github:tao-cumplido/ng-font-awesome",
     "popper.js": "^1.14.3",
+    "tree-kill": "^1.2.0",
     "rxjs": "^5.5.5",
     "zone.js": "^0.8.18"
   },

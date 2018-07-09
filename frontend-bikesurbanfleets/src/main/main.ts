@@ -157,9 +157,9 @@ export namespace Main {
             shell.openExternal(url); // opens links (or dragged documents) in external browser
         });
 
-        if (process.env.target === 'development') {
-            visualization.webContents.openDevTools();
-        }
+        //if (process.env.target === 'development') {
+        //    visualization.webContents.openDevTools();
+        //}
 
         visualization.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/visualization');
     }

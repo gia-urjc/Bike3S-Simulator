@@ -63,6 +63,8 @@
     </div>
     <div class="modal-footer">
         <button *ngIf="!finished" type="button" class="btn btn-outline-dark" (click)="cancelSimulation()">Cancel</button>
+        <button *ngIf="finished" type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+
     </div>
 </ng-template>
 
