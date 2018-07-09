@@ -283,5 +283,10 @@ export namespace Main {
 
 Main.initMenu();
 if (process.env.target === 'development') {
-    Main.test();
+    try {
+        Main.test();
+    }
+    catch(error) {
+       
+    }
 }

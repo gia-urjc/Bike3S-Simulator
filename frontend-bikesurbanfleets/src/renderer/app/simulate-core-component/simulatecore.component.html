@@ -59,6 +59,20 @@
         <div *ngIf="!finished">
             <simulationspinner-component></simulationspinner-component>
         </div>
+        <hr *ngIf="!finished">
+        <div class="info-modal" *ngIf="this.percentage === 0">
+            <span>Loading map <img class="icon-loading" alt="Loading animation" src="assets/gears_loading.gif"></span>
+        </div>
+        <div class="info-modal" *ngIf="this.percentage !== 0">
+            <span>Map Loaded <img class="icon-ok" alt="Ok icon" src="assets/ok.png"></span>
+        </div>
+        <div class="info-modal" *ngIf="this.percentage !== 0 && this.percentage !== 100">
+            <span>Simulating <img class="icon-loading" alt="Loading animation" src="assets/cycling.gif"></span>
+        </div>
+        <div class="info-modal" *ngIf="this.percentage === 100">
+            <span>Simulation Finished <img class="icon-ok" alt="Ok icon" src="assets/ok.png"></span>
+        </div>
+        <hr>
         <p><ngb-progressbar id="progress-bar" type="success" [value]="percentage" [striped]="true" [animated]="true">{{percentage}}</ngb-progressbar></p>
     </div>
     <div class="modal-footer">
