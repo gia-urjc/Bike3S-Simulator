@@ -1,14 +1,16 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -106,9 +108,9 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 	}
 
 	@Override
-	public List<Station> recommendStationToRentBike(GeoPoint point) {
+	public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
 		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations());
-		List<Station> result;
+		List<Recommendation> result;
 		if (!stations.isEmpty()) {
 		List<Station> nearer = nearerStations(point, stations);
 		List<Station> farther = fartherStations(point, stations);
@@ -117,7 +119,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 		farther = farther.stream().sorted(byBikesRatio).collect(Collectors.toList());
 
 		nearer.addAll(farther);
-		result = rebalanceWhenRenting(nearer);
+		result = rebalanceWhenRenting(nearer).stream().map( station -> new Recommendation(station, null)).collect(Collectors.toList());
 		}
 		else {
 			result = new ArrayList<>();
@@ -125,27 +127,18 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 		return result;
 	}
 
-	public List<Station> recommendStationToReturnBike(GeoPoint point) {
+	public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
 		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations());
-		List<Station> result;
+		List<Recommendation> result;
 		if (!stations.isEmpty()) {
 		List<Station> nearer = nearerStations(point, stations);
 		List<Station> farther = fartherStations(point, stations);
-/**		if (stations.size() == 0) {
-			nearer = nearerStations(point, infraestructureManager.consultStations());
-			if (nearer.size() == 0) {
-				farther = fartherStations(point, infraestructureManager.consultStations());
-				stations = farther;
-			} else {
-				stations = nearer;
-			}
-		} */
 		Comparator<Station> bySlotsRatio = stationComparator.bySlotsCapacityRatio();
 		nearer = nearer.stream().sorted(bySlotsRatio).collect(Collectors.toList());
 		farther = farther.stream().sorted(bySlotsRatio).collect(Collectors.toList());
 
 		nearer.addAll(farther);
-		result = rebalanceWhenReturning(nearer);
+		result = rebalanceWhenReturning(nearer).stream().map( station -> new Recommendation(station, null)).collect(Collectors.toList());
 		}
 		else {
 			result = new ArrayList<>();

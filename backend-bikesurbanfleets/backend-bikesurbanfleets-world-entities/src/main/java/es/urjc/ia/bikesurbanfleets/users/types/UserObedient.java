@@ -10,6 +10,7 @@ import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a user who always follows the first system recommendations i. e., that 
@@ -97,7 +98,8 @@ public class UserObedient extends User {
     @Override
     public Station determineStationToRentBike() {
         Station destination = null;
-        List<Station> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
+        List<Station> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition())
+        		.stream().map( recommendation -> recommendation.getStation()).collect(Collectors.toList());
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
@@ -109,7 +111,8 @@ public class UserObedient extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
+        List<Station> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition())
+        		.stream().map( recommendation -> recommendation.getStation() ).collect(Collectors.toList());
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
