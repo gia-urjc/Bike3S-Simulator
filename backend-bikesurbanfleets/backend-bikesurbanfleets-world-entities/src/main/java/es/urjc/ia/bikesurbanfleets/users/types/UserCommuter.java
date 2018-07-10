@@ -71,8 +71,6 @@ public class UserCommuter extends User {
          */
         private int minRentalAttempts = infraestructure.getRandom().nextInt(4, 7);
 
-        private double cyclingVelocity;
-
         @Override
         public String toString() {
             return "UserEmployeeParameters{" +
@@ -92,9 +90,6 @@ public class UserCommuter extends User {
     public UserCommuter(UserCommuterParameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
-        if(parameters.cyclingVelocity != 0) {
-            this.cyclingVelocity = parameters.cyclingVelocity;
-        }
     }
     
     @Override
