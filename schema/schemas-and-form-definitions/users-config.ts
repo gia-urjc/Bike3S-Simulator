@@ -52,6 +52,7 @@ export const typeParameters = {
         minRentalAttempts: UInt,
         bikeReservationPercentage: Percentage,
         slotReservationPercentage: Percentage,
+        cyclingVelocity: sNumber()
     },
     USER_AVAILABLE_RESOURCES: {
         minReservationAttempts: UInt,
