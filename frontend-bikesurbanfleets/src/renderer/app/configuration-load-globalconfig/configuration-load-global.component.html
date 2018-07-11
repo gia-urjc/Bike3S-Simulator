@@ -1,0 +1,16 @@
+<div class="modal-header">
+    <h4 class="modal-title">Loading Global Configuration</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div *ngIf="isError" class="alert alert-danger">
+    <strong>Error!</strong> {{message}}
+</div>
+<div *ngIf="!isError" class="alert alert-success">
+    {{message}}
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">Close</button>
+</div>

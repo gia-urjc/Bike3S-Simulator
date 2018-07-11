@@ -144,7 +144,7 @@ class JsonLoader implements JsonLoaderAjax {
     }
 
     async loadJson(path: string): Promise<any> {
-        return await readIpc('read-json', path);
+        return await readIpc('load-json-global', path);
     }
 
     async writeJson(jsonInfo: JsonInfo): Promise<boolean> {

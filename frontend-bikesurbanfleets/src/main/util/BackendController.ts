@@ -1,5 +1,4 @@
 import * as paths from 'path';
-import * as Ajv from 'ajv';
 import * as fs from 'fs-extra';
 import * as kill from 'tree-kill';
 import { spawn, ChildProcess } from 'child_process';
@@ -8,12 +7,7 @@ import { IpcUtil } from './index';
 import {Main} from "../main";
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
 import Channel from './Channel';
-import { truncate } from 'fs';
-
-interface ValidationInfo {
-    result: boolean;
-    errors: string;
-}
+import { validate, ValidationInfo } from '../../shared/util';
 
 interface ArgumentInfo {
     title: string;
@@ -93,16 +87,6 @@ export default class BackendController {
         this.window = Main.simulate;
     }
 
-    private validateConfiguration(schemaFile: string, configurationFile: string): ValidationInfo {
-        let ajv = new Ajv({$data: true});
-        let valid = ajv.validate(schemaFile, configurationFile);
-
-        if(valid) {
-            return {result: true, errors: ajv.errorsText()};
-        }
-        return {result: false, errors: ajv.errorsText()};
-    }
-
     private sendInfoToGui(channel: string, message: string): void {
         if(this.window) {
             console.log(message.toString());
@@ -120,7 +104,7 @@ export default class BackendController {
                 globalConf = await fs.readJson(args.globalConfPath);
 
                 // Entry Point Validation
-                let entryPointsValidation = this.validateConfiguration(this.entryPointSchema, entryPointsConf);
+                let entryPointsValidation: ValidationInfo = validate(this.entryPointSchema, entryPointsConf);
                 console.log("Validation Entry Points: " + entryPointsValidation);
                 if(!entryPointsValidation.result) {
                     this.sendInfoToGui('user-gen-error', entryPointsValidation.errors);
@@ -129,7 +113,7 @@ export default class BackendController {
                 
                 
                 //Global Configuration Validation
-                let globalValidation = this.validateConfiguration(this.globalSchema, globalConf);
+                let globalValidation: ValidationInfo = validate(this.globalSchema, globalConf);
                 console.log("Global Validation: " + globalValidation.result);
                 if(!globalValidation.result) {
                     this.sendInfoToGui('user-gen-error', globalValidation.errors);
@@ -189,7 +173,7 @@ export default class BackendController {
                 usersConf = await fs.readJsonSync(args.usersConfPath);
 
                 //Global Configuration Validation
-                let globalValidation = this.validateConfiguration(this.globalSchema , globalConf);
+                let globalValidation: ValidationInfo = validate(this.globalSchema , globalConf);
                 console.log("Global Validation: " + globalValidation.result);
                 if(!globalValidation.result) {
                     this.sendInfoToGui('core-error', globalValidation.errors);
@@ -197,7 +181,7 @@ export default class BackendController {
                 }
 
                 //Stations Configuration Validation
-                let stationsValidation = this.validateConfiguration(this.stationsSchema, stationsConf);
+                let stationsValidation: ValidationInfo = validate(this.stationsSchema, stationsConf);
                 console.log("Stations Validation " + stationsValidation.result);
                 if(!stationsValidation.result) {
                     this.sendInfoToGui('core-error', stationsValidation.errors);
@@ -205,7 +189,7 @@ export default class BackendController {
                 }
 
                 //User generation validation
-                let usersValidation = this.validateConfiguration(this.usersConfigSchema, usersConf);
+                let usersValidation: ValidationInfo = validate(this.usersConfigSchema, usersConf);
                 console.log("Users Validation " + usersValidation.result);
                 if(!usersValidation.result) {
                     this.sendInfoToGui('core-error', usersValidation.errors);

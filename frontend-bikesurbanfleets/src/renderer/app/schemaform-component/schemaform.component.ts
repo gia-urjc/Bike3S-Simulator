@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ChangeDetectorRef} from '@angular/core';
 
 @Component({
     selector: 'schema-form',
@@ -19,16 +19,24 @@ export class SchemaformComponent implements OnInit {
     @Output('isValid')
     isValid = new EventEmitter<any>();
 
+    reloadingForm: boolean;
+
     actualData: any;
 
-    constructor() {
+    constructor(private cdRef: ChangeDetectorRef) {
     }
 
     ngOnInit(): void {
     }
 
     resetForm() {
-        console.log(this.form);
+        this.reloadingForm = true;
+        this.cdRef.detectChanges();
+        let jsonForm = document.getElementById("json-form");
+        this.reloadingForm = false;
+        if(jsonForm) {
+            jsonForm.click();
+        }
     }
 
     submit(data: any) {

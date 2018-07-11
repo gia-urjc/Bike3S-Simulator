@@ -3,7 +3,7 @@ import {AjaxProtocol} from "../../ajax/AjaxProtocol";
 import {Layer, Rectangle, FeatureGroup, Circle, Marker} from "leaflet";
 import {LeafletDrawFunctions, FormJsonSchema, EntryPoint, Station} from "./config-definitions";
 import {ConfigurationLeaflethandler} from "./configuration.leaflethandler";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
 import {EntryPointDataType} from "../../../shared/configuration";
 import {ConfigurationUtils} from "./configuration.utils";
 const  {dialog} = (window as any).require('electron').remote;
@@ -12,6 +12,7 @@ import {ConfigurationSaveComponent} from "../configuration-save-component/config
 import * as $ from "jquery";
 import * as L from 'leaflet';
 import 'leaflet-draw';
+import { ConfigurationLoadGlobalComponent } from "../configuration-load-globalconfig/configuration-load-global.component";
 
 @Component({
     selector: 'configuration',
@@ -279,6 +280,23 @@ export class ConfigurationComponent {
 
     selectFolder(): string {
         return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0];
+    }
+
+    selectFile(): string {
+		return dialog.showOpenDialog({
+            properties: ['openFile', 'createDirectory'],
+            filters: [{name: 'JSON Files', extensions: ['json']}]
+        })[0].replace(/\\/g, "/");
+    }
+
+    async loadGlobalConfig() {
+        let file = this.selectFile();
+        let modalRef: NgbModalRef = this.modalService.open(ConfigurationLoadGlobalComponent);
+        modalRef.componentInstance.path = file;
+        modalRef.result.then((globalData) => {
+            Object.assign(this.globalData, globalData);
+            this.gsForm.resetForm();
+        });
     }
 
 }

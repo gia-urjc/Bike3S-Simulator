@@ -24,6 +24,7 @@ import {JsonTreeViewComponent} from "./jsoneditor-component/jsoneditor.component
 import {ConfigurationSaveComponent} from "./configuration-save-component/configurationsave.component";
 import { AnalyseHistoryComponent } from './analyse-history-component/analysehistory.component';
 import {FlexLayoutModule} from "@angular/flex-layout";
+import { ConfigurationLoadGlobalComponent } from './configuration-load-globalconfig/configuration-load-global.component';
 
 @NgModule({
     imports: [
@@ -54,7 +55,8 @@ import {FlexLayoutModule} from "@angular/flex-layout";
         ConfigurationComponent,
         JsonTreeViewComponent,
         ConfigurationSaveComponent,
-        AnalyseHistoryComponent
+        AnalyseHistoryComponent,
+        ConfigurationLoadGlobalComponent
     ],
     bootstrap: [AppComponent],
     providers: [{
@@ -62,7 +64,8 @@ import {FlexLayoutModule} from "@angular/flex-layout";
         useClass: ElectronAjax
     }, NgbModal],
     entryComponents: [
-        ConfigurationSaveComponent
+        ConfigurationSaveComponent,
+        ConfigurationLoadGlobalComponent
     ]
 })
 export class AppModule {}

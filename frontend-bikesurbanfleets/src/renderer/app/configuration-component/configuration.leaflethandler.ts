@@ -18,7 +18,6 @@ export class ConfigurationLeaflethandler {
             component.hasBoundingBox = true;
             component.globalFormInit().then(() => {
                 component.gsForm.resetForm();
-                component.updateGlobalFormView();
                 $('.leaflet-draw-draw-rectangle').hide();
             });
         } else {
@@ -46,7 +45,12 @@ export class ConfigurationLeaflethandler {
 
     static onDeleteBoundingBoxHandler(component: ConfigurationComponent) {
         $('.leaflet-draw-draw-rectangle').show();
+        component.globalData.boundingBox.northWest.latitude = 0;
+        component.globalData.boundingBox.northWest.longitude = 0;
+        component.globalData.boundingBox.southEast.latitude = 0;
+        component.globalData.boundingBox.southEast.longitude = 0;
         component.hasBoundingBox = false;
+        component.gsForm.resetForm();
     }
 
 }

@@ -42,9 +42,9 @@
                 Load Configuration
             </button>
             <div ngbDropdownMenu class="dropdown-menu">
-                <a class="dropdown-item" href="#">Load Global Configuration</a>
-                <a class="dropdown-item" href="#">Load Entry Points</a>
-                <a class="dropdown-item" href="#">Load Stations</a>
+                <a class="dropdown-item" (click)="loadGlobalConfig()">Load Global Configuration</a>
+                <a class="dropdown-item">Load Entry Points</a>
+                <a class="dropdown-item">Load Stations</a>
             </div>
         </div>
         <div class="fixed-button-save col-xs-3">
