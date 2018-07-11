@@ -49,7 +49,7 @@ public class UserRandom extends User {
     	List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
     	stations.removeAll(triedStations);
         //Remove station if the user is in this station
-        stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        stations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
         if(!stations.isEmpty()) {
             int index = infraestructure.getRandom().nextInt(0, stations.size());
             return stations.get(index);

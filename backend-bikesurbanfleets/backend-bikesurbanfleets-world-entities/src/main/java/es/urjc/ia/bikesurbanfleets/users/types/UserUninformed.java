@@ -52,7 +52,7 @@ public class UserUninformed extends User {
         stations.removeAll(triedStations);
 
         //Remove station if the user is in this station
-        stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        stations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
         
         Comparator<Station> criteria = services.getStationComparator().byDistance(this.getPosition());
         stations.stream().sorted(criteria).collect(Collectors.toList());
