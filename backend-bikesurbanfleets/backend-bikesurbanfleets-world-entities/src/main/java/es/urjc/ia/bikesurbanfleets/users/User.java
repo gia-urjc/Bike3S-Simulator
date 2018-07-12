@@ -60,12 +60,12 @@ public abstract class User implements Entity {
     /**
      * Speed in meters per second at which user walks.
      */
-    private double walkingVelocity;
+    protected double walkingVelocity;
 
     /**
      * Speed in meters per second at which user cycles.
      */
-    private double cyclingVelocity;
+    protected double cyclingVelocity;
 
     /**
      * It indicates if user has a reserved bike currently.

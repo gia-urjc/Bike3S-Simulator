@@ -134,7 +134,7 @@ public class UserTourist extends User {
         Station destination = null;
 
         //Remove station if the user is in this station
-        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
         if (!recommendedStations.isEmpty()) {
              List<Station> nearestStations = new ArrayList<>();
 	                

@@ -112,7 +112,7 @@ public class UserAvailableResources extends User {
         List<Station> recommendedStations = informationSystem.getStationsOrderedByNumberOfBikes();
         Station destination = null;
         //Remove station if the user is in this station
-        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
         }
