@@ -143,8 +143,16 @@ class JsonLoader implements JsonLoaderAjax {
         return await readIpc('get-all-schemas');
     }
 
-    async loadJson(path: string): Promise<any> {
+    async loadJsonGlobal(path: string): Promise<any> {
         return await readIpc('load-json-global', path);
+    }
+
+    async loadJsonEntryPoints(path: string): Promise<any> {
+        return await readIpc('load-json-entry-points', path);
+    }
+
+    async loadJsonStations(path: string): Promise<any> {
+        return await readIpc('load-json-stations', path);
     }
 
     async writeJson(jsonInfo: JsonInfo): Promise<boolean> {

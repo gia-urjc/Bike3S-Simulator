@@ -39,8 +39,8 @@ export default class JsonLoader {
                 new Channel('get-all-schemas', async () => await jsonLoader.getAllSchemas()),
                 new Channel('write-json', async (jsonInfo: JsonInfo) => await jsonLoader.writeJson(jsonInfo)),
                 new Channel('load-json-global', async (path: string) => await jsonLoader.loadGlobalConfig(path)),
-                new Channel('load-json-entry-points', async (path: string) => await jsonLoader.entryPointsConfSchema(path)),
-                new Channel('load-json-stations', async (path: string) => await jsonLoader.stationConfigurationSchema(path))
+                new Channel('load-json-entry-points', async (path: string) => await jsonLoader.loadEntryPointsConfig(path)),
+                new Channel('load-json-stations', async (path: string) => await jsonLoader.loadStationsConfig(path))
             ];
 
             channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));

@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import * as kill from 'tree-kill';
 import { spawn, ChildProcess } from 'child_process';
 import { app } from 'electron';
-import { IpcUtil } from './index';
+import { IpcUtil } from '.';
 import {Main} from "../main";
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
 import Channel from './Channel';

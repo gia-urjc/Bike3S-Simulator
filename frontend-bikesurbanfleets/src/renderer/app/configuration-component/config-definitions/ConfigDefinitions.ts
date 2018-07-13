@@ -1,6 +1,11 @@
 import {Circle, DivIcon, FeatureGroup, Marker} from "leaflet";
 import {PlainObject} from "../../../../shared/util";
 
+export enum ConfigurationFile {
+    GLOBAL_CONFIGURATION,
+    ENTRYPOINT_CONFIGURATION,
+    STATION_CONFIGURATION
+}
 
 export class Station{
     private stationInfo: any;
@@ -125,14 +130,15 @@ export namespace LeafletDrawFunctions {
                 polygon: false,
                 rectangle: {
                     shapeOptions: {
-                        opacity: 0.4,
-                        weight: 4
+                        opacity: 1,
                     }
                 },
                 circlemarker: false,
                 circle: {
                     shapeOptions: {
+                        opacity: 1,
                         color: '#e81b1b',
+                        weight: 2
                     }
                 },
                 marker: {

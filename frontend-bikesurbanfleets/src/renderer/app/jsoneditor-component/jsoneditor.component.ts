@@ -1,10 +1,11 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, ChangeDetectorRef} from "@angular/core";
+import { EntryPoint } from "../configuration-component/config-definitions";
 const JSONEditor = require('jsoneditor');
 
 @Component({
     selector: 'json-tree-view',
     template: require('./jsoneditor.component.html'),
-    styles: [require('./jsoneditor.component.css')]
+    styles: []
 })
 export class JsonTreeViewComponent {
 
@@ -14,20 +15,20 @@ export class JsonTreeViewComponent {
     jsonEditor: any;
 
     constructor() {
-
     }
 
     ngOnInit() {
         let container = document.getElementById("json-editor");
         if(container != null) {
-            this.jsonEditor = new JSONEditor(container, {onChange: () => this.onChange()});
+            this.jsonEditor = new JSONEditor(container, {readOnly: true});
             this.jsonEditor.set(this.data);
-            console.log(this.data);
+            console.log("JsonTree: " + this.data);
         }
     }
 
-    onChange() {
-        //TODO Detect changes and send Event to change map figures
+    dataUpdated(data: any) {
+        this.data = data;
+        this.jsonEditor.set(this.data);
     }
 
 }

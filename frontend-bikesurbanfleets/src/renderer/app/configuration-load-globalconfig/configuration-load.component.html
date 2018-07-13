@@ -5,12 +5,15 @@
     </button>
 </div>
 <div *ngIf="isError" class="alert alert-danger">
-    <strong>Error!</strong> {{message}}
+    <p><strong>Error!</strong> {{message}}</p>
+    <p>
+        This error is caused because you've selected the wrong configuration file or your configuration file has not a valid format
+    </p>
 </div>
 <div *ngIf="!isError" class="alert alert-success">
     {{message}}
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="close()">Close</button>
+    <button type="button" class="btn btn-outline-dark" (click)="close()">Ok</button>
 </div>

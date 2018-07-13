@@ -1,0 +1,79 @@
+import { Input, Component, Inject, EventEmitter, Output } from "@angular/core";
+import { AjaxProtocol } from "../../ajax/AjaxProtocol";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { ConfigurationFile } from "../configuration-component/config-definitions/ConfigDefinitions";
+const  {dialog} = (window as any).require('electron').remote;
+
+@Component({
+    selector: 'configuration-load',
+    template: require('./configuration-load.component.html'),
+    styles: []
+})
+export class ConfigurationLoadComponent {
+    
+    @Input()
+    path: string;
+
+    @Input()
+    configurationFile: ConfigurationFile;
+
+    dataLoaded: any;
+
+    isError: boolean;
+    message: string;
+
+    constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol,
+                public activeModal: NgbActiveModal) {
+    }
+
+    async ngOnInit() {
+        try {
+            await this.ajax.jsonLoader.init();
+        }
+        catch(error) {
+            dialog.showErrorBox("Error", `Error loading schemas: ${error}`);
+        }
+        switch(this.configurationFile) {
+            case ConfigurationFile.GLOBAL_CONFIGURATION: await this.loadGlobalConfig(); break;
+            case ConfigurationFile.ENTRYPOINT_CONFIGURATION: await this.loadEntryPointConfig(); break;
+        }
+    }
+
+    async ngOnDestroy() {
+        this.ajax.jsonLoader.close();
+    }
+
+
+    async loadGlobalConfig() {
+        let globalData: any;
+        try {
+            if(this.path) {
+                this.dataLoaded = await this.ajax.jsonLoader.loadJsonGlobal(this.path);
+                this.message = "Global configuration loaded";
+            }
+            
+        }
+        catch(error) {
+            this.isError = true;
+            this.message = error.message; 
+        }
+    }
+
+    async loadEntryPointConfig() {
+        let entryPointData: any;
+        try {
+            if(this.path) {
+                this.dataLoaded = await this.ajax.jsonLoader.loadJsonEntryPoints(this.path);
+                this.message = "Entry Points configuration loaded";
+            }
+        }
+        catch(error) {
+            this.isError = true;
+            this.message = error.message + "\n";
+        }
+    }
+
+    close() {
+        this.activeModal.close(this.dataLoaded);
+    }
+}

@@ -8,7 +8,7 @@
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
                                     <div id="globalForm">
-                                        <schema-form #globalSchemaForm [form]="globalForm" (automaticSubmit)="globalFormSubmit($event)" (isValid)="isGlobalFormValid($event)"></schema-form>
+                                        <schema-global-form #globalSchemaForm [form]="globalForm" (isValid)="isGlobalFormValid($event)" (dataSubmited)="globalFormSubmit($event)"></schema-global-form>
                                     </div>
                                 </div>
                             </ng-template>
@@ -23,7 +23,7 @@
                         <ngb-tab id="added-stations" title="Stations">
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
-                                    <json-tree-view [data]="finalStations"></json-tree-view>
+                                    <json-tree-view #jsonTreeStation [data]="finalStations"></json-tree-view>
                                 </div>
                             </ng-template>
                         </ngb-tab>
@@ -43,7 +43,7 @@
             </button>
             <div ngbDropdownMenu class="dropdown-menu">
                 <a class="dropdown-item" (click)="loadGlobalConfig()">Load Global Configuration</a>
-                <a class="dropdown-item">Load Entry Points</a>
+                <a class="dropdown-item" (click)="loadEntryPoints()">Load Entry Points</a>
                 <a class="dropdown-item">Load Stations</a>
             </div>
         </div>
@@ -55,7 +55,7 @@
 <ng-template data-backdrop="static" data-keyboard="false" id="form-select-entry-point" #selecEntryPointType let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title">Select Entry Point and User Type</h4>
-        <button type="button" class="close" aria-label="Close" (click)="c('Close click')">
+        <button type="button" class="close" aria-label="Close" (click)="closeFormEntryPoint()">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -63,15 +63,15 @@
         <schema-form #selectEntryPointFormId [form]="selectEntryPointForm" (dataSubmited)="selectEntryPointSubmit($event)"></schema-form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeFormEntryPoint()">Close</button>
     </div>
-    <button class="hidden-button" id="form-select-entry-point-close" (click)="d('External close')"></button>
+    <button class="hidden-button" id="form-select-entry-point-close" (click)="closeFormEntryPoint()"></button>
 </ng-template>
 
 <ng-template data-backdrop="static" data-keyboard="false" id="form-entry-point" #entryPoint let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title">Entry Point parameters</h4>
-        <button type="button" class="close" aria-label="Close" (click)="c('Close click')">
+        <button type="button" class="close" aria-label="Close" (click)="closeFormEntryPoint()">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -79,9 +79,9 @@
         <schema-form #entryPointFormId [form]="entryPointForm" (dataSubmited)="entryPointSubmit($event)"></schema-form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeFormEntryPoint()">Close</button>
     </div>
-    <button class="hidden-button" id="form-entry-point-close" (click)="d('External close')"></button>
+    <button class="hidden-button" id="form-entry-point-close" (click)="closeFormEntryPoint()"></button>
 </ng-template>
 
 <ng-template data-backdrop="static" data-keyboard="false" id="form-station" #stationModal let-c="close" let-d="dismiss">
@@ -100,6 +100,6 @@
     <button class="hidden-button" id="form-station-close" (click)="d('External close')"></button>
 </ng-template>
 
-<button class="hidden-button" id="form-select-entry-point-button" (click)="openFormEntryPoint(selecEntryPointType)">Open modal</button>
-<button class="hidden-button" id="form-entry-point-button" (click)="openFormEntryPoint(entryPoint)">Open modal</button>
+<button class="hidden-button" id="form-select-entry-point-button" (click)="openForm(selecEntryPointType)">Open modal</button>
+<button class="hidden-button" id="form-entry-point-button" (click)="openForm(entryPoint)">Open modal</button>
 <button class="hidden-button" id="form-station-button" (click)="openStationForm(stationModal)">Open modal</button>

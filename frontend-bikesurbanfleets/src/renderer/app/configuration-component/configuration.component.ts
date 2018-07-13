@@ -1,4 +1,4 @@
-import {Component, Inject, ViewChild} from "@angular/core";
+import {Component, Inject, ViewChild, TemplateRef} from "@angular/core";
 import {AjaxProtocol} from "../../ajax/AjaxProtocol";
 import {Layer, Rectangle, FeatureGroup, Circle, Marker} from "leaflet";
 import {LeafletDrawFunctions, FormJsonSchema, EntryPoint, Station} from "./config-definitions";
@@ -6,13 +6,15 @@ import {ConfigurationLeaflethandler} from "./configuration.leaflethandler";
 import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
 import {EntryPointDataType} from "../../../shared/configuration";
 import {ConfigurationUtils} from "./configuration.utils";
-const  {dialog} = (window as any).require('electron').remote;
-import {SchemaformComponent} from "../schemaform-component/schemaform.component";
+import {SchemaFormComponent} from "../schemaform-component/schemaform.component";
 import {ConfigurationSaveComponent} from "../configuration-save-component/configurationsave.component";
-import * as $ from "jquery";
+import { ConfigurationLoadComponent } from "../configuration-load-globalconfig/configuration-load.component";
+import { ConfigurationFile } from "./config-definitions/ConfigDefinitions";
 import * as L from 'leaflet';
-import 'leaflet-draw';
-import { ConfigurationLoadGlobalComponent } from "../configuration-load-globalconfig/configuration-load-global.component";
+import * as $ from "jquery";
+import { JsonTreeViewComponent } from "../jsoneditor-component/jsoneditor.component";
+const  {dialog} = (window as any).require('electron').remote;
+
 
 @Component({
     selector: 'configuration',
@@ -41,7 +43,7 @@ export class ConfigurationComponent {
     /*
     * Variables for configuration
     */
-    globalData = {
+    globalData: any = {
         boundingBox: {
             northWest: { latitude: 0, longitude:0 },
             southEast: { latitude: 0, longitude:0 }
@@ -49,6 +51,8 @@ export class ConfigurationComponent {
     };
     entryPoints: Array<EntryPoint> = new Array<any>();
     stations: Array<Station> = new Array<any>();
+
+    actualModalOpen: NgbModalRef;
 
     /*
     * Final configurations
@@ -60,7 +64,10 @@ export class ConfigurationComponent {
         "stations": new Array<any>()
     };
 
-    @ViewChild('globalSchemaForm') gsForm: SchemaformComponent;
+    @ViewChild('globalSchemaForm') gsForm: SchemaFormComponent;
+    @ViewChild('entryPoint') entryPointModal: TemplateRef<any>;
+    @ViewChild('jsonTreeEp') jsonTreeEp: JsonTreeViewComponent;
+    @ViewChild('jsonTreeStation') jsonTreeStation: JsonTreeViewComponent;
 
     /*
     * Map control variables
@@ -79,15 +86,16 @@ export class ConfigurationComponent {
         this.drawOptions = LeafletDrawFunctions.createLeafletDrawOptions(this.featureGroup);
         (L as any).drawLocal = LeafletDrawFunctions.createCustomMessages();
         await this.ajax.formSchema.init();
-        this.globalFormInit().then();
-        this.selectEntryPointFormInit().then();
-        this.stationFormInit().then();
+        this.globalFormInit();
+        this.selectEntryPointFormInit();
+        this.stationFormInit();
     }
 
     getMapController(map: L.Map) {
         this.map = map;
         this.drawOptions.edit.featureGroup.addTo(this.map);
         this.defineMapEventHandlers();
+        console.log(this.featureGroup);
     }
 
     defineMapEventHandlers() {
@@ -129,27 +137,24 @@ export class ConfigurationComponent {
 
     globalFormSubmit($event: any) {
         this.globalData = $event;
-        console.log('Global Configuration Updated');
         console.log(this.globalData);
     }
 
     isGlobalFormValid($event: any) {
-        console.log('Is global Form Valid?: ' + $event);
         this.globalConfigValid = $event;
     }
 
-    selectEntryPointSubmit(data: EntryPointDataType) {
-        $('#form-select-entry-point-close').trigger('click');
+    async selectEntryPointSubmit(data: EntryPointDataType) {
+        this.actualModalOpen.close();
         console.log(data);
         this.lastSelectedEntryPointType = data;
-        this.entryPointFormInit(data).then((entryPointData: any) => {
-            entryPointData.position.latitude = this.lastCircleAdded.getLatLng().lat;
-            entryPointData.position.longitude = this.lastCircleAdded.getLatLng().lng;
-            if(this.entryPointForm.schema.properties.radius !== null) {
-                entryPointData.radius = this.lastCircleAdded.getRadius();
-            }
-            $('#form-entry-point-button').trigger('click');
-        });
+        let entryPointData = await this.entryPointFormInit(data);
+        entryPointData.position.latitude = this.lastCircleAdded.getLatLng().lat;
+        entryPointData.position.longitude = this.lastCircleAdded.getLatLng().lng;
+        if(this.entryPointForm.schema.properties.radius !== null) {
+            entryPointData.radius = this.lastCircleAdded.getRadius();
+        }
+        this.actualModalOpen = this.modalService.open(this.entryPointModal);
     }
 
     entryPointSubmit(entryPoint: any) {
@@ -170,7 +175,7 @@ export class ConfigurationComponent {
         this.entryPoints.push(newEntryPoint);
         this.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
         console.log(this.entryPoints);
-        $('#form-entry-point-close').trigger('click');
+        this.actualModalOpen.close();
     }
 
     stationSubmit(station: any) {
@@ -182,32 +187,23 @@ export class ConfigurationComponent {
         this.stations.push(newStation);
         this.finalStations.stations.push(newStation.getStationInfo());
         this.lastMarkerAdded.setIcon(newStation.getIcon());
-        $('#form-station-close').trigger('click');
+        this.actualModalOpen.close();
     }
 
     async globalFormInit() {
-        this.ajax.formSchema.getGlobalSchema().then((data) => {
-            console.log(data);
-            this.globalForm = {
-                schema: JSON.parse(data),
-                data: this.globalData,
-                options: {
-                    addSubmit: false
-                }
-            };
-            console.log(this.globalForm);
-            return;
-        });
+        let schema = await this.ajax.formSchema.getGlobalSchema();
+        this.globalForm = {
+            schema: JSON.parse(schema),
+            data: this.globalData,
+        };
     }
 
     async selectEntryPointFormInit(): Promise<void> {
-        this.ajax.formSchema.getSchemaFormEntryPointAndUserTypes().then((schema) => {
-            this.selectEntryPointForm = {
-                schema:schema,
-                data: null
-            };
-            return;
-        });
+        let schema = await this.ajax.formSchema.getSchemaFormEntryPointAndUserTypes();
+        this.selectEntryPointForm = {
+            schema:schema,
+            data: null
+        };
     }
 
     async entryPointFormInit(selected: EntryPointDataType): Promise<any> {
@@ -224,66 +220,56 @@ export class ConfigurationComponent {
     }
 
     async stationFormInit(): Promise<void> {
-        this.ajax.formSchema.getStationSchema().then((schema) => {
-            this.stationForm = {
-                schema: JSON.parse(schema),
-                data: this.lastStation
-            };
-            return;
-        });
+        let schema = await this.ajax.formSchema.getStationSchema();
+        this.stationForm = {
+            schema: JSON.parse(schema),
+            data: this.lastStation
+        };
     }
 
-    openFormEntryPoint(modalRef: any) {
-        this.modalService.open(modalRef, {backdrop: "static", keyboard: false}).result.then((result) => {
-            if(result === 'Close click') {
-                console.log("Removing circle");
-                this.featureGroup.removeLayer(this.lastCircleAdded);
-            }
-        }, () => {});
+    openForm(modalRef: any) {
+        this.actualModalOpen = this.modalService.open(modalRef, {backdrop: "static", keyboard: false});
+    }
+
+    closeFormEntryPoint() {
+        this.actualModalOpen.close();
+        this.featureGroup.removeLayer(this.lastCircleAdded);
     }
 
     openStationForm(modalRef: any) {
-        this.modalService.open(modalRef, {backdrop: "static", keyboard: false}).result.then((result) => {
-            if(result === 'Close click') {
-                console.log("Removing circle");
-                this.featureGroup.removeLayer(this.lastMarkerAdded);
-            }
-        }, () => {});
+        this.actualModalOpen = this.modalService.open(modalRef, {backdrop: "static", keyboard: false});
     }
 
-    updateGlobalFormView() {
-        let tab1 = document.getElementById('added-entities');
-        let tab2 = document.getElementById('global-form');
-        if(tab1 !== null && tab2 !== null) {
-            tab1.click();
-            tab2.click();
-        }
+    closeStationForm() {
+        this.actualModalOpen.close();
+        this.featureGroup.removeLayer(this.lastMarkerAdded);
     }
 
     generateConfiguration() {
         let path = this.selectFolder();
+        if(this.isGlobalFormValid) {
+            let inputs = document.getElementsByTagName('input');
+            Array.from(document.getElementsByTagName('input')).forEach((item) => {
+                if(item.type === 'submit') {
+                    item.click();
+                    console.log('click');
+                }
+            });
+        }
         const modalRef = this.modalService.open(ConfigurationSaveComponent);
         modalRef.componentInstance.path = path;
         modalRef.componentInstance.globalConfiguration = this.globalData;
         modalRef.componentInstance.entryPointConfiguration = this.finalEntryPoints;
         modalRef.componentInstance.stationConfiguration = this.finalStations;
         modalRef.componentInstance.globalConfigValid = this.globalConfigValid;
-        console.log("Global Data");
-        console.log(this.globalData);
-        console.log("Entry Points");
-        console.log(this.finalEntryPoints);
-        console.log("Stations");
-        console.log(this.finalStations);
-        console.log("Features");
-        console.log(this.featureGroup);
     }
 
     selectFolder(): string {
-        return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0];
+            return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0];
     }
 
-    selectFile(): string {
-		return dialog.showOpenDialog({
+    selectFile(): string | undefined {
+        return dialog.showOpenDialog({
             properties: ['openFile', 'createDirectory'],
             filters: [{name: 'JSON Files', extensions: ['json']}]
         })[0].replace(/\\/g, "/");
@@ -291,11 +277,50 @@ export class ConfigurationComponent {
 
     async loadGlobalConfig() {
         let file = this.selectFile();
-        let modalRef: NgbModalRef = this.modalService.open(ConfigurationLoadGlobalComponent);
+        let modalRef: NgbModalRef = this.modalService.open(ConfigurationLoadComponent);
         modalRef.componentInstance.path = file;
+        modalRef.componentInstance.configurationFile = ConfigurationFile.GLOBAL_CONFIGURATION;
         modalRef.result.then((globalData) => {
             Object.assign(this.globalData, globalData);
             this.gsForm.resetForm();
+            let northWestLat = this.globalData.boundingBox.northWest.latitude;
+            let northWestLng = this.globalData.boundingBox.northWest.longitude;
+            let southEastLat = this.globalData.boundingBox.southEast.latitude;
+            let southEastLon = this.globalData.boundingBox.southEast.longitude;
+            let newBbox = new Rectangle([[northWestLat, northWestLng], [southEastLat, southEastLon]]);
+            this.featureGroup.addLayer(newBbox);
+            this.hasBoundingBox = true;
+            $('.leaflet-draw-draw-rectangle').hide();
+        });
+        this.featureGroup.eachLayer((layer: any) => {
+            if(layer instanceof Rectangle) {
+                let bbox: Rectangle = <Rectangle> layer; 
+                this.featureGroup.removeLayer(layer);
+            }
+        });  
+    }
+
+    async loadEntryPoints() {
+        let file = this.selectFile();
+        let modalRef: NgbModalRef = this.modalService.open(ConfigurationLoadComponent);
+        modalRef.componentInstance.path = file;
+        modalRef.componentInstance.configurationFile = ConfigurationFile.ENTRYPOINT_CONFIGURATION;
+        modalRef.result.then((entryPointsConfig: any) => {
+            console.log(entryPointsConfig);
+            for(let entryPoint of entryPointsConfig.entryPoints) {
+                let latitude: number = entryPoint.position.latitude;
+                let longitude: number = entryPoint.position.longitude;
+                let radius: number = entryPoint.radius;
+                let circle: Circle = new Circle([latitude, longitude], {radius: radius, color: "#e81b1b"});
+                let newEntryPoint = new EntryPoint(entryPoint, circle);
+                newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
+                this.entryPoints.push(newEntryPoint);
+                this.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
+                this.featureGroup.addLayer(circle);
+            }
+            if(this.jsonTreeEp) {
+                this.jsonTreeEp.dataUpdated(this.finalEntryPoints);
+            }
         });
     }
 

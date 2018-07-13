@@ -1,12 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output, ChangeDetectorRef} from '@angular/core';
 
 @Component({
-    selector: 'schema-form',
-    template: require('./schemaform.component.html'),
+    selector: 'schema-global-form',
+    template: require('./schemaform-global.component.html'),
     styles: []
 })
-export class SchemaFormComponent {
-    
+export class SchemaFormGlobalComponent {
+
     @Input()
     form: any;
 
@@ -21,7 +21,20 @@ export class SchemaFormComponent {
 
     actualData: any;
 
-    constructor(private cdRef: ChangeDetectorRef) {}
+    constructor(private cdRef: ChangeDetectorRef) {
+    }
+
+    ngAfterContentChecked() {
+        let schemaformhtml = document.getElementsByTagName('schema-global-form');
+        if(schemaformhtml.length !== 0) {
+            let submithtml = schemaformhtml.item(0).querySelectorAll('[type="submit"]');
+            if(submithtml.length !== 0) {
+                submithtml.item(0).setAttribute('style', 'display: none');
+            }
+        }
+        
+    }
+
 
     resetForm() {
         this.reloading = true;
@@ -40,4 +53,5 @@ export class SchemaFormComponent {
     valid(isValid: any) {
         this.isValid.emit(isValid);
     }
+
 }
