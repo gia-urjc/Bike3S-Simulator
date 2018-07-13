@@ -142,6 +142,7 @@ export class ConfigurationComponent {
 
     isGlobalFormValid($event: any) {
         this.globalConfigValid = $event;
+        console.log(this.globalConfigValid);
     }
 
     async selectEntryPointSubmit(data: EntryPointDataType) {

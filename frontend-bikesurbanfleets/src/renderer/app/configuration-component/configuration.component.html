@@ -87,7 +87,7 @@
 <ng-template data-backdrop="static" data-keyboard="false" id="form-station" #stationModal let-c="close" let-d="dismiss">
     <div class="modal-header">
         <h4 class="modal-title">Create Station</h4>
-        <button type="button" class="close" aria-label="Close" (click)="c('Close click')">
+        <button type="button" class="close" aria-label="Close" (click)="closeStationForm()">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -95,9 +95,9 @@
         <schema-form #stationsFormId [form]="stationForm" (dataSubmited)="stationSubmit($event)"></schema-form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeStationForm()">Close</button>
     </div>
-    <button class="hidden-button" id="form-station-close" (click)="d('External close')"></button>
+    <button class="hidden-button" id="form-station-close" (click)="closeStationForm()"></button>
 </ng-template>
 
 <button class="hidden-button" id="form-select-entry-point-button" (click)="openForm(selecEntryPointType)">Open modal</button>
