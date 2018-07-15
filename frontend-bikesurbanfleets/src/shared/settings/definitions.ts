@@ -1,15 +1,15 @@
 export interface SettingsLayerEntry {
-    key: string,
-    enabled: boolean,
+    key: string;
+    enabled: boolean;
 }
 
 export interface SettingsLayers {
-    [name: string]: SettingsLayerEntry
+    [name: string]: SettingsLayerEntry;
 }
 
 export interface SettingsTree {
-    layers: SettingsLayers,
+    layers: SettingsLayers;
     development: {
         extensions: Record<any, string>,
-    }
+    };
 }

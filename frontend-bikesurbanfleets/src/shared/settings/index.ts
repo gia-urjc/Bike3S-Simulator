@@ -4,7 +4,7 @@ type PathCall = () => string;
 
 type SettingsPath<T> = {
     [P in keyof T]: PathCall & SettingsPath<T[P]>
-}
+};
 
 function settingsPathGenerator() {
     let parts: Array<PropertyKey> = [];
@@ -23,4 +23,4 @@ function settingsPathGenerator() {
 export {
     defaultSettings,
     settingsPathGenerator,
-}
+};

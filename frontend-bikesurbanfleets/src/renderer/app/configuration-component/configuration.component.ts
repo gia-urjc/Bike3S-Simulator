@@ -4,15 +4,13 @@ import {Layer, Rectangle, FeatureGroup, Circle, Marker} from "leaflet";
 import {LeafletDrawFunctions, FormJsonSchema, EntryPoint, Station} from "./config-definitions";
 import {ConfigurationLeaflethandler} from "./configuration.leaflethandler";
 import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
-import {EntryPointDataType} from "../../../shared/configuration";
+import {EntryPointDataType, GlobalConfiguration, ConfigurationFile} from "../../../shared/ConfigurationInterfaces";
 import {ConfigurationUtils} from "./configuration.utils";
-import {SchemaFormComponent} from "../schemaform-component/schemaform.component";
 import {ConfigurationSaveComponent} from "../configuration-save-component/configurationsave.component";
 import { ConfigurationLoadComponent } from "../configuration-load-globalconfig/configuration-load.component";
-import { ConfigurationFile } from "./config-definitions/ConfigDefinitions";
 import * as L from 'leaflet';
-import * as $ from "jquery";
 import { JsonTreeViewComponent } from "../jsoneditor-component/jsoneditor.component";
+import { SchemaFormGlobalComponent } from "../schemaform-global-component/schemaform-global.component";
 const  {dialog} = (window as any).require('electron').remote;
 
 
@@ -43,7 +41,7 @@ export class ConfigurationComponent {
     /*
     * Variables for configuration
     */
-    globalData: any = {
+    globalData: GlobalConfiguration = {
         boundingBox: {
             northWest: { latitude: 0, longitude:0 },
             southEast: { latitude: 0, longitude:0 }
@@ -64,23 +62,26 @@ export class ConfigurationComponent {
         "stations": new Array<any>()
     };
 
-    @ViewChild('globalSchemaForm') gsForm: SchemaFormComponent;
-    @ViewChild('entryPoint') entryPointModal: TemplateRef<any>;
+    @ViewChild('globalSchemaForm') gsForm: SchemaFormGlobalComponent;
+
+    @ViewChild('selecEntryPointType') epSelectModalForm: TemplateRef<any>;
+    @ViewChild('entryPoint') epModalForm: TemplateRef<any>;
+    @ViewChild('stationModal') stationModalForm: TemplateRef<any>;
+
     @ViewChild('jsonTreeEp') jsonTreeEp: JsonTreeViewComponent;
     @ViewChild('jsonTreeStation') jsonTreeStation: JsonTreeViewComponent;
 
     /*
     * Map control variables
     */
-    hasBoundingBox = false;                                 // Bounding box exist if true
     featureGroup: FeatureGroup = new FeatureGroup();        // List of drawn element
     drawOptions: any;                                       // Draw options for leaflet-draw
     map: L.Map;                                             // showed Map
     lastCircleAdded: Circle;                                // Last circle added
     lastMarkerAdded: Marker;                                // Last Marker added
 
-    constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol,
-                private modalService: NgbModal) {}
+    constructor(@Inject('AjaxProtocol') public ajax: AjaxProtocol,
+                public modalService: NgbModal) {}
 
     async ngOnInit() {
         this.drawOptions = LeafletDrawFunctions.createLeafletDrawOptions(this.featureGroup);
@@ -91,111 +92,14 @@ export class ConfigurationComponent {
         this.stationFormInit();
     }
 
-    getMapController(map: L.Map) {
-        this.map = map;
-        this.drawOptions.edit.featureGroup.addTo(this.map);
-        this.defineMapEventHandlers();
-        console.log(this.featureGroup);
-    }
-
-    defineMapEventHandlers() {
-        this.map.on('draw:created', (event: any) => {
-            let layer: Layer = event.layer;
-            let type = event.layerType;
-            switch(type) {
-                case 'rectangle': ConfigurationLeaflethandler.onDrawBoundingBoxHandler(<Rectangle> layer, this);
-                break;
-                case 'circle': ConfigurationLeaflethandler.onDrawEntryPointHandler(<Circle> layer, this);
-                break;
-                case 'marker': ConfigurationLeaflethandler.onDrawStationHandler(<Marker> layer, this);
-            }
-        });
-        this.map.on('draw:deleted', (event: any) => {
-            for (let layer of event.layers.getLayers()) {
-                if(layer instanceof Rectangle && this.hasBoundingBox) {
-                    ConfigurationLeaflethandler.onDeleteBoundingBoxHandler(this);
-                }
-                if (layer instanceof Circle) {
-                    let index = ConfigurationUtils.getEntryPointIndexByCircle(layer, this.entryPoints);
-                    if (index !== null) {
-                        this.entryPoints.splice(index, 1);
-                        this.finalEntryPoints.entryPoints.splice(index, 1);
-                    }
-                    this.featureGroup.removeLayer(layer);
-                }
-                if (layer instanceof Marker) {
-                    let index = ConfigurationUtils.getStationIndexByMarker(layer, this.stations);
-                    if(index !== null) {
-                        this.stations.splice(index, 1);
-                        this.finalStations.stations.splice(index, 1);
-                    }
-                    this.featureGroup.removeLayer(layer);
-                }
-            }
-        });
-    }
-
-    globalFormSubmit($event: any) {
-        this.globalData = $event;
-        console.log(this.globalData);
-    }
-
-    isGlobalFormValid($event: any) {
-        this.globalConfigValid = $event;
-        console.log(this.globalConfigValid);
-    }
-
-    async selectEntryPointSubmit(data: EntryPointDataType) {
-        this.actualModalOpen.close();
-        console.log(data);
-        this.lastSelectedEntryPointType = data;
-        let entryPointData = await this.entryPointFormInit(data);
-        entryPointData.position.latitude = this.lastCircleAdded.getLatLng().lat;
-        entryPointData.position.longitude = this.lastCircleAdded.getLatLng().lng;
-        if(this.entryPointForm.schema.properties.radius !== null) {
-            entryPointData.radius = this.lastCircleAdded.getRadius();
-        }
-        this.actualModalOpen = this.modalService.open(this.entryPointModal);
-    }
-
-    entryPointSubmit(entryPoint: any) {
-        entryPoint.entryPointType = {};
-        entryPoint.entryPointType = this.lastSelectedEntryPointType.entryPointType;
-        entryPoint.userType.typeName = this.lastSelectedEntryPointType.userType;
-        this.lastCircleAdded.setLatLng({
-            lat: entryPoint.position.latitude,
-            lng: entryPoint.position.longitude
-        });
-        if(this.lastSelectedEntryPointType.entryPointType === "POISSON") {
-            this.lastCircleAdded.setRadius(entryPoint.radius);
-        } else {
-            this.lastCircleAdded.setRadius(50);
-        }
-        let newEntryPoint = new EntryPoint(entryPoint, this.lastCircleAdded);
-        newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
-        this.entryPoints.push(newEntryPoint);
-        this.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
-        console.log(this.entryPoints);
-        this.actualModalOpen.close();
-    }
-
-    stationSubmit(station: any) {
-        this.lastMarkerAdded.setLatLng({
-            lat: station.position.latitude,
-            lng: station.position.longitude
-        });
-        let newStation = new Station(station, this.lastMarkerAdded);
-        this.stations.push(newStation);
-        this.finalStations.stations.push(newStation.getStationInfo());
-        this.lastMarkerAdded.setIcon(newStation.getIcon());
-        this.actualModalOpen.close();
-    }
-
     async globalFormInit() {
         let schema = await this.ajax.formSchema.getGlobalSchema();
         this.globalForm = {
             schema: JSON.parse(schema),
             data: this.globalData,
+            options: {
+                addSubmit: false
+            }
         };
     }
 
@@ -228,6 +132,117 @@ export class ConfigurationComponent {
         };
     }
 
+    getMapController(map: L.Map) {
+        this.map = map;
+        this.drawOptions.edit.featureGroup.addTo(this.map);
+        this.defineMapEventHandlers();
+        console.log(this.featureGroup);
+    }
+
+    bboxChanged(data: any) {
+        Object.assign(this.globalData.boundingBox, data);
+    }
+
+    defineMapEventHandlers() {
+        this.map.on('draw:created', (event: any) => {
+            let layer: Layer = event.layer;
+            let type = event.layerType;
+            switch(type) {
+                case 'rectangle': ConfigurationLeaflethandler.drawBoundingBox(this, <Rectangle> layer);
+                break;
+                case 'circle': ConfigurationLeaflethandler.drawEntryPoint(this, <Circle> layer);
+                break;
+                case 'marker': ConfigurationLeaflethandler.drawStation(this, <Marker> layer);
+            }
+        });
+        this.map.on('draw:deleted', (event: any) => {
+            for (let layer of event.layers.getLayers()) {
+                if(layer instanceof Rectangle) {
+                    ConfigurationLeaflethandler.deleteBoundingBox(this);
+                }
+                if (layer instanceof Circle) {
+                    let index = ConfigurationUtils.getEntryPointIndexByCircle(layer, this.entryPoints);
+                    if (index !== null) {
+                        this.entryPoints.splice(index, 1);
+                        this.finalEntryPoints.entryPoints.splice(index, 1);
+                        this.jsonTreeEp.dataUpdated(this.finalEntryPoints);
+                    }
+                    this.featureGroup.removeLayer(layer);
+                }
+                if (layer instanceof Marker) {
+                    let index = ConfigurationUtils.getStationIndexByMarker(layer, this.stations);
+                    if(index !== null) {
+                        this.stations.splice(index, 1);
+                        this.finalStations.stations.splice(index, 1);
+                        this.jsonTreeStation.dataUpdated(this.finalStations);
+                    }
+                    this.featureGroup.removeLayer(layer);
+                }
+            }
+        });
+    }
+
+    globalFormSubmit($event: any) {
+        this.globalData = $event;
+        console.log(this.globalData);
+    }
+
+    isGlobalFormValid($event: any) {
+        this.globalConfigValid = $event;
+        console.log(this.globalConfigValid);
+    }
+
+    async selectEntryPointSubmit(data: EntryPointDataType) {
+        this.actualModalOpen.close();
+        console.log(data);
+        this.lastSelectedEntryPointType = data;
+        let entryPointData = await this.entryPointFormInit(data);
+        entryPointData.position.latitude = this.lastCircleAdded.getLatLng().lat;
+        entryPointData.position.longitude = this.lastCircleAdded.getLatLng().lng;
+        if(this.entryPointForm.schema.properties.radius !== null) {
+            entryPointData.radius = this.lastCircleAdded.getRadius();
+        }
+        this.actualModalOpen = this.modalService.open(this.epModalForm);
+    }
+
+    entryPointSubmit(entryPoint: any) {
+        entryPoint.entryPointType = {};
+        entryPoint.entryPointType = this.lastSelectedEntryPointType.entryPointType;
+        entryPoint.userType.typeName = this.lastSelectedEntryPointType.userType;
+        this.lastCircleAdded.setLatLng({
+            lat: entryPoint.position.latitude,
+            lng: entryPoint.position.longitude
+        });
+        if(entryPoint.hasOwnProperty('radius')) {
+            this.lastCircleAdded.setRadius(entryPoint.radius);
+        } else {
+            this.lastCircleAdded.setRadius(50);
+        }
+        let newEntryPoint = new EntryPoint(entryPoint, this.lastCircleAdded);
+        newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
+        this.entryPoints.push(newEntryPoint);
+        this.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
+        console.log(this.entryPoints);
+        this.actualModalOpen.close();
+        if(this.jsonTreeEp) {
+            this.jsonTreeEp.dataUpdated(this.finalEntryPoints);   
+        }
+    }
+
+    stationSubmit(station: any) {
+        this.lastMarkerAdded.setLatLng({
+            lat: station.position.latitude,
+            lng: station.position.longitude
+        });
+        let newStation = new Station(station, this.lastMarkerAdded);
+        this.stations.push(newStation);
+        this.finalStations.stations.push(newStation.getStationInfo());
+        this.lastMarkerAdded.setIcon(newStation.getIcon());
+        this.actualModalOpen.close();
+        if(this.jsonTreeStation) {
+            this.jsonTreeStation.dataUpdated(this.finalStations);
+        }
+    }
     openForm(modalRef: any) {
         this.actualModalOpen = this.modalService.open(modalRef, {backdrop: "static", keyboard: false});
     }
@@ -239,6 +254,7 @@ export class ConfigurationComponent {
 
     openStationForm(modalRef: any) {
         this.actualModalOpen = this.modalService.open(modalRef, {backdrop: "static", keyboard: false});
+        this.featureGroup.removeLayer(this.lastMarkerAdded);
     }
 
     closeStationForm() {
@@ -249,13 +265,8 @@ export class ConfigurationComponent {
     generateConfiguration() {
         let path = this.selectFolder();
         if(this.isGlobalFormValid) {
-            let inputs = document.getElementsByTagName('input');
-            Array.from(document.getElementsByTagName('input')).forEach((item) => {
-                if(item.type === 'submit') {
-                    item.click();
-                    console.log('click');
-                }
-            });
+            this.globalData = this.gsForm.actualData;
+            console.log(this.globalData);
         }
         const modalRef = this.modalService.open(ConfigurationSaveComponent);
         modalRef.componentInstance.path = path;
@@ -284,21 +295,8 @@ export class ConfigurationComponent {
         modalRef.result.then((globalData) => {
             Object.assign(this.globalData, globalData);
             this.gsForm.resetForm();
-            let northWestLat = this.globalData.boundingBox.northWest.latitude;
-            let northWestLng = this.globalData.boundingBox.northWest.longitude;
-            let southEastLat = this.globalData.boundingBox.southEast.latitude;
-            let southEastLon = this.globalData.boundingBox.southEast.longitude;
-            let newBbox = new Rectangle([[northWestLat, northWestLng], [southEastLat, southEastLon]]);
-            this.featureGroup.addLayer(newBbox);
-            this.hasBoundingBox = true;
-            $('.leaflet-draw-draw-rectangle').hide();
+            ConfigurationLeaflethandler.drawBoundingBox(this, this.globalData.boundingBox);
         });
-        this.featureGroup.eachLayer((layer: any) => {
-            if(layer instanceof Rectangle) {
-                let bbox: Rectangle = <Rectangle> layer; 
-                this.featureGroup.removeLayer(layer);
-            }
-        });  
     }
 
     async loadEntryPoints() {
@@ -307,20 +305,26 @@ export class ConfigurationComponent {
         modalRef.componentInstance.path = file;
         modalRef.componentInstance.configurationFile = ConfigurationFile.ENTRYPOINT_CONFIGURATION;
         modalRef.result.then((entryPointsConfig: any) => {
-            console.log(entryPointsConfig);
             for(let entryPoint of entryPointsConfig.entryPoints) {
-                let latitude: number = entryPoint.position.latitude;
-                let longitude: number = entryPoint.position.longitude;
-                let radius: number = entryPoint.radius;
-                let circle: Circle = new Circle([latitude, longitude], {radius: radius, color: "#e81b1b"});
-                let newEntryPoint = new EntryPoint(entryPoint, circle);
-                newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
-                this.entryPoints.push(newEntryPoint);
-                this.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
-                this.featureGroup.addLayer(circle);
+                ConfigurationLeaflethandler.drawEntryPoint(this, entryPoint);
             }
             if(this.jsonTreeEp) {
                 this.jsonTreeEp.dataUpdated(this.finalEntryPoints);
+            }
+        });
+    }
+
+    async loadStations() {
+        let file = this.selectFile();
+        let modalRef: NgbModalRef = this.modalService.open(ConfigurationLoadComponent);
+        modalRef.componentInstance.path = file;
+        modalRef.componentInstance.configurationFile = ConfigurationFile.STATION_CONFIGURATION;
+        modalRef.result.then((stationsConfig: any) => {
+            for(let station of stationsConfig.stations) {
+                ConfigurationLeaflethandler.drawStation(this, station);
+            }
+            if(this.jsonTreeStation) {
+                this.jsonTreeStation.dataUpdated(this.finalStations);
             }
         });
     }

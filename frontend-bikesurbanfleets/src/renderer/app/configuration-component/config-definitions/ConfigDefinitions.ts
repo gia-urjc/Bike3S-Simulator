@@ -1,12 +1,6 @@
 import {Circle, DivIcon, FeatureGroup, Marker} from "leaflet";
 import {PlainObject} from "../../../../shared/util";
 
-export enum ConfigurationFile {
-    GLOBAL_CONFIGURATION,
-    ENTRYPOINT_CONFIGURATION,
-    STATION_CONFIGURATION
-}
-
 export class Station{
     private stationInfo: any;
     private marker: Marker;
@@ -45,7 +39,7 @@ export class Station{
         const size = 30;
         const slotRatio = (this.stationInfo.capacity - this.stationInfo.bikes) / this.stationInfo.capacity * 100;
         const gradient = new ConicGradient({
-            stops: `tomato $bue{slotRatio}%, mediumseagreen 0`,
+            stops: `tomato ${slotRatio}%, mediumseagreen 0`,
             size: size,
         });
         return new DivIcon({
@@ -107,12 +101,6 @@ export class EntryPoint {
         }
         return popUp;
     }
-}
-
-export interface FormJsonSchema {
-    schema: any;
-    data: any;
-    options?: any;
 }
 
 export namespace LeafletDrawFunctions {

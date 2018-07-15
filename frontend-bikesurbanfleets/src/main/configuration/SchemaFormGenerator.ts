@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 import { app } from 'electron';
 import * as paths from 'path';
-import {EntryPointDataType, SchemaConfig} from "../../shared/configuration";
+import {EntryPointDataType, SchemaConfig} from "../../shared/ConfigurationInterfaces";
 import {IpcUtil} from "../util";
 import SchemaParser from "./SchemaParser";
 

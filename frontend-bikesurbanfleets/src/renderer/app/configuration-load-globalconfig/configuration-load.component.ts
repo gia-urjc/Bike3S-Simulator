@@ -1,7 +1,7 @@
 import { Input, Component, Inject, EventEmitter, Output } from "@angular/core";
 import { AjaxProtocol } from "../../ajax/AjaxProtocol";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { ConfigurationFile } from "../configuration-component/config-definitions/ConfigDefinitions";
+import { ConfigurationFile } from "../../../shared/ConfigurationInterfaces";
 const  {dialog} = (window as any).require('electron').remote;
 
 @Component({
@@ -36,6 +36,7 @@ export class ConfigurationLoadComponent {
         switch(this.configurationFile) {
             case ConfigurationFile.GLOBAL_CONFIGURATION: await this.loadGlobalConfig(); break;
             case ConfigurationFile.ENTRYPOINT_CONFIGURATION: await this.loadEntryPointConfig(); break;
+            case ConfigurationFile.STATION_CONFIGURATION: await this.loadStationsConfig(); break;
         }
     }
 
@@ -65,6 +66,20 @@ export class ConfigurationLoadComponent {
             if(this.path) {
                 this.dataLoaded = await this.ajax.jsonLoader.loadJsonEntryPoints(this.path);
                 this.message = "Entry Points configuration loaded";
+            }
+        }
+        catch(error) {
+            this.isError = true;
+            this.message = error.message + "\n";
+        }
+    }
+
+    async loadStationsConfig() {
+        let stations: any;
+        try {
+            if(this.path) {
+                this.dataLoaded = await this.ajax.jsonLoader.loadJsonStations(this.path);
+                this.message = "Stations configuration loaded";
             }
         }
         catch(error) {

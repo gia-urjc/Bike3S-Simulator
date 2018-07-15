@@ -20,7 +20,7 @@ export class JsonTreeViewComponent {
     ngOnInit() {
         let container = document.getElementById("json-editor");
         if(container != null) {
-            this.jsonEditor = new JSONEditor(container, {readOnly: true});
+            this.jsonEditor = new JSONEditor(container, {mode: 'view'});
             this.jsonEditor.set(this.data);
             console.log("JsonTree: " + this.data);
         }

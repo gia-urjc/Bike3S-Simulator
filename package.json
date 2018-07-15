@@ -14,12 +14,8 @@
     "appId": "es.urjc.bike3s",
     "win": {
       "target": [
-        {
-          "target": "nsis"
-        },
-        {
-          "target": "portable"
-        }
+        "nsis",
+        "portable"
       ],
       "icon": "icon.ico"
     },
@@ -42,8 +38,8 @@
     "@angular/animations": "^5.1.0",
     "@angular/cdk": "^5.1.0",
     "@angular/common": "^5.1.0",
-    "@angular/core": "^5.1.0",
     "@angular/compiler": "^5.1.0",
+    "@angular/core": "^5.1.0",
     "@angular/flex-layout": "^5.0.0-beta.14",
     "@angular/forms": "^5.1.0",
     "@angular/http": "^5.1.0",
@@ -79,8 +75,10 @@
     "moment": "^2.20.1",
     "ng-font-awesome": "github:tao-cumplido/ng-font-awesome",
     "popper.js": "^1.14.3",
-    "tree-kill": "^1.2.0",
+    "request": "^2.87.0",
+    "request-progress": "^3.0.0",
     "rxjs": "^5.5.5",
+    "tree-kill": "^1.2.0",
     "zone.js": "^0.8.18"
   },
   "devDependencies": {

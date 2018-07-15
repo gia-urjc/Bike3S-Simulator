@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { settingsPathGenerator } from '../../shared/settings';
 import { AjaxProtocol } from '../ajax/AjaxProtocol';
-import {EntryPointDataType} from "../../shared/configuration";
+import {EntryPointDataType} from "../../shared/ConfigurationInterfaces";
 
 @Component({
     selector: 'my-app',

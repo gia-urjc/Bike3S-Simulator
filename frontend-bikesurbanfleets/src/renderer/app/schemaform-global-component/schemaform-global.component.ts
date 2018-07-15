@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, ChangeDetectorRef} from '@angular/core';
+import * as $ from "jquery";
 
 @Component({
     selector: 'schema-global-form',
@@ -16,6 +17,9 @@ export class SchemaFormGlobalComponent {
     @Output('isValid')
     isValid = new EventEmitter<any>();
 
+    @Output('bboxChange')
+    bboxChange = new EventEmitter<any>();
+
     reloading: boolean;
     globalUpdate: boolean;
 
@@ -23,18 +27,6 @@ export class SchemaFormGlobalComponent {
 
     constructor(private cdRef: ChangeDetectorRef) {
     }
-
-    ngAfterContentChecked() {
-        let schemaformhtml = document.getElementsByTagName('schema-global-form');
-        if(schemaformhtml.length !== 0) {
-            let submithtml = schemaformhtml.item(0).querySelectorAll('[type="submit"]');
-            if(submithtml.length !== 0) {
-                submithtml.item(0).setAttribute('style', 'display: none');
-            }
-        }
-        
-    }
-
 
     resetForm() {
         this.reloading = true;
@@ -54,4 +46,20 @@ export class SchemaFormGlobalComponent {
         this.isValid.emit(isValid);
     }
 
+    onChanges(data: any) {
+        if(this.validBbox(data.boundingBox)) {
+            this.bboxChange.emit(data.boundingBox);
+        }
+        this.actualData = data;
+        console.log(this.actualData);
+    }
+
+    getData() {
+        return this.actualData;
+    }
+
+    private validBbox(boundingBox: any): boolean {
+        return boundingBox.northWest.latitude !== 0 && boundingBox.northWest.longitude !== 0
+            && boundingBox.southEast.latitude !== 0 && boundingBox.southEast.longitude !== 0;
+    }
 }

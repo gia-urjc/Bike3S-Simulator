@@ -9,6 +9,7 @@ import { ipcMain, ipcRenderer } from 'electron';
 import { BackendController } from "./util";
 import JsonLoader from "./json-loader/JsonLoader";
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
+import MapDownloadController from './util/MapDownloadController';
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;
@@ -92,6 +93,7 @@ export namespace Main {
         SchemaFormGenerator.enableIpc();
         JsonLoader.enableIpc();
         CsvGeneratorController.enableIpc();
+        MapDownloadController.enableIpc();
 
         app.on('ready', async () => {
 

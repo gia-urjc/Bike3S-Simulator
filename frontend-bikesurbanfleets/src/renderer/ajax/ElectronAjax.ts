@@ -3,7 +3,7 @@ import { Event } from 'electron';
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
 import { AjaxProtocol, BackendAjax, FormSchemaAjax, HistoryAjax, JsonLoaderAjax, SettingsAjax, CsvGeneratorAjax } from './AjaxProtocol';
-import { EntryPointDataType } from "../../shared/configuration";
+import { EntryPointDataType } from "../../shared/ConfigurationInterfaces";
 import { CoreSimulatorArgs, UserGeneratorArgs } from "../../shared/BackendInterfaces";
 import { JsonInfo, JsonSchemaGroup } from "../../main/json-loader/JsonLoader";
 import { CsvArgs } from '../../main/util/CsvGeneratorController';
