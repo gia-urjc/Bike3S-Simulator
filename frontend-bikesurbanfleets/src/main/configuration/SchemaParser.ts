@@ -1,4 +1,4 @@
-import {SchemaConfig} from "../../shared/configuration";
+import {SchemaConfig} from "../../shared/ConfigurationInterfaces";
 import * as _ from "lodash";
 
 export default class {

@@ -1,7 +1,5 @@
 import {GeoPoint, options, UInt} from "../common/index";
 import {sArray, sBoolean, sConst, sEnum, sInteger, sNumber, sObject} from "json-schema-builder-ts/dist/types";
-import {JsonSchema} from "json-schema-builder-ts";
-import {sAnyOf} from "json-schema-builder-ts/dist/operators/schematical";
 
 const Percentage = sNumber().min(0).max(100);
 

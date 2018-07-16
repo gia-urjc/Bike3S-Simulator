@@ -45,7 +45,7 @@ export class ConfigurationSaveComponent {
     }
 
     async ngOnDestroy() {
-        this.ajax.jsonLoader.close().then();
+        this.ajax.jsonLoader.close();
     }
 
     async generateConfiguration() {
@@ -73,5 +73,4 @@ export class ConfigurationSaveComponent {
     selectFolder(): string {
         return dialog.showOpenDialog({properties: ['openDirectory']})[0];
     }
-
 }

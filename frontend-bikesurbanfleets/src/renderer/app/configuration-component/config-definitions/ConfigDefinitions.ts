@@ -1,7 +1,6 @@
 import {Circle, DivIcon, FeatureGroup, Marker} from "leaflet";
 import {PlainObject} from "../../../../shared/util";
 
-
 export class Station{
     private stationInfo: any;
     private marker: Marker;
@@ -40,7 +39,7 @@ export class Station{
         const size = 30;
         const slotRatio = (this.stationInfo.capacity - this.stationInfo.bikes) / this.stationInfo.capacity * 100;
         const gradient = new ConicGradient({
-            stops: `tomato $bue{slotRatio}%, mediumseagreen 0`,
+            stops: `tomato ${slotRatio}%, mediumseagreen 0`,
             size: size,
         });
         return new DivIcon({
@@ -104,12 +103,6 @@ export class EntryPoint {
     }
 }
 
-export interface FormJsonSchema {
-    schema: any;
-    data: any;
-    options?: any;
-}
-
 export namespace LeafletDrawFunctions {
     export function createLeafletDrawOptions(featureGroup: FeatureGroup): any {
         return {
@@ -125,14 +118,15 @@ export namespace LeafletDrawFunctions {
                 polygon: false,
                 rectangle: {
                     shapeOptions: {
-                        opacity: 0.4,
-                        weight: 4
+                        opacity: 1,
                     }
                 },
                 circlemarker: false,
                 circle: {
                     shapeOptions: {
+                        opacity: 1,
                         color: '#e81b1b',
+                        weight: 2
                     }
                 },
                 marker: {

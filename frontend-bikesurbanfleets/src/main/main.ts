@@ -7,9 +7,9 @@ import { HistoryReaderController, CsvGeneratorController } from './util';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 import { ipcMain, ipcRenderer } from 'electron';
 import { BackendController } from "./util";
-import JsonLoader from "./json-loader/JsonLoader";
+import JsonLoader from "./util/JsonLoaderController";
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
-import { CsvGenerator } from './dataAnalysis/analysis/generators/CsvGenerator';
+import MapDownloadController from './util/MapDownloadController';
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;
@@ -86,12 +86,14 @@ export namespace Main {
     }
 
     export function initMenu() {
+        
         HistoryReaderController.enableIpc();
         Settings.enableIpc();
         BackendController.enableIpc();
         SchemaFormGenerator.enableIpc();
         JsonLoader.enableIpc();
         CsvGeneratorController.enableIpc();
+        MapDownloadController.enableIpc();
 
         app.on('ready', async () => {
 
@@ -283,5 +285,10 @@ export namespace Main {
 
 Main.initMenu();
 if (process.env.target === 'development') {
-    Main.test();
+    try {
+        Main.test();
+    }
+    catch(error) {
+       
+    }
 }

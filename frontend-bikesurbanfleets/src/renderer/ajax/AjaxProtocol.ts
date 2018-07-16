@@ -1,8 +1,9 @@
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
-import {JsonInfo, default as JsonLoader, JsonSchemaGroup} from "../../main/json-loader/JsonLoader";
+import {JsonInfo, default as JsonLoader, JsonSchemaGroup} from "../../main/util/JsonLoaderController";
 import { CsvArgs } from '../../main/util/CsvGeneratorController';
+import { MapDownloadArgs } from '../../shared/ConfigurationInterfaces';
 
 export interface HistoryAjax {
     init(path: string): Promise<void>;
@@ -25,6 +26,9 @@ export interface FormSchemaAjax {
 export interface JsonLoaderAjax {
     init(): Promise<void>;
     getAllSchemas(): Promise<JsonSchemaGroup>;
+    loadJsonGlobal(path: string): Promise<any>;
+    loadJsonEntryPoints(path: string): Promise<any>;
+    loadJsonStations(path: string): Promise<any>;
     writeJson(jsonInfo: JsonInfo): Promise<boolean>;
     close(): Promise<void>;
 }
@@ -33,6 +37,7 @@ export interface BackendAjax {
     init(): Promise<void>;
     generateUsers(args: UserGeneratorArgs): Promise<void>;
     simulate(args: CoreSimulatorArgs): Promise<void>;
+    cancelSimulation(): Promise<void>;
     closeBackend(): Promise<void>;
 }
 
@@ -54,4 +59,11 @@ export interface AjaxProtocol {
     backend: BackendAjax;
     jsonLoader: JsonLoaderAjax;
     csvGenerator: CsvGeneratorAjax;
+    mapDownloader: MapDownloaderAjax;
+}
+
+export interface MapDownloaderAjax {
+    init(): Promise<void>;
+    download(args: MapDownloadArgs): Promise<void>;
+    close(): Promise<void>;
 }

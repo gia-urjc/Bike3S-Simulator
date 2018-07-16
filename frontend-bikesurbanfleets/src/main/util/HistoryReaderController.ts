@@ -6,7 +6,7 @@ import { app } from 'electron';
 import { without } from 'lodash';
 
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
-import { IpcUtil } from './index';
+import { IpcUtil } from '.';
 import Channel from './Channel';
 
 interface TimeRange {

@@ -2,7 +2,7 @@ import {Component, Inject} from "@angular/core";
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../../shared/BackendInterfaces";
 import * as $ from "jquery";
 import {AjaxProtocol} from "../../ajax/AjaxProtocol";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
 const { dialog } = (window as any).require('electron').remote;
 const { ipcRenderer } = (window as any).require('electron');
 
@@ -24,6 +24,8 @@ export class SimulatecoreComponent{
     private exceptions: string;
     private errors: boolean;
     private finished: boolean;
+
+    private modal: NgbModalRef;
 
     constructor(@Inject('AjaxProtocol') private ajax: AjaxProtocol, private modalService: NgbModal) {}
 
@@ -58,8 +60,7 @@ export class SimulatecoreComponent{
     }
 
     open(content: any) {
-        this.modalService.open(content).result.then(() => {
-        });
+        this.modal = this.modalService.open(content, {backdrop: "static", keyboard: false});
     }
 
     addErrors(error: string) {
@@ -102,10 +103,22 @@ export class SimulatecoreComponent{
         console.log(args);
         $('#modal-button').trigger('click');
         await this.ajax.backend.simulate(args);
-        if(!this.errors) {
+        if(!this.errors || this.percentage === 100) {
             this.resultMessage = "Simulation completed";
         }
         this.finished = true;
+    }
+
+    async cancelSimulation() {
+        try {
+            await this.ajax.backend.cancelSimulation();
+            this.modal.close();
+            
+        }
+        catch(error) {
+            this.errors = true;
+            this.exceptions += error;
+        }
     }
 
 }

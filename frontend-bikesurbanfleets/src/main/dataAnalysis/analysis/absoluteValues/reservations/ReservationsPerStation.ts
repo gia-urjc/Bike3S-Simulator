@@ -36,7 +36,6 @@ export class ReservationsPerStation implements SystemInfo, Observer {
     
     public update(reservation: Reservation): void {
         let key: number = reservation.station.id;
-        console.log("Reservations per station");
         
         switch (reservation.type) { 
             case 'BIKE': { 
