@@ -26,6 +26,7 @@ import { AnalyseHistoryComponent } from './analyse-history-component/analysehist
 import {FlexLayoutModule} from "@angular/flex-layout";
 import { ConfigurationLoadComponent } from './configuration-load-globalconfig/configuration-load.component';
 import { SchemaFormGlobalComponent } from './schemaform-global-component/schemaform-global.component';
+import { ConfDownMapComponent } from './configuration-download-map/configuration-download-map.component';
 
 @NgModule({
     imports: [
@@ -58,7 +59,8 @@ import { SchemaFormGlobalComponent } from './schemaform-global-component/schemaf
         JsonTreeViewComponent,
         ConfigurationSaveComponent,
         AnalyseHistoryComponent,
-        ConfigurationLoadComponent
+        ConfigurationLoadComponent,
+        ConfDownMapComponent
     ],
     bootstrap: [AppComponent],
     providers: [{
@@ -67,7 +69,8 @@ import { SchemaFormGlobalComponent } from './schemaform-global-component/schemaf
     }, NgbModal],
     entryComponents: [
         ConfigurationSaveComponent,
-        ConfigurationLoadComponent
+        ConfigurationLoadComponent,
+        ConfDownMapComponent
     ]
 })
 export class AppModule {}

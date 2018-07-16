@@ -70,6 +70,6 @@ p.help-block {
 .fixed-button-down-map {
     position: fixed;
     top: 35px;
-    right: 340px;
+    right: 330px;
     z-index: 1000; 
 }

@@ -8,9 +8,10 @@ import {EntryPointDataType, GlobalConfiguration, ConfigurationFile} from "../../
 import {ConfigurationUtils} from "./configuration.utils";
 import {ConfigurationSaveComponent} from "../configuration-save-component/configurationsave.component";
 import { ConfigurationLoadComponent } from "../configuration-load-globalconfig/configuration-load.component";
-import * as L from 'leaflet';
 import { JsonTreeViewComponent } from "../jsoneditor-component/jsoneditor.component";
 import { SchemaFormGlobalComponent } from "../schemaform-global-component/schemaform-global.component";
+import { ConfDownMapComponent } from "../configuration-download-map/configuration-download-map.component";
+import * as L from 'leaflet';
 const  {dialog} = (window as any).require('electron').remote;
 
 
@@ -62,6 +63,8 @@ export class ConfigurationComponent {
         "stations": new Array<any>()
     };
 
+    hasBoundingBox: boolean;
+
     @ViewChild('globalSchemaForm') gsForm: SchemaFormGlobalComponent;
 
     @ViewChild('selecEntryPointType') epSelectModalForm: TemplateRef<any>;
@@ -84,10 +87,10 @@ export class ConfigurationComponent {
                 public modalService: NgbModal) {}
 
     async ngOnInit() {
+        this.hasBoundingBox = false;
         this.drawOptions = LeafletDrawFunctions.createLeafletDrawOptions(this.featureGroup);
         (L as any).drawLocal = LeafletDrawFunctions.createCustomMessages();
         await this.ajax.formSchema.init();
-        await this.ajax.mapDownloader.init();
         this.globalFormInit();
         this.selectEntryPointFormInit();
         this.stationFormInit();
@@ -302,6 +305,7 @@ export class ConfigurationComponent {
             this.gsForm.resetForm();
             ConfigurationLeaflethandler.drawBoundingBox(this, this.globalData.boundingBox);
         });
+        this.hasBoundingBox = true;
     }
 
     async loadEntryPoints() {
@@ -337,9 +341,11 @@ export class ConfigurationComponent {
     async downloadMap() {
         let path = this.saveFile();
         Object.assign(this.globalData, this.gsForm.actualData.boundingBox);
-        console.log(this.globalData);
-        await this.ajax.mapDownloader.download({path: path, bbox: this.globalData.boundingBox});
-        console.log("Finished");
+        if(path) {
+            let modalRef: NgbModalRef = this.modalService.open(ConfDownMapComponent, {backdrop: "static", keyboard: false});
+            modalRef.componentInstance.path = path;
+            modalRef.componentInstance.boundingBox = this.globalData.boundingBox;
+        }
     }
 
 }

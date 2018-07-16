@@ -38,7 +38,7 @@
         </div>
     </div>
         <div ngbDropdown class="fixed-button-load dropup col-xs-3">
-            <div class="fixed-button-down-map col-xs-3">
+            <div *ngIf="hasBoundingBox" class="fixed-button-down-map col-xs-3">
                 <button (click)="downloadMap()" class="btn btn-primary">Download Map</button>
             </div>
             <button ngbDropdownToggle type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">

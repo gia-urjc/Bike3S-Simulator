@@ -56,16 +56,16 @@ export default class MapDownloadController {
             let url = this.BASE_URL + `(way["highway"](${slat},${slon},${nlat},${nlon});node(w););out;`;
             console.log(url);
             let output = fs.createWriteStream(args.path);
-                progress(request(url))
-                .on('progress', (state: DownloadState) => {
-                    console.log(state);
-                })
-                .on('error', (err: any) => {
-                    console.log(err);
-                    reject();
-                })
-                .on('end', () => {resol();})
-                .pipe(output);
+            progress(request(url))
+            .on('progress', (state: DownloadState) => {
+                console.log(state);
+            })
+            .on('error', (err: any) => {
+                console.log(err);
+                reject();
+            })
+            .on('end', () => {resol();})
+            .pipe(output);
             }
         );
     }

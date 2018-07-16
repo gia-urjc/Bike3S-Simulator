@@ -27,6 +27,7 @@ export class ConfigurationLeaflethandler {
             bBox.southEast.latitude = rectangle.getBounds().getSouthEast().lat;
             bBox.southEast.longitude = rectangle.getBounds().getSouthEast().lng;
             comp.featureGroup.addLayer(rectangle);
+            comp.hasBoundingBox = true;
             comp.gsForm.resetForm();
         }
 
@@ -97,5 +98,6 @@ export class ConfigurationLeaflethandler {
         bBox.southEast.latitude = 0;
         bBox.southEast.longitude = 0;
         comp.gsForm.resetForm();
+        comp.hasBoundingBox = false;
     }
 }
