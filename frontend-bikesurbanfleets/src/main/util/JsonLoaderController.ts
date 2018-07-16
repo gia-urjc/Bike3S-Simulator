@@ -1,7 +1,7 @@
 import {app} from "electron";
 import * as paths from "path";
 import * as fs from "fs-extra";
-import {IpcUtil} from "../util";
+import {IpcUtil} from ".";
 import { ValidationInfo, validate } from "../../shared/util";
 
 class Channel {

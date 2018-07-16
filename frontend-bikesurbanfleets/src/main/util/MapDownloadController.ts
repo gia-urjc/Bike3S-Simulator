@@ -48,11 +48,12 @@ export default class MapDownloadController {
 
     private download(args: MapDownloadArgs): Promise<void> {
         return new Promise((resol, reject) => {
+            console.log(args);
             let nlat = args.bbox.northWest.latitude;
             let nlon = args.bbox.southEast.longitude;
             let slat = args.bbox.southEast.latitude;
             let slon = args.bbox.northWest.longitude;
-            let url = this.BASE_URL + `(way["highway"](${slat},${slon},${nlat},${nlon});node(w););out`;
+            let url = this.BASE_URL + `(way["highway"](${slat},${slon},${nlat},${nlon});node(w););out;`;
             console.log(url);
             let output = fs.createWriteStream(args.path);
                 progress(request(url))

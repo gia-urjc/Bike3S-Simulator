@@ -1,8 +1,9 @@
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
-import {JsonInfo, default as JsonLoader, JsonSchemaGroup} from "../../main/json-loader/JsonLoader";
+import {JsonInfo, default as JsonLoader, JsonSchemaGroup} from "../../main/util/JsonLoaderController";
 import { CsvArgs } from '../../main/util/CsvGeneratorController';
+import { MapDownloadArgs } from '../../shared/ConfigurationInterfaces';
 
 export interface HistoryAjax {
     init(path: string): Promise<void>;
@@ -58,4 +59,11 @@ export interface AjaxProtocol {
     backend: BackendAjax;
     jsonLoader: JsonLoaderAjax;
     csvGenerator: CsvGeneratorAjax;
+    mapDownloader: MapDownloaderAjax;
+}
+
+export interface MapDownloaderAjax {
+    init(): Promise<void>;
+    download(args: MapDownloadArgs): Promise<void>;
+    close(): Promise<void>;
 }

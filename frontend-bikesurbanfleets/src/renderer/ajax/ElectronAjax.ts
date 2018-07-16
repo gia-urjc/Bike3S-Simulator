@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { Event } from 'electron';
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
-import { AjaxProtocol, BackendAjax, FormSchemaAjax, HistoryAjax, JsonLoaderAjax, SettingsAjax, CsvGeneratorAjax } from './AjaxProtocol';
-import { EntryPointDataType } from "../../shared/ConfigurationInterfaces";
+import { AjaxProtocol, BackendAjax, FormSchemaAjax, HistoryAjax, JsonLoaderAjax, SettingsAjax, CsvGeneratorAjax, MapDownloaderAjax } from './AjaxProtocol';
+import { EntryPointDataType, MapDownloadArgs } from "../../shared/ConfigurationInterfaces";
 import { CoreSimulatorArgs, UserGeneratorArgs } from "../../shared/BackendInterfaces";
-import { JsonInfo, JsonSchemaGroup } from "../../main/json-loader/JsonLoader";
+import { JsonInfo, JsonSchemaGroup } from "../../main/util/JsonLoaderController";
 import { CsvArgs } from '../../main/util/CsvGeneratorController';
 
 // https://github.com/electron/electron/issues/7300#issuecomment-274269710
@@ -180,6 +180,22 @@ class CsvGenerator implements CsvGeneratorAjax {
 
 }
 
+class MapDownloader implements MapDownloaderAjax {
+    
+    async init(): Promise<void> {
+        return await readIpc('map-download-init');
+    }
+
+    async download(args: MapDownloadArgs): Promise<void> {
+        return await readIpc('map-download-get', args);
+    }
+
+    async close(): Promise<void> {
+        return await readIpc('map-download-close');
+    }
+    
+}
+
 @Injectable()
 export class ElectronAjax implements AjaxProtocol {
 
@@ -189,6 +205,7 @@ export class ElectronAjax implements AjaxProtocol {
     backend: ElectronBackend;
     jsonLoader: JsonLoaderAjax;
     csvGenerator: CsvGeneratorAjax;
+    mapDownloader: MapDownloader;
 
     constructor() {
         this.history = new ElectronHistory();
@@ -197,5 +214,6 @@ export class ElectronAjax implements AjaxProtocol {
         this.backend = new ElectronBackend();
         this.jsonLoader = new JsonLoader();
         this.csvGenerator = new CsvGenerator();
+        this.mapDownloader = new MapDownloader();
     }
 }

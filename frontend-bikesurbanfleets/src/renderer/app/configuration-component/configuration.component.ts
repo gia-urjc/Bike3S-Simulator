@@ -87,6 +87,7 @@ export class ConfigurationComponent {
         this.drawOptions = LeafletDrawFunctions.createLeafletDrawOptions(this.featureGroup);
         (L as any).drawLocal = LeafletDrawFunctions.createCustomMessages();
         await this.ajax.formSchema.init();
+        await this.ajax.mapDownloader.init();
         this.globalFormInit();
         this.selectEntryPointFormInit();
         this.stationFormInit();
@@ -280,6 +281,10 @@ export class ConfigurationComponent {
             return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0];
     }
 
+    saveFile(): string {
+        return dialog.showSaveDialog({filters: [{name: 'OSM Files', extensions: ['osm']}]});
+    }
+
     selectFile(): string | undefined {
         return dialog.showOpenDialog({
             properties: ['openFile', 'createDirectory'],
@@ -327,6 +332,14 @@ export class ConfigurationComponent {
                 this.jsonTreeStation.dataUpdated(this.finalStations);
             }
         });
+    }
+
+    async downloadMap() {
+        let path = this.saveFile();
+        Object.assign(this.globalData, this.gsForm.actualData.boundingBox);
+        console.log(this.globalData);
+        await this.ajax.mapDownloader.download({path: path, bbox: this.globalData.boundingBox});
+        console.log("Finished");
     }
 
 }

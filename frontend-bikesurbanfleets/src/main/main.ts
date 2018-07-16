@@ -7,7 +7,7 @@ import { HistoryReaderController, CsvGeneratorController } from './util';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 import { ipcMain, ipcRenderer } from 'electron';
 import { BackendController } from "./util";
-import JsonLoader from "./json-loader/JsonLoader";
+import JsonLoader from "./util/JsonLoaderController";
 import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
 import MapDownloadController from './util/MapDownloadController';
 
