@@ -40,7 +40,6 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
         let events: Array<Event> = timeEntry.events;
         let key: number | undefined;
         let eventStations: Array<Station>;
-        console.log('Rentals And returns per Station');
         
         for (let event of events) {
             eventStations = event.changes.stations;
@@ -63,7 +62,6 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
                 }
                 
                 case 'EventUserArrivesAtStationToRentBikeWithoutReservation': {
-                    console.log(eventStations);
                     if (eventStations.length > 0) {
                         // If only stations with reservations have been recorded, key'll be undefined 
                         key = this.obtainChangedStationId(eventStations);

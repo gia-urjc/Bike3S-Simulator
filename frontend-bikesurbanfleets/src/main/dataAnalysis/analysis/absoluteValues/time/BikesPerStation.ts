@@ -62,8 +62,6 @@ export class BikesPerStation implements Observer {
     let reservationId: number;
     let reservation: Reservation | undefined;
     let station: Station;
-
-    console.log("Bikes per stations");
       
     for(let event of events) {
       let eventStations: Array<Station> = event.changes.stations;

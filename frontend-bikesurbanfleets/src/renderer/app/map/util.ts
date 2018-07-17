@@ -9,5 +9,5 @@ export abstract class LayerEntry {
 export function SettingsLayerPath(path: string) {
     return function (Target: { new(key: string): LayerEntry }) {
         Reflect.defineMetadata(LayerEntry.SettingsPathKey, path, Target);
-    }
+    };
 }

@@ -11,7 +11,7 @@ import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
 import { Visualization } from './visualization-component/visualization.component';
 import { MenuComponent } from './menu-component/menu.component';
-import {SchemaformComponent} from './schemaform-component/schemaform.component';
+import {SchemaFormComponent} from './schemaform-component/schemaform.component';
 import {Bootstrap4FrameworkModule, JsonSchemaFormModule} from 'angular2-json-schema-form';
 import {AppRoutingModule} from "./app.routes";
 import {SimulateComponent} from "./simulate-component/simulate.component";
@@ -24,6 +24,9 @@ import {JsonTreeViewComponent} from "./jsoneditor-component/jsoneditor.component
 import {ConfigurationSaveComponent} from "./configuration-save-component/configurationsave.component";
 import { AnalyseHistoryComponent } from './analyse-history-component/analysehistory.component';
 import {FlexLayoutModule} from "@angular/flex-layout";
+import { ConfigurationLoadComponent } from './configuration-load-globalconfig/configuration-load.component';
+import { SchemaFormGlobalComponent } from './schemaform-global-component/schemaform-global.component';
+import { ConfDownMapComponent } from './configuration-download-map/configuration-download-map.component';
 
 @NgModule({
     imports: [
@@ -45,7 +48,8 @@ import {FlexLayoutModule} from "@angular/flex-layout";
         AppComponent,
         MapComponent,
         Visualization,
-        SchemaformComponent,
+        SchemaFormComponent,
+        SchemaFormGlobalComponent,
         MenuComponent,
         SimulateComponent,
         SimulatecoreComponent,
@@ -54,7 +58,9 @@ import {FlexLayoutModule} from "@angular/flex-layout";
         ConfigurationComponent,
         JsonTreeViewComponent,
         ConfigurationSaveComponent,
-        AnalyseHistoryComponent
+        AnalyseHistoryComponent,
+        ConfigurationLoadComponent,
+        ConfDownMapComponent
     ],
     bootstrap: [AppComponent],
     providers: [{
@@ -62,7 +68,9 @@ import {FlexLayoutModule} from "@angular/flex-layout";
         useClass: ElectronAjax
     }, NgbModal],
     entryComponents: [
-        ConfigurationSaveComponent
+        ConfigurationSaveComponent,
+        ConfigurationLoadComponent,
+        ConfDownMapComponent
     ]
 })
 export class AppModule {}

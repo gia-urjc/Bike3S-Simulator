@@ -1,13 +1,9 @@
 import * as fs from 'fs-extra';
 import { app } from 'electron';
 import * as paths from 'path';
-import {EntryPointDataType, SchemaConfig} from "../../shared/configuration";
-import {IpcUtil} from "../util";
-import SchemaParser from "./SchemaParser";
-
-class Channel {
-    constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
-}
+import {EntryPointDataType, SchemaConfig} from "../../shared/ConfigurationInterfaces";
+import {IpcUtil, Channel} from "../util";
+import SchemaParser from "../configuration/SchemaParser";
 
 export default class SchemaFormGenerator{
 

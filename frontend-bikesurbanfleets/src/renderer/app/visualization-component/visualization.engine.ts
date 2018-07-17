@@ -2,9 +2,8 @@ import { FormControl, Validators } from '@angular/forms';
 import { Layer, Marker, Popup } from 'leaflet';
 import { isArray, isEqual } from 'lodash';
 
-import { IntervalObservable } from '../../rxjs/observable/IntervalObservable';
-import { takeWhile } from '../../rxjs/operators';
-import{ ReplaySubject } from "../../rxjs/ReplaySubject";
+import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
+import { takeWhile } from 'rxjs/operators/takeWhile';
 
 import { EntityChanges, HistoryTimeEntry, IdReference, isIdReference } from '../../../shared/history';
 import { Geo, safe } from '../../../shared/util';

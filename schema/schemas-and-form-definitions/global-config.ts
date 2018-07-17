@@ -25,6 +25,8 @@ export const layout =
     {key: "recommendationSystemType", placeholder: "Type of the Recommendation System"},
     {key: "graphManagerType", placeholder: "Type of graph Manager"},
     {key: "maxDistanceRecommendation", placeholder: "Max distance recommended by the system"},
-    {key: "boundingBox.northWest", placeholder: "example1"},
-    {key: "boundingBox.southEast", placeholder: "example2"}
+    {key: "boundingBox.northWest.latitude", placeholder: "Nort-West latitude"},
+    {key: "boundingBox.northWest.longitude", placeholder: "Nort-West longitude"},
+    {key: "boundingBox.southEast.latitude", placeholder: "South-West latitude"},
+    {key: "boundingBox.southEast.longitude", placeholder: "South-West longitude"},
 ]

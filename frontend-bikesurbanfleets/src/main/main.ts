@@ -3,13 +3,9 @@ import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
 import { Settings } from './settings';
-import { HistoryReaderController, CsvGeneratorController } from './util';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 import { ipcMain, ipcRenderer } from 'electron';
-import { BackendController } from "./util";
-import JsonLoader from "./json-loader/JsonLoader";
-import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
-import { CsvGenerator } from './dataAnalysis/analysis/generators/CsvGenerator';
+import { HistoryReaderController, BackendController, SchemaFormGeneratorController, JsonLoaderController, CsvGeneratorController, MapDownloadController } from './controllers';
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;
@@ -86,12 +82,14 @@ export namespace Main {
     }
 
     export function initMenu() {
+        
         HistoryReaderController.enableIpc();
         Settings.enableIpc();
         BackendController.enableIpc();
-        SchemaFormGenerator.enableIpc();
-        JsonLoader.enableIpc();
+        SchemaFormGeneratorController.enableIpc();
+        JsonLoaderController.enableIpc();
         CsvGeneratorController.enableIpc();
+        MapDownloadController.enableIpc();
 
         app.on('ready', async () => {
 
@@ -283,5 +281,10 @@ export namespace Main {
 
 Main.initMenu();
 if (process.env.target === 'development') {
-    Main.test();
+    try {
+        Main.test();
+    }
+    catch(error) {
+       
+    }
 }
