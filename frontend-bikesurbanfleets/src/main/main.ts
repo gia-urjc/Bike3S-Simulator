@@ -3,13 +3,9 @@ import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
 import { Settings } from './settings';
-import { HistoryReaderController, CsvGeneratorController } from './util';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 import { ipcMain, ipcRenderer } from 'electron';
-import { BackendController } from "./util";
-import JsonLoader from "./util/JsonLoaderController";
-import SchemaFormGenerator from "./configuration/SchemaFormGenerator";
-import MapDownloadController from './util/MapDownloadController';
+import { HistoryReaderController, BackendController, SchemaFormGeneratorController, JsonLoaderController, CsvGeneratorController, MapDownloadController } from './controllers';
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;
@@ -90,8 +86,8 @@ export namespace Main {
         HistoryReaderController.enableIpc();
         Settings.enableIpc();
         BackendController.enableIpc();
-        SchemaFormGenerator.enableIpc();
-        JsonLoader.enableIpc();
+        SchemaFormGeneratorController.enableIpc();
+        JsonLoaderController.enableIpc();
         CsvGeneratorController.enableIpc();
         MapDownloadController.enableIpc();
 

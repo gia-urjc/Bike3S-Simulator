@@ -1,12 +1,8 @@
 import {app} from "electron";
 import * as paths from "path";
 import * as fs from "fs-extra";
-import {IpcUtil} from ".";
+import {IpcUtil, Channel} from "../util";
 import { ValidationInfo, validate } from "../../shared/util";
-
-class Channel {
-    constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
-}
 
 export interface JsonSchemaGroup {
     globalSchema: any;

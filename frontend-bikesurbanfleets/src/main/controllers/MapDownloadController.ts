@@ -1,7 +1,6 @@
-import IpcUtil from "./IpcUtil";
-import Channel from "./Channel";
 import * as fs from 'fs-extra';
 import { MapDownloadArgs } from "../../shared/ConfigurationInterfaces";
+import { Channel, IpcUtil } from '../util';
 const request = require('request');
 const progress = require('request-progress');
 
