@@ -193,6 +193,10 @@ class MapDownloader implements MapDownloaderAjax {
     async download(args: MapDownloadArgs): Promise<void> {
         return await readIpc('map-download-get', args);
     }
+    
+    async cancel(): Promise<void> {
+        return await readIpc('map-download-cancel');
+    }
 
     async close(): Promise<void> {
         return await readIpc('map-download-close');

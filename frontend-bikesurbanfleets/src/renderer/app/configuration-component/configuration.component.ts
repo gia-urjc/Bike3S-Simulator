@@ -108,8 +108,6 @@ export class ConfigurationComponent {
             },
             layout: layout.globalLayout
         };
-        console.log(JSON.stringify(schema));
-        console.log(JSON.stringify(layout));
     }
 
     async selectEntryPointFormInit(): Promise<void> {

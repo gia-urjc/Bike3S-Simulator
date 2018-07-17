@@ -88,7 +88,6 @@ export default class BackendController {
 
     private sendInfoToGui(channel: string, message: string): void {
         if(this.window) {
-            console.log(message.toString());
             this.window.webContents.send(channel, message);
         }
     }

@@ -20,7 +20,7 @@ export const GlobalConfig = new JsonSchema(options, sObject({
 export const layout = 
 [
     {key: "totalSimulationTime", placeholder: "Total simulation time in seconds."},
-    {key: "reservationTime", placeholder: "Maximum time for reserves."},
+    {key: "reservationTime", placeholder: "Maximum time for reserves in seconds."},
     {key: "randomSeed", placeholder: "Random Seed"},
     {key: "recommendationSystemType", placeholder: "Type of the Recommendation System"},
     {key: "graphManagerType", placeholder: "Type of graph Manager"},

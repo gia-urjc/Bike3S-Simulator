@@ -11,7 +11,7 @@ export namespace Main {
     let visualization: Electron.BrowserWindow | null;
     let menu: Electron.BrowserWindow | null;
     export let simulate: Electron.BrowserWindow | null;
-    let configuration: Electron.BrowserWindow | null;
+    export let configuration: Electron.BrowserWindow | null;
     let analyse: Electron.BrowserWindow | null;
 
     export function initWindowsListeners() {

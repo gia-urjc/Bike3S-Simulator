@@ -66,5 +66,6 @@ export interface AjaxProtocol {
 export interface MapDownloaderAjax {
     init(): Promise<void>;
     download(args: MapDownloadArgs): Promise<void>;
+    cancel(): Promise<void>;
     close(): Promise<void>;
 }
