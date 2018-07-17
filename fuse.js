@@ -33,6 +33,7 @@ projectRoot.build.dataAnalyser = () => path.join(projectRoot.build(), 'data-anal
 
 projectRoot.fuseCache = () => path.join(projectRoot(), '.fusebox');
 projectRoot.schemaCacheDefaults = () => path.join(projectRoot(), '.schema/defaults');
+projectRoot.schemaLayoutCacheDefaults = () => path.join(projectRoot(), '.schema/schemas-and-form-definitions');
 
 let production = false;
 
@@ -128,8 +129,10 @@ Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, 
         if (code === 0) {
         log.time().green('compiling schemas').echo();
 
+       // Schema processing 
         fs.readdirSync(projectRoot.schemaCacheDefaults()).filter((file) => file.endsWith('.js')).forEach((file) => {
-            const schema = require(path.join(projectRoot.schemaCacheDefaults(), file)).default;
+            const allSchema = require(path.join(projectRoot.schemaCacheDefaults(), file));
+            const schema = allSchema.default;
             const out = path.join(schemaBuildPath, `${file.slice(0, -3)}.json`);
 
             schema.errors.forEach((error) => {
@@ -139,7 +142,22 @@ Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, 
             schema.write(out);
 
             log.time().green(`written schema to ${out}`).echo();
+            
         });
+
+        // Layout processing
+        fs.readdirSync(projectRoot.schemaLayoutCacheDefaults()).filter((file) => file.endsWith('.js')).forEach((file) => {
+            const allLayouts = require(path.join(projectRoot.schemaLayoutCacheDefaults(), file));
+            const out = path.join(schemaBuildPath, `${file.slice(0, -3)}-layout.json`);
+
+            if(allLayouts.layout){
+                fs.writeJsonSync(out, allLayouts.layout, {spaces: 4});
+                log.time().green(`writen layout to ${out}`).echo();
+            }
+        });
+
+        //const globalLayout = require(path.join(projectRoot.schemaCacheDefaults(), 'global-config.js')).globalLayout;
+        //fs.writeJSONSync();
 
         resolve();
         } else {

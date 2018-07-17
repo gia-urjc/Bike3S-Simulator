@@ -2,7 +2,7 @@ import {app} from "electron";
 import * as paths from "path";
 import * as fs from "fs-extra";
 import {IpcUtil} from "../util";
-import {EntryPointDataType} from "../../shared/configuration";
+import {JsonSchemaLayout} from "../../shared/configuration";
 
 class Channel {
     constructor(public name: string, public callback: (data?: any) => Promise<any>) {}
@@ -24,6 +24,7 @@ export default class JsonLoader {
     private static globalConfigurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/global-config.json'));
     private static stationConfigurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config.json'));
     private static entryPointsConfSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-config.json'));
+    private static globalLayout: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/global-config-layout.json'));
 
     static create() {
         return new JsonLoader();
@@ -53,6 +54,12 @@ export default class JsonLoader {
             globalSchema: this.globalConfigurationSchema,
             entryPointSchema: this.entryPointsConfSchema,
             stationsSchema: this.stationConfigurationSchema
+        };
+    }
+
+    static async getAllLayouts(): Promise<JsonSchemaLayout> {
+        return {
+            globalLayout: this.globalLayout
         };
     }
 

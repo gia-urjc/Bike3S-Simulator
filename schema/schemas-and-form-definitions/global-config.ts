@@ -16,3 +16,15 @@ export const GlobalConfig = new JsonSchema(options, sObject({
     }).require.all().restrict(),
     debugMode: sBoolean()
 }).require('totalSimulationTime', 'reservationTime', 'boundingBox', 'recommendationSystemType', 'graphManagerType', 'maxDistanceRecommendation'));
+
+export const layout = 
+[
+    {key: "totalSimulationTime", placeholder: "Total simulation time in seconds."},
+    {key: "reservationTime", placeholder: "Max time for reserve."},
+    {key: "randomSeed", placeholder: "Random Seed"},
+    {key: "recommendationSystemType", placeholder: "Type of the Recommendation System"},
+    {key: "graphManagerType", placeholder: "Type of graph Manager"},
+    {key: "maxDistanceRecommendation", placeholder: "Max distance recommended by the system"},
+    {key: "boundingBox.northWest", placeholder: "example1"},
+    {key: "boundingBox.southEast", placeholder: "example2"}
+]

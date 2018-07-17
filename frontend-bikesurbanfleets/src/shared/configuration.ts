@@ -40,3 +40,4 @@ export interface BaseStation extends PlainObject, BaseEntity {
 }
 
 export interface Bike extends PlainObject, BaseEntity {}
+export interface JsonSchemaLayout{}

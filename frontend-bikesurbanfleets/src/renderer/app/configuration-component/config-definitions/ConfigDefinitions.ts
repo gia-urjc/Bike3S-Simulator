@@ -107,6 +107,7 @@ export class EntryPoint {
 export interface FormJsonSchema {
     schema: any;
     data: any;
+    layout?: any;
     options?: any;
 }
 
