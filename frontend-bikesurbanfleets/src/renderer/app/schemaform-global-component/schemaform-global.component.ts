@@ -4,7 +4,7 @@ import * as $ from "jquery";
 @Component({
     selector: 'schema-global-form',
     template: require('./schemaform-global.component.html'),
-    styles: []
+    styles: [require('./schemaform-global.component.css')]
 })
 export class SchemaFormGlobalComponent {
 

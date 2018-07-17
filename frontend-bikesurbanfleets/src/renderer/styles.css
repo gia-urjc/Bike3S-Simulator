@@ -56,6 +56,10 @@ select {
     -webkit-animation-delay: 0.2s;
     animation-delay: 0.2s; }
 
+.bold-text {
+    font-weight: bold;
+}
+
 @-webkit-keyframes sk-cubeGridScaleDelay {
     0%, 70%, 100% {
         -webkit-transform: scale3D(1, 1, 1);
