@@ -143,7 +143,7 @@ public abstract class EventUser implements Event {
             user.getMemory().update(UserMemory.FactType.BIKE_FAILED_RESERVATION);
             debugEventLog("User has not been able to reserve bike");
             if (user.decidesToLeaveSystemAffterFailedReservation()) {
-                leaveSystem();
+                user.leaveSystem();
                 debugEventLog("User decides to leave the system");
                 debugClose(user, user.getId());
             } else if (user.decidesToDetermineOtherStationAfterFailedReservation()) {
@@ -304,16 +304,9 @@ public abstract class EventUser implements Event {
         return newEvents;
     }
     
-    protected void leaveSystem() {
-        user.setPosition(null);
-        user.setRoute(null);
-        user.setDestinationStation(null);
-        user.setDestinationPoint(null);
-    }
-
     protected void exceptionTreatment(Exception e) {
         MessageGuiFormatter.showErrorsForGui(e);
-        leaveSystem();
+        user.leaveSystem();
         debugEventLog("Exception occurred");
         debugEventLog(ExceptionUtils.getStackTrace(e));
         debugClose(user, user.getId());

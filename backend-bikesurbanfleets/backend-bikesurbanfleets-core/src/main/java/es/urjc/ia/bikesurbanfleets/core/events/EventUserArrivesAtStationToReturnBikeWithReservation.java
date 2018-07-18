@@ -40,7 +40,7 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
         try {
             user.setInstant(this.instant);
             user.returnBikeWithReservationTo(station);
-            leaveSystem();
+            user.leaveSystem();
             debugEventLog("User returns the bike");
             debugClose(user, user.getId());
         }
