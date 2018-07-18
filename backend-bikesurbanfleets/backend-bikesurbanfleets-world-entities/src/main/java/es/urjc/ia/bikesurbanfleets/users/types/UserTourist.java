@@ -4,7 +4,7 @@ import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
-import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
+import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.List;
  * @author IAgroup
  *
  */
-@AssociatedType("USER_TOURIST")
+@UserType("USER_TOURIST")
 public class UserTourist extends User {
     
     public class UserParameters {

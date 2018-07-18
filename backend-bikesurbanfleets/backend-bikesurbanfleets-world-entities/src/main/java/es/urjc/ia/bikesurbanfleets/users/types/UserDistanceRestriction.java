@@ -4,7 +4,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
-import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
+import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
  * @author IAgroup
  *
  */
-@AssociatedType("USER_DISTANCE_RESTRICTION")
+@UserType("USER_DISTANCE_RESTRICTION")
 public class UserDistanceRestriction extends User {
 
     public class UserParameters {

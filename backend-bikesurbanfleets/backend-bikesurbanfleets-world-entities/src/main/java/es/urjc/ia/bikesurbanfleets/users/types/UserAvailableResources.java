@@ -5,7 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
-import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
+import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
  * 
  * @author IAgroup
  */
-@AssociatedType("USER_AVAILABLE_RESOURCES")
+@UserType("USER_AVAILABLE_RESOURCES")
 public class UserAvailableResources extends User {
 
     public class UserParameters {

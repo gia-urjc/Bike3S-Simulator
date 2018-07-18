@@ -23,9 +23,9 @@ public class UserFactory {
     private Set<Class<?>> userClasses;
 
     public UserFactory() {
-        // Load Users by reflection using the annotation AssociatedType
+        // Load Users by reflection using the annotation UserType
         Reflections reflections = new Reflections();
-        this.userClasses = reflections.getTypesAnnotatedWith(AssociatedType.class);
+        this.userClasses = reflections.getTypesAnnotatedWith(UserType.class);
 
         for(Class userClass: userClasses) {
             System.out.println(userClass.getName());
@@ -55,7 +55,7 @@ public class UserFactory {
     private User instantiateUser(SimulationServices services, JsonElement parameters, String type) {
 
         for(Class<?> userClass: userClasses) {
-            String userTypeAnnotation = userClass.getAnnotation(AssociatedType.class).value();
+            String userTypeAnnotation = userClass.getAnnotation(UserType.class).value();
             if(userTypeAnnotation.equals(type)) {
                 List<Class<?>> innerClasses = Arrays.asList(userClass.getClasses());
                 Class<?> userParametersClass = null;

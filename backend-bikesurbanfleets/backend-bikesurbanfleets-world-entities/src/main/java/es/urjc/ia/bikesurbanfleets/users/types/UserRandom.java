@@ -5,7 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
-import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
+import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author IAgroup
  *
  */
-@AssociatedType("USER_RANDOM")
+@UserType("USER_RANDOM")
 public class UserRandom extends User {
 
     public UserRandom(SimulationServices services) {

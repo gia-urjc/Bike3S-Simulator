@@ -9,7 +9,7 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.history.JsonIdentifier;
-import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
+import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
 import java.util.stream.Collectors;
@@ -53,7 +53,7 @@ public class HistoricUser implements HistoricEntity {
         this.cyclingVelocity = user.getCyclingVelocity();
         this.destinationStation = station == null ? null : new IdReference(HistoricStation.class, station.getId());
         this.route = user.getRoute();
-        this.type = user.getClass().getAnnotation(AssociatedType.class).value();
+        this.type = user.getClass().getAnnotation(UserType.class).value();
         this.reservations = new IdReference(HistoricReservation.class, user.getMemory().getReservations().stream().map(Reservation::getId).collect(Collectors.toList()));
     }
 
