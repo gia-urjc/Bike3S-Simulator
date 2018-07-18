@@ -7,7 +7,6 @@ import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
-import es.urjc.ia.bikesurbanfleets.users.UserType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@AssociatedType(UserType.USER_UNINFORMED)
+@AssociatedType("USER_UNINFORMED")
 public class UserUninformed extends User {
 
     public UserUninformed(SimulationServices services) {

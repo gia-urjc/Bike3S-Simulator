@@ -29,5 +29,6 @@ export const layout =
     {key: "boundingBox.northWest.latitude", placeholder: "Nort-West latitude", title: "North latitude"},
     {key: "boundingBox.northWest.longitude", placeholder: "Nort-West longitude", title: "North longitude"},
     {key: "boundingBox.southEast.latitude", placeholder: "South-West latitude", title: "South latitude"},
-    {key: "boundingBox.southEast.longitude", placeholder: "South-West longitude", title: "South longitude"}
+    {key: "boundingBox.southEast.longitude", placeholder: "South-West longitude", title: "South longitude"},
+    {key: "debugMode", placeholder: "If checked, log files will be generated"}
 ];

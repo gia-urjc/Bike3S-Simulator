@@ -212,10 +212,12 @@ export default class BackendController {
 
 
                 this.simulationProcess.stderr.on('data', (data) => {
+                    console.log(data.toString());
                     this.sendInfoToGui('core-error', data.toString());
                 });
 
                 this.simulationProcess.stdout.on('data', (data) => {
+                    console.log(data.toString());
                     this.sendInfoToGui('core-data', data.toString());
                 });
 

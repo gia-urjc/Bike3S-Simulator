@@ -5,15 +5,32 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import es.urjc.bikesurbanfleets.services.SimulationServices;
-import es.urjc.ia.bikesurbanfleets.users.UserType;
-import es.urjc.ia.bikesurbanfleets.users.types.*;
+import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.UserProperties;
+import org.reflections.Reflections;
+
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class serves to create, in a generic way, user instances.
  * @author IAgroup
  */
 public class UserFactory {
+
+    private Set<Class<?>> userClasses;
+
+    public UserFactory() {
+        // Load Users by reflection using the annotation AssociatedType
+        Reflections reflections = new Reflections();
+        this.userClasses = reflections.getTypesAnnotatedWith(AssociatedType.class);
+
+        for(Class userClass: userClasses) {
+            System.out.println(userClass.getName());
+        }
+    }
 
 	Gson gson = new Gson();
     /**
@@ -30,34 +47,46 @@ public class UserFactory {
         }
         String type = epUserProps.getTypeName();
 
-        switch (UserType.valueOf(type)) {
-            case USER_RANDOM:
-                return new UserRandom(services);
-            case USER_UNINFORMED:
-                return new UserUninformed(services);
-            case USER_INFORMED:
-                return new UserInformed(gson.fromJson(parameters,
-                        UserInformed.UserInformedParameters.class), services);
-            case USER_TOURIST:
-                return new UserTourist(gson.fromJson(parameters,
-                        UserTourist.UserTouristParameters.class), services);
-            case USER_COMMUTER:
-                return new UserCommuter(gson.fromJson(parameters,
-                        UserCommuter.UserCommuterParameters.class), services);
-            case USER_AVAILABLE_RESOURCES: 
-                return new UserAvailableResources(gson.fromJson(parameters,
-                        UserAvailableResources.UserAvailableResourcesParameters.class), services);
-            case USER_REASONABLE:
-                return new UserDistanceResourcesRatio(gson.fromJson(parameters,
-                        UserDistanceResourcesRatio.UserDistanceResourcesRatioParameters.class), services);
-            case USER_DISTANCE_RESTRICTION:
-                return new UserDistanceRestriction(gson.fromJson(parameters,
-                        UserDistanceRestriction.UserDistanceRestrictionParameters.class), services);
-            case USER_OBEDIENT:
-            	return new UserObedient(gson.fromJson(parameters,
-            			UserObedient.UserObedientParameters.class), services);
-            
-        }
+        User user = instantiateUser(services, parameters, type);
+        if (user != null) return user;
         throw new IllegalArgumentException("The type" + epUserProps.getTypeName() + "doesn't exists");
+    }
+
+    private User instantiateUser(SimulationServices services, JsonElement parameters, String type) {
+
+        for(Class<?> userClass: userClasses) {
+            String userTypeAnnotation = userClass.getAnnotation(AssociatedType.class).value();
+            if(userTypeAnnotation.equals(type)) {
+                List<Class<?>> innerClasses = Arrays.asList(userClass.getClasses());
+                Class<?> userParametersClass = null;
+
+                //Searching parameters class
+                for(Class<?> innerClass: innerClasses) {
+                    if(innerClass.getSimpleName().equals("UserParameters")) {
+                        userParametersClass = innerClass;
+                        break;
+                    }
+                }
+
+                try {
+                    if(userParametersClass != null) {
+                        Constructor constructor = userClass.getConstructor(userParametersClass, SimulationServices.class);
+                        User user = (User) constructor.newInstance(gson.fromJson(parameters, userParametersClass), services);
+                        return user;
+                    }
+                    else {
+                        Constructor constructor = userClass.getConstructor(SimulationServices.class);
+                        User user = (User) constructor.newInstance(services);
+                        return user;
+                    }
+                }
+                catch(Exception e) {
+                    MessageGuiFormatter.showErrorsForGui("Error Creating user");
+                    MessageGuiFormatter.showErrorsForGui(e);
+                }
+
+            }
+        }
+        return null;
     }
 }

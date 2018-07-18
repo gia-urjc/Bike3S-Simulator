@@ -7,7 +7,6 @@ import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
-import es.urjc.ia.bikesurbanfleets.users.UserType;
 
 import java.util.List;
 
@@ -22,10 +21,10 @@ import java.util.List;
  * 
  * @author IAgroup
  */
-@AssociatedType(UserType.USER_OBEDIENT)
+@AssociatedType("USER_OBEDIENT")
 public class UserObedient extends User {
 
-    public class UserObedientParameters {
+    public class UserParameters {
         /**
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
@@ -68,13 +67,13 @@ public class UserObedient extends User {
          */
         private boolean willReserve;
                 
-        private UserObedientParameters() {}
+        private UserParameters() {}
 
     }
 
-    private UserObedientParameters parameters;
+    private UserParameters parameters;
     
-    public UserObedient(UserObedientParameters parameters, SimulationServices services) {
+    public UserObedient(UserParameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
     }

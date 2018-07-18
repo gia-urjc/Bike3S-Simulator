@@ -11,7 +11,6 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.history.JsonIdentifier;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
-import es.urjc.ia.bikesurbanfleets.users.UserType;
 
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ public class HistoricUser implements HistoricEntity {
     private int id;
 
     @Expose
-    private UserType type;
+    private String type;
 
     @Expose
     private double walkingVelocity;
