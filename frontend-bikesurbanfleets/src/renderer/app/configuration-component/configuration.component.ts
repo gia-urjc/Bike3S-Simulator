@@ -108,8 +108,6 @@ export class ConfigurationComponent {
             },
             layout: layout.globalLayout
         };
-        console.log(JSON.stringify(schema));
-        console.log(JSON.stringify(layout));
     }
 
     async selectEntryPointFormInit(): Promise<void> {
@@ -145,7 +143,6 @@ export class ConfigurationComponent {
         this.map = map;
         this.drawOptions.edit.featureGroup.addTo(this.map);
         this.defineMapEventHandlers();
-        console.log(this.featureGroup);
     }
 
     bboxChanged(data: any) {
@@ -193,17 +190,14 @@ export class ConfigurationComponent {
 
     globalFormSubmit($event: any) {
         this.globalData = $event;
-        console.log(this.globalData);
     }
 
     isGlobalFormValid($event: any) {
         this.globalConfigValid = $event;
-        console.log(this.globalConfigValid);
     }
 
     async selectEntryPointSubmit(data: EntryPointDataType) {
         this.actualModalOpen.close();
-        console.log(data);
         this.lastSelectedEntryPointType = data;
         let entryPointData = await this.entryPointFormInit(data);
         entryPointData.position.latitude = this.lastCircleAdded.getLatLng().lat;
@@ -231,7 +225,6 @@ export class ConfigurationComponent {
         newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
         this.entryPoints.push(newEntryPoint);
         this.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
-        console.log(this.entryPoints);
         this.actualModalOpen.close();
         if(this.jsonTreeEp) {
             this.jsonTreeEp.dataUpdated(this.finalEntryPoints);   
@@ -275,7 +268,6 @@ export class ConfigurationComponent {
         let path = this.selectFolder();
         if(this.isGlobalFormValid) {
             this.globalData = this.gsForm.actualData;
-            console.log(this.globalData);
         }
         const modalRef = this.modalService.open(ConfigurationSaveComponent);
         modalRef.componentInstance.path = path;
