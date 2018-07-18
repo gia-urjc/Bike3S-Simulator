@@ -274,7 +274,6 @@ public abstract class User implements Entity {
     public void cancelsBikeReservation(Station station) {
         this.reservedBike = false;
         station.cancelsBikeReservation(reservation);
-        this.reservation = null;
     }
 
     /**
@@ -284,7 +283,6 @@ public abstract class User implements Entity {
     public void cancelsSlotReservation(Station station) {
         this.reservedSlot = false;
         station.cancelsSlotReservation();
-        this.reservation = null;
     }
 
     /**
@@ -313,6 +311,7 @@ public abstract class User implements Entity {
             cancelsBikeReservation(station);
         }
         this.bike = station.removeBikeWithReservation(reservation);
+        this.reservation = null;
     }
 
     /**
@@ -346,6 +345,7 @@ public abstract class User implements Entity {
         if(station.returnBike(this.bike)){
             this.bike = null;
         }
+        this.reservation = null;
     }
 
     public List<GeoRoute> calculateRoutes(GeoPoint position) throws GeoRouteCreationException, GraphHopperIntegrationException {
@@ -369,6 +369,14 @@ public abstract class User implements Entity {
      */
     public int timeToReach() {
         return (int) (route.getTotalDistance()/getAverageVelocity());
+    }
+    
+    public void leaveSystem() {
+        setPosition(null);
+        setRoute(null);
+        setDestinationStation(null);
+        setDestinationPoint(null);
+        instant = -1;
     }
 
     /**

@@ -1,13 +1,10 @@
 import * as AJV from 'ajv';
 import * as fs from 'fs-extra';
 import * as paths from 'path';
-
 import { app } from 'electron';
 import { without } from 'lodash';
-
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
-import { IpcUtil } from './index';
-import Channel from './Channel';
+import { IpcUtil, Channel } from '../util';
 
 interface TimeRange {
     start: number;

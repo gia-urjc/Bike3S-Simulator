@@ -1,4 +1,5 @@
 import { isPlainObject } from 'lodash';
+import * as Ajv from 'ajv';
 
 export interface PlainObject {
     [key: string]: any;
@@ -10,6 +11,11 @@ export interface JsonObject {
 }
 
 export interface JsonArray extends Array<JsonValue> {}
+
+export interface ValidationInfo {
+    result: boolean;
+    errors: string;
+}
 
 export type JsonValue = null | string | number | boolean | JsonArray | JsonObject;
 
@@ -105,4 +111,13 @@ export namespace Geo {
 
 export function safe(object: PlainObject, path: string) {
     return path.split('.').reduce((r, v) => r && r[v], object);
+}
+
+export function validate(schemaFile: string, jsonFile: string): ValidationInfo {
+    let ajv = new Ajv({$data: true});
+    let valid = ajv.validate(schemaFile, jsonFile);
+    if(valid) {
+        return {result: true, errors: ajv.errorsText()};
+    }
+    return {result: false, errors: ajv.errorsText()};
 }

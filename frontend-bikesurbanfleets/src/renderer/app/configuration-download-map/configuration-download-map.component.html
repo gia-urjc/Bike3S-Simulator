@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h4 class="modal-title">Downloading map</h4>
+    <button *ngIf="isDownloading" type="button" class="close" aria-label="Close" (click)="cancel()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <button *ngIf="!isDownloading" type="button" class="close" aria-label="Close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div *ngIf="isDownloading" id="download-message">
+    <p>Downloading<img id="downloading-icon" alt="Downloading animation" src="assets/download.gif"><span *ngIf="downloadSpeed && totalDownloaded"> - {{downloadSpeed}} KB/s - Total Downloaded {{totalDownloaded}} MB</span></p>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="cancel()">Cancel</button>
+    </div>
+</div>
+<div *ngIf="!isDownloading && !stopped">
+    <div *ngIf="isError" class="alert alert-danger">
+        <p><strong>Error!</strong> {{message}}</p>
+    </div>
+    <div *ngIf="!isError" class="alert alert-success">
+        <p>Map Downloaded in {{path}}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="close()">Ok</button>
+    </div>
+</div>

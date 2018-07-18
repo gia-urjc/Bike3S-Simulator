@@ -1,7 +1,6 @@
 import { app } from "electron";
 import * as paths from 'path';
-import { IpcUtil } from ".";
-import Channel from "./Channel";
+import { IpcUtil, Channel } from "../util";
 import { DataGenerator } from "../dataAnalysis/analysis/generators/DataGenerator";
 
 export interface CsvArgs {

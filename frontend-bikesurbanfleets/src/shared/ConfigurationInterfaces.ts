@@ -40,3 +40,38 @@ export interface BaseStation extends PlainObject, BaseEntity {
 }
 
 export interface Bike extends PlainObject, BaseEntity {}
+
+export interface FormJsonSchema {
+    schema: any;
+    data: any;
+    layout?: any;
+    options?: any;
+}
+
+export interface GlobalConfiguration {
+    [key: string]: any;
+    boundingBox: BoundingBox;
+}
+
+export interface BoundingBox {
+    northWest: {
+        latitude: number;
+        longitude: number;
+    };
+    southEast: {
+        latitude: number;
+        longitude: number;
+    };
+}
+
+export interface MapDownloadArgs {
+    bbox: BoundingBox;
+    path: string;
+}
+
+export enum ConfigurationFile {
+    GLOBAL_CONFIGURATION,
+    ENTRYPOINT_CONFIGURATION,
+    STATION_CONFIGURATION
+}
+

@@ -7,7 +7,6 @@ import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.AssociatedType;
 import es.urjc.ia.bikesurbanfleets.users.User;
-import es.urjc.ia.bikesurbanfleets.users.UserType;
 
 import java.util.List;
 
@@ -20,10 +19,10 @@ import java.util.List;
  * @author IAgroup
  *
  */
-@AssociatedType(UserType.USER_INFORMED)
+@AssociatedType("USER_INFORMED")
 public class UserInformed extends User {
 
-    public class UserInformedParameters {
+    public class UserParameters {
 
         /**
          * It is the maximum time in seconds until which the user will decide to continue walking
@@ -78,7 +77,7 @@ public class UserInformed extends User {
         private boolean willReserve = false;
 
 
-        private UserInformedParameters(){}
+        private UserParameters(){}
 
         @Override
         public String toString() {
@@ -97,9 +96,9 @@ public class UserInformed extends User {
     }
 
 
-    private UserInformedParameters parameters;
+    private UserParameters parameters;
 
-    public UserInformed(UserInformedParameters parameters, SimulationServices services) {
+    public UserInformed(UserParameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
     }

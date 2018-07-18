@@ -18,6 +18,27 @@ button {
     margin-left: 14px;
 }
 
+.info-modal {
+    font-size: 14px;
+    text-align: center;
+}
+
+.icon-loading {
+    width: 40px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+}
+
+.icon-ok {
+    width: 20px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+}
+
+#progress-bar {
+    padding-top: 40px;
+}
+
 textarea {
     resize: none;
     background-color: #292929;

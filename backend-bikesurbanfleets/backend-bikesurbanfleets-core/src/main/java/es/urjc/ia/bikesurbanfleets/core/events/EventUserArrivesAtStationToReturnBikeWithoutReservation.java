@@ -38,7 +38,7 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
                 debugEventLog("User can't return bike");
                 newEvents = manageSlotReservationDecisionAtOtherStation();
             } else {
-                leaveSystem();
+                user.leaveSystem();
                 debugEventLog("User returns the bike");
                 debugClose(user, user.getId());
             }

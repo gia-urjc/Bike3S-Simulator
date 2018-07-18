@@ -1,0 +1,11 @@
+<div id="json-form">
+    <div *ngIf="!reloading">
+        <json-schema-form
+            *ngIf="form !== undefined"
+            [form]="form"
+            (onSubmit)="submit($event)"
+            (isValid)="valid($event)"
+            (onChanges)="onChanges($event)">
+        </json-schema-form>
+    </div>
+</div>

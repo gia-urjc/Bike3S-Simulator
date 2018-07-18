@@ -1,4 +1,4 @@
-import SchemaParser from './SchemaFormGenerator';
+import SchemaParser from '../controllers/SchemaFormGeneratorController';
 
 export {
     SchemaParser

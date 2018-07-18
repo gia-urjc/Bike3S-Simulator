@@ -1,17 +1,12 @@
 import * as paths from 'path';
-import * as Ajv from 'ajv';
 import * as fs from 'fs-extra';
-import { spawn } from 'child_process';
+import * as kill from 'tree-kill';
+import { spawn, ChildProcess } from 'child_process';
 import { app } from 'electron';
-import { IpcUtil } from './index';
+import { IpcUtil, Channel } from '../util';
 import {Main} from "../main";
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
-import Channel from './Channel';
-
-interface ValidationInfo {
-    result: boolean;
-    errors: string;
-}
+import { validate, ValidationInfo } from '../../shared/util';
 
 interface ArgumentInfo {
     title: string;
@@ -54,6 +49,9 @@ export default class BackendController {
     private entryPointSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-config.json'));
     private usersConfigSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/users-config.json'));
 
+    private userGenProcess?: ChildProcess;
+    private simulationProcess?: ChildProcess;
+
     public static async create(): Promise<BackendController> {
         return new BackendController();
     }
@@ -64,7 +62,8 @@ export default class BackendController {
 
             this.channels = [
                 new Channel('backend-call-generate-users', async (args: UserGeneratorArgs) => await backendCalls.generateUsers(args)),
-                new Channel('backend-call-core-simulation', async (args: CoreSimulatorArgs) => await backendCalls.simulate(args))
+                new Channel('backend-call-core-simulation', async (args: CoreSimulatorArgs) => await backendCalls.simulate(args)),
+                new Channel('backend-call-cancel-simulation', async () => await backendCalls.cancelSimulation())
             ];
 
             this.channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
@@ -87,19 +86,8 @@ export default class BackendController {
         this.window = Main.simulate;
     }
 
-    private validateConfiguration(schemaFile: string, configurationFile: string): ValidationInfo {
-        let ajv = new Ajv({$data: true});
-        let valid = ajv.validate(schemaFile, configurationFile);
-
-        if(valid) {
-            return {result: true, errors: ajv.errorsText()};
-        }
-        return {result: false, errors: ajv.errorsText()};
-    }
-
     private sendInfoToGui(channel: string, message: string): void {
         if(this.window) {
-            console.log(message.toString());
             this.window.webContents.send(channel, message);
         }
     }
@@ -110,14 +98,11 @@ export default class BackendController {
             let rootPath = app.getAppPath();
 			let entryPointsConf, globalConf: any; 
 			try {
-				entryPointsConf = await fs.readJson(args.entryPointsConfPath);
-				let globalConfData = await fs.readFile(args.globalConfPath);
-				let globalConfStr = globalConfData.toString();
-				globalConfStr = globalConfStr.replace(/\\/g, "/");
-                globalConf = JSON.parse(globalConfStr);
-                
+                entryPointsConf = await fs.readJson(args.entryPointsConfPath);
+                globalConf = await fs.readJson(args.globalConfPath);
+
                 // Entry Point Validation
-                let entryPointsValidation = this.validateConfiguration(this.entryPointSchema, entryPointsConf);
+                let entryPointsValidation: ValidationInfo = validate(this.entryPointSchema, entryPointsConf);
                 console.log("Validation Entry Points: " + entryPointsValidation);
                 if(!entryPointsValidation.result) {
                     this.sendInfoToGui('user-gen-error', entryPointsValidation.errors);
@@ -126,7 +111,7 @@ export default class BackendController {
                 
                 
                 //Global Configuration Validation
-                let globalValidation = this.validateConfiguration(this.globalSchema, globalConf);
+                let globalValidation: ValidationInfo = validate(this.globalSchema, globalConf);
                 console.log("Global Validation: " + globalValidation.result);
                 if(!globalValidation.result) {
                     this.sendInfoToGui('user-gen-error', globalValidation.errors);
@@ -134,7 +119,7 @@ export default class BackendController {
                 }
 
                 
-                const userGen = spawn('java', [
+                this.userGenProcess = spawn('java', [
                     '-jar',
                     'bikesurbanfleets-config-usersgenerator-1.0.jar',
                     '-entryPointsInput', '"' + args.entryPointsConfPath + '"',
@@ -146,15 +131,16 @@ export default class BackendController {
                     shell: true
                 });
 
-                userGen.stderr.on('data', (data) => {
+                this.userGenProcess.stderr.on('data', (data) => {
                     this.sendInfoToGui('user-gen-error', data.toString());
                 });
 
-                userGen.stdout.on('data', (data) => {
+                this.userGenProcess.stdout.on('data', (data) => {
                     this.sendInfoToGui('user-gen-data', data.toString());
                 });
 
-                userGen.on('close', (code) => {
+                this.userGenProcess.on('close', (code) => {
+                    this.userGenProcess = undefined;
                     if (code === 0) {
                         console.log('User generation finished');
                         resolve();
@@ -169,6 +155,7 @@ export default class BackendController {
                     + "Global Configuration: " + args.globalConfPath + "\n"
                     + "Entry Points configuration: " + args.entryPointsConfPath + "\n";
                 this.sendInfoToGui('user-gen-error', errorMessage);
+                this.sendInfoToGui('user-gen-error', 'Exception:' + error);
                 reject(errorMessage);
 			}
         });
@@ -179,15 +166,12 @@ export default class BackendController {
             let rootPath = app.getAppPath();
             let globalConf, stationsConf, usersConf: any;
             try {
-				let globalConfData  = await fs.readFile(args.globalConfPath);
-				let globalConfStr = globalConfData.toString();
-				globalConfStr = globalConfStr.replace(/\\/g, "/");
-                globalConf =  JSON.parse(globalConfStr);
+				globalConf  = await fs.readJson(args.globalConfPath);
                 stationsConf = await fs.readJson(args.stationsConfPath);
                 usersConf = await fs.readJsonSync(args.usersConfPath);
 
                 //Global Configuration Validation
-                let globalValidation = this.validateConfiguration(this.globalSchema , globalConf);
+                let globalValidation: ValidationInfo = validate(this.globalSchema , globalConf);
                 console.log("Global Validation: " + globalValidation.result);
                 if(!globalValidation.result) {
                     this.sendInfoToGui('core-error', globalValidation.errors);
@@ -195,7 +179,7 @@ export default class BackendController {
                 }
 
                 //Stations Configuration Validation
-                let stationsValidation = this.validateConfiguration(this.stationsSchema, stationsConf);
+                let stationsValidation: ValidationInfo = validate(this.stationsSchema, stationsConf);
                 console.log("Stations Validation " + stationsValidation.result);
                 if(!stationsValidation.result) {
                     this.sendInfoToGui('core-error', stationsValidation.errors);
@@ -203,15 +187,15 @@ export default class BackendController {
                 }
 
                 //User generation validation
-                let usersValidation = this.validateConfiguration(this.usersConfigSchema, usersConf);
-                console.log("Users Validation " + usersValidation);
+                let usersValidation: ValidationInfo = validate(this.usersConfigSchema, usersConf);
+                console.log("Users Validation " + usersValidation.result);
                 if(!usersValidation.result) {
                     this.sendInfoToGui('core-error', usersValidation.errors);
                     reject("Error validating users", + usersValidation.errors);
                 }
             
                     
-                const sim = spawn('java', [
+                this.simulationProcess = spawn('java', [
                     '-DLogFilePath=${HOME}/.Bike3S/',
                     '-jar',
                     'bikesurbanfleets-core-1.0.jar',
@@ -227,15 +211,18 @@ export default class BackendController {
                 });
 
 
-                sim.stderr.on('data', (data) => {
+                this.simulationProcess.stderr.on('data', (data) => {
+                    console.log(data.toString());
                     this.sendInfoToGui('core-error', data.toString());
                 });
 
-                sim.stdout.on('data', (data) => {
+                this.simulationProcess.stdout.on('data', (data) => {
+                    console.log(data.toString());
                     this.sendInfoToGui('core-data', data.toString());
                 });
 
-                sim.on('close', (code) => {
+                this.simulationProcess.on('close', (code) => {
+                    this.simulationProcess = undefined;
                     if (code === 0) {
                         console.log("Simulation Finished");
                         resolve();
@@ -259,4 +246,15 @@ export default class BackendController {
         
     }
 
+    public cancelSimulation(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if(this.simulationProcess) {
+                kill(this.simulationProcess.pid);
+                console.log("Simulation interrupted");
+                resolve();
+            }
+            reject("Proccess is not executing");
+        });
+    }
+    
 }
