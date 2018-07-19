@@ -71,6 +71,7 @@ export default class SchemaFormGenerator{
 
     public static async schemaFormStation(): Promise<string | undefined> {
         let stationSchema = await SchemaParser.getStationSchema(this.stationConfigurationSchema);
+        console.log(JSON.stringify(stationSchema));
         if(stationSchema !== undefined) {
             return JSON.stringify(stationSchema);
         }

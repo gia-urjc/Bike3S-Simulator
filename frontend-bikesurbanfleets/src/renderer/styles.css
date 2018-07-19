@@ -60,6 +60,10 @@ select {
     font-weight: bold;
 }
 
+.hidden {
+    display: none;
+}
+
 @-webkit-keyframes sk-cubeGridScaleDelay {
     0%, 70%, 100% {
         -webkit-transform: scale3D(1, 1, 1);

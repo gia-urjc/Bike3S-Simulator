@@ -124,18 +124,27 @@ export class ConfigurationComponent {
             radius: 0
         };
         let schema = await this.ajax.formSchema.getSchemaByTypes(selected);
+        let layout = await this.ajax.jsonLoader.getAllLayouts();
+/*        if(selected.entryPointType === "POISSON"){
+            layout.entryPointLayout.splice(0,0,{key: "lambda", placeholder: "lambda in minutes"});
+        }else{
+            layout.entryPointLayout.splice(0,0,{key: "timeInstant", placeholder: "User instant appear in seconds"});
+        }*/
         this.entryPointForm = {
             schema: JSON.parse(schema),
-            data: entryPointData
+            data: entryPointData,
+            //layout: layout.entryPointLayout
         };
         return entryPointData;
     }
 
     async stationFormInit(): Promise<void> {
         let schema = await this.ajax.formSchema.getStationSchema();
+        let layout = await this.ajax.jsonLoader.getAllLayouts();
         this.stationForm = {
             schema: JSON.parse(schema),
-            data: this.lastStation
+            data: this.lastStation,
+            layout: layout.stationsLayout
         };
     }
 
