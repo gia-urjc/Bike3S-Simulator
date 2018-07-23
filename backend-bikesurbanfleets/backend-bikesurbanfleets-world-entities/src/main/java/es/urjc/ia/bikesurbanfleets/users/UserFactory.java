@@ -22,17 +22,15 @@ public class UserFactory {
 
     private Set<Class<?>> userClasses;
 
+    private Gson gson = new Gson();
+
     public UserFactory() {
-        // Load Users by reflection using the annotation UserType
+        // Load User classes by reflection using the annotation UserType
         Reflections reflections = new Reflections();
         this.userClasses = reflections.getTypesAnnotatedWith(UserType.class);
-
-        for(Class userClass: userClasses) {
-            System.out.println(userClass.getName());
-        }
     }
 
-	Gson gson = new Gson();
+
     /**
      * It creates a specific type of user.
      * @param epUserProps It is the user type and parameters which determines the instance type to create.
