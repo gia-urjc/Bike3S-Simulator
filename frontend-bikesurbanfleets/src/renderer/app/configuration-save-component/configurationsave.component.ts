@@ -36,17 +36,13 @@ export class ConfigurationSaveComponent {
 
     async ngOnInit() {
         try {
-            await this.ajax.jsonLoader.init();
+            await this.generateConfiguration();
         }
         catch(e) {
             dialog.showErrorBox("Error", `Error loading schemas: ${e}`);
         }
-        await this.generateConfiguration();
     }
 
-    async ngOnDestroy() {
-        this.ajax.jsonLoader.close();
-    }
 
     async generateConfiguration() {
         if(!this.globalConfigValid) {
@@ -54,7 +50,7 @@ export class ConfigurationSaveComponent {
             this.message = "Global Configuration is not valid";
         }
         else {
-            try {
+            try{
                 await this.ajax.jsonLoader.writeJson({
                     json: this.globalConfiguration, path: this.path + "/global-configuration.json"});
                 await this.ajax.jsonLoader.writeJson({

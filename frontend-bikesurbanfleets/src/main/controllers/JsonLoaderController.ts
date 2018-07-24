@@ -62,7 +62,6 @@ export default class JsonLoader {
         };
     }
     async getAllLayouts(): Promise<JsonLayoutGroup> {
-        console.log(JSON.stringify(this.globalLayout))
         return {
             globalLayout: this.globalLayout
         }
