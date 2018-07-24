@@ -11,7 +11,7 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersConfig;
-import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
+import es.urjc.ia.bikesurbanfleets.core.events.user.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricReservation;

@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.core.events;
+package es.urjc.ia.bikesurbanfleets.core.events.truck;
 
 import java.util.ArrayList;
 import java.util.List;

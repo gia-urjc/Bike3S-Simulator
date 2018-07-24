@@ -3,6 +3,8 @@ package es.urjc.ia.bikesurbanfleets.infraestructure.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 
@@ -16,16 +18,20 @@ public class Truck implements Entity {
 	private static IdGenerator idGenerator = new IdGenerator();
 	private int id;
 	private int capacity;
-	private Station destinationStation;
+ 	private Station destinationStation;
 	private int numberOfBikes;
 	private List<Bike> bikes;
-	
-	public Truck(int capacity) {
+	private double velocity;
+	private GeoPoint position;
+	private GeoRoute route;
+		
+	public Truck(int capacity, double velocity) {
 		this.id = idGenerator.next();
 		this.destinationStation = null;
 		this.capacity = capacity;
 		this.numberOfBikes = 0;
 		this.bikes = new ArrayList<>();
+		this.velocity = velocity;
 	}
 	
 	public int getId() {
@@ -48,21 +54,50 @@ public class Truck implements Entity {
 		return this.destinationStation;
 	}
 	
-	public void load(int nBikes) {
-		List<Bike> stationBikes = destinationStation.getBikes();
-		int count, i = 0;
+	public double getVelocity() {
+		return velocity;
+	}
 		
-		while (count < nBikes && i < stationBikes.size()) {
-			bikes.add(stationBikes.remove(i));
-			count++;
-			i++;
+	public GeoPoint getPosition() {
+		return position;
+	}
+
+	public void setPosition(GeoPoint position) {
+		this.position = position;
+	}
+
+	public GeoRoute getRoute() {
+		return route;
+	}
+
+	public void setRoute(GeoRoute route) {
+		this.route = route;
+	}
+
+	public void setDestinationStation(Station destinationStation) {
+		this.destinationStation = destinationStation;
+	}
+
+	public void load(int nBikes) {
+		if (destinationStation.availableBikes() >= nBikes) {
+			for (int i=0; i<nBikes; i++) {
+				Bike bike = destinationStation.removeBikeWithoutReservation();
+				bikes.add(bike);
+			}
+			numberOfBikes += nBikes;
 		}
+		// TODO: add else branch to consult system operator
 	}
 	
 	public void unload(int nBikes) {
-		for (int i=0; i<nBikes; i++) {
-			destinationStation.add(bikes.remove(i));
+		if (destinationStation.availableSlots() >= nBikes) {
+			for (int i=0; i<nBikes; i++) {
+				Bike bike = bikes.remove(i); 
+				destinationStation.returnBike(bike);
+			}
+			numberOfBikes -= nBikes;
 		}
+		// TODO: add else branch to consult system operator
 	}
 
-}
+} 
