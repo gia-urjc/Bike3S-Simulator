@@ -80,10 +80,10 @@ public class Station implements Entity {
         return this.capacity - (int)bikes.stream().filter(Objects::nonNull).count() - reservedSlots;
     }
 
-    private Bike getFirstAvailableBike() {
+    public Bike getFirstAvailableBike() {
         Bike bike = null;
         for (Bike currentBike: bikes) {
-            if (currentBike != null &&    !currentBike.isReserved()) {
+            if (currentBike != null && !currentBike.isReserved()) {
                 bike = currentBike;
                 break;
             }

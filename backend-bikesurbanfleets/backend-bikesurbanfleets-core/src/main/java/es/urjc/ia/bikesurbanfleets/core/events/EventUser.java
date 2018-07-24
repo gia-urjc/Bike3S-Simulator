@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
+import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
@@ -29,7 +30,7 @@ public abstract class EventUser implements Event {
     /**
      * It is the time instant when event happens.
      */
-    protected int instant;
+    private int instant;
 
     /**
      * It is the user who is involved in the event.
@@ -45,11 +46,7 @@ public abstract class EventUser implements Event {
         return instant;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public String toString() {
+       public String toString() {
         return print();
     }
 
@@ -57,7 +54,12 @@ public abstract class EventUser implements Event {
      * It proccesses the event so that the relevant changes at the system occur.
      */
     public abstract List<Event> execute();
-
+    
+    /**
+     * It returns the entities involved in the event.
+     */
+    public abstract List<Entity> getEntities();
+    
 
     /*
         =================

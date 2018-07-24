@@ -32,7 +32,7 @@ public class EventSlotReservationTimeout extends EventUser {
     public List<Event> execute()  {
         List<Event> newEvents = new ArrayList<>();
         try {
-            user.setInstant(this.instant);
+            user.setInstant(getInstant());
             user.setPosition(positionTimeOut);
             reservation.expire();
             user.cancelsSlotReservation(user.getDestinationStation());

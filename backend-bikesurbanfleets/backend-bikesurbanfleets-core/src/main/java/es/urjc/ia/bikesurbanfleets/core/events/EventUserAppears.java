@@ -25,7 +25,7 @@ public class EventUserAppears extends EventUser {
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
         try {
-            user.setInstant(this.instant);
+            user.setInstant(getInstant());
             user.setPosition(position);
             debugEventLog();
             newEvents = manageBikeReservationDecisionAtOtherStation();

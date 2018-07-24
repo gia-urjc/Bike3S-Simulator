@@ -30,7 +30,7 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
         try {
-            user.setInstant(this.instant);
+            user.setInstant(getInstant());
             debugEventLog();
             if(!user.returnBikeWithoutReservationTo(station)) {
                 user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);

@@ -38,7 +38,7 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
     public List<Event> execute() {
         List<Event> newEvents = new ArrayList<>();
         try {
-            user.setInstant(this.instant);
+            user.setInstant(getInstant());
             user.returnBikeWithReservationTo(station);
             user.leaveSystem();
             debugEventLog("User returns the bike");
