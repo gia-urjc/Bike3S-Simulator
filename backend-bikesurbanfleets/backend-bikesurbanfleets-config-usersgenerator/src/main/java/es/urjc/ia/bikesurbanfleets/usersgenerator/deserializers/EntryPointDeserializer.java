@@ -2,7 +2,6 @@ package es.urjc.ia.bikesurbanfleets.usersgenerator.deserializers;
 
 import com.google.gson.*;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint.EntryPointType;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPointFactory;
 
 import java.lang.reflect.Type;
@@ -28,8 +27,8 @@ public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>
 
         for (JsonElement element : json.getAsJsonArray()) {
             JsonObject jsonEntryPoint = element.getAsJsonObject();
-            EntryPointType entryPointType;
-            entryPointType = EntryPointType.valueOf(jsonEntryPoint.get("entryPointType").getAsString());
+            String entryPointType;
+            entryPointType = jsonEntryPoint.get("entryPointType").getAsString();
             entryPoints.add(entryPointFactory.createEntryPoint(jsonEntryPoint, entryPointType));
         }
 

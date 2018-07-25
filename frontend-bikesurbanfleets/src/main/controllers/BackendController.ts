@@ -196,7 +196,7 @@ export default class BackendController {
             
                     
                 this.simulationProcess = spawn('java', [
-                    '-DLogFilePath=${HOME}/.Bike3S/',
+                    '-DLogFilePath="${HOME}/.Bike3S/"',
                     '-jar',
                     'bikesurbanfleets-core-1.0.jar',
                     '-globalConfig', '"' + args.globalConfPath + '"',

@@ -7,6 +7,7 @@ import es.urjc.ia.bikesurbanfleets.common.util.TimeRange;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.UserProperties;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPointType;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.distributions.DistributionPoisson;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
  * Number of users that are generated depends on the value of parameter of followed distribution.
  * @author IAgroup
  */
+@EntryPointType("POISSON")
 public class EntryPointPoisson extends EntryPoint {
 
     /**

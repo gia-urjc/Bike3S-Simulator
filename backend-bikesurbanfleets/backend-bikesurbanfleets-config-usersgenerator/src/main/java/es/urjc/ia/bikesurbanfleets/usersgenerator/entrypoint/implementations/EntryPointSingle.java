@@ -4,6 +4,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.UserProperties;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint;
+import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPointType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  * @author IAgroup
  *
  */
+@EntryPointType("SINGLEUSER")
 public class EntryPointSingle extends EntryPoint {
     /**
      * It is the point where user appears, i. e., where user is located after being generated.
@@ -30,7 +32,7 @@ public class EntryPointSingle extends EntryPoint {
     private int timeInstant; 
     
     public EntryPointSingle(GeoPoint position, UserProperties userType, int instant) {
-        this.entryPointType = EntryPointType.SINGLEUSER;
+        this.entryPointType = this.getClass().getAnnotation(EntryPointType.class).value();
         this.position = position;
         this.userType = userType;
         this.timeInstant = instant;

@@ -13,11 +13,7 @@ import java.util.List;
  */
 public abstract class EntryPoint {
 
-    public enum EntryPointType {
-        POISSON, RANDOM, SINGLEUSER
-    }
-
-    protected EntryPointType entryPointType;
+    protected String entryPointType;
 
     public static int TOTAL_SIMULATION_TIME;
     /**
@@ -26,7 +22,7 @@ public abstract class EntryPoint {
      * @return a list of single users
      */
 
-    public EntryPointType getEntryPointType() {
+    public String getEntryPointType() {
         return entryPointType;
     }
 
