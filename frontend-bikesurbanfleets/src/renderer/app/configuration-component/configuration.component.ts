@@ -124,18 +124,27 @@ export class ConfigurationComponent {
             radius: 0
         };
         let schema = await this.ajax.formSchema.getSchemaByTypes(selected);
+        let layout = await this.ajax.jsonLoader.getAllLayouts();
+/*        if(selected.entryPointType === "POISSON"){
+            layout.entryPointLayout.splice(0,0,{key: "lambda", placeholder: "lambda in minutes"});
+        }else{
+            layout.entryPointLayout.splice(0,0,{key: "timeInstant", placeholder: "User instant appear in seconds"});
+        }*/
         this.entryPointForm = {
             schema: JSON.parse(schema),
-            data: entryPointData
+            data: entryPointData,
+            //layout: layout.entryPointLayout
         };
         return entryPointData;
     }
 
     async stationFormInit(): Promise<void> {
         let schema = await this.ajax.formSchema.getStationSchema();
+        let layout = await this.ajax.jsonLoader.getAllLayouts();
         this.stationForm = {
             schema: JSON.parse(schema),
-            data: this.lastStation
+            data: this.lastStation,
+            layout: layout.stationsLayout
         };
     }
 
@@ -143,7 +152,6 @@ export class ConfigurationComponent {
         this.map = map;
         this.drawOptions.edit.featureGroup.addTo(this.map);
         this.defineMapEventHandlers();
-        console.log(this.featureGroup);
     }
 
     bboxChanged(data: any) {
@@ -191,17 +199,14 @@ export class ConfigurationComponent {
 
     globalFormSubmit($event: any) {
         this.globalData = $event;
-        console.log(this.globalData);
     }
 
     isGlobalFormValid($event: any) {
         this.globalConfigValid = $event;
-        console.log(this.globalConfigValid);
     }
 
     async selectEntryPointSubmit(data: EntryPointDataType) {
         this.actualModalOpen.close();
-        console.log(data);
         this.lastSelectedEntryPointType = data;
         let entryPointData = await this.entryPointFormInit(data);
         entryPointData.position.latitude = this.lastCircleAdded.getLatLng().lat;
@@ -229,7 +234,6 @@ export class ConfigurationComponent {
         newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
         this.entryPoints.push(newEntryPoint);
         this.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
-        console.log(this.entryPoints);
         this.actualModalOpen.close();
         if(this.jsonTreeEp) {
             this.jsonTreeEp.dataUpdated(this.finalEntryPoints);   
@@ -273,7 +277,6 @@ export class ConfigurationComponent {
         let path = this.selectFolder();
         if(this.isGlobalFormValid) {
             this.globalData = this.gsForm.actualData;
-            console.log(this.globalData);
         }
         const modalRef = this.modalService.open(ConfigurationSaveComponent);
         modalRef.componentInstance.path = path;
