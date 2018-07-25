@@ -59,7 +59,6 @@ export default class JsonLoader {
     }
 
     async getAllSchemas(): Promise<JsonSchemaGroup> {
-        console.log(JSON.stringify(this.entryPointsConfSchema));
         return {
             globalSchema: this.globalConfigurationSchema,
             entryPointSchema: this.entryPointsConfSchema,
@@ -67,7 +66,6 @@ export default class JsonLoader {
         };
     }
     async getAllLayouts(): Promise<JsonLayoutGroup> {
-        console.log(JSON.stringify(this.stationsLayout))
         return {
             globalLayout: this.globalLayout,
             //entryPointLayout : this.entryPointLayout,
