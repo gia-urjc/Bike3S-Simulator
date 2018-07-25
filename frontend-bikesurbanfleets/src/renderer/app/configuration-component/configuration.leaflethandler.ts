@@ -21,6 +21,7 @@ export class ConfigurationLeaflethandler {
         // If rectangle is passed, the call comes from the map editor, so the new boundingBox is
         // created based in the rectangle drawn in the map
         if(rectangle instanceof Rectangle) {
+            Object.assign(comp.globalData, comp.gsForm.actualData);
             let bBox = comp.globalData.boundingBox;
             bBox.northWest.latitude = rectangle.getBounds().getNorthWest().lat;
             bBox.northWest.longitude = rectangle.getBounds().getNorthWest().lng;

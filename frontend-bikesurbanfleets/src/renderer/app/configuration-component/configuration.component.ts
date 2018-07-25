@@ -281,6 +281,7 @@ export class ConfigurationComponent {
         modalRef.componentInstance.entryPointConfiguration = this.finalEntryPoints;
         modalRef.componentInstance.stationConfiguration = this.finalStations;
         modalRef.componentInstance.globalConfigValid = this.globalConfigValid;
+        Object.assign(this.globalData, this.gsForm.actualData);
     }
 
     selectFolder(): string {
