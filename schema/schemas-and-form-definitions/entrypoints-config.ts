@@ -30,3 +30,16 @@ export const EntryPoint = sAnyOf(
     }).require('entryPointType', 'userType', 'position', 'timeInstant')
 );
 
+/*export const layout = 
+[
+    //{key: "entryPointType", placeholder: "Type of the entry point"},
+    //{key: "distribution", placeholder: "Type of distribution"},
+    //{key: "userType", placeholder: "Type of user"},
+    {key: "position", htmlClass: 'hidden'},
+    {key: "position.latitude", placeholder: "Initial latitude of the user", htmlClass: 'hidden'},
+    {key: "position.longitude", placeholder: "Initial longitude of the user", htmlClass: 'hidden'},
+    {key: "timeRange.start", placeholder: "Start time in seconds"},
+    {key: "timeRange.end", placeholder: "End time in seconds"},
+    {key: "radius", placeholder: "radius in meters"},
+    {key: "totalUsers", placeholder: "Total number of users"}
+];*/

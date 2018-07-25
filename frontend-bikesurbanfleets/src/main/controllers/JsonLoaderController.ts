@@ -16,7 +16,9 @@ export interface JsonInfo {
 }
 
 export interface JsonLayoutGroup{
-    globalLayout: any
+    globalLayout: any,
+    //entryPointLayout: any,
+    stationsLayout: any
 }
 
 export default class JsonLoader {
@@ -25,6 +27,8 @@ export default class JsonLoader {
     private stationConfigurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config.json'));
     private entryPointsConfSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-config.json'));
     private globalLayout: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/global-config-layout.json'));
+    //private entryPointLayout: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-config-layout.json'));
+    private stationsLayout: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config-layout.json'));
 
     static create() {
         return new JsonLoader();
@@ -63,7 +67,9 @@ export default class JsonLoader {
     }
     async getAllLayouts(): Promise<JsonLayoutGroup> {
         return {
-            globalLayout: this.globalLayout
+            globalLayout: this.globalLayout,
+            //entryPointLayout : this.entryPointLayout,
+            stationsLayout: this.stationsLayout
         }
     }
 

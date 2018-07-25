@@ -49,11 +49,14 @@ export default class {
                             _.pull(finalEntryPointSchema.required, 'entryPointType');
                         }
                         finalEntryPointSchema.additionalProperties = true;
+                        console.log("12");
+                        console.log(JSON.stringify(finalEntryPointSchema));
                         return finalEntryPointSchema;
                     }
                 }
             }
         }
+        
     }
 
     static async getStationSchema(configSch: SchemaConfig): Promise <SchemaConfig | undefined> {
