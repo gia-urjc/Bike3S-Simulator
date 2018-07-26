@@ -2,10 +2,7 @@ package es.urjc.ia.bikesurbanfleets.core.core;
 
 
 import com.google.protobuf.Message;
-import es.urjc.bikesurbanfleets.services.GraphManagerType;
-import es.urjc.bikesurbanfleets.services.RecommendationSystemType;
-import es.urjc.bikesurbanfleets.services.SimulationServiceConfigData;
-import es.urjc.bikesurbanfleets.services.SimulationServices;
+
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
@@ -18,6 +15,10 @@ import es.urjc.ia.bikesurbanfleets.history.entities.HistoricReservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
+import es.urjc.ia.bikesurbanfleets.services.GraphManagerType;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServiceConfigData;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserFactory;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;

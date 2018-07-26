@@ -6,6 +6,7 @@ import java.util.List;
 import org.w3c.dom.events.Event;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Truck;
 
 public class EventTruckAppears extends EventTruck {
 	private GeoPoint position;
@@ -19,6 +20,7 @@ public class EventTruckAppears extends EventTruck {
 	public List<Event> execute() {
 		List<Event> events = new ArrayList<>();
 		truck.setPosition(position);
+		return events;
 	}
 
 }

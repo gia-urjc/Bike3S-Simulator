@@ -1,4 +1,4 @@
-package es.urjc.bikesurbanfleets.services;
+package es.urjc.ia.bikesurbanfleets.services;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphHopperIntegration;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;

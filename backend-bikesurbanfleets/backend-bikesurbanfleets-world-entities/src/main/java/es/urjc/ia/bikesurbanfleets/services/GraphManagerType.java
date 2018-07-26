@@ -1,4 +1,4 @@
-package es.urjc.bikesurbanfleets.services;
+package es.urjc.ia.bikesurbanfleets.services;
 
 public enum GraphManagerType {
     GRAPH_HOPPER
