@@ -18,10 +18,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
+@GraphManagerType("GRAPH_HOPPER")
 public class GraphHopperIntegration implements GraphManager {
+
+    @GraphManagerParameters
+    public class GraphProperties {
+
+        private String mapDir;
+
+    }
 
     private final String GRAPHHOPPER_DIR = GlobalInfo.AUX_DIR + "/graphhopper_files";
 
@@ -31,10 +38,10 @@ public class GraphHopperIntegration implements GraphManager {
     private GeoPoint startPosition;
     private GeoPoint endPosition;
 
-    public GraphHopperIntegration(String mapDir) throws IOException {
+    public GraphHopperIntegration(GraphProperties properties) throws IOException {
         FileUtils.deleteDirectory(new File(GRAPHHOPPER_DIR));
         this.hopper = new GraphHopperOSM().forServer();
-        hopper.setDataReaderFile(mapDir);
+        hopper.setDataReaderFile(properties.mapDir);
         hopper.setGraphHopperLocation(GRAPHHOPPER_DIR);
         hopper.setEncodingManager(new EncodingManager("foot"));
         hopper.importOrLoad();

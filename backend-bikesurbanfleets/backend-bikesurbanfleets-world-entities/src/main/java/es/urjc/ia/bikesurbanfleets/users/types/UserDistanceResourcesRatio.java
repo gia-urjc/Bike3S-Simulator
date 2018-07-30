@@ -5,6 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
@@ -25,7 +26,8 @@ import java.util.List;
 @UserType("USER_REASONABLE")
 public class UserDistanceResourcesRatio extends User {
 
-    public class UserParameters {
+    @UserParameters
+    public class Parameters {
         /**
          * It is the time in seconds until which the user will decide to continue walking
          * or cycling towards the previously chosen station without making a new reservation
@@ -69,7 +71,7 @@ public class UserDistanceResourcesRatio extends User {
          */
         private int failedReservationPercentage;
 
-        private UserParameters() {}
+        private Parameters() {}
 
         @Override
         public String toString() {
@@ -85,9 +87,9 @@ public class UserDistanceResourcesRatio extends User {
         }
     }
 
-    private UserParameters parameters;
+    private Parameters parameters;
 
-    public UserDistanceResourcesRatio(UserParameters parameters, SimulationServices services) {
+    public UserDistanceResourcesRatio(Parameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
     }

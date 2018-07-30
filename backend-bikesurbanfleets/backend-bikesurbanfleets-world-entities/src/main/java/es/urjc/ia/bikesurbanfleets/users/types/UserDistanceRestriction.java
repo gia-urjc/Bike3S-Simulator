@@ -4,6 +4,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
@@ -24,7 +25,8 @@ import java.util.List;
 @UserType("USER_DISTANCE_RESTRICTION")
 public class UserDistanceRestriction extends User {
 
-    public class UserParameters {
+    @UserParameters
+    public class Parameters {
         /**
          * It is the time in seconds until which the user will decide to continue walking
          * or cycling towards the previously chosen station without making a new reservation
@@ -89,9 +91,9 @@ public class UserDistanceRestriction extends User {
         }
     }
 
-    private UserParameters parameters;
+    private Parameters parameters;
 
-    public UserDistanceRestriction(UserParameters parameters, SimulationServices services) {
+    public UserDistanceRestriction(Parameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
     }
