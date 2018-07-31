@@ -1,6 +1,6 @@
 {
     "name": "Bike3S",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "main": "frontend/main.js",
     "author": "URJC <contact@ia.urjc.es>",
     "description": "This software can create and analyse Bike Sharing System Simulations",
