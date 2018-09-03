@@ -114,7 +114,8 @@ public class SystemOperator {
 		
 	}
 	
-	public List<Event> valueBringBikes(Station station) {
+	public List<Event> evaluateBringBikes(Station station) {
+		List<Event> events = new ArrayList();
 		double bikesRatio = station.availableBikes()/station.getCapacity();
 		double slotsRatio = station.availableSlots()/station.getCapacity();
 		double availableResourcesRatio = bikesRatio + slotsRatio;
@@ -128,7 +129,7 @@ public class SystemOperator {
 	}
 
 		if (bikesToBring > 0) {
-			List<Event> events = new ArrayList<>();
+
 			Comparator<Station> byDistance = services.getStationComparator().byDistance(station.getPosition());
 			List<Station> orderedStations = stations.stream()
 				.sorted(byDistance).collect(Collectors.toList());

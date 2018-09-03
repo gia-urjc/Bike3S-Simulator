@@ -19,19 +19,19 @@ public class Truck implements Entity {
 	private int id;
 	private int capacity;
  	private Station destinationStation;
-	private int numberOfBikes;
-	private List<Bike> bikes;
+		private List<Bike> bikes;
 	private double velocity;
 	private GeoPoint position;
 	private GeoRoute route;
+	private Order order;
 		
 	public Truck(int capacity, double velocity) {
 		this.id = idGenerator.next();
 		this.destinationStation = null;
 		this.capacity = capacity;
-		this.numberOfBikes = 0;
 		this.bikes = new ArrayList<>();
 		this.velocity = velocity;
+		this.order = null;
 	}
 	
 	public int getId() {
@@ -46,10 +46,6 @@ public class Truck implements Entity {
 		return this.bikes;
 	}
 	
-	public int getNumberofBikes() {
-		return this.numberOfBikes;
-	}
-	
 	public Station getDestinationStation() {
 		return this.destinationStation;
 	}
@@ -62,12 +58,17 @@ public class Truck implements Entity {
 		return position;
 	}
 
-	public void setPosition(GeoPoint position) {
-		this.position = position;
-	}
-
 	public GeoRoute getRoute() {
 		return route;
+	}
+	
+	public Order getOrder() {
+		
+		return order;
+	}
+
+	public void setPosition(GeoPoint position) {
+		this.position = position;
 	}
 
 	public void setRoute(GeoRoute route) {
@@ -77,27 +78,39 @@ public class Truck implements Entity {
 	public void setDestinationStation(Station destinationStation) {
 		this.destinationStation = destinationStation;
 	}
+	
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+	
+	public int loadedBikes() {
+		return bikes.size();
+	}
+	
+	public int availableSlots() {
+		return capacity - loadedBikes();
+	}
 
-	public void load(int nBikes) {
-		if (destinationStation.availableBikes() >= nBikes) {
+	public boolean load(int nBikes) {
+		if (availableSlots() >= nBikes && destinationStation.availableBikes() >= nBikes) {
 			for (int i=0; i<nBikes; i++) {
 				Bike bike = destinationStation.removeBikeWithoutReservation();
 				bikes.add(bike);
 			}
-			numberOfBikes += nBikes;
+			return true;
 		}
-		// TODO: add else branch to consult system operator
+		return false;
 	}
 	
-	public void unload(int nBikes) {
-		if (destinationStation.availableSlots() >= nBikes) {
+	public boolean unload(int nBikes) {
+		if (loadedBikes() >= nBikes && destinationStation.availableSlots() >= nBikes) {
 			for (int i=0; i<nBikes; i++) {
 				Bike bike = bikes.remove(i); 
 				destinationStation.returnBike(bike);
 			}
-			numberOfBikes -= nBikes;
+			return true;
 		}
-		// TODO: add else branch to consult system operator
+		return false;
 	}
 
 } 
