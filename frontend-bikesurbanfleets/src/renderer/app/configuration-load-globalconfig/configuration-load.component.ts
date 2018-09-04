@@ -46,7 +46,6 @@ export class ConfigurationLoadComponent {
 
 
     async loadGlobalConfig() {
-        let globalData: any;
         try {
             if(this.path) {
                 this.dataLoaded = await this.ajax.jsonLoader.loadJsonGlobal(this.path);
