@@ -402,6 +402,8 @@ public abstract class User implements Entity {
      * @return station where user has decided to go.
      */
     public abstract Station determineStationToRentBike();
+    
+    public abstract Station determineStationToRentBikeA();
 
     /**
      * User decides to which station he wants to go to return his bike.
