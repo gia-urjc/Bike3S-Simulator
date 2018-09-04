@@ -214,6 +214,11 @@ public abstract class User implements Entity {
         this.route = route;
         if (hasBike()) {
         	memory.addRouteTraveledByBike(route);
+        	memory.setDistanceTraveledByBike(memory.getDistanceTraveledByBike()+route.getTotalDistance());
+        }
+        else {
+        	memory.addWalkedRoute(route);
+        	memory.setWalkedDistance(memory.getWalkedDistance()+route.getTotalDistance());
         }
     }
 

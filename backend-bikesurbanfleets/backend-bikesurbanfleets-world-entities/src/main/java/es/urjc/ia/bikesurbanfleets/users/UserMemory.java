@@ -59,7 +59,10 @@ public class UserMemory {
     private List<Station> stationsWithRentalFailedAttempts;
     private List<Station> stationsWithReturnFailedAttemptss;
     private List<Reservation> reservations;
-    private List<GeoRoute> routesTraveledByBike; 
+    private List<GeoRoute> routesTraveledByBike;
+    private List<GeoRoute> walkedRoutes; 
+    private double distanceTraveledByBike;
+    private double walkedDistance;
   
     public UserMemory(User user) {
         this.bikeReservationAttemptsCounter = 0; 
@@ -71,6 +74,9 @@ public class UserMemory {
         this.stationsWithReturnFailedAttemptss = new ArrayList<>();
         this.reservations = new ArrayList<>();
         this.routesTraveledByBike = new ArrayList<>();
+        this.walkedRoutes = new ArrayList();
+        this.distanceTraveledByBike = 0;
+        this.walkedDistance = 0;
     }
     
     public List<Reservation> getReservations() {
@@ -106,8 +112,32 @@ public class UserMemory {
     	return routesTraveledByBike;
     }
     
+    public List<GeoRoute> getWalkedRoutes() {
+    	return walkedRoutes;
+    }
+    
+    public double getDistanceTraveledByBike() {
+    	return distanceTraveledByBike;
+    }
+    
+    public double getWalkedDistance() {
+    	return walkedDistance;
+    }
+    
     public void addRouteTraveledByBike(GeoRoute route) {
     	routesTraveledByBike.add(route);
+    }
+    
+    public void addWalkedRoute(GeoRoute route) {
+    	walkedRoutes.add(route);
+    }
+    
+    public void setDistanceTraveledByBike(double distance) {
+    	distanceTraveledByBike = distance;
+    }
+    
+    public void setWalkedDistance(double distance) {
+    	walkedDistance = distance;
     }
     
     public void update(FactType fact) throws IllegalArgumentException {
@@ -156,16 +186,12 @@ public class UserMemory {
                 .collect(Collectors.toList());
     }
     
-    public double getDistanceTraveledByBike() {
-    	double distance = 0;
-    	for(GeoRoute route: routesTraveledByBike) {
-    		distance+=route.getTotalDistance();
-    	}
-    	return distance;
+    public double getTimeRidingABike() {
+    	return distanceTraveledByBike / user.getCyclingVelocity();
     }
     
-    public double getTimeRidingABike() {
-    	return getDistanceTraveledByBike() / user.getCyclingVelocity();
+    public double getTimeWalking() {
+    	return walkedDistance / user.getWalkingVelocity();
     }
 
 }
