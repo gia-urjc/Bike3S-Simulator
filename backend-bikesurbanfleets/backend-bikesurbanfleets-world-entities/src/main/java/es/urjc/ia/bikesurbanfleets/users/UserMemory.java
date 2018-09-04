@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation.ReservationState;
@@ -58,7 +59,8 @@ public class UserMemory {
     private List<Station> stationsWithRentalFailedAttempts;
     private List<Station> stationsWithReturnFailedAttemptss;
     private List<Reservation> reservations;
-   
+    private List<GeoRoute> routesTraveledByBike; 
+  
     public UserMemory(User user) {
         this.bikeReservationAttemptsCounter = 0; 
         this.bikeReservationTimeoutsCounter = 0;
@@ -68,7 +70,9 @@ public class UserMemory {
         this.stationsWithRentalFailedAttempts = new ArrayList<>();
         this.stationsWithReturnFailedAttemptss = new ArrayList<>();
         this.reservations = new ArrayList<>();
+        this.routesTraveledByBike = new ArrayList<>();
     }
+    
     public List<Reservation> getReservations() {
     	return reservations;
     }
@@ -97,7 +101,15 @@ public class UserMemory {
     public List<Station> getStationsWithReturnFailedAttempts() {
         return this.stationsWithReturnFailedAttemptss;
     }
-
+    
+    public List<GeoRoute> getRoutesTraveledByBike() {
+    	return routesTraveledByBike;
+    }
+    
+    public void addRouteTraveledByBike(GeoRoute route) {
+    	routesTraveledByBike.add(route);
+    }
+    
     public void update(FactType fact) throws IllegalArgumentException {
         switch(fact) {
             case BIKE_RESERVATION_TIMEOUT: bikeReservationTimeoutsCounter++;
@@ -142,6 +154,18 @@ public class UserMemory {
                 .filter(reservation -> reservation.getStartInstant() == timeInstant)
                 .map(Reservation::getStation)
                 .collect(Collectors.toList());
+    }
+    
+    public double getDistanceTraveledByBike() {
+    	double distance = 0;
+    	for(GeoRoute route: routesTraveledByBike) {
+    		distance+=route.getTotalDistance();
+    	}
+    	return distance;
+    }
+    
+    public double getTimeRidingABike() {
+    	return getDistanceTraveledByBike() / user.getCyclingVelocity();
     }
 
 }

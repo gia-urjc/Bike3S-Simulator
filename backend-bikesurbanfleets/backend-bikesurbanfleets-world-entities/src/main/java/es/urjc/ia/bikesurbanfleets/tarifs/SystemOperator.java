@@ -147,6 +147,7 @@ public class SystemOperator {
 				i++;
 			}
 		}
+		return events;
 	}
 	
 	public void charge(int money) {

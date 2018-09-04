@@ -93,7 +93,6 @@ public abstract class User implements Entity {
      */
     private UserMemory memory;
 
-
     protected InfraestructureManager infraestructure;
 
     /**
@@ -213,6 +212,9 @@ public abstract class User implements Entity {
 
     public void setRoute(GeoRoute route) {
         this.route = route;
+        if (hasBike()) {
+        	memory.addRouteTraveledByBike(route);
+        }
     }
 
     public double getWalkingVelocity() {
@@ -403,8 +405,6 @@ public abstract class User implements Entity {
      */
     public abstract Station determineStationToRentBike();
     
-    public abstract Station determineStationToRentBikeA();
-
     /**
      * User decides to which station he wants to go to return his bike.
      * @return station where user has decided to go.

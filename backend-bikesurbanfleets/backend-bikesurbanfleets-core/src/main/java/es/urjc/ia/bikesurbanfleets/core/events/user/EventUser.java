@@ -60,7 +60,6 @@ public abstract class EventUser implements Event {
      */
     public abstract List<Entity> getEntities();
     
-
     /*
         =================
         DEBUG METHODS
