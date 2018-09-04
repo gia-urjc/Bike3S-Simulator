@@ -35,11 +35,11 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
             if(!user.returnBikeWithoutReservationTo(station)) {
                 user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);
                 user.setPosition(station.getPosition());
-                debugEventLog("User can't return bike");
+                debugEventLog("User can't return bike. Station info: " + station.toString()) ;
                 newEvents = manageSlotReservationDecisionAtOtherStation();
             } else {
                 user.leaveSystem();
-                debugEventLog("User returns the bike");
+                debugEventLog("User returns the bike. Station info: " + station.toString());
                 debugClose(user, user.getId());
             }
         }

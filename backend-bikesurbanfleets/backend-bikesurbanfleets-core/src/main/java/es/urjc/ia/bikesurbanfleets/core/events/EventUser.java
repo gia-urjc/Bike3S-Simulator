@@ -129,7 +129,7 @@ public abstract class EventUser implements Event {
             Reservation reservation = new Reservation(instant, ReservationType.BIKE, user, destination, bike);
             user.addReservation(reservation);
             destination.getReservations().add(reservation);
-            debugEventLog("User has been able to reserve bike");
+            debugEventLog("User has been able to reserve bike. Reservation Info: " + reservation.toString());
             if (Reservation.VALID_TIME < arrivalTime) {
                 GeoPoint pointTimeOut = user.reachedPointUntilTimeOut();
                 newEvents.add(new EventBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, pointTimeOut));
@@ -306,6 +306,7 @@ public abstract class EventUser implements Event {
     
     protected void exceptionTreatment(Exception e) {
         MessageGuiFormatter.showErrorsForGui(e);
+        System.out.println(user.toString());
         user.leaveSystem();
         debugEventLog("Exception occurred");
         debugEventLog(ExceptionUtils.getStackTrace(e));

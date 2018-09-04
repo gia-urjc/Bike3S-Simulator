@@ -44,7 +44,7 @@ public class UserRandom extends User {
 
     @Override
     public Station determineStationToRentBike() {
-    	List<Station> stations = new ArrayList(infraestructure.consultStations());
+    	List<Station> stations = infraestructure.consultStations();
     	List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
     	stations.removeAll(triedStations);
         //Remove station if the user is in this station
@@ -55,7 +55,7 @@ public class UserRandom extends User {
         }
         //The user wants a bike but tried in all stations
         else {
-            List<Station> allStations = new ArrayList(infraestructure.consultStations());
+            List<Station> allStations = infraestructure.consultStations();
             allStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
             int index = infraestructure.getRandom().nextInt(0, allStations.size());
             return allStations.get(index);
@@ -64,7 +64,7 @@ public class UserRandom extends User {
 
     @Override
     public Station determineStationToReturnBike() {
-        List<Station> stations = new ArrayList(infraestructure.consultStations());
+        List<Station> stations = infraestructure.consultStations();
         List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(getInstant());
         stations.removeAll(triedStations);
         //Remove station if the user is in this station
