@@ -7,7 +7,7 @@
   "homepage": "https://github.com/stimonm/Bike3S",
   "scripts": {
     "start:electron": "electron ./build",
-    "distribute": "node fuse build:dist && cd build && npm install && electron-builder",
+    "distribute": "node fuse build:dist && cd build && npm install && electron-builder -mwl",
     "debug:frontend": "node fuse build:dev"
   },
   "build": {
