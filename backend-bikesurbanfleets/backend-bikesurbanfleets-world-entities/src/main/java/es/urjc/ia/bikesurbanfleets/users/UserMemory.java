@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation.ReservationState;
@@ -58,7 +59,11 @@ public class UserMemory {
     private List<Station> stationsWithRentalFailedAttempts;
     private List<Station> stationsWithReturnFailedAttemptss;
     private List<Reservation> reservations;
-   
+    private List<GeoRoute> routesTraveledByBike;
+    private List<GeoRoute> walkedRoutes; 
+    private double distanceTraveledByBike;
+    private double walkedDistance;
+  
     public UserMemory(User user) {
         this.bikeReservationAttemptsCounter = 0; 
         this.bikeReservationTimeoutsCounter = 0;
@@ -68,7 +73,12 @@ public class UserMemory {
         this.stationsWithRentalFailedAttempts = new ArrayList<>();
         this.stationsWithReturnFailedAttemptss = new ArrayList<>();
         this.reservations = new ArrayList<>();
+        this.routesTraveledByBike = new ArrayList<>();
+        this.walkedRoutes = new ArrayList();
+        this.distanceTraveledByBike = 0;
+        this.walkedDistance = 0;
     }
+    
     public List<Reservation> getReservations() {
     	return reservations;
     }
@@ -97,7 +107,39 @@ public class UserMemory {
     public List<Station> getStationsWithReturnFailedAttempts() {
         return this.stationsWithReturnFailedAttemptss;
     }
-
+    
+    public List<GeoRoute> getRoutesTraveledByBike() {
+    	return routesTraveledByBike;
+    }
+    
+    public List<GeoRoute> getWalkedRoutes() {
+    	return walkedRoutes;
+    }
+    
+    public double getDistanceTraveledByBike() {
+    	return distanceTraveledByBike;
+    }
+    
+    public double getWalkedDistance() {
+    	return walkedDistance;
+    }
+    
+    public void addRouteTraveledByBike(GeoRoute route) {
+    	routesTraveledByBike.add(route);
+    }
+    
+    public void addWalkedRoute(GeoRoute route) {
+    	walkedRoutes.add(route);
+    }
+    
+    public void setDistanceTraveledByBike(double distance) {
+    	distanceTraveledByBike = distance;
+    }
+    
+    public void setWalkedDistance(double distance) {
+    	walkedDistance = distance;
+    }
+    
     public void update(FactType fact) throws IllegalArgumentException {
         switch(fact) {
             case BIKE_RESERVATION_TIMEOUT: bikeReservationTimeoutsCounter++;
@@ -142,6 +184,14 @@ public class UserMemory {
                 .filter(reservation -> reservation.getStartInstant() == timeInstant)
                 .map(Reservation::getStation)
                 .collect(Collectors.toList());
+    }
+    
+    public double getTimeRidingABike() {
+    	return distanceTraveledByBike / user.getCyclingVelocity();
+    }
+    
+    public double getTimeWalking() {
+    	return walkedDistance / user.getWalkingVelocity();
     }
 
 }
