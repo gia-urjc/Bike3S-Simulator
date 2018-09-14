@@ -6,5 +6,5 @@ export interface SystemInfo {
     basicData: any;
     data: Data;
     getData(): Data;
-    init(v?: any): Promise<void>;
+    init(): Promise<void>;
 }

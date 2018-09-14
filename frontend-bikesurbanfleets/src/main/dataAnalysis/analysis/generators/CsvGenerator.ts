@@ -11,7 +11,7 @@ import { ReservationAbsoluteValue } from "../absoluteValues/reservations/Reserva
 import { ReservationData } from "../absoluteValues/reservations/ReservationData";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
-import { EmptyStationInfo, EmptyStateData } from "../absoluteValues/time/EmptyStationInfo";
+import { EmptyStationInfo, EmptyStateData } from "../absoluteValues/bikesPerStation/EmptyStationInfo";
 import * as json2csv from 'json2csv';
 import * as fs from 'fs';
 

@@ -7,8 +7,8 @@ import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
-import { BikesPerStation } from "../absoluteValues/time/BikesPerStation";
-import { EmptyStationInfo } from "../absoluteValues/time/EmptyStationInfo";
+import { BikesPerStation } from "../absoluteValues/bikesPerStation/BikesPerStation";
+import { EmptyStationInfo } from "../absoluteValues/bikesPerStation/EmptyStationInfo";
 import { ReservationIterator } from "../iterators/ReservationIterator";
 import { TimeEntryIterator } from "../iterators/TimeEntryIterator";
 import { SystemReservations } from "../systemEntities/SystemReservations";
@@ -16,11 +16,12 @@ import { SystemStations } from "../systemEntities/SystemStations";
 import { SystemUsers } from "../systemEntities/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
 import {SystemGlobalInfo } from '../SystemGlobalInfo';
+import { BikesBalanceQuality } from '../absoluteValues/bikesPerStation/BikesBalanceQuality';
 
 export class DataGenerator {
     private readonly RESERVATIONS: number = 3;  // 3 data related to reservations must be initialized
     private readonly RENTALS_AND_RETURNS: number = 2;  // 2 data related to rentals and returns must be initialized
-    private readonly CALCULATION: number = 2;  // both calculators must have calculated its data before writing them 
+    private readonly CALCULATION: number = 3;  // both iterators must have calculated all its data before writing them 
     private readonly BIKES_PER_STATION: number = 2;  // this data needs to be initialized with both reservation and station information
 
     private csv: boolean;  // it indicates if a csv file must be generated    
@@ -158,7 +159,7 @@ export class DataGenerator {
             if (this.reservationCounter === this.RESERVATIONS) {
                 iterator.iterate().then( () => {
                 this.calculationCounter++;
-                    this.calculateGlobalInfo();
+                this.calculateGlobalInfo();
                 });
             }
             return;
@@ -175,12 +176,20 @@ export class DataGenerator {
             if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStationCounter === this.BIKES_PER_STATION) {
                 iterator.iterate().then( () => {
                     let emptyStations: EmptyStationInfo = new EmptyStationInfo(this.bikesPerStation);
-                    emptyStations.init();
                     this.info.set(EmptyStationInfo.name, emptyStations);
-                    
-                    this.calculationCounter++;
-                    this.calculateGlobalInfo();
-                });
+                    emptyStations.init().then( () => {
+                        this.calculationCounter++;
+                        this.calculateGlobalInfo();
+                    })                 
+                    let bikesBalance: BikesBalanceQuality = new BikesBalanceQuality(this.bikesPerStation);
+                    bikesBalance.setStations(this.systemStations.getStations());
+                    this.info.set(BikesBalanceQuality.name, bikesBalance);
+                    bikesBalance.init().then( () => {
+                        this.calculationCounter++;
+                        this.calculateGlobalInfo();
+                    });              
+                
+                    });
             }
             return;
         }

@@ -6,6 +6,11 @@ import { Settings } from './settings';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
 import { ipcMain, ipcRenderer } from 'electron';
 import { HistoryReaderController, BackendController, SchemaFormGeneratorController, JsonLoaderController, CsvGeneratorController, MapDownloadController } from './controllers';
+import { Data } from './dataAnalysis/analysis/absoluteValues/Data';
+import { BikesBalanceQuality } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesBalanceQuality';
+import { BikesPerStation } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesPerStation';
+import { SystemReservations } from './dataAnalysis/analysis/systemEntities/SystemReservations';
+import { Reservation } from './dataAnalysis/systemDataTypes/Entities';
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;
@@ -277,6 +282,23 @@ export namespace Main {
        let generator: DataGenerator = await DataGenerator.create('build/history', 'csvFiles', 'build/schema');
     }
        
+       function testQuality(): void {
+           let history: HistoryReaderController = await HistoryReaderController.create(this.historyPath, this.schemaPath);
+           let reservations: SystemReservations = new SystemReservations();
+           await reservations.init(history);
+           let stations: SystemStations = new SystemStations();
+           await stations.init(history);
+           
+           let bikesPerStation: BikesPerStation = new BikesPerStation();
+           bikesPerStation.setReservations(reservations.getReservations());
+           await bikesPerStation.init(stations.getStations());
+           
+           let bikesBalance: BikesBalanceQuality = new BikesBalanceQuality(bikesPerStation);
+           bikesBalance.setStations(stations.getStations());
+           await bikesBalance.init();
+           let quality: Data = bikesBalance.getData();
+           quality.forEach( (value, stationId) ==> console.log(stationId+": "+value));
+       }
 }
 
 Main.initMenu();
