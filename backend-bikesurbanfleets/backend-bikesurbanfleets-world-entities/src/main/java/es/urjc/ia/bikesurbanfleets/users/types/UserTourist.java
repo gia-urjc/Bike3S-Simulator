@@ -4,6 +4,7 @@ import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
@@ -20,8 +21,9 @@ import java.util.List;
  */
 @UserType("USER_TOURIST")
 public class UserTourist extends User {
-    
-    public class UserParameters {
+
+    @UserParameters
+    public class Parameters {
         /**
          * It indicates the size of the set of stations closest to the user within which the
          * destination will be chossen randomly.
@@ -83,7 +85,7 @@ public class UserTourist extends User {
          */
         private int failedReservationPercentage;
 
-        private UserParameters() {}
+        private Parameters() {}
 
         @Override
         public String toString() {
@@ -102,9 +104,9 @@ public class UserTourist extends User {
         }
     }
 
-    private UserParameters parameters;
+    private Parameters parameters;
 
-    public UserTourist(UserParameters parameters, SimulationServices services) {
+    public UserTourist(Parameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
     }

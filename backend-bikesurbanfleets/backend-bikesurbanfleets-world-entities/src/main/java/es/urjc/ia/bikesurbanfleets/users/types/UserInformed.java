@@ -5,6 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
@@ -22,7 +23,8 @@ import java.util.List;
 @UserType("USER_INFORMED")
 public class UserInformed extends User {
 
-    public class UserParameters {
+    @UserParameters
+    public class Parameters {
 
         /**
          * It is the maximum time in seconds until which the user will decide to continue walking
@@ -77,7 +79,7 @@ public class UserInformed extends User {
         private boolean willReserve = false;
 
 
-        private UserParameters(){}
+        private Parameters(){}
 
         @Override
         public String toString() {
@@ -96,9 +98,9 @@ public class UserInformed extends User {
     }
 
 
-    private UserParameters parameters;
+    private Parameters parameters;
 
-    public UserInformed(UserParameters parameters, SimulationServices services) {
+    public UserInformed(Parameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
     }

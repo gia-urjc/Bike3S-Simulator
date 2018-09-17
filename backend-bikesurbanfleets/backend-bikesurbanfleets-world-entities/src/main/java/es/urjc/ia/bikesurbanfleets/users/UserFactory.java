@@ -60,7 +60,7 @@ public class UserFactory {
 
                 //Searching parameters class
                 for(Class<?> innerClass: innerClasses) {
-                    if(innerClass.getSimpleName().equals("UserParameters")) {
+                    if(innerClass.getAnnotation(UserParameters.class) != null) {
                         userParametersClass = innerClass;
                         break;
                     }

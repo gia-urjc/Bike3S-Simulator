@@ -1,24 +1,30 @@
 package es.urjc.bikesurbanfleets.services;
 
-import es.urjc.ia.bikesurbanfleets.common.graphs.GraphHopperIntegration;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
+import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManagerParameters;
+import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManagerType;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
+import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.RecommendationSystemByAvailableResourcesRatio;
+import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
+import org.reflections.Reflections;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public class SimulationServices {
 
     private final String INIT_EXCEPTION_MESSAGE = "Simulation Service is not correctly started." +
             " You should init all the services";
-    private final String GRAPH_HOPPER_EXC_MESSAGE = "You need to set a map for " +
-            "GraphHopper integration";
-    private final String GRAPH_MANAGER_EXC_MESSAGE = "Graph manager is not correctly initialized";
-    private final String RECOM_SYSTEM_EXC_MESSAGE = "Recommendation System is not correctly initialized";
 
     private InfraestructureManager infrastructureManager;
     private RecommendationSystem recommendationSystem;
@@ -26,36 +32,96 @@ public class SimulationServices {
     private GraphManager graphManager;
     private StationComparator stationComparator;
 
+    private Set<Class<?>> graphClasses;
+    private Set<Class<?>> recommendationSystemClasses;
+
+    private Gson gson = new Gson();
+
     public SimulationServices(SimulationServiceConfigData configData)
             throws IOException, GraphHopperIntegrationException {
+
+        Reflections reflections = new Reflections();
+        this.graphClasses = reflections.getTypesAnnotatedWith(GraphManagerType.class);
+        this.recommendationSystemClasses = reflections.getTypesAnnotatedWith(RecommendationSystemType.class);
+
         this.infrastructureManager = new InfraestructureManager(configData.getStations(), configData.getBbox());
-        this.graphManager = initGraphManager(configData.getGraphManagerType(), configData.getMapDir());
+        this.graphManager = initGraphManager(configData.getGraphManagerType(), configData.getGraphParameters());
         this.stationComparator = new StationComparator();
         this.informationSystem = new InformationSystem(this.infrastructureManager, this.stationComparator);
-        this.recommendationSystem = initRecommendationSystem(configData.getRecomSystemType(), configData.getMaxDistance());
+        this.recommendationSystem = initRecommendationSystem(configData.getRecomSystemType(), configData.getRecomParameters());
     }
 
-    private RecommendationSystem initRecommendationSystem(RecommendationSystemType type, Integer maxDistance) throws IllegalStateException {
-        switch(type) {
-            case AVAILABLE_RESOURCES_RATIO:
-                if(maxDistance == null) {
-                    return new RecommendationSystemByAvailableResourcesRatio(this.infrastructureManager, this.stationComparator);
+    private RecommendationSystem initRecommendationSystem(String type, JsonElement parameters) throws IllegalStateException {
+
+        for(Class<?> recommendationSystemClass: recommendationSystemClasses) {
+            String recomTypeAnnotation = recommendationSystemClass.getAnnotation(RecommendationSystemType.class).value();
+            if(recomTypeAnnotation.equals(type)) {
+                List<Class<?>> innerClasses = Arrays.asList(recommendationSystemClass.getClasses());
+                Class<?> recomParametersClass = null;
+
+                for(Class<?> innerClass: innerClasses) {
+                    if(innerClass.getAnnotation(RecommendationSystemParameters.class) != null) {
+                        recomParametersClass = innerClass;
+                        break;
+                    }
                 }
-                return new RecommendationSystemByAvailableResourcesRatio(this.infrastructureManager, maxDistance, this.stationComparator);
+
+                try {
+                    if(recomParametersClass != null) {
+                        Constructor constructor = recommendationSystemClass.getConstructor(InfraestructureManager.class, StationComparator.class, recomParametersClass);
+                        RecommendationSystem recomSys = (RecommendationSystem) constructor.newInstance(this.infrastructureManager, this.stationComparator, gson.fromJson(parameters, recomParametersClass));
+                        return recomSys;
+                    }
+                    else {
+                        Constructor constructor = recommendationSystemClass.getConstructor(InfraestructureManager.class, StationComparator.class);
+                        RecommendationSystem recomSys = (RecommendationSystem) constructor.newInstance(this.infrastructureManager, this.stationComparator);
+                        return recomSys;
+                    }
+                }
+                catch(Exception e) {
+                    MessageGuiFormatter.showErrorsForGui("Error Creating Recommendation System");
+                    MessageGuiFormatter.showErrorsForGui(e);
+                }
+            }
         }
-        throw new IllegalStateException(RECOM_SYSTEM_EXC_MESSAGE);
+        return null;
     }
 
-    private GraphManager initGraphManager(GraphManagerType type, String mapDir)
-            throws IOException, GraphHopperIntegrationException, IllegalStateException {
-        switch(type) {
-            case GRAPH_HOPPER:
-                if(mapDir == null) {
-                    throw new GraphHopperIntegrationException(GRAPH_HOPPER_EXC_MESSAGE);
+    private GraphManager initGraphManager(String graphManagerType, JsonElement parameters)
+            throws IllegalStateException {
+
+        for(Class<?> graphClass: graphClasses) {
+            String graphTypeAnnotation = graphClass.getAnnotation(GraphManagerType.class).value();
+            if(graphTypeAnnotation.equals(graphManagerType)) {
+                List<Class<?>> innerClasses = Arrays.asList(graphClass.getClasses());
+                Class<?> graphParametersClass = null;
+
+                for(Class<?> innerClass: innerClasses) {
+                    if(innerClass.getAnnotation(GraphManagerParameters.class) != null) {
+                        graphParametersClass = innerClass;
+                        break;
+                    }
                 }
-                return new GraphHopperIntegration(mapDir);
+
+                try {
+                    if(graphParametersClass != null) {
+                        Constructor constructor = graphClass.getConstructor(graphParametersClass);
+                        GraphManager graphManager = (GraphManager) constructor.newInstance(gson.fromJson(parameters, graphParametersClass));
+                        return graphManager;
+                    }
+                    else {
+                        Constructor constructor = graphClass.getConstructor();
+                        GraphManager graphManager = (GraphManager) constructor.newInstance();
+                        return graphManager;
+                    }
+                }
+                catch(Exception e) {
+                    MessageGuiFormatter.showErrorsForGui("Error Creating Graph Manager");
+                    MessageGuiFormatter.showErrorsForGui(e);
+                }
+            }
         }
-        throw new IllegalStateException(GRAPH_MANAGER_EXC_MESSAGE);
+        return null;
     }
 
     public InfraestructureManager getInfrastructureManager() throws IllegalStateException {

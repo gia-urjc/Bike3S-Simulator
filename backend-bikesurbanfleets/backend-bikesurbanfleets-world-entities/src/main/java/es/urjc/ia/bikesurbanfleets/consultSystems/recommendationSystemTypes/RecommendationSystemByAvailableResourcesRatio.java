@@ -3,6 +3,8 @@ package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -20,13 +22,21 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
+@RecommendationSystemType("AVAILABLE_RESOURCES_RATIO")
 public class RecommendationSystemByAvailableResourcesRatio extends RecommendationSystem {
 
-	/**
-	 * It is the maximum distance in meters between the recommended stations and the
-	 * indicated geographical point.
-	 */
-	private int maxDistance = 650;
+	@RecommendationSystemParameters
+	public class RecommendationParameters {
+
+		/**
+		 * It is the maximum distance in meters between the recommended stations and the
+		 * indicated geographical point.
+		 */
+		private int maxDistance = 650;
+
+	}
+
+	private RecommendationParameters parameters;
 
 	/**
 	 * It indicates the number of stations to consider when choosing one randomly in
@@ -41,23 +51,24 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 	public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager,
 			StationComparator stationComparator) {
 		super(infraestructureManager);
+		this.parameters = new RecommendationParameters();
 		this.stationComparator = stationComparator;
 	}
 
-	public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager,
-			Integer maxDistance, StationComparator stationComparator) {
+	public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager, StationComparator stationComparator,
+														 RecommendationParameters parameters) {
 		super(infraestructureManager);
-		this.maxDistance = maxDistance;
+		this.parameters = parameters;
 		this.stationComparator = stationComparator;
 	}
 
 	private List<Station> fartherStations(GeoPoint point, List<Station> stations) {
-		return stations.stream().filter(station -> station.getPosition().distanceTo(point) > maxDistance)
+		return stations.stream().filter(station -> station.getPosition().distanceTo(point) > parameters.maxDistance)
 				.collect(Collectors.toList());
 	}
 
 	private List<Station> nearerStations(GeoPoint point, List<Station> stations) {
-		return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= maxDistance)
+		return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance)
 				.collect(Collectors.toList());
 	}
 

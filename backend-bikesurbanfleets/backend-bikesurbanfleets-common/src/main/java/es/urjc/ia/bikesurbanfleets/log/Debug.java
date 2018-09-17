@@ -33,9 +33,8 @@ public class Debug {
             writer.write("----------------------------\n");
             writer.write("Instant: " + event.getInstant() + "\n");
             writer.write("Event: " + event.getClass().getSimpleName() + "\n");
-            writer.write(message + "\n");
-            writer.write(entity.toString() + "\n");
-            writer.write("-----------------------------\n");
+            writer.write("Message: " + message + "\n");
+            writer.write("Entity Info: " + entity.toString() + "\n");
         }
     }
 
@@ -49,8 +48,7 @@ public class Debug {
             writer.write("----------------------------\n");
             writer.write("Instant: " + event.getInstant() + "\n");
             writer.write("Event: " + event.getClass().getSimpleName() + "\n");
-            writer.write(entity.toString() + "\n");
-            writer.write("-----------------------------\n");
+            writer.write("Entity Info: " + entity.toString() + "\n");
         }
     }
 

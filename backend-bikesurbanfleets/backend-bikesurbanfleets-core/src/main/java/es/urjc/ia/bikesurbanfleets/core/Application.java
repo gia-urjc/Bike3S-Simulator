@@ -1,7 +1,10 @@
 package es.urjc.ia.bikesurbanfleets.core;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
+import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.core.config.ConfigJsonReader;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
@@ -93,8 +96,15 @@ public class Application {
             if(historyOutputPath != null) {
                 globalInfo.setHistoryOutputPath(historyOutputPath);
             }
-            SimulationEngine simulation = new SimulationEngine(globalInfo, stationsInfo, usersInfo, mapPath);
-            simulation.run();
+
+            //TODO mapPath not obligatory for other graph managers
+            if(mapPath != null) {
+                SimulationEngine simulation = new SimulationEngine(globalInfo, stationsInfo, usersInfo, mapPath);
+                simulation.run();
+            }
+            else {
+                MessageGuiFormatter.showErrorsForGui("You should specify a map directory");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

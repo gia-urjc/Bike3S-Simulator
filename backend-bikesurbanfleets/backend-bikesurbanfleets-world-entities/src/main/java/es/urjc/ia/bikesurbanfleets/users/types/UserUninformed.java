@@ -64,11 +64,12 @@ public class UserUninformed extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> stations = new ArrayList(infraestructure.consultStations());
-        List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(getInstant());
-        stations.removeAll(triedStations);
+        List<Station> stations = infraestructure.consultStations();
+        //List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(getInstant());
+        //stations.removeAll(triedStations);
 
         //Remove station if the user is in this station
+        System.out.println("List Size" + stations.size());
         stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         Comparator<Station> criteria = services.getStationComparator().byDistance(this.getPosition());
         stations.stream().sorted(criteria).collect(Collectors.toList());

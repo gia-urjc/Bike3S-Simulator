@@ -1,46 +1,47 @@
 package es.urjc.bikesurbanfleets.services;
 
+import com.google.gson.JsonElement;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
 import java.util.List;
 
-public class SimulationServiceConfigData {
+public class  SimulationServiceConfigData {
 
     private List<Station> stations;
     private BoundingBox bbox;
 
-    private GraphManagerType graphManagerType;
-    private RecommendationSystemType recomSystemType;
-    private String mapDir;
-    private Integer maxDistance;
+    private String graphManagerType;
+    private String recomSystemType;
+    private JsonElement graphParameters;
+    private JsonElement recomParameters;
 
     public SimulationServiceConfigData() {}
 
-    public GraphManagerType getGraphManagerType() {
+    public String getGraphManagerType() {
         return graphManagerType;
     }
 
-    public SimulationServiceConfigData setGraphManagerType(GraphManagerType graphManagerType) {
+    public SimulationServiceConfigData setGraphManagerType(String graphManagerType) {
         this.graphManagerType = graphManagerType;
         return this;
     }
 
-    public RecommendationSystemType getRecomSystemType() {
+    public String getRecomSystemType() {
         return recomSystemType;
     }
 
-    public SimulationServiceConfigData setRecomSystemType(RecommendationSystemType recomSystemType) {
+    public SimulationServiceConfigData setRecomSystemType(String recomSystemType) {
         this.recomSystemType = recomSystemType;
         return this;
     }
 
-    public String getMapDir() {
-        return mapDir;
+    public JsonElement getGraphParameters() {
+        return graphParameters;
     }
 
-    public SimulationServiceConfigData setMapDir(String mapDir) {
-        this.mapDir = mapDir;
+    public SimulationServiceConfigData setGraphParameters(JsonElement graphParameters) {
+        this.graphParameters = graphParameters;
         return this;
     }
 
@@ -62,13 +63,13 @@ public class SimulationServiceConfigData {
         return this;
     }
 
-    public SimulationServiceConfigData setMaxDistance(int maxDistance) {
-        this.maxDistance = maxDistance;
+    public SimulationServiceConfigData setRecomParameters(JsonElement recomparameters) {
+        this.recomParameters = recomparameters;
         return this;
     }
 
-    public int getMaxDistance() {
-        return this.maxDistance;
+    public JsonElement getRecomParameters() {
+        return this.recomParameters;
     }
 
 }

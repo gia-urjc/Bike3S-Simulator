@@ -4,6 +4,7 @@ import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
@@ -26,7 +27,8 @@ import java.util.List;
 @UserType("USER_COMMUTER")
 public class UserCommuter extends User {
 
-    public class UserParameters {
+    @UserParameters
+    public class Parameters {
 
         /**
          * Place where user will go to take return the bike
@@ -83,12 +85,12 @@ public class UserCommuter extends User {
                     '}';
         }
 
-        private UserParameters() {}
+        private Parameters() {}
 
     }
-    private UserParameters parameters;
+    private Parameters parameters;
     
-    public UserCommuter(UserParameters parameters, SimulationServices services) {
+    public UserCommuter(Parameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
         if(parameters.cyclingVelocity != 0) {

@@ -35,6 +35,7 @@ export class ConfigurationSaveComponent {
     }
 
     async ngOnInit() {
+        //this.ajax.jsonLoader.init();
         try {
             await this.generateConfiguration();
         }

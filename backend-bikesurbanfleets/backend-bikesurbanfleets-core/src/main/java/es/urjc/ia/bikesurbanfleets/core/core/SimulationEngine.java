@@ -1,9 +1,8 @@
 package es.urjc.ia.bikesurbanfleets.core.core;
 
 
-import com.google.protobuf.Message;
-import es.urjc.bikesurbanfleets.services.GraphManagerType;
-import es.urjc.bikesurbanfleets.services.RecommendationSystemType;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import es.urjc.bikesurbanfleets.services.SimulationServiceConfigData;
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
@@ -15,13 +14,11 @@ import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricReservation;
-import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserFactory;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;
-import org.apache.commons.math3.util.Precision;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,16 +40,27 @@ public class SimulationEngine {
      * It creates an event queue where its events are sorted by the time instant when they'll occur.
      */
     public SimulationEngine(GlobalInfo globalInfo, StationsConfig stationsInfo, UsersConfig usersInfo,
-                            String mapPath) throws Exception {
+                            String mapDir) throws Exception {
         this.globalInfo = globalInfo;
         this.usersInfo = usersInfo;
+
+        // ----
+        // TODO make it flexible to different properties
+        JsonObject graphParameters = new JsonObject();
+        graphParameters.addProperty("mapDir", mapDir);
+
+        JsonObject recomParameters = new JsonObject();
+        recomParameters.addProperty("maxDistance", globalInfo.getMaxDistanceRecommendation());
+        // TODO make it flexible to different properties
+        // ----
+
         SimulationServiceConfigData servicesConfigData = new SimulationServiceConfigData();
         servicesConfigData.setBbox(globalInfo.getBoundingBox())
-            .setGraphManagerType(GraphManagerType.valueOf(globalInfo.getGraphManagerType()))
-            .setMapDir(mapPath)
-            .setRecomSystemType(RecommendationSystemType.valueOf(globalInfo.getRecommendationSystemType()))
-            .setStations(stationsInfo.getStations())
-            .setMaxDistance(globalInfo.getMaxDistanceRecommendation());
+            .setGraphManagerType(globalInfo.getGraphManagerType())
+            .setGraphParameters(graphParameters)
+            .setRecomSystemType(globalInfo.getRecommendationSystemType())
+            .setRecomParameters(recomParameters)
+            .setStations(stationsInfo.getStations());
 
         SimulationServices services = new SimulationServices(servicesConfigData);
 
