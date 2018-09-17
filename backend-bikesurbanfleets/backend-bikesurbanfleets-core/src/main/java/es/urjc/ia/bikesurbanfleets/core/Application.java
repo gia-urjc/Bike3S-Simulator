@@ -64,7 +64,6 @@ public class Application {
         //Create auxiliary folder
         File auxiliaryDir = new File(GlobalInfo.AUX_DIR);
         if(!auxiliaryDir.exists()) {
-            FileUtils.deleteDirectory(auxiliaryDir);
             auxiliaryDir.mkdirs();
         }
 
