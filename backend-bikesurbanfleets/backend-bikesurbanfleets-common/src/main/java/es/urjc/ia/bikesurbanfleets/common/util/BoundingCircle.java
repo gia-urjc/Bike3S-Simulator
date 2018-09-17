@@ -44,15 +44,15 @@ public class BoundingCircle {
         double cosLatitude = Math.cos(latitudeRadians);
         
         double bearing = random.nextDouble() * 2 * Math.PI;
-        double theta = distance / GeoPoint.EARTH_RADIUS;
+        double delta = distance / GeoPoint.EARTH_RADIUS;
         double senBearing = Math.sin(bearing);
         double cosBearing = Math.cos(bearing);
-        double senTheta = Math.sin(theta);
-        double cosTheta = Math.cos(theta);
+        double senDelta = Math.sin(delta);
+        double cosDelta = Math.cos(delta);
         
-        double resLatRadians = Math.asin(senLatitude*cosTheta+cosLatitude*senTheta*cosBearing);
-        double resLonRadians = longitudeRadians + Math.atan2(senBearing*senTheta*cosLatitude, 
-                cosTheta-senLatitude*Math.sin(resLatRadians));
+        double resLatRadians = Math.asin(senLatitude*cosDelta+cosLatitude*senDelta*cosBearing);
+        double resLonRadians = longitudeRadians + Math.atan2(senBearing*senDelta*cosLatitude, 
+                cosDelta-senLatitude*Math.sin(resLatRadians));
         resLonRadians = ((resLonRadians+(Math.PI*3))%(Math.PI*2))-Math.PI;
         
         double resLatitude = resLatRadians / GeoPoint.DEGREES_TO_RADIANS;
