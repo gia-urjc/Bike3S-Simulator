@@ -63,8 +63,10 @@ public class Application {
 
         //Create auxiliary folder
         File auxiliaryDir = new File(GlobalInfo.AUX_DIR);
-        FileUtils.deleteDirectory(auxiliaryDir);
-        auxiliaryDir.mkdirs();
+        if(!auxiliaryDir.exists()) {
+            FileUtils.deleteDirectory(auxiliaryDir);
+            auxiliaryDir.mkdirs();
+        }
 
         CommandLine cmd;
         try {
