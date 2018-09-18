@@ -1,5 +1,5 @@
 import { HistoryEntitiesJson } from "../../../../shared/history";
-import { HistoryReaderController } from "../../../util";
+import { HistoryReaderController } from "../../../controllers/HistoryReaderController";
 import { Reservation } from "../../systemDataTypes/Entities";
 
 export class SystemReservations {

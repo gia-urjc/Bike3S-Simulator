@@ -4,8 +4,13 @@ import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
 import { Settings } from './settings';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
-import { ipcMain, ipcRenderer } from 'electron';
-import { HistoryReaderController, BackendController, SchemaFormGeneratorController, JsonLoaderController, CsvGeneratorController, MapDownloadController } from './controllers';
+import { ipcMain } from 'electron';
+import { HistoryReaderController } from './controllers/HistoryReaderController';
+import { BackendController } from './controllers/BackendController';
+import { SchemaFormGeneratorController } from './controllers/SchemaFormGeneratorController';
+import { JsonLoaderController } from './controllers/JsonLoaderController';
+import { CsvGeneratorController } from './controllers/CsvGeneratorController';
+import { MapDownloadController } from './controllers/MapDownloadController';
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;

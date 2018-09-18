@@ -16,12 +16,12 @@ export interface JsonInfo {
 }
 
 export interface JsonLayoutGroup{
-    globalLayout: any,
+    globalLayout: any;
     //entryPointLayout: any,
-    stationsLayout: any
+    stationsLayout: any;
 }
 
-export default class JsonLoader {
+export class JsonLoaderController {
 
     private globalConfigurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/global-config.json'));
     private stationConfigurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config.json'));
@@ -31,7 +31,7 @@ export default class JsonLoader {
     private stationsLayout: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config-layout.json'));
 
     static create() {
-        return new JsonLoader();
+        return new JsonLoaderController();
     }
 
     static enableIpc(): void {
@@ -70,7 +70,7 @@ export default class JsonLoader {
             globalLayout: this.globalLayout,
             //entryPointLayout : this.entryPointLayout,
             stationsLayout: this.stationsLayout
-        }
+        };
     }
 
     async writeJson(jsonInfo: JsonInfo): Promise<boolean> {

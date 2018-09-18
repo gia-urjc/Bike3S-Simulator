@@ -1,4 +1,4 @@
-import { HistoryReaderController } from '../../../util';
+import { HistoryReaderController } from '../../../controllers/HistoryReaderController';
 import { HistoryIterator } from '../../HistoryIterator';
 import { TimeEntry } from '../../systemDataTypes/SystemInternalData';
 import { Observer, Observable } from '../ObserverPattern';

@@ -15,3 +15,5 @@ node_modules/
 /libs/
 /csvFiles/
 tempHistory/
+logs/
+tempCsv/

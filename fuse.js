@@ -225,11 +225,10 @@ Sparky.task('build:data-analyser', () => {
         experimentalFeatures: true
     });
 
-    const main = fuse.bundle('data-analyser.js').instructions('>main/DataAnalyserTool.ts');
+    const main = fuse.bundle('data-analyser.js').instructions('> [main/DataAnalyserTool.ts]');
 
     return fuse.run();
 });
-
 Sparky.task('build:frontend:main', () => {
     const fuse = FuseBox.init({
         homeDir: projectRoot.frontend.src(),

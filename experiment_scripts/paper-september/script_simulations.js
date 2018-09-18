@@ -172,6 +172,7 @@ async function main() {
             
             //simulate
             await simulate(globalConf, stationsConf, tempUserConfPath, historyTempUserPath, mapPath, logFilePath);
+            console.log(csvTempUserPath);
             await generateAllData(historyTempUserPath, csvTempUserPath)
         }
     }

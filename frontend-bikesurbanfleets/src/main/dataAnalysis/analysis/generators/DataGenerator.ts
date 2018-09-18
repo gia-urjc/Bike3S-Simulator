@@ -1,5 +1,4 @@
-import { HistoryReaderController } from "../../../util";
-import { Data } from '../absoluteValues/Data';
+import { HistoryReaderController } from "../../../controllers/HistoryReaderController";
 
 import { Iterator } from '../iterators/Iterator';
 import { SystemInfo } from "../absoluteValues/SystemInfo";
@@ -15,7 +14,7 @@ import { SystemReservations } from "../systemEntities/SystemReservations";
 import { SystemStations } from "../systemEntities/SystemStations";
 import { SystemUsers } from "../systemEntities/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
-import {SystemGlobalInfo } from '../SystemGlobalInfo';
+import { SystemGlobalInfo } from '../SystemGlobalInfo';
 
 export class DataGenerator {
     private readonly RESERVATIONS: number = 3;  // 3 data related to reservations must be initialized
@@ -55,8 +54,6 @@ export class DataGenerator {
         return generator;
     }
    
-    
-
     private constructor(historyPath: string, csvPath?: string, schemaPath?: string) {
         this.csv = csvPath === undefined ? false: true;
         this.historyPath = historyPath;

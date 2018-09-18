@@ -18,7 +18,7 @@ interface DownloadState {
     };
 }
 
-export default class MapDownloadController {
+export class MapDownloadController {
 
     private static channels: Channel[] = [];
     private BASE_URL = "http://overpass-api.de/api/interpreter?data=";

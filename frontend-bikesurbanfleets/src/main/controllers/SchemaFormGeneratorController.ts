@@ -5,7 +5,7 @@ import {EntryPointDataType, SchemaConfig} from "../../shared/ConfigurationInterf
 import {IpcUtil, Channel} from "../util";
 import SchemaParser from "../configuration/SchemaParser";
 
-export default class SchemaFormGenerator{
+export class SchemaFormGeneratorController{
 
     private static globalConfigurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/global-config.json'));
     private static stationConfigurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config.json'));
@@ -13,7 +13,7 @@ export default class SchemaFormGenerator{
 
 
     static create() {
-        return new SchemaFormGenerator();
+        return new SchemaFormGeneratorController();
     }
 
     static enableIpc(): void {
