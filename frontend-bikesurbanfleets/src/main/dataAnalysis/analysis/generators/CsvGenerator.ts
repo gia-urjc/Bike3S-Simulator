@@ -3,6 +3,7 @@ import { Station, User, Entity } from "../../systemDataTypes/Entities";
 import { SystemGlobalInfo } from "../SystemGlobalInfo";
 import { AbsoluteValue } from "../absoluteValues/AbsoluteValue";
 import { SystemInfo } from "../absoluteValues/SystemInfo";
+import { BikesBalanceQuality } from '../absoluteValues/bikesPerStation/BikesBalanceQuality';
 import { RentalAndReturnAbsoluteValue } from "../absoluteValues/rentalsAndReturns/RentalAndReturnAbsoluteValue";
 import { RentalAndReturnData } from "../absoluteValues/rentalsAndReturns/RentalAndReturnData";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
@@ -16,15 +17,19 @@ import * as json2csv from 'json2csv';
 import * as fs from 'fs';
 
 export class CsvGenerator {
-	private readonly NUM_DATA: number = 4;
+	private readonly NUM_DATA: number = 4;   // number of absolute values of reservation and rental and return data  
     private csvPath: string;
+    
     private entityInfoTitles: Array<string>;
     private globalInfoTitles: Array<string>;
     private emptyStationTitles: Array<string>;
+    private bikesBalanceTitles: Array<string>;
+    
    	private stationData: Array<JsonObject>;
    	private userData: Array<JsonObject>;
     private globalInfo: JsonObject;
     private emptyStationData: Array<JsonObject>;
+    private bikesBalanceData: Array<JsonObject>; 
     
     public constructor(csvPath: string) {
         this.csvPath = csvPath;
@@ -35,6 +40,7 @@ export class CsvGenerator {
         this.userData = new Array();
         this.globalInfo = {};
         this.emptyStationData = new Array();
+        this.bikesBalanceData = new Array();
   }
     
   public createJsonFor(entities: Array<Entity>, data: Array<JsonObject>, reservations: SystemInfo, rentalsAndReturns: SystemInfo): void {
@@ -109,7 +115,7 @@ export class CsvGenerator {
     
     private async initEmptyStationInfo(info: Map<string, SystemInfo>): Promise<void> {
         let emptyStations: SystemInfo | undefined = info.get(EmptyStationInfo.name);
-        if (emptyStations !== undefined) {
+        if (emptyStations) {
              EmptyStateData.NAMES.forEach( (name) => {
              this.emptyStationTitles.push(name);
             });
@@ -121,6 +127,23 @@ export class CsvGenerator {
             });
         }
         return;
+    }
+    
+    private async initBikesBalanceInfo(info: Map<string, SystemInfo>, stations: Array<Station>): Promise<void> {
+        this.bikesBalanceTitles[0] = 'id';
+        this.bikesBalanceTitles[1] = 'balance quality';
+        let bikesBalance: SystemInfo | undefined = info.get(BikesBalanceQuality.name); 
+        if (bikesBalance) {
+            bikesBalance.getData().absoluteValues.forEach( (quality, stationId) => {
+                let obj: JsonObject = {};
+                obj[this.bikesBalanceTitles[0]] = stationId;
+                obj[this.bikesBalanceTitles[1]] = quality;
+                this.bikesBalanceData.push(obj);
+            });
+            return;
+        }
+        
+        
     }
 
 	   public async generate(entityInfo: Map<string, SystemInfo>, globalInfo: SystemGlobalInfo, stations: Array<Station>, users: Array<User>): Promise<void> {
