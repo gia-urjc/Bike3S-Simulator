@@ -6,6 +6,7 @@ const rootPath = () => process.cwd();
 const csv = require('csvtojson');
 const json2csv = require('json2csv');
 const lodash = require('lodash');
+const parameters = require('./parameters')
 
 
 rootPath.configurationFiles = () => path.join(rootPath(), 'configuration-files');
@@ -20,7 +21,8 @@ rootPath.temp.csv = () => path.join(rootPath.temp(), 'csv');
 rootPath.temp.generatedCsv = () => path.join(rootPath.temp(), 'generated-csv');
 rootPath.temp.concurrentBackends = () => path.join(rootPath.temp(), 'concurrent-backend');
 
-let userTypes = ["USER_RANDOM", "USER_INFORMED", "USER_INFORMED", "USER_OBEDIENT", "USER_DISTANCE_RESTRICTION", "USER_REASONABLE", "USER_COMMUTER", "USER_AVAILABLE_RESOURCES", "USER_TOURIST"];
+let userTypes = parameters.userTypes;
+console.log(userTypes);
 
 function createTempFolders(folderPath) {
     if(!fs.existsSync(folderPath)) {
@@ -50,48 +52,9 @@ function beforeScript() {
     });
 }
 
-/* 
-function generateUsersConfig(totalTime, numUsers, globalConf, entryPointConf) {
+function simulate(globalConfigPath, stationsConfigPath, usersConfigPath, historyPath, mapPath, logPath) {
     return new Promise((resolve, reject) => {
-        let entryPointsFile = fs.readJsonSync(path.join(rootPath.configurationFiles(), entryPointConf));
-        let lambda = 1/(totalTime/numUsers);
-        for(let i = 0; i < entryPointsFile.entryPoints.length; i++) {
-            entryPointsFile.entryPoints[i].totalUsers = numUsers;
-            entryPointsFile.entryPoints[i].distribution.lambda = lambda;
-        }
-        fs.writeFileSync(path.join(rootPath.configurationFiles(), entryPointConf), JSON.stringify(entryPointsFile, null, 4));
-        const userGen = spawn('java', [
-                '-jar',
-                `bikesurbanfleets-config-usersgenerator-1.0.jar`,
-                `-entryPointsSchema ${rootPath.build.schema()}/entrypoints-config.json`,
-                `-globalSchema ${rootPath.build.schema()}/global-config.json`,
-                `-entryPointsInput ${rootPath.configurationFiles()}/${entryPointConf}`,
-                `-globalInput ${rootPath.configurationFiles()}/${globalConf}`,
-                `-output ${rootPath.configurationFiles()}/users-configuration.json`,
-                `-validator ${rootPath.build.jsonSchemaValidator()}/jsonschema-validator.js`
-            ], {
-                cwd: rootPath.build(),
-                shell: true
-            });
-
-        userGen.on('error', (error) => {
-            log.red(error).echo();
-        });
-
-        userGen.on('close', (code) => {
-            if (code === 0) {
-                resolve();
-            } else {
-                log.time().red(`Exit code: ${code}`).echo();
-                reject();
-            }
-        });
-    });
-}
-*/
-
-function simulate(globalConfigPath, stationsConfigPath, usersConfigPath, historyPath, mapPath) {
-    return new Promise((resolve, reject) => {
+        fs.closeSync(fs.openSync(logPath, 'w'));
         const simulator = spawn('java', [
             '-jar',
             'bikesurbanfleets-core-1.0.jar',
@@ -106,8 +69,7 @@ function simulate(globalConfigPath, stationsConfigPath, usersConfigPath, history
             `-validator ${rootPath.build.jsonSchemaValidator()}/jsonschema-validator.js`
         ], {
             cwd: rootPath.build(),
-            shell: true,
-            stdio: 'inherit'
+            shell: true
         });
 
         simulator.on('error', (error) => {
@@ -122,17 +84,22 @@ function simulate(globalConfigPath, stationsConfigPath, usersConfigPath, history
                 reject();
             }
         });
+
+        simulator.stdout.on('data', (data) => {
+            console.log(data.toString());
+            fs.appendFileSync(logPath, data);
+        })
     });
 }
 
-function generateAllData() {
+function generateAllData(historyPath, csvPath) {
     return new Promise((resolve, reject) => {
         const dataAnalyser = spawn('node', [
             'data-analyser.js',
             'analyse',
-            `-h ${rootPath.temp.history()}`,
+            `-h ${historyPath}`,
             `-s ${rootPath.build.schema()}`,
-            `-c ${rootPath.temp.csv()}`
+            `-c ${csvPath}`
         ], {
             cwd: path.join(rootPath.build(), 'data-analyser'),
             shell: true,
@@ -154,40 +121,6 @@ function generateAllData() {
     });
 }
 
-function readDataFromCsv() {
-    return new Promise((resolve, reject) => {
-        csv().fromFile(path.join(rootPath.temp.csv(), 'global_values.csv'))
-            .on('json',(jsonObj)=>{
-                resolve(jsonObj);
-            })
-            .on('done',(error)=>{
-                reject(error);
-                console.log('end')
-            })
-    });
-}
-
-
-function writeCSVs(dataDS, dataHE, dataRE) {
-    let fields = [];
-    for(numUsers of numUsersList) {
-        fields.push(numUsers.toString());
-    }
-    let DScsv = json2csv({ data: dataDS, fields: fields });
-    let HEcsv = json2csv({ data: dataHE, fields: fields });
-    let REcsv = json2csv({ data: dataRE, fields: fields });
-
-    let csvName = "DS.csv";
-    fs.writeFileSync(path.join(rootPath.temp.generatedCsv(), csvName), DScsv);
-
-    csvName = "HE.csv";
-    fs.writeFileSync(path.join(rootPath.temp.generatedCsv(), csvName), HEcsv);
-
-    csvName = "RE.csv";
-    fs.writeFileSync(path.join(rootPath.temp.generatedCsv(), csvName), REcsv);
-
-}
-
 async function main() {
     //await beforeScript();
     let configurations = lodash.without(fs.readdirSync(rootPath.configurationFiles()), '.DS_Store');
@@ -202,6 +135,12 @@ async function main() {
         let tempFolderHistory = path.join(rootPath.configurationFiles(), conf + "/tempHistory");
         createTempFolders(tempFolderHistory);
 
+        let tempFolderLog = path.join(rootPath.configurationFiles(), conf + "/logs");
+        createTempFolders(tempFolderLog);
+
+        let tempCsvFolderLog = path.join(rootPath.configurationFiles(), conf + `/tempCsv`);
+        createTempFolders(tempCsvFolderLog);
+
         usersConfJson = fs.readJsonSync(usersConf).initialUsers;
         for(userType of userTypes) {
 
@@ -211,6 +150,13 @@ async function main() {
             //Temporal folder for historics
             let historyTempUserPath = path.join(tempFolderHistory, `history_${userType}`);
             createTempFolders(historyTempUserPath);
+
+            //Temporal folder for logs
+            let csvTempUserPath = path.join(tempCsvFolderLog, `csv_${userType}`)
+            createTempFolders(csvTempUserPath)
+
+            //Temporal file for logs
+            let logFilePath = path.join(tempFolderLog, `log_${userType}.txt`);
 
             //map file
             let mapPath = path.join(rootPath.mapPath(), 'madrid.osm');
@@ -225,7 +171,8 @@ async function main() {
             fs.writeFileSync(tempUserConfPath, JSON.stringify(newUsersConf, null, 4));
             
             //simulate
-            await simulate(globalConf, stationsConf, tempUserConfPath, historyTempUserPath, mapPath);
+            await simulate(globalConf, stationsConf, tempUserConfPath, historyTempUserPath, mapPath, logFilePath);
+            await generateAllData(historyTempUserPath, csvTempUserPath)
         }
     }
 }
