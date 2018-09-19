@@ -3,7 +3,7 @@ import { TimeEntry, Event } from "../../../systemDataTypes/SystemInternalData";
 import { Observer } from "../../ObserverPattern";
 import { Data } from "../Data";
 
-interface BikesPerTime {
+export interface BikesPerTime {
   time: number;
    availableBikes: number;
 }

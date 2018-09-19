@@ -10,6 +10,7 @@ import { Data } from './dataAnalysis/analysis/absoluteValues/Data';
 import { BikesBalanceQuality } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesBalanceQuality';
 import { BikesPerStation } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesPerStation';
 import { SystemReservations } from './dataAnalysis/analysis/systemEntities/SystemReservations';
+import { SystemStations } from './dataAnalysis/analysis/systemEntities/SystemStations';
 import { Reservation } from './dataAnalysis/systemDataTypes/Entities';
 
 export namespace Main {
@@ -283,7 +284,7 @@ export namespace Main {
     }
        
        function testQuality(): void {
-           let history: HistoryReaderController = await HistoryReaderController.create(this.historyPath, this.schemaPath);
+           let history: HistoryReaderController = await HistoryReaderController.create("build/history", "build/schema");
            let reservations: SystemReservations = new SystemReservations();
            await reservations.init(history);
            let stations: SystemStations = new SystemStations();
@@ -297,7 +298,7 @@ export namespace Main {
            bikesBalance.setStations(stations.getStations());
            await bikesBalance.init();
            let quality: Data = bikesBalance.getData();
-           quality.forEach( (value, stationId) ==> console.log(stationId+": "+value));
+           quality.absoluteValues.forEach( (value, stationId) ==> console.log(stationId+": "+value));
        }
 }
 
@@ -310,3 +311,5 @@ if (process.env.target === 'development') {
        
     }
 }
+
+Main.testQuality();
