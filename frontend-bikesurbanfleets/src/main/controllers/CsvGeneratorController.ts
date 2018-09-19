@@ -8,7 +8,7 @@ export interface CsvArgs {
     csvPath: string;
 }
 
-export default class CsvGeneratorController {
+export class CsvGeneratorController {
 
     private static channels: Array<Channel>;
     private schemaPath = paths.join(app.getAppPath(), 'schema');

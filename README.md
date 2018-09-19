@@ -76,3 +76,16 @@ node fuse build:dist
 ```
 npm run distribute
 ```
+
+### Simulate from the command line
+Are you too lazy to configure your IDE? No problem, you can execute this commands to execute the simulator:
+
+**Generate users**:
+```
+node fuse gen-users:dev
+```
+
+**To simulate**:
+```
+node fuse simulate:dev
+```

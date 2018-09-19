@@ -1,5 +1,5 @@
 import {HistoryTimeEntry} from "../../shared/history";
-import {HistoryReaderController} from '../util';
+import {HistoryReaderController} from '../controllers/HistoryReaderController';
 import {TimeEntry, Event} from './systemDataTypes/SystemInternalData';
 
 export class HistoryIterator {

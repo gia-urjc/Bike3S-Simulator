@@ -8,7 +8,6 @@ import { RentalAndReturnAbsoluteValue } from "../absoluteValues/rentalsAndReturn
 import { RentalAndReturnData } from "../absoluteValues/rentalsAndReturns/RentalAndReturnData";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
-import { ReservationAbsoluteValue } from "../absoluteValues/reservations/ReservationAbsoluteValue";
 import { ReservationData } from "../absoluteValues/reservations/ReservationData";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";

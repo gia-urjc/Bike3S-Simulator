@@ -349,7 +349,8 @@ public abstract class User implements Entity {
     }
 
     public List<GeoRoute> calculateRoutes(GeoPoint position) throws GeoRouteCreationException, GraphHopperIntegrationException {
-        return graph.obtainAllRoutesBetween(this.getPosition(), position);
+        String vehicle = this.bike == null ? "foot" : "bike";
+        return graph.obtainAllRoutesBetween(this.getPosition(), position, vehicle);
     }
 
     public GeoPoint reachedPointUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {

@@ -1,9 +1,6 @@
-import { HistoryEntitiesJson } from "../../../shared/history";
-import { HistoryReaderController } from "../../util";
+
 import { User } from "../systemDataTypes/Entities";
 import { SystemInfo } from "./absoluteValues/SystemInfo";
-import { RentalsAndReturnsPerStation } from "./absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
-import { ReservationsPerStation } from "./absoluteValues/reservations/ReservationsPerStation";
 
 export class SystemGlobalInfo {
     static readonly NAMES: Array<string> = [

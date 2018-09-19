@@ -13,7 +13,7 @@ import java.util.List;
 public interface GraphManager {
 
 
-    List<GeoRoute> obtainAllRoutesBetween(GeoPoint originPoint, GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException;
+    List<GeoRoute> obtainAllRoutesBetween(GeoPoint originPoint, GeoPoint destinationPoint, String vehicle) throws GeoRouteCreationException, GraphHopperIntegrationException;
 
     /**
      * It calculates which is the shortest route.
@@ -21,7 +21,7 @@ public interface GraphManager {
      * @throws GeoRouteCreationException
      * @throws GraphHopperIntegrationException
      */
-    GeoRoute obtainShortestRouteBetween(GeoPoint originPoint, GeoPoint destinationPoint) throws GraphHopperIntegrationException, GraphHopperIntegrationException, GeoRouteCreationException;
+    GeoRoute obtainShortestRouteBetween(GeoPoint originPoint, GeoPoint destinationPoint, String vehicle) throws GraphHopperIntegrationException, GraphHopperIntegrationException, GeoRouteCreationException;
 
     /**
      * It indicates if there are more than one possible route between two points.
@@ -29,5 +29,5 @@ public interface GraphManager {
      * @throws GraphHopperIntegrationException
      * @throws GeoRouteCreationException
      */
-    boolean hasAlternativesRoutes(GeoPoint startPosition, GeoPoint endPosition) throws GraphHopperIntegrationException, GeoRouteCreationException;
+    boolean hasAlternativesRoutes(GeoPoint startPosition, GeoPoint endPosition, String vehicle) throws GraphHopperIntegrationException, GeoRouteCreationException;
 }

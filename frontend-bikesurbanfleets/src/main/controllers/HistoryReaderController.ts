@@ -11,7 +11,7 @@ interface TimeRange {
     end: number;
 }
 
-export default class HistoryReaderController {
+export class HistoryReaderController {
 
     private static ajv = new AJV({
         $data: true,
@@ -29,7 +29,7 @@ export default class HistoryReaderController {
 
     static async create(path: string, schemaPath?:string|null): Promise<HistoryReaderController> {
         let reader = new HistoryReaderController(path);
-        if(schemaPath == null) {
+        if(schemaPath === null || schemaPath === undefined) {
             HistoryReaderController.entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
             HistoryReaderController.changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));
         }

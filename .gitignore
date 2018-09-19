@@ -14,3 +14,7 @@ node_modules/
 /.schema/
 /libs/
 /csvFiles/
+tempHistory/
+logs/
+tempCsv/
+tempUsersConf/

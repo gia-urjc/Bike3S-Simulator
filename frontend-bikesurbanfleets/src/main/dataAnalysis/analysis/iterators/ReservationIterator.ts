@@ -1,6 +1,3 @@
-import { HistoryEntitiesJson } from "../../../../shared/history";
-import { HistoryReaderController } from '../../../util';
-import { HistoryIterator } from '../../HistoryIterator';
 import { Reservation } from '../../systemDataTypes/Entities';
 import { Observer, Observable } from '../ObserverPattern';
 import { Iterator } from "./Iterator";

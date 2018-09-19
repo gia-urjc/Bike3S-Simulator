@@ -1,5 +1,4 @@
-import { HistoryReaderController } from "../../../util";
-import { Data } from '../absoluteValues/Data';
+import { HistoryReaderController } from "../../../controllers/HistoryReaderController";
 
 import { Iterator } from '../iterators/Iterator';
 import { SystemInfo } from "../absoluteValues/SystemInfo";
@@ -56,8 +55,6 @@ export class DataGenerator {
         return generator;
     }
    
-    
-
     private constructor(historyPath: string, csvPath?: string, schemaPath?: string) {
         this.csv = csvPath === undefined ? false: true;
         this.historyPath = historyPath;

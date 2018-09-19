@@ -1,7 +1,6 @@
 import { Reservation, Station } from "../../../systemDataTypes/Entities";
 import { TimeEntry, Event } from "../../../systemDataTypes/SystemInternalData";
 import { Observer } from "../../ObserverPattern";
-import { Data } from "../Data";
 
 export interface BikesPerTime {
   time: number;

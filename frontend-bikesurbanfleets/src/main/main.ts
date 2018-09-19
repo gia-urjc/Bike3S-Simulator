@@ -2,10 +2,16 @@ import { app, BrowserWindow, shell } from 'electron';
 import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
+import { BackendController } from './controllers/BackendController';
+import { CsvGeneratorController } from './controllers/CsvGeneratorController';
+import { HistoryReaderController } from './controllers/HistoryReaderController';
+import { JsonLoaderController } from './controllers/JsonLoaderController';
+import { MapDownloadController } from './controllers/MapDownloadController';
+import { SchemaFormGeneratorController } from './controllers/SchemaFormGeneratorController';
 import { Settings } from './settings';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
+
 import { ipcMain, ipcRenderer } from 'electron';
-import { HistoryReaderController, BackendController, SchemaFormGeneratorController, JsonLoaderController, CsvGeneratorController, MapDownloadController } from './controllers';
 import { Data } from './dataAnalysis/analysis/absoluteValues/Data';
 import { BikesBalanceQuality } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesBalanceQuality';
 import { BikesPerStation } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesPerStation';
@@ -283,7 +289,7 @@ export namespace Main {
        let generator: DataGenerator = await DataGenerator.create('build/history', 'csvFiles', 'build/schema');
     }
        
-       function testQuality(): void {
+    export async function testQuality(): Promise<void> {
            let history: HistoryReaderController = await HistoryReaderController.create("build/history", "build/schema");
            let reservations: SystemReservations = new SystemReservations();
            await reservations.init(history);
@@ -298,7 +304,7 @@ export namespace Main {
            bikesBalance.setStations(stations.getStations());
            await bikesBalance.init();
            let quality: Data = bikesBalance.getData();
-           quality.absoluteValues.forEach( (value, stationId) ==> console.log(stationId+": "+value));
+           quality.absoluteValues.forEach( (value, stationId) => console.log(stationId+": "+value.quality));
        }
 }
 

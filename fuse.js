@@ -13,6 +13,9 @@ const fs = require('fs-extra');
 const projectRoot = () => process.cwd();
 
 projectRoot.backendRoot = () => path.join(projectRoot(), 'backend-bikesurbanfleets');
+projectRoot.configurationFiles = () => path.join(projectRoot(), 'backend-configuration-files');
+projectRoot.configurationFiles.map = () => path.join(projectRoot.configurationFiles(), 'maps');
+
 
 projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfleets');
 projectRoot.frontend.src = () => path.join(projectRoot.frontend(), 'src');
@@ -47,19 +50,19 @@ Sparky.task('clean:backend', () => new Promise((resolve, reject) => {
         stdio: 'inherit' // pipe to calling process
     });
 
-log.time().green('start cleaning and installing backend maven dependencies').echo();
+    log.time().green('start cleaning and installing backend maven dependencies').echo();
 
-maven.on('error', (error) => {
-    log.red(error).echo();
-});
+    maven.on('error', (error) => {
+        log.red(error).echo();
+    });
 
-maven.on('close', (code) => {
-    if (code === 0) {
-        log.time().green('finished cleaning and install of backend maven dependencies').echo();
-        resolve();
-    } else {
-        log.time().red(`maven finished with error code ${code}`).echo();
-        reject();
+    maven.on('close', (code) => {
+        if (code === 0) {
+            log.time().green('finished cleaning and install of backend maven dependencies').echo();
+            resolve();
+        } else {
+            log.time().red(`maven finished with error code ${code}`).echo();
+            reject();
     }});
 }));
 
@@ -169,39 +172,39 @@ Sparky.task('build:schema', ['clean:cache:schema'], () => new Promise((resolve, 
 
 Sparky.task('build:schema-test', () => new Promise((resolve, reject) => {
     
-        log.time().green('compiling schemas').echo();
+    log.time().green('compiling schemas').echo();
 
-       // Schema processing 
-        fs.readdirSync(projectRoot.schemaCacheDefaults()).filter((file) => file.endsWith('.js')).forEach((file) => {
-            const allSchema = require(path.join(projectRoot.schemaCacheDefaults(), file));
-            const schema = allSchema.default;
-            const out = path.join(schemaBuildPath, `${file.slice(0, -3)}.json`);
+    // Schema processing 
+    fs.readdirSync(projectRoot.schemaCacheDefaults()).filter((file) => file.endsWith('.js')).forEach((file) => {
+        const allSchema = require(path.join(projectRoot.schemaCacheDefaults(), file));
+        const schema = allSchema.default;
+        const out = path.join(schemaBuildPath, `${file.slice(0, -3)}.json`);
 
-            schema.errors.forEach((error) => {
-                log.red(error).echo();
-            });
-
-            schema.write(out);
-
-            log.time().green(`written schema to ${out}`).echo();
-            
+        schema.errors.forEach((error) => {
+            log.red(error).echo();
         });
 
-        // Layout processing
-        fs.readdirSync(projectRoot.schemaLayoutCacheDefaults()).filter((file) => file.endsWith('.js')).forEach((file) => {
-            const allLayouts = require(path.join(projectRoot.schemaLayoutCacheDefaults(), file));
-            const out = path.join(schemaBuildPath, `${file.slice(0, -3)}-layout.json`);
+        schema.write(out);
 
-            if(allLayouts.layout){
-                fs.writeJsonSync(out, allLayouts.layout, {spaces: 4});
-                log.time().green(`writen layout to ${out}`).echo();
-            }
-        });
+        log.time().green(`written schema to ${out}`).echo();
+        
+    });
 
-        //const globalLayout = require(path.join(projectRoot.schemaCacheDefaults(), 'global-config.js')).globalLayout;
-        //fs.writeJSONSync();
+    // Layout processing
+    fs.readdirSync(projectRoot.schemaLayoutCacheDefaults()).filter((file) => file.endsWith('.js')).forEach((file) => {
+        const allLayouts = require(path.join(projectRoot.schemaLayoutCacheDefaults(), file));
+        const out = path.join(schemaBuildPath, `${file.slice(0, -3)}-layout.json`);
 
-        resolve();
+        if(allLayouts.layout){
+            fs.writeJsonSync(out, allLayouts.layout, {spaces: 4});
+            log.time().green(`writen layout to ${out}`).echo();
+        }
+    });
+
+    //const globalLayout = require(path.join(projectRoot.schemaCacheDefaults(), 'global-config.js')).globalLayout;
+    //fs.writeJSONSync();
+
+    resolve();
 }));
 Sparky.task('build:jsonschema-validator', () => {
     const fuse = FuseBox.init({
@@ -225,11 +228,10 @@ Sparky.task('build:data-analyser', () => {
         experimentalFeatures: true
     });
 
-    const main = fuse.bundle('data-analyser.js').instructions('>main/DataAnalyserTool.ts');
+    const main = fuse.bundle('data-analyser.js').instructions('> [main/DataAnalyserTool.ts]');
 
     return fuse.run();
 });
-
 Sparky.task('build:frontend:main', () => {
     const fuse = FuseBox.init({
         homeDir: projectRoot.frontend.src(),
@@ -330,9 +332,72 @@ Sparky.task('build:frontend:renderer', () => {
     return fuse.run();
 });
 
+Sparky.task('gen-users:dev', () => new Promise((resolve, reject) => {
+    const userGen = spawn('java', [
+        `-jar`,
+        `bikesurbanfleets-config-usersgenerator-1.0.jar`,
+        '-entryPointsInput', '"' + path.join(projectRoot.configurationFiles(), 'entry-points-configuration.json') + '"',
+        '-globalInput', '"' + path.join(projectRoot.configurationFiles(), 'global-configuration.json') + '"',
+        '-output', '"' + projectRoot.configurationFiles() + '/users-configuration.json"',
+        '-callFromFrontend'
+    ], {
+        cwd: projectRoot.build(),
+        shell: true, // necessary for windows
+        stdio: 'inherit' // pipe to calling process
+    });
+
+    log.time().green('Starting user generation').echo();
+
+    userGen.on('error', (error) => {
+        log.red(error).echo();
+    });
+
+    userGen.on('close', (code) => {
+        if (code === 0) {
+            log.time().green('Finished user generation').echo();
+            resolve();
+        } else {
+            log.time().red(`User generation finished with code ${code}`).echo();
+            reject();
+    }});
+}));
+
+Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
+    const userGen = spawn('java', [
+        `-jar`,
+        `bikesurbanfleets-core-1.0.jar`,
+        '-globalConfig', '"' + path.join(projectRoot.configurationFiles(), 'global-configuration.json') + '"',
+        '-usersConfig', '"' + path.join(projectRoot.configurationFiles(), 'users-configuration.json') + '"',
+        '-stationsConfig', '"' + path.join(projectRoot.configurationFiles(), 'stations-configuration.json') + '"',
+        '-historyOutput', '"' + path.join(projectRoot.build(), 'history') + '"',
+        '-mapPath', '"' + path.join(projectRoot.configurationFiles.map(), 'madrid.osm') + '"',
+        `-callFromFrontend`
+    ], {
+        cwd: projectRoot.build(),
+        shell: true, // necessary for windows
+        stdio: 'inherit' // pipe to calling process
+    });
+
+    log.time().green('Starting user generation').echo();
+
+    userGen.on('error', (error) => {
+        log.red(error).echo();
+    });
+
+    userGen.on('close', (code) => {
+        if (code === 0) {
+            log.time().green('Finished user generation').echo();
+            resolve();
+        } else {
+            log.time().red(`User generation finished with code ${code}`).echo();
+            reject();
+    }});
+}));
+
 Sparky.task('copy:assets', async () => {
     await fs.copy(path.join(projectRoot.frontend(), 'assets'), path.join(projectRoot.build.frontend(), 'assets'));
 });
+
 
 Sparky.task('clean:build', () => Sparky.src(projectRoot.build()).clean(projectRoot.build()));
 
@@ -344,7 +409,7 @@ Sparky.task('clean:cache', ['clean:cache:fuse', 'clean:cache:schema'], () => {})
 
 
 Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:frontend:main'], () => {
-
+    
 });
 
 Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});

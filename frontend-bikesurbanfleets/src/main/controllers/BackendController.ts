@@ -4,7 +4,7 @@ import * as kill from 'tree-kill';
 import { spawn, ChildProcess } from 'child_process';
 import { app } from 'electron';
 import { IpcUtil, Channel } from '../util';
-import {Main} from "../main";
+import { Main } from "../main";
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
 import { validate, ValidationInfo } from '../../shared/util';
 
@@ -28,7 +28,7 @@ class BackendUserGenArguments {
 }
 
 
-export default class BackendController {
+export class BackendController {
 
     /*
     *   =================

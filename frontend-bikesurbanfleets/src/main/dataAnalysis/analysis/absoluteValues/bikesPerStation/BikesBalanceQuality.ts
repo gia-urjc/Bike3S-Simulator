@@ -40,16 +40,17 @@ export class BikesBalanceQuality implements SystemInfo {
         let individualValue: number = 0;
         let pastTime: number = 0;
         for (let i = 0; i < list.length; i++) {
-            let station: BikesPerTime = list[i];
-            individualValue = Math.abs( Math.pow(station.availableBikes - capacity/2, 2) * (station.time - pastTime));
-            pastTime = station.time;
+            let stationBikes: BikesPerTime = list[i];
+            individualValue = Math.pow(stationBikes.availableBikes - capacity/2, 2) * (stationBikes.time - pastTime);
+            pastTime = stationBikes.time;
             summation += individualValue;
         }
         return summation;
     }
     
     public async init(): Promise<void> {
-        let i: number = 0;   // stations counter
+        // TODO: fix this code
+        let i: number = 0; 
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
             let station: Station = this.stations[i];
             let capacity: number = station.capacity; 

@@ -1,4 +1,3 @@
-import { HistoryEntity } from "../../../shared/history";
 import { PlainObject } from '../../../shared/util';
 export interface Entity extends  PlainObject {
     id: number;
