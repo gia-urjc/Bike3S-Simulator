@@ -129,7 +129,7 @@ export class CsvGenerator {
         return;
     }
     
-    private async initBikesBalanceInfo(info: Map<string, SystemInfo>, stations: Array<Station>): Promise<void> {
+    private async initBikesBalanceInfo(info: Map<string, SystemInfo>): Promise<void> {
         this.bikesBalanceTitles[0] = 'id';
         this.bikesBalanceTitles[1] = 'balance quality';
         let bikesBalance: SystemInfo | undefined = info.get(BikesBalanceQuality.name); 
@@ -140,10 +140,8 @@ export class CsvGenerator {
                 obj[this.bikesBalanceTitles[1]] = quality;
                 this.bikesBalanceData.push(obj);
             });
-            return;
         }
-        
-        
+        return;
     }
 
 	   public async generate(entityInfo: Map<string, SystemInfo>, globalInfo: SystemGlobalInfo, stations: Array<Station>, users: Array<User>): Promise<void> {
@@ -163,6 +161,10 @@ export class CsvGenerator {
            
            this.initEmptyStationInfo(entityInfo).then( () => {
                this.transformEmptyStationJsonToCsv();
+           });
+           
+           this.initBikesBalanceInfo(entityInfo).then( () => {
+               this.transformBikesBalanceJsonToCsv();
            });
          return;
    	}
@@ -207,6 +209,15 @@ export class CsvGenerator {
         if(!fs.existsSync(this.csvPath)) {
             fs.mkdirSync(this.csvPath);
         }
+    }
+    
+    private transformBikesBalanceJsonToCsv(): void {
+        let csv = json2csv({ data: this.bikesBalanceData, fields: this.bikesBalanceTitles, withBOM: true, del: ';' });
+        this.checkFolders();
+        fs.writeFile (`${this.csvPath}/bikesBalance.csv`, csv, (err) => {
+          if (err) throw err;
+          console.log('Bikes balance quality file saved');
+        });
     }
     
 }  
