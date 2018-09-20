@@ -78,14 +78,16 @@ npm run distribute
 ```
 
 ### Simulate from the command line
-Are you too lazy to configure your IDE? No problem, you can execute this commands to execute the simulator:
+Are you too lazy to configure your IDE? No problem, you can execute this commands to execute the simulator.
 
 **Generate users**:
 ```
 node fuse gen-users:dev
 ```
 
-**To simulate**:
+**Simulate**:
 ```
 node fuse simulate:dev
 ```
+
+The configuration files of the simulation runned via `node fuse gen-users:dev` and `node fuse simulate:dev`, are in the project directory in the folder `/backend-configuration-files`. To test quickly simulations without the GUI, you can edit these configuration files and run these commands. The history will be stored in `/build/history`. 
