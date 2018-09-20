@@ -24,15 +24,18 @@ export class BikesBalanceData implements Data {
 export class BikesBalanceQuality implements SystemInfo {
     basicData: BikesPerStation;
     data: Data;
-    stations: Array<Station>;
+    stations: Map<number, Station>;
     
     public constructor(bikesInfo: BikesPerStation) {
         this.basicData = bikesInfo;
-        this.data = new BikesBalanceData(); 
+        this.data = new BikesBalanceData();
+        this.stations = new Map(); 
     }
     
     public setStations(stations: Array<Station>): void {
-        this.stations = stations;
+        for (let station of stations) {
+        this.stations.set(station.id, station);
+        }
     }
     
     private quality(capacity: number, list: Array<BikesPerTime>): number {
@@ -49,15 +52,12 @@ export class BikesBalanceQuality implements SystemInfo {
     }
     
     public async init(): Promise<void> {
-        // TODO: fix this code
-        let i: number = 0; 
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
-            let station: Station = this.stations[i];
+            let station: Station = this.stations.get(stationId);
             let capacity: number = station.capacity; 
             let qualityValue: number = this.quality(capacity, stationInfo.getList());
             this.data.absoluteValues.set(stationId, new BikesBalanceAbsoluteValue(qualityValue));
-            i++;
-        })
+        });
         return;
     }
     
