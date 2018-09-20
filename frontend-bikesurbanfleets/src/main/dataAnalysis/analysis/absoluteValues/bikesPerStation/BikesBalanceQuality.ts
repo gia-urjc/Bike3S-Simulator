@@ -2,7 +2,7 @@ import { Station } from '../../../systemDataTypes/Entities';
 import { AbsoluteValue } from '../AbsoluteValue';
 import { Data } from '../Data';
 import { SystemInfo } from '../SystemInfo';
-import { BikesPerTime, BikesPerStation, StationBikesPerTimeList } from './BikesPerStation';
+import { BikesPerTime, BikesPerStationAndTime, StationBikesPerTimeList } from './BikesPerStationAndTime';
 
 export class BikesBalanceAbsoluteValue implements AbsoluteValue {
     quality: number;
@@ -22,11 +22,11 @@ export class BikesBalanceData implements Data {
 }
 
 export class BikesBalanceQuality implements SystemInfo {
-    basicData: BikesPerStation;
+    basicData: BikesPerStationAndTime;
     data: Data;
     stations: Map<number, Station>;
     
-    public constructor(bikesInfo: BikesPerStation) {
+    public constructor(bikesInfo: BikesPerStationAndTime) {
         this.basicData = bikesInfo;
         this.data = new BikesBalanceData();
         this.stations = new Map(); 
@@ -41,22 +41,29 @@ export class BikesBalanceQuality implements SystemInfo {
     private quality(capacity: number, list: Array<BikesPerTime>): number {
         let summation: number = 0;
         let individualValue: number = 0;
-        let pastTime: number = 0;
+        let pastTime: number = 0;  // in hours
         for (let i = 0; i < list.length; i++) {
             let stationBikes: BikesPerTime = list[i];
-            individualValue = Math.pow(stationBikes.availableBikes - capacity/2, 2) * (stationBikes.time - pastTime);
-            pastTime = stationBikes.time;
+            individualValue = Math.pow(stationBikes.availableBikes - capacity/2, 2) * (stationBikes.time/3600 - pastTime);
+            console.log("time: "+stationBikes.time+" bikes:"+stationBikes.availableBikes);
+            console.log("individual value: "+individualValue);
+            pastTime = stationBikes.time/3600;
             summation += individualValue;
         }
+        console.log("quality: "+summation);
         return summation;
     }
     
     public async init(): Promise<void> {
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
-            let station: Station = this.stations.get(stationId);
-            let capacity: number = station.capacity; 
-            let qualityValue: number = this.quality(capacity, stationInfo.getList());
-            this.data.absoluteValues.set(stationId, new BikesBalanceAbsoluteValue(qualityValue));
+            let station: Station | undefined = this.stations.get(stationId);
+            if (station) {
+                let capacity: number = station.capacity;
+                console.log("capacity of station "+station.id+": "+capacity);
+                let qualityValue: number = this.quality(capacity, stationInfo.getList());
+                this.data.absoluteValues.set(stationId, new BikesBalanceAbsoluteValue(qualityValue));
+                let abs: AbsoluteValue | undefined = this.data.absoluteValues.get(stationId); 
+            }
         });
         return;
     }

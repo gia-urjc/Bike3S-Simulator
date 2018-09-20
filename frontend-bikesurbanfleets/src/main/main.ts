@@ -14,7 +14,7 @@ import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator"
 import { ipcMain, ipcRenderer } from 'electron';
 import { Data } from './dataAnalysis/analysis/absoluteValues/Data';
 import { BikesBalanceQuality } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesBalanceQuality';
-import { BikesPerStation } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesPerStation';
+import { BikesPerStationAndTime } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesPerStationAndTime';
 import { SystemReservations } from './dataAnalysis/analysis/systemEntities/SystemReservations';
 import { SystemStations } from './dataAnalysis/analysis/systemEntities/SystemStations';
 import { Reservation } from './dataAnalysis/systemDataTypes/Entities';
@@ -289,23 +289,6 @@ export namespace Main {
        let generator: DataGenerator = await DataGenerator.create('build/history', 'csvFiles', 'build/schema');
     }
        
-    export async function testQuality(): Promise<void> {
-           let history: HistoryReaderController = await HistoryReaderController.create("build/history", "build/schema");
-           let reservations: SystemReservations = new SystemReservations();
-           await reservations.init(history);
-           let stations: SystemStations = new SystemStations();
-           await stations.init(history);
-           
-           let bikesPerStation: BikesPerStation = new BikesPerStation();
-           bikesPerStation.setReservations(reservations.getReservations());
-           await bikesPerStation.init(stations.getStations());
-           
-           let bikesBalance: BikesBalanceQuality = new BikesBalanceQuality(bikesPerStation);
-           bikesBalance.setStations(stations.getStations());
-           await bikesBalance.init();
-           let quality: Data = bikesBalance.getData();
-           quality.absoluteValues.forEach( (value, stationId) => console.log(stationId+": "+value.quality));
-       }
 }
 
 Main.initMenu();
@@ -317,5 +300,3 @@ if (process.env.target === 'development') {
        
     }
 }
-
-Main.testQuality();

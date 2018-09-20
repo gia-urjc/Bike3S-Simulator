@@ -6,7 +6,7 @@ import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
-import { BikesPerStation } from "../absoluteValues/bikesPerStation/BikesPerStation";
+import { BikesPerStationAndTime } from "../absoluteValues/bikesPerStation/BikesPerStationAndTime";
 import { EmptyStationInfo } from "../absoluteValues/bikesPerStation/EmptyStationInfo";
 import { ReservationIterator } from "../iterators/ReservationIterator";
 import { TimeEntryIterator } from "../iterators/TimeEntryIterator";
@@ -40,7 +40,7 @@ export class DataGenerator {
     
     private info: Map<string, SystemInfo>;  // it contains all the results of the data analysis
     private globalInfo: SystemGlobalInfo; 
-    private bikesPerStation: BikesPerStation;
+    private bikesPerStation: BikesPerStationAndTime;
     private iterators: Map<string, Iterator>;
 
     public static async create(historyPath: string, csvPath?: string, schemaPath?: string): Promise<DataGenerator> {
@@ -65,7 +65,7 @@ export class DataGenerator {
         this.calculationCounter = 0;
         this.bikesPerStationCounter = 0;
         this.info = new Map();
-        this.bikesPerStation = new BikesPerStation();
+        this.bikesPerStation = new BikesPerStationAndTime();
         this.iterators = new Map();
         this.systemStations = new SystemStations();
         this.systemUsers = new SystemUsers();
@@ -217,7 +217,7 @@ export class DataGenerator {
         if (this.calculationCounter === this.CALCULATION + 1 && this.csvPath !== undefined) {
             let generator: CsvGenerator = new CsvGenerator(this.csvPath);
             try {
-              await generator.generate(this.info, this.globalInfo, this.systemStations.getStations(), this.systemUsers.getUsers());
+              await generator.generate(this.info, this.globalInfo, this.bikesPerStation, this.systemStations.getStations(), this.systemUsers.getUsers());
             }
             catch(error) {
               throw new Error('Error generating csv file: '+error);
