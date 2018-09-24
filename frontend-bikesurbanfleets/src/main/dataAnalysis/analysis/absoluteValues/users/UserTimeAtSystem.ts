@@ -64,13 +64,18 @@ export class UserTimeInfo implements SystemInfo  {
                 }
                     
                 case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
-                    let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
-                    if (value) {
-                        let appearanceTime: number = value.time;
-                        value.time = timeEntry.time - appearanceTime;          va
+                    let bike: any = event.changes.users[0].bike;
+
+                    if (!bike) {
+                        let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
+                        if (value) {
+                            let appearanceTime: number = value.time;
+                            value.time = timeEntry.time - appearanceTime;          va
+                        }
                     }
                     break;
-            } 
-
+                }
+            }
     }
+        
 } 

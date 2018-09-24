@@ -1,5 +1,4 @@
 import { HistoryReaderController } from "../../../controllers/HistoryReaderController";
-
 import { Iterator } from '../iterators/Iterator';
 import { SystemInfo } from "../absoluteValues/SystemInfo";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
@@ -14,12 +13,13 @@ import { SystemReservations } from "../systemEntities/SystemReservations";
 import { SystemStations } from "../systemEntities/SystemStations";
 import { SystemUsers } from "../systemEntities/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
-import {SystemGlobalInfo } from '../SystemGlobalInfo';
+import { SystemGlobalInfo } from '../SystemGlobalInfo';
 import { BikesBalanceQuality } from '../absoluteValues/bikesPerStation/BikesBalanceQuality';
+import { UserTimeInfo } from '../absoluteValues/users/UserTimeAtSystem';
 
 export class DataGenerator {
     private readonly RESERVATIONS: number = 3;  // 3 data related to reservations must be initialized
-    private readonly RENTALS_AND_RETURNS: number = 2;  // 2 data related to rentals and returns must be initialized
+    private readonly RENTALS_AND_RETURNS: number = 3;  // 2 data related to rentals and returns must be initialized
     private readonly CALCULATION: number = 3;  // both iterators must have calculated all its data before writing them 
     private readonly BIKES_PER_STATION: number = 2;  // this data needs to be initialized with both reservation and station information
 
@@ -146,6 +146,14 @@ export class DataGenerator {
             timeEntryIterator.subscribe(rentalsAndReturns);
             this.info.set(RentalsAndReturnsPerUser.name, rentalsAndReturns);  
             this.initRentalsAndReturns(rentalsAndReturns);
+            
+            let userTime: UserTimeInfo = new UserTimeInfo(this.systemUsers.getUsers());
+            timeEntryIterator.subscribe(userTime);
+            this.info.set(UserTimeInfo.name, userTime);
+            userTime.init().then( () -> {
+                this.rentalAndReturnCounter++;
+                this.calculateRentalsAndReturns();
+            });
         });
         return; 
     }
