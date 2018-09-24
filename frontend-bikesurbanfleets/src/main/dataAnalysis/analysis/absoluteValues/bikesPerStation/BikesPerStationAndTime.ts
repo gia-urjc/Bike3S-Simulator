@@ -2,7 +2,7 @@ import { Reservation, Station } from "../../../systemDataTypes/Entities";
 import { TimeEntry, Event } from "../../../systemDataTypes/SystemInternalData";
 import { Observer } from "../../ObserverPattern";
 
-interface BikesPerTime {
+export interface BikesPerTime {
   time: number;
    availableBikes: number;
 }
@@ -34,7 +34,7 @@ export class StationBikesPerTimeList {
     }
 }
 
-export class BikesPerStation implements Observer {
+export class BikesPerStationAndTime implements Observer {
   private stations: Map<number, StationBikesPerTimeList>;
   private reservations: Array<Reservation>;
 

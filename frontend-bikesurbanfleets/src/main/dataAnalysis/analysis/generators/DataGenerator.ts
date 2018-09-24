@@ -6,20 +6,21 @@ import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
-import { BikesPerStation } from "../absoluteValues/time/BikesPerStation";
-import { EmptyStationInfo } from "../absoluteValues/time/EmptyStationInfo";
+import { BikesPerStationAndTime } from "../absoluteValues/bikesPerStation/BikesPerStationAndTime";
+import { EmptyStationInfo } from "../absoluteValues/bikesPerStation/EmptyStationInfo";
 import { ReservationIterator } from "../iterators/ReservationIterator";
 import { TimeEntryIterator } from "../iterators/TimeEntryIterator";
 import { SystemReservations } from "../systemEntities/SystemReservations";
 import { SystemStations } from "../systemEntities/SystemStations";
 import { SystemUsers } from "../systemEntities/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
-import { SystemGlobalInfo } from '../SystemGlobalInfo';
+import {SystemGlobalInfo } from '../SystemGlobalInfo';
+import { BikesBalanceQuality } from '../absoluteValues/bikesPerStation/BikesBalanceQuality';
 
 export class DataGenerator {
     private readonly RESERVATIONS: number = 3;  // 3 data related to reservations must be initialized
     private readonly RENTALS_AND_RETURNS: number = 2;  // 2 data related to rentals and returns must be initialized
-    private readonly CALCULATION: number = 2;  // both calculators must have calculated its data before writing them 
+    private readonly CALCULATION: number = 3;  // both iterators must have calculated all its data before writing them 
     private readonly BIKES_PER_STATION: number = 2;  // this data needs to be initialized with both reservation and station information
 
     private csv: boolean;  // it indicates if a csv file must be generated    
@@ -39,7 +40,7 @@ export class DataGenerator {
     
     private info: Map<string, SystemInfo>;  // it contains all the results of the data analysis
     private globalInfo: SystemGlobalInfo; 
-    private bikesPerStation: BikesPerStation;
+    private bikesPerStation: BikesPerStationAndTime;
     private iterators: Map<string, Iterator>;
 
     public static async create(historyPath: string, csvPath?: string, schemaPath?: string): Promise<DataGenerator> {
@@ -64,7 +65,7 @@ export class DataGenerator {
         this.calculationCounter = 0;
         this.bikesPerStationCounter = 0;
         this.info = new Map();
-        this.bikesPerStation = new BikesPerStation();
+        this.bikesPerStation = new BikesPerStationAndTime();
         this.iterators = new Map();
         this.systemStations = new SystemStations();
         this.systemUsers = new SystemUsers();
@@ -155,7 +156,7 @@ export class DataGenerator {
             if (this.reservationCounter === this.RESERVATIONS) {
                 iterator.iterate().then( () => {
                 this.calculationCounter++;
-                    this.calculateGlobalInfo();
+                this.calculateGlobalInfo();
                 });
             }
             return;
@@ -172,12 +173,20 @@ export class DataGenerator {
             if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStationCounter === this.BIKES_PER_STATION) {
                 iterator.iterate().then( () => {
                     let emptyStations: EmptyStationInfo = new EmptyStationInfo(this.bikesPerStation);
-                    emptyStations.init();
                     this.info.set(EmptyStationInfo.name, emptyStations);
-                    
-                    this.calculationCounter++;
-                    this.calculateGlobalInfo();
-                });
+                    emptyStations.init().then( () => {
+                        this.calculationCounter++;
+                        this.calculateGlobalInfo();
+                    })                 
+                    let bikesBalance: BikesBalanceQuality = new BikesBalanceQuality(this.bikesPerStation);
+                    bikesBalance.setStations(this.systemStations.getStations());
+                    this.info.set(BikesBalanceQuality.name, bikesBalance);
+                    bikesBalance.init().then( () => {
+                        this.calculationCounter++;
+                        this.calculateGlobalInfo();
+                    });              
+                
+                    });
             }
             return;
         }
@@ -208,7 +217,7 @@ export class DataGenerator {
         if (this.calculationCounter === this.CALCULATION + 1 && this.csvPath !== undefined) {
             let generator: CsvGenerator = new CsvGenerator(this.csvPath);
             try {
-              await generator.generate(this.info, this.globalInfo, this.systemStations.getStations(), this.systemUsers.getUsers());
+              await generator.generate(this.info, this.globalInfo, this.bikesPerStation, this.systemStations.getStations(), this.systemUsers.getUsers());
             }
             catch(error) {
               throw new Error('Error generating csv file: '+error);

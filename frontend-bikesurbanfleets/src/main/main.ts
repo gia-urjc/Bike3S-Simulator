@@ -2,15 +2,22 @@ import { app, BrowserWindow, shell } from 'electron';
 import { join } from 'path';
 import { format as urlFormat } from 'url';
 import { settingsPathGenerator } from '../shared/settings';
+import { BackendController } from './controllers/BackendController';
+import { CsvGeneratorController } from './controllers/CsvGeneratorController';
+import { HistoryReaderController } from './controllers/HistoryReaderController';
+import { JsonLoaderController } from './controllers/JsonLoaderController';
+import { MapDownloadController } from './controllers/MapDownloadController';
+import { SchemaFormGeneratorController } from './controllers/SchemaFormGeneratorController';
 import { Settings } from './settings';
 import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
-import { ipcMain } from 'electron';
-import { HistoryReaderController } from './controllers/HistoryReaderController';
-import { BackendController } from './controllers/BackendController';
-import { SchemaFormGeneratorController } from './controllers/SchemaFormGeneratorController';
-import { JsonLoaderController } from './controllers/JsonLoaderController';
-import { CsvGeneratorController } from './controllers/CsvGeneratorController';
-import { MapDownloadController } from './controllers/MapDownloadController';
+
+import { ipcMain, ipcRenderer } from 'electron';
+import { Data } from './dataAnalysis/analysis/absoluteValues/Data';
+import { BikesBalanceQuality } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesBalanceQuality';
+import { BikesPerStationAndTime } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesPerStationAndTime';
+import { SystemReservations } from './dataAnalysis/analysis/systemEntities/SystemReservations';
+import { SystemStations } from './dataAnalysis/analysis/systemEntities/SystemStations';
+import { Reservation } from './dataAnalysis/systemDataTypes/Entities';
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;

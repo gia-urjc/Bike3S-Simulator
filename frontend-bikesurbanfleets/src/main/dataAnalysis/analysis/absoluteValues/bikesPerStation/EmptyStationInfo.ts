@@ -1,7 +1,7 @@
 import { AbsoluteValue } from "../AbsoluteValue";
 import { Data } from "../Data";
 import { SystemInfo } from "../SystemInfo";
-import { BikesPerStation, StationBikesPerTimeList } from './BikesPerStation';
+import { BikesPerStationAndTime, StationBikesPerTimeList } from './BikesPerStationAndTime';
 
 export class TimeInterval {
     start: number;
@@ -45,16 +45,16 @@ export class EmptyStateData implements Data {
 }
 
 export class EmptyStationInfo implements SystemInfo {
-    basicData: BikesPerStation;
+    basicData: BikesPerStationAndTime;
     data: Data;
 
-    public static create(stationsInfo: BikesPerStation): EmptyStationInfo {
+    public static create(stationsInfo: BikesPerStationAndTime): EmptyStationInfo {
         let emptyStations: EmptyStationInfo = new EmptyStationInfo(stationsInfo);
         emptyStations.init();
         return emptyStations;
     }
    
-    public constructor(stationsInfo: BikesPerStation) {
+    public constructor(stationsInfo: BikesPerStationAndTime) {
         this.basicData = stationsInfo;
         this.data = new EmptyStateData(); 
     }

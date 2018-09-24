@@ -3,36 +3,50 @@ import { Station, User, Entity } from "../../systemDataTypes/Entities";
 import { SystemGlobalInfo } from "../SystemGlobalInfo";
 import { AbsoluteValue } from "../absoluteValues/AbsoluteValue";
 import { SystemInfo } from "../absoluteValues/SystemInfo";
+import { BikesBalanceQuality } from '../absoluteValues/bikesPerStation/BikesBalanceQuality';
+import { BikesPerTime, BikesPerStationAndTime } from '../absoluteValues/bikesPerStation/BikesPerStationAndTime';
+import { RentalAndReturnAbsoluteValue } from "../absoluteValues/rentalsAndReturns/RentalAndReturnAbsoluteValue";
 import { RentalAndReturnData } from "../absoluteValues/rentalsAndReturns/RentalAndReturnData";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationData } from "../absoluteValues/reservations/ReservationData";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
-import { EmptyStationInfo, EmptyStateData } from "../absoluteValues/time/EmptyStationInfo";
+import { EmptyStationInfo, EmptyStateData } from "../absoluteValues/bikesPerStation/EmptyStationInfo";
 import * as json2csv from 'json2csv';
 import * as fs from 'fs';
 
 export class CsvGenerator {
-	private readonly NUM_DATA: number = 4;
+    
+	private readonly NUM_DATA: number = 4;   // number of absolute values of reservation and rental and return data  
     private csvPath: string;
+    
     private entityInfoTitles: Array<string>;
     private globalInfoTitles: Array<string>;
     private emptyStationTitles: Array<string>;
+    private bikesBalanceTitles: Array<string>;
+    private bikesPerStationTitles: Array<string>;
+    
    	private stationData: Array<JsonObject>;
    	private userData: Array<JsonObject>;
     private globalInfo: JsonObject;
     private emptyStationData: Array<JsonObject>;
+    private bikesBalanceData: Array<JsonObject>;
+    private bikesPerStationData: Array<JsonObject>; 
     
     public constructor(csvPath: string) {
         this.csvPath = csvPath;
         this.entityInfoTitles = new Array();
         this.globalInfoTitles = new Array();
         this.emptyStationTitles = new Array();
+        this.bikesBalanceTitles = new Array();
+        this.bikesPerStationTitles = new Array();
         this.stationData = new Array();
         this.userData = new Array();
         this.globalInfo = {};
         this.emptyStationData = new Array();
+        this.bikesBalanceData = new Array();
+        this.bikesPerStationData = new Array();
   }
     
   public createJsonFor(entities: Array<Entity>, data: Array<JsonObject>, reservations: SystemInfo, rentalsAndReturns: SystemInfo): void {
@@ -107,7 +121,7 @@ export class CsvGenerator {
     
     private async initEmptyStationInfo(info: Map<string, SystemInfo>): Promise<void> {
         let emptyStations: SystemInfo | undefined = info.get(EmptyStationInfo.name);
-        if (emptyStations !== undefined) {
+        if (emptyStations) {
              EmptyStateData.NAMES.forEach( (name) => {
              this.emptyStationTitles.push(name);
             });
@@ -120,8 +134,41 @@ export class CsvGenerator {
         }
         return;
     }
+    
+    private async initBikesBalanceInfo(info: Map<string, SystemInfo>): Promise<void> {
+        this.bikesBalanceTitles[0] = 'id';
+        this.bikesBalanceTitles[1] = 'balance quality';
+        let bikesBalance: SystemInfo | undefined = info.get(BikesBalanceQuality.name); 
+        if (bikesBalance) {
+            bikesBalance.getData().absoluteValues.forEach( (value, stationId) => {
+                let obj: JsonObject = {};
+                obj[this.bikesBalanceTitles[0]] = stationId;
+                obj[this.bikesBalanceTitles[1]] = value.quality;
+                this.bikesBalanceData.push(obj);
+            });
+        }
+        return;
+    }
+    
+    private async initBikesPerStationInfo(bikesPerStation: BikesPerStationAndTime): Promise<void> {
+        this.bikesPerStationTitles[0] = 'id';
+        this.bikesPerStationTitles[1] = 'time';
+        this.bikesPerStationTitles[2] = 'available bikes';
+        
+        bikesPerStation.getStations().forEach( (bikesList, stationId) => {
+            let list: Array<BikesPerTime> = bikesList.getList();
+            for (let item of list) {
+                let obj: JsonObject = {};
+                obj[this.bikesPerStationTitles[0]] = stationId;
+                obj[this.bikesPerStationTitles[1]] = item.time;
+                obj[this.bikesPerStationTitles[2]] = item.availableBikes;
+                this.bikesPerStationData.push(obj);
+            }
+            });
+        return;
+    } 
 
-	   public async generate(entityInfo: Map<string, SystemInfo>, globalInfo: SystemGlobalInfo, stations: Array<Station>, users: Array<User>): Promise<void> {
+	   public async generate(entityInfo: Map<string, SystemInfo>, globalInfo: SystemGlobalInfo, bikesPerStation: BikesPerStationAndTime, stations: Array<Station>, users: Array<User>): Promise<void> {
          await this.initEntityInfoTitles();
            
          this.initStationInfo(entityInfo, stations).then( () => {
@@ -139,6 +186,14 @@ export class CsvGenerator {
            this.initEmptyStationInfo(entityInfo).then( () => {
                this.transformEmptyStationJsonToCsv();
            });
+           
+           this.initBikesBalanceInfo(entityInfo).then( () => {
+               this.transformBikesBalanceJsonToCsv();
+           });
+           
+           this.initBikesPerStationInfo(bikesPerStation).then( () => {
+               this.transformBikesPerStationJsonToCsv();
+           })
          return;
    	}
 
@@ -184,4 +239,22 @@ export class CsvGenerator {
         }
     }
     
+    private transformBikesBalanceJsonToCsv(): void {
+        let csv = json2csv({ data: this.bikesBalanceData, fields: this.bikesBalanceTitles, withBOM: true, del: ';' });
+        this.checkFolders();
+        fs.writeFile (`${this.csvPath}/bikesBalance.csv`, csv, (err) => {
+          if (err) throw err;
+          console.log('Bikes balance quality file saved');
+        });
+    }
+    
+    private transformBikesPerStationJsonToCsv(): void {
+        let csv = json2csv({ data: this.bikesPerStationData, fields: this.bikesPerStationTitles, withBOM: true, del: ';' });
+        this.checkFolders();
+        fs.writeFile (`${this.csvPath}/bikesPerStationAndTime.csv`, csv, (err) => {
+          if (err) throw err;
+          console.log('Bikes per station and time file saved');
+        });
+    }
+   
 }  

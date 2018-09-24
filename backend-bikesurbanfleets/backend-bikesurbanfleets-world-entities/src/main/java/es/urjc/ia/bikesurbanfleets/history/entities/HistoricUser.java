@@ -34,6 +34,7 @@ public class HistoricUser implements HistoricEntity {
     @Expose
     private double cyclingVelocity;
 
+    
     @Expose
     private IdReference reservations;
 
@@ -55,6 +56,7 @@ public class HistoricUser implements HistoricEntity {
         this.route = user.getRoute();
         this.type = user.getClass().getAnnotation(UserType.class).value();
         this.reservations = new IdReference(HistoricReservation.class, user.getMemory().getReservations().stream().map(Reservation::getId).collect(Collectors.toList()));
+
     }
 
     @Override
