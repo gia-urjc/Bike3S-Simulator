@@ -1,10 +1,11 @@
-import { TimeEntry } from '../../../systemDataTypes/SystemInternalData';
+import { User } from '../../../systemDataTypes/Entities';
+import { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { AbsoluteValue } from '../AbsoluteValue';
 import { Data } from '../Data';
 import { SystemInfo } from '../SystemInfo';
 
-export UserTimeAbsoluteValue implements AbsoluteValue {
-    time: double;
+export class UserTimeAbsoluteValue implements AbsoluteValue {
+    time: number;
     
     public constructor(time: number) {
         this.time = time;
@@ -21,7 +22,7 @@ export class UserTimeData implements Data {
     
 }
   
-export class UserTimeInfo implements SystemInfo  {
+export class UserTimeAtSystem implements SystemInfo  {
     basicData: Array<User>;
     data: Data;
     
@@ -31,8 +32,8 @@ export class UserTimeInfo implements SystemInfo  {
     }
     
     public async init(): Promise<void> {
-        for (let user of basicData) {
-            this.data.absoluteValues.set(user.id, new UserTime(0));
+        for (let user of this.basicData) {
+            this.data.absoluteValues.set(user.id, new UserTimeAbsoluteValue(0));
         }
         return;
     }
@@ -57,7 +58,7 @@ export class UserTimeInfo implements SystemInfo  {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value) {
                         let appearanceTime: number = value.time;
-                        value.time = timeEntry.time - appearanceTime;          va
+                        value.time = timeEntry.time - appearanceTime;          
                         console.log("desaparition: "+value.time);
                     }
                     break;
@@ -70,12 +71,17 @@ export class UserTimeInfo implements SystemInfo  {
                         let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                         if (value) {
                             let appearanceTime: number = value.time;
-                            value.time = timeEntry.time - appearanceTime;          va
+                            value.time = timeEntry.time - appearanceTime;          
                         }
                     }
                     break;
                 }
             }
+        }
     }
+        
+        public getData(): Data {
+            return this.data;
+        }
         
 } 

@@ -5,8 +5,8 @@ import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
-import { BikesPerStationAndTime } from "../absoluteValues/bikesPerStation/BikesPerStationAndTime";
-import { EmptyStationInfo } from "../absoluteValues/bikesPerStation/EmptyStationInfo";
+import { BikesPerStationAndTime } from "../absoluteValues/stations/BikesPerStationAndTime";
+import { EmptyStationInfo } from "../absoluteValues/stations/EmptyStationInfo";
 import { ReservationIterator } from "../iterators/ReservationIterator";
 import { TimeEntryIterator } from "../iterators/TimeEntryIterator";
 import { SystemReservations } from "../systemEntities/SystemReservations";
@@ -14,8 +14,8 @@ import { SystemStations } from "../systemEntities/SystemStations";
 import { SystemUsers } from "../systemEntities/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
 import { SystemGlobalInfo } from '../SystemGlobalInfo';
-import { BikesBalanceQuality } from '../absoluteValues/bikesPerStation/BikesBalanceQuality';
-import { UserTimeInfo } from '../absoluteValues/users/UserTimeAtSystem';
+import { StationBalancingQuality } from '../absoluteValues/stations/StationBalancingQuality';
+import { UserTimeAtSystem } from '../absoluteValues/users/UserTimeAtSystem';
 
 export class DataGenerator {
     private readonly RESERVATIONS: number = 3;  // 3 data related to reservations must be initialized
@@ -147,10 +147,10 @@ export class DataGenerator {
             this.info.set(RentalsAndReturnsPerUser.name, rentalsAndReturns);  
             this.initRentalsAndReturns(rentalsAndReturns);
             
-            let userTime: UserTimeInfo = new UserTimeInfo(this.systemUsers.getUsers());
+            let userTime: UserTimeAtSystem = new UserTimeAtSystem(this.systemUsers.getUsers());
             timeEntryIterator.subscribe(userTime);
-            this.info.set(UserTimeInfo.name, userTime);
-            userTime.init().then( () -> {
+            this.info.set(UserTimeAtSystem.name, userTime);
+            userTime.init().then( () => {
                 this.rentalAndReturnCounter++;
                 this.calculateRentalsAndReturns();
             });
@@ -186,9 +186,9 @@ export class DataGenerator {
                         this.calculationCounter++;
                         this.calculateGlobalInfo();
                     })                 
-                    let bikesBalance: BikesBalanceQuality = new BikesBalanceQuality(this.bikesPerStation);
+                    let bikesBalance: StationBalancingQuality = new StationBalancingQuality(this.bikesPerStation);
                     bikesBalance.setStations(this.systemStations.getStations());
-                    this.info.set(BikesBalanceQuality.name, bikesBalance);
+                    this.info.set(StationBalancingQuality.name, bikesBalance);
                     bikesBalance.init().then( () => {
                         this.calculationCounter++;
                         this.calculateGlobalInfo();
