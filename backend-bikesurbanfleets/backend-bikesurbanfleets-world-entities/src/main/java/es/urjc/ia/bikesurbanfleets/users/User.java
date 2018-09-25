@@ -10,8 +10,8 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrati
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultsystems.InformationSystem;
+import es.urjc.ia.bikesurbanfleets.consultsystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
