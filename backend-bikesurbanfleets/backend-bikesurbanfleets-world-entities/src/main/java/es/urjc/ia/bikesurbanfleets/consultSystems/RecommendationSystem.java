@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems;
+package es.urjc.ia.bikesurbanfleets.consultsystems;
 
 import java.util.List;
 import java.util.stream.Collectors;

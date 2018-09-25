@@ -266,7 +266,7 @@ export class CsvGenerator {
     private transformBikesBalanceJsonToCsv(): void {
         let csv = json2csv({ data: this.bikesBalanceData, fields: this.bikesBalanceTitles, withBOM: true, del: ';' });
         this.checkFolders();
-        fs.writeFile (`${this.csvPath}/bikesBalance.csv`, csv, (err) => {
+        fs.writeFile (`${this.csvPath}/stationBalancingQuality.csv`, csv, (err) => {
           if (err) throw err;
           console.log('Bikes balance quality file saved');
         });

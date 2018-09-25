@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems;
+package es.urjc.ia.bikesurbanfleets.consultsystems;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
