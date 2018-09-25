@@ -45,12 +45,9 @@ export class StationBalancingQuality implements SystemInfo {
         for (let i = 0; i < list.length; i++) {
             let stationBikes: BikesPerTime = list[i];
             individualValue = Math.pow(stationBikes.availableBikes - capacity/2, 2) * (stationBikes.time/3600 - pastTime);
-            console.log("time: "+stationBikes.time+" bikes:"+stationBikes.availableBikes);
-            console.log("individual value: "+individualValue);
             pastTime = stationBikes.time/3600;
             summation += individualValue;
         }
-        console.log("quality: "+summation);
         return summation;
     }
     
@@ -59,7 +56,6 @@ export class StationBalancingQuality implements SystemInfo {
             let station: Station | undefined = this.stations.get(stationId);
             if (station) {
                 let capacity: number = station.capacity;
-                console.log("capacity of station "+station.id+": "+capacity);
                 let qualityValue: number = this.quality(capacity, stationInfo.getList());
                 this.data.absoluteValues.set(stationId, new StationBalancingAbsoluteValue(qualityValue));
                 let abs: AbsoluteValue | undefined = this.data.absoluteValues.get(stationId); 

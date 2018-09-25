@@ -59,19 +59,18 @@ export class UserTimeAtSystem implements SystemInfo  {
                     if (value) {
                         let appearanceTime: number = value.time;
                         value.time = timeEntry.time - appearanceTime;          
-                        console.log("desaparition: "+value.time);
                     }
                     break;
                 }
                     
                 case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
-                    let bike: any = event.changes.users[0].bike;
+                    let bike: any = event.changes.users[0].bike.new;
 
                     if (!bike) {
                         let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                         if (value) {
                             let appearanceTime: number = value.time;
-                            value.time = timeEntry.time - appearanceTime;          
+                            value.time = timeEntry.time - appearanceTime;
                         }
                     }
                     break;

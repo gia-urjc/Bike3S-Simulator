@@ -160,10 +160,10 @@ export class CsvGenerator {
         this.userTimeTitles[1] = UserTimeData.NAMES;
         let userInfo: SystemInfo | undefined = info.get(UserTimeAtSystem.name); 
         if (userInfo) {
-            userInfo.getData().absoluteValues.forEach( (time, userId) => {
+            userInfo.getData().absoluteValues.forEach( (timeInfo, userId) => {
                 let obj: JsonObject = {};
                 obj[this.userTimeTitles[0]] = userId;
-                obj[this.userTimeTitles[1]] = time;
+                obj[this.userTimeTitles[1]] = timeInfo.time;
                 this.userTimeData.push(obj);
             });
         }
