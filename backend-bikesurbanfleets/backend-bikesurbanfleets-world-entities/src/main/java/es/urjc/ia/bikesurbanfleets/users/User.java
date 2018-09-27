@@ -8,6 +8,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationExce
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
+import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.consultsystems.InformationSystem;
@@ -20,6 +21,7 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,9 +54,9 @@ public abstract class User implements Entity {
      */
     private Station destinationStation;
     
-/**
- * It is the place in the city the user wants to cycle to.
- */
+    /**
+    * It is the place in the city the user wants to cycle to.
+    */
     private GeoPoint destinationPoint;
     
     /**
@@ -348,9 +350,18 @@ public abstract class User implements Entity {
         this.reservation = null;
     }
 
-    public List<GeoRoute> calculateRoutes(GeoPoint position) throws GeoRouteCreationException, GraphHopperIntegrationException {
+    public List<GeoRoute> calculateRoutes(GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
         String vehicle = this.bike == null ? "foot" : "bike";
-        return graph.obtainAllRoutesBetween(this.getPosition(), position, vehicle);
+        if(this.position.equals(destinationPoint)) {
+            SimulationRandom random = SimulationRandom.getGeneralInstance();
+            GeoPoint auxiliarPoint = services.getInfrastructureManager().generateBoundingBoxRandomPoint(random);
+            GeoRoute initRoute = graph.obtainShortestRouteBetween(this.position, auxiliarPoint, vehicle);
+            GeoRoute returnRoute = graph.obtainShortestRouteBetween(auxiliarPoint, destinationPoint, vehicle);
+            ArrayList<GeoRoute> newRoutes = new ArrayList<>();
+            newRoutes.add(initRoute.concatRoute(returnRoute));
+            return newRoutes;
+        }
+        return graph.obtainAllRoutesBetween(this.position, destinationPoint, vehicle);
     }
 
     public GeoPoint reachedPointUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {

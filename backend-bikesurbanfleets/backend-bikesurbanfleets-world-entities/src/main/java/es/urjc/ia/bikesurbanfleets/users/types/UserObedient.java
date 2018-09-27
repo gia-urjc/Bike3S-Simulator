@@ -27,6 +27,12 @@ public class UserObedient extends User {
 
     @UserParameters
     public class Parameters {
+
+        /**
+         *  User destination place
+         */
+        private GeoPoint destinationPlace;
+
         /**
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
@@ -110,7 +116,12 @@ public class UserObedient extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
+        GeoPoint destinationPlace = parameters.destinationPlace;
+        if(destinationPlace == null) {
+            SimulationRandom random = SimulationRandom.getGeneralInstance();
+            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
+        }
+        List<Station> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace);
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
