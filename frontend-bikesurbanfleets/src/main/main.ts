@@ -13,8 +13,8 @@ import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator"
 
 import { ipcMain, ipcRenderer } from 'electron';
 import { Data } from './dataAnalysis/analysis/absoluteValues/Data';
-import { BikesBalanceQuality } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesBalanceQuality';
-import { BikesPerStationAndTime } from './dataAnalysis/analysis/absoluteValues/bikesPerStation/BikesPerStationAndTime';
+import { StationBalancingQuality } from './dataAnalysis/analysis/absoluteValues/stations/StationBalancingQuality';
+import { BikesPerStationAndTime } from './dataAnalysis/analysis/absoluteValues/stations/BikesPerStationAndTime';
 import { SystemReservations } from './dataAnalysis/analysis/systemEntities/SystemReservations';
 import { SystemStations } from './dataAnalysis/analysis/systemEntities/SystemStations';
 import { Reservation } from './dataAnalysis/systemDataTypes/Entities';

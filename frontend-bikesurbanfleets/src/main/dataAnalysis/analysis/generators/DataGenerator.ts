@@ -1,25 +1,25 @@
 import { HistoryReaderController } from "../../../controllers/HistoryReaderController";
-
 import { Iterator } from '../iterators/Iterator';
 import { SystemInfo } from "../absoluteValues/SystemInfo";
 import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
 import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
 import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
 import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
-import { BikesPerStationAndTime } from "../absoluteValues/bikesPerStation/BikesPerStationAndTime";
-import { EmptyStationInfo } from "../absoluteValues/bikesPerStation/EmptyStationInfo";
+import { BikesPerStationAndTime } from "../absoluteValues/stations/BikesPerStationAndTime";
+import { EmptyStationInfo } from "../absoluteValues/stations/EmptyStationInfo";
 import { ReservationIterator } from "../iterators/ReservationIterator";
 import { TimeEntryIterator } from "../iterators/TimeEntryIterator";
 import { SystemReservations } from "../systemEntities/SystemReservations";
 import { SystemStations } from "../systemEntities/SystemStations";
 import { SystemUsers } from "../systemEntities/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
-import {SystemGlobalInfo } from '../SystemGlobalInfo';
-import { BikesBalanceQuality } from '../absoluteValues/bikesPerStation/BikesBalanceQuality';
+import { SystemGlobalInfo } from '../SystemGlobalInfo';
+import { StationBalancingQuality } from '../absoluteValues/stations/StationBalancingQuality';
+import { UserTimeAtSystem } from '../absoluteValues/users/UserTimeAtSystem';
 
 export class DataGenerator {
     private readonly RESERVATIONS: number = 3;  // 3 data related to reservations must be initialized
-    private readonly RENTALS_AND_RETURNS: number = 2;  // 2 data related to rentals and returns must be initialized
+    private readonly RENTALS_AND_RETURNS: number = 3;  // 2 data related to rentals and returns must be initialized
     private readonly CALCULATION: number = 3;  // both iterators must have calculated all its data before writing them 
     private readonly BIKES_PER_STATION: number = 2;  // this data needs to be initialized with both reservation and station information
 
@@ -146,6 +146,14 @@ export class DataGenerator {
             timeEntryIterator.subscribe(rentalsAndReturns);
             this.info.set(RentalsAndReturnsPerUser.name, rentalsAndReturns);  
             this.initRentalsAndReturns(rentalsAndReturns);
+            
+            let userTime: UserTimeAtSystem = new UserTimeAtSystem(this.systemUsers.getUsers());
+            timeEntryIterator.subscribe(userTime);
+            this.info.set(UserTimeAtSystem.name, userTime);
+            userTime.init().then( () => {
+                this.rentalAndReturnCounter++;
+                this.calculateRentalsAndReturns();
+            });
         });
         return; 
     }
@@ -178,9 +186,9 @@ export class DataGenerator {
                         this.calculationCounter++;
                         this.calculateGlobalInfo();
                     })                 
-                    let bikesBalance: BikesBalanceQuality = new BikesBalanceQuality(this.bikesPerStation);
+                    let bikesBalance: StationBalancingQuality = new StationBalancingQuality(this.bikesPerStation);
                     bikesBalance.setStations(this.systemStations.getStations());
-                    this.info.set(BikesBalanceQuality.name, bikesBalance);
+                    this.info.set(StationBalancingQuality.name, bikesBalance);
                     bikesBalance.init().then( () => {
                         this.calculationCounter++;
                         this.calculateGlobalInfo();
