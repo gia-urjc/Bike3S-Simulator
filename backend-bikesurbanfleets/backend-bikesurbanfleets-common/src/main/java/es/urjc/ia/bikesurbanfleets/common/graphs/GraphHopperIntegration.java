@@ -41,17 +41,17 @@ public class GraphHopperIntegration implements GraphManager {
 
     public GraphHopperIntegration(GraphProperties properties) throws IOException {
         //Check the last map loaded
-        boolean isSameMap;
+        boolean sameMap;
         try {
             CheckSum csum = new CheckSum();
-            isSameMap = csum.md5CheckSum(new File(properties.mapDir));
+            sameMap = csum.md5CheckSum(new File(properties.mapDir));
         }
         catch (Exception e) {
-            isSameMap = false;
+            sameMap = false;
         }
 
         //If it is not the same map, we remove the latest temporary files
-        if(!isSameMap) {
+        if(!sameMap) {
             FileUtils.deleteDirectory(new File(GRAPHHOPPER_DIR));
         }
         this.hopper = new GraphHopperOSM().forServer();
@@ -59,7 +59,6 @@ public class GraphHopperIntegration implements GraphManager {
         hopper.setGraphHopperLocation(GRAPHHOPPER_DIR);
         hopper.setEncodingManager(new EncodingManager("foot, bike"));
         hopper.importOrLoad();
-
     }
 
     private GeoRoute responseGHToRoute(PathWrapper path) throws GeoRouteCreationException{

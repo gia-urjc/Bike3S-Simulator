@@ -183,18 +183,18 @@ export class CsvGenerator {
              this.transformGlobalInfoJsonToCsv();
          });
            
-           this.initEmptyStationInfo(entityInfo).then( () => {
-               this.transformEmptyStationJsonToCsv();
-           });
-           
-           this.initBikesBalanceInfo(entityInfo).then( () => {
-               this.transformBikesBalanceJsonToCsv();
-           });
-           
-           this.initBikesPerStationInfo(bikesPerStation).then( () => {
-               this.transformBikesPerStationJsonToCsv();
-           })
-         return;
+        this.initEmptyStationInfo(entityInfo).then( () => {
+            this.transformEmptyStationJsonToCsv();
+        });
+        
+        this.initBikesBalanceInfo(entityInfo).then( () => {
+            this.transformBikesBalanceJsonToCsv();
+        });
+        
+        this.initBikesPerStationInfo(bikesPerStation).then( () => {
+            this.transformBikesPerStationJsonToCsv();
+        });
+        return;
    	}
 
 	private transformStationJsonToCsv(): void {

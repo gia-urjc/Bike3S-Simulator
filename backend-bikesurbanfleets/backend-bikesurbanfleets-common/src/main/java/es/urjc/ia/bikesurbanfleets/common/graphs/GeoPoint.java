@@ -60,8 +60,6 @@ public class GeoPoint {
      * @see <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula on Wikipedia</a>
      */
     public double distanceTo(GeoPoint point) {
-        // TODO: we must consider possible routes between 2 points to calculate real distance
-
         double[] f = {Math.toRadians(this.latitude), Math.toRadians(point.latitude)};
         double[] l = {Math.toRadians(this.longitude), Math.toRadians(point.longitude)};
         double h = haversine(f[1] - f[0]) + Math.cos(f[0]) * Math.cos(f[1]) * haversine(l[1] - l[0]);
@@ -79,12 +77,12 @@ public class GeoPoint {
      * @param point2 It is the second point which determines the angle.
      * @return an angle in radians.
      */
-    public double bearing(GeoPoint point2) {
+    public double bearing(GeoPoint point) {
         // the latitudes and longitudes of these points are in radians
         double latitudePoint1 = Math.toRadians(latitude);
         double longitudePoint1 = Math.toRadians(longitude);
-        double latitudePoint2 = Math.toRadians(point2.getLatitude());
-        double longitudePoint2 = Math.toRadians(point2.getLongitude());
+        double latitudePoint2 = Math.toRadians(point.getLatitude());
+        double longitudePoint2 = Math.toRadians(point.getLongitude());
 
         double y = Math.sin(longitudePoint2 - longitudePoint1) * Math.cos(latitudePoint2);
         double x = Math.cos(latitudePoint1)*Math.sin(latitudePoint2)
