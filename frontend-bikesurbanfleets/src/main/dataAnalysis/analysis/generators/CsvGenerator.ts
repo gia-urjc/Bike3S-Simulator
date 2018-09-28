@@ -125,6 +125,7 @@ export class CsvGenerator {
     }
     
     private async initEmptyStationInfo(info: Map<string, SystemInfo>): Promise<void> {
+        this.emptyStationTitles[0] = 'id';
         let emptyStations: SystemInfo | undefined = info.get(EmptyStationInfo.name);
         if (emptyStations) {
              EmptyStateData.NAMES.forEach( (name) => {
@@ -132,6 +133,7 @@ export class CsvGenerator {
             });
             emptyStations.getData().absoluteValues.forEach( (v, k) => {
                 let jsonObj: JsonObject = {};
+                jsonObj.id = k;
                 jsonObj[this.emptyStationTitles[0]] = v.intervalsToString();
                 jsonObj[this.emptyStationTitles[1]] = v.totalTime;
                 this.emptyStationData.push(jsonObj);
