@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.consultsystems;
+package es.urjc.ia.bikesurbanfleets.consultSystems;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;

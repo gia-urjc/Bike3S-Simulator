@@ -8,10 +8,10 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManagerType;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
-import es.urjc.ia.bikesurbanfleets.consultsystems.InformationSystem;
-import es.urjc.ia.bikesurbanfleets.consultsystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultsystems.RecommendationSystemParameters;
-import es.urjc.ia.bikesurbanfleets.consultsystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import org.reflections.Reflections;
 
