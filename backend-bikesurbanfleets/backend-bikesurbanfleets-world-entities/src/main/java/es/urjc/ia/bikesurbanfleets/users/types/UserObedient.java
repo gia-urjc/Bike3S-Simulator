@@ -4,6 +4,7 @@ import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.Recommendation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -98,11 +99,11 @@ public class UserObedient extends User {
     @Override
     public Station determineStationToRentBike() {
         Station destination = null;
-        List<Station> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
+        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
         //Remove station if the user is in this station
-        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
+        recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
         if (!recommendedStations.isEmpty()) {
-            destination = recommendedStations.get(0);
+            destination = recommendedStations.get(0).getStation();
         }
         return destination;
     }
@@ -110,9 +111,9 @@ public class UserObedient extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
+        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
         //Remove station if the user is in this station
-        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
         }
