@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  *
  */
 @RecommendationSystemType("AVAILABLE_RESOURCES_RATIO")
-public class RecommendationSystemByAvailableResourcesRatio extends RecommendationSystem {
+public class RecommendationSystemByAvailableResourcesRatioPaper extends RecommendationSystem {
 
 	@RecommendationSystemParameters
 	public class RecommendationParameters {
@@ -48,14 +48,14 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 	 */
 	private StationComparator stationComparator;
 
-	public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager,
+	public RecommendationSystemByAvailableResourcesRatioPaper(InfraestructureManager infraestructureManager,
 			StationComparator stationComparator) {
 		super(infraestructureManager);
 		this.parameters = new RecommendationParameters();
 		this.stationComparator = stationComparator;
 	}
 
-	public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager, StationComparator stationComparator,
+	public RecommendationSystemByAvailableResourcesRatioPaper(InfraestructureManager infraestructureManager, StationComparator stationComparator,
 														 RecommendationParameters parameters) {
 		super(infraestructureManager);
 		this.parameters = parameters;
@@ -118,38 +118,30 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 
 	@Override
 	public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
-		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations());
 		List<Station> temp;
 		List<Recommendation> result = new ArrayList();
+		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
+				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance).collect(Collectors.toList());
+		
 		if (!stations.isEmpty()) {
-		List<Station> nearer = nearerStations(point, stations);
-		List<Station> farther = fartherStations(point, stations);
 		Comparator<Station> byBikesRatio = stationComparator.byBikesCapacityRatio();
-		nearer = nearer.stream().sorted(byBikesRatio).collect(Collectors.toList());
-		farther = farther.stream().sorted(byBikesRatio).collect(Collectors.toList());
-
-		nearer.addAll(farther);
-		temp = rebalanceWhenRenting(nearer);
-result = temp.stream().map(station -> new Recommendation(station 0.0)).collect(Collectors.toList());
-		}
+		temp = stations.stream().sorted(byBikesRatio).collect(Collectors.toList());
+		result = temp.stream().map(station -> new Recommendation(station, 0.0)).collect(Collectors.toList());
+	}
 		return result;
 	}
 
 	public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
-		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations());
 		List<Station> temp;
 		List<Recommendation> result = new ArrayList();
-		if (!stations.isEmpty()) {
-		List<Station> nearer = nearerStations(point, stations);
-		List<Station> farther = fartherStations(point, stations);
-		Comparator<Station> bySlotsRatio = stationComparator.bySlotsCapacityRatio();
-		nearer = nearer.stream().sorted(bySlotsRatio).collect(Collectors.toList());
-		farther = farther.stream().sorted(bySlotsRatio).collect(Collectors.toList());
-		nearer.addAll(farther);
-		temp = rebalanceWhenReturning(nearer);
-		result = temp.stream().map(station -> new Recommendation(station, 0.0)).collect(Collectors.toList());
-		}
+		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance).collect(Collectors.toList());
 		
+		if (!stations.isEmpty()) {
+		Comparator<Station> bySlotsRatio = stationComparator.bySlotsCapacityRatio();
+		temp = stations.stream().sorted(bySlotsRatio).collect(Collectors.toList());
+		result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
+		}
+
 		return result;
 	}
 

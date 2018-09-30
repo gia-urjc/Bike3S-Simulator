@@ -14,26 +14,27 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
 @RecommendationSystemType("ECONOMIC_INCENTIVES")
-public class RecommendationSystemWithEconomicIncentives extends RecommendationSystem {
+public class RecommendationSystemByStationSetsWithIncentives extends RecommendationSystem {
 	
 	@RecommendationSystemParameters
 	public class RecommendationParameters {
-		private int maxDistance = 750;
+		private int maxDistance = 700;
 	}
 	
-	private final int INCENTIVE = 100;   // 1 euro per 100 meters
+	private int COMPENSATION = 10;   // 1 cent of dicount per 10 meters extra to walk 
+	private	int EXTRA = 3;   // 3 cents of discount per each extra bresource     
 	private RecommendationParameters parameters;
 	private StationComparator stationComparator;
 	private List<Station> selectedStations;
 	
-	public RecommendationSystemWithEconomicIncentives(InfraestructureManager infraestructure, StationComparator comparator) {
+	public RecommendationSystemByStationSetsWithIncentives(InfraestructureManager infraestructure, StationComparator comparator) {
 		super(infraestructure);
 		this.parameters = new RecommendationParameters();
 		this.stationComparator = comparator;
 		this.selectedStations = new ArrayList<>();
 	}
 		
-	public RecommendationSystemWithEconomicIncentives(InfraestructureManager infraestructure, StationComparator comparator, 
+	public RecommendationSystemByStationSetsWithIncentives(InfraestructureManager infraestructure, StationComparator comparator, 
 			RecommendationParameters parameters) {
 		super(infraestructure);
 		this.parameters = parameters;
@@ -60,9 +61,10 @@ public class RecommendationSystemWithEconomicIncentives extends RecommendationSy
 						StationQuality quality = qualityToRent(station);
 						qualities.add(quality);
 		 }
+			Station nearestStation = getNearestStationToRent(point);
 			result = qualities.stream().map(sq -> { 
 				Station station = sq.getStation();
-				double incentive = calculateIncentive(point, station);
+				double incentive = calculateIncentiveToRent(point, nearestStation, station);
 				Recommendation recommendation = new Recommendation(station, incentive);
 				return recommendation;
 			}).collect(Collectors.toList());
@@ -72,8 +74,9 @@ public class RecommendationSystemWithEconomicIncentives extends RecommendationSy
 				for (int i=0; i<stations.size(); i++) {
 					temp.add(stations.get(i));
 				}
+				Station nearestStation = getNearestStationToRent(point);
 				result = temp.stream().map(s -> {
-					double incentive = calculateIncentive(point, s);
+					double incentive = calculateIncentiveToReturn(point, nearestStation, s);
 					return new Recommendation(s, incentive);
 				}).collect(Collectors.toList());
 			}
@@ -179,15 +182,51 @@ public class RecommendationSystemWithEconomicIncentives extends RecommendationSy
 		return new StationQuality(station, quality);
 	}
 	
-	public double calculateIncentive(GeoPoint point, Station station) {
+	private Station getNearestStationToRent(GeoPoint point) {
 		Comparator<Station> byDistance = stationComparator.byDistance(point);
-		List<Station> stations = infraestructureManager.consultStations().stream()
+		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
 				.filter(s -> s.getPosition().distanceTo(point) <= parameters.maxDistance)
 				.sorted(byDistance).collect(Collectors.toList());
-		Station nearerStation = stations.get(0);
-		double idealDistance = nearerStation.getPosition().distanceTo(point);
-		double distance = station.getPosition().distanceTo(point);
-		return (distance - idealDistance)/INCENTIVE;
+		return stations.get(0);
 	}
+	
+	private Station getNearestStationToReturn(GeoPoint point) {
+		Comparator<Station> byDistance = stationComparator.byDistance(point);
+		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream()
+				.filter(s -> s.getPosition().distanceTo(point) <= parameters.maxDistance)
+				.sorted(byDistance).collect(Collectors.toList());
+		return stations.get(0);
+	}
+	
+	private double extraWhenRenting(Station nearestStation, Station recommendedStation) {
+		int nearestStationBikes = narestStation.availableBikes();
+		int recommendedStationBikes = recommendedStation.availableBikes();
+		return (recommendedStationBikes - nearestStationBikes)*EXTRA;
+	}
+	
+	private double extraWhenReturning(Station nearestStation, Station recommendedStation) {
+		int nearestStationSlots = narestStation.availableSlots();
+		int recommendedStationSlots = recommendedStation.availableSlots();
+		return (recommendedStationSlots - nearestStationSlots)*EXTRA;
+	}
+	
+	private double compensation(GeoPoint point, Station nearestStation, Station recommendedStation) {
+		double distanceToNearestStation = nearerStation.getPosition().distanceTo(point);
+		double distanceToRecommendedStation = recommendedStation.getPosition().distanceTo(point);
+		return (distanceToRecommendedStation - distanceToNearestStation)/COMPENSATION;
+	}
+	
+	public double calculateIncentiveToRent(GeoPoint point, Station nearestStation, Station recommendedStation) {
+	double compensation = compensation(point, nearestStation, recommendedStation);
+	double extra = extraWhenRenting(nearestStation, recommendedStation);
+	return compensation+extra;
+	}
+	
+	public double calculateIncentiveToReturn(GeoPoint point, Station nearestStation, Station recommendedStation) {
+	double compensation = compensation(point, nearestStation, recommendedStation);
+	double extra = extraWhenReturning(nearestStation, recommendedStation);
+	return compensation+extra;
+	}
+	
 
 }

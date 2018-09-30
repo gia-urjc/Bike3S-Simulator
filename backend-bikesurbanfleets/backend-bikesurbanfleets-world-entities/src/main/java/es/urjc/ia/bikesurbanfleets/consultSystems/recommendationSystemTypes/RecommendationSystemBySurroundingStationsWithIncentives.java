@@ -15,23 +15,26 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
 
 @RecommendationSystemType("SURROUNDING_STATIONS")
-public class RecommendationSystemBySurroundingStations extends RecommendationSystem {
+public class RecommendationSystemBySurroundingStationsWithIncentives extends RecommendationSystem {
 
 	@RecommendationSystemParameters
 	public class RecommendationParameters {
-		private int maxDistance = 750;
+		private int maxDistance = 700;
 	}
+	
+	private final int COMPENSATION = 10; 
+	private final int EXTRA = 3;
 	
 	private RecommendationParameters parameters;
 	private StationComparator stationComparator;
 	
-	public RecommendationSystemBySurroundingStations(InfraestructureManager infraestructure, StationComparator stationComparator) {
+	public RecommendationSystemBySurroundingStationsWithIncentives(InfraestructureManager infraestructure, StationComparator stationComparator) {
 		super(infraestructure);
 		this.parameters = new RecommendationParameters();
 		this.stationComparator = stationComparator;
 	}
 	
-	public RecommendationSystemBySurroundingStations(InfraestructureManager infraestructure, StationComparator stationComparator,
+	public RecommendationSystemBySurroundingStationsWithIncentives(InfraestructureManager infraestructure, StationComparator stationComparator,
 			RecommendationParameters parameters) {
 		super(infraestructure);
 		this.parameters = parameters;
@@ -46,14 +49,23 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
 				.sorted(byBikesRatio).collect(Collectors.toList());
 		List<StationQuality> qualities = new ArrayList();
 		
-		int numStations = stations.size() >= 5 ? Math.floorDiv(stations.size(), 5) : stations.size();
+		int numStations = stations.size() >= 10 ? Math.floorDiv(stations.size(), 2) : stations.size();
 		for(int i=0; i<numStations; i++) {
 			Station station = stations.get(i);
 			double quality = qualityToRent(station, point);
 			qualities.add(new StationQuality(station, quality));
 		}
 		Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
-		return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), 0.0)).collect(Collectors.toList());
+		Station nearestStation = getNearestStationToRent(point); 
+		return qualities.stream().sorted(byQuality).map(sq -> {
+			Station s = sq.getStation();
+			double incentive = 0.0;
+			if (!s.getPosition().equals(nearestStation.getPosition())) {
+				incentive = calculateIncentiveToRent(point, nearestStation, s);
+			}
+			return new Recommendation(s, incentive);
+		}).collect(Collectors.toList());
+		}
 		 
 	}
 	
@@ -65,14 +77,23 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
 				.sorted(bySlotsRatio).collect(Collectors.toList());
 		List<StationQuality> qualities = new ArrayList();
 
-		int numStations = stations.size() >= 9 ? Math.floorDiv(stations.size(), 3) : stations.size();
+		int numStations = stations.size() >= 10 ? Math.floorDiv(stations.size(), 2) : stations.size();
 		for(int i=0; i<numStations; i++) {
 			Station station = stations.get(i);
 			double quality = qualityToReturn(station, point);
 			qualities.add(new StationQuality(station, quality));
 		}
+		Station nearestStation = getNearestStationToReturn(point);
 		Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
-		return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), 0.0)).collect(Collectors.toList());
+		return qualities.stream().sorted(byQuality).map(sq -> {
+			Station s = sq.getStation();
+			double incentive = 0.0;
+			if (!s.getPosition().equals(nearestStation.getPosition())) {
+				incentive = calculateIncentiveToReturn(point, nearestStation, s);
+			}
+			return new Recommendation(s, incentive);
+		}).collect(Collectors.toList());
+		}
 	}
 	
 	private double qualityToRent(Station station, GeoPoint point) {
@@ -104,6 +125,54 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
 		}
 		return summation;
 	}
+	
+	private Station getNearestStationToRent(GeoPoint point) {
+		Comparator<Station> byDistance = stationComparator.byDistance(point);
+		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
+				.filter(s -> s.getPosition().distanceTo(point) <= parameters.maxDistance)
+				.sorted(byDistance).collect(Collectors.toList());
+		return stations.get(0);
+	}
+	
+	private Station getNearestStationToReturn(GeoPoint point) {
+		Comparator<Station> byDistance = stationComparator.byDistance(point);
+		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream()
+				.filter(s -> s.getPosition().distanceTo(point) <= parameters.maxDistance)
+				.sorted(byDistance).collect(Collectors.toList());
+		return stations.get(0);
+	}
+
+
+	private double extraWhenRenting(Station nearestStation, Station recommendedStation) {
+		int nearestStationBikes = narestStation.availableBikes();
+		int recommendedStationBikes = recommendedStation.availableBikes();
+		return (recommendedStationBikes - nearestStationBikes)*EXTRA;
+	}
+	
+	private double extraWhenReturning(Station nearestStation, Station recommendedStation) {
+		int nearestStationSlots = narestStation.availableSlots();
+		int recommendedStationSlots = recommendedStation.availableSlots();
+		return (recommendedStationSlots - nearestStationSlots)*EXTRA;
+	}
+	
+	private double compensation(GeoPoint point, Station nearestStation, Station recommendedStation) {
+		double distanceToNearestStation = nearerStation.getPosition().distanceTo(point);
+		double distanceToRecommendedStation = recommendedStation.getPosition().distanceTo(point);
+		return (distanceToRecommendedStation - distanceToNearestStation)/COMPENSATION;
+	}
+	
+	public double calculateIncentiveToRent(GeoPoint point, Station nearestStation, Station recommendedStation) {
+	double compensation = compensation(point, nearestStation, recommendedStation);
+	double extra = extraWhenRenting(nearestStation, recommendedStation);
+	return compensation+extra;
+	}
+	
+	public double calculateIncentiveToReturn(GeoPoint point, Station nearestStation, Station recommendedStation) {
+	double compensation = compensation(point, nearestStation, recommendedStation);
+	double extra = extraWhenReturning(nearestStation, recommendedStation);
+	return compensation+extra;
+	}
+
 	
 
 }

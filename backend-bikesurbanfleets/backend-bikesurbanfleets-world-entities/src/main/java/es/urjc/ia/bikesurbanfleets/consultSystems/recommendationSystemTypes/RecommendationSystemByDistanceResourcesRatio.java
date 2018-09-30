@@ -59,9 +59,7 @@ public class RecommendationSystemByDistanceResourcesRatio extends Recommendation
 			Comparator<Station> byDistanceBikesRatio = stationComparator.byProportionBetweenDistanceAndBikes(point);
 			temp = stations.stream().filter( station -> station.getPosition().distanceTo(point) <= parameters.maxDistance)
 					.sorted(byDistanceBikesRatio).collect(Collectors.toList());
-			for(Station station: temp) {
-				result.add(new Recommendation(station, -1.0));
-			}
+			result = temp.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), 0.0)).collect(Collectors.toList());
 		}
 		return result;	
 	}
@@ -75,9 +73,7 @@ public class RecommendationSystemByDistanceResourcesRatio extends Recommendation
 			Comparator<Station> byDistanceSlotsRatio = stationComparator.byProportionBetweenDistanceAndSlots(point);
 			temp = stations.stream().filter( station  -> station.getPosition().distanceTo(point) <= parameters.maxDistance)
 					.sorted(byDistanceSlotsRatio).collect(Collectors.toList());
-			for (Station station: temp) {
-				result.add(new Recommendation(station, -1.0));
-			}
+			result = temp.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), 0.0)).collect(Collectors.toList());
 		}
 		return result;
 }
