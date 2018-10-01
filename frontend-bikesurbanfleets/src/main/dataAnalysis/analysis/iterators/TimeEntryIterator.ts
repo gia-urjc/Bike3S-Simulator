@@ -28,7 +28,7 @@ export class TimeEntryIterator implements Iterator {
             }
         }
         catch(error) {
-            throw new Error('Error getting time entries: '+error);
+            throw new Error('Error getting time entries: '+ error);
         }
         return;
     }
