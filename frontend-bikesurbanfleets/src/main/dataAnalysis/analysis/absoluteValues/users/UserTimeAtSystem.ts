@@ -64,7 +64,8 @@ export class UserTimeAtSystem implements SystemInfo  {
                 }
                     
                 case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
-                    let bike: any = event.changes.users[0].bike.new;
+                    console.log(event.changes.users[0]);
+                    let bike: any = event.changes.users[0].bike;
 
                     if (!bike) {
                         let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);

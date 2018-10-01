@@ -193,34 +193,27 @@ export class CsvGenerator {
 	   public async generate(entityInfo: Map<string, SystemInfo>, globalInfo: SystemGlobalInfo, bikesPerStation: BikesPerStationAndTime, stations: Array<Station>, users: Array<User>): Promise<void> {
          await this.initEntityInfoTitles();
            
-         this.initStationInfo(entityInfo, stations).then( () => {
-             this.transformStationJsonToCsv();
-         });
+         await this.initStationInfo(entityInfo, stations);
+         this.transformStationJsonToCsv();
            
-         this.initUserInfo(entityInfo, users).then( () => {
-             this.transformUserJsonToCsv();
-         });
+         await this.initUserInfo(entityInfo, users);
+         this.transformUserJsonToCsv();
            
-         this.initGlobalInfo(globalInfo).then( () => { 
-             this.transformGlobalInfoJsonToCsv();
-         });
+         await this.initGlobalInfo(globalInfo); 
+         this.transformGlobalInfoJsonToCsv();
            
-           this.initEmptyStationInfo(entityInfo).then( () => {
-               this.transformEmptyStationJsonToCsv();
-           });
-           
-           this.initBikesBalancingInfo(entityInfo).then( () => {
-               this.transformBikesBalanceJsonToCsv();
-           });
-           
-           this.initBikesPerStationInfo(bikesPerStation).then( () => {
-               this.transformBikesPerStationJsonToCsv();
-           });
-           
-           this.initUserTimeInfo(entityInfo).then( () => {
-               this.transformUserTimeJsonToCsv();
-           })
-         return;
+         await this.initEmptyStationInfo(entityInfo);
+         this.transformEmptyStationJsonToCsv();
+        
+         await this.initBikesBalancingInfo(entityInfo);
+         this.transformBikesBalanceJsonToCsv();
+        
+         await this.initBikesPerStationInfo(bikesPerStation);
+         this.transformBikesPerStationJsonToCsv();
+        
+         await this.initUserTimeInfo(entityInfo);
+         this.transformUserTimeJsonToCsv();
+        return;
    	}
 
 	private transformStationJsonToCsv(): void {
