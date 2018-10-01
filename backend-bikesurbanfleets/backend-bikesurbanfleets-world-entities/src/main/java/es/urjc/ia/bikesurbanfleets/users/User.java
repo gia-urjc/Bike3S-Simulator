@@ -354,11 +354,20 @@ public abstract class User implements Entity {
         String vehicle = this.bike == null ? "foot" : "bike";
         if(this.position.equals(destinationPoint)) {
             SimulationRandom random = SimulationRandom.getGeneralInstance();
-            GeoPoint auxiliarPoint = services.getInfrastructureManager().generateBoundingBoxRandomPoint(random);
-            GeoRoute initRoute = graph.obtainShortestRouteBetween(this.position, auxiliarPoint, vehicle);
-            GeoRoute returnRoute = graph.obtainShortestRouteBetween(auxiliarPoint, destinationPoint, vehicle);
+            boolean validAuxiliarPoint = false;
             ArrayList<GeoRoute> newRoutes = new ArrayList<>();
-            newRoutes.add(initRoute.concatRoute(returnRoute));
+            while(!validAuxiliarPoint) {
+                try {
+                    GeoPoint auxiliarPoint = services.getInfrastructureManager().generateBoundingBoxRandomPoint(random);
+                    GeoRoute initRoute = graph.obtainShortestRouteBetween(this.position, auxiliarPoint, vehicle);
+                    GeoRoute returnRoute = graph.obtainShortestRouteBetween(auxiliarPoint, destinationPoint, vehicle);
+                    newRoutes.add(initRoute.concatRoute(returnRoute));
+                    validAuxiliarPoint = true;
+                }
+                catch(Exception e) {
+                    System.out.println("Not valid point, retrying");
+                }
+            }
             return newRoutes;
         }
         return graph.obtainAllRoutesBetween(this.position, destinationPoint, vehicle);
