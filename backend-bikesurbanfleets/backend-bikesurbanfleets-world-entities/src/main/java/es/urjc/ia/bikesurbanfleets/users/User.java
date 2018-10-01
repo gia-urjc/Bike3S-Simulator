@@ -159,8 +159,7 @@ public abstract class User implements Entity {
     public GeoPoint getDestinationPlace() {
     	return destinationPlace;
     }
-
-    @Override
+   @Override
     public int getId() {
         return id;
     }

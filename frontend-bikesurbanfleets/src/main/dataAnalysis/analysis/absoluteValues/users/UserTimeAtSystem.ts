@@ -49,34 +49,9 @@ export class UserTimeAtSystem implements SystemInfo  {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value) { 
                         value.time = timeEntry.time;
-                        console.log("appearance time of user "+key+": "+value.time);  
                     }
                     break;
                 }
-                    
-            /*   case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
-                    let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
-                    if (value) {
-                        let appearanceTime: number = value.time;
-                        value.time = timeEntry.time - appearanceTime;          
-                    }
-                    break;
-                }
-                    
-                case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
-                    console.log(event.changes.users[0]);
-                    let bike: any = event.changes.users[0].bike;
-
-                    if (!bike) {
-                        let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
-                        if (value) {
-                            let appearanceTime: number = value.time;
-                            value.time = timeEntry.time - appearanceTime;
-                        }
-                    }
-                    break;
-                }
-              */
                     
                 case 'EventUserArrivesAtDestinationInCity': {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
@@ -84,11 +59,9 @@ export class UserTimeAtSystem implements SystemInfo  {
                         let appearanceTime: number = value.time;
                         value.time = timeEntry.time - appearance;
                     }
+                    break;
                 }
-                }
-                    
-                }
-            }
+            }  //for
         }
     }
         
