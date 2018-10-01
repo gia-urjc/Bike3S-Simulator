@@ -3,6 +3,7 @@ package es.urjc.ia.bikesurbanfleets.core.events;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserMemory;
@@ -12,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends EventUser {
-
     private List<Entity> entities;
     private Station station;
 
@@ -38,9 +38,13 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
                 debugEventLog("User can't return bike. Station info: " + station.toString()) ;
                 newEvents = manageSlotReservationDecisionAtOtherStation();
             } else {
-                user.leaveSystem();
+                user.setDestinationPoint(user.getDestinationPlace());
+                user.setDestinationStation(null);
+                GeoRoute route = user.determineRoute();
+                user.setRoute(route);
+                int arrivalTime = user.timeToReach();
                 debugEventLog("User returns the bike. Station info: " + station.toString());
-                debugClose(user, user.getId());
+                newEvents.add(new EventUserArrivesAtDestinationInCity(arrivalTime, user));	
             }
         }
         catch(Exception e) {

@@ -10,8 +10,8 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrati
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
-import es.urjc.ia.bikesurbanfleets.consultsystems.InformationSystem;
-import es.urjc.ia.bikesurbanfleets.consultsystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
@@ -56,6 +56,11 @@ public abstract class User implements Entity {
  * It is the place in the city the user wants to cycle to.
  */
     private GeoPoint destinationPoint;
+    
+    /** 
+     * It is the user destination in the city.
+     */
+    private GeoPoint destinationPlace;
     
     /**
      * Speed in meters per second at which user walks.
@@ -146,6 +151,11 @@ public abstract class User implements Entity {
         this.graph = services.getGraphManager();
         History.registerEntity(this);
         this.memory = new UserMemory(this);
+
+    }
+    
+    public GeoPoint getDestinationPlace() {
+    	return destinationPlace;
     }
 
     @Override

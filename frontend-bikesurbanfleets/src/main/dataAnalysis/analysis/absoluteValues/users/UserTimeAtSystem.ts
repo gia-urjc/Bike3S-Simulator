@@ -54,7 +54,7 @@ export class UserTimeAtSystem implements SystemInfo  {
                     break;
                 }
                     
-                case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
+            /*   case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value) {
                         let appearanceTime: number = value.time;
@@ -74,6 +74,18 @@ export class UserTimeAtSystem implements SystemInfo  {
                         }
                     }
                     break;
+                }
+              */
+                    
+                case 'EventUserArrivesAtDestinationInCity': {
+                    let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
+                    if (value) {
+                        let appearanceTime: number = value.time;
+                        value.time = timeEntry.time - appearance;
+                    }
+                }
+                }
+                    
                 }
             }
         }

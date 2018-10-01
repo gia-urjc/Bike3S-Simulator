@@ -4,6 +4,7 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -40,14 +41,19 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
         try {
             user.setInstant(this.instant);
             user.returnBikeWithReservationTo(station);
-            user.leaveSystem();
+            user.setDestinationPoint(user.getDestinationPlace());
+            user.setDestinationStation(null);
+            GeoRoute route = user.determineRoute();
+            user.setRoute(route);
+            int arrivalTime = user.timeToReach();
             debugEventLog("User returns the bike");
-            debugClose(user, user.getId());
+            newEvents.add(new EventUserArrivesAtDestinationInCity(arrivalTime, user));
+        
         }
         catch(Exception e) {
             exceptionTreatment(e);
         }
-        return newEvents;
+        return new ArrayList();
     }
 
     @Override
