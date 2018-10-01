@@ -5,7 +5,9 @@ const Percentage = sNumber().min(0).max(100);
 
 export const typeParameters = {
     USER_RANDOM: {},
-    USER_UNINFORMED: {},
+    USER_UNINFORMED: {
+        destinationPlace: GeoPoint
+    },
     USER_INFORMED: {
         willReserve: sBoolean(),
         minReservationAttempts: UInt,

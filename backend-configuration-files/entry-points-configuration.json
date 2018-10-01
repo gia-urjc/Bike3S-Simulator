@@ -3,9 +3,12 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_INFORMED",
+                "typeName": "USER_OBEDIENT",
                 "parameters": {
-                    "minRentalAttempts": 2
+                    "ddestinationPlace": {
+                        "latitude": 40.41498327528509,
+                        "longitude": -3.7037658691406254
+                    }
                 }
             },
             "position": {
@@ -20,9 +23,12 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_INFORMED",
+                "typeName": "USER_OBEDIENT",
                 "parameters": {
-                    "minRentalAttempts": 2
+                    "ddestinationPlace": {
+                        "latitude": 40.41498327528509,
+                        "longitude": -3.7037658691406254
+                    }
                 }
             },
             "position": {
@@ -37,9 +43,12 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_INFORMED",
+                "typeName": "USER_OBEDIENT",
                 "parameters": {
-                    "minRentalAttempts": 2
+                    "ddestinationPlace": {
+                        "latitude": 40.41498327528509,
+                        "longitude": -3.7037658691406254
+                    }
                 }
             },
             "position": {
@@ -54,9 +63,12 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_INFORMED",
+                "typeName": "USER_OBEDIENT",
                 "parameters": {
-                    "minRentalAttempts": 2
+                    "ddestinationPlace": {
+                        "latitude": 40.41498327528509,
+                        "longitude": -3.7037658691406254
+                    }
                 }
             },
             "position": {

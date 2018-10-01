@@ -1,6 +1,10 @@
 package es.urjc.ia.bikesurbanfleets.common.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 
 /**
  * This class is a random type initialized with a specific seed.
@@ -14,6 +18,7 @@ public class SimulationRandom {
 
     private static SimulationRandom generalInstance = null;
     private static SimulationRandom userCreationInstance = null;
+    private static List<GeoPoint> validRandomPositions = new ArrayList<>();
 
     public static void init() {
         if (generalInstance != null || userCreationInstance != null) {
@@ -41,6 +46,18 @@ public class SimulationRandom {
     public static SimulationRandom getUserCreationInstance() {
         if (userCreationInstance != null) return userCreationInstance;
         throw new IllegalStateException("You should first call init(seed)");
+    }
+
+    public static boolean addRandomUsedPoint(GeoPoint point) {
+        return validRandomPositions.add(point);
+    }
+
+    public static GeoPoint getRandomUsedPoint() throws IllegalAccessException {
+        int index = generalInstance.nextInt(0, validRandomPositions.size() - 1);
+        if(validRandomPositions.size() == 0) {
+            throw new IllegalAccessException("No valid random points yet");
+        }
+        return validRandomPositions.get(index);
     }
 
     private Random random;

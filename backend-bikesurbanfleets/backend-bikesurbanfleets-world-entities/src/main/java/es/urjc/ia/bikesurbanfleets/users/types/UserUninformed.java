@@ -5,6 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
@@ -23,8 +24,27 @@ import java.util.stream.Collectors;
 @UserType("USER_UNINFORMED")
 public class UserUninformed extends User {
 
-    public UserUninformed(SimulationServices services) {
+    @UserParameters
+    public class Parameters {
+
+        private GeoPoint destinationPlace;
+
+        private Parameters() {}
+
+        @Override
+        public String toString() {
+            return "Parameters{" +
+                "destinationPlace=" + destinationPlace +
+            '}';
+        }
+
+    }
+
+    private Parameters parameters;
+
+    public UserUninformed(Parameters parameters, SimulationServices services) {
         super(services);
+        this.parameters = parameters;
     }
 
     @Override
@@ -69,8 +89,12 @@ public class UserUninformed extends User {
 
         //Remove station if the user is in this station
         System.out.println("List Size" + stations.size());
-        stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
-        Comparator<Station> criteria = services.getStationComparator().byDistance(this.getPosition());
+        GeoPoint destinationPlace = parameters.destinationPlace;
+        if(destinationPlace == null) {
+            SimulationRandom random = SimulationRandom.getGeneralInstance();
+            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
+        }
+        Comparator<Station> criteria = services.getStationComparator().byDistance(destinationPlace);
         stations.stream().sorted(criteria).collect(Collectors.toList());
         if (!stations.isEmpty()) {
         	destination = stations.get(0);

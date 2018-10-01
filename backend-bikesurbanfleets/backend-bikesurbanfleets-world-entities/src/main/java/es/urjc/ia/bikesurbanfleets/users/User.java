@@ -8,6 +8,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationExce
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
+import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
@@ -20,6 +21,7 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,9 +54,9 @@ public abstract class User implements Entity {
      */
     private Station destinationStation;
     
-/**
- * It is the place in the city the user wants to cycle to.
- */
+    /**
+    * It is the place in the city the user wants to cycle to.
+    */
     private GeoPoint destinationPoint;
     
     /** 
@@ -358,9 +360,61 @@ public abstract class User implements Entity {
         this.reservation = null;
     }
 
-    public List<GeoRoute> calculateRoutes(GeoPoint position) throws GeoRouteCreationException, GraphHopperIntegrationException {
+    private List<GeoRoute> createRouteFromStationToSame(List<GeoRoute> geoRoute, String vehicle, boolean calcNewRandom) throws Exception {
+        
+        SimulationRandom random = SimulationRandom.getGeneralInstance();
+        GeoPoint auxiliarPoint = null;
+        double RADIO = 1000;
+        
+        if(calcNewRandom) {
+            auxiliarPoint = services.getInfrastructureManager().generateRandomPointInCircle(this.position, RADIO);
+        }
+        else {
+            auxiliarPoint = SimulationRandom.getRandomUsedPoint();
+        }
+
+        GeoRoute initRoute = graph.obtainShortestRouteBetween(this.position, auxiliarPoint, vehicle);
+        GeoRoute returnRoute = graph.obtainShortestRouteBetween(auxiliarPoint, destinationPoint, vehicle);
+        
+        if(calcNewRandom) {
+            SimulationRandom.addRandomUsedPoint(auxiliarPoint);
+        }
+        geoRoute.add(initRoute.concatRoute(returnRoute));
+        return geoRoute;
+    }
+
+    public List<GeoRoute> calculateRoutes(GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
         String vehicle = this.bike == null ? "foot" : "bike";
-        return graph.obtainAllRoutesBetween(this.getPosition(), position, vehicle);
+        
+        if(this.position.equals(destinationPoint)) {
+            
+            ArrayList<GeoRoute> newRoutes = new ArrayList<>();
+            // First try. If valid random point, program still running
+            try {
+                createRouteFromStationToSame(newRoutes, vehicle, true);
+            }
+            // If not valid route, we use a point used before
+            catch(Exception e1) {
+                try {
+                    createRouteFromStationToSame(newRoutes, vehicle, false);
+                }
+                // If no points are at first runtime this method should be executed
+                catch(Exception e2) {
+                    boolean isValidPoint = false;
+                    while(!isValidPoint) {
+                        try {
+                            createRouteFromStationToSame(newRoutes, vehicle, true);
+                            isValidPoint = true; 
+                        }
+                        catch(Exception e3) {
+                            System.out.println("Trying new point");
+                        }
+                    }
+                }    
+            }
+            return newRoutes;
+        }
+        return graph.obtainAllRoutesBetween(this.position, destinationPoint, vehicle);
     }
 
     public GeoPoint reachedPointUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {

@@ -27,6 +27,12 @@ public class UserDistanceRestriction extends User {
 
     @UserParameters
     public class Parameters {
+
+        /**
+         * User destination place
+         */
+        private GeoPoint destinationPlace;
+
         /**
          * It is the time in seconds until which the user will decide to continue walking
          * or cycling towards the previously chosen station without making a new reservation
@@ -128,7 +134,12 @@ public class UserDistanceRestriction extends User {
     @Override
      public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceSlotsRatio(this.getPosition());
+        GeoPoint destinationPlace = parameters.destinationPlace;
+        if(destinationPlace == null) {
+            SimulationRandom random = SimulationRandom.getGeneralInstance();
+            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
+        }
+        List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceSlotsRatio(destinationPlace);
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
