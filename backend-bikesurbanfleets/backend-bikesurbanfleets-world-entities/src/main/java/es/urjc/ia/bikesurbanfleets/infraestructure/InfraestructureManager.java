@@ -2,6 +2,7 @@ package es.urjc.ia.bikesurbanfleets.infraestructure;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
+import es.urjc.ia.bikesurbanfleets.common.util.BoundingCircle;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
@@ -90,6 +91,11 @@ public class InfraestructureManager {
     
     public GeoPoint generateBoundingBoxRandomPoint(SimulationRandom random) {
         return bbox.randomPoint(random);
+    }
+
+    public GeoPoint generateRandomPointInCircle(GeoPoint center, double radio) {
+        BoundingCircle boundingCircle = new BoundingCircle(center, radio);
+        return boundingCircle.randomPointInCircle(SimulationRandom.getGeneralInstance());
     }
     
 }

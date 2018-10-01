@@ -14,5 +14,6 @@
     "maxDistanceRecommendation": 1000,
     "recommendationSystemType": "AVAILABLE_RESOURCES_RATIO",
     "reservationTime": 1000,
+    "randomSeed": 10,
     "totalSimulationTime": 86399
 }

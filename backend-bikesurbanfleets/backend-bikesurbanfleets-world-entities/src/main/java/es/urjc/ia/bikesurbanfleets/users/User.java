@@ -350,23 +350,57 @@ public abstract class User implements Entity {
         this.reservation = null;
     }
 
+    private List<GeoRoute> createRouteFromStationToSame(List<GeoRoute> geoRoute, String vehicle, boolean calcNewRandom) throws Exception {
+        
+        SimulationRandom random = SimulationRandom.getGeneralInstance();
+        GeoPoint auxiliarPoint = null;
+        double RADIO = 1000;
+        
+        if(calcNewRandom) {
+            auxiliarPoint = services.getInfrastructureManager().generateRandomPointInCircle(this.position, RADIO);
+        }
+        else {
+            auxiliarPoint = SimulationRandom.getRandomUsedPoint();
+        }
+
+        GeoRoute initRoute = graph.obtainShortestRouteBetween(this.position, auxiliarPoint, vehicle);
+        GeoRoute returnRoute = graph.obtainShortestRouteBetween(auxiliarPoint, destinationPoint, vehicle);
+        
+        if(calcNewRandom) {
+            SimulationRandom.addRandomUsedPoint(auxiliarPoint);
+        }
+        geoRoute.add(initRoute.concatRoute(returnRoute));
+        return geoRoute;
+    }
+
     public List<GeoRoute> calculateRoutes(GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
         String vehicle = this.bike == null ? "foot" : "bike";
+        
         if(this.position.equals(destinationPoint)) {
-            SimulationRandom random = SimulationRandom.getGeneralInstance();
-            boolean validAuxiliarPoint = false;
+            
             ArrayList<GeoRoute> newRoutes = new ArrayList<>();
-            while(!validAuxiliarPoint) {
+            // First try. If valid random point, program still running
+            try {
+                createRouteFromStationToSame(newRoutes, vehicle, true);
+            }
+            // If not valid route, we use a point used before
+            catch(Exception e1) {
                 try {
-                    GeoPoint auxiliarPoint = services.getInfrastructureManager().generateBoundingBoxRandomPoint(random);
-                    GeoRoute initRoute = graph.obtainShortestRouteBetween(this.position, auxiliarPoint, vehicle);
-                    GeoRoute returnRoute = graph.obtainShortestRouteBetween(auxiliarPoint, destinationPoint, vehicle);
-                    newRoutes.add(initRoute.concatRoute(returnRoute));
-                    validAuxiliarPoint = true;
+                    createRouteFromStationToSame(newRoutes, vehicle, false);
                 }
-                catch(Exception e) {
-                    System.out.println("Not valid point, retrying");
-                }
+                // If no points are at first runtime this method should be executed
+                catch(Exception e2) {
+                    boolean isValidPoint = false;
+                    while(!isValidPoint) {
+                        try {
+                            createRouteFromStationToSame(newRoutes, vehicle, true);
+                            isValidPoint = true; 
+                        }
+                        catch(Exception e3) {
+                            System.out.println("Trying new point");
+                        }
+                    }
+                }    
             }
             return newRoutes;
         }

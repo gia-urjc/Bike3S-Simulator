@@ -130,9 +130,8 @@ public class UserDistanceResourcesRatio extends User {
     @Override
      public Station determineStationToReturnBike() {
         GeoPoint destinationPlace = parameters.destinationPlace;
-        if(destinationPlace == null) {
-            SimulationRandom random = SimulationRandom.getGeneralInstance();
-            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
+        if(destinationPlace == null) { 
+            destinationPlace = infraestructure.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
         }
         List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceSlotsRatio(destinationPlace);
         Station destination = null;
