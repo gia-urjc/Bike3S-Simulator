@@ -84,6 +84,7 @@ public class UserObedient extends User {
     public UserObedient(Parameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
+        this.destinationPlace = parameters.destinationPlace;
     }
     
     @Override

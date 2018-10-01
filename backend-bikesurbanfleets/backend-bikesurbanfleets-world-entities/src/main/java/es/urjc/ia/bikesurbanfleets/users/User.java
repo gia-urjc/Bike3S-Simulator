@@ -62,7 +62,7 @@ public abstract class User implements Entity {
     /** 
      * It is the user destination in the city.
      */
-    private GeoPoint destinationPlace;
+    protected GeoPoint destinationPlace;
     
     /**
      * Speed in meters per second at which user walks.
