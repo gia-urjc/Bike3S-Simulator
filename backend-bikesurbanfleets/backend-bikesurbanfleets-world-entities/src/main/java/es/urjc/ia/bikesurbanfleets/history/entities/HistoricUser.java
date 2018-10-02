@@ -37,7 +37,7 @@ public class HistoricUser implements HistoricEntity {
     
     @Expose
     private IdReference reservations;
-
+    
     private GeoPoint position;
     private GeoRoute route;
     private IdReference bike;

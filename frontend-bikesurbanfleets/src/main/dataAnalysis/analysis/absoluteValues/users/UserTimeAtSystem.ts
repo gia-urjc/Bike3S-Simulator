@@ -54,11 +54,16 @@ export class UserTimeAtSystem implements SystemInfo  {
                 }
                     
                 case 'EventUserArrivesAtDestinationInCity': {
+                    console.log()
+                    console.log("event: "+event.name);
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value) {
                         let appearanceTime: number = value.time;
                         value.time = timeEntry.time - appearanceTime;
+                        console.log("HOLA");
+                        console.log("appearance time: "+appearanceTime);
                         console.log("leave time: "+timeEntry.time);
+                        console.log("time at system: "+value.time);
                     }
                     break;
                 }

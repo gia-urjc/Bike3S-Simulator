@@ -82,9 +82,8 @@ public class UserObedient extends User {
     private Parameters parameters;
     
     public UserObedient(Parameters parameters, SimulationServices services) {
-        super(services);
+        super(services, parameters.destinationPlace);
         this.parameters = parameters;
-        this.destinationPlace = parameters.destinationPlace;
     }
     
     @Override
@@ -181,7 +180,7 @@ public class UserObedient extends User {
 
     @Override
     public String toString() {
-        return super.toString() + "UserDistanceRestriction{" +
+        return super.toString() + "UserObedient{" +
                 "parameters=" + parameters +
                 '}';
     }

@@ -25,7 +25,7 @@
             "userType": {
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
-                    "ddestinationPlace": {
+                    "destinationPlace": {
                         "latitude": 40.41498327528509,
                         "longitude": -3.7037658691406254
                     }
@@ -45,7 +45,7 @@
             "userType": {
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
-                    "ddestinationPlace": {
+                    "destinationPlace": {
                         "latitude": 40.41498327528509,
                         "longitude": -3.7037658691406254
                     }
@@ -65,7 +65,7 @@
             "userType": {
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
-                    "ddestinationPlace": {
+                    "destinationPlace": {
                         "latitude": 40.41498327528509,
                         "longitude": -3.7037658691406254
                     }

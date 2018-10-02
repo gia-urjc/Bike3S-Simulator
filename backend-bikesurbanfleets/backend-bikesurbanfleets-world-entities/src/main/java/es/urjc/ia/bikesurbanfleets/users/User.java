@@ -156,6 +156,35 @@ public abstract class User implements Entity {
 
     }
     
+    public User(SimulationServices services, GeoPoint finalDestination) {
+        this.id = idGenerator.next();
+
+        this.position = null;
+        this.bike = null;
+
+        // random velocity between 3km/h and 7km/h in m/s
+        this.walkingVelocity = SimulationRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
+        // random velocity between 10km/h and 20km/h in m/s
+        this.cyclingVelocity = SimulationRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
+
+        this.reservedBike = false;
+        this.reservedSlot = false;
+        this.destinationStation = null;
+        this.destinationPlace = finalDestination; 
+
+        this.reservation = null;
+        this.memory = new UserMemory(this);
+        this.services = services;
+        this.infraestructure = services.getInfrastructureManager();
+        this.recommendationSystem = services.getRecommendationSystem();
+        this.informationSystem = services.getInformationSystem();
+        this.graph = services.getGraphManager();
+        History.registerEntity(this);
+        this.memory = new UserMemory(this);
+
+    }
+
+
     public GeoPoint getDestinationPlace() {
     	return destinationPlace;
     }

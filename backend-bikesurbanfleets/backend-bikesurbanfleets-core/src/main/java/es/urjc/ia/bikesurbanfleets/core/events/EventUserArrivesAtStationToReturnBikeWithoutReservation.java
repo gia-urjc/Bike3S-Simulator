@@ -31,21 +31,23 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
         List<Event> newEvents = new ArrayList<>();
         try {
             user.setInstant(this.instant);
+            user.setPosition(station.getPosition());
             debugEventLog();
             if(!user.returnBikeWithoutReservationTo(station)) {
                 user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);
-                user.setPosition(station.getPosition());
                 debugEventLog("User can't return bike. Station info: " + station.toString()) ;
                 newEvents = manageSlotReservationDecisionAtOtherStation();
             } else {
                 user.setDestinationPoint(user.getDestinationPlace());
                 user.setDestinationStation(null);
                 GeoRoute route = user.determineRoute();
+                System.out.println("bici: "+user.hasBike());
+                if (!user.hasBike()) {
+                System.out.println("Ruta: "+route); }
                 user.setRoute(route);
                 int arrivalTime = user.timeToReach();
-                System.out.println("user arrival at destination in city: "+arrivalTime);
                 debugEventLog("User returns the bike without reservation. Destination in city: "+user.getDestinationPlace().toString());
-                newEvents.add(new EventUserArrivesAtDestinationInCity(arrivalTime, user));	
+                newEvents.add(new EventUserArrivesAtDestinationInCity(this.instant+arrivalTime, user));	
             }
         }
         catch(Exception e) {
