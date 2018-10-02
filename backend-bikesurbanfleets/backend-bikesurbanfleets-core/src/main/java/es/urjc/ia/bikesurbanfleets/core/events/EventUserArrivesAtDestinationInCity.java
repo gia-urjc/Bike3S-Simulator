@@ -17,6 +17,7 @@ public class EventUserArrivesAtDestinationInCity extends EventUser {
 	@Override
 	public List<Event> execute() {
 		debugEventLog("User arrives at his destination in city");
+		user.setInstant(this.instant);
 		user.setPosition(user.getDestinationPlace());
 		user.leaveSystem();
   debugClose(user, user.getId());

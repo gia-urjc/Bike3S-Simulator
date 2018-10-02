@@ -57,7 +57,8 @@ export class UserTimeAtSystem implements SystemInfo  {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value) {
                         let appearanceTime: number = value.time;
-                        value.time = timeEntry.time - appearance;
+                        value.time = timeEntry.time - appearanceTime;
+                        console.log("leave time: "+timeEntry.time);
                     }
                     break;
                 }

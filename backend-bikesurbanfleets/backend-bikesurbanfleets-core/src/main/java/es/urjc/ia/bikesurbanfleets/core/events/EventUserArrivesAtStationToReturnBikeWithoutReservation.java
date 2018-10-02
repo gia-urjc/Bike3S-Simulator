@@ -43,7 +43,8 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
                 GeoRoute route = user.determineRoute();
                 user.setRoute(route);
                 int arrivalTime = user.timeToReach();
-                debugEventLog("User returns the bike. Station info: " + station.toString());
+                System.out.println("user arrival at destination in city: "+arrivalTime);
+                debugEventLog("User returns the bike without reservation. Destination in city: "+user.getDestinationPlace().toString());
                 newEvents.add(new EventUserArrivesAtDestinationInCity(arrivalTime, user));	
             }
         }

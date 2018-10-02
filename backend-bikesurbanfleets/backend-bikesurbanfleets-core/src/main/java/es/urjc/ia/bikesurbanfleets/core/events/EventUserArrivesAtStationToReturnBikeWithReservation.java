@@ -46,14 +46,15 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
             GeoRoute route = user.determineRoute();
             user.setRoute(route);
             int arrivalTime = user.timeToReach();
-            debugEventLog("User returns the bike");
+            System.out.println("user arrival at destination in city: "+arrivalTime);
+            debugEventLog("User returns the bike with reservation. Destination in city: "+user.getDestinationPlace().toString());
             newEvents.add(new EventUserArrivesAtDestinationInCity(arrivalTime, user));
         
         }
         catch(Exception e) {
             exceptionTreatment(e);
         }
-        return new ArrayList();
+        return newEvents;
     }
 
     @Override
