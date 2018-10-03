@@ -38,11 +38,7 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
 
 	private RecommendationParameters parameters;
 
-	/**
-	 * It indicates the number of stations to consider when choosing one randomly in
-	 * recommendation by ratio between available resources and station capacity.
-	 */
-	private final int N_STATIONS = 5;
+
 	/**
 	 * It contains several comparators to sort stations.
 	 */

@@ -16,6 +16,11 @@ public abstract class RecommendationSystem {
    protected InfraestructureManager infraestructureManager;
    
    /**
+    * It  is the maximum distance at which recommended stations can b e
+    */
+   protected double distance;
+   
+   /**
     * It filters stations which have not available bikes.  
     * @return a list of stations with available bikes.
     */
@@ -34,9 +39,21 @@ public abstract class RecommendationSystem {
    }
    
  
-   public RecommendationSystem(InfraestructureManager infraestructureManager) {
-	   this.infraestructureManager = infraestructureManager; 	
+   public RecommendationSystem(InfraestructureManager infraestructureManager, double distance) {
+	   this.infraestructureManager = infraestructureManager;
+	   this.distance = distance;
    }
+   
+   public RecommendationSystem(InfraestructureManager infraestructureManager) {
+	   this.infraestructureManager = infraestructureManager;
+	   this.distance = 700;
+   }
+   
+   public double getDistance() {
+	   return distance;
+   }
+   
+   
 	
 	public abstract List<Recommendation> recommendStationToRentBike(GeoPoint	point);
  	public abstract List<Recommendation> recommendStationToReturnBike(GeoPoint point);

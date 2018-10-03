@@ -13,9 +13,8 @@ import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
-
-@RecommendationSystemType("SURROUNDING_STATIONS")
-public class RecommendationSystemBySurroundingStationsWithIncentives extends RecommendationSystem {
+@RecommendationSystemType("SURROUNDING_STATIONS_COMPLEX_INCENTIVES")
+public class RecommendationSystemBySurroundingStationsWithComplexIncentives extends RecommendationSystem {
 
 	@RecommendationSystemParameters
 	public class RecommendationParameters {
@@ -28,13 +27,13 @@ public class RecommendationSystemBySurroundingStationsWithIncentives extends Rec
 	private RecommendationParameters parameters;
 	private StationComparator stationComparator;
 	
-	public RecommendationSystemBySurroundingStationsWithIncentives(InfraestructureManager infraestructure, StationComparator stationComparator) {
+ public RecommendationSystemBySurroundingStationsWithComplexIncentives(InfraestructureManager infraestructure, StationComparator stationComparator) {
 		super(infraestructure);
 		this.parameters = new RecommendationParameters();
 		this.stationComparator = stationComparator;
 	}
 	
-	public RecommendationSystemBySurroundingStationsWithIncentives(InfraestructureManager infraestructure, StationComparator stationComparator,
+	public RecommendationSystemBySurroundingStationsWithComplexIncentives(InfraestructureManager infraestructure, StationComparator stationComparator,
 			RecommendationParameters parameters) {
 		super(infraestructure);
 		this.parameters = parameters;
@@ -132,7 +131,7 @@ public class RecommendationSystemBySurroundingStationsWithIncentives extends Rec
 	private double extra(StationQuality nearestStationQuality, StationQuality recommendedStationQuality) {
 		double quality1 = nearestStationQuality.getQuality();
 		double quality2 = recommendedStationQuality.getQuality();
-		return (quality2 - quality1)*EXTRA;
+		return Math.abs(quality2 - quality1)*EXTRA;
 	}
 	
 	private double compensation(GeoPoint point, Station nearestStation, Station recommendedStation) {

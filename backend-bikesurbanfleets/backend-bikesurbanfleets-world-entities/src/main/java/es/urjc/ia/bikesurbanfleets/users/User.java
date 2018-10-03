@@ -8,7 +8,6 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationExce
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
-import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
@@ -390,8 +389,7 @@ public abstract class User implements Entity {
 
     private List<GeoRoute> createRouteFromStationToSame(List<GeoRoute> geoRoute, String vehicle, boolean calcNewRandom) throws Exception {
         
-        SimulationRandom random = SimulationRandom.getGeneralInstance();
-        GeoPoint auxiliarPoint = null;
+                GeoPoint auxiliarPoint = null;
         double RADIO = 1000;
         
         if(calcNewRandom) {
