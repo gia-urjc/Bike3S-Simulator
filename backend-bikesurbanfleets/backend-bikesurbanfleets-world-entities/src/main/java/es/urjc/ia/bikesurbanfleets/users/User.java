@@ -22,6 +22,7 @@ import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -442,7 +443,13 @@ public abstract class User implements Entity {
             }
             return newRoutes;
         }
-        return graph.obtainAllRoutesBetween(this.position, destinationPoint, vehicle);
+        try {
+            return graph.obtainAllRoutesBetween(this.position, destinationPoint, vehicle);
+        }
+        catch(Exception e) {
+            List<GeoPoint> patchedRoute = new ArrayList<>(Arrays.asList(this.position, destinationPoint)); 
+            return new ArrayList<>(Arrays.asList(new GeoRoute(patchedRoute)));
+        }
     }
 
     public GeoPoint reachedPointUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {

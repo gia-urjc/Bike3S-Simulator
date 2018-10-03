@@ -123,6 +123,11 @@ public class InformationSystem {
         		.stream().sorted(stationComparator.byDistance(point)).collect(Collectors.toList());
     }
 
+    public List<Station> getStationsBikeOrderedByDistanceNoFiltered(GeoPoint point) {
+        List<Station> stations = infraestructureManager.consultStations();
+        return stations.stream().sorted(stationComparator.byDistance(point)).collect(Collectors.toList());
+    }
+
     public List<Station> getStationsToReturnBikeOrderedByDistance(GeoPoint point) {
     	List<Station> stations = infraestructureManager.consultStations();
      return validStationInfosToReturnBike(stations)

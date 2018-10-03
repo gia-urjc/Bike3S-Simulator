@@ -93,6 +93,7 @@ public class UserCommuter extends User {
     public UserCommuter(Parameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
+        this.destinationPlace = parameters.destinationPlace;
         if(parameters.cyclingVelocity != 0) {
             this.cyclingVelocity = parameters.cyclingVelocity;
         }

@@ -7,7 +7,7 @@ package es.urjc.ia.bikesurbanfleets.common.util;
  */
 public class IdGenerator {
 
-    private int counter = 0;
+    private int counter = 1;
 
     public int next() {
         return counter++;

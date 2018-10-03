@@ -84,6 +84,7 @@ public class UserObedient extends User {
     public UserObedient(Parameters parameters, SimulationServices services) {
         super(services, parameters.destinationPlace);
         this.parameters = parameters;
+        this.destinationPlace = parameters.destinationPlace;
     }
     
     @Override
@@ -107,7 +108,7 @@ public class UserObedient extends User {
         List<Station> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.availableBikes() == 0);
-        if (!recommendedStations.isEmpty()) {
+        if(!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
         }
         return destination;
@@ -117,11 +118,9 @@ public class UserObedient extends User {
     public Station determineStationToReturnBike() {
         Station destination = null;
         GeoPoint destinationPlace = parameters.destinationPlace;
-        if(destinationPlace == null) {
-            SimulationRandom random = SimulationRandom.getGeneralInstance();
-            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
-        }
+        System.out.println(destinationPlace);
         List<Station> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace);
+        System.out.println("TRAZA!!!");
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
         }
@@ -156,19 +155,19 @@ public class UserObedient extends User {
     @Override
     public boolean decidesToReturnBike() {
         int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return percentage < parameters.bikeReturnPercentage ? true : false;
+        return parameters.bikeReturnPercentage < percentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
         int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return percentage < parameters.reservationTimeoutPercentage ? true : false;
+        return parameters.reservationTimeoutPercentage < percentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
         int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return percentage < parameters.failedReservationPercentage ? true : false;
+        return parameters.failedReservationPercentage < percentage ? true : false;
     }
     
     @Override

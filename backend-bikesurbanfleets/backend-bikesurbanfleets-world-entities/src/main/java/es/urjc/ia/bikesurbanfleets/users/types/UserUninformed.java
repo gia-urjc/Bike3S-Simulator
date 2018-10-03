@@ -45,6 +45,7 @@ public class UserUninformed extends User {
     public UserUninformed(Parameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
+        this.destinationPlace = parameters.destinationPlace;
     }
 
     @Override
@@ -66,16 +67,12 @@ public class UserUninformed extends User {
     public Station determineStationToRentBike() {
         Station destination = null;
         List<Station> stations = infraestructure.consultStations();
-        List<Station> triedStations = getMemory().getStationsWithBikeReservationAttempts(getInstant());
-        stations.removeAll(triedStations);
+        List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts();
+        List<Station> finalStations = informationSystem.getStationsBikeOrderedByDistanceNoFiltered(this.getPosition());
+        finalStations.removeAll(triedStations);
 
-        //Remove station if the user is in this station
-        stations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
-        
-        Comparator<Station> criteria = services.getStationComparator().byDistance(this.getPosition());
-        stations.stream().sorted(criteria).collect(Collectors.toList());
-        if (!stations.isEmpty()) {
-        	destination = stations.get(0);
+        if (!finalStations.isEmpty()) {
+        	destination = finalStations.get(0);
         }
         return destination;
     }
@@ -84,8 +81,7 @@ public class UserUninformed extends User {
     public Station determineStationToReturnBike() {
         Station destination = null;
         List<Station> stations = infraestructure.consultStations();
-        //List<Station> triedStations = getMemory().getStationsWithSlotReservationAttempts(getInstant());
-        //stations.removeAll(triedStations);
+        List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
 
         //Remove station if the user is in this station
         System.out.println("List Size" + stations.size());
@@ -94,10 +90,10 @@ public class UserUninformed extends User {
             SimulationRandom random = SimulationRandom.getGeneralInstance();
             destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
         }
-        Comparator<Station> criteria = services.getStationComparator().byDistance(destinationPlace);
-        stations.stream().sorted(criteria).collect(Collectors.toList());
-        if (!stations.isEmpty()) {
-        	destination = stations.get(0);
+        List<Station> finalStations = informationSystem.getStationsBikeOrderedByDistanceNoFiltered(this.destinationPlace);
+        finalStations.removeAll(triedStations);
+        if (!finalStations.isEmpty()) {
+        	destination = finalStations.get(0);
         }
         return destination;
     }

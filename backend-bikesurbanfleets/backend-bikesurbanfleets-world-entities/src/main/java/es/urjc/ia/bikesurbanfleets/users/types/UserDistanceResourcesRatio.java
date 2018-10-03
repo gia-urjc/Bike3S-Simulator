@@ -98,6 +98,7 @@ public class UserDistanceResourcesRatio extends User {
     public UserDistanceResourcesRatio(Parameters parameters, SimulationServices services) {
         super(services);
         this.parameters = parameters;
+        this.destinationPlace = parameters.destinationPlace;
     }
     
     @Override

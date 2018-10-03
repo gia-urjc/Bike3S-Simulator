@@ -37,6 +37,7 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
             debugEventLog();
             if (user.removeBikeWithoutReservationFrom(station)) {
                 debugEventLog("User removes Bike without reservation");
+                System.out.println(user.decidesToReturnBike());
                 if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
                     debugEventLog("User decides to return bike to other station");
                     newEvents = manageSlotReservationDecisionAtOtherStation();
