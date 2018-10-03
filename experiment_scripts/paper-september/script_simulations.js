@@ -125,6 +125,9 @@ async function main() {
     //await beforeScript();
     let configurations = lodash.without(fs.readdirSync(rootPath.configurationFiles()), '.DS_Store');
     for(conf of configurations) {
+        if(conf.startsWith('nope_')) {
+            continue;
+        }
         let globalConf = path.join(rootPath.configurationFiles(), conf + "/global-configuration.json");
         let stationsConf = path.join(rootPath.configurationFiles(), conf + "/stations_configuration.json");
         let usersConf = path.join(rootPath.configurationFiles(), conf + "/users_configuration.json");
@@ -165,11 +168,12 @@ async function main() {
             newUsersConf = { initialUsers : []};
             for(user of usersConfJson) {
                 let newUser = user;
-                if(userType === "USER_INFORMED" || userType === "USER_OBEDIENT") {
+                if(userType === "USER_INFORMED") {
                     newUser.userType.parameters = {
-                        minReservationAttempts: 0,
-                        minReservationAttempts: 0,
-                        minRentalAttempts: 3
+                        minReservationAttempts: 3,
+                        minReservationAttempts: 3,
+                        minRentalAttempts: 3,
+                        destinationPlace: user.destinationPlace
                     }
                 }
                 newUser.userType.typeName = userType;
