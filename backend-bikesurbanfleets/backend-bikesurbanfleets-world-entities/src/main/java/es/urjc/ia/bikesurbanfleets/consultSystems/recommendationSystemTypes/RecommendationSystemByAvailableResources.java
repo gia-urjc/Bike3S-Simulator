@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("AVAILABLE_RESOURCES_RATIO_PAPER")
-public class RecommendationSystemByAvailableResourcesRatioPaper extends RecommendationSystem {
+@RecommendationSystemType("AVAILABLE_RESOURCES")
+public class RecommendationSystemByAvailableResources extends RecommendationSystem {
 
 	@RecommendationSystemParameters
 	public class RecommendationParameters {
@@ -48,14 +48,14 @@ public class RecommendationSystemByAvailableResourcesRatioPaper extends Recommen
 	 */
 	private StationComparator stationComparator;
 
-	public RecommendationSystemByAvailableResourcesRatioPaper(InfraestructureManager infraestructureManager,
+	public RecommendationSystemByAvailableResources(InfraestructureManager infraestructureManager,
 			StationComparator stationComparator) {
 		super(infraestructureManager);
 		this.parameters = new RecommendationParameters();
 		this.stationComparator = stationComparator;
 	}
 
-	public RecommendationSystemByAvailableResourcesRatioPaper(InfraestructureManager infraestructureManager, StationComparator stationComparator,
+	public RecommendationSystemByAvailableResources(InfraestructureManager infraestructureManager, StationComparator stationComparator,
 														 RecommendationParameters parameters) {
 		super(infraestructureManager);
 		this.parameters = parameters;
@@ -71,9 +71,8 @@ public class RecommendationSystemByAvailableResourcesRatioPaper extends Recommen
 				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance).collect(Collectors.toList());
 		
 		if (!stations.isEmpty()) {
-		Comparator<Station> byBikesRatio = stationComparator.byBikesCapacityRatio();
-		temp = stations.stream().sorted(byBikesRatio).collect(Collectors.toList());
-		temp.forEach(s -> System.out.println("Station "+s.getId()+": "+(double)s.availableBikes()/s.getCapacity()));
+		Comparator<Station> byBikes = stationComparator.byAvailableBikes();
+		temp = stations.stream().sorted(byBikes).collect(Collectors.toList());
 		result = temp.stream().map(station -> new Recommendation(station, 0.0)).collect(Collectors.toList());
 	}
 		return result;
@@ -85,9 +84,8 @@ public class RecommendationSystemByAvailableResourcesRatioPaper extends Recommen
 		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance).collect(Collectors.toList());
 		
 		if (!stations.isEmpty()) {
-		Comparator<Station> bySlotsRatio = stationComparator.bySlotsCapacityRatio();
-		temp = stations.stream().sorted(bySlotsRatio).collect(Collectors.toList());
-		temp.forEach(s -> System.out.println("Station "+s.getId()+": "+s.availableBikes()/s.getCapacity()));
+		Comparator<Station> bySlots = stationComparator.byAvailableSlots();
+		temp = stations.stream().sorted(bySlots).collect(Collectors.toList());
 		result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
 		}
 

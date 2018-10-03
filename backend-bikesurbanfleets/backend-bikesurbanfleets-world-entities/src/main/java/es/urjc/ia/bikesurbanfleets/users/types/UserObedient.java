@@ -117,18 +117,17 @@ public class UserObedient extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
-        //Remove station if the user is in this station
-        recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
-
-        GeoPoint destinationPlace = parameters.destinationPlace;
+                
         if(destinationPlace == null) {
             SimulationRandom random = SimulationRandom.getGeneralInstance();
             destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
         }
-        List<Station> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace);
-        if destination {
-        	destination = recommendedStations.get(0);
+        
+        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace);
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
+        if (!recommendedStations.isEmpty()) {
+        	destination = recommendedStations.get(0).getStation();
         }
         return destination;
     }

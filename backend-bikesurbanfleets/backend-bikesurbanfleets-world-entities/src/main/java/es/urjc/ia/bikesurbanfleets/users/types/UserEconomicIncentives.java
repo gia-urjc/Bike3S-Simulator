@@ -10,7 +10,9 @@ import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a user who always follows the first system recommendations i. e., that 
@@ -69,11 +71,16 @@ public class UserEconomicIncentives extends User {
          * It determines if the user will make a reservation or not.
          */
         private boolean willReserve;
+        
+        private double maxDistance = 700; 
                 
         private Parameters() {}
 
     }
 
+    private final int COMPENSATION = 10;   // 1 incentive unit  per 10 meters
+    private final int  EXTRA = 10;   // 20% of compensation
+    
     private Parameters parameters;
     
     public UserEconomicIncentives(Parameters parameters, SimulationServices services) {
@@ -102,9 +109,21 @@ public class UserEconomicIncentives extends User {
         List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
         //Remove station if the user is in this station
         recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()) && recommendation.getStation().availableBikes() == 0);
-        if (!recommendedStations.isEmpty()) {
-        	// TODO: evaluate incentive
-            destination = recommendedStations.get(0).getStation();
+        		if(!recommendedStations.isEmpty()) {
+        			List<Station> stations = informationSystem.getStations();
+        			Station nearestStation = nearestStationTo(stations, this.getPosition());
+        			int i = 0;
+        			while (destination == null && i < recommendedStations.size()) {
+        					Station station = recommendedStations.get(i).getStation();
+        					double incentive = recommendedStations.get(i).getIncentive();
+        					double quality = qualityToRent(stations, station);
+        					double compensation = compensation(this.getPosition(), nearestStation, station);
+        					double extra = quality*EXTRA/100;
+        					if (incentive >= (compensation+extra)) {
+        							destination = recommendedStations.get(i).getStation();
+        					}
+            i++;
+        			}
         }
         return destination;
     }
@@ -116,8 +135,21 @@ public class UserEconomicIncentives extends User {
         //Remove station if the user is in this station
         recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
-        	// TODO: evaluate incentives
-            destination = recommendedStations.get(0).getStation();
+									List<Station> stations = informationSystem.getStations();
+									Station nearestStation = nearestStationTo(stations, this.getDestinationPlace());
+									int i = 0;
+									while (destination == null && i < recommendedStations.size()) {
+											Station station = recommendedStations.get(i).getStation();
+											double incentive = recommendedStations.get(i).getIncentive();
+											double quality = qualityToReturn(stations, station);
+											double compensation = compensation(this.getDestinationPlace(), nearestStation, station);
+											double extra = quality*EXTRA/100;
+											if (incentive >= (compensation+extra)) {
+													destination = recommendedStations.get(i).getStation();
+											}
+						    i++;
+									}
+        	 
         }
         return destination;
     }
@@ -178,5 +210,43 @@ public class UserEconomicIncentives extends User {
                 "parameters=" + parameters +
                 '}';
     }
+
+    private double compensation(GeoPoint point, Station nearestStation, Station recommendedStation) {
+    	double distanceToNearestStation = nearestStation.getPosition().distanceTo(point);
+    	double distanceToRecommendedStation  = recommendedStation.getPosition().distanceTo(point);
+    	return (distanceToRecommendedStation - distanceToNearestStation)/COMPENSATION;
+    }
+    
+    private double qualityToRent(List<Station> stations, Station station) {
+		double summation = 0;
+		if (!stations.isEmpty()) {
+			double factor, multiplication;
+			for (Station s: stations) {
+				factor = (parameters.maxDistance - station.getPosition().distanceTo(s.getPosition()))/parameters.maxDistance;
+				multiplication = s.availableBikes()*factor;
+				summation += multiplication; 
+			}
+		}
+		return summation;
+	}
+	
+	private double qualityToReturn(List<Station> stations, Station station) {
+		double summation = 0;
+		if (!stations.isEmpty()) {
+			double factor, multiplication;
+			for (Station s: stations) {
+				factor = (parameters.maxDistance - station.getPosition().distanceTo(s.getPosition()))/parameters.maxDistance;
+				multiplication = s.availableSlots()*factor;
+				summation += multiplication; 
+			}
+		}
+		return summation;
+	}
+
+	private Station nearestStationTo(List<Station> stations, GeoPoint point) {
+		Comparator<Station> byDistance = services.getStationComparator().byDistance(point);
+		List<Station> orderedStations = stations.stream().sorted(byDistance).collect(Collectors.toList());
+		return orderedStations.get(0);
+	}
 
 }
