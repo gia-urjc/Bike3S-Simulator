@@ -129,5 +129,9 @@ public class InformationSystem {
         		.stream().sorted(stationComparator.byDistance(point)).collect(Collectors.toList());
     }
     
+    public List<Station> getStations() {
+    	return infraestructureManager.consultStations(); 
+    }
+    
     
 }

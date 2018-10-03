@@ -577,6 +577,13 @@ public abstract class User implements Entity {
         result += " | Actual velocity: " + getAverageVelocity();
         result +=     "| Has reserved bike: "+hasReservedBike();
         result += " | Has reserved slot: "+hasReservedSlot()+"\n";
+        if (destinationStation != null) {
+        	result += "| Destination station: "+destinationStation.getId();
+        }
+        else {
+        	result += "| Destination station: "+null;
+        }
+        	
         return result;
     }
 }

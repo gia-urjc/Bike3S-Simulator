@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.Recommendation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -37,8 +38,8 @@ public abstract class RecommendationSystem {
 	   this.infraestructureManager = infraestructureManager; 	
    }
 	
-	public abstract List<Station> recommendStationToRentBike(GeoPoint	point);
- 	public abstract List<Station> recommendStationToReturnBike(GeoPoint point);
+	public abstract List<Recommendation> recommendStationToRentBike(GeoPoint	point);
+ 	public abstract List<Recommendation> recommendStationToReturnBike(GeoPoint point);
 
 
 }
