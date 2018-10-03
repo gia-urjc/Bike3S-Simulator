@@ -44,7 +44,7 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
 		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
 				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance)
 				.sorted(byBikesRatio).collect(Collectors.toList());
-		List<StationQuality> qualities = new ArrayList();
+		List<StationQuality> qualities = new ArrayList<>();
 		
 		int numStations = stations.size() >= 5 ? Math.floorDiv(stations.size(), 5) : stations.size();
 		for(int i=0; i<numStations; i++) {
@@ -63,7 +63,7 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
 		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream()
 				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance)
 				.sorted(bySlotsRatio).collect(Collectors.toList());
-		List<StationQuality> qualities = new ArrayList();
+		List<StationQuality> qualities = new ArrayList<>();
 
 		int numStations = stations.size() >= 9 ? Math.floorDiv(stations.size(), 3) : stations.size();
 		for(int i=0; i<numStations; i++) {

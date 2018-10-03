@@ -120,7 +120,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 	public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
 		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations());
 		List<Station> temp;
-		List<Recommendation> result = new ArrayList();
+		List<Recommendation> result = new ArrayList<>();
 		if (!stations.isEmpty()) {
 		List<Station> nearer = nearerStations(point, stations);
 		List<Station> farther = fartherStations(point, stations);
@@ -130,7 +130,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 
 		nearer.addAll(farther);
 		temp = rebalanceWhenRenting(nearer);
-result = temp.stream().map(station -> new Recommendation(station 0.0)).collect(Collectors.toList());
+result = temp.stream().map(station -> new Recommendation(station, 0.0)).collect(Collectors.toList());
 		}
 		return result;
 	}
@@ -138,7 +138,7 @@ result = temp.stream().map(station -> new Recommendation(station 0.0)).collect(C
 	public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
 		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations());
 		List<Station> temp;
-		List<Recommendation> result = new ArrayList();
+		List<Recommendation> result = new ArrayList<>();
 		if (!stations.isEmpty()) {
 		List<Station> nearer = nearerStations(point, stations);
 		List<Station> farther = fartherStations(point, stations);

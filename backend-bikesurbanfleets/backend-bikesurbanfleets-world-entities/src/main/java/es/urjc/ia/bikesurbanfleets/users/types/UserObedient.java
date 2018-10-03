@@ -101,7 +101,7 @@ public class UserObedient extends User {
         Station destination = null;
         List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
         //Remove station if the user is in this station
-        recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
+        recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()) && recommendation.getStation().availableBikes() == 0);
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0).getStation();
         }
@@ -115,7 +115,7 @@ public class UserObedient extends User {
         //Remove station if the user is in this station
         recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
-            destination = recommendedStations.get(0);
+            destination = recommendedStations.get(0).getStation();
         }
         return destination;
     }

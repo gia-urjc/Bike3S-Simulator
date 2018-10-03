@@ -101,7 +101,7 @@ public class UserEconomicIncentives extends User {
         Station destination = null;
         List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
         //Remove station if the user is in this station
-        recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
+        recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()) && recommendation.getStation().availableBikes() == 0);
         if (!recommendedStations.isEmpty()) {
         	// TODO: evaluate incentive
             destination = recommendedStations.get(0).getStation();
@@ -117,7 +117,7 @@ public class UserEconomicIncentives extends User {
         recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
         	// TODO: evaluate incentives
-            destination = recommendedStations.get(0);
+            destination = recommendedStations.get(0).getStation();
         }
         return destination;
     }

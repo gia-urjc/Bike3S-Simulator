@@ -74,7 +74,7 @@ public class UserMemory {
         this.stationsWithReturnFailedAttemptss = new ArrayList<>();
         this.reservations = new ArrayList<>();
         this.routesTraveledByBike = new ArrayList<>();
-        this.walkedRoutes = new ArrayList();
+        this.walkedRoutes = new ArrayList<>();
         this.distanceTraveledByBike = 0;
         this.walkedDistance = 0;
     }

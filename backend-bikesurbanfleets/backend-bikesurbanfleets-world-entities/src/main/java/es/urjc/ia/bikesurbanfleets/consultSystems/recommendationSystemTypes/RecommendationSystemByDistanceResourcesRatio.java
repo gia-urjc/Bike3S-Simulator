@@ -54,12 +54,12 @@ public class RecommendationSystemByDistanceResourcesRatio extends Recommendation
 	public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
 		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations());
 	 List<Station> temp;
-	 List<Recommendation> result = new ArrayList();
+	 List<Recommendation> result = new ArrayList<>();
 		if (!stations.isEmpty()) {
 			Comparator<Station> byDistanceBikesRatio = stationComparator.byProportionBetweenDistanceAndBikes(point);
 			temp = stations.stream().filter( station -> station.getPosition().distanceTo(point) <= parameters.maxDistance)
 					.sorted(byDistanceBikesRatio).collect(Collectors.toList());
-			result = temp.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), 0.0)).collect(Collectors.toList());
+			result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
 		}
 		return result;	
 	}
@@ -73,7 +73,7 @@ public class RecommendationSystemByDistanceResourcesRatio extends Recommendation
 			Comparator<Station> byDistanceSlotsRatio = stationComparator.byProportionBetweenDistanceAndSlots(point);
 			temp = stations.stream().filter( station  -> station.getPosition().distanceTo(point) <= parameters.maxDistance)
 					.sorted(byDistanceSlotsRatio).collect(Collectors.toList());
-			result = temp.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), 0.0)).collect(Collectors.toList());
+			result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
 		}
 		return result;
 }

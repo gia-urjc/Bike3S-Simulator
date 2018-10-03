@@ -62,64 +62,11 @@ public class RecommendationSystemByAvailableResourcesRatioPaper extends Recommen
 		this.stationComparator = stationComparator;
 	}
 
-	private List<Station> fartherStations(GeoPoint point, List<Station> stations) {
-		return stations.stream().filter(station -> station.getPosition().distanceTo(point) > parameters.maxDistance)
-				.collect(Collectors.toList());
-	}
-
-	private List<Station> nearerStations(GeoPoint point, List<Station> stations) {
-		return stations.stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance)
-				.collect(Collectors.toList());
-	}
-
-	private List<Station> rebalanceWhenRenting(List<Station> stations) {
-		double ratioSum = 0.0;
-		int i;
-		int n_stations = stations.size() > N_STATIONS ? N_STATIONS : stations.size();
-		for (i = 0; i < n_stations; i++) {
-			ratioSum += stations.get(i).availableBikes() / stations.get(i).getCapacity();
-		}
-
-		double random = infraestructureManager.getRandom().nextDouble(0, ratioSum);
-		double ratio;
-		for (i = 0; i < n_stations; i++) {
-			ratio = stations.get(i).availableBikes() / stations.get(i).getCapacity();
-			if (random <= ratio) {
-				break;
-			}
-			random -= ratio;
-		}
-		Station selected = stations.remove(i);
-		stations.add(0, selected);
-		return stations;
-	}
-
-	private List<Station> rebalanceWhenReturning(List<Station> stations) {
-		double ratioSum = 0.0;
-		int i;
-		int n_stations = stations.size() > N_STATIONS ? N_STATIONS : stations.size();
-		for (i = 0; i < n_stations; i++) {
-			ratioSum += stations.get(i).availableSlots() / stations.get(i).getCapacity();
-		}
-
-		double random = infraestructureManager.getRandom().nextDouble(0, ratioSum);
-		double ratio;
-		for (i = 0; i < n_stations; i++) {
-			ratio = stations.get(i).availableSlots() / stations.get(i).getCapacity();
-			if (random <= ratio) {
-				break;
-			}
-			random -= ratio;
-		}
-		Station selected = stations.remove(i);
-		stations.add(0, selected);
-		return stations;
-	}
 
 	@Override
 	public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
 		List<Station> temp;
-		List<Recommendation> result = new ArrayList();
+		List<Recommendation> result = new ArrayList<>();
 		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
 				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance).collect(Collectors.toList());
 		
@@ -133,7 +80,7 @@ public class RecommendationSystemByAvailableResourcesRatioPaper extends Recommen
 
 	public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
 		List<Station> temp;
-		List<Recommendation> result = new ArrayList();
+		List<Recommendation> result = new ArrayList<>();
 		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance).collect(Collectors.toList());
 		
 		if (!stations.isEmpty()) {

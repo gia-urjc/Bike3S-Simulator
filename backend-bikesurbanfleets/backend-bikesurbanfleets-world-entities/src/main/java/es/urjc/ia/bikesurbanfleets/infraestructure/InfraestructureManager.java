@@ -77,7 +77,7 @@ public class InfraestructureManager {
     }
 
     public List<Station> consultStations() {
-        return new ArrayList(stations);
+        return new ArrayList<Station>(stations);
     }
     
     public List<Bike> consultBikes() {

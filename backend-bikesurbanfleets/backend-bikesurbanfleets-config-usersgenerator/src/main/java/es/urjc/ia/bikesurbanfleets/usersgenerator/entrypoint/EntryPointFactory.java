@@ -2,9 +2,6 @@ package es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.implementations.EntryPointPoisson;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.implementations.EntryPointSingle;
 import org.reflections.Reflections;
 
 import java.util.Set;
