@@ -165,6 +165,13 @@ async function main() {
             newUsersConf = { initialUsers : []};
             for(user of usersConfJson) {
                 let newUser = user;
+                if(userType === "USER_INFORMED" || userType === "USER_OBEDIENT") {
+                    newUser.userType.parameters = {
+                        minReservationAttempts: 0,
+                        minReservationAttempts: 0,
+                        minRentalAttempts: 3
+                    }
+                }
                 newUser.userType.typeName = userType;
                 newUsersConf.initialUsers.push(newUser);
             }

@@ -28,6 +28,12 @@ public class UserObedient extends User {
 
     @UserParameters
     public class Parameters {
+
+        /**
+         *  User destination place
+         */
+        private GeoPoint destinationPlace;
+
         /**
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
@@ -77,7 +83,7 @@ public class UserObedient extends User {
     private Parameters parameters;
     
     public UserObedient(Parameters parameters, SimulationServices services) {
-        super(services);
+        super(services, parameters.destinationPlace);
         this.parameters = parameters;
     }
     
@@ -114,8 +120,15 @@ public class UserObedient extends User {
         List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
         //Remove station if the user is in this station
         recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
-        if (!recommendedStations.isEmpty()) {
-            destination = recommendedStations.get(0).getStation();
+
+        GeoPoint destinationPlace = parameters.destinationPlace;
+        if(destinationPlace == null) {
+            SimulationRandom random = SimulationRandom.getGeneralInstance();
+            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
+        }
+        List<Station> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace);
+        if destination {
+        	destination = recommendedStations.get(0);
         }
         return destination;
     }
@@ -172,7 +185,7 @@ public class UserObedient extends User {
 
     @Override
     public String toString() {
-        return super.toString() + "UserDistanceRestriction{" +
+        return super.toString() + "UserObedient{" +
                 "parameters=" + parameters +
                 '}';
     }

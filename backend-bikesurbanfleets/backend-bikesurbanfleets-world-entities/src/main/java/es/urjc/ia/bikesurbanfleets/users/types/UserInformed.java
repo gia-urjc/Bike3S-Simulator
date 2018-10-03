@@ -27,6 +27,11 @@ public class UserInformed extends User {
     public class Parameters {
 
         /**
+         * User destination place
+         */
+        private GeoPoint destinationPlace;
+
+        /**
          * It is the maximum time in seconds until which the user will decide to continue walking
          * or cycling towards the previously chosen station witohout making a new reservation
          * after a reservation timeout event has happened.
@@ -140,7 +145,12 @@ public class UserInformed extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> recommendedStations = informationSystem.getStationsToReturnBikeOrderedByDistance(this.getPosition());
+        GeoPoint destinationPlace = parameters.destinationPlace;
+        if(destinationPlace == null) {
+            SimulationRandom random = SimulationRandom.getGeneralInstance();
+            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
+        }
+        List<Station> recommendedStations = informationSystem.getStationsToReturnBikeOrderedByDistance(destinationPlace);
         //Remove station if the user is in this station
         recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {

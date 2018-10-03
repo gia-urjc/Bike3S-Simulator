@@ -100,6 +100,14 @@ public class GeoRoute {
         return newPoint;
     }
 
+    public GeoRoute concatRoute(GeoRoute route) throws GeoRouteCreationException {
+        List<GeoPoint> newPoints = new ArrayList<>();
+        this.points.stream().forEach(point -> newPoints.add(point));
+        route.points.stream().forEach(point -> newPoints.add(point));
+        return new GeoRoute(newPoints);
+
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

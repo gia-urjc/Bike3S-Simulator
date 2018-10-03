@@ -7,6 +7,7 @@ import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.users.User;
 
 import java.util.ArrayList;
 import java.util.Comparator;

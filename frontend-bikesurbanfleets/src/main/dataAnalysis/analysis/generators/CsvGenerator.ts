@@ -125,6 +125,7 @@ export class CsvGenerator {
     }
     
     private async initEmptyStationInfo(info: Map<string, SystemInfo>): Promise<void> {
+        this.emptyStationTitles[0] = 'id';
         let emptyStations: SystemInfo | undefined = info.get(EmptyStationInfo.name);
         if (emptyStations) {
              EmptyStateData.NAMES.forEach( (name) => {
@@ -132,6 +133,7 @@ export class CsvGenerator {
             });
             emptyStations.getData().absoluteValues.forEach( (v, k) => {
                 let jsonObj: JsonObject = {};
+                jsonObj.id = k;
                 jsonObj[this.emptyStationTitles[0]] = v.intervalsToString();
                 jsonObj[this.emptyStationTitles[1]] = v.totalTime;
                 this.emptyStationData.push(jsonObj);
@@ -191,34 +193,27 @@ export class CsvGenerator {
 	   public async generate(entityInfo: Map<string, SystemInfo>, globalInfo: SystemGlobalInfo, bikesPerStation: BikesPerStationAndTime, stations: Array<Station>, users: Array<User>): Promise<void> {
          await this.initEntityInfoTitles();
            
-         this.initStationInfo(entityInfo, stations).then( () => {
-             this.transformStationJsonToCsv();
-         });
+         await this.initStationInfo(entityInfo, stations);
+         this.transformStationJsonToCsv();
            
-         this.initUserInfo(entityInfo, users).then( () => {
-             this.transformUserJsonToCsv();
-         });
+         await this.initUserInfo(entityInfo, users);
+         this.transformUserJsonToCsv();
            
-         this.initGlobalInfo(globalInfo).then( () => { 
-             this.transformGlobalInfoJsonToCsv();
-         });
+         await this.initGlobalInfo(globalInfo); 
+         this.transformGlobalInfoJsonToCsv();
            
-        this.initEmptyStationInfo(entityInfo).then( () => {
-            this.transformEmptyStationJsonToCsv();
-        });
+         await this.initEmptyStationInfo(entityInfo);
+         this.transformEmptyStationJsonToCsv();
         
-        this.initBikesBalancingInfo(entityInfo).then( () => {
-            this.transformBikesBalanceJsonToCsv();
-        });
+         await this.initBikesBalancingInfo(entityInfo);
+         this.transformBikesBalanceJsonToCsv();
         
-        this.initBikesPerStationInfo(bikesPerStation).then( () => {
-            this.transformBikesPerStationJsonToCsv();
-        });
+         await this.initBikesPerStationInfo(bikesPerStation);
+         this.transformBikesPerStationJsonToCsv();
         
-        this.initUserTimeInfo(entityInfo).then( () => {
-            this.transformUserTimeJsonToCsv();
-        });
-         return;
+         await this.initUserTimeInfo(entityInfo);
+         this.transformUserTimeJsonToCsv();
+        return;
    	}
 
 	private transformStationJsonToCsv(): void {

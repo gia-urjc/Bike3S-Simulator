@@ -49,33 +49,25 @@ export class UserTimeAtSystem implements SystemInfo  {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value) { 
                         value.time = timeEntry.time;
-                        console.log("appearance time of user "+key+": "+value.time);  
                     }
                     break;
                 }
                     
-                case 'EventUserArrivesAtStationToReturnBikeWithReservation': {
+                case 'EventUserArrivesAtDestinationInCity': {
+                    console.log()
+                    console.log("event: "+event.name);
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value) {
                         let appearanceTime: number = value.time;
-                        value.time = timeEntry.time - appearanceTime;          
+                        value.time = timeEntry.time - appearanceTime;
+                        console.log("HOLA");
+                        console.log("appearance time: "+appearanceTime);
+                        console.log("leave time: "+timeEntry.time);
+                        console.log("time at system: "+value.time);
                     }
                     break;
                 }
-                    
-                case 'EventUserArrivesAtStationToReturnBikeWithoutReservation': {
-                    let bike: any = event.changes.users[0].bike.new;
-
-                    if (!bike) {
-                        let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
-                        if (value) {
-                            let appearanceTime: number = value.time;
-                            value.time = timeEntry.time - appearanceTime;
-                        }
-                    }
-                    break;
-                }
-            }
+            }  //for
         }
     }
         
