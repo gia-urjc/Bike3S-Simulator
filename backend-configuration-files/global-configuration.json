@@ -13,7 +13,7 @@
             "longitude": -3.69826
         }
     },
-    "recommendationSystemType": "AVAILABLE_RESOURCES_RATIO",
+    "recommendationSystemType": "SURROUNDING_STATIONS_COMPLEX_INCENTIVES",
     "graphManagerType": "GRAPH_HOPPER",
     "maxDistanceRecommendation": 1000
 }

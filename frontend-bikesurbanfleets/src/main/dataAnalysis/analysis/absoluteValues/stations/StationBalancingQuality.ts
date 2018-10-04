@@ -44,7 +44,7 @@ export class StationBalancingQuality implements SystemInfo {
         let pastTime: number = 0;  // in hours
         for (let i = 0; i < list.length; i++) {
             let stationBikes: BikesPerTime = list[i];
-            individualValue = Math.pow(stationBikes.availableBikes - capacity/2, 2) * (stationBikes.time/3600 - pastTime);
+            individualValue = Math.abs(stationBikes.availableBikes - capacity/2) * (stationBikes.time/3600 - pastTime);
             pastTime = stationBikes.time/3600;
             summation += individualValue;
         }

@@ -1,7 +1,5 @@
 package es.urjc.ia.bikesurbanfleets.core;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
@@ -9,14 +7,11 @@ import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
-import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 

@@ -7,7 +7,7 @@ export const GlobalConfig = new JsonSchema(options, sObject({
     totalSimulationTime: UInt,
     reservationTime: sInteger().min(0).max(rData('1/totalSimulationTime')),
     randomSeed: sInteger().min(1),
-    recommendationSystemType: sEnum('AVAILABLE_RESOURCES_RATIO'),
+    recommendationSystemType: sEnum('AVAILABLE_RESOURCES_RATIO', 'SURROUNDING_STATIONS', 'AVAILABLE_RESOURCES', 'AVAILABLE_RESOURCES_RATIO_PAPER', 'DISTANCE_RESOURCES_RATIO'),
     graphManagerType: sEnum('GRAPH_HOPPER'),
     maxDistanceRecommendation: sNumber().min(0),
     boundingBox: sObject({

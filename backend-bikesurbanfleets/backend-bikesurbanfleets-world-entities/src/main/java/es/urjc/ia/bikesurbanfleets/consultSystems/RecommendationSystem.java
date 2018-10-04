@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.Recommendation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -13,6 +14,11 @@ public abstract class RecommendationSystem {
      * It provides information about the infraestructure state.
      */
    protected InfraestructureManager infraestructureManager;
+   
+   /**
+    * It  is the maximum distance at which recommended stations can b e
+    */
+   protected double distance;
    
    /**
     * It filters stations which have not available bikes.  
@@ -33,12 +39,24 @@ public abstract class RecommendationSystem {
    }
    
  
-   public RecommendationSystem(InfraestructureManager infraestructureManager) {
-	   this.infraestructureManager = infraestructureManager; 	
+   public RecommendationSystem(InfraestructureManager infraestructureManager, double distance) {
+	   this.infraestructureManager = infraestructureManager;
+	   this.distance = distance;
    }
+   
+   public RecommendationSystem(InfraestructureManager infraestructureManager) {
+	   this.infraestructureManager = infraestructureManager;
+	   this.distance = 700;
+   }
+   
+   public double getDistance() {
+	   return distance;
+   }
+   
+   
 	
-	public abstract List<Station> recommendStationToRentBike(GeoPoint	point);
- 	public abstract List<Station> recommendStationToReturnBike(GeoPoint point);
+	public abstract List<Recommendation> recommendStationToRentBike(GeoPoint	point);
+ 	public abstract List<Recommendation> recommendStationToReturnBike(GeoPoint point);
 
 
 }

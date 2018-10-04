@@ -12,7 +12,7 @@
     "debugMode": true,
     "graphManagerType": "GRAPH_HOPPER",
     "maxDistanceRecommendation": 1000,
-    "recommendationSystemType": "AVAILABLE_RESOURCES_RATIO",
+    "recommendationSystemType": "AVAILABLE_RESOURCES",
     "reservationTime": 1000,
     "totalSimulationTime": 86399,
     "randomSeed": 10

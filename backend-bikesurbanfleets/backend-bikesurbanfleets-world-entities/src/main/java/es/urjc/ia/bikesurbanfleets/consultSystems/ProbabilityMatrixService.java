@@ -2,15 +2,12 @@ package es.urjc.ia.bikesurbanfleets.consultSystems;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.reflect.TypeToken;
 
 public class ProbabilityMatrixService {
 
@@ -37,7 +34,6 @@ public class ProbabilityMatrixService {
     }
 
     public Map<Integer, Double> getProbByStationOrigAndInstant(int stationOriginId, int instant) {
-        int instantIndex = instant / 3600;
         return probabilityMatrix.get(stationOriginId).get(instant);
     }
 

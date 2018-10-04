@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.print.attribute.IntegerSyntax;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 

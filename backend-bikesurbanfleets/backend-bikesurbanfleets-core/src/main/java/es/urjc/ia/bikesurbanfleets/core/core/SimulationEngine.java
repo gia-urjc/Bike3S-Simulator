@@ -1,7 +1,5 @@
 package es.urjc.ia.bikesurbanfleets.core.core;
 
-
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import es.urjc.bikesurbanfleets.services.SimulationServiceConfigData;
 import es.urjc.bikesurbanfleets.services.SimulationServices;

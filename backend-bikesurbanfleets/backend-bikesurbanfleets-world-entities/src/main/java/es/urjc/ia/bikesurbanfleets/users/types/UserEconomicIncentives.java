@@ -10,7 +10,9 @@ import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a user who always follows the first system recommendations i. e., that 
@@ -23,17 +25,11 @@ import java.util.List;
  * 
  * @author IAgroup
  */
-@UserType("USER_OBEDIENT")
-public class UserObedient extends User {
+@UserType("USER_ECONOMIC_INCENTIVES")
+public class UserEconomicIncentives extends User {
 
     @UserParameters
     public class Parameters {
-
-        /**
-         *  User destination place
-         */
-        private GeoPoint destinationPlace;
-
         /**
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
@@ -75,17 +71,23 @@ public class UserObedient extends User {
          * It determines if the user will make a reservation or not.
          */
         private boolean willReserve;
+        
+        private GeoPoint destinationPlace;
+        
+
                 
         private Parameters() {}
 
     }
 
+    private final int COMPENSATION = 10;   // 1 incentive unit  per 10 meters
+    private final int  EXTRA = 20;   // 20% of compensation
+    
     private Parameters parameters;
     
-    public UserObedient(Parameters parameters, SimulationServices services) {
+    public UserEconomicIncentives(Parameters parameters, SimulationServices services) {
         super(services, parameters.destinationPlace);
         this.parameters = parameters;
-        this.destinationPlace = parameters.destinationPlace;
     }
     
     @Override
@@ -109,29 +111,61 @@ public class UserObedient extends User {
         List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
         //Remove station if the user is in this station
         recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()) && recommendation.getStation().availableBikes() == 0);
-        if (!recommendedStations.isEmpty()) {
-            destination = recommendedStations.get(0).getStation();
+        List<Station> stations = informationSystem.getStations();
+        Station nearestStation = nearestStationToRent(stations, this.getPosition());
+
+        		if(!recommendedStations.isEmpty()) {
+        			int i = 0;
+        			while (destination == null && i < recommendedStations.size()) {
+        					Station station = recommendedStations.get(i).getStation();
+        					double incentive = recommendedStations.get(i).getIncentive();
+        					double quality = qualityToRent(stations, station);
+        					double compensation = compensation(this.getPosition(), nearestStation, station);
+        					double extra = quality*EXTRA/100;
+        					if (incentive >= (compensation+extra)) {
+        							destination = recommendedStations.get(i).getStation();
+        					}
+        					System.out.println("station "+station.getId());
+        					System.out.println("incentive: "+incentive);
+        					System.out.println("min expected incentive: "+(compensation+extra));
+            i++;
+        			}
         }
+        		if(destination == null) {
+        			destination = nearestStation;
+        		}
         return destination;
     }
 
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-
-                
-        if(destinationPlace == null) {
-            SimulationRandom random = SimulationRandom.getGeneralInstance();
-            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
-        }
-        
-        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace);
+        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
         //Remove station if the user is in this station
         recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
+        List<Station> stations = informationSystem.getStations();
+        Station nearestStation = nearestStationToReturn(stations, this.getDestinationPlace());
         if (!recommendedStations.isEmpty()) {
-        	destination = recommendedStations.get(0).getStation();
+									int i = 0;
+									while (destination == null && i < recommendedStations.size()) {
+											Station station = recommendedStations.get(i).getStation();
+											double incentive = recommendedStations.get(i).getIncentive();
+											double quality = qualityToReturn(stations, station);
+											double compensation = compensation(this.getDestinationPlace(), nearestStation, station);
+											double extra = quality*EXTRA/100;
+											if (incentive >= (compensation+extra)) {
+													destination = recommendedStations.get(i).getStation();
+											}
+											System.out.println("station "+station.getId());
+											System.out.println("incentive: "+incentive);
+											System.out.println("min expected incentive: "+(compensation+extra));											
+						    i++;
+									}
         }
-        return destination;
+        if (destination == null) {
+        		destination  = nearestStation;
+        }
+    	return destination;
     }
     
     @Override
@@ -162,19 +196,19 @@ public class UserObedient extends User {
     @Override
     public boolean decidesToReturnBike() {
         int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return parameters.bikeReturnPercentage < percentage ? true : false;
+        return percentage < parameters.bikeReturnPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
         int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return parameters.reservationTimeoutPercentage < percentage ? true : false;
+        return percentage < parameters.reservationTimeoutPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
         int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return parameters.failedReservationPercentage < percentage ? true : false;
+        return percentage < parameters.failedReservationPercentage ? true : false;
     }
     
     @Override
@@ -186,9 +220,58 @@ public class UserObedient extends User {
 
     @Override
     public String toString() {
-        return super.toString() + "UserObedient{" +
+        return super.toString() + "UserDistanceRestriction{" +
                 "parameters=" + parameters +
                 '}';
     }
+
+    private double compensation(GeoPoint point, Station nearestStation, Station recommendedStation) {
+    	double distanceToNearestStation = nearestStation.getPosition().distanceTo(point);
+    	double distanceToRecommendedStation  = recommendedStation.getPosition().distanceTo(point);
+    	return (distanceToRecommendedStation - distanceToNearestStation)/COMPENSATION;
+    }
+    
+    private double qualityToRent(List<Station> stations, Station station) {
+		double summation = 0;
+		if (!stations.isEmpty()) {
+			double factor, multiplication;
+			double maxDistance = recommendationSystem.getDistance();
+			for (Station s: stations) {
+				factor = (maxDistance - station.getPosition().distanceTo(s.getPosition()))/maxDistance;
+				multiplication = s.availableBikes()*factor;
+				summation += multiplication; 
+			}
+		}
+		return summation;
+	}
+	
+	private double qualityToReturn(List<Station> stations, Station station) {
+		double summation = 0;
+		if (!stations.isEmpty()) {
+			double factor, multiplication;
+			double maxDistance = recommendationSystem.getDistance();
+			for (Station s: stations) {
+				factor = (maxDistance - station.getPosition().distanceTo(s.getPosition()))/maxDistance;
+				multiplication = s.availableSlots()*factor;
+				summation += multiplication; 
+			}
+		}
+		return summation;
+	}
+
+	private Station nearestStationToRent(List<Station> stations, GeoPoint point) {
+		Comparator<Station> byDistance = services.getStationComparator().byDistance(point);
+		List<Station> orderedStations = stations.stream().filter(s -> s.availableBikes() > 0)
+				.sorted(byDistance).collect(Collectors.toList());
+		return orderedStations.get(0);
+	}
+	
+	private Station nearestStationToReturn(List<Station> stations, GeoPoint point) {
+		Comparator<Station> byDistance = services.getStationComparator().byDistance(point);
+		List<Station> orderedStations = stations.stream().filter(s -> s.availableSlots() > 0)
+				.sorted(byDistance).collect(Collectors.toList());
+		return orderedStations.get(0);
+	}
+
 
 }
