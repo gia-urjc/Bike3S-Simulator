@@ -146,7 +146,7 @@ async function main() {
 
         usersConfJson = fs.readJsonSync(usersConf).initialUsers;
         for(userType of userTypes) {
-
+            
             // Temporary user config
             tempUserConfPath = path.join(tempFolderUsersConf, `users_configuration_${userType}.json`);
             
@@ -168,13 +168,11 @@ async function main() {
             newUsersConf = { initialUsers : []};
             for(user of usersConfJson) {
                 let newUser = user;
-                if(userType === "USER_INFORMED") {
-                    newUser.userType.parameters = {
-                        minReservationAttempts: 3,
-                        minReservationAttempts: 3,
-                        minRentalAttempts: 3,
-                        destinationPlace: user.destinationPlace
-                    }
+                newUser.userType.parameters = {
+                    minReservationAttempts: 3,
+                    minReservationAttempts: 3,
+                    destinationPlace: user.userType.parameters.destinationPlace,
+                    minRentalAttempts: 3
                 }
                 newUser.userType.typeName = userType;
                 newUsersConf.initialUsers.push(newUser);

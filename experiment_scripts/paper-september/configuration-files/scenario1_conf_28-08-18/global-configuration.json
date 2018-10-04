@@ -11,7 +11,7 @@
     },
     "debugMode": true,
     "graphManagerType": "GRAPH_HOPPER",
-    "maxDistanceRecommendation": 10000,
+    "maxDistanceRecommendation": 800,
     "recommendationSystemType": "AVAILABLE_RESOURCES_RATIO",
     "reservationTime": 1000,
     "randomSeed": 10,

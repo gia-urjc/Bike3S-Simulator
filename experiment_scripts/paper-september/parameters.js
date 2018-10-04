@@ -1,3 +1,3 @@
 module.exports = {
-    userTypes:["USER_OBEDIENT"]
+    userTypes:["USER_UNINFORMED", "USER_INFORMED"]
 }
