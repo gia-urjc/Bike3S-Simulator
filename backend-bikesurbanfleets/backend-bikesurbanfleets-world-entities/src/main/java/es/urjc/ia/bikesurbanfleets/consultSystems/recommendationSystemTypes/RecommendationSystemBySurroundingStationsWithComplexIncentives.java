@@ -21,8 +21,8 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 		private int maxDistance = 700;
 	}
 	
-	private final int COMPENSATION = 10; 
-	private final int EXTRA = 3;
+	private final double COMPENSATION = 10;  // 1 cent per 15 meters 
+	private final double EXTRA = 1.44;
 	
 	private RecommendationParameters parameters;
 	private StationComparator stationComparator;
@@ -53,7 +53,7 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 			qualities.add(new StationQuality(station, quality));
 		}
 		
-		Station nearestStation = getNearestStation(stations, point);
+		Station nearestStation = nearestStationToRent(stations, point);
 		double nearestStationQuality = qualityToRent(stations, nearestStation); 
 		StationQuality stationQuality = new StationQuality(nearestStation, nearestStationQuality);
 		
@@ -81,7 +81,7 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 			qualities.add(new StationQuality(station, quality));
 		}
 		
-		Station nearestStation = getNearestStation(stations, point);
+		Station nearestStation = nearestStationToReturn(stations, point);
 		double nearestStationQuality = qualityToReturn(stations, nearestStation); 
 		StationQuality stationQuality = new StationQuality(nearestStation, nearestStationQuality);
 
@@ -122,9 +122,17 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 		return summation;
 	}
 
-	private Station getNearestStation(List<Station> stations, GeoPoint point) {
+	private Station nearestStationToRent(List<Station> stations, GeoPoint point) {
 		Comparator<Station> byDistance = stationComparator.byDistance(point);
-		List<Station> orderedStations = stations.stream().sorted(byDistance).collect(Collectors.toList());
+		List<Station> orderedStations = stations.stream().filter(s -> s.availableBikes() > 0)
+				.sorted(byDistance).collect(Collectors.toList());
+		return orderedStations.get(0);
+	}
+
+	private Station nearestStationToReturn(List<Station> stations, GeoPoint point) {
+		Comparator<Station> byDistance = stationComparator.byDistance(point);
+		List<Station> orderedStations = stations.stream().filter(s -> s.availableSlots() > 0)
+				.sorted(byDistance).collect(Collectors.toList());
 		return orderedStations.get(0);
 	}
 

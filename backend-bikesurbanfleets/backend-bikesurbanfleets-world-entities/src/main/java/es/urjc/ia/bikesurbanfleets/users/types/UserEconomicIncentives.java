@@ -81,7 +81,7 @@ public class UserEconomicIncentives extends User {
     }
 
     private final int COMPENSATION = 10;   // 1 incentive unit  per 10 meters
-    private final int  EXTRA = 20;   // 20% of compensation
+    private final int EXTRA = 30;   // 30% of quality
     
     private Parameters parameters;
     
@@ -118,6 +118,7 @@ public class UserEconomicIncentives extends User {
         			int i = 0;
         			while (destination == null && i < recommendedStations.size()) {
         					Station station = recommendedStations.get(i).getStation();
+        					
         					double incentive = recommendedStations.get(i).getIncentive();
         					double quality = qualityToRent(stations, station);
         					double compensation = compensation(this.getPosition(), nearestStation, station);
@@ -140,7 +141,7 @@ public class UserEconomicIncentives extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getPosition());
+        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getDestinationPlace());
         //Remove station if the user is in this station
         recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
         List<Station> stations = informationSystem.getStations();
