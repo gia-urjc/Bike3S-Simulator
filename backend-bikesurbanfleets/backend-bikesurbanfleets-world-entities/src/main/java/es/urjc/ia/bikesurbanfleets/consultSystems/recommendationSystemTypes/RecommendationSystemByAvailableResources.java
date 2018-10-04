@@ -80,9 +80,9 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
 		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance).collect(Collectors.toList());
 		
 		if (!stations.isEmpty()) {
-		Comparator<Station> bySlots = stationComparator.byAvailableSlots();
-		temp = stations.stream().sorted(bySlots).collect(Collectors.toList());
-		result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
+		    Comparator<Station> bySlots = stationComparator.byAvailableSlots();
+		    temp = stations.stream().sorted(bySlots).collect(Collectors.toList());
+		    result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
 		}
 
 		return result;

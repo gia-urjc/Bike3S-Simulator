@@ -127,7 +127,6 @@ public class UserObedient extends User {
         
         List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace);
         //Remove station if the user is in this station
-        recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0).getStation();
         }

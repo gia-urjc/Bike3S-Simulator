@@ -18,7 +18,7 @@ public class StationComparator {
 	}
 
 	public Comparator<Station> byAvailableSlots() {
-		return (s1, s2) -> Integer.compare(s2.availableBikes(), s1.availableBikes());
+		return (s1, s2) -> Integer.compare(s2.availableSlots(), s1.availableSlots());
 	}
 
 	public Comparator<Station> byProportionBetweenDistanceAndBikes(GeoPoint point) {
