@@ -13,7 +13,6 @@ import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
-
 @RecommendationSystemType("SURROUNDING_STATIONS_SIMPLE_INCENTIVES")
 public class RecommendationSystemBySurroundingStationsWithSimpleIncentives extends RecommendationSystem {
 
@@ -22,13 +21,13 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 		private int maxDistance = 700;
 	}
 	
-	private final int COMPENSATION = 10; 
-	private final int EXTRA = 3;
+	private final double COMPENSATION = 10.0; 
+	private final double EXTRA = 1.5;
 	
 	private RecommendationParameters parameters;
 	private StationComparator stationComparator;
 	
-	public RecommendationSystemBySurroundingStationsWithSimpleIncentives(InfraestructureManager infraestructure, StationComparator stationComparator) {
+ public RecommendationSystemBySurroundingStationsWithSimpleIncentives(InfraestructureManager infraestructure, StationComparator stationComparator) {
 		super(infraestructure);
 		this.parameters = new RecommendationParameters();
 		this.stationComparator = stationComparator;
@@ -54,19 +53,25 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 			qualities.add(new StationQuality(station, quality));
 		}
 		
-		Station nearestStation = getNearestStation(stations, point);
-		double nearestStationQuality = qualityToRent(stations, nearestStation); 
-		StationQuality stationQuality = new StationQuality(nearestStation, nearestStationQuality);
+		Station nearestStation = nearestStationToRent(stations, point);
 		
 	 Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
-	 return qualities.stream().sorted(byQuality).map(sq -> {
-		 Station s = sq.getStation();
-		 double incentive = 0.0;
+	 qualities = qualities.stream().sorted(byQuality).collect(Collectors.toList());
+	 
+	 List<Recommendation> recommendations = new ArrayList<>();
+		int numStations = qualities.size();
+		double incentive = 0.0;
+		double compensation, extra;
+		for (int i=0; i<numStations; i++) {
+			Station s = qualities.get(i).getStation();
 			if (s.getId() != nearestStation.getId()) {
-				incentive = calculateIncentive(point, stationQuality, sq);
+				compensation = compensation(point, nearestStation, s);
+				extra = (numStations - i)*EXTRA; 
+				incentive = compensation+extra;
 			}
-			return new Recommendation(s, incentive);
-		}).collect(Collectors.toList());
+			recommendations.add(new Recommendation(s, incentive));
+		}
+		return recommendations;
 	}
 	
 	@Override
@@ -82,19 +87,25 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 			qualities.add(new StationQuality(station, quality));
 		}
 		
-		Station nearestStation = getNearestStation(stations, point);
-		double nearestStationQuality = qualityToReturn(stations, nearestStation); 
-		StationQuality stationQuality = new StationQuality(nearestStation, nearestStationQuality);
+		Station nearestStation = nearestStationToReturn(stations, point);
 
 		Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
-		return qualities.stream().sorted(byQuality).map(sq -> {
-			Station s = sq.getStation();
-			double incentive = 0.0;
+		qualities = qualities.stream().sorted(byQuality).collect(Collectors.toList());
+		
+		List<Recommendation> recommendations = new ArrayList<>();
+		int numStations = qualities.size();
+		double incentive = 0.0;
+		double compensation, extra;
+		for (int i=0; i<numStations; i++) {
+			Station s = qualities.get(i).getStation();
 			if (s.getId() != nearestStation.getId()) {
-				incentive = calculateIncentive(point, stationQuality, sq);
+				compensation = compensation(point, nearestStation, s);
+				extra = (numStations - i)*EXTRA; 
+				incentive = compensation+extra;
 			}
-			return new Recommendation(s, incentive);
-		}).collect(Collectors.toList());
+			recommendations.add(new Recommendation(s, incentive));
+		}
+		return recommendations;
 	}
 	
 	private double qualityToRent(List<Station> stations, Station station) {
@@ -123,28 +134,24 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 		return summation;
 	}
 
-	private Station getNearestStation(List<Station> stations, GeoPoint point) {
+	private Station nearestStationToRent(List<Station> stations, GeoPoint point) {
 		Comparator<Station> byDistance = stationComparator.byDistance(point);
-		List<Station> orderedStations = stations.stream().sorted(byDistance).collect(Collectors.toList());
+		List<Station> orderedStations = stations.stream().filter(s -> s.availableBikes() > 0)
+				.sorted(byDistance).collect(Collectors.toList());
+		return orderedStations.get(0);
+	}
+	
+	private Station nearestStationToReturn(List<Station> stations, GeoPoint point) {
+		Comparator<Station> byDistance = stationComparator.byDistance(point);
+		List<Station> orderedStations = stations.stream().filter(s -> s.availableSlots() > 0)
+				.sorted(byDistance).collect(Collectors.toList());
 		return orderedStations.get(0);
 	}
 
-	private double extra(StationQuality nearestStationQuality, StationQuality recommendedStationQuality) {
-		double quality1 = nearestStationQuality.getQuality();
-		double quality2 = recommendedStationQuality.getQuality();
-		return (quality2 - quality1)*EXTRA;
-	}
-	
 	private double compensation(GeoPoint point, Station nearestStation, Station recommendedStation) {
 		double distanceToNearestStation = nearestStation.getPosition().distanceTo(point);
 		double distanceToRecommendedStation = recommendedStation.getPosition().distanceTo(point);
 		return (distanceToRecommendedStation - distanceToNearestStation)/COMPENSATION;
 	}
 	
-	public double calculateIncentive(GeoPoint point, StationQuality nearestStationQuality, StationQuality recommendedStationQuality) {
-	double compensation = compensation(point, nearestStationQuality.getStation(), recommendedStationQuality.getStation());
-	double extra = extra(nearestStationQuality, recommendedStationQuality);
-	return compensation+extra;
-	}
-
 }
