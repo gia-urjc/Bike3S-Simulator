@@ -24,6 +24,15 @@ public class UserTourist extends User {
 
     @UserParameters
     public class Parameters {
+
+        /**
+         * It is the place the tourist wants to visit after
+         * renting
+         * a b
+         * ike.
+         */
+        private GeoPoint touristDestination;
+        
         /**
          * It indicates the size of the set of stations closest to the user within which the
          * destination will be chossen randomly.
@@ -35,15 +44,7 @@ public class UserTourist extends User {
          * or cycling towards the previously chosen station witohout making a new reservation
          * after a reservation timeout event has happened.
          */
-        private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
-
-        /**
-         * It is the place the tourist wants to visit after
-         * renting
-         * a b
-         * ike.
-         */
-        private GeoPoint touristDestination;
+        private final int minArrivalTimeToReserveAtSameStation = 180;
 
         /**
          * It is the number of times that the user musts try to make a bike reservation before
@@ -91,7 +92,7 @@ public class UserTourist extends User {
         public String toString() {
             return "UserTouristParameters{" +
                     "SELECTION_STATIONS_SET=" + SELECTION_STATIONS_SET +
-                    ", MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
+                    ", minArrivalTimeToReserveAtSameStation=" + minArrivalTimeToReserveAtSameStation +
                     ", touristDestination=" + touristDestination +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
@@ -174,7 +175,7 @@ public class UserTourist extends User {
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-     return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : infraestructure.getRandom().nextBoolean();
+     return arrivalTime < parameters.minArrivalTimeToReserveAtSameStation ? false : infraestructure.getRandom().nextBoolean();
     }
     
     @Override
@@ -186,7 +187,7 @@ public class UserTourist extends User {
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+        return arrivalTime < parameters.minArrivalTimeToReserveAtSameStation ? false : true;
     }
 
     @Override

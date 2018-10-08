@@ -30,6 +30,11 @@ public class UserObedient extends User {
     public class Parameters {
 
         /**
+         * It determines if the user will make a reservation or not.
+         */
+        private boolean willReserve;
+
+        /**
          *  User destination place
          */
         private GeoPoint destinationPlace;
@@ -69,12 +74,6 @@ public class UserObedient extends User {
          * after he hasn't been able to make a reservation.
          */
         private int failedReservationPercentage;
-
-        
-        /**
-         * It determines if the user will make a reservation or not.
-         */
-        private boolean willReserve;
                 
         private Parameters() {}
 

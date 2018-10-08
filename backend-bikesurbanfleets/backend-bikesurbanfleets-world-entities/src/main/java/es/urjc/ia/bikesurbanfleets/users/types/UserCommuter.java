@@ -36,21 +36,11 @@ public class UserCommuter extends User {
         private GeoPoint destinationPlace;
 
         /**
-         * It determines the rate with which the user will reserve a bike.
-         */
-        private int bikeReservationPercentage;
-
-        /**
-         * It determines the rate with which the user will reserve a slot.
-         */
-        private int slotReservationPercentage;
-
-        /**
          * It is the time in seconds until which the user will decide to continue walking
          * or cycling towards the previously chosen station without making a new reservation
          * after a reservation timeout event has happened.
          */
-        private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
+        private final int minArrivalTimeToReserveAtSameStation = 180;
 
 
         /**
@@ -71,6 +61,16 @@ public class UserCommuter extends User {
          */
         private int minRentalAttempts = infraestructure.getRandom().nextInt(4, 7);
 
+        /**
+         * It determines the rate with which the user will reserve a bike.
+         */
+        private int bikeReservationPercentage;
+
+        /**
+         * It determines the rate with which the user will reserve a slot.
+         */
+        private int slotReservationPercentage;
+
         private double cyclingVelocity;
 
         @Override
@@ -78,7 +78,7 @@ public class UserCommuter extends User {
             return "UserEmployeeParameters{" +
                     ", bikeReservationPercentage=" + bikeReservationPercentage +
                     ", slotReservationPercentage=" + slotReservationPercentage +
-                    ", MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
+                    ", MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + minArrivalTimeToReserveAtSameStation +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
                     ", minRentalAttempts=" + minRentalAttempts +
@@ -141,7 +141,7 @@ public class UserCommuter extends User {
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-     return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+     return arrivalTime < parameters.minArrivalTimeToReserveAtSameStation ? false : true;
     }
     
     @Override
@@ -153,7 +153,7 @@ public class UserCommuter extends User {
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+        return arrivalTime < parameters.minArrivalTimeToReserveAtSameStation ? false : true;
     }
 
     @Override

@@ -27,16 +27,14 @@ public class UserInformed extends User {
     public class Parameters {
 
         /**
+         * It determines if the user will reserve or not
+         */
+        private boolean willReserve = false;
+
+        /**
          * User destination place
          */
         private GeoPoint destinationPlace;
-
-        /**
-         * It is the maximum time in seconds until which the user will decide to continue walking
-         * or cycling towards the previously chosen station witohout making a new reservation
-         * after a reservation timeout event has happened.
-         */
-        private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
 
         /**
          * It is the number of times that the user musts try to make a bike reservation before
@@ -57,12 +55,19 @@ public class UserInformed extends User {
         private int minRentalAttempts = infraestructure.getRandom().nextInt(3, 6);
 
         /**
+         * It is the maximum time in seconds until which the user will decide to continue walking
+         * or cycling towards the previously chosen station witohout making a new reservation
+         * after a reservation timeout event has happened.
+         */
+        private final int minArrivalTimeToReserveAtSameStation = 180;
+        
+        /**
          * It determines the rate with which the user will reserve a bike.
          */
         private int bikeReservationPercentage = 0;
 
         /**
-         * It determines the rate with which the user will reserve a slot.
+         * It determines the rate with which the reservationTimeoutPercentageuser will reserve a slot.
          */
         private int slotReservationPercentage = 0;
 
@@ -78,18 +83,13 @@ public class UserInformed extends User {
          */
         private int failedReservationPercentage = 0;
 
-        /**
-         * It determines if the user will reserve or not
-         */
-        private boolean willReserve = false;
-
 
         private Parameters(){}
 
         @Override
         public String toString() {
             return "UserUninformedParameters{" +
-                    "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
+                    "MinArrivalTimeToReserveAtSameStation=" + minArrivalTimeToReserveAtSameStation +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
                     ", minRentalAttempts=" + minRentalAttempts +
@@ -156,7 +156,7 @@ public class UserInformed extends User {
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-        return parameters.willReserve && arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION;
+        return parameters.willReserve && arrivalTime < parameters.minArrivalTimeToReserveAtSameStation;
     }
 
     @Override
@@ -168,7 +168,7 @@ public class UserInformed extends User {
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-        return parameters.willReserve && arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION;
+        return parameters.willReserve && arrivalTime < parameters.minArrivalTimeToReserveAtSameStation;
     }
 
     @Override

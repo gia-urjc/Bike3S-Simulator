@@ -68,12 +68,12 @@ public class UserFactory {
 
                 try {
                     if(userParametersClass != null) {
-                        Constructor constructor = userClass.getConstructor(userParametersClass, SimulationServices.class);
+                        Constructor<?> constructor = userClass.getConstructor(userParametersClass, SimulationServices.class);
                         User user = (User) constructor.newInstance(gson.fromJson(parameters, userParametersClass), services);
                         return user;
                     }
                     else {
-                        Constructor constructor = userClass.getConstructor(SimulationServices.class);
+                        Constructor<?> constructor = userClass.getConstructor(SimulationServices.class);
                         User user = (User) constructor.newInstance(services);
                         return user;
                     }
