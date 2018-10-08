@@ -66,7 +66,7 @@ function simulate(globalConfigPath, stationsConfigPath, usersConfigPath, history
             `-stationsConfig ${stationsConfigPath}`,
             `-mapPath ${mapPath}`,
             `-historyOutput ${historyPath}`,
-            `-validator ${rootPath.build.jsonSchemaValidator()}/jsonschema-validator.js`
+            `-callFromFrontend`
         ], {
             cwd: rootPath.build(),
             shell: true
