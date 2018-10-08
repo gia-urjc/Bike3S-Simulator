@@ -29,11 +29,16 @@ public class UserAvailableResources extends User {
     public class Parameters {
 
         /**
+         * Place where user will go to take return the bike
+         */
+        private GeoPoint destinationPlace;
+
+        /**
          * It is the time in seconds until which the user will decide to continue walking
          * or cycling towards the previously chosen station without making a new reservation
          * after a reservation timeout event has happened.
          */
-        private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
+        private final int minArrivalTimeToReserveAtSameStation = 180;
 
         /**
          * It is the number of times that the user musts try to make a bike reservation before
@@ -76,7 +81,8 @@ public class UserAvailableResources extends User {
         @Override
         public String toString() {
             return "UserAvailableResourcesParameters{" +
-                    "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
+                    "destinationPlace=" + destinationPlace.toString() +
+                    "minArrivalTimeToReserveAtSameStation=" + minArrivalTimeToReserveAtSameStation +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
                     ", minRentalAttempts=" + minRentalAttempts +
@@ -136,7 +142,7 @@ public class UserAvailableResources extends User {
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+        return arrivalTime < parameters.minArrivalTimeToReserveAtSameStation ? false : true;
     }
 
     
@@ -148,7 +154,7 @@ public class UserAvailableResources extends User {
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+        return arrivalTime < parameters.minArrivalTimeToReserveAtSameStation ? false : true;
     }
 
     @Override

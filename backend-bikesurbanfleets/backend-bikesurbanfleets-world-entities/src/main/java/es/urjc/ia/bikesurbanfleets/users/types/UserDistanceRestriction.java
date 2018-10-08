@@ -38,7 +38,7 @@ public class UserDistanceRestriction extends User {
          * or cycling towards the previously chosen station without making a new reservation
          * after a reservation timeout event has happened.
          */
-        private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
+        private final int minArrivalTimeToReserveAtSameStation = 180;
 
         /**
          * It is the number of times that the user musts try to make a bike reservation before
@@ -85,7 +85,7 @@ public class UserDistanceRestriction extends User {
         @Override
         public String toString() {
             return "UserDistanceRestrictionParameters{" +
-                    "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
+                    "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + minArrivalTimeToReserveAtSameStation +
                     ", minReservationAttempts=" + minReservationAttempts +
                     ", minReservationTimeouts=" + minReservationTimeouts +
                     ", minRentalAttempts=" + minRentalAttempts +
@@ -151,7 +151,7 @@ public class UserDistanceRestriction extends User {
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+        return arrivalTime < parameters.minArrivalTimeToReserveAtSameStation ? false : true;
     }
 
     @Override
@@ -162,7 +162,7 @@ public class UserDistanceRestriction extends User {
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
         int arrivalTime = timeToReach();
-        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
+        return arrivalTime < parameters.minArrivalTimeToReserveAtSameStation ? false : true;
     }
 
     @Override

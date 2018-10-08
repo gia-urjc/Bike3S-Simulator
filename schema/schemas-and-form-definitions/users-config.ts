@@ -10,9 +10,11 @@ export const typeParameters = {
     },
     USER_INFORMED: {
         willReserve: sBoolean(),
+        destinationPlace: GeoPoint,
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,
         minRentalAttempts: UInt,
+        minArrivalTimeToReserveAtSameStation: UInt,
         bikeReservationPercentage: Percentage,
         slotReservationPercentage: Percentage,
         reservationTimeoutPercentage: Percentage,
@@ -20,15 +22,17 @@ export const typeParameters = {
     },
     USER_OBEDIENT: {
         willReserve: sBoolean(),
+        destinationPlace: GeoPoint,
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,
         minRentalAttempts: UInt,
-        bikeReservationPercentage: Percentage,
-        slotReservationPercentage: Percentage,
+        bikeReturnPercentage: Percentage,
         reservationTimeoutPercentage: Percentage,
         failedReservationPercentage: Percentage
     },
     USER_DISTANCE_RESTRICTION: {
+        destinationPlace: sBoolean(),
+        minArrivalTimeToReserveAtSameStation: UInt,
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,
         minRentalAttempts: UInt,
@@ -37,16 +41,9 @@ export const typeParameters = {
         failedReservationPercentage: Percentage,
         maxDistance: sNumber()
     },
-    USER_REASONABLE: {
-        minReservationAttempts: UInt,
-        minReservationTimeOuts: UInt,
-        minRentalAttempts: UInt,
-        bikeReturnPercentage: Percentage,
-        reservationTimeoutPercentage: Percentage,
-        failedReservationPercentage: Percentage
-    },
     USER_COMMUTER: {
         destinationPlace: GeoPoint,
+        minArrivalTimeToReserveAtSameStation: UInt,
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,
         minRentalAttempts: UInt,
@@ -55,6 +52,8 @@ export const typeParameters = {
         cyclingVelocity: sNumber()
     },
     USER_AVAILABLE_RESOURCES: {
+        destinationPlace: GeoPoint,
+        minArrivalTimeToReserveAtSameStation: UInt,
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,
         minRentalAttempts: UInt,
@@ -64,6 +63,7 @@ export const typeParameters = {
     },
     USER_TOURIST: {
         touristDestination: GeoPoint,
+        minArrivalTimeToReserveAtSameStation: GeoPoint,
         minReservationAttempts: UInt,
         minReservationTimeOuts: UInt,
         minRentalAttempts: UInt,
@@ -71,5 +71,15 @@ export const typeParameters = {
         slotReservationPercentage: Percentage,
         reservationTimeoutPercentage: Percentage,
         failedReservationPercentage: Percentage
+    },
+    USER_ECONOMIC_INCENTIVES: {
+        willReserve: sBoolean(),
+        destinationPlace: GeoPoint,
+        minReservationAttempts: UInt,
+        minReservationTimeouts: UInt,
+        minRentalAttempts: UInt,
+        bikeReturnPercentage: Percentage,
+        reservationTimeoutPercentage: Percentage,
+        failedReservationPercentage: Percentage,
     }
 };

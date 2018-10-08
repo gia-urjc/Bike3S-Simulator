@@ -30,6 +30,17 @@ public class UserEconomicIncentives extends User {
 
     @UserParameters
     public class Parameters {
+
+        /**
+         * It determines if the user will make a reservation or not.
+         */
+        private boolean willReserve;
+
+        /**
+         * User destination place
+         */
+        private GeoPoint destinationPlace;
+
         /**
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
@@ -65,15 +76,6 @@ public class UserEconomicIncentives extends User {
          * after he hasn't been able to make a reservation.
          */
         private int failedReservationPercentage;
-
-        
-        /**
-         * It determines if the user will make a reservation or not.
-         */
-        private boolean willReserve;
-        
-        private GeoPoint destinationPlace;
-        
 
                 
         private Parameters() {}
@@ -114,27 +116,27 @@ public class UserEconomicIncentives extends User {
         List<Station> stations = informationSystem.getStations();
         Station nearestStation = nearestStationToRent(stations, this.getPosition());
 
-        		if(!recommendedStations.isEmpty()) {
-        			int i = 0;
-        			while (destination == null && i < recommendedStations.size()) {
-        					Station station = recommendedStations.get(i).getStation();
-        					
-        					double incentive = recommendedStations.get(i).getIncentive();
-        					double quality = qualityToRent(stations, station);
-        					double compensation = compensation(this.getPosition(), nearestStation, station);
-        					double extra = quality*EXTRA/100;
-        					if (incentive >= (compensation+extra)) {
-        							destination = recommendedStations.get(i).getStation();
-        					}
-        					System.out.println("station "+station.getId());
-        					System.out.println("incentive: "+incentive);
-        					System.out.println("min expected incentive: "+(compensation+extra));
-            i++;
-        			}
+        if(!recommendedStations.isEmpty()) {
+            int i = 0;
+            while (destination == null && i < recommendedStations.size()) {
+                Station station = recommendedStations.get(i).getStation();
+                    
+                double incentive = recommendedStations.get(i).getIncentive();
+                double quality = qualityToRent(stations, station);
+                double compensation = compensation(this.getPosition(), nearestStation, station);
+                double extra = quality*EXTRA/100;
+                if (incentive >= (compensation+extra)) {
+                    destination = recommendedStations.get(i).getStation();
+                }
+                System.out.println("station "+station.getId());
+                System.out.println("incentive: "+incentive);
+                System.out.println("min expected incentive: "+(compensation+extra));
+                i++;
+            }
         }
-        		if(destination == null) {
-        			destination = nearestStation;
-        		}
+        if(destination == null) {
+            destination = nearestStation;
+        }
         return destination;
     }
 
@@ -147,24 +149,24 @@ public class UserEconomicIncentives extends User {
         List<Station> stations = informationSystem.getStations();
         Station nearestStation = nearestStationToReturn(stations, this.getDestinationPlace());
         if (!recommendedStations.isEmpty()) {
-									int i = 0;
-									while (destination == null && i < recommendedStations.size()) {
-											Station station = recommendedStations.get(i).getStation();
-											double incentive = recommendedStations.get(i).getIncentive();
-											double quality = qualityToReturn(stations, station);
-											double compensation = compensation(this.getDestinationPlace(), nearestStation, station);
-											double extra = quality*EXTRA/100;
-											if (incentive >= (compensation+extra)) {
-													destination = recommendedStations.get(i).getStation();
-											}
-											System.out.println("station "+station.getId());
-											System.out.println("incentive: "+incentive);
-											System.out.println("min expected incentive: "+(compensation+extra));											
-						    i++;
-									}
+            int i = 0;
+            while (destination == null && i < recommendedStations.size()) {
+                Station station = recommendedStations.get(i).getStation();
+                double incentive = recommendedStations.get(i).getIncentive();
+                double quality = qualityToReturn(stations, station);
+                double compensation = compensation(this.getDestinationPlace(), nearestStation, station);
+                double extra = quality*EXTRA/100;
+                if (incentive >= (compensation+extra)) {
+                    destination = recommendedStations.get(i).getStation();
+                }
+                System.out.println("station "+station.getId());
+                System.out.println("incentive: "+incentive);
+                System.out.println("min expected incentive: "+(compensation+extra));											
+                i++;
+            }
         }
         if (destination == null) {
-        		destination  = nearestStation;
+            destination  = nearestStation;
         }
     	return destination;
     }
