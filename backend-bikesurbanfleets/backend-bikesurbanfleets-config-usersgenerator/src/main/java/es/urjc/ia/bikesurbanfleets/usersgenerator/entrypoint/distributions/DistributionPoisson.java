@@ -32,7 +32,7 @@ public class DistributionPoisson {
      */
     public int randomInterarrivalDelay() {
         double lambdaSeconds = lambda / 60;
-        SimulationRandom random = SimulationRandom.getUserCreationInstance();
+        SimulationRandom random = SimulationRandom.getGeneralInstance();
         double randomValue = Math.log(1.0 - random.nextDouble(Double.MIN_VALUE, 1));
         Double result = -randomValue / lambdaSeconds;
         Long longResult = Math.round(result);

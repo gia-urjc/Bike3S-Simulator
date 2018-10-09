@@ -136,9 +136,9 @@ public abstract class User implements Entity {
         this.bike = null;
 
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = SimulationRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
+        this.walkingVelocity = SimulationRandom.getGeneralInstance().nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = SimulationRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = SimulationRandom.getGeneralInstance().nextInt(10, 21) / 3.6;
 
         this.reservedBike = false;
         this.reservedSlot = false;
@@ -163,9 +163,9 @@ public abstract class User implements Entity {
         this.bike = null;
 
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = SimulationRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
+        this.walkingVelocity = SimulationRandom.getGeneralInstance().nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = SimulationRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
+        this.cyclingVelocity = SimulationRandom.getGeneralInstance().nextInt(10, 21) / 3.6;
 
         this.reservedBike = false;
         this.reservedSlot = false;
@@ -388,24 +388,13 @@ public abstract class User implements Entity {
         this.reservation = null;
     }
 
-    private List<GeoRoute> createRouteFromStationToSame(List<GeoRoute> geoRoute, String vehicle, boolean calcNewRandom) throws Exception {
+    private List<GeoRoute> createRouteFromStationToSame(List<GeoRoute> geoRoute, String vehicle) throws Exception {
         
-                GeoPoint auxiliarPoint = null;
+        GeoPoint auxiliarPoint = null;
         double RADIO = 1000;
-        
-        if(calcNewRandom) {
-            auxiliarPoint = services.getInfrastructureManager().generateRandomPointInCircle(this.position, RADIO);
-        }
-        else {
-            auxiliarPoint = SimulationRandom.getRandomUsedPoint();
-        }
-
+        auxiliarPoint = services.getInfrastructureManager().generateRandomPointInCircle(this.position, RADIO);
         GeoRoute initRoute = graph.obtainShortestRouteBetween(this.position, auxiliarPoint, vehicle);
         GeoRoute returnRoute = graph.obtainShortestRouteBetween(auxiliarPoint, destinationPoint, vehicle);
-        
-        if(calcNewRandom) {
-            SimulationRandom.addRandomUsedPoint(auxiliarPoint);
-        }
         geoRoute.add(initRoute.concatRoute(returnRoute));
         return geoRoute;
     }
@@ -418,26 +407,22 @@ public abstract class User implements Entity {
             ArrayList<GeoRoute> newRoutes = new ArrayList<>();
             // First try. If valid random point, program still running
             try {
-                createRouteFromStationToSame(newRoutes, vehicle, true);
+                createRouteFromStationToSame(newRoutes, vehicle);
             }
-            // If not valid route, we use a point used before
+            // If no points are at first runtime this method should be executed
             catch(Exception e1) {
-                try {
-                    createRouteFromStationToSame(newRoutes, vehicle, false);
-                }
-                // If no points are at first runtime this method should be executed
-                catch(Exception e2) {
-                    boolean isValidPoint = false;
-                    while(!isValidPoint) {
-                        try {
-                            createRouteFromStationToSame(newRoutes, vehicle, true);
-                            isValidPoint = true; 
-                        }
-                        catch(Exception e3) {
-                            System.out.println("Trying new point");
-                        }
+                boolean isValidPoint = false;
+                int tryCounter = 1;
+                while(!isValidPoint) {
+                    try {
+                        createRouteFromStationToSame(newRoutes, vehicle);
+                        isValidPoint = true; 
                     }
-                }    
+                    catch(Exception e3) {
+                        System.out.println("Trying new point route" + tryCounter);
+                        tryCounter++;
+                    }
+                }  
             }
             return newRoutes;
         }

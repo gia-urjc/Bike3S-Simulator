@@ -78,7 +78,7 @@ public class EntryPointPoisson extends EntryPoint {
             //If not radius is specified, user just appears in the position submitted.
             if (radius > 0) {
                 BoundingCircle boundingCircle = new BoundingCircle(position, radius);
-                userPosition = boundingCircle.randomPointInCircle(SimulationRandom.getUserCreationInstance());
+                userPosition = boundingCircle.randomPointInCircle(SimulationRandom.getGeneralInstance());
             } else {
                 userPosition = position;
             }
