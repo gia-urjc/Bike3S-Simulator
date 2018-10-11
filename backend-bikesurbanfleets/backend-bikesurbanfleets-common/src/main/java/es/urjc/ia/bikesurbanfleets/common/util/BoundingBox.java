@@ -58,4 +58,12 @@ public class BoundingBox {
         return new GeoPoint(newLatitude, newLongitude);
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+            ", northWest='" + getNorthWest() + "'" +
+            ", southEast='" + getSouthEast() + "'" +
+            "}";
+    }
+
 }
