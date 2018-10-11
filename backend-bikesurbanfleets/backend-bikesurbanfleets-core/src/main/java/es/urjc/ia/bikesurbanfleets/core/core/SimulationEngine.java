@@ -1,8 +1,8 @@
 package es.urjc.ia.bikesurbanfleets.core.core;
 
 import com.google.gson.JsonObject;
-import es.urjc.bikesurbanfleets.services.SimulationServiceConfigData;
-import es.urjc.bikesurbanfleets.services.SimulationServices;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServiceConfigData;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;

@@ -1,6 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
-import es.urjc.bikesurbanfleets.services.SimulationServices;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
@@ -56,12 +56,6 @@ public class UserObedient extends User {
          * reservation) before deciding to leave the system.
          */
         private int minRentalAttempts = infraestructure.getRandom().nextInt(4, 8);
-
-        /**
-         * It determines the rate with which the user will decide to go directly to a station
-         * in order to return the bike he has just rented.
-         */
-        private int bikeReturnPercentage;
 
         /**
          * It determines the rate with which the user will choose a new destination station
@@ -159,8 +153,7 @@ public class UserObedient extends User {
 
     @Override
     public boolean decidesToReturnBike() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return parameters.bikeReturnPercentage < percentage ? true : false;
+        return true;
     }
 
     @Override

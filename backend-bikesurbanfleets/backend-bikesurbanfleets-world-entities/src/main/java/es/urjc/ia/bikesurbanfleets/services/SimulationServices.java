@@ -1,4 +1,4 @@
-package es.urjc.bikesurbanfleets.services;
+package es.urjc.ia.bikesurbanfleets.services;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
