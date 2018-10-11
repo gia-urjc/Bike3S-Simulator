@@ -1,14 +1,13 @@
 process.env.SPARKY_LOG = false;
-
 const { FuseBox, Sparky } = require('fuse-box');
 const { EnvPlugin, CSSPlugin, CSSResourcePlugin, RawPlugin, WebIndexPlugin, JSONPlugin, QuantumPlugin } = require('fuse-box');
-
 const log = require('fliplog');
 const express = require('express');
-
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra');
+const request = require('request');
+const progress = require('request-progress');
 
 const projectRoot = () => process.cwd();
 
@@ -39,8 +38,10 @@ projectRoot.schemaCacheDefaults = () => path.join(projectRoot(), '.schema/defaul
 projectRoot.schemaLayoutCacheDefaults = () => path.join(projectRoot(), '.schema/schemas-and-form-definitions');
 
 let production = false;
-
 let schemaBuildPath = projectRoot.build.schema();
+
+//BiciMad map
+const overpassApiUrl = "http://overpass-api.de/api/interpreter?data=node(40.382824670624586,-3.636131286621094,40.46625392958603,-3.7508010864257817);out;";
 
 
 Sparky.task('clean:backend', () => new Promise((resolve, reject) => {
@@ -398,6 +399,38 @@ Sparky.task('copy:assets', async () => {
     await fs.copy(path.join(projectRoot.frontend(), 'assets'), path.join(projectRoot.build.frontend(), 'assets'));
 });
 
+Sparky.task('download-map:dev', () => new Promise((resolve, reject) => {
+    log.time().green('Downloading osm map for development.').echo();
+    if(!fs.existsSync(projectRoot.configurationFiles.map())) {
+        fs.mkdirSync(projectRoot.configurationFiles.map());
+    }
+    let mapFile = path.resolve(projectRoot.configurationFiles.map(), 'madrid.osm');
+    if(fs.existsSync(mapFile)) {
+        log.time().green('Map is currently downloaded').echo();
+        resolve();
+    }
+    else {
+        let mapDownloadedFile = fs.createWriteStream(mapFile);
+        this.request = request(overpassApiUrl);
+        progress(this.request)
+            .on('progress', (state) => {
+                process.stdout.write('Speed: ' + parseFloat(state.speed / 1024 / 1024).toFixed(2) + 
+                ' MB/s - Downloaded: ' + parseFloat(state.size.transferred / 1024 / 1024).toFixed(2) + ' MB\r');
+            })
+            .on('error', (err) => {
+                console.log(err);
+                this.request = undefined;
+                reject();
+            })
+            .on('end', () => {
+                this.request = undefined;
+                log.time().green('Downloaded map in: ' + mapFile).echo();
+                resolve();
+            })
+            .pipe(mapDownloadedFile);
+    }
+}));
+
 
 Sparky.task('clean:build', () => Sparky.src(projectRoot.build()).clean(projectRoot.build()));
 
@@ -415,11 +448,11 @@ Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:
 Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});
 
 
-Sparky.task('configure:dev', ['build:dev-backend'], () => {});
+Sparky.task('configure:dev', ['download-map:dev', 'build:dev-backend'], () => {});
 
 Sparky.task('build:dist', () => {
     production = true;
-    Sparky.start('build:dev-backend')
+    Sparky.start('download-map:dev', 'build:dev-backend')
         .then(() => {
             return Sparky.start('build:frontend');
         })
