@@ -41,7 +41,7 @@ let production = false;
 let schemaBuildPath = projectRoot.build.schema();
 
 //BiciMad map
-const overpassApiUrl = "http://overpass-api.de/api/interpreter?data=node(40.382824670624586,-3.636131286621094,40.46625392958603,-3.7508010864257817);out;";
+const overpassApiUrl = "http://overpass-api.de/api/interpreter?data=(node(40.362765146988,-3.8349151611328,40.504459339205,-3.5760498046875);<;);out;";
 
 
 Sparky.task('clean:backend', () => new Promise((resolve, reject) => {
@@ -379,7 +379,7 @@ Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
         stdio: 'inherit' // pipe to calling process
     });
 
-    log.time().green('Starting user generation').echo();
+    log.time().green('Starting development simulation').echo();
 
     userGen.on('error', (error) => {
         log.red(error).echo();
@@ -387,7 +387,7 @@ Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
 
     userGen.on('close', (code) => {
         if (code === 0) {
-            log.time().green('Finished user generation').echo();
+            log.time().green('Finished development simulation').echo();
             resolve();
         } else {
             log.time().red(`User generation finished with code ${code}`).echo();

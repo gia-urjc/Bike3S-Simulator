@@ -185,7 +185,7 @@ export class DataGenerator {
                     emptyStations.init().then( () => {
                         this.calculationCounter++;
                         this.calculateGlobalInfo();
-                    })                 
+                    });                 
                     let bikesBalance: StationBalancingQuality = new StationBalancingQuality(this.bikesPerStation);
                     bikesBalance.setStations(this.systemStations.getStations());
                     this.info.set(StationBalancingQuality.name, bikesBalance);
