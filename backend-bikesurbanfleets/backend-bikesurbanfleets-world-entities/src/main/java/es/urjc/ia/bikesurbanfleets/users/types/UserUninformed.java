@@ -2,16 +2,12 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This class represents a user who doesn't know anything about the state of the system.
@@ -27,14 +23,19 @@ public class UserUninformed extends User {
     @UserParameters
     public class Parameters {
 
-        private GeoPoint destinationPlace;
-
         private Parameters() {}
+        
+        /**
+         * It is the number of times that the user will try to rent a bike (without a bike
+         * reservation) before deciding to leave the system.
+         */
+        private int minRentalAttempts = 2;
+
 
         @Override
         public String toString() {
             return "Parameters{" +
-                "destinationPlace=" + destinationPlace +
+                    "minRentalAttempts=" + minRentalAttempts+
             '}';
         }
 
@@ -42,26 +43,58 @@ public class UserUninformed extends User {
 
     private Parameters parameters;
 
-    public UserUninformed(Parameters parameters, SimulationServices services) {
-        super(services);
+    public UserUninformed(Parameters parameters, SimulationServices services, GeoPoint finalDestination, long seed) {
+        super(services,finalDestination,seed);
         this.parameters = parameters;
-        this.destinationPlace = parameters.destinationPlace;
     }
 
+    //**********************************************
+    //Decision related to reservations
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
-        return infraestructure.getRandom().nextBoolean();
+        return false;
     }
-
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
-        return infraestructure.getRandom().nextBoolean();
+        return false;
+    }
+    @Override
+    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
+        return false;
     }
 
     @Override
-    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        return infraestructure.getRandom().nextBoolean();
+    public boolean decidesToReserveBikeAtNewDecidedStation() {
+        return false;
     }
+
+    @Override
+    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
+        return false;
+    }
+
+    @Override
+    public boolean decidesToReserveSlotAtNewDecidedStation() {
+        return false;
+    }
+    @Override
+    public boolean decidesToDetermineOtherStationAfterTimeout() {
+        return false;
+    }
+
+    @Override
+    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
+        return false;
+    }
+
+    //**********************************************
+    //decisions related to taking and leaving a bike
+    @Override
+    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
+        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) 
+            return true; 
+        else return false;
+     }
 
     @Override
     public Station determineStationToRentBike() {
@@ -82,14 +115,8 @@ public class UserUninformed extends User {
         Station destination = null;
         List<Station> stations = infraestructure.consultStations();
         List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
-
         //Remove station if the user is in this station
         System.out.println("List Size" + stations.size());
-        GeoPoint destinationPlace = parameters.destinationPlace;
-        if(destinationPlace == null) {
-            SimulationRandom random = SimulationRandom.getGeneralInstance();
-            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
-        }
         List<Station> finalStations = informationSystem.getStationsBikeOrderedByDistanceNoFiltered(this.destinationPlace);
         finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
@@ -98,57 +125,18 @@ public class UserUninformed extends User {
         return destination;
     }
 
+    //**********************************************
+    //decisions related to either go directly to the destination or going arround
+
     @Override
-    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
+    public boolean decidesToGoToPointInCity() {
         return false;
     }
 
     @Override
-    public boolean decidesToReserveBikeAtNewDecidedStation() {
-        return false;
+    public GeoPoint getPointInCity() {
+        return null;
     }
 
-    @Override
-    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToReserveSlotAtNewDecidedStation() {
-        return false;
-    }
-
-    @Override
-    public GeoPoint decidesNextPoint() {
-        return infraestructure.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
-    }
-
-    @Override
-    public boolean decidesToReturnBike() {
-        return infraestructure.getRandom().nextBoolean();
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterTimeout() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        return false;
-    }
-
-    @Override
-    public GeoRoute determineRoute() throws Exception{
-        List<GeoRoute> routes = null;
-        routes = calculateRoutes(getDestinationPoint());
-        if(routes != null) {
-            int index = infraestructure.getRandom().nextInt(0, routes.size());
-            return routes.get(index);
-        }
-        else {
-            return null;
-        }
-    }
-
+ 
 }

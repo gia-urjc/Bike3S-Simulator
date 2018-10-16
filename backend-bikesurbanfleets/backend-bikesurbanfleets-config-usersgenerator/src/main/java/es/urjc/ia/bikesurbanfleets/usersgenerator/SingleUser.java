@@ -8,6 +8,7 @@ public class SingleUser {
      * It is the point where user appears, i. e., where user is located after being generated.
      */
     private GeoPoint position;
+    private GeoPoint destinationPlace;
 
     /**
      * Type of user that will be generated.
@@ -19,15 +20,21 @@ public class SingleUser {
      */
     private int timeInstant;
 
-    public SingleUser(GeoPoint position, UserProperties userType, int instant) {
+    public SingleUser(GeoPoint position, GeoPoint destinationPlace, UserProperties userType, int instant) {
         this.position = position;
         this.userType = userType;
         this.timeInstant = instant;
+        this.destinationPlace = destinationPlace;
     }
 
     public GeoPoint getPosition() {
         return position;
     }
+
+    public GeoPoint getDestinationPlace() {
+        return destinationPlace;
+    }
+
 
     public UserProperties getUserType() {
         return userType;

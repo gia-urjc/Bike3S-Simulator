@@ -54,7 +54,7 @@ public class Application {
                 globalInfo = configurationIO.readPreConfigGlobalInfo(globalInput);
                 EntryPoint.TOTAL_SIMULATION_TIME = globalInfo.getTotalSimulationTime();
                 if(globalInfo.getRandomSeed() == 0) {
-                    SimulationRandom.init();
+                    SimulationRandom.init(0);
                 }
                 else {
                     SimulationRandom.init(globalInfo.getRandomSeed());
@@ -71,7 +71,7 @@ public class Application {
                 globalInfo = configurationIO.readPreConfigGlobalInfo(globalInput);
                 EntryPoint.TOTAL_SIMULATION_TIME = globalInfo.getTotalSimulationTime();
                 if(globalInfo.getRandomSeed() == 0) {
-                    SimulationRandom.init();
+                    SimulationRandom.init(0);
                 }
                 else {
                     SimulationRandom.init(globalInfo.getRandomSeed());

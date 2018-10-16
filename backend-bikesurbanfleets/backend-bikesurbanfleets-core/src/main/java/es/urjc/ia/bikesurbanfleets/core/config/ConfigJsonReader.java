@@ -2,7 +2,6 @@ package es.urjc.ia.bikesurbanfleets.core.config;
 
 import com.google.gson.Gson;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 
 import java.io.FileReader;
@@ -40,12 +39,6 @@ public class ConfigJsonReader {
         String globalConfigStr = new String(Files.readAllBytes(Paths.get(globalConfFile)), StandardCharsets.UTF_8);
         globalConfigStr = globalConfigStr.replace("\\", "/");
         GlobalInfo globalInfo = gson.fromJson(globalConfigStr, GlobalInfo.class);
-        if(globalInfo.getRandomSeed() == 0) {
-            SimulationRandom.init();
-        }
-        else {
-            SimulationRandom.init(globalInfo.getRandomSeed());
-        }
         return globalInfo;
     }
 
@@ -62,7 +55,30 @@ public class ConfigJsonReader {
             return usersConfig;
         }
     }
+public Message readMessage(JsonReader reader) throws IOException {
+     long id = -1;
+     String text = null;
+     User user = null;
+     List<Double> geo = null;
 
+     reader.beginObject();
+     while (reader.hasNext()) {
+       String name = reader.nextName();
+       if (name.equals("id")) {
+         id = reader.nextLong();
+       } else if (name.equals("text")) {
+         text = reader.nextString();
+       } else if (name.equals("geo") && reader.peek() != JsonToken.NULL) {
+         geo = readDoublesArray(reader);
+       } else if (name.equals("user")) {
+         user = readUser(reader);
+       } else {
+         reader.skipValue();
+       }
+     }
+     reader.endObject();
+     return new Message(id, text, user, geo);
+   }
     /**
      * It creates a system manager object from the simulation configuration object.
      * @return the created system manager object.

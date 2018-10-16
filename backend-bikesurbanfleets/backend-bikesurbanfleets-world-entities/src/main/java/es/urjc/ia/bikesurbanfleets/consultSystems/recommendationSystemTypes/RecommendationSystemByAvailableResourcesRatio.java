@@ -1,6 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
@@ -47,12 +48,14 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 	 * It contains several comparators to sort stations.
 	 */
 	private StationComparator stationComparator;
+        private SimpleRandom rand;
 
 	public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager,
 			StationComparator stationComparator) {
 		super(infraestructureManager);
 		this.parameters = new RecommendationParameters();
 		this.stationComparator = stationComparator;
+                this.rand=new SimpleRandom(1);
 	}
 
 	public RecommendationSystemByAvailableResourcesRatio(InfraestructureManager infraestructureManager, StationComparator stationComparator,
@@ -80,7 +83,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 			ratioSum += stations.get(i).availableBikes() / stations.get(i).getCapacity();
 		}
 
-		double random = infraestructureManager.getRandom().nextDouble(0, ratioSum);
+		double random = rand.nextDouble(0, ratioSum);
 		double ratio;
 		for (i = 0; i < n_stations; i++) {
 			ratio = stations.get(i).availableBikes() / stations.get(i).getCapacity();
@@ -102,7 +105,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 			ratioSum += stations.get(i).availableSlots() / stations.get(i).getCapacity();
 		}
 
-		double random = infraestructureManager.getRandom().nextDouble(0, ratioSum);
+		double random = rand.nextDouble(0, ratioSum);
 		double ratio;
 		for (i = 0; i < n_stations; i++) {
 			ratio = stations.get(i).availableSlots() / stations.get(i).getCapacity();

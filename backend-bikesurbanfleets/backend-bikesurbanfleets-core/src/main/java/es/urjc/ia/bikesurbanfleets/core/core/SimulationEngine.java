@@ -10,6 +10,7 @@ import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersConfig;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricReservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
@@ -73,8 +74,10 @@ public class SimulationEngine {
     private List<EventUserAppears> processUsers(SimulationServices services) {
         List<EventUserAppears> eventUserAppearsList = new ArrayList<>();
         UserFactory userFactory = new UserFactory();
+        SimpleRandom simprand=new SimpleRandom(globalInfo.getRandomSeed());
         for (SingleUser singleUser: usersInfo.getUsers()) {
-            User user = userFactory.createUser(singleUser.getUserType(), services);
+            int seed=simprand.nextInt();
+            User user = userFactory.createUser(singleUser.getUserType(), services, singleUser.getDestinationPlace(), seed);
             int instant = singleUser.getTimeInstant();
             GeoPoint position = singleUser.getPosition();
             eventUserAppearsList.add(new EventUserAppears(instant, user, position));

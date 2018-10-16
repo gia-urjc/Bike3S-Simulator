@@ -1,0 +1,13 @@
+{
+  "prototype": [
+    "id",
+    "startTime",
+    "endTime",
+    "type",
+    "state",
+    "user",
+    "station",
+    "bike"
+  ],
+  "instances": []
+}

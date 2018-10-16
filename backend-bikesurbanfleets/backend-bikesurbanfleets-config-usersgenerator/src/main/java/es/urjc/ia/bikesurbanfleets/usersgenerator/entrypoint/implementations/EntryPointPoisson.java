@@ -26,13 +26,22 @@ public class EntryPointPoisson extends EntryPoint {
      * If a radius is given, position is the center of circle
      * In other case, position is the specific point where user appears
      */
-    private GeoPoint position;
+    private GeoPoint positionappearance;
 
+    /**
+     * It is the point where user wants to go to.
+     */
+    private GeoPoint destinationPlace;
+ 
     /**
      * It is the radius of circle is going to be used to delimit area where users appears
      */
-    private double radius;
+    private double radiusappears;
 
+    /**
+     * It is the radius of circle is going to be used to delimit area where users wants to go to
+     */
+    private double radiusgoto;
     /**
      * Type of distribution that users generation will follow
      */
@@ -73,18 +82,25 @@ public class EntryPointPoisson extends EntryPoint {
 
         while (currentTime < endTime && usersCounter < maximumUsers) {
             usersCounter++;
-            GeoPoint userPosition;
+            GeoPoint userPosition,userGoTo;
 
             //If not radius is specified, user just appears in the position submitted.
-            if (radius > 0) {
-                BoundingCircle boundingCircle = new BoundingCircle(position, radius);
-                userPosition = boundingCircle.randomPointInCircle(SimulationRandom.getUserCreationInstance());
+            if (radiusappears > 0) {
+                BoundingCircle boundingCircle = new BoundingCircle(positionappearance, radiusappears);
+                userPosition = boundingCircle.randomPointInCircle(SimulationRandom.getInstance());
             } else {
-                userPosition = position;
+                userPosition = positionappearance;
+            }
+            //If not radius is specified, user goes to the position submitted.
+            if (radiusgoto > 0) {
+                BoundingCircle boundingCircle = new BoundingCircle(destinationPlace, radiusgoto);
+                userGoTo = boundingCircle.randomPointInCircle(SimulationRandom.getInstance());
+            } else {
+                userGoTo = destinationPlace;
             }
             int timeEvent = distribution.randomInterarrivalDelay();
             currentTime += timeEvent;
-            SingleUser user = new SingleUser(userPosition, userType, currentTime);
+            SingleUser user = new SingleUser(userPosition, userGoTo, userType, currentTime);
             users.add(user);
         }
         return users;
@@ -92,7 +108,8 @@ public class EntryPointPoisson extends EntryPoint {
 
     @Override
     public String toString() {
-        String result = position.toString();
+        String result = positionappearance.toString();
+        result += "| " + destinationPlace.toString() + " \n";
         result += "| EntryPointType" + this.getEntryPointType();
         result += "| distributionParameter " + distribution.getLambda() + "\n";
         result += "user Type: " + userType;

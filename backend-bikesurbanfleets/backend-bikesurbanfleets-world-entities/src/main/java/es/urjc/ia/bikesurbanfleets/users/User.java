@@ -9,7 +9,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
@@ -53,11 +53,6 @@ public abstract class User implements Entity {
      * It is the station to which user has decided to go at this moment.
      */
     private Station destinationStation;
-    
-    /**
-    * It is the place in the city the user wants to cycle to.
-    */
-    private GeoPoint destinationPoint;
     
     /** 
      * It is the user destination in the city.
@@ -129,49 +124,26 @@ public abstract class User implements Entity {
      */
     private int instant;
 
-    public User(SimulationServices services) {
-        this.id = idGenerator.next();
-
-        this.position = null;
-        this.bike = null;
-
-        // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = SimulationRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
-        // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = SimulationRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
-
-        this.reservedBike = false;
-        this.reservedSlot = false;
-        this.destinationStation = null;
-
-        this.reservation = null;
-        this.memory = new UserMemory(this);
-        this.services = services;
-        this.infraestructure = services.getInfrastructureManager();
-        this.recommendationSystem = services.getRecommendationSystem();
-        this.informationSystem = services.getInformationSystem();
-        this.graph = services.getGraphManager();
-        History.registerEntity(this);
-        this.memory = new UserMemory(this);
-
-    }
+    /* random class for generating random events in the user */
+    protected SimpleRandom rando;
     
-    public User(SimulationServices services, GeoPoint finalDestination) {
+    public User(SimulationServices services, GeoPoint finalDestination, Long seed) {
         this.id = idGenerator.next();
 
         this.position = null;
-        this.bike = null;
-
         // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = SimulationRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
+        this.walkingVelocity = rando.nextInt(3, 8) / 3.6;
         // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = SimulationRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
-
-        this.reservedBike = false;
-        this.reservedSlot = false;
-        this.destinationStation = null;
+        this.cyclingVelocity = rando.nextInt(10, 21) / 3.6;
         this.destinationPlace = finalDestination; 
 
+        this.rando=new SimpleRandom(seed);
+
+        this.bike = null;
+        this.reservedBike = false;
+        this.reservedSlot = false;
+        this.destinationStation = null;
+        
         this.reservation = null;
         this.memory = new UserMemory(this);
         this.services = services;
@@ -181,7 +153,6 @@ public abstract class User implements Entity {
         this.graph = services.getGraphManager();
         History.registerEntity(this);
         this.memory = new UserMemory(this);
-
     }
 
 
@@ -219,7 +190,7 @@ public abstract class User implements Entity {
     public Bike getBike() {
         return bike;
     }
-        public boolean hasBike() {
+    public boolean hasBike() {
         return bike != null ? true : false;
     }
 
@@ -235,24 +206,8 @@ public abstract class User implements Entity {
         return destinationStation;
     }
     
-    public void setDestinationStation(Station destinationStation) {
-        this.destinationStation = destinationStation;
-    }
-    
-    public GeoPoint getDestinationPoint() {
-    	return destinationPoint;
-    }
-    
-    public void setDestinationPoint(GeoPoint point) {
-    	this.destinationPoint = point;
-    }
-
-    public GeoRoute getRoute() {
+     public GeoRoute getRoute() {
         return this.route;
-    }
-
-    public void setRoute(GeoRoute route) {
-        this.route = route;
     }
 
     public double getWalkingVelocity() {
@@ -334,7 +289,7 @@ public abstract class User implements Entity {
 
     public boolean removeBikeWithoutReservationFrom(Station station) {
         if (hasBike()) {
-            return false;
+            throw new RuntimeException ("removeBikeWithoutReservationFrom");
         }
         this.bike = station.removeBikeWithoutReservation();
         return hasBike();
@@ -365,7 +320,7 @@ public abstract class User implements Entity {
         boolean returned = false;
         if (!hasBike()) {
             // TODO: log warning (or throw error?)
-            return false;
+            throw new RuntimeException ("returnBikeWithoutReservationTo");
         }
         if(station.returnBike(this.bike)) {
             this.bike = null;
@@ -388,66 +343,30 @@ public abstract class User implements Entity {
         this.reservation = null;
     }
 
-    private List<GeoRoute> createRouteFromStationToSame(List<GeoRoute> geoRoute, String vehicle, boolean calcNewRandom) throws Exception {
-        
-                GeoPoint auxiliarPoint = null;
-        double RADIO = 1000;
-        
-        if(calcNewRandom) {
-            auxiliarPoint = services.getInfrastructureManager().generateRandomPointInCircle(this.position, RADIO);
-        }
-        else {
-            auxiliarPoint = SimulationRandom.getRandomUsedPoint();
-        }
-
-        GeoRoute initRoute = graph.obtainShortestRouteBetween(this.position, auxiliarPoint, vehicle);
-        GeoRoute returnRoute = graph.obtainShortestRouteBetween(auxiliarPoint, destinationPoint, vehicle);
-        
-        if(calcNewRandom) {
-            SimulationRandom.addRandomUsedPoint(auxiliarPoint);
-        }
-        geoRoute.add(initRoute.concatRoute(returnRoute));
-        return geoRoute;
-    }
-
-    public List<GeoRoute> calculateRoutes(GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
+    private GeoRoute calculateRoute(GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
         String vehicle = this.bike == null ? "foot" : "bike";
-        
+    
         if(this.position.equals(destinationPoint)) {
-            
-            ArrayList<GeoRoute> newRoutes = new ArrayList<>();
-            // First try. If valid random point, program still running
-            try {
-                createRouteFromStationToSame(newRoutes, vehicle, true);
-            }
-            // If not valid route, we use a point used before
-            catch(Exception e1) {
-                try {
-                    createRouteFromStationToSame(newRoutes, vehicle, false);
-                }
-                // If no points are at first runtime this method should be executed
-                catch(Exception e2) {
-                    boolean isValidPoint = false;
-                    while(!isValidPoint) {
-                        try {
-                            createRouteFromStationToSame(newRoutes, vehicle, true);
-                            isValidPoint = true; 
-                        }
-                        catch(Exception e3) {
-                            System.out.println("Trying new point");
-                        }
-                    }
-                }    
-            }
-            return newRoutes;
+            List<GeoPoint> patchedRoute = new ArrayList<>(Arrays.asList(this.position, destinationPoint)); 
+            return new GeoRoute(patchedRoute);
         }
         try {
-            return graph.obtainAllRoutesBetween(this.position, destinationPoint, vehicle);
+            return graph.obtainShortestRouteBetween(this.position, destinationPoint, vehicle);
         }
         catch(Exception e) {
             List<GeoPoint> patchedRoute = new ArrayList<>(Arrays.asList(this.position, destinationPoint)); 
-            return new ArrayList<>(Arrays.asList(new GeoRoute(patchedRoute)));
+            return new GeoRoute(patchedRoute);
         }
+        
+    }
+    
+  /**
+     * Time in seconds that user takes in arriving to a GeoPoint
+     * time = distance/velocity
+     * @throws Exception
+     */
+    protected int timeToReach() {
+        return (int) (route.getTotalDistance()/getAverageVelocity());
     }
 
     public GeoPoint reachedPointUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
@@ -460,21 +379,30 @@ public abstract class User implements Entity {
      * This position is currently at the last position of the current route
      */
 
-    /**
-     * Time in seconds that user takes in arriving to a GeoPoint
-     * time = distance/velocity
-     * @throws Exception
-     */
-    public int timeToReach() {
-        return (int) (route.getTotalDistance()/getAverageVelocity());
-    }
-    
+     
     public void leaveSystem() {
         setPosition(null);
-        setRoute(null);
-        setDestinationStation(null);
-        setDestinationPoint(null);
+        route= null;
+        destinationStation=null;
         instant = -1;
+    }
+     /**
+     * The user walks to a station; sets the route and the destination station.
+     * devuelve el tiempo que tardará el usario
+     */
+    final public int goToStation(Station dest) throws Exception {
+            destinationStation = dest;
+            route = calculateRoute(dest.getPosition()); 
+            return (int) (route.getTotalDistance()/getAverageVelocity());
+    }
+    /**
+     * The user goes to e point in the city not a station.
+     * devuelve el tiempo que tardará el usario
+     */
+    public int goToPointInCity(GeoPoint point) throws Exception {
+            destinationStation = null;
+            route = calculateRoute(point);
+            return (int) (route.getTotalDistance()/getAverageVelocity());
     }
 
     /**
@@ -534,32 +462,26 @@ public abstract class User implements Entity {
      */
     public abstract boolean decidesToReserveSlotAtNewDecidedStation();
 
-    /**
-     * User decides the point (it is not a station) to which he wants to ride the rented bike
-     * after removing it from station.
-     * @return the point where he wants to go after making his decision.
-     */
-    public abstract GeoPoint decidesNextPoint();
 
     /**
-     * Just after removing the bike, user decides if he'll ride it directly to a station,
+     * Just after removing the bike, user decides if he'll ride it directly to a station or he will go to a point in the city
      * in order to return it.
-     * @return true if user decides to cycle directly to a station in order to return
-     * his bike and false in other case (he decides to ride it to another point before returning it).
+     * @return true if user decides to ride to a point in the city
+     * and false in other case (he decides to go to a station close).
      */
-    public abstract boolean decidesToReturnBike();
+    public abstract boolean decidesToGoToPointInCity();
+
+     /**
+     * If the user decides thogo to a point in the city, this is that point, that is if decidesToGoToPointInCity is true
+      * @return the point where he wants to go after making his decision.
+     */
+    public abstract GeoPoint getPointInCity();
 
     /**
      * When timeout happens, he decides to continue going to that chosen station or to go to another one.
      * @return true if user chooses a new station to go and false if he continues to the previously chosen one.
      */
     public abstract boolean decidesToDetermineOtherStationAfterTimeout();
-
-    /**
-     * The user chooses the route which he'll travel to arrive at  selected destination.
-     * @return the route which the user will follow.
-     */
-    public abstract GeoRoute determineRoute() throws Exception;
 
     /**
      * When user hasn't been able to make a reservation at the destination station,

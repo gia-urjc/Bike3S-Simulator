@@ -2,7 +2,6 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -49,19 +48,19 @@ public class UserTourist extends User {
          * It is the number of times that the user musts try to make a bike reservation before
          * deciding to leave the system.
          */
-        private int minReservationAttempts = infraestructure.getRandom().nextInt(2, 4);
+        private int minReservationAttempts = rando.nextInt(2, 4);
 
         /**
          * It is the number of times that a reservation timeout event musts occurs before the
          * user decides to leave the system.
          */
-        private int minReservationTimeouts = infraestructure.getRandom().nextInt(1, 3);
+        private int minReservationTimeouts = rando.nextInt(1, 3);
 
         /**
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentalAttempts = infraestructure.getRandom().nextInt(3, 6);
+        private int minRentalAttempts = rando.nextInt(3, 6);
 
         /**
          * It determines the rate with which the user will reserve a bike.
@@ -106,8 +105,8 @@ public class UserTourist extends User {
 
     private Parameters parameters;
 
-    public UserTourist(Parameters parameters, SimulationServices services) {
-        super(services);
+    public UserTourist(Parameters parameters, SimulationServices services, GeoPoint finalDestination, long seed) {
+        super(services,finalDestination,seed);
         this.parameters = parameters;
     }
     
@@ -146,7 +145,7 @@ public class UserTourist extends User {
                  nearestStations.add(recommendedStations.get(i));
              }
 	         
-            int index = infraestructure.getRandom().nextInt(0, end-1);
+            int index = rando.nextInt(0, end-1);
             destination = nearestStations.get(index);
         }
         return destination;
@@ -167,19 +166,19 @@ public class UserTourist extends User {
         for(int i = 0; i < end; i++) {
             nearestStations.add(recommendedStations.get(i));
         }
-        int index = infraestructure.getRandom().nextInt(0, end-1);
+        int index = rando.nextInt(0, end-1);
         return nearestStations.get(index);
     }
 
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-        int arrivalTime = timeToReach();
-     return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : infraestructure.getRandom().nextBoolean();
+     int arrivalTime = timeToReach();
+     return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : rando.nextBoolean();
     }
     
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
+        int percentage = rando.nextInt(0, 100);
         return percentage < parameters.bikeReservationPercentage ? true : false;
     }
 
@@ -191,54 +190,41 @@ public class UserTourist extends User {
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
+        int percentage = rando.nextInt(0, 100);
         return percentage < parameters.slotReservationPercentage ? true : false;
     }
 
-    @Override
-    public GeoPoint decidesNextPoint() {
-        return parameters.touristDestination;
-    }
-
-    @Override
-    public boolean decidesToReturnBike() {
-        return false;
-    }
-
-    @Override
+     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
+        int percentage = rando.nextInt(0, 100);
         return percentage < parameters.reservationTimeoutPercentage ? true : false;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
+        int percentage = rando.nextInt(0, 100);
         return percentage < parameters.failedReservationPercentage ? true : false;
     }
     
-    @Override
-    public GeoRoute determineRoute() throws Exception{
-        List<GeoRoute> routes = null;
-        routes = calculateRoutes(getDestinationPoint());
-        if(routes != null) {
-            if(!hasBike()) {
-                return routes.get(0);
-            }
-            else {
-                return routes.get(routes.size() - 1);
-            }
-        }
-        else {
-    	    return null;
-        }
-    }
-
+ 
     @Override
     public String toString() {
         return super.toString() + "UserDistanceRestriction{" +
                 "parameters=" + parameters +
                 '}';
+    }
+
+      //**********************************************
+    //decisions related to either go directly to the destination or going arround
+
+    @Override
+    public boolean decidesToGoToPointInCity() {
+        return true;
+    }
+
+    @Override
+    public GeoPoint getPointInCity() {
+        return parameters.touristDestination;
     }
 
 }

@@ -2,8 +2,6 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 
 import es.urjc.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -26,110 +24,79 @@ public class UserInformed extends User {
     @UserParameters
     public class Parameters {
 
+        private Parameters() {}
+        
         /**
-         * User destination place
-         */
-        private GeoPoint destinationPlace;
-
-        /**
-         * It is the maximum time in seconds until which the user will decide to continue walking
-         * or cycling towards the previously chosen station witohout making a new reservation
-         * after a reservation timeout event has happened.
-         */
-        private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
-
-        /**
-         * It is the number of times that the user musts try to make a bike reservation before
-         * deciding to leave the system.
-         */
-        private int minReservationAttempts = infraestructure.getRandom().nextInt(2, 4);
-
-        /**
-         * It is the number of times that a reservation timeout event musts occurs before the
-         * user decides to leave the system.
-         */
-        private int minReservationTimeouts = infraestructure.getRandom().nextInt(1, 3);
-
-        /**
-         * It is the number of times that the user musts try to rent a bike (without a bike
+         * It is the number of times that the user will try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentalAttempts = infraestructure.getRandom().nextInt(3, 6);
+        private int minRentalAttempts = 2;
 
-        /**
-         * It determines the rate with which the user will reserve a bike.
-         */
-        private int bikeReservationPercentage = 0;
-
-        /**
-         * It determines the rate with which the user will reserve a slot.
-         */
-        private int slotReservationPercentage = 0;
-
-        /**
-         * It determines the rate with which the user will choose a new destination station
-         * after a  timeout event happens.
-         */
-        private int reservationTimeoutPercentage = 0;
-
-        /**
-         * It determines the rate with which the user will choose a new destination station
-         * after he hasn't been able to make a reservation.
-         */
-        private int failedReservationPercentage = 0;
-
-        /**
-         * It determines if the user will reserve or not
-         */
-        private boolean willReserve = false;
-
-
-        private Parameters(){}
 
         @Override
         public String toString() {
-            return "UserUninformedParameters{" +
-                    "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
-                    ", minReservationAttempts=" + minReservationAttempts +
-                    ", minReservationTimeouts=" + minReservationTimeouts +
-                    ", minRentalAttempts=" + minRentalAttempts +
-                    ", bikeReservationPercentage=" + bikeReservationPercentage +
-                    ", slotReservationPercentage=" + slotReservationPercentage +
-                    ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
-                    ", failedReservationPercentage=" + failedReservationPercentage +
-                    ", willReserve=" + willReserve +
-                    '}';
+            return "Parameters{" +
+                    "minRentalAttempts=" + minRentalAttempts+
+            '}';
         }
+
     }
 
 
     private Parameters parameters;
 
-    public UserInformed(Parameters parameters, SimulationServices services) {
-        super(services);
+    public UserInformed(Parameters parameters, SimulationServices services, GeoPoint finalDestination, long seed) {
+        super(services,finalDestination,seed);
         this.parameters = parameters;
-        this.destinationPlace = parameters.destinationPlace;
     }
 
+    //**********************************************
+    //Decision related to reservations
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
-        return parameters.willReserve ?
-                getMemory().getReservationTimeoutsCounter() == parameters.minReservationTimeouts : infraestructure.getRandom().nextBoolean();
+        return false;
     }
-
-
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
-        return parameters.willReserve ?
-                getMemory().getReservationAttemptsCounter() == parameters.minReservationAttempts : infraestructure.getRandom().nextBoolean();
+        return false;
     }
-
+    @Override
+    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
+        return false;
+    }
 
     @Override
-    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        return parameters.willReserve ?
-                getMemory().getRentalAttemptsCounter() == parameters.minRentalAttempts : infraestructure.getRandom().nextBoolean();
+    public boolean decidesToReserveBikeAtNewDecidedStation() {
+        return false;
     }
+
+    @Override
+    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
+        return false;
+    }
+
+    @Override
+    public boolean decidesToReserveSlotAtNewDecidedStation() {
+        return false;
+    }
+    @Override
+    public boolean decidesToDetermineOtherStationAfterTimeout() {
+        return false;
+    }
+
+    @Override
+    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
+        return false;
+    }
+
+    //**********************************************
+    //decisions related to taking and leaving a bike
+    @Override
+    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
+        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) 
+            return true; 
+        else return false;
+     }
 
     @Override
     public Station determineStationToRentBike() {
@@ -144,8 +111,7 @@ public class UserInformed extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        System.out.println(parameters.destinationPlace);
-        GeoPoint destinationPlace = parameters.destinationPlace;
+        GeoPoint destinationPlace = this.destinationPlace;
         List<Station> recommendedStations = informationSystem.getStationsToReturnBikeOrderedByDistance(destinationPlace);
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
@@ -153,63 +119,17 @@ public class UserInformed extends User {
         return destination;
     }
 
+    //**********************************************
+    //decisions related to either go directly to the destination or going arround
+
     @Override
-    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-        int arrivalTime = timeToReach();
-        return parameters.willReserve && arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION;
+    public boolean decidesToGoToPointInCity() {
+        return false;
     }
 
     @Override
-    public boolean decidesToReserveBikeAtNewDecidedStation() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return parameters.willReserve && percentage < parameters.bikeReservationPercentage;
-    }
-
-    @Override
-    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        int arrivalTime = timeToReach();
-        return parameters.willReserve && arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION;
-    }
-
-    @Override
-    public boolean decidesToReserveSlotAtNewDecidedStation() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return parameters.willReserve && percentage < parameters.slotReservationPercentage;
-    }
-
-    @Override
-    public GeoPoint decidesNextPoint() {
-        return infraestructure.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
-    }
-
-    @Override
-    public boolean decidesToReturnBike() {
-        return infraestructure.getRandom().nextBoolean();
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterTimeout() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return parameters.willReserve && percentage < parameters.reservationTimeoutPercentage;
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return parameters.willReserve && percentage < parameters.failedReservationPercentage;
-    }
-
-    @Override
-    public GeoRoute determineRoute() throws Exception{
-        List<GeoRoute> routes = null;
-        routes = calculateRoutes(getDestinationPoint());
-        if(routes != null) {
-            int index = infraestructure.getRandom().nextInt(0, routes.size());
-            return routes.get(index);
-        }
-        else {
-            return null;
-        }
+    public GeoPoint getPointInCity() {
+        return null;
     }
 
 }

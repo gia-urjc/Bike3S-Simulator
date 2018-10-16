@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import es.urjc.bikesurbanfleets.services.SimulationServices;
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.UserProperties;
 import org.reflections.Reflections;
@@ -36,7 +37,7 @@ public class UserFactory {
      * @param epUserProps It is the user type and parameters which determines the instance type to create.
      * @return an instance of a specific user type.
      */
-    public User createUser(UserProperties epUserProps, SimulationServices services) {
+    public User createUser(UserProperties epUserProps, SimulationServices services, GeoPoint dest, int seed) {
 
         JsonElement parameters;
         parameters = new JsonObject();
@@ -45,12 +46,12 @@ public class UserFactory {
         }
         String type = epUserProps.getTypeName();
 
-        User user = instantiateUser(services, parameters, type);
+        User user = instantiateUser(services, parameters, type, dest,  seed);
         if (user != null) return user;
         throw new IllegalArgumentException("The type" + epUserProps.getTypeName() + "doesn't exists");
     }
 
-    private User instantiateUser(SimulationServices services, JsonElement parameters, String type) {
+    private User instantiateUser(SimulationServices services, JsonElement parameters, String type, GeoPoint dest, long seed ) {
 
         for(Class<?> userClass: userClasses) {
             String userTypeAnnotation = userClass.getAnnotation(UserType.class).value();
@@ -68,13 +69,13 @@ public class UserFactory {
 
                 try {
                     if(userParametersClass != null) {
-                        Constructor constructor = userClass.getConstructor(userParametersClass, SimulationServices.class);
-                        User user = (User) constructor.newInstance(gson.fromJson(parameters, userParametersClass), services);
+                        Constructor constructor = userClass.getConstructor(userParametersClass, SimulationServices.class, GeoPoint.class, long.class  );
+                        User user = (User) constructor.newInstance(gson.fromJson(parameters, userParametersClass), services, dest, seed);
                         return user;
                     }
                     else {
-                        Constructor constructor = userClass.getConstructor(SimulationServices.class);
-                        User user = (User) constructor.newInstance(services);
+                        Constructor constructor = userClass.getConstructor(SimulationServices.class, GeoPoint.class, Long.class );
+                        User user = (User) constructor.newInstance(services, dest, seed);
                         return user;
                     }
                 }
