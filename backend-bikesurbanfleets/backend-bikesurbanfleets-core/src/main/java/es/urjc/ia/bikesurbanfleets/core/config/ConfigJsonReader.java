@@ -55,31 +55,6 @@ public class ConfigJsonReader {
             return usersConfig;
         }
     }
-/*public Message readMessage(JsonReader reader) throws IOException {
-     long id = -1;
-     String text = null;
-     User user = null;
-     List<Double> geo = null;
-
-     reader.beginObject();
-     while (reader.hasNext()) {
-       String name = reader.nextName();
-       if (name.equals("id")) {
-         id = reader.nextLong();
-       } else if (name.equals("text")) {
-         text = reader.nextString();
-       } else if (name.equals("geo") && reader.peek() != JsonToken.NULL) {
-         geo = readDoublesArray(reader);
-       } else if (name.equals("user")) {
-         user = readUser(reader);
-       } else {
-         reader.skipValue();
-       }
-     }
-     reader.endObject();
-     return new Message(id, text, user, geo);
-   }
-    */
     /**
      * It creates a system manager object from the simulation configuration object.
      * @return the created system manager object.
