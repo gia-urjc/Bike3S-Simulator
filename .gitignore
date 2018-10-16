@@ -19,4 +19,4 @@ logs/
 tempCsv/
 tempUsersConf/
 *.txt
-/nbproject/private/
+*.osm

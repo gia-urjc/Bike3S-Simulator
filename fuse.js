@@ -1,14 +1,13 @@
 process.env.SPARKY_LOG = false;
-
 const { FuseBox, Sparky } = require('fuse-box');
 const { EnvPlugin, CSSPlugin, CSSResourcePlugin, RawPlugin, WebIndexPlugin, JSONPlugin, QuantumPlugin } = require('fuse-box');
-
 const log = require('fliplog');
 const express = require('express');
-
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs-extra');
+const request = require('request');
+const progress = require('request-progress');
 
 const projectRoot = () => process.cwd();
 
@@ -39,8 +38,10 @@ projectRoot.schemaCacheDefaults = () => path.join(projectRoot(), '.schema/defaul
 projectRoot.schemaLayoutCacheDefaults = () => path.join(projectRoot(), '.schema/schemas-and-form-definitions');
 
 let production = false;
-
 let schemaBuildPath = projectRoot.build.schema();
+
+//BiciMad map
+const overpassApiUrl = "http://overpass-api.de/api/interpreter?data=(node(40.362765146988,-3.8349151611328,40.504459339205,-3.5760498046875);<;);out;";
 
 
 Sparky.task('clean:backend', () => new Promise((resolve, reject) => {
@@ -378,7 +379,7 @@ Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
         stdio: 'inherit' // pipe to calling process
     });
 
-    log.time().green('Starting user generation').echo();
+    log.time().green('Starting development simulation').echo();
 
     userGen.on('error', (error) => {
         log.red(error).echo();
@@ -386,7 +387,7 @@ Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
 
     userGen.on('close', (code) => {
         if (code === 0) {
-            log.time().green('Finished user generation').echo();
+            log.time().green('Finished development simulation').echo();
             resolve();
         } else {
             log.time().red(`User generation finished with code ${code}`).echo();
@@ -397,6 +398,38 @@ Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
 Sparky.task('copy:assets', async () => {
     await fs.copy(path.join(projectRoot.frontend(), 'assets'), path.join(projectRoot.build.frontend(), 'assets'));
 });
+
+Sparky.task('download-map:dev', () => new Promise((resolve, reject) => {
+    log.time().green('Downloading osm map for development.').echo();
+    if(!fs.existsSync(projectRoot.configurationFiles.map())) {
+        fs.mkdirSync(projectRoot.configurationFiles.map());
+    }
+    let mapFile = path.resolve(projectRoot.configurationFiles.map(), 'madrid.osm');
+    if(fs.existsSync(mapFile)) {
+        log.time().green('Map is currently downloaded').echo();
+        resolve();
+    }
+    else {
+        let mapDownloadedFile = fs.createWriteStream(mapFile);
+        this.request = request(overpassApiUrl);
+        progress(this.request)
+            .on('progress', (state) => {
+                process.stdout.write('Speed: ' + parseFloat(state.speed / 1024 / 1024).toFixed(2) + 
+                ' MB/s - Downloaded: ' + parseFloat(state.size.transferred / 1024 / 1024).toFixed(2) + ' MB\r');
+            })
+            .on('error', (err) => {
+                console.log(err);
+                this.request = undefined;
+                reject();
+            })
+            .on('end', () => {
+                this.request = undefined;
+                log.time().green('Downloaded map in: ' + mapFile).echo();
+                resolve();
+            })
+            .pipe(mapDownloadedFile);
+    }
+}));
 
 
 Sparky.task('clean:build', () => Sparky.src(projectRoot.build()).clean(projectRoot.build()));
@@ -415,11 +448,11 @@ Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:
 Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});
 
 
-Sparky.task('configure:dev', ['build:dev-backend'], () => {});
+Sparky.task('configure:dev', ['download-map:dev', 'build:dev-backend'], () => {});
 
 Sparky.task('build:dist', () => {
     production = true;
-    Sparky.start('build:dev-backend')
+    Sparky.start('download-map:dev', 'build:dev-backend')
         .then(() => {
             return Sparky.start('build:frontend');
         })

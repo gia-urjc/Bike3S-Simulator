@@ -58,7 +58,7 @@ public class Application {
             auxiliaryDir.mkdirs();
         }
 
-        CommandLine cmd;
+  /*      CommandLine cmd;
         try {
             cmd = commandParser(args);
         } catch (ParseException e1) {
@@ -76,8 +76,20 @@ public class Application {
         historyOutputPath = cmd.getOptionValue("historyOutput");
         validator = cmd.getOptionValue("validator");
         callFromFrontend = cmd.hasOption("callFromFrontend");
-        
-        checkParams(); // If not valid, throws exception
+*/
+        globalSchema = "";
+        usersSchema = "";
+        stationsSchema = "";
+        String test="informed";
+        globalConfig = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/conf/global_configuration.json";
+        usersConfig = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/conf/users_configuration.json";
+        stationsConfig = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/conf/stations_configuration.json";
+        mapPath = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/madrid.osm";
+        historyOutputPath = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/hist";
+        validator = "";
+        callFromFrontend = true;
+       
+   //     checkParams(); // If not valid, throws exception
         ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
 
         try {

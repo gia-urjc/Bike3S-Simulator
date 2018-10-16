@@ -55,7 +55,7 @@ public class ConfigJsonReader {
             return usersConfig;
         }
     }
-public Message readMessage(JsonReader reader) throws IOException {
+/*public Message readMessage(JsonReader reader) throws IOException {
      long id = -1;
      String text = null;
      User user = null;
@@ -79,6 +79,7 @@ public Message readMessage(JsonReader reader) throws IOException {
      reader.endObject();
      return new Message(id, text, user, geo);
    }
+    */
     /**
      * It creates a system manager object from the simulation configuration object.
      * @return the created system manager object.

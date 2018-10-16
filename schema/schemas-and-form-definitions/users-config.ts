@@ -1,5 +1,5 @@
-import {GeoPoint, options, UInt} from "../common/index";
-import {sArray, sBoolean, sConst, sEnum, sInteger, sNumber, sObject} from "json-schema-builder-ts/dist/types";
+import {GeoPoint, UInt} from "../common/index";
+import {sBoolean, sNumber} from "json-schema-builder-ts/dist/types";
 
 const Percentage = sNumber().min(0).max(100);
 

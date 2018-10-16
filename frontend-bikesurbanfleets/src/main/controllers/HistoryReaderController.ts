@@ -38,7 +38,7 @@ export class HistoryReaderController {
             HistoryReaderController.changeFileSchema = fs.readJsonSync(paths.join(schemaPath, 'timeentries.json'));
         }
         console.log(reader.historyPath);
-        reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities', '.DS_Store').sort((a, b) => {
+        reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities', '.DS_Store', 'final-global-values.json').sort((a, b) => {
             const [x, y] = [a, b].map((s) => parseInt(s.split('-')[0]));
             return x - y;
         });
