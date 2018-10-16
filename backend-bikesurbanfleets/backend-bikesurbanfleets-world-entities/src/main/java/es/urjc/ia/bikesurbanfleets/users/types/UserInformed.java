@@ -1,5 +1,8 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
@@ -10,10 +13,11 @@ import es.urjc.ia.bikesurbanfleets.users.User;
 import java.util.List;
 
 /**
- * This class represents a user who makes most of his decissions randomly.
- * This user always chooses the closest destination station and the shortest route to reach it.
- * Moreover, this type of user only leaves the system when he has tried to make a bike
- * reservation in all the system's stations and he hasn't been able.
+ * This class represents a user who makes most of his decissions randomly. This
+ * user always chooses the closest destination station and the shortest route to
+ * reach it. Moreover, this type of user only leaves the system when he has
+ * tried to make a bike reservation in all the system's stations and he hasn't
+ * been able.
  *
  * @author IAgroup
  *
@@ -22,33 +26,41 @@ import java.util.List;
 public class UserInformed extends User {
 
     @UserParameters
-    public class Parameters {
+    private class Parameters {
 
+        //default constructor used if no parameters are specified
         private Parameters() {}
-        
         /**
-         * It is the number of times that the user will try to rent a bike (without a bike
-         * reservation) before deciding to leave the system.
+         * It is the number of times that the user will try to rent a bike
+         * (without a bike reservation) before deciding to leave the system.
          */
         private int minRentalAttempts = 2;
-
-
+        private GeoPoint touristDestination = null;
         @Override
         public String toString() {
-            return "Parameters{" +
-                    "minRentalAttempts=" + minRentalAttempts+
-            '}';
+            return "Parameters{"
+                    + "minRentalAttempts=" + minRentalAttempts
+                    + '}';
         }
 
     }
 
-
     private Parameters parameters;
 
-    public UserInformed(Parameters parameters, SimulationServices services, GeoPoint finalDestination, long seed) {
-        super(services,finalDestination,seed);
-        this.parameters = parameters;
-    }
+//                   user = (User) constructor.newInstance(userdef, services, seed);
+    public UserInformed(JsonObject userdef, SimulationServices services, long seed) throws Exception{
+        super(services, userdef, seed);
+        //***********Parameter treatment*****************************
+        //if this user has parameters this is the right declaration
+        //if no parameters are used this code just has to be commented
+        //"getparameters" is defined in USER such that a value of Parameters 
+        // is overwritten if there is a values specified in the jason description of the user
+        // if no value is specified in jason, then the orriginal value of that field is mantained
+        // that means that teh paramerts are all optional
+        // if you want another behaviour, then you should overwrite getParameters in this calss
+        this.parameters = new Parameters();
+        getParameters(userdef, this.parameters);
+     }
 
     //**********************************************
     //Decision related to reservations
@@ -56,10 +68,12 @@ public class UserInformed extends User {
     public boolean decidesToLeaveSystemAfterTimeout() {
         return false;
     }
+
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
         return false;
     }
+
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
         return false;
@@ -79,6 +93,7 @@ public class UserInformed extends User {
     public boolean decidesToReserveSlotAtNewDecidedStation() {
         return false;
     }
+
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
         return false;
@@ -93,10 +108,12 @@ public class UserInformed extends User {
     //decisions related to taking and leaving a bike
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) 
-            return true; 
-        else return false;
-     }
+        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     @Override
     public Station determineStationToRentBike() {
@@ -121,7 +138,6 @@ public class UserInformed extends User {
 
     //**********************************************
     //decisions related to either go directly to the destination or going arround
-
     @Override
     public boolean decidesToGoToPointInCity() {
         return false;

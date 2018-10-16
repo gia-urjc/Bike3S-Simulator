@@ -1,4 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
@@ -27,6 +29,8 @@ public class UserDistanceRestriction extends User {
     public class Parameters {
 
  
+        //default constructor used if no parameters are specified
+        private Parameters() {}
         /**
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
@@ -37,7 +41,7 @@ public class UserDistanceRestriction extends User {
          * It is a distance restriction: this user dosn't go to destination stations which are
          * farer than this distance.
          */
-        private int maxDistance;
+        private int maxDistance=300;
 
         @Override
         public String toString() {
@@ -50,10 +54,20 @@ public class UserDistanceRestriction extends User {
 
     private Parameters parameters;
 
-    public UserDistanceRestriction(Parameters parameters, SimulationServices services, GeoPoint finalDestination, long seed) {
-        super(services,finalDestination,seed);
-        this.parameters = parameters;
-    }
+    public UserDistanceRestriction(JsonObject userdef, SimulationServices services, long seed) throws Exception{
+        super(services, userdef, seed);
+        //***********Parameter treatment*****************************
+        //if this user has parameters this is the right declaration
+        //if no parameters are used this code just has to be commented
+        //"getparameters" is defined in USER such that a value of Parameters 
+        // is overwritten if there is a values specified in the jason description of the user
+        // if no value is specified in jason, then the orriginal value of that field is mantained
+        // that means that teh paramerts are all optional
+        // if you want another behaviour, then you should overwrite getParameters in this calss
+        this.parameters = new Parameters();
+        getParameters(userdef, this.parameters);
+     }
+
     
     //**********************************************
     //Decision related to reservations

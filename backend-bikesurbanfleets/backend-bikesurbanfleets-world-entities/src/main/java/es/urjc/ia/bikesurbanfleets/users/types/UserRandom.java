@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
+import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
@@ -20,8 +21,13 @@ import java.util.List;
 @UserType("USER_RANDOM")
 public class UserRandom extends User {
 
-    public UserRandom(SimulationServices services, GeoPoint finalDestination, long seed) {
-        super(services,finalDestination,seed);
+    public UserRandom(JsonObject userdef, SimulationServices services, long seed) {
+        super(services, userdef, seed);
+        //read specific parameters
+        JsonObject jsonparameters = userdef.getAsJsonObject("userType").getAsJsonObject("parameters");
+        if (jsonparameters != null) {
+            throw new IllegalArgumentException("random user can not have parameters");
+        } 
     }
 
     @Override

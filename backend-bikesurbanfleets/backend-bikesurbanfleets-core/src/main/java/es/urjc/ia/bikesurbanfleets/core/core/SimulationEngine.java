@@ -79,11 +79,11 @@ public class SimulationEngine {
         List<EventUserAppears> eventUserAppearsList = new ArrayList<>();
         UserFactory userFactory = new UserFactory();
         SimpleRandom simprand=new SimpleRandom(globalInfo.getRandomSeed());
-        for (SingleUser singleUser: usersInfo.getUsers()) {
+        for (JsonObject userdef: usersInfo.getUsers()) {
             int seed=simprand.nextInt();
-            User user = userFactory.createUser(singleUser.getUserType(), services, singleUser.getDestinationPlace(), seed);
-            int instant = singleUser.getTimeInstant();
-            GeoPoint position = singleUser.getPosition();
+            User user = userFactory.createUser(userdef, services, seed);
+            int instant = user.getInstant();
+            GeoPoint position = user.getPosition();
             eventUserAppearsList.add(new EventUserAppears(instant, user, position));
         }
 
