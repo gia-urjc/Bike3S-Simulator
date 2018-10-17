@@ -22,13 +22,11 @@ public class EventUserArrivesAtDestinationInCity extends EventUser {
 	@Override
 	public List<Event> execute() {
                 List<Event> newEvents = new ArrayList<>();
-		debugEventLog("User arrives at his destination in city");
 		user.setInstant(this.instant);
                 user.setPosition(currentPosition);
- 	
                 user.setState(User.STATE.EXIT_AFTER_REACHING_DESTINATION);
+		debugEventLog("User arrives at his destination in city");
                 newEvents.add(new EventUserLeavesSystem(this.getInstant(), user));
-		debugClose(user, user.getId());
 		return newEvents;
 	}
 	

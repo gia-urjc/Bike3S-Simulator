@@ -143,7 +143,6 @@ public abstract class EventUser implements Event {
             debugEventLog("User has not been able to reserve bike");
             if (user.decidesToLeaveSystemAffterFailedReservation()) {
                 debugEventLog("User decides to leave the system");
-                debugClose(user, user.getId());
                 user.setState(User.STATE.EXIT_AFTER_FAILED_RESERVATION);
                 newEvents.add(new EventUserLeavesSystem(this.getInstant(), user));
             } else if (user.decidesToDetermineOtherStationAfterFailedReservation()) {
@@ -178,8 +177,8 @@ public abstract class EventUser implements Event {
             debugEventLog("User decides to manage bike reservation at the same station");
             newEvents = manageBikeReservation(destination);
         } else {   // user decides not to reserve
-            debugEventLog("User decides to go to the initially chosen station without reservation");
             int arrivalTime = user.goToStation(destination);
+            debugEventLog("User decides to go to the initially chosen station without reservation");
             newEvents.add(new EventUserArrivesAtStationToRentBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
         }
         return newEvents;
@@ -240,8 +239,8 @@ public abstract class EventUser implements Event {
             debugEventLog("User has not been able to reserve a slot");
             
             if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user waljs to the initially chosen station
-                debugEventLog("User decides to go to the initially chosen station without slot reservation");
                 int arrivalTime = user.goToStation(destination);
+                debugEventLog("User decides to go to the initially chosen station without slot reservation");
                 newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
             } else {
                 debugEventLog("User decides to determine other station to manage slot reservation");
@@ -263,8 +262,8 @@ public abstract class EventUser implements Event {
             debugEventLog("User decides to manage slot reservation at the same station");
             newEvents = manageSlotReservation(destination);
         } else {   // user decides not to reserve
-            debugEventLog("User decides to go to the initially chosen station without slot reservation");
             int arrivalTime = user.goToStation(destination);
+            debugEventLog("User decides to go to the initially chosen station without slot reservation");
             newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
         }
         return newEvents;
@@ -282,8 +281,8 @@ public abstract class EventUser implements Event {
             debugEventLog("User decides to reserve slot at new decided station");
             newEvents = manageSlotReservation(destination);
         } else {   // user decides not to reserve bike
-            debugEventLog("User decides to go directly to the new decided station without slot reservation");
             int arrivalTime = user.goToStation(destination);
+            debugEventLog("User decides to go directly to the new decided station without slot reservation");
             newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
         }
         return newEvents;

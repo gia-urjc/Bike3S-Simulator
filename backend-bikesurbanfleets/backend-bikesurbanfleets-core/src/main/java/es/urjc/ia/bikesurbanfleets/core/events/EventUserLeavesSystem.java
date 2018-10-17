@@ -21,6 +21,8 @@ public class EventUserLeavesSystem extends EventUser {
 	public List<Event> execute() {
 		user.leaveSystem();
                 user.setState(User.STATE.LEFT_SYSTEM);
+                debugEventLog();
+		debugClose(user, user.getId());
 		return new ArrayList<>();
 	}
 	

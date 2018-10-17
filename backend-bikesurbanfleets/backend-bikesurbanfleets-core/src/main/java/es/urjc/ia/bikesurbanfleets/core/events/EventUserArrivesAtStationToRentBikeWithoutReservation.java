@@ -50,8 +50,8 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
                 user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE);
                 debugEventLog("User can't take bikes from the station");
                 if (user.decidesToLeaveSystemWhenBikesUnavailable()) {
-                    debugEventLog("User decides to leave the system");
                     user.setState(User.STATE.EXIT_AFTER_FAILED_RENTAL);
+                    debugEventLog("User decides to leave the system");
                     newEvents.add(new EventUserLeavesSystem(this.getInstant(), user));
                 } else {
                     user.setState(User.STATE.WALK_TO_STATION);
