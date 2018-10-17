@@ -2,7 +2,6 @@ package es.urjc.ia.bikesurbanfleets.core.config;
 
 import com.google.gson.Gson;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 
 import java.io.FileReader;
@@ -40,12 +39,6 @@ public class ConfigJsonReader {
         String globalConfigStr = new String(Files.readAllBytes(Paths.get(globalConfFile)), StandardCharsets.UTF_8);
         globalConfigStr = globalConfigStr.replace("\\", "/");
         GlobalInfo globalInfo = gson.fromJson(globalConfigStr, GlobalInfo.class);
-        if(globalInfo.getRandomSeed() == 0) {
-            SimulationRandom.init();
-        }
-        else {
-            SimulationRandom.init(globalInfo.getRandomSeed());
-        }
         return globalInfo;
     }
 
@@ -62,7 +55,6 @@ public class ConfigJsonReader {
             return usersConfig;
         }
     }
-
     /**
      * It creates a system manager object from the simulation configuration object.
      * @return the created system manager object.

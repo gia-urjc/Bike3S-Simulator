@@ -1,0 +1,38 @@
+{
+  "prototype": [
+    "id",
+    "type",
+    "walkingVelocity",
+    "cyclingVelocity",
+    "state",
+    "reservations",
+    "position",
+    "route",
+    "bike",
+    "destinationStation"
+  ],
+  "instances": [
+    {
+      "id": 1,
+      "type": "USER_INFORMED",
+      "walkingVelocity": 1.9444444444444444,
+      "cyclingVelocity": 3.2331848603160633,
+      "state": "APPEARED",
+      "reservations": {
+        "type": "reservations",
+        "id": []
+      }
+    },
+    {
+      "id": 2,
+      "type": "USER_UNINFORMED",
+      "walkingVelocity": 1.3888888888888888,
+      "cyclingVelocity": 100.0,
+      "state": "APPEARED",
+      "reservations": {
+        "type": "reservations",
+        "id": []
+      }
+    }
+  ]
+}

@@ -36,7 +36,7 @@ public class BoundingCircle {
      * @param random It is the general random instance of the system.
      * @return a random point which belongs to thhe boundingCircle object. 
      */
-    public GeoPoint randomPointInCircle(SimulationRandom random) {
+    public GeoPoint randomPointInCircle(SimpleRandom random) {
         double distance = Math.pow(random.nextDouble(), 0.5) * radius;
         double latitudeRadians = center.getLatitude() * GeoPoint.DEGREES_TO_RADIANS;
         double longitudeRadians = center.getLongitude() * GeoPoint.DEGREES_TO_RADIANS;

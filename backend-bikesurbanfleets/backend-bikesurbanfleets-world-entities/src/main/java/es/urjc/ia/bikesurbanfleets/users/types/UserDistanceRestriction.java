@@ -1,8 +1,8 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
-import es.urjc.bikesurbanfleets.services.SimulationServices;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -25,73 +25,28 @@ import java.util.List;
 @UserType("USER_DISTANCE_RESTRICTION")
 public class UserDistanceRestriction extends User {
 
-    @UserParameters
+     @UserParameters
     public class Parameters {
 
-        /**
-         * User destination place
-         */
-        private GeoPoint destinationPlace;
-
-        /**
-         * It is the time in seconds until which the user will decide to continue walking
-         * or cycling towards the previously chosen station without making a new reservation
-         * after a reservation timeout event has happened.
-         */
-        private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
-
-        /**
-         * It is the number of times that the user musts try to make a bike reservation before
-         * deciding to leave the system.
-         */
-        private int minReservationAttempts = infraestructure.getRandom().nextInt(2, 5);
-
-        /**
-         * It is the number of times that a reservation timeout event musts occurs before the
-         * user decides to leave the system.
-         */
-        private int minReservationTimeouts = infraestructure.getRandom().nextInt(2, 4);
-
+ 
+        //default constructor used if no parameters are specified
+        private Parameters() {}
         /**
          * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentalAttempts = infraestructure.getRandom().nextInt(3, 6);
-
-        /**
-         * It determines the rate with which the user will decide to go directly to a station
-         * in order to return the bike he has just rented.
-         */
-        private int bikeReturnPercentage;
-
-        /**
-         * It determines the rate with which the user will choose a new destination station
-         * after a  timeout event happens.
-         */
-        private int reservationTimeoutPercentage;
-
-        /**
-         * It determines the rate with which the user will choose a new destination station
-         * after he hasn't been able to make a reservation.
-         */
-        private int failedReservationPercentage;
+        private int minRentalAttempts = 2;
 
         /**
          * It is a distance restriction: this user dosn't go to destination stations which are
          * farer than this distance.
          */
-        private int maxDistance;
+        private int maxDistance=300;
 
         @Override
         public String toString() {
             return "UserDistanceRestrictionParameters{" +
-                    "MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION=" + MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION +
-                    ", minReservationAttempts=" + minReservationAttempts +
-                    ", minReservationTimeouts=" + minReservationTimeouts +
                     ", minRentalAttempts=" + minRentalAttempts +
-                    ", bikeReturnPercentage=" + bikeReturnPercentage +
-                    ", reservationTimeoutPercentage=" + reservationTimeoutPercentage +
-                    ", failedReservationPercentage=" + failedReservationPercentage +
                     ", maxDistance=" + maxDistance +
                     '}';
         }
@@ -99,32 +54,76 @@ public class UserDistanceRestriction extends User {
 
     private Parameters parameters;
 
-    public UserDistanceRestriction(Parameters parameters, SimulationServices services) {
-        super(services);
-        this.parameters = parameters;
-    }
+    public UserDistanceRestriction(JsonObject userdef, SimulationServices services, long seed) throws Exception{
+        super(services, userdef, seed);
+        //***********Parameter treatment*****************************
+        //if this user has parameters this is the right declaration
+        //if no parameters are used this code just has to be commented
+        //"getparameters" is defined in USER such that a value of Parameters 
+        // is overwritten if there is a values specified in the jason description of the user
+        // if no value is specified in jason, then the orriginal value of that field is mantained
+        // that means that teh paramerts are all optional
+        // if you want another behaviour, then you should overwrite getParameters in this calss
+        this.parameters = new Parameters();
+        getParameters(userdef, this.parameters);
+     }
+
     
+    //**********************************************
+    //Decision related to reservations
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
-        return getMemory().getReservationTimeoutsCounter() == parameters.minReservationTimeouts ? true : false;
+        return false;
     }
-
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
-        return getMemory().getReservationAttemptsCounter() == parameters.minReservationAttempts ? true : false;
+        return false;
+    }
+    @Override
+    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
+        return false;
     }
 
     @Override
-    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        return getMemory().getRentalAttemptsCounter() == parameters.minRentalAttempts ? true : false;
+    public boolean decidesToReserveBikeAtNewDecidedStation() {
+        return false;
     }
-    
+
+    @Override
+    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
+        return false;
+    }
+
+    @Override
+    public boolean decidesToReserveSlotAtNewDecidedStation() {
+        return false;
+    }
+    @Override
+    public boolean decidesToDetermineOtherStationAfterTimeout() {
+        return false;
+    }
+
+    @Override
+    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
+        return false;
+    }
+
+    //**********************************************
+    //decisions related to taking and leaving a bike
+    @Override
+    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
+        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) 
+            return true; 
+        else return false;
+     }
+
+
     @Override
     public Station determineStationToRentBike() {
         Station destination = null;
         List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceBikesRatio(this.getPosition(), parameters.maxDistance);
         //Remove station if the user is in this station
-        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
+        //recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
         }
@@ -134,14 +133,9 @@ public class UserDistanceRestriction extends User {
     @Override
      public Station determineStationToReturnBike() {
         Station destination = null;
-        GeoPoint destinationPlace = parameters.destinationPlace;
-        if(destinationPlace == null) {
-            SimulationRandom random = SimulationRandom.getGeneralInstance();
-            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
-        }
         List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceSlotsRatio(destinationPlace);
         //Remove station if the user is in this station
-        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+    //    recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0);
         }
@@ -149,64 +143,23 @@ public class UserDistanceRestriction extends User {
     }
     
     @Override
-    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-        int arrivalTime = timeToReach();
-        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
-    }
-
-    @Override
-    public boolean decidesToReserveBikeAtNewDecidedStation() {
-        return true;
-    }
-
-    @Override
-    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        int arrivalTime = timeToReach();
-        return arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : true;
-    }
-
-    @Override
-    public boolean decidesToReserveSlotAtNewDecidedStation() {
-        return true;
-    }
-
-    @Override
-    public GeoPoint decidesNextPoint() {
-        return infraestructure.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
-    }
-
-    @Override
-    public boolean decidesToReturnBike() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return percentage < parameters.bikeReturnPercentage ? true : false;
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterTimeout() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return percentage < parameters.reservationTimeoutPercentage ? true : false;
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        int percentage = infraestructure.getRandom().nextInt(0, 100);
-        return percentage < parameters.failedReservationPercentage ? true : false;
-    }
-    
-    /**
-     * The user chooses the shortest route because he wants to arrive at work as fast as possible.
-     */
-    @Override
-    public GeoRoute determineRoute() throws Exception{
-        List<GeoRoute> routes = null;
-        routes = calculateRoutes(getDestinationPoint());
-        return routes != null ? routes.get(0) : null;
-    }
-
-    @Override
     public String toString() {
         return super.toString() + "UserDistanceRestriction{" +
                 "parameters=" + parameters +
                 '}';
     }
+    
+        //**********************************************
+    //decisions related to either go directly to the destination or going arround
+
+    @Override
+    public boolean decidesToGoToPointInCity() {
+        return false;
+    }
+
+    @Override
+    public GeoPoint getPointInCity() {
+        return null;
+    }
+
 }

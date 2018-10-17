@@ -29,6 +29,8 @@ public class History {
 
     private static String DEFAULT_HISTORY_OUTPUT_PATH = "history";
 
+    private final static String FINAL_GLOBAL_VALUES_FILENAME = "final-global-values.json";
+
     //Needed if the are no reservations in the system
     private static Class<? extends HistoricEntity> reservationClass;
 
@@ -76,6 +78,18 @@ public class History {
         }
     }
 
+    public static void writeGlobalInformation(FinalGlobalValues finalGlobalValues) throws IOException {
+        // it creates a file with the specified name in the history directory
+        File json = outputPath.resolve(FINAL_GLOBAL_VALUES_FILENAME).toFile();
+        json.getParentFile().mkdirs();
+
+        // it writes the specified content in the created file
+        try (FileWriter writer = new FileWriter(json)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(finalGlobalValues, writer);
+        }
+    }
+
     /**
      * It saves in a file the initial states of all entities in the system and, in other files,
      * the changes that the entities have been passing throught the entire simulation.
@@ -102,11 +116,7 @@ public class History {
             writeJson("entities/" + entry.getKey() + ".json", entry.getValue());
         }
 
-
-
         writeTimeEntries();
-
-        // TODO: copy configuration file
     }
 
     /**

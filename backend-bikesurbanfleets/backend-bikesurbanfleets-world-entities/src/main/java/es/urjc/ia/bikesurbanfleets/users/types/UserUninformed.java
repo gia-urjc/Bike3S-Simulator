@@ -1,17 +1,17 @@
-package es.urjc.ia.bikesurbanfleets.users.types;
+ package es.urjc.ia.bikesurbanfleets.users.types;
 
-import es.urjc.bikesurbanfleets.services.SimulationServices;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
+import java.lang.reflect.Field;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This class represents a user who doesn't know anything about the state of the system.
@@ -27,14 +27,19 @@ public class UserUninformed extends User {
     @UserParameters
     public class Parameters {
 
-        private GeoPoint destinationPlace;
-
+       //default constructor used if no parameters are specified
         private Parameters() {}
+        
+        /**
+         * It is the number of times that the user will try to rent a bike (without a bike
+         * reservation) before deciding to leave the system.
+         */
+        private int minRentalAttempts = 1;
 
         @Override
         public String toString() {
             return "Parameters{" +
-                "destinationPlace=" + destinationPlace +
+                    "minRentalAttempts=" + minRentalAttempts+
             '}';
         }
 
@@ -42,26 +47,67 @@ public class UserUninformed extends User {
 
     private Parameters parameters;
 
-    public UserUninformed(Parameters parameters, SimulationServices services) {
-        super(services);
-        this.parameters = parameters;
-        this.destinationPlace = parameters.destinationPlace;
-    }
-
+    public UserUninformed(JsonObject userdef, SimulationServices services, long seed) throws Exception{
+        super(services, userdef, seed);
+        //***********Parameter treatment*****************************
+        //if this user has parameters this is the right declaration
+        //if no parameters are used this code just has to be commented
+        //"getparameters" is defined in USER such that a value of Parameters 
+        // is overwritten if there is a values specified in the jason description of the user
+        // if no value is specified in jason, then the orriginal value of that field is mantained
+        // that means that teh paramerts are all optional
+        // if you want another behaviour, then you should overwrite getParameters in this calss
+        this.parameters = new Parameters();
+        getParameters(userdef, this.parameters);
+     }
+ 
+    //**********************************************
+    //Decision related to reservations
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
-        return infraestructure.getRandom().nextBoolean();
+        return false;
     }
-
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
-        return infraestructure.getRandom().nextBoolean();
+        return false;
+    }
+    @Override
+    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
+        return false;
     }
 
     @Override
-    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        return infraestructure.getRandom().nextBoolean();
+    public boolean decidesToReserveBikeAtNewDecidedStation() {
+        return false;
     }
+
+    @Override
+    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
+        return false;
+    }
+
+    @Override
+    public boolean decidesToReserveSlotAtNewDecidedStation() {
+        return false;
+    }
+    @Override
+    public boolean decidesToDetermineOtherStationAfterTimeout() {
+        return false;
+    }
+
+    @Override
+    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
+        return false;
+    }
+
+    //**********************************************
+    //decisions related to taking and leaving a bike
+    @Override
+    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
+        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) 
+            return true; 
+        else return false;
+     }
 
     @Override
     public Station determineStationToRentBike() {
@@ -82,14 +128,8 @@ public class UserUninformed extends User {
         Station destination = null;
         List<Station> stations = infraestructure.consultStations();
         List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
-
         //Remove station if the user is in this station
         System.out.println("List Size" + stations.size());
-        GeoPoint destinationPlace = parameters.destinationPlace;
-        if(destinationPlace == null) {
-            SimulationRandom random = SimulationRandom.getGeneralInstance();
-            destinationPlace = this.infraestructure.generateBoundingBoxRandomPoint(random);
-        }
         List<Station> finalStations = informationSystem.getStationsBikeOrderedByDistanceNoFiltered(this.destinationPlace);
         finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
@@ -98,57 +138,18 @@ public class UserUninformed extends User {
         return destination;
     }
 
+    //**********************************************
+    //decisions related to either go directly to the destination or going arround
+
     @Override
-    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
+    public boolean decidesToGoToPointInCity() {
         return false;
     }
 
     @Override
-    public boolean decidesToReserveBikeAtNewDecidedStation() {
-        return false;
+    public GeoPoint getPointInCity() {
+        return null;
     }
 
-    @Override
-    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToReserveSlotAtNewDecidedStation() {
-        return false;
-    }
-
-    @Override
-    public GeoPoint decidesNextPoint() {
-        return infraestructure.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
-    }
-
-    @Override
-    public boolean decidesToReturnBike() {
-        return infraestructure.getRandom().nextBoolean();
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterTimeout() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        return false;
-    }
-
-    @Override
-    public GeoRoute determineRoute() throws Exception{
-        List<GeoRoute> routes = null;
-        routes = calculateRoutes(getDestinationPoint());
-        if(routes != null) {
-            int index = infraestructure.getRandom().nextInt(0, routes.size());
-            return routes.get(index);
-        }
-        else {
-            return null;
-        }
-    }
-
+ 
 }

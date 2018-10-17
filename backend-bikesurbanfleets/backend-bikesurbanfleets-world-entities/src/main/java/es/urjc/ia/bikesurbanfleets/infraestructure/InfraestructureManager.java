@@ -3,7 +3,7 @@ package es.urjc.ia.bikesurbanfleets.infraestructure;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingCircle;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
@@ -38,11 +38,6 @@ public class InfraestructureManager {
     private List<Reservation> reservations;
     
     /**
-     * It is a global random instance with an specific seed.
-     */
-    private SimulationRandom random;
-    
-    /**
      * It represents the map area where simulation is taking place.
      */
     private BoundingBox bbox;
@@ -52,7 +47,6 @@ public class InfraestructureManager {
         this.bikes = stations.stream().map(Station::getBikes).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         this.reservations = new ArrayList<>();
         this.bbox = bbox;
-        this.random = SimulationRandom.getGeneralInstance();
     }
     
     /**
@@ -84,18 +78,17 @@ public class InfraestructureManager {
     public List<Bike> consultBikes() {
     	return this.bikes;
     }
-    
-    public SimulationRandom getRandom() {
-        return random;
-    }
-    
-    public GeoPoint generateBoundingBoxRandomPoint(SimulationRandom random) {
+ 
+    //random is a value between 0 and 1
+    public GeoPoint generateBoundingBoxRandomPoint(SimpleRandom random) {
         return bbox.randomPoint(random);
     }
-
-    public GeoPoint generateRandomPointInCircle(GeoPoint center, double radio) {
+    
+ //random is a value between 0 and 1
+    public GeoPoint generateRandomPointInCircle(GeoPoint center, double radio, SimpleRandom random) {
         BoundingCircle boundingCircle = new BoundingCircle(center, radio);
-        return boundingCircle.randomPointInCircle(SimulationRandom.getGeneralInstance());
+        return boundingCircle.randomPointInCircle(random);
     }
     
-}
+
+ }

@@ -1,6 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.core.config;
 
-import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ public class UsersConfig {
     /**
      * They are all the entry points of the system obtained from the configuration file.
      */
-    private List<SingleUser> initialUsers;
+    private List<JsonObject> initialUsers;
 
-    public List<SingleUser> getUsers() {
+    public List<JsonObject> getUsers() {
         return initialUsers;
     }
 }

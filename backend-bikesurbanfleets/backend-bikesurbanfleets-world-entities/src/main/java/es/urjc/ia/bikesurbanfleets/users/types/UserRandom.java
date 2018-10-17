@@ -1,9 +1,8 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
-import es.urjc.bikesurbanfleets.services.SimulationServices;
+import com.google.gson.JsonObject;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
@@ -22,23 +21,28 @@ import java.util.List;
 @UserType("USER_RANDOM")
 public class UserRandom extends User {
 
-    public UserRandom(SimulationServices services) {
-        super(services);
+    public UserRandom(JsonObject userdef, SimulationServices services, long seed) {
+        super(services, userdef, seed);
+        //read specific parameters
+        JsonObject jsonparameters = userdef.getAsJsonObject("userType").getAsJsonObject("parameters");
+        if (jsonparameters != null) {
+            throw new IllegalArgumentException("random user can not have parameters");
+        } 
     }
 
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
-        return infraestructure.getRandom().nextBoolean();
+        return rando.nextBoolean();
     }
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
-        return infraestructure.getRandom().nextBoolean();
+        return rando.nextBoolean();
     }
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        return infraestructure.getRandom().nextBoolean();
+        return rando.nextBoolean();
     }
 
     @Override
@@ -49,14 +53,14 @@ public class UserRandom extends User {
         //Remove station if the user is in this station
         stations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
         if(!stations.isEmpty()) {
-            int index = infraestructure.getRandom().nextInt(0, stations.size());
+            int index = rando.nextInt(0, stations.size());
             return stations.get(index);
         }
         //The user wants a bike but tried in all stations
         else {
             List<Station> allStations = infraestructure.consultStations();
             allStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
-            int index = infraestructure.getRandom().nextInt(0, allStations.size());
+            int index = rando.nextInt(0, allStations.size());
             return allStations.get(index);
         }
     }
@@ -68,62 +72,53 @@ public class UserRandom extends User {
         stations.removeAll(triedStations);
         //Remove station if the user is in this station
         stations.removeIf(station -> station.getPosition().equals(this.getPosition()));
-        int index = infraestructure.getRandom().nextInt(0, stations.size());
+        int index = rando.nextInt(0, stations.size());
         return stations.get(index);
     }
 		
     
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-        return infraestructure.getRandom().nextBoolean();
+        return rando.nextBoolean();
     }
     
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-        return infraestructure.getRandom().nextBoolean();
+        return rando.nextBoolean();
     }
 
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        return infraestructure.getRandom().nextBoolean();
+        return rando.nextBoolean();
     }
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-        return infraestructure.getRandom().nextBoolean();
-    }
-
-    @Override
-    public GeoPoint decidesNextPoint() {
-        return infraestructure.generateBoundingBoxRandomPoint(SimulationRandom.getGeneralInstance());
-    }
-
-    @Override
-    public boolean decidesToReturnBike() {
-        return infraestructure.getRandom().nextBoolean();
+        return rando.nextBoolean();
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
-        return infraestructure.getRandom().nextBoolean();
+        return rando.nextBoolean();
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        return infraestructure.getRandom().nextBoolean();
+        return rando.nextBoolean();
     }
 
+       //**********************************************
+    //decisions related to either go directly to the destination or going arround
+
     @Override
-    public GeoRoute determineRoute() throws Exception{
-        List<GeoRoute> routes = null;
-        routes = calculateRoutes(getDestinationPoint());
-        if(routes != null) {
-            int index = infraestructure.getRandom().nextInt(0, routes.size());
-            return routes != null ? routes.get(index) : null;
-        }
-        else {
-    	    return null;
-        }
+    public boolean decidesToGoToPointInCity() {
+         return rando.nextBoolean();
+   }
+
+    @Override
+    public GeoPoint getPointInCity() {
+        return infraestructure.generateBoundingBoxRandomPoint(rando);
     }
+
 
 }
