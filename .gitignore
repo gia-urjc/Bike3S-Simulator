@@ -20,3 +20,6 @@ tempCsv/
 tempUsersConf/
 *.txt
 *.osm
+/Bike3STests/conmuter/hist/
+/Bike3STests/informed/hist/
+/Bike3STests/uninformed/hist/
