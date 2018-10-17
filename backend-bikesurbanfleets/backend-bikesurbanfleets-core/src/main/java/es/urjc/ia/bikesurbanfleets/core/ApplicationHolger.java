@@ -82,7 +82,7 @@ public class ApplicationHolger {
         globalSchema = "";
         usersSchema = "";
         stationsSchema = "";
-        String test="informed";
+        String test="paperAT2018";
         globalConfig = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/conf/global_configuration.json";
         usersConfig = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/conf/users_configuration.json";
         stationsConfig = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/conf/stations_configuration.json";

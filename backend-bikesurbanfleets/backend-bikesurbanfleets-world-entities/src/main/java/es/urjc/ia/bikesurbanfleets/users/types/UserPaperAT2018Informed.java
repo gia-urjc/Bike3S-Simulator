@@ -9,12 +9,14 @@ import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
+import es.urjc.ia.bikesurbanfleets.users.UserType;
 import java.util.List;
 
 /**
  *
  * @author holger
  */
+@UserType("USER_PAPERAT2018_INF")
 public class UserPaperAT2018Informed extends UserPaperAT2018Uninformed {
     
         public UserPaperAT2018Informed(JsonObject userdef, SimulationServices services, long seed) throws Exception{
