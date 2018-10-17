@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
@@ -31,22 +32,18 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
         try {
             user.setInstant(this.instant);
             user.setPosition(station.getPosition());
+            user.setState(User.STATE.WITH_BIKE);
             debugEventLog();
             if(!user.returnBikeWithoutReservationTo(station)) {
                 user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);
                 debugEventLog("User can't return bike. Station info: " + station.toString()) ;
                 newEvents = manageSlotReservationDecisionAtOtherStation();
             } else {
-                user.setDestinationPoint(user.getDestinationPlace());
-                user.setDestinationStation(null);
-                GeoRoute route = user.determineRoute();
-                System.out.println("bici: "+user.hasBike());
-                if (!user.hasBike()) {
-                System.out.println("Ruta: "+route); }
-                user.setRoute(route);
-                int arrivalTime = user.timeToReach();
-                debugEventLog("User returns the bike without reservation. Destination in city: "+user.getDestinationPlace().toString());
-                newEvents.add(new EventUserArrivesAtDestinationInCity(this.instant+arrivalTime, user));	
+                GeoPoint point = user.getDestinationPlace();
+                int arrivalTime = user.goToPointInCity(point);
+                debugEventLog("User returns the bike without reservation. Destination in city: "+point.toString());
+                user.setState(User.STATE.WALK_TO_DESTINATION);
+                newEvents.add(new EventUserArrivesAtDestinationInCity(this.instant+arrivalTime, user, point));	
             }
         }
         catch(Exception e) {

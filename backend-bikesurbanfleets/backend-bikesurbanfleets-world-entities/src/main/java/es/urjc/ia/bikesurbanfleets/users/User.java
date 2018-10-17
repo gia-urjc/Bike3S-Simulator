@@ -1,6 +1,9 @@
 package es.urjc.ia.bikesurbanfleets.users;
 
-import es.urjc.bikesurbanfleets.services.SimulationServices;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
@@ -9,7 +12,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
-import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
+import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
 import es.urjc.ia.bikesurbanfleets.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
@@ -19,24 +22,33 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
+import java.lang.reflect.Field;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * This is the main entity of the the system.
- * It represents the basic behaviour of all users type that can appear at the system.
- * It provides an implementation for basic methods which manage common information for all kind of users.
- * It provides a behaviour pattern (make decissions) which depends on specific user type properties.
+ * This is the main entity of the the system. It represents the basic behaviour
+ * of all users type that can appear at the system. It provides an
+ * implementation for basic methods which manage common information for all kind
+ * of users. It provides a behaviour pattern (make decissions) which depends on
+ * specific user type properties.
+ *
  * @author IAgroup
-  */
+ */
 @HistoryReference(HistoricUser.class)
 public abstract class User implements Entity {
 
+    public enum STATE {
+        APPEARED, WALK_TO_STATION, WITH_BIKE, WALK_TO_DESTINATION, EXIT_AFTER_TIMEOUT,
+        EXIT_AFTER_FAILED_RESERVATION,EXIT_AFTER_FAILED_RENTAL, EXIT_AFTER_REACHING_DESTINATION, LEFT_SYSTEM 
+    }
+    
     private static IdGenerator idGenerator = new IdGenerator();
 
     private int id;
+    private STATE state;
 
     /**
      * Current user position.
@@ -45,7 +57,8 @@ public abstract class User implements Entity {
 
     /**
      * Before user removes a bike or after returns it, this attribute is null.
-     * While user is cycling, this attribute contains the bike the user has rented.
+     * While user is cycling, this attribute contains the bike the user has
+     * rented.
      */
     private Bike bike;
 
@@ -53,17 +66,12 @@ public abstract class User implements Entity {
      * It is the station to which user has decided to go at this moment.
      */
     private Station destinationStation;
-    
+
     /**
-    * It is the place in the city the user wants to cycle to.
-    */
-    private GeoPoint destinationPoint;
-    
-    /** 
      * It is the user destination in the city.
      */
     protected GeoPoint destinationPlace;
-    
+
     /**
      * Speed in meters per second at which user walks.
      */
@@ -85,8 +93,9 @@ public abstract class User implements Entity {
     private boolean reservedSlot;
 
     /**
-     * It is the user current (bike or slot) reservation, i. e., the last reservation user has made.
-     * If user hasn't made a reservation, this attribute is null.
+     * It is the user current (bike or slot) reservation, i. e., the last
+     * reservation user has made. If user hasn't made a reservation, this
+     * attribute is null.
      */
     private Reservation reservation;
 
@@ -96,25 +105,28 @@ public abstract class User implements Entity {
     private GeoRoute route;
 
     /**
-     * It saves the unsuccessful facts that have happened to the user during the entire simulation.
+     * It saves the unsuccessful facts that have happened to the user during the
+     * entire simulation.
      */
     private UserMemory memory;
-
 
     protected InfraestructureManager infraestructure;
 
     /**
-     * It tries to convince the user to rent or return a bike in a specific station to help balance the system.
+     * It tries to convince the user to rent or return a bike in a specific
+     * station to help balance the system.
      */
     protected RecommendationSystem recommendationSystem;
 
     /**
-     * It informs the user about the state and distance of the different stations.
+     * It informs the user about the state and distance of the different
+     * stations.
      */
     protected InformationSystem informationSystem;
 
     /**
-     * It provides the user the availables routes between twoe geographical points.
+     * It provides the user the availables routes between twoe geographical
+     * points.
      */
     protected GraphManager graph;
 
@@ -123,27 +135,64 @@ public abstract class User implements Entity {
      */
     protected SimulationServices services;
 
-
     /**
      * It is the time instant of the simulation.
      */
     private int instant;
 
-    public User(SimulationServices services) {
+    /* random class for generating random events in the user */
+    protected SimpleRandom rando;
+
+    protected void readConfigParameters(JsonObject userdef) {
+        //get the parameters form the configuration json
+        Gson gson = new Gson();
+        //necesary paramneters
+        JsonElement aux = userdef.get("position");
+        if (aux != null) {
+            position = gson.fromJson(aux, GeoPoint.class);
+        } else {
+            throw new IllegalArgumentException("position missing");
+        }
+        aux = userdef.get("destinationPlace");
+        if (aux != null) {
+            destinationPlace = gson.fromJson(aux, GeoPoint.class);
+        } else {
+            throw new IllegalArgumentException("destinationPlace missing");
+        }
+        aux = userdef.get("timeInstant");
+        if (aux != null) {
+            instant = aux.getAsInt();
+        } else {
+            throw new IllegalArgumentException("instant missing");
+        }
+
+        //optional parameters
+        this.walkingVelocity = rando.nextInt(3, 8) / 3.6;
+        this.cyclingVelocity = rando.nextInt(10, 21) / 3.6;
+        aux = userdef.get("walkingVelocity");
+        if (aux != null) {
+            walkingVelocity = aux.getAsDouble();
+        }
+        aux = userdef.get("cyclingVelocity");
+        if (aux != null) {
+            cyclingVelocity = aux.getAsDouble();
+        }
+    }
+
+    public User(SimulationServices services, JsonObject userdef, long seed) {
+
         this.id = idGenerator.next();
+        this.rando = new SimpleRandom(seed);
 
-        this.position = null;
+        //first get the parameters form the configuration json
+        this.readConfigParameters(userdef);
+
         this.bike = null;
-
-        // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = SimulationRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
-        // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = SimulationRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
-
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
-
+        this.state=STATE.APPEARED;
+        
         this.reservation = null;
         this.memory = new UserMemory(this);
         this.services = services;
@@ -153,42 +202,46 @@ public abstract class User implements Entity {
         this.graph = services.getGraphManager();
         History.registerEntity(this);
         this.memory = new UserMemory(this);
-
-    }
-    
-    public User(SimulationServices services, GeoPoint finalDestination) {
-        this.id = idGenerator.next();
-
-        this.position = null;
-        this.bike = null;
-
-        // random velocity between 3km/h and 7km/h in m/s
-        this.walkingVelocity = SimulationRandom.getUserCreationInstance().nextInt(3, 8) / 3.6;
-        // random velocity between 10km/h and 20km/h in m/s
-        this.cyclingVelocity = SimulationRandom.getUserCreationInstance().nextInt(10, 21) / 3.6;
-
-        this.reservedBike = false;
-        this.reservedSlot = false;
-        this.destinationStation = null;
-        this.destinationPlace = finalDestination; 
-
-        this.reservation = null;
-        this.memory = new UserMemory(this);
-        this.services = services;
-        this.infraestructure = services.getInfrastructureManager();
-        this.recommendationSystem = services.getRecommendationSystem();
-        this.informationSystem = services.getInformationSystem();
-        this.graph = services.getGraphManager();
-        History.registerEntity(this);
-        this.memory = new UserMemory(this);
-
     }
 
+    //substitutes the default values of the parameters of param with the values provided the json description uderdef (if a parameter is present)
+    public void getParameters(JsonObject userdef, Object param) throws IllegalArgumentException, IllegalAccessException {
+        if (param == null) 
+            return;
+        //read specific parameters
+        JsonObject jsonparameters = userdef.getAsJsonObject("userType").getAsJsonObject("parameters");
+        //if no parameters are specified, the original parameters are used
+        if (jsonparameters == null) {
+            return;
+        }
+
+        //if parameters are present substitute their values with the values from the parameters specified in jason
+        Field[] fields = param.getClass().getDeclaredFields();
+        JsonElement aux;
+        Gson gson = new Gson();
+        for (Field f : fields) {
+            aux = jsonparameters.get(f.getName());
+            if (aux != null) {
+                f.setAccessible(true);
+                f.set(param, gson.fromJson(aux, f.getType()));
+            }
+        }
+        return;
+    }
+
+    public STATE getState() {
+        return state;
+    }
+
+    public void setState(STATE state) {
+        this.state = state;
+    }
 
     public GeoPoint getDestinationPlace() {
-    	return destinationPlace;
+        return destinationPlace;
     }
-   @Override
+
+    @Override
     public int getId() {
         return id;
     }
@@ -198,15 +251,14 @@ public abstract class User implements Entity {
         this.reservation = reservation;
         this.memory.getReservations().add(reservation);
     }
-    
+
     public int getInstant() {
-    	return instant;
-    }
-    
-    public void setInstant(int instant) {
-    	this.instant = instant;
+        return instant;
     }
 
+    public void setInstant(int instant) {
+        this.instant = instant;
+    }
 
     public GeoPoint getPosition() {
         return position;
@@ -219,7 +271,8 @@ public abstract class User implements Entity {
     public Bike getBike() {
         return bike;
     }
-        public boolean hasBike() {
+
+    public boolean hasBike() {
         return bike != null ? true : false;
     }
 
@@ -234,25 +287,9 @@ public abstract class User implements Entity {
     public Station getDestinationStation() {
         return destinationStation;
     }
-    
-    public void setDestinationStation(Station destinationStation) {
-        this.destinationStation = destinationStation;
-    }
-    
-    public GeoPoint getDestinationPoint() {
-    	return destinationPoint;
-    }
-    
-    public void setDestinationPoint(GeoPoint point) {
-    	this.destinationPoint = point;
-    }
 
     public GeoRoute getRoute() {
         return this.route;
-    }
-
-    public void setRoute(GeoRoute route) {
-        this.route = route;
     }
 
     public double getWalkingVelocity() {
@@ -269,19 +306,22 @@ public abstract class User implements Entity {
 
     /**
      * The user's average velocity in m/s
-     * @return user walking velocity if he hasn't a bike at that moment and cycling velocity in other case
+     *
+     * @return user walking velocity if he hasn't a bike at that moment and
+     * cycling velocity in other case
      */
     public double getAverageVelocity() {
         return !hasBike() ? walkingVelocity : cyclingVelocity;
     }
 
     /**
-     *  User tries to reserve a bike at the specified station.
-     * @param station: it is the station for which user wants to make a bike reservation.
-     * @return the reserved bike if user has been able to reserve one at
-     * that station (there're available bikes) and false in other case.
+     * User tries to reserve a bike at the specified station.
+     *
+     * @param station: it is the station for which user wants to make a bike
+     * reservation.
+     * @return the reserved bike if user has been able to reserve one at that
+     * station (there're available bikes) and false in other case.
      */
-
     public Bike reservesBike(Station station) {
         Bike bike = null;
         if (station.availableBikes() > 0) {
@@ -293,11 +333,12 @@ public abstract class User implements Entity {
 
     /**
      * User tries to reserve a slot at the specified station.
-     * @param station: it is the station for which user wants to make a slot reservation.
-     * @return true if user has been able to reserve a slot at
-     * that station (there're available slots) and false in other case.
+     *
+     * @param station: it is the station for which user wants to make a slot
+     * reservation.
+     * @return true if user has been able to reserve a slot at that station
+     * (there're available slots) and false in other case.
      */
-
     public boolean reservesSlot(Station station) {
         if (station.availableSlots() > 0) {
             this.reservedSlot = true;
@@ -308,9 +349,10 @@ public abstract class User implements Entity {
 
     /**
      * User cancels his bike reservation at the specified station.
-     * @param station: it is station for which user wants to cancel his bike reservation.
+     *
+     * @param station: it is station for which user wants to cancel his bike
+     * reservation.
      */
-
     public void cancelsBikeReservation(Station station) {
         this.reservedBike = false;
         station.cancelsBikeReservation(reservation);
@@ -318,7 +360,9 @@ public abstract class User implements Entity {
 
     /**
      * User cancels his slot reservation at the specified station.
-     * @param station: it is station for which user wants to cancel his slot reservation.
+     *
+     * @param station: it is station for which user wants to cancel his slot
+     * reservation.
      */
     public void cancelsSlotReservation(Station station) {
         this.reservedSlot = false;
@@ -327,14 +371,14 @@ public abstract class User implements Entity {
 
     /**
      * User tries to remove a bike from specified station.
+     *
      * @param station: it is the station where he wnats to remove (rent) a bike.
-     * @return true if user has been able to remove a bike (there are available bikes 
-     * or he has a bike reservation) and false in other case.
+     * @return true if user has been able to remove a bike (there are available
+     * bikes or he has a bike reservation) and false in other case.
      */
-
     public boolean removeBikeWithoutReservationFrom(Station station) {
         if (hasBike()) {
-            return false;
+            throw new RuntimeException("removeBikeWithoutReservationFrom");
         }
         this.bike = station.removeBikeWithoutReservation();
         return hasBike();
@@ -342,9 +386,9 @@ public abstract class User implements Entity {
 
     /**
      * User removes the reserved bike from the specified station.
+     *
      * @param station: it is the station where user goes to rent a bike.
      */
-
     public void removeBikeWithReservationFrom(Station station) {
         if (hasReservedBike()) {
             // first, reservation is cancelled to let a bike available at station to make sure one bike is available for take away
@@ -356,18 +400,18 @@ public abstract class User implements Entity {
 
     /**
      * User tries to return his rented bike to the specified station.
+     *
      * @param station: it is the station where user wants to return his bike.
-     * @return true if user has been ablo to return his bike (there available slots
-     *  or he has a slot reservation) and false in other case.
+     * @return true if user has been ablo to return his bike (there available
+     * slots or he has a slot reservation) and false in other case.
      */
-
     public boolean returnBikeWithoutReservationTo(Station station) {
         boolean returned = false;
         if (!hasBike()) {
             // TODO: log warning (or throw error?)
-            return false;
+            throw new RuntimeException("returnBikeWithoutReservationTo");
         }
-        if(station.returnBike(this.bike)) {
+        if (station.returnBike(this.bike)) {
             this.bike = null;
             returned = true;
         }
@@ -376,78 +420,44 @@ public abstract class User implements Entity {
 
     /**
      * User returns his bike to specified station.
-     * @param station: it is the station at which user arrives in order to return his bike.
+     *
+     * @param station: it is the station at which user arrives in order to
+     * return his bike.
      */
     public void returnBikeWithReservationTo(Station station) {
         if (hasReservedSlot()) {
             cancelsSlotReservation(station);
         }
-        if(station.returnBike(this.bike)){
+        if (station.returnBike(this.bike)) {
             this.bike = null;
         }
         this.reservation = null;
     }
 
-    private List<GeoRoute> createRouteFromStationToSame(List<GeoRoute> geoRoute, String vehicle, boolean calcNewRandom) throws Exception {
-        
-                GeoPoint auxiliarPoint = null;
-        double RADIO = 1000;
-        
-        if(calcNewRandom) {
-            auxiliarPoint = services.getInfrastructureManager().generateRandomPointInCircle(this.position, RADIO);
-        }
-        else {
-            auxiliarPoint = SimulationRandom.getRandomUsedPoint();
-        }
-
-        GeoRoute initRoute = graph.obtainShortestRouteBetween(this.position, auxiliarPoint, vehicle);
-        GeoRoute returnRoute = graph.obtainShortestRouteBetween(auxiliarPoint, destinationPoint, vehicle);
-        
-        if(calcNewRandom) {
-            SimulationRandom.addRandomUsedPoint(auxiliarPoint);
-        }
-        geoRoute.add(initRoute.concatRoute(returnRoute));
-        return geoRoute;
-    }
-
-    public List<GeoRoute> calculateRoutes(GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
+    private GeoRoute calculateRoute(GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
         String vehicle = this.bike == null ? "foot" : "bike";
-        
-        if(this.position.equals(destinationPoint)) {
-            
-            ArrayList<GeoRoute> newRoutes = new ArrayList<>();
-            // First try. If valid random point, program still running
-            try {
-                createRouteFromStationToSame(newRoutes, vehicle, true);
-            }
-            // If not valid route, we use a point used before
-            catch(Exception e1) {
-                try {
-                    createRouteFromStationToSame(newRoutes, vehicle, false);
-                }
-                // If no points are at first runtime this method should be executed
-                catch(Exception e2) {
-                    boolean isValidPoint = false;
-                    while(!isValidPoint) {
-                        try {
-                            createRouteFromStationToSame(newRoutes, vehicle, true);
-                            isValidPoint = true; 
-                        }
-                        catch(Exception e3) {
-                            System.out.println("Trying new point");
-                        }
-                    }
-                }    
-            }
-            return newRoutes;
+
+        if (this.position.equals(destinationPoint)) {
+            List<GeoPoint> patchedRoute = new ArrayList<>(Arrays.asList(this.position, destinationPoint));
+            return new GeoRoute(patchedRoute);
         }
         try {
-            return graph.obtainAllRoutesBetween(this.position, destinationPoint, vehicle);
+            return graph.obtainShortestRouteBetween(this.position, destinationPoint, vehicle);
+        } catch (Exception e) {
+            List<GeoPoint> patchedRoute = new ArrayList<>(Arrays.asList(this.position, destinationPoint));
+            return new GeoRoute(patchedRoute);
         }
-        catch(Exception e) {
-            List<GeoPoint> patchedRoute = new ArrayList<>(Arrays.asList(this.position, destinationPoint)); 
-            return new ArrayList<>(Arrays.asList(new GeoRoute(patchedRoute)));
-        }
+
+    }
+
+    /**
+     * Time in seconds that user takes in arriving to a GeoPoint time =
+     * distance/velocity
+     *
+     * @throws Exception
+     */
+    protected int timeToReach() {
+        return (int) (route.getTotalDistance() / getAverageVelocity());
     }
 
     public GeoPoint reachedPointUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
@@ -455,140 +465,167 @@ public abstract class User implements Entity {
     }
 
     /**
-     * When user is going to a station and timeout happens, it calculates how far
-     * he has gotten in order to update his position.
-     * This position is currently at the last position of the current route
+     * When user is going to a station and timeout happens, it calculates how
+     * far he has gotten in order to update his position. This position is
+     * currently at the last position of the current route
      */
-
-    /**
-     * Time in seconds that user takes in arriving to a GeoPoint
-     * time = distance/velocity
-     * @throws Exception
-     */
-    public int timeToReach() {
-        return (int) (route.getTotalDistance()/getAverageVelocity());
-    }
-    
     public void leaveSystem() {
         setPosition(null);
-        setRoute(null);
-        setDestinationStation(null);
-        setDestinationPoint(null);
+        route = null;
+        destinationStation = null;
         instant = -1;
     }
 
     /**
-     * User decides if he'll leave the system when bike reservation timeout happens.
-     * @return true if he decides to leave the system and false in other case (he decides to continue at system).
+     * The user walks to a station; sets the route and the destination station.
+     * devuelve el tiempo que tardará el usario
+     */
+    final public int goToStation(Station dest) throws Exception {
+        destinationStation = dest;
+        route = calculateRoute(dest.getPosition());
+        return (int) (route.getTotalDistance() / getAverageVelocity());
+    }
+
+    /**
+     * The user goes to e point in the city not a station. devuelve el tiempo
+     * que tardará el usario
+     */
+    public int goToPointInCity(GeoPoint point) throws Exception {
+        destinationStation = null;
+        route = calculateRoute(point);
+        return (int) (route.getTotalDistance() / getAverageVelocity());
+    }
+
+    /**
+     * User decides if he'll leave the system when bike reservation timeout
+     * happens.
+     *
+     * @return true if he decides to leave the system and false in other case
+     * (he decides to continue at system).
      */
     public abstract boolean decidesToLeaveSystemAfterTimeout();
 
     /**
-     * User decides if he'll leave the system after not being able to make a bike reservation.
-     * @return true if he decides to leave the system and false in other case (he decides to continue at system).
+     * User decides if he'll leave the system after not being able to make a
+     * bike reservation.
+     *
+     * @return true if he decides to leave the system and false in other case
+     * (he decides to continue at system).
      */
     public abstract boolean decidesToLeaveSystemAffterFailedReservation();
 
     /**
-     * User decides if he'll leave the system when there're no avalable bikes at station.
-     * @return true if he decides to leave the system and false in other case (he decides to continue at system).
+     * User decides if he'll leave the system when there're no avalable bikes at
+     * station.
+     *
+     * @return true if he decides to leave the system and false in other case
+     * (he decides to continue at system).
      */
     public abstract boolean decidesToLeaveSystemWhenBikesUnavailable();
 
     /**
      * User decides to which station he wants to go to rent a bike.
+     *
      * @return station where user has decided to go.
      */
     public abstract Station determineStationToRentBike();
 
     /**
      * User decides to which station he wants to go to return his bike.
+     *
      * @return station where user has decided to go.
      */
     public abstract Station determineStationToReturnBike();
 
     /**
-     * User decides if he'll try to make again a bike reservation at the previosly
-     * chosen station after timeout happens.
-     * @return true if user decides to reserve a bike at the initially chosen station.
+     * User decides if he'll try to make again a bike reservation at the
+     * previosly chosen station after timeout happens.
+     *
+     * @return true if user decides to reserve a bike at the initially chosen
+     * station.
      */
     public abstract boolean decidesToReserveBikeAtSameStationAfterTimeout();
 
     /**
-     * User decides if he'll try to make a bike reservation at a new chosen station.
-     * @return true if user decides to reserve a bike at that new station and false in other case.
+     * User decides if he'll try to make a bike reservation at a new chosen
+     * station.
+     *
+     * @return true if user decides to reserve a bike at that new station and
+     * false in other case.
      */
     public abstract boolean decidesToReserveBikeAtNewDecidedStation();
 
     /**
-     * User decides if he'll try to make again a slot reservation at the previosly
-     * chosen station after timeout happens.
-     * @return true if user decides to reserve a slot at the initially chosen station.
+     * User decides if he'll try to make again a slot reservation at the
+     * previosly chosen station after timeout happens.
+     *
+     * @return true if user decides to reserve a slot at the initially chosen
+     * station.
      */
-
     public abstract boolean decidesToReserveSlotAtSameStationAfterTimeout();
 
     /**
-     * User decides if he'll try to make a slot reservation at a new chosen station.
-     * @return true if user decides to reserve a slot at that new station and false in other case.
+     * User decides if he'll try to make a slot reservation at a new chosen
+     * station.
+     *
+     * @return true if user decides to reserve a slot at that new station and
+     * false in other case.
      */
     public abstract boolean decidesToReserveSlotAtNewDecidedStation();
 
     /**
-     * User decides the point (it is not a station) to which he wants to ride the rented bike
-     * after removing it from station.
+     * Just after removing the bike, user decides if he'll ride it directly to a
+     * station or he will go to a point in the city in order to return it.
+     *
+     * @return true if user decides to ride to a point in the city and false in
+     * other case (he decides to go to a station close).
+     */
+    public abstract boolean decidesToGoToPointInCity();
+
+    /**
+     * If the user decides thogo to a point in the city, this is that point,
+     * that is if decidesToGoToPointInCity is true
+     *
      * @return the point where he wants to go after making his decision.
      */
-    public abstract GeoPoint decidesNextPoint();
+    public abstract GeoPoint getPointInCity();
 
     /**
-     * Just after removing the bike, user decides if he'll ride it directly to a station,
-     * in order to return it.
-     * @return true if user decides to cycle directly to a station in order to return
-     * his bike and false in other case (he decides to ride it to another point before returning it).
-     */
-    public abstract boolean decidesToReturnBike();
-
-    /**
-     * When timeout happens, he decides to continue going to that chosen station or to go to another one.
-     * @return true if user chooses a new station to go and false if he continues to the previously chosen one.
+     * When timeout happens, he decides to continue going to that chosen station
+     * or to go to another one.
+     *
+     * @return true if user chooses a new station to go and false if he
+     * continues to the previously chosen one.
      */
     public abstract boolean decidesToDetermineOtherStationAfterTimeout();
 
     /**
-     * The user chooses the route which he'll travel to arrive at  selected destination.
-     * @return the route which the user will follow.
-     */
-    public abstract GeoRoute determineRoute() throws Exception;
-
-    /**
-     * When user hasn't been able to make a reservation at the destination station,
-     * he decides if he wants to choose another station to which go.
-     * @return true if he decides to determine another destination station and false in
-     * other case (he keeps his previously decision).
+     * When user hasn't been able to make a reservation at the destination
+     * station, he decides if he wants to choose another station to which go.
+     *
+     * @return true if he decides to determine another destination station and
+     * false in other case (he keeps his previously decision).
      */
     public abstract boolean decidesToDetermineOtherStationAfterFailedReservation();
 
     @Override
     public String toString() {
         String result = "| Id: " + getId();
-        if(position != null) {
+        if (position != null) {
             result += "| Actual Position: " + position.toString();
-        }
-        else {
+        } else {
             result += "| Actual Position: null";
         }
         result += " | Has Bike: " + hasBike();
         result += " | Actual velocity: " + getAverageVelocity();
-        result +=     "| Has reserved bike: "+hasReservedBike();
-        result += " | Has reserved slot: "+hasReservedSlot()+"\n";
+        result += "| Has reserved bike: " + hasReservedBike();
+        result += " | Has reserved slot: " + hasReservedSlot() + "\n";
         if (destinationStation != null) {
-        	result += "| Destination station: "+destinationStation.getId();
+            result += "| Destination station: " + destinationStation.getId();
+        } else {
+            result += "| Destination station: " + null;
         }
-        else {
-        	result += "| Destination station: "+null;
-        }
-        	
+
         return result;
     }
 }

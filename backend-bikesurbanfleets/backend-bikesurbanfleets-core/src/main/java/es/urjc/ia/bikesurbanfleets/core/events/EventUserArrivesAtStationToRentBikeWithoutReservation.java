@@ -35,18 +35,14 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
             user.setPosition(station.getPosition());
             debugEventLog();
             if (user.removeBikeWithoutReservationFrom(station)) {
+                user.setState(User.STATE.WITH_BIKE);
                 debugEventLog("User removes Bike without reservation");
-                System.out.println(user.decidesToReturnBike());
-                if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
+                if (!user.decidesToGoToPointInCity()) {  // user goes directly to another station to return his bike
                     debugEventLog("User decides to return bike to other station");
                     newEvents = manageSlotReservationDecisionAtOtherStation();
                 } else {   // user rides his bike to a point which is not a station
-                    GeoPoint point = user.decidesNextPoint();
-                    user.setDestinationPoint(point);
-                    user.setDestinationStation(null);
-                    GeoRoute route = user.determineRoute();
-                    user.setRoute(route);
-                    int arrivalTime = user.timeToReach();
+                    GeoPoint point = user.getPointInCity();
+                    int arrivalTime = user.goToPointInCity(point);
                     debugEventLog("User decides to take a ride");
                     newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
                 }
@@ -54,9 +50,11 @@ public class EventUserArrivesAtStationToRentBikeWithoutReservation extends Event
                 user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE);
                 debugEventLog("User can't take bikes from the station");
                 if (user.decidesToLeaveSystemWhenBikesUnavailable()) {
-                    user.leaveSystem();
                     debugEventLog("User decides to leave the system");
+                    user.setState(User.STATE.EXIT_AFTER_FAILED_RENTAL);
+                    newEvents.add(new EventUserLeavesSystem(this.getInstant(), user));
                 } else {
+                    user.setState(User.STATE.WALK_TO_STATION);
                     newEvents = manageBikeReservationDecisionAtOtherStation();
                 }
             }

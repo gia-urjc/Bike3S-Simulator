@@ -39,22 +39,19 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         try {
             user.setInstant(this.instant);
             user.setPosition(station.getPosition());
+            user.setState(User.STATE.WITH_BIKE);
             reservation.resolve(instant);
             user.removeBikeWithReservationFrom(station);
             debugEventLog("User removes Bike with reservation");
-            if (user.decidesToReturnBike()) {  // user goes directly to another station to return his bike
+            if (!user.decidesToGoToPointInCity()) {  // user goes directly to another station to return his bike
                 debugEventLog("User decides to return bike to other station");
                 newEvents = manageSlotReservationDecisionAtOtherStation();
             } else {   // user rides his bike to a point which is not a station
-                GeoPoint point = user.decidesNextPoint();
-                user.setDestinationPoint(point);
-                user.setDestinationStation(null);
-                GeoRoute route = user.determineRoute();
-                user.setRoute(route);
-                int arrivalTime = user.timeToReach();
-                debugEventLog("User decides take a ride");
+                GeoPoint point = user.getPointInCity();
+                int arrivalTime = user.goToPointInCity(point);
+                debugEventLog("User decides to take a ride");
                 newEvents.add(new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, point));
-            }
+             }
         }
         catch(Exception e) {
             exceptionTreatment(e);
