@@ -1,6 +1,7 @@
-import { AbsoluteValue } from "../AbsoluteValue";
+import { AbsoluteValue } from "../../AbsoluteValue";
 
 export class ReservationAbsoluteValue implements AbsoluteValue {
+    static readonly NUM_ATTR: number = 4;
     successfulBikeReservations: number;
     failedBikeReservations: number;
     successfulSlotReservations: number;
