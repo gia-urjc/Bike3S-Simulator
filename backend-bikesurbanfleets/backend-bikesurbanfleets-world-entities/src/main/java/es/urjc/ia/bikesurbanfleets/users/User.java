@@ -22,7 +22,6 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.history.History;
 import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
-import es.urjc.ia.bikesurbanfleets.users.types.UserUninformed;
 import java.lang.reflect.Field;
 
 import java.util.ArrayList;
