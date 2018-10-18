@@ -16,7 +16,7 @@ import org.apache.commons.cli.ParseException;
 import java.io.File;
 
 
-public class Application {
+public class ApplicationAlberto {
 
     //Program parameters
     private static String globalSchema;
@@ -81,7 +81,8 @@ public class Application {
         globalSchema = "";
         usersSchema = "";
         stationsSchema = "";
-        String test="informed";
+//        String test="informed";
+        String test="paperAT2018/inf";
         globalConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/global_configuration.json";
         usersConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/users_configuration.json";
         stationsConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/stations_configuration.json";
