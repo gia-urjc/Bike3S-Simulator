@@ -64,7 +64,7 @@ export class UserTimeAtSystem implements SystemInfo  {
                 case 'EventUserAppears': {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value) { 
-                        this.timeappeared = timeEntry.time;
+                        value.timeappeared = timeEntry.time;
                     }
                     break;
                 }
@@ -73,7 +73,7 @@ export class UserTimeAtSystem implements SystemInfo  {
                     if (value && event.changes.users[0].state!== undefined && 
                             event.changes.users[0].state.old === 'WALK_TO_STATION' &&
                             event.changes.users[0].state.new === 'WITH_BIKE' ) { 
-                        this.timegetbike = timeEntry.time;
+                                value.timegetbike = timeEntry.time;
                     }
                     break;
                 }
@@ -82,7 +82,7 @@ export class UserTimeAtSystem implements SystemInfo  {
                     if (value && event.changes.users[0].state!== undefined && 
                             event.changes.users[0].state.old === 'WALK_TO_STATION' &&
                             event.changes.users[0].state.new === 'WITH_BIKE' ) { 
-                        this.timegetbike = timeEntry.time;
+                                value.timegetbike = timeEntry.time;
                     }
                     break;
                 }
@@ -90,7 +90,7 @@ export class UserTimeAtSystem implements SystemInfo  {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value && event.changes.users[0].state!== undefined && 
                             event.changes.users[0].state.old === 'WITH_BIKE') { 
-                        this.timeleavebike = timeEntry.time;
+                                value.timeleavebike = timeEntry.time;
                     }
                     break;
                 }
@@ -98,7 +98,7 @@ export class UserTimeAtSystem implements SystemInfo  {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value && event.changes.users[0].state!== undefined && 
                             event.changes.users[0].state.old === 'WITH_BIKE') { 
-                        this.timeleavebike = timeEntry.time;
+                                value.timeleavebike = timeEntry.time;
                     }
                     break;
                 }
@@ -106,29 +106,29 @@ export class UserTimeAtSystem implements SystemInfo  {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value && event.changes.users[0].state!== undefined && 
                             event.changes.users[0].state.old === 'WALK_TO_DESTINATION') { 
-                        this.timegetdestination = timeEntry.time;
+                                value.timegetdestination = timeEntry.time;
                     }
                     break;
                 }
                 case 'EventUserLeavesSystem': {
                     let value: AbsoluteValue | undefined = this.data.absoluteValues.get(key);
                     if (value && event.changes.users[0].state!== undefined ) {
-                        this.timeleave = timeEntry.time;
+                        value.timeleave = timeEntry.time;
                         switch(event.changes.users[0].state.old) {
                            case 'EXIT_AFTER_TIMEOUT': {
-                                this.EXIT_AFTER_TIMEOUT = false;
+                                value.EXIT_AFTER_TIMEOUT = true;
                                 break;
                            }
                             case 'EXIT_AFTER_FAILED_RESERVATION': {
-                                this.EXIT_AFTER_FAILED_RESERVATION = false;
+                                value.EXIT_AFTER_FAILED_RESERVATION = true;
                                 break;
                            }
                            case 'EXIT_AFTER_FAILED_RENTAL': {
-                                this.EXIT_AFTER_FAILED_RENTAL = false;
+                                value.EXIT_AFTER_FAILED_RENTAL = true;
                                 break;
                            }
                            case 'EXIT_AFTER_REACHING_DESTINATION': {
-                                this.EXIT_AFTER_REACHING_DESTINATION = false;
+                                value.EXIT_AFTER_REACHING_DESTINATION = true;
                                 break;
                            }
                         }
