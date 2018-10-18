@@ -6,62 +6,48 @@ const Percentage = sNumber().min(0).max(100);
 export const typeParameters = {
     USER_RANDOM: {},
     USER_UNINFORMED: {
-        destinationPlace: GeoPoint
-    },
-    USER_INFORMED: {
-        willReserve: sBoolean(),
-        minReservationAttempts: UInt,
-        minReservationTimeouts: UInt,
-        minRentalAttempts: UInt,
-        bikeReservationPercentage: Percentage,
-        slotReservationPercentage: Percentage,
-        reservationTimeoutPercentage: Percentage,
-        failedReservationPercentage: Percentage
-    },
-    USER_OBEDIENT: {
-        willReserve: sBoolean(),
-        minReservationAttempts: UInt,
-        minReservationTimeouts: UInt,
-        minRentalAttempts: UInt,
-        bikeReservationPercentage: Percentage,
-        slotReservationPercentage: Percentage,
-        reservationTimeoutPercentage: Percentage,
-        failedReservationPercentage: Percentage
+        minRentalAttempts: UInt
     },
     USER_DISTANCE_RESTRICTION: {
-        minReservationAttempts: UInt,
-        minReservationTimeouts: UInt,
         minRentalAttempts: UInt,
-        bikeReturnPercentage: Percentage,
-        reservationTimeoutPercentage: Percentage,
-        failedReservationPercentage: Percentage,
-        maxDistance: sNumber()
-    },
-    USER_REASONABLE: {
-        minReservationAttempts: UInt,
-        minReservationTimeOuts: UInt,
-        minRentalAttempts: UInt,
-        bikeReturnPercentage: Percentage,
-        reservationTimeoutPercentage: Percentage,
-        failedReservationPercentage: Percentage
+        maxDistance: sNumber
     },
     USER_COMMUTER: {
-        destinationPlace: GeoPoint,
+        minRentalAttempts: UInt,
+    },
+    USER_AVAILABLE_RESOURCES: {
+        minRentalAttempts: UInt
+    },
+    USER_INFORMED: {
+        minRentalAttempts: UInt
+    },
+    USER_OBEDIENT: {
+        minRentalAttempts: UInt
+    },
+    USER_PAPERAT2018_INF: {
+        minRentalAttempts: UInt
+    },
+    USER_PAPERAT2018_UNINF: {
+        minRentalAttempts: UInt
+    },
+    /*
+    USER_ECONOMIC_INCENTIVE: {
+        minRentalAttempts: UInt,
+    },
+    */
+    /*
+    USER_GENERAL:{
+        willReserve: sBoolean,
         minReservationAttempts: UInt,
         minReservationTimeouts: UInt,
         minRentalAttempts: UInt,
         bikeReservationPercentage: Percentage,
         slotReservationPercentage: Percentage,
-        cyclingVelocity: sNumber()
-    },
-    USER_AVAILABLE_RESOURCES: {
-        minReservationAttempts: UInt,
-        minReservationTimeouts: UInt,
-        minRentalAttempts: UInt,
-        bikeReturnPercentage: Percentage,
         reservationTimeoutPercentage: Percentage,
         failedReservationPercentage: Percentage
     },
+    */ 
+    /*
     USER_TOURIST: {
         touristDestination: GeoPoint,
         minReservationAttempts: UInt,
@@ -72,4 +58,5 @@ export const typeParameters = {
         reservationTimeoutPercentage: Percentage,
         failedReservationPercentage: Percentage
     }
+    */
 };

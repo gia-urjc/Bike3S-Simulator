@@ -25,7 +25,7 @@ import java.util.List;
 @UserType("USER_AVAILABLE_RESOURCES")
 public class UserAvailableResources extends User {
 
-        @UserParameters
+    @UserParameters
     public class Parameters {
 
         //default constructor used if no parameters are specified

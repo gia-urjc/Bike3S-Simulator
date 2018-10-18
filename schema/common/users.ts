@@ -15,7 +15,8 @@ export const UserProperties = sAnyOf(...Object.entries(typeParameters).map((user
 }));
 
 export const SingleUser = sObject({
-    userType: UserProperties,
     position: GeoPoint,
-    timeInstant: UInt
+    destinationPlace: GeoPoint,
+    timeInstant: UInt,
+    userType: UserProperties,
 });

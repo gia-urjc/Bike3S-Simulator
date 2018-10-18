@@ -35,7 +35,7 @@ public class UserInformed extends User {
          * (without a bike reservation) before deciding to leave the system.
          */
         private int minRentalAttempts = 2;
-        private GeoPoint touristDestination = null;
+
         @Override
         public String toString() {
             return "Parameters{"
