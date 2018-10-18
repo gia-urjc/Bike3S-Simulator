@@ -19,7 +19,6 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.users.User;
 import es.urjc.ia.bikesurbanfleets.users.UserFactory;
-import es.urjc.ia.bikesurbanfleets.usersgenerator.SingleUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,12 +97,19 @@ public class SimulationEngine {
         // Those variables are used to control de percentage of the simulation done
         int totalUsers = eventsQueue.size();
         double percentage = 0;
+        int lastInstant = 0;
 
         MessageGuiFormatter.showPercentageForGui(percentage);
 
         while (!eventsQueue.isEmpty()) {
             Event event = eventsQueue.poll();  // retrieves and removes first element
 
+            //check if the instant is after the last one
+            if (event.getInstant() < lastInstant) {
+            	throw new RuntimeException("Illegal event execution");
+            }
+            lastInstant=event.getInstant();
+            
             // Shows the actual percentage in the stdout for frontend
             if(event.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
                 percentage += (((double) 1 /(double) totalUsers) * 100);

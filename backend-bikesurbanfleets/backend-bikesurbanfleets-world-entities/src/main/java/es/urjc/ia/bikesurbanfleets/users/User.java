@@ -40,9 +40,15 @@ import java.util.List;
 @HistoryReference(HistoricUser.class)
 public abstract class User implements Entity {
 
+    public enum STATE {
+        APPEARED, WALK_TO_STATION, WITH_BIKE, WALK_TO_DESTINATION, EXIT_AFTER_TIMEOUT,
+        EXIT_AFTER_FAILED_RESERVATION,EXIT_AFTER_FAILED_RENTAL, EXIT_AFTER_REACHING_DESTINATION, LEFT_SYSTEM 
+    }
+    
     private static IdGenerator idGenerator = new IdGenerator();
 
     private int id;
+    private STATE state;
 
     /**
      * Current user position.
@@ -185,7 +191,8 @@ public abstract class User implements Entity {
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
-
+        this.state=STATE.APPEARED;
+        
         this.reservation = null;
         this.memory = new UserMemory(this);
         this.services = services;
@@ -220,6 +227,14 @@ public abstract class User implements Entity {
             }
         }
         return;
+    }
+
+    public STATE getState() {
+        return state;
+    }
+
+    public void setState(STATE state) {
+        this.state = state;
     }
 
     public GeoPoint getDestinationPlace() {

@@ -33,6 +33,7 @@ public class EventSlotReservationTimeout extends EventUser {
         try {
             user.setInstant(this.instant);
             user.setPosition(positionTimeOut);
+            user.setState(User.STATE.WITH_BIKE);
             reservation.expire();
             user.cancelsSlotReservation(user.getDestinationStation());
             user.getMemory().update(UserMemory.FactType.SLOT_RESERVATION_TIMEOUT);

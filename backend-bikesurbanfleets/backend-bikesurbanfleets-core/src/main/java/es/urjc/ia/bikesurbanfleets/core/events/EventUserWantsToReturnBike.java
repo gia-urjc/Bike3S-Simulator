@@ -30,6 +30,7 @@ public class EventUserWantsToReturnBike extends EventUser {
         try {
             user.setInstant(this.instant);
             user.setPosition(currentPosition);
+            user.setState(User.STATE.WITH_BIKE);
             debugEventLog();
             newEvents = manageSlotReservationDecisionAtOtherStation();
         }

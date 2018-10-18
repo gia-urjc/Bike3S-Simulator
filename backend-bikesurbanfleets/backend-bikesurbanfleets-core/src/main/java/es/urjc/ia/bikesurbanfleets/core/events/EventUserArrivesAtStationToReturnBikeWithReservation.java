@@ -40,6 +40,7 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
         try {
             user.setInstant(this.instant);
             user.setPosition(station.getPosition());
+            user.setState(User.STATE.WALK_TO_DESTINATION);
             user.returnBikeWithReservationTo(station);
             GeoPoint point = user.getDestinationPlace();
             int arrivalTime = user.goToPointInCity(point);

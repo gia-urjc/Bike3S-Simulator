@@ -39,6 +39,7 @@ public class EventUserArrivesAtStationToRentBikeWithReservation extends EventUse
         try {
             user.setInstant(this.instant);
             user.setPosition(station.getPosition());
+            user.setState(User.STATE.WITH_BIKE);
             reservation.resolve(instant);
             user.removeBikeWithReservationFrom(station);
             debugEventLog("User removes Bike with reservation");

@@ -26,6 +26,7 @@ public class EventUserAppears extends EventUser {
         try {
             user.setInstant(this.instant);
             user.setPosition(position);
+            user.setState(User.STATE.WALK_TO_STATION);
             debugEventLog();
             newEvents = manageBikeReservationDecisionAtOtherStation();
         }

@@ -34,7 +34,9 @@ public class HistoricUser implements HistoricEntity {
     @Expose
     private double cyclingVelocity;
 
-    
+     @Expose
+    private User.STATE state;
+   
     @Expose
     private IdReference reservations;
     
@@ -47,6 +49,7 @@ public class HistoricUser implements HistoricEntity {
         Bike bike = user.getBike();
         Station station = user.getDestinationStation();
 
+        this.state=user.getState();
         this.id = user.getId();
         this.position = user.getPosition() == null ? null : new GeoPoint(user.getPosition());
         this.bike = bike == null ? null : new IdReference(HistoricBike.class, bike.getId());
