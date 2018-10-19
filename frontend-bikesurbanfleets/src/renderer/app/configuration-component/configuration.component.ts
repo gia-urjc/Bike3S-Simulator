@@ -216,12 +216,14 @@ export class ConfigurationComponent {
         entryPoint.entryPointType = {};
         entryPoint.entryPointType = this.lastSelectedEntryPointType.entryPointType;
         entryPoint.userType.typeName = this.lastSelectedEntryPointType.userType;
+        console.log(entryPoint);
         this.lastCircleAdded.setLatLng({
             lat: entryPoint.positionAppearance.latitude,
             lng: entryPoint.positionAppearance.longitude
         });
+        console.log(this.lastCircleAdded.getLatLng());
         if(entryPoint.hasOwnProperty('radiusAppears')) {
-            this.lastCircleAdded.setRadius(entryPoint.radius);
+            this.lastCircleAdded.setRadius(entryPoint.radiusAppears);
         } else {
             this.lastCircleAdded.setRadius(50);
         }
