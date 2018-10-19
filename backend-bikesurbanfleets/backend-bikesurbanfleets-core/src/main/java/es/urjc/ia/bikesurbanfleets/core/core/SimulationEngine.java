@@ -83,6 +83,9 @@ public class SimulationEngine {
             User user = userFactory.createUser(userdef, services, seed);
             int instant = user.getInstant();
             GeoPoint position = user.getPosition();
+            // Is necessary to have the user position initialized to null to write changes.
+            // Position is asigned again in EventUserAppears
+            user.setPosition(null);
             eventUserAppearsList.add(new EventUserAppears(instant, user, position));
         }
 
