@@ -31,7 +31,7 @@ public class GraphHopperIntegration implements GraphManager {
 
     }
 
-    private final String GRAPHHOPPER_DIR = GlobalInfo.AUX_DIR + "/graphhopper_files";
+    private final String GRAPHHOPPER_DIR = GlobalInfo.TEMP_DIR + "/graphhopper_files";
 
     private GraphHopper hopper;
     private GHResponse rsp;
