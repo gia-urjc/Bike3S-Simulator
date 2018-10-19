@@ -73,6 +73,11 @@ public class HolgerRecomender extends RecommendationSystem {
 
         if (!stationdat.isEmpty()) {
             temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
+            for (int i=0; i<10; i++){
+                System.out.println("stat "+ i + " utility: " + temp.get(i).utility);  
+                System.out.println("      dist: " + temp.get(i).distance);  
+                System.out.println("      bikes: " + temp.get(i).station.availableBikes());  
+            }
             result = temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
@@ -102,6 +107,7 @@ public class HolgerRecomender extends RecommendationSystem {
     private List<StationData> calculateDataTake(List<Station> stations, GeoPoint point) {
         List<StationData> aux = new ArrayList<StationData>();
         double closeststationdistance = Double.MAX_VALUE;
+        Station beststation=null;
         for (Station s : stations) {
             StationData sd = new StationData();
             sd.station = s;
@@ -110,10 +116,12 @@ public class HolgerRecomender extends RecommendationSystem {
             sd.distance = s.getPosition().distanceTo(point);
             if (closeststationdistance >= sd.distance) {
                 closeststationdistance = sd.distance;
+                beststation=sd.station;
             }
             aux.add(sd);
         }
 
+        System.out.println("nearest station"+beststation.toString());
         //now calculate utility
         double MAXDIST = 500;
         for (StationData sd : aux) {
@@ -174,7 +182,7 @@ public class HolgerRecomender extends RecommendationSystem {
     }
     
     private double calculateStationUtilityTake(StationData sd) {
-        int halfcap= (int) Math.ceil(((double) sd.capacity) /2.0D);
+        int halfcap= (int) Math.ceil(((double) sd.capacity) /3.5D);
         if (sd.station.availableBikes()>=halfcap) {
             return 1;
         }
@@ -182,7 +190,7 @@ public class HolgerRecomender extends RecommendationSystem {
     }
 
     private double calculateStationUtilityReturn(StationData sd) {
-        int halfcap= (int) Math.ceil(((double) sd.capacity) /2.0D);
+        int halfcap= (int) Math.ceil(((double) sd.capacity) /3.5D);
     
         if (sd.station.availableSlots()>=halfcap) {
             return 1;
