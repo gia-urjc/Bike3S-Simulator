@@ -127,7 +127,7 @@ public class SimulationEngine {
             // if it is the last event, save the global values of the simulation
             if(eventsQueue.isEmpty()) {
                 FinalGlobalValues finalGlobalValues = new FinalGlobalValues();
-                finalGlobalValues.setTotalTimeSimulation(event.getInstant());
+                finalGlobalValues.setTotalTimeSimulation(this.globalInfo.getTotalSimulationTime());
                 finalGlobalValues.setBoundingBox(this.globalInfo.getBoundingBox());
                 History.writeGlobalInformation(finalGlobalValues);
             }

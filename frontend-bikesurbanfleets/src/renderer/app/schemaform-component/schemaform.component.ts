@@ -5,7 +5,7 @@ import {Component, EventEmitter, Input, OnInit, Output, ChangeDetectorRef} from 
     template: require('./schemaform.component.html'),
     styles: []
 })
-export class SchemaFormComponent {
+export class SchemaFormComponent implements OnInit {
     
     @Input()
     form: any;
@@ -21,7 +21,13 @@ export class SchemaFormComponent {
 
     actualData: any;
 
-    constructor(private cdRef: ChangeDetectorRef) {}
+    constructor(private cdRef: ChangeDetectorRef) {
+    }
+
+    ngOnInit(): void {
+        console.log(this.form);
+        
+    }
 
     resetForm() {
         this.reloading = true;

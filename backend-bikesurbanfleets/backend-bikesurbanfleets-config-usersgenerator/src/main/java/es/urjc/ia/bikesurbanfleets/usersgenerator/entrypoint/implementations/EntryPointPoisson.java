@@ -26,7 +26,7 @@ public class EntryPointPoisson extends EntryPoint {
      * If a radius is given, position is the center of circle
      * In other case, position is the specific point where user appears
      */
-    private GeoPoint positionappearance;
+    private GeoPoint positionAppearance;
 
     /**
      * It is the point where user wants to go to.
@@ -36,12 +36,12 @@ public class EntryPointPoisson extends EntryPoint {
     /**
      * It is the radius of circle is going to be used to delimit area where users appears
      */
-    private double radiusappears;
+    private double radiusAppears;
 
     /**
      * It is the radius of circle is going to be used to delimit area where users wants to go to
      */
-    private double radiusgoto;
+    private double radiusGoTo;
     /**
      * Type of distribution that users generation will follow
      */
@@ -85,15 +85,15 @@ public class EntryPointPoisson extends EntryPoint {
             GeoPoint userPosition,userGoTo;
 
             //If not radius is specified, user just appears in the position submitted.
-            if (radiusappears > 0) {
-                BoundingCircle boundingCircle = new BoundingCircle(positionappearance, radiusappears);
+            if (radiusAppears > 0) {
+                BoundingCircle boundingCircle = new BoundingCircle(positionAppearance, radiusAppears);
                 userPosition = boundingCircle.randomPointInCircle(SimulationRandom.getInstance());
             } else {
-                userPosition = positionappearance;
+                userPosition = positionAppearance;
             }
             //If not radius is specified, user goes to the position submitted.
-            if (radiusgoto > 0) {
-                BoundingCircle boundingCircle = new BoundingCircle(destinationPlace, radiusgoto);
+            if (radiusGoTo > 0) {
+                BoundingCircle boundingCircle = new BoundingCircle(destinationPlace, radiusGoTo);
                 userGoTo = boundingCircle.randomPointInCircle(SimulationRandom.getInstance());
             } else {
                 userGoTo = destinationPlace;
@@ -108,7 +108,7 @@ public class EntryPointPoisson extends EntryPoint {
 
     @Override
     public String toString() {
-        String result = positionappearance.toString();
+        String result = positionAppearance.toString();
         result += "| " + destinationPlace.toString() + " \n";
         result += "| EntryPointType" + this.getEntryPointType();
         result += "| distributionParameter " + distribution.getLambda() + "\n";
