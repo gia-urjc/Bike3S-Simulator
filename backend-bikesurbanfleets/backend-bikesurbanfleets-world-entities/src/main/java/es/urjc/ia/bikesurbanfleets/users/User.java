@@ -184,23 +184,26 @@ public abstract class User implements Entity {
         this.id = idGenerator.next();
         this.rando = new SimpleRandom(seed);
 
-        //first get the parameters form the configuration json
-        this.readConfigParameters(userdef);
-
         this.bike = null;
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
         this.state=STATE.APPEARED;
-        
         this.reservation = null;
         this.memory = new UserMemory(this);
+
+        // ******* Historic treatment *******
+        // it's necessary to register the user here, to detect changes 
+        // in the event execution
+        History.registerEntity(this);
+
+        //first get the parameters form the configuration json
+        this.readConfigParameters(userdef);
         this.services = services;
         this.infraestructure = services.getInfrastructureManager();
         this.recommendationSystem = services.getRecommendationSystem();
         this.informationSystem = services.getInformationSystem();
-        this.graph = services.getGraphManager();
-        History.registerEntity(this);
+        this.graph = services.getGraphManager(); 
         this.memory = new UserMemory(this);
     }
 

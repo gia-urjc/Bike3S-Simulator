@@ -450,15 +450,10 @@ Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend',
 
 Sparky.task('configure:dev', ['download-map:dev', 'build:dev-backend'], () => {});
 
-Sparky.task('build:dist', () => {
+Sparky.task('build:dist', ['download-map:dev', 'build:dev-backend'], () => {
     production = true;
-    Sparky.start('download-map:dev', 'build:dev-backend')
-        .then(() => {
-            return Sparky.start('build:frontend');
-        })
-        .catch((error) => {
-            console.error(error);
-        })
+    return Sparky.start('build:frontend');
+        
 });
 
 Sparky.task('build:schema:forBackend', () => {
