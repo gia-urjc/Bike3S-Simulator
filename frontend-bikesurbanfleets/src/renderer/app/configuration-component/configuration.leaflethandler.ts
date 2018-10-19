@@ -53,10 +53,10 @@ export class ConfigurationLeaflethandler {
         }
         else {
             let entryPoint = cir;
-            let latitude: number = entryPoint.position.latitude;
-            let longitude: number = entryPoint.position.longitude;
-            let radius: number = entryPoint.radius;
-            let circle: Circle = new Circle([latitude, longitude], {radius: radius, color: "#e81b1b"});
+            let latitude: number = entryPoint.positionAppearance.latitude;
+            let longitude: number = entryPoint.positionAppearance.longitude;
+            let radiusAppears: number = entryPoint.radiusAppears;
+            let circle: Circle = new Circle([latitude, longitude], {radius: radiusAppears, color: "#e81b1b"});
             let newEntryPoint = new EntryPoint(entryPoint, circle);
             newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
             comp.entryPoints.push(newEntryPoint);

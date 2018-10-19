@@ -2,45 +2,19 @@
   "initialUsers": [
     {
       "position": {
-        "latitude": 40.404901618877936,
-        "longitude": -3.6799060055799995
+        "latitude": 40.42775034816118,
+        "longitude": -3.6883469722750566
       },
-                "destinationPlace": {
-            "latitude": 40.40999473415198,
-            "longitude": -3.6976875537907916
-          },
+      "destinationPlace": {
+        "latitude": 40.427793418189665,
+        "longitude": -3.687237017133333
+      },
       "userType": {
-        "typeName": "USER_INFORMED",
-        "parameters": {
-                  "touristDestination": {
-        "latitude": 40.41836926653367,
-        "longitude": -3.692229965506509
-      }
-
-        }
+        "typeName": "USER_PAPERAT2018_INF",
+        "parameters": {}
       },
-      "cyclingVelocity": 3.2331848603160633,
-      "timeInstant": 4
-    },
-    {
-      "position": {
-        "latitude": 40.41836926653367,
-        "longitude": -3.692229965506509
-      },
-          "destinationPlace": {
-            "latitude": 40.40999473415198,
-            "longitude": -3.6976875537907916
-          },
-      "userType": {
-        "typeName": "USER_UNINFORMED",
-        "parameters": {
-            "test1": 10,
-            "test3": 30,
-            "test10": 100
-        }
-      },
-      "cyclingVelocity": 100,
-      "timeInstant": 25
+      "cyclingVelocity": 6.76111111111111,
+      "timeInstant": 6
     }
   ]
 }

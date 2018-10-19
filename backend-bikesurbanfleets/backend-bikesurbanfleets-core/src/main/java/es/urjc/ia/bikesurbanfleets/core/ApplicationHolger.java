@@ -54,11 +54,29 @@ public class ApplicationHolger {
     
     public static void main(String[] args) throws Exception {
 
-        //Create auxiliary folder
-        File auxiliaryDir = new File(GlobalInfo.AUX_DIR);
+        String test="paperAT2018/uninf";
+        String basedir="/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/";
+        GlobalInfo.DEBUG_DIR=basedir+test+ "/debug";
+        
+        //Create auxiliary folders
+        File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
         if(!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
+        auxiliaryDir = new File(GlobalInfo.DEBUG_DIR);
+        if(!auxiliaryDir.exists()) {
+            auxiliaryDir.mkdirs();
+        }
+       globalSchema = "";
+        usersSchema = "";
+        stationsSchema = "";
+        globalConfig = basedir+ test +"/conf/global_configuration.json";
+        usersConfig = basedir+ test +"/conf/users_configuration.json";
+        stationsConfig = basedir+ test +"/conf/stations_configuration.json";
+        mapPath = basedir+ "madrid.osm";
+        historyOutputPath = basedir+ test +"/hist";
+        validator = "";
+        callFromFrontend = true;
 
   /*      CommandLine cmd;
         try {
@@ -79,17 +97,6 @@ public class ApplicationHolger {
         validator = cmd.getOptionValue("validator");
         callFromFrontend = cmd.hasOption("callFromFrontend");
 */
-        globalSchema = "";
-        usersSchema = "";
-        stationsSchema = "";
-        String test="paperAT2018/inf";
-        globalConfig = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/conf/global_configuration.json";
-        usersConfig = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/conf/users_configuration.json";
-        stationsConfig = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/conf/stations_configuration.json";
-        mapPath = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/madrid.osm";
-        historyOutputPath = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/"+ test +"/hist";
-        validator = "";
-        callFromFrontend = true;
        
    //     checkParams(); // If not valid, throws exception
         ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);

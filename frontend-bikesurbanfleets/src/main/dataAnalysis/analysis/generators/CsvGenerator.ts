@@ -157,15 +157,32 @@ export class CsvGenerator {
         return;
     }
     
+ 
     private async initUserTimeInfo(info: Map<string, SystemInfo>): Promise<void> {
         this.userTimeTitles[0] = 'id';
-        this.userTimeTitles[1] = UserTimeData.NAMES;
+        this.userTimeTitles[1] = 'timeappeared'; 
+        this.userTimeTitles[2] = 'timegetbike';
+        this.userTimeTitles[3] = 'timeleavebike';
+        this.userTimeTitles[4] = 'timegetdestination';
+        this.userTimeTitles[5] = 'timeleave';
+        this.userTimeTitles[6] = 'EXIT_AFTER_TIMEOUT';
+        this.userTimeTitles[7] = 'EXIT_AFTER_FAILED_RESERVATION';
+        this.userTimeTitles[8] = 'EXIT_AFTER_FAILED_RENTAL';
+        this.userTimeTitles[9] = 'EXIT_AFTER_REACHING_DESTINATION';
         let userInfo: SystemInfo | undefined = info.get(UserTimeAtSystem.name); 
         if (userInfo) {
             userInfo.getData().absoluteValues.forEach( (timeInfo, userId) => {
                 let obj: JsonObject = {};
                 obj[this.userTimeTitles[0]] = userId;
-                obj[this.userTimeTitles[1]] = timeInfo.time;
+                obj[this.userTimeTitles[1]] = timeInfo.timeappeared ;
+                obj[this.userTimeTitles[2]] = timeInfo.timegetbike;
+                obj[this.userTimeTitles[3]] = timeInfo.timeleavebike;
+                obj[this.userTimeTitles[4]] = timeInfo.timegetdestination;
+                obj[this.userTimeTitles[5]] = timeInfo.timeleave;
+                obj[this.userTimeTitles[6]] = timeInfo.EXIT_AFTER_TIMEOUT;
+                obj[this.userTimeTitles[7]] = timeInfo.EXIT_AFTER_FAILED_RESERVATION;
+                obj[this.userTimeTitles[8]] = timeInfo.EXIT_AFTER_FAILED_RENTAL;
+                obj[this.userTimeTitles[9]] = timeInfo.EXIT_AFTER_REACHING_DESTINATION;
                 this.userTimeData.push(obj);
             });
         }

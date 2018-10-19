@@ -54,7 +54,7 @@ public class Application {
     public static void main(String[] args) throws Exception {
 
         //Create auxiliary folder
-        File auxiliaryDir = new File(GlobalInfo.AUX_DIR);
+        File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
         if(!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }

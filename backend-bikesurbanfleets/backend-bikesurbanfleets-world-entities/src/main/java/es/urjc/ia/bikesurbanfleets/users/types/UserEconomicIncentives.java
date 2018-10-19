@@ -153,24 +153,24 @@ public class UserEconomicIncentives extends User {
         List<Station> stations = informationSystem.getStations();
         Station nearestStation = nearestStationToReturn(stations, this.getDestinationPlace());
         if (!recommendedStations.isEmpty()) {
-									int i = 0;
-									while (destination == null && i < recommendedStations.size()) {
-											Station station = recommendedStations.get(i).getStation();
-											double incentive = recommendedStations.get(i).getIncentive();
-											double quality = qualityToReturn(stations, station);
-											double compensation = compensation(this.getDestinationPlace(), nearestStation, station);
-											double extra = quality*EXTRA/100;
-											if (incentive >= (compensation+extra)) {
-													destination = recommendedStations.get(i).getStation();
-											}
-											System.out.println("station "+station.getId());
-											System.out.println("incentive: "+incentive);
-											System.out.println("min expected incentive: "+(compensation+extra));											
-						    i++;
-									}
+            int i = 0;
+            while (destination == null && i < recommendedStations.size()) {
+                Station station = recommendedStations.get(i).getStation();
+                double incentive = recommendedStations.get(i).getIncentive();
+                double quality = qualityToReturn(stations, station);
+                double compensation = compensation(this.getDestinationPlace(), nearestStation, station);
+                double extra = quality*EXTRA/100;
+                if (incentive >= (compensation+extra)) {
+                        destination = recommendedStations.get(i).getStation();
+                }
+                System.out.println("station "+station.getId());
+                System.out.println("incentive: "+incentive);
+                System.out.println("min expected incentive: "+(compensation+extra));											
+                i++;
+            }
         }
         if (destination == null) {
-        		destination  = nearestStation;
+            destination  = nearestStation;
         }
     	return destination;
     }

@@ -64,8 +64,6 @@ public class GeoPoint {
         double[] l = {Math.toRadians(this.longitude), Math.toRadians(point.longitude)};
         double h = haversine(f[1] - f[0]) + Math.cos(f[0]) * Math.cos(f[1]) * haversine(l[1] - l[0]);
         return 2 * EARTH_RADIUS * Math.asin(Math.sqrt(h));
-
-
     }
 
     private double haversine(double value) {
