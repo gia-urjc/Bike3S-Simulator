@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.common.config;
 
+import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 
 public class GlobalInfo {
@@ -41,17 +42,13 @@ public class GlobalInfo {
     /**
      * Recommendation system that will be used by the agents
      */
-    private String recommendationSystemType;
+    private JsonObject recommendationSystemType;
 
     /**
      * Graph implementation that will be used by the agents to get routes between points
      */
     private String graphManagerType;
 
-    /**
-     * Max distance for recommendation system
-     */
-    private int maxDistanceRecommendation;
 
     public int getReservationTime() {
         return reservationTime;
@@ -81,16 +78,12 @@ public class GlobalInfo {
         this.historyOutputPath = historyOutputPath;
     }
 
-    public String getRecommendationSystemType() {
+    public JsonObject getRecommendationSystemTypeJsonDescription() {
         return recommendationSystemType;
     }
 
     public String getGraphManagerType() {
         return graphManagerType;
-    }
-
-    public int getMaxDistanceRecommendation() {
-        return maxDistanceRecommendation;
     }
 
 }

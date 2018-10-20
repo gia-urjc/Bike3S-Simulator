@@ -11,9 +11,13 @@
     },
     "debugMode": true,
     "graphManagerType": "GRAPH_HOPPER",
-    "maxDistanceRecommendation": 800,
-    "recommendationSystemType": "AVAILABLE_RESOURCES",
     "reservationTime": 1000,
     "randomSeed": 10,
-    "totalSimulationTime": 86399
+    "totalSimulationTime": 86399,
+     "recommendationSystemType": {
+        "typeName": "AVAILABLE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 800
+        }
+      }
 }

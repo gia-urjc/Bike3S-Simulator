@@ -51,17 +51,11 @@ public class SimulationEngine {
         JsonObject graphParameters = new JsonObject();
         graphParameters.addProperty("mapDir", mapDir);
 
-        JsonObject recomParameters = new JsonObject();
-        recomParameters.addProperty("maxDistance", globalInfo.getMaxDistanceRecommendation());
-        // TODO make it flexible to different properties
-        // ----
-
         SimulationServiceConfigData servicesConfigData = new SimulationServiceConfigData();
         servicesConfigData.setBbox(globalInfo.getBoundingBox())
             .setGraphManagerType(globalInfo.getGraphManagerType())
             .setGraphParameters(graphParameters)
-            .setRecomSystemType(globalInfo.getRecommendationSystemType())
-            .setRecomParameters(recomParameters)
+            .setRecomSystemType(globalInfo.getRecommendationSystemTypeJsonDescription())
             .setStations(stationsInfo.getStations());
 
         SimulationServices services = new SimulationServices(servicesConfigData);

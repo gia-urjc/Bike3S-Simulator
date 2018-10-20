@@ -1,11 +1,13 @@
 package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
 
+import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
@@ -18,32 +20,31 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 
 	@RecommendationSystemParameters
 	public class RecommendationParameters {
-		private int maxDistance = 700;
-	}
+		private int maxDistanceRecommendation = 700;
+	private  double COMPENSATION = 10.0; 
+	private  double EXTRA = 1.5;
 	
-	private final double COMPENSATION = 10.0; 
-	private final double EXTRA = 1.5;
+	}
 	
 	private RecommendationParameters parameters;
-	private StationComparator stationComparator;
-	
- public RecommendationSystemBySurroundingStationsWithSimpleIncentives(InfraestructureManager infraestructure, StationComparator stationComparator) {
-		super(infraestructure);
-		this.parameters = new RecommendationParameters();
-		this.stationComparator = stationComparator;
-	}
-	
-	public RecommendationSystemBySurroundingStationsWithSimpleIncentives(InfraestructureManager infraestructure, StationComparator stationComparator,
-			RecommendationParameters parameters) {
-		super(infraestructure);
-		this.parameters = parameters;
-		this.stationComparator = stationComparator;
-	}
+   public RecommendationSystemBySurroundingStationsWithSimpleIncentives(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
+        super(infraestructureManager);
+        //***********Parameter treatment*****************************
+        //if this recomender has parameters this is the right declaration
+        //if no parameters are used this code just has to be commented
+        //"getparameters" is defined in USER such that a value of Parameters 
+        // is overwritten if there is a values specified in the jason description of the recomender
+        // if no value is specified in jason, then the orriginal value of that field is mantained
+        // that means that teh paramerts are all optional
+        // if you want another behaviour, then you should overwrite getParameters in this calss
+        this.parameters = new RecommendationParameters();
+        getParameters(recomenderdef, this.parameters);
+    }
 	
 	@Override
 	public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
 		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
-				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance)
+				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
 				.collect(Collectors.toList());
 		List<StationQuality> qualities = new ArrayList<>();
 		
@@ -66,7 +67,7 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 			Station s = qualities.get(i).getStation();
 			if (s.getId() != nearestStation.getId()) {
 				compensation = compensation(point, nearestStation, s);
-				extra = (numStations - i)*EXTRA; 
+				extra = (numStations - i)*parameters.EXTRA; 
 				incentive = compensation+extra;
 			}
 			recommendations.add(new Recommendation(s, incentive));
@@ -77,7 +78,7 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 	@Override
 	public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
 		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream()
-				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance)
+				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
 				.collect(Collectors.toList());
 		List<StationQuality> qualities = new ArrayList<>();
 
@@ -100,7 +101,7 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 			Station s = qualities.get(i).getStation();
 			if (s.getId() != nearestStation.getId()) {
 				compensation = compensation(point, nearestStation, s);
-				extra = (numStations - i)*EXTRA; 
+				extra = (numStations - i)*parameters.EXTRA; 
 				incentive = compensation+extra;
 			}
 			recommendations.add(new Recommendation(s, incentive));
@@ -113,7 +114,7 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 		if (!stations.isEmpty()) {
 			double factor, multiplication;
 			for (Station s: stations) {
-				factor = (parameters.maxDistance - station.getPosition().distanceTo(s.getPosition()))/parameters.maxDistance;
+				factor = (parameters.maxDistanceRecommendation - station.getPosition().distanceTo(s.getPosition()))/parameters.maxDistanceRecommendation;
 				multiplication = s.availableBikes()*factor;
 				summation += multiplication; 
 			}
@@ -126,7 +127,7 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 		if (!stations.isEmpty()) {
 			double factor, multiplication;
 			for (Station s: stations) {
-				factor = (parameters.maxDistance - station.getPosition().distanceTo(s.getPosition()))/parameters.maxDistance;
+				factor = (parameters.maxDistanceRecommendation - station.getPosition().distanceTo(s.getPosition()))/parameters.maxDistanceRecommendation;
 				multiplication = s.availableSlots()*factor;
 				summation += multiplication; 
 			}
@@ -135,14 +136,14 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 	}
 
 	private Station nearestStationToRent(List<Station> stations, GeoPoint point) {
-		Comparator<Station> byDistance = stationComparator.byDistance(point);
+		Comparator<Station> byDistance = StationComparator.byDistance(point);
 		List<Station> orderedStations = stations.stream().filter(s -> s.availableBikes() > 0)
 				.sorted(byDistance).collect(Collectors.toList());
 		return orderedStations.get(0);
 	}
 	
 	private Station nearestStationToReturn(List<Station> stations, GeoPoint point) {
-		Comparator<Station> byDistance = stationComparator.byDistance(point);
+		Comparator<Station> byDistance = StationComparator.byDistance(point);
 		List<Station> orderedStations = stations.stream().filter(s -> s.availableSlots() > 0)
 				.sorted(byDistance).collect(Collectors.toList());
 		return orderedStations.get(0);
@@ -151,7 +152,7 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 	private double compensation(GeoPoint point, Station nearestStation, Station recommendedStation) {
 		double distanceToNearestStation = nearestStation.getPosition().distanceTo(point);
 		double distanceToRecommendedStation = recommendedStation.getPosition().distanceTo(point);
-		return (distanceToRecommendedStation - distanceToNearestStation)/COMPENSATION;
+		return (distanceToRecommendedStation - distanceToNearestStation)/parameters.COMPENSATION;
 	}
 	
 }
