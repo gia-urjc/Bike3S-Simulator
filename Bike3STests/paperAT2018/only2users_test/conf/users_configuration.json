@@ -1,0 +1,44 @@
+{
+  "initialUsers": [
+    {
+      "position": {
+        "latitude": 40.425185595188324,
+        "longitude": -3.6988909361270226
+      },
+      "id_end_stattion": 131,
+      "destinationPlace": {
+        "latitude": 40.43052819266414,
+        "longitude": -3.7134870521172254
+      },
+      "id_initial_station": 7,
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {}
+      },
+      "cyclingVelocity": 2.2918105778695455,
+      "timeInstant": 13,
+      "travelTime": 634,
+      "userId": 0
+    },
+    {
+      "position": {
+        "latitude": 40.42226930241179,
+        "longitude": -3.6989875755820427
+      },
+      "id_end_stattion": 129,
+      "destinationPlace": {
+        "latitude": 40.40192617570612,
+        "longitude": -3.6971239788477344
+      },
+      "id_initial_station": 62,
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {}
+      },
+      "cyclingVelocity": 2.649333333333333,
+      "timeInstant": 17,
+      "travelTime": 1022,
+      "userId": 1
+    }
+  ]
+}

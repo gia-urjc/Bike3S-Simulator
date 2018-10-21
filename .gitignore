@@ -20,15 +20,5 @@ tempCsv/
 tempUsersConf/
 *.txt
 *.osm
-/Bike3STests/conmuter/hist/
-/Bike3STests/informed/hist/
-/Bike3STests/uninformed/hist/
-/Bike3STests/paperAT2018/inf/hist/
-/Bike3STests/paperAT2018/uninf/hist/
-/Bike3STests/paperAT2018/uninf/debug/
-/Bike3STests/paperAT2018/inf/debug/
-/Bike3STests/paperAT2018/obedient_Holger_recomender/hist/
-/Bike3STests/paperAT2018/obedient_Holger_recomender_orig/hist/
-/Bike3STests/paperAT2018/obedient_Holger_recomender/debug/
-/Bike3STests/paperAT2018/obedient_Holger_recomender_test/hist/
-/Bike3STests/paperAT2018/obedient_Holger_recomender_test/debug/
+Bike3STests/**/hist/
+Bike3STests/**/debug/

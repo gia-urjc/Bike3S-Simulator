@@ -15,9 +15,12 @@
     "randomSeed": 10,
     "totalSimulationTime": 86399,
      "recommendationSystemType": {
-        "typeName": "AVAILABLE_RESOURCES",
+        "typeName": "HOLGERRECOMENDER",
         "parameters": {
-            "maxDistanceRecommendation": 800
+            "maxDistanceRecommendation": 80,
+            "MINCAP_TO_RECOMEND" : 3,
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
         }
       }
 }
