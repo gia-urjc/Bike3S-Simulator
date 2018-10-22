@@ -13,7 +13,10 @@
             "longitude": -3.69826
         }
     },
-    "recommendationSystemType": "SURROUNDING_STATIONS_COMPLEX_INCENTIVES",
-    "graphManagerType": "GRAPH_HOPPER",
-    "maxDistanceRecommendation": 1000
+    "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+        }
+    },
+    "graphManagerType": "GRAPH_HOPPER"
 }
