@@ -7,6 +7,8 @@
   "homepage": "https://github.com/stimonm/Bike3S",
   "scripts": {
     "start:electron": "electron ./build",
+    "start:electron:main-debug": "electron --inspect=5858 ./build",
+    "start:electron:main-debug:break": "electron --inspect-brk=5858 ./build",
     "distribute": "node fuse build:dist && cd build && npm install && electron-builder",
     "debug:frontend": "node fuse build:dev"
   },
