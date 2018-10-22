@@ -82,7 +82,7 @@ export class UserFactInstantInfo implements Observer {
                     if (info) {
                         info.abandonmentInstant = timeEntry.time;
                     }
-                    info.exitReason = user.state;
+                    info.exitReason = user.state.old;
                     break;
                 }
             }  
