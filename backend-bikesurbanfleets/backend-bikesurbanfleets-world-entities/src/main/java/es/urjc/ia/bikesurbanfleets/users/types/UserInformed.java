@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -59,7 +60,7 @@ public class UserInformed extends User {
         // that means that teh paramerts are all optional
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new Parameters();
-        getParameters(userdef, this.parameters);
+        getParameters(userdef.getAsJsonObject("userType"), this.parameters);
      }
 
     //**********************************************

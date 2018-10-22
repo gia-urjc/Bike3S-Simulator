@@ -3,19 +3,19 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_OBEDIENT",
-                "parameters": {
-                    "destinationPlace": {
-                        "latitude": 40.41498327528509,
-                        "longitude": -3.7037658691406254
-                    }
-                }
+                "typeName": "USER_INFORMED",
+                "parameters": {}
             },
-            "position": {
+            "positionAppearance": {
                 "latitude": 40.419969,
                 "longitude": -3.709819
             },
-            "radius": 100,
+            "destinationPlace": {
+                "latitude": 40.41498327528509,
+                "longitude": -3.7037658691406254
+            },
+            "radiusAppears": 100,
+            "radiusGoTo": 100, 
             "distribution": {
                 "lambda": 1
             }
@@ -23,19 +23,19 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_OBEDIENT",
-                "parameters": {
-                    "destinationPlace": {
-                        "latitude": 40.41498327528509,
-                        "longitude": -3.7037658691406254
-                    }
-                }
+                "typeName": "USER_INFORMED",
+                "parameters": {}
             },
-            "position": {
+            "destinationPlace": {
+                "latitude": 40.41498327528509,
+                "longitude": -3.7037658691406254
+            },
+            "positionAppearance": {
                 "latitude": 40.418969,
                 "longitude": -3.700819
             },
-            "radius": 100,
+            "radiusAppears": 100,
+            "radiusGoTo": 100,
             "distribution": {
                 "lambda": 1
             }
@@ -44,18 +44,18 @@
             "entryPointType": "POISSON",
             "userType": {
                 "typeName": "USER_OBEDIENT",
-                "parameters": {
-                    "destinationPlace": {
-                        "latitude": 40.41498327528509,
-                        "longitude": -3.7037658691406254
-                    }
-                }
+                "parameters": {}
             },
-            "position": {
+            "destinationPlace": {
+                "latitude": 40.41498327528509,
+                "longitude": -3.7037658691406254
+            },
+            "positionAppearance": {
                 "latitude": 40.4131931,
                 "longitude": -3.70456
             },
-            "radius": 100,
+            "radiusAppears": 100,
+            "radiusGoTo": 100,
             "distribution": {
                 "lambda": 1
             }
@@ -64,18 +64,18 @@
             "entryPointType": "POISSON",
             "userType": {
                 "typeName": "USER_OBEDIENT",
-                "parameters": {
-                    "destinationPlace": {
-                        "latitude": 40.41498327528509,
-                        "longitude": -3.7037658691406254
-                    }
-                }
+                "parameters": {}
             },
-            "position": {
+            "destinationPlace": {
+                "latitude": 40.41498327528509,
+                "longitude": -3.7037658691406254
+            },
+            "positionAppearance": {
                 "latitude": 40.4131931,
                 "longitude": -3.7104038
             },
-            "radius": 100,
+            "radiusAppears": 100,
+            "radiusGoTo": 100,
             "distribution": {
                 "lambda": 1
             }

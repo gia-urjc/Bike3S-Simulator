@@ -54,10 +54,11 @@ public class ApplicationHolger {
     
     public static void main(String[] args) throws Exception {
 
-        String test="paperAT2018/obedient_Holger_recomender";
+        String test="paperAT2018/halfbikes/obedient_Holger_recomender_random_10bikes";
         String basedir="/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/";
         GlobalInfo.DEBUG_DIR=basedir+test+ "/debug";
-        
+        System.out.println("Test:"+test);
+
         //Create auxiliary folders
         File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
         if(!auxiliaryDir.exists()) {

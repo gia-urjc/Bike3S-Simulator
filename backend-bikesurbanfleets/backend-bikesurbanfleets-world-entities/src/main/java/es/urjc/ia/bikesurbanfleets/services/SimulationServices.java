@@ -2,6 +2,7 @@ package es.urjc.ia.bikesurbanfleets.services;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManagerParameters;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManagerType;
@@ -23,14 +24,13 @@ import java.util.Set;
 
 public class SimulationServices {
 
-    private final String INIT_EXCEPTION_MESSAGE = "Simulation Service is not correctly started." +
-            " You should init all the services";
+    private final String INIT_EXCEPTION_MESSAGE = "Simulation Service is not correctly started."
+            + " You should init all the services";
 
     private InfraestructureManager infrastructureManager;
     private RecommendationSystem recommendationSystem;
     private InformationSystem informationSystem;
     private GraphManager graphManager;
-    private StationComparator stationComparator;
 
     private Set<Class<?>> graphClasses;
     private Set<Class<?>> recommendationSystemClasses;
@@ -46,39 +46,24 @@ public class SimulationServices {
 
         this.infrastructureManager = new InfraestructureManager(configData.getStations(), configData.getBbox());
         this.graphManager = initGraphManager(configData.getGraphManagerType(), configData.getGraphParameters());
-        this.stationComparator = new StationComparator();
-        this.informationSystem = new InformationSystem(this.infrastructureManager, this.stationComparator);
-        this.recommendationSystem = initRecommendationSystem(configData.getRecomSystemType(), configData.getRecomParameters());
+        this.informationSystem = new InformationSystem(this.infrastructureManager);
+        this.recommendationSystem = initRecommendationSystem(configData.getRecomSystemType());
     }
 
-    private RecommendationSystem initRecommendationSystem(String type, JsonElement parameters) throws IllegalStateException {
+    private RecommendationSystem initRecommendationSystem(JsonObject recsystemdef) throws IllegalStateException {
 
-        for(Class<?> recommendationSystemClass: recommendationSystemClasses) {
+        //find the usertype
+        String type = recsystemdef.get("typeName").getAsString();
+
+        for (Class<?> recommendationSystemClass : recommendationSystemClasses) {
             String recomTypeAnnotation = recommendationSystemClass.getAnnotation(RecommendationSystemType.class).value();
-            if(recomTypeAnnotation.equals(type)) {
-                List<Class<?>> innerClasses = Arrays.asList(recommendationSystemClass.getClasses());
-                Class<?> recomParametersClass = null;
-
-                for(Class<?> innerClass: innerClasses) {
-                    if(innerClass.getAnnotation(RecommendationSystemParameters.class) != null) {
-                        recomParametersClass = innerClass;
-                        break;
-                    }
-                }
+            if (recomTypeAnnotation.equals(type)) {
 
                 try {
-                    if(recomParametersClass != null) {
-                        Constructor constructor = recommendationSystemClass.getConstructor(InfraestructureManager.class, StationComparator.class, recomParametersClass);
-                        RecommendationSystem recomSys = (RecommendationSystem) constructor.newInstance(this.infrastructureManager, this.stationComparator, gson.fromJson(parameters, recomParametersClass));
-                        return recomSys;
-                    }
-                    else {
-                        Constructor constructor = recommendationSystemClass.getConstructor(InfraestructureManager.class, StationComparator.class);
-                        RecommendationSystem recomSys = (RecommendationSystem) constructor.newInstance(this.infrastructureManager, this.stationComparator);
-                        return recomSys;
-                    }
-                }
-                catch(Exception e) {
+                    Constructor constructor = recommendationSystemClass.getConstructor(JsonObject.class, InfraestructureManager.class);
+                    RecommendationSystem recomSys = (RecommendationSystem) constructor.newInstance(recsystemdef, this.infrastructureManager);
+                    return recomSys;
+                } catch (Exception e) {
                     MessageGuiFormatter.showErrorsForGui("Error Creating Recommendation System");
                     MessageGuiFormatter.showErrorsForGui(e);
                 }
@@ -90,32 +75,30 @@ public class SimulationServices {
     private GraphManager initGraphManager(String graphManagerType, JsonElement parameters)
             throws IllegalStateException {
 
-        for(Class<?> graphClass: graphClasses) {
+        for (Class<?> graphClass : graphClasses) {
             String graphTypeAnnotation = graphClass.getAnnotation(GraphManagerType.class).value();
-            if(graphTypeAnnotation.equals(graphManagerType)) {
+            if (graphTypeAnnotation.equals(graphManagerType)) {
                 List<Class<?>> innerClasses = Arrays.asList(graphClass.getClasses());
                 Class<?> graphParametersClass = null;
 
-                for(Class<?> innerClass: innerClasses) {
-                    if(innerClass.getAnnotation(GraphManagerParameters.class) != null) {
+                for (Class<?> innerClass : innerClasses) {
+                    if (innerClass.getAnnotation(GraphManagerParameters.class) != null) {
                         graphParametersClass = innerClass;
                         break;
                     }
                 }
 
                 try {
-                    if(graphParametersClass != null) {
+                    if (graphParametersClass != null) {
                         Constructor constructor = graphClass.getConstructor(graphParametersClass);
                         GraphManager graphManager = (GraphManager) constructor.newInstance(gson.fromJson(parameters, graphParametersClass));
                         return graphManager;
-                    }
-                    else {
+                    } else {
                         Constructor constructor = graphClass.getConstructor();
                         GraphManager graphManager = (GraphManager) constructor.newInstance();
                         return graphManager;
                     }
-                }
-                catch(Exception e) {
+                } catch (Exception e) {
                     MessageGuiFormatter.showErrorsForGui("Error Creating Graph Manager");
                     MessageGuiFormatter.showErrorsForGui(e);
                 }
@@ -144,18 +127,10 @@ public class SimulationServices {
         return graphManager;
     }
 
-    public StationComparator getStationComparator() {
-        checkService();
-        return stationComparator;
-    }
-
-
-    private void checkService() throws IllegalStateException {
-        if(recommendationSystem == null || graphManager == null) {
+     private void checkService() throws IllegalStateException {
+        if (recommendationSystem == null || graphManager == null) {
             throw new IllegalStateException(INIT_EXCEPTION_MESSAGE);
         }
     }
-
-
 
 }

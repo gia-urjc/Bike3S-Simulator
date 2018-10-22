@@ -233,10 +233,15 @@ Sparky.task('build:data-analyser', () => {
 
     return fuse.run();
 });
+
 Sparky.task('build:frontend:main', () => {
     const fuse = FuseBox.init({
         homeDir: projectRoot.frontend.src(),
         output: path.join(projectRoot.build.frontend(), '$name.js'),
+        sourceMaps: {
+            project: !production,
+            vendor: false, // vendor sourcemaps take very long to generate
+        },
         target: 'server',
         experimentalFeatures: true,
         ignoreModules: ['electron'],
@@ -253,6 +258,40 @@ Sparky.task('build:frontend:main', () => {
         // main.watch('main/**');
         return fuse.run().then(() => {
             const electron = spawn('npm', ['run', 'start:electron'], {
+                cwd: projectRoot(),
+                shell: true, // necessary on windows
+                stdio: 'inherit' // pipe to calling process
+            });
+        });
+    }
+
+    return fuse.run();
+});
+
+Sparky.task('build:frontend:debug', () => {
+    const fuse = FuseBox.init({
+        homeDir: projectRoot.frontend.src(),
+        output: path.join(projectRoot.build.frontend(), '$name.js'),
+        sourceMaps: {
+            project: !production,
+            vendor: false, // vendor sourcemaps take very long to generate
+        },
+        target: 'server',
+        experimentalFeatures: true,
+        ignoreModules: ['electron'],
+        plugins: [
+            EnvPlugin({ target: production ? 'production' : 'development' }),
+            JSONPlugin()
+        ]
+    });
+
+    const main = fuse.bundle('main').instructions('>main/main.ts');
+
+    
+    if (!production) {
+        // main.watch('main/**');
+        return fuse.run().then(() => {
+            const electron = spawn('npm', ['run', 'start:electron:main-debug:break'], {
                 cwd: projectRoot(),
                 shell: true, // necessary on windows
                 stdio: 'inherit' // pipe to calling process
@@ -443,6 +482,10 @@ Sparky.task('clean:cache', ['clean:cache:fuse', 'clean:cache:schema'], () => {})
 
 Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:frontend:main'], () => {
     
+});
+
+Sparky.task('build:frontend:debug', ['copy:assets', 'build:frontend:renderer', 'build:frontend:main'], () => {
+
 });
 
 Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});

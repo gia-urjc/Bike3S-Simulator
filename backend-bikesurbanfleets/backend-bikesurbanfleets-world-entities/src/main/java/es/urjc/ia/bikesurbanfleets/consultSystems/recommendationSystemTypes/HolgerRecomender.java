@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
 
+import com.google.gson.JsonObject;
 import java.util.ArrayList;
 
 import java.util.Comparator;
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
+import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
@@ -36,29 +37,28 @@ public class HolgerRecomender extends RecommendationSystem {
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
-        private int maxDistance = 800;
+        private int MINCAP_TO_RECOMEND=5;
+        //maximum difference to teh closest station
+        private  double MAXDIFF = 500;
+        //maximum distance to be recomended (except closest station which would be recomended in any case)
+        private  double MAXTOTALDIST = 1000;
 
     }
 
     private RecommendationParameters parameters;
 
-    /**
-     * It contains several comparators to sort stations.
-     */
-    private StationComparator stationComparator;
-
-    public HolgerRecomender(InfraestructureManager infraestructureManager,
-            StationComparator stationComparator) {
+    public HolgerRecomender(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception{
         super(infraestructureManager);
+       //***********Parameter treatment*****************************
+        //if this recomender has parameters this is the right declaration
+        //if no parameters are used this code just has to be commented
+        //"getparameters" is defined in USER such that a value of Parameters 
+        // is overwritten if there is a values specified in the jason description of the recomender
+        // if no value is specified in jason, then the orriginal value of that field is mantained
+        // that means that teh paramerts are all optional
+        // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
-        this.stationComparator = stationComparator;
-    }
-
-    public HolgerRecomender(InfraestructureManager infraestructureManager, StationComparator stationComparator,
-            RecommendationParameters parameters) {
-        super(infraestructureManager);
-        this.parameters = parameters;
-        this.stationComparator = stationComparator;
+        getParameters(recomenderdef, this.parameters);
     }
 
     @Override
@@ -73,6 +73,11 @@ public class HolgerRecomender extends RecommendationSystem {
 
         if (!stationdat.isEmpty()) {
             temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
+            for (int i=0; i<10; i++){
+                System.out.println("stat "+ i + " utility: " + temp.get(i).utility);  
+                System.out.println("      dist: " + temp.get(i).distance);  
+                System.out.println("      bikes: " + temp.get(i).station.availableBikes());  
+            }
             result = temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
@@ -102,6 +107,7 @@ public class HolgerRecomender extends RecommendationSystem {
     private List<StationData> calculateDataTake(List<Station> stations, GeoPoint point) {
         List<StationData> aux = new ArrayList<StationData>();
         double closeststationdistance = Double.MAX_VALUE;
+        Station beststation=null;
         for (Station s : stations) {
             StationData sd = new StationData();
             sd.station = s;
@@ -110,10 +116,12 @@ public class HolgerRecomender extends RecommendationSystem {
             sd.distance = s.getPosition().distanceTo(point);
             if (closeststationdistance >= sd.distance) {
                 closeststationdistance = sd.distance;
+                beststation=sd.station;
             }
             aux.add(sd);
         }
 
+        System.out.println("nearest station"+beststation.toString());
         //now calculate utility
         double MAXDIST = 500;
         for (StationData sd : aux) {
@@ -155,39 +163,35 @@ public class HolgerRecomender extends RecommendationSystem {
         return aux;
     }
 
-    //maximum difference to teh closest station
-    private static double MAXDIFF = 500;
-    //maximum distance to be recomended (except closest station which would be recomended in any case)
-    private static double MAXTOTALDIST = 1000;
 
     private double calculateDistanceUtility(double closest, double newdist) {
         if (newdist == closest) {
             return 1.0;
         }
-        if (newdist > MAXTOTALDIST) {
+        if (newdist > parameters.MAXTOTALDIST) {
             return 0.0;
         }
-        if (newdist > closest + MAXDIFF) {
+        if (newdist > closest + parameters.MAXDIFF) {
             return 0.0;
         }
-        return 1 - ((newdist - closest) / MAXDIFF);
+        return 1 - ((newdist - closest) / parameters.MAXDIFF);
     }
     
     private double calculateStationUtilityTake(StationData sd) {
-        int halfcap= (int) Math.ceil(((double) sd.capacity) /2.0D);
-        if (sd.station.availableBikes()>=halfcap) {
+    //    int halfcap= (int) Math.ceil(((double) sd.capacity) /3.5D);
+        if (sd.station.availableBikes()>=parameters.MINCAP_TO_RECOMEND) {
             return 1;
         }
-        return ((double)sd.station.availableBikes() / (double) halfcap);
+        return ((double)sd.station.availableBikes() / (double) parameters.MINCAP_TO_RECOMEND);
     }
 
     private double calculateStationUtilityReturn(StationData sd) {
-        int halfcap= (int) Math.ceil(((double) sd.capacity) /2.0D);
+    //    int halfcap= (int) Math.ceil(((double) sd.capacity) /8D);
     
-        if (sd.station.availableSlots()>=halfcap) {
+        if (sd.station.availableSlots()>=parameters.MINCAP_TO_RECOMEND) {
             return 1;
         }
-        return (sd.station.availableSlots() / halfcap);
+        return ((double)sd.station.availableSlots() / (double)parameters.MINCAP_TO_RECOMEND);
     }
 
 }

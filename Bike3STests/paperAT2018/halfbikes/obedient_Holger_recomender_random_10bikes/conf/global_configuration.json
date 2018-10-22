@@ -1,0 +1,26 @@
+{
+    "boundingBox": {
+        "northWest": {
+            "latitude": 40.56698287529177,
+            "longitude": -3.8768005371093754
+        },
+        "southEast": {
+            "latitude": 40.30759108012253,
+            "longitude": -3.481292724609375
+        }
+    },
+    "debugMode": true,
+    "graphManagerType": "GRAPH_HOPPER",
+    "reservationTime": 1000,
+    "randomSeed": 10,
+    "totalSimulationTime": 86399,
+     "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER_RANDOM",
+        "parameters": {
+            "maxDistanceRecommendation": 80,
+            "MINCAP_TO_RECOMEND" : 10,
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+      }
+}
