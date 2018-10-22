@@ -72,15 +72,19 @@ export class EmptyStationInfo implements SystemInfo {
         let time = 0;
         let startTime = -1;
         let endTime = -1;
+        let index: number = 0;
          
         stationInfo.getList().forEach ( (bikesPerTime) => {
             if (startTime === -1) {
                 if (bikesPerTime.availableBikes === 0) {
-                    startTime = bikesPerTime.time;
+                    if (index !== (stationInfo.getList().length-1)) {
+                        startTime = bikesPerTime.time;
+                    }
+                    // TODO: it is is the only value
                 }
             }
             else {
-                // TODO: add 1 instant to time if it is the last stationInfo data
+            
                 if (bikesPerTime.availableBikes !== 0) {
                     endTime = bikesPerTime.time;
                     let interval: TimeInterval = new TimeInterval(startTime, endTime);
@@ -90,6 +94,7 @@ export class EmptyStationInfo implements SystemInfo {
                     endTime = -1;
                 }
             }
+            index++;
         });
         return new EmptyStateAbsoluteValue(intervals, time);
     }
