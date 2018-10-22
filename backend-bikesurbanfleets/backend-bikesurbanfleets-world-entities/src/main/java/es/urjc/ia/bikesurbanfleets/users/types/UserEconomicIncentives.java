@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.Recommendation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
@@ -38,7 +40,10 @@ public class UserEconomicIncentives extends User {
          * reservation) before deciding to leave the system.
          */
         private int minRentalAttempts = 2;
-
+        private  int COMPENSATION = 10;   // 1 incentive unit  per 10 meters
+        private  int EXTRA = 30;   // 30% of quality
+        private int maxdistance=800; //800 meters
+  
         @Override
         public String toString() {
             return "Parameters{" +
@@ -48,10 +53,7 @@ public class UserEconomicIncentives extends User {
 
     }
 
-    private final int COMPENSATION = 10;   // 1 incentive unit  per 10 meters
-    private final int EXTRA = 30;   // 30% of quality
-    
-    private Parameters parameters;
+     private Parameters parameters;
     
     public UserEconomicIncentives(JsonObject userdef, SimulationServices services, long seed) throws Exception{
         super(services, userdef, seed);
@@ -64,7 +66,7 @@ public class UserEconomicIncentives extends User {
         // that means that teh paramerts are all optional
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new Parameters();
-        getParameters(userdef, this.parameters);
+        getParameters(userdef.getAsJsonObject("userType"), this.parameters);
      }
    
     //**********************************************
@@ -128,7 +130,7 @@ public class UserEconomicIncentives extends User {
         					double incentive = recommendedStations.get(i).getIncentive();
         					double quality = qualityToRent(stations, station);
         					double compensation = compensation(this.getPosition(), nearestStation, station);
-        					double extra = quality*EXTRA/100;
+        					double extra = quality*parameters.EXTRA/100;
         					if (incentive >= (compensation+extra)) {
         							destination = recommendedStations.get(i).getStation();
         					}
@@ -153,24 +155,24 @@ public class UserEconomicIncentives extends User {
         List<Station> stations = informationSystem.getStations();
         Station nearestStation = nearestStationToReturn(stations, this.getDestinationPlace());
         if (!recommendedStations.isEmpty()) {
-									int i = 0;
-									while (destination == null && i < recommendedStations.size()) {
-											Station station = recommendedStations.get(i).getStation();
-											double incentive = recommendedStations.get(i).getIncentive();
-											double quality = qualityToReturn(stations, station);
-											double compensation = compensation(this.getDestinationPlace(), nearestStation, station);
-											double extra = quality*EXTRA/100;
-											if (incentive >= (compensation+extra)) {
-													destination = recommendedStations.get(i).getStation();
-											}
-											System.out.println("station "+station.getId());
-											System.out.println("incentive: "+incentive);
-											System.out.println("min expected incentive: "+(compensation+extra));											
-						    i++;
-									}
+            int i = 0;
+            while (destination == null && i < recommendedStations.size()) {
+                Station station = recommendedStations.get(i).getStation();
+                double incentive = recommendedStations.get(i).getIncentive();
+                double quality = qualityToReturn(stations, station);
+                double compensation = compensation(this.getDestinationPlace(), nearestStation, station);
+                double extra = quality*parameters.EXTRA/100;
+                if (incentive >= (compensation+extra)) {
+                        destination = recommendedStations.get(i).getStation();
+                }
+                System.out.println("station "+station.getId());
+                System.out.println("incentive: "+incentive);
+                System.out.println("min expected incentive: "+(compensation+extra));											
+                i++;
+            }
         }
         if (destination == null) {
-        		destination  = nearestStation;
+            destination  = nearestStation;
         }
     	return destination;
     }
@@ -199,14 +201,14 @@ public class UserEconomicIncentives extends User {
     private double compensation(GeoPoint point, Station nearestStation, Station recommendedStation) {
     	double distanceToNearestStation = nearestStation.getPosition().distanceTo(point);
     	double distanceToRecommendedStation  = recommendedStation.getPosition().distanceTo(point);
-    	return (distanceToRecommendedStation - distanceToNearestStation)/COMPENSATION;
+    	return (distanceToRecommendedStation - distanceToNearestStation)/parameters.COMPENSATION;
     }
     
     private double qualityToRent(List<Station> stations, Station station) {
 		double summation = 0;
 		if (!stations.isEmpty()) {
 			double factor, multiplication;
-			double maxDistance = recommendationSystem.getDistance();
+			double maxDistance = parameters.maxdistance;
 			for (Station s: stations) {
 				factor = (maxDistance - station.getPosition().distanceTo(s.getPosition()))/maxDistance;
 				multiplication = s.availableBikes()*factor;
@@ -220,7 +222,7 @@ public class UserEconomicIncentives extends User {
 		double summation = 0;
 		if (!stations.isEmpty()) {
 			double factor, multiplication;
-			double maxDistance = recommendationSystem.getDistance();
+			double maxDistance = parameters.maxdistance;
 			for (Station s: stations) {
 				factor = (maxDistance - station.getPosition().distanceTo(s.getPosition()))/maxDistance;
 				multiplication = s.availableSlots()*factor;
@@ -231,14 +233,14 @@ public class UserEconomicIncentives extends User {
 	}
 
 	private Station nearestStationToRent(List<Station> stations, GeoPoint point) {
-		Comparator<Station> byDistance = services.getStationComparator().byDistance(point);
+		Comparator<Station> byDistance = StationComparator.byDistance(point);
 		List<Station> orderedStations = stations.stream().filter(s -> s.availableBikes() > 0)
 				.sorted(byDistance).collect(Collectors.toList());
 		return orderedStations.get(0);
 	}
 	
 	private Station nearestStationToReturn(List<Station> stations, GeoPoint point) {
-		Comparator<Station> byDistance = services.getStationComparator().byDistance(point);
+		Comparator<Station> byDistance = StationComparator.byDistance(point);
 		List<Station> orderedStations = stations.stream().filter(s -> s.availableSlots() > 0)
 				.sorted(byDistance).collect(Collectors.toList());
 		return orderedStations.get(0);

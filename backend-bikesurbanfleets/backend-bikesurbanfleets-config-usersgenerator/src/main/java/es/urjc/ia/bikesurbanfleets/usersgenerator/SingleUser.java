@@ -8,6 +8,10 @@ public class SingleUser {
      * It is the point where user appears, i. e., where user is located after being generated.
      */
     private GeoPoint position;
+
+    /**
+     * Destination place of the user
+     */
     private GeoPoint destinationPlace;
 
     /**
@@ -19,6 +23,16 @@ public class SingleUser {
      * It is the time instant when user appears at the system.
      */
     private int timeInstant;
+
+    @Override
+    public String toString() {
+        return "{" +
+            ", position='" + getPosition() + "'" +
+            ", destinationPlace='" + getDestinationPlace() + "'" +
+            ", userType='" + getUserType() + "'" +
+            ", timeInstant='" + getTimeInstant() + "'" +
+            "}";
+    }
 
     public SingleUser(GeoPoint position, GeoPoint destinationPlace, UserProperties userType, int instant) {
         this.position = position;
@@ -43,4 +57,5 @@ public class SingleUser {
     public int getTimeInstant() {
         return timeInstant;
     }
+
 }

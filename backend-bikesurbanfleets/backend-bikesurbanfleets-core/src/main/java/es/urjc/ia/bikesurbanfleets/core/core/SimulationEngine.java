@@ -51,17 +51,11 @@ public class SimulationEngine {
         JsonObject graphParameters = new JsonObject();
         graphParameters.addProperty("mapDir", mapDir);
 
-        JsonObject recomParameters = new JsonObject();
-        recomParameters.addProperty("maxDistance", globalInfo.getMaxDistanceRecommendation());
-        // TODO make it flexible to different properties
-        // ----
-
         SimulationServiceConfigData servicesConfigData = new SimulationServiceConfigData();
         servicesConfigData.setBbox(globalInfo.getBoundingBox())
             .setGraphManagerType(globalInfo.getGraphManagerType())
             .setGraphParameters(graphParameters)
-            .setRecomSystemType(globalInfo.getRecommendationSystemType())
-            .setRecomParameters(recomParameters)
+            .setRecomSystemType(globalInfo.getRecommendationSystemTypeJsonDescription())
             .setStations(stationsInfo.getStations());
 
         SimulationServices services = new SimulationServices(servicesConfigData);
@@ -83,6 +77,9 @@ public class SimulationEngine {
             User user = userFactory.createUser(userdef, services, seed);
             int instant = user.getInstant();
             GeoPoint position = user.getPosition();
+            // Is necessary to have the user position initialized to null to write changes.
+            // Position is asigned again in EventUserAppears
+            user.setPosition(null);
             eventUserAppearsList.add(new EventUserAppears(instant, user, position));
         }
 
@@ -127,7 +124,7 @@ public class SimulationEngine {
             // if it is the last event, save the global values of the simulation
             if(eventsQueue.isEmpty()) {
                 FinalGlobalValues finalGlobalValues = new FinalGlobalValues();
-                finalGlobalValues.setTotalTimeSimulation(event.getInstant());
+                finalGlobalValues.setTotalTimeSimulation(this.globalInfo.getTotalSimulationTime());
                 finalGlobalValues.setBoundingBox(this.globalInfo.getBoundingBox());
                 History.writeGlobalInformation(finalGlobalValues);
             }

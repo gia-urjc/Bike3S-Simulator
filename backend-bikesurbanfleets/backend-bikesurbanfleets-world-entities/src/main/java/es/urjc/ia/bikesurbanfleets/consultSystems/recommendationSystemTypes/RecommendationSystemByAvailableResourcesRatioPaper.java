@@ -1,6 +1,8 @@
 package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
 
+import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
@@ -18,75 +20,69 @@ import java.util.stream.Collectors;
  * should go to contribute with system rebalancing. Then, this recommendation
  * system gives the user a list of stations ordered descending by the
  * "resources/capacityº" ratio.
- * 
+ *
  * @author IAgroup
  *
  */
 @RecommendationSystemType("AVAILABLE_RESOURCES_RATIO_PAPER")
 public class RecommendationSystemByAvailableResourcesRatioPaper extends RecommendationSystem {
 
-	@RecommendationSystemParameters
-	public class RecommendationParameters {
+    @RecommendationSystemParameters
+    public class RecommendationParameters {
 
-		/**
-		 * It is the maximum distance in meters between the recommended stations and the
-		 * indicated geographical point.
-		 */
-		private int maxDistance = 650;
+        /**
+         * It is the maximum distance in meters between the recommended stations
+         * and the indicated geographical point.
+         */
+        private int maxDistanceRecommendation = 650;
 
-	}
+    }
 
-	private RecommendationParameters parameters;
+    private RecommendationParameters parameters;
 
-	/**
-	 * It contains several comparators to sort stations.
-	 */
-	private StationComparator stationComparator;
+    public RecommendationSystemByAvailableResourcesRatioPaper(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
+        super(infraestructureManager);
+        //***********Parameter treatment*****************************
+        //if this recomender has parameters this is the right declaration
+        //if no parameters are used this code just has to be commented
+        //"getparameters" is defined in USER such that a value of Parameters 
+        // is overwritten if there is a values specified in the jason description of the recomender
+        // if no value is specified in jason, then the orriginal value of that field is mantained
+        // that means that teh paramerts are all optional
+        // if you want another behaviour, then you should overwrite getParameters in this calss
+        this.parameters = new RecommendationParameters();
+         getParameters(recomenderdef, this.parameters);
+  }
 
-	public RecommendationSystemByAvailableResourcesRatioPaper(InfraestructureManager infraestructureManager,
-			StationComparator stationComparator) {
-		super(infraestructureManager);
-		this.parameters = new RecommendationParameters();
-		this.stationComparator = stationComparator;
-	}
+    @Override
+    public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
+        List<Station> temp;
+        List<Recommendation> result = new ArrayList<>();
+        List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
+                .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
-	public RecommendationSystemByAvailableResourcesRatioPaper(InfraestructureManager infraestructureManager, StationComparator stationComparator,
-														 RecommendationParameters parameters) {
-		super(infraestructureManager);
-		this.parameters = parameters;
-		this.stationComparator = stationComparator;
-	}
+        if (!stations.isEmpty()) {
+            Comparator<Station> byBikesRatio = StationComparator.byBikesCapacityRatio();
+            temp = stations.stream().sorted(byBikesRatio).collect(Collectors.toList());
+            temp.forEach(s -> System.out.println("Station " + s.getId() + ": " + (double) s.availableBikes() / s.getCapacity()));
+            result = temp.stream().map(station -> new Recommendation(station, 0.0)).collect(Collectors.toList());
+        }
+        return result;
+    }
 
+    public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
+        List<Station> temp;
+        List<Recommendation> result = new ArrayList<>();
+        List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
-	@Override
-	public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
-		List<Station> temp;
-		List<Recommendation> result = new ArrayList<>();
-		List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
-				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance).collect(Collectors.toList());
-		
-		if (!stations.isEmpty()) {
-		Comparator<Station> byBikesRatio = stationComparator.byBikesCapacityRatio();
-		temp = stations.stream().sorted(byBikesRatio).collect(Collectors.toList());
-		temp.forEach(s -> System.out.println("Station "+s.getId()+": "+(double)s.availableBikes()/s.getCapacity()));
-		result = temp.stream().map(station -> new Recommendation(station, 0.0)).collect(Collectors.toList());
-	}
-		return result;
-	}
+        if (!stations.isEmpty()) {
+            Comparator<Station> bySlotsRatio = StationComparator.bySlotsCapacityRatio();
+            temp = stations.stream().sorted(bySlotsRatio).collect(Collectors.toList());
+            temp.forEach(s -> System.out.println("Station " + s.getId() + ": " + s.availableBikes() / s.getCapacity()));
+            result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
+        }
 
-	public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
-		List<Station> temp;
-		List<Recommendation> result = new ArrayList<>();
-		List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistance).collect(Collectors.toList());
-		
-		if (!stations.isEmpty()) {
-		Comparator<Station> bySlotsRatio = stationComparator.bySlotsCapacityRatio();
-		temp = stations.stream().sorted(bySlotsRatio).collect(Collectors.toList());
-		temp.forEach(s -> System.out.println("Station "+s.getId()+": "+s.availableBikes()/s.getCapacity()));
-		result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
-		}
-
-		return result;
-	}
+        return result;
+    }
 
 }

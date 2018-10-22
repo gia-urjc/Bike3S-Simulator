@@ -15,7 +15,7 @@ public class Debug {
 
     public static boolean DEBUG_MODE;
     private static FileWriterMap fileWriterMap = new FileWriterMap();
-    private static final Path DEBUG_PATH = Paths.get(GlobalInfo.AUX_DIR + "/debug_logs");
+    private static final Path DEBUG_PATH = Paths.get(GlobalInfo.DEBUG_DIR + "/debug_logs");
 
     public static void init() throws IOException {
         if(DEBUG_MODE) {

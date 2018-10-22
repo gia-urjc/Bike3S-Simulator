@@ -7,6 +7,8 @@
   "homepage": "https://github.com/stimonm/Bike3S",
   "scripts": {
     "start:electron": "electron ./build",
+    "start:electron:main-debug": "electron --inspect=5858 ./build",
+    "start:electron:main-debug:break": "electron --inspect-brk=5858 ./build",
     "distribute": "node fuse build:dist && cd build && npm install && electron-builder",
     "debug:frontend": "node fuse build:dev"
   },
@@ -92,7 +94,7 @@
     "@types/moment": "^2.13.0",
     "@types/node": "^8.5.1",
     "@types/reflect-metadata": "0.0.5",
-    "angular-ide": "^0.9.39",
+    "angular-ide": "^0.9.51",
     "electron": "^2.0.4",
     "electron-builder": "^20.17.1",
     "electron-installer-squirrel-windows": "^1.3.0",

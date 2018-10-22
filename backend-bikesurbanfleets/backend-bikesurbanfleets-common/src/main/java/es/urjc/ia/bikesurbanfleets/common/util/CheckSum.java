@@ -21,7 +21,7 @@ public class CheckSum {
     private String md5;
 
     public CheckSum() throws FileNotFoundException {
-        File file = new File(GlobalInfo.AUX_DIR + "/mapMd5.txt");
+        File file = new File(GlobalInfo.TEMP_DIR + "/mapMd5.txt");
         if(file.exists()) {
             JsonParser parser = new JsonParser();
             JsonElement jsonElement = parser.parse(new FileReader(file));
@@ -39,7 +39,7 @@ public class CheckSum {
         String newMd5 = DigestUtils.md5Hex(new FileInputStream(file));
         if(md5 == null || !md5.equals(newMd5)) {
             this.md5 = newMd5;
-            FileWriter fileWriter = new FileWriter(new File(GlobalInfo.AUX_DIR + "/mapMd5.txt"));
+            FileWriter fileWriter = new FileWriter(new File(GlobalInfo.TEMP_DIR + "/mapMd5.txt"));
             gson.toJson(this, fileWriter);
             fileWriter.close();
             return false;

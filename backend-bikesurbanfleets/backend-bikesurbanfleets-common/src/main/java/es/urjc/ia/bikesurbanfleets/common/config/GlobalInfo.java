@@ -1,11 +1,13 @@
 package es.urjc.ia.bikesurbanfleets.common.config;
 
+import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 
 public class GlobalInfo {
 
     public static final String HOME_DIR = System.getProperty("user.home");
-    public static final String AUX_DIR = HOME_DIR + "/.Bike3S";
+    public static final String TEMP_DIR = HOME_DIR + "/.Bike3S";
+    public static String DEBUG_DIR = TEMP_DIR;
 
     /**
      * It is the time period during a reservation is valid or active.
@@ -40,17 +42,13 @@ public class GlobalInfo {
     /**
      * Recommendation system that will be used by the agents
      */
-    private String recommendationSystemType;
+    private JsonObject recommendationSystemType;
 
     /**
      * Graph implementation that will be used by the agents to get routes between points
      */
     private String graphManagerType;
 
-    /**
-     * Max distance for recommendation system
-     */
-    private int maxDistanceRecommendation;
 
     public int getReservationTime() {
         return reservationTime;
@@ -80,16 +78,12 @@ public class GlobalInfo {
         this.historyOutputPath = historyOutputPath;
     }
 
-    public String getRecommendationSystemType() {
+    public JsonObject getRecommendationSystemTypeJsonDescription() {
         return recommendationSystemType;
     }
 
     public String getGraphManagerType() {
         return graphManagerType;
-    }
-
-    public int getMaxDistanceRecommendation() {
-        return maxDistanceRecommendation;
     }
 
 }

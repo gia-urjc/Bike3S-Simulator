@@ -19,7 +19,7 @@ public class EntryPointSingle extends EntryPoint {
     /**
      * It is the point where user appears, i. e., where user is located after being generated.
      */
-    private GeoPoint position;
+    private GeoPoint positionAppearance;
     
     /**
      * It is the point where user wants to go to.
@@ -35,9 +35,9 @@ public class EntryPointSingle extends EntryPoint {
      */
     private int timeInstant; 
     
-    public EntryPointSingle(GeoPoint position, GeoPoint destinationPlace, UserProperties userType, int instant) {
+    public EntryPointSingle(GeoPoint positionAppearance, GeoPoint destinationPlace, UserProperties userType, int instant) {
         this.entryPointType = this.getClass().getAnnotation(EntryPointType.class).value();
-        this.position = position;
+        this.positionAppearance = positionAppearance;
         this.userType = userType;
         this.timeInstant = instant;
         this.destinationPlace=destinationPlace;
@@ -46,13 +46,13 @@ public class EntryPointSingle extends EntryPoint {
     @Override
     public List<SingleUser> generateUsers() {
         List<SingleUser> singleUsers = new ArrayList<>();
-        SingleUser user = new SingleUser(position, destinationPlace, userType, timeInstant);
+        SingleUser user = new SingleUser(positionAppearance, destinationPlace, userType, timeInstant);
         singleUsers.add(user);
         return singleUsers;
     }
     
     public String toString() {
-        String result = position.toString();
+        String result = positionAppearance.toString();
          result += "| " + destinationPlace+ " \n";
        
         result += "| SINGLE user \n";

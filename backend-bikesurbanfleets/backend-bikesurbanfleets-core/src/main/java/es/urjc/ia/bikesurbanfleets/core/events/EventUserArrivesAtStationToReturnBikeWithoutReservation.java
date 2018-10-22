@@ -41,8 +41,8 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
             } else {
                 GeoPoint point = user.getDestinationPlace();
                 int arrivalTime = user.goToPointInCity(point);
-                debugEventLog("User returns the bike without reservation. Destination in city: "+point.toString());
                 user.setState(User.STATE.WALK_TO_DESTINATION);
+                debugEventLog("User returns the bike without reservation. Destination in city: "+point.toString());
                 newEvents.add(new EventUserArrivesAtDestinationInCity(this.instant+arrivalTime, user, point));	
             }
         }

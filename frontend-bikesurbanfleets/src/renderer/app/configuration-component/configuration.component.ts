@@ -1,10 +1,10 @@
 import {Component, Inject, ViewChild, TemplateRef} from "@angular/core";
 import {AjaxProtocol} from "../../ajax/AjaxProtocol";
 import {Layer, Rectangle, FeatureGroup, Circle, Marker} from "leaflet";
-import {LeafletDrawFunctions, FormJsonSchema, EntryPoint, Station} from "./config-definitions";
+import {LeafletDrawFunctions, EntryPoint, Station} from "./config-definitions";
 import {ConfigurationLeaflethandler} from "./configuration.leaflethandler";
 import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
-import {EntryPointDataType, GlobalConfiguration, ConfigurationFile} from "../../../shared/ConfigurationInterfaces";
+import {EntryPointDataType, GlobalConfiguration, ConfigurationFile, FormJsonSchema} from "../../../shared/ConfigurationInterfaces";
 import {ConfigurationUtils} from "./configuration.utils";
 import {ConfigurationSaveComponent} from "../configuration-save-component/configurationsave.component";
 import { ConfigurationLoadComponent } from "../configuration-load-globalconfig/configuration-load.component";
@@ -12,6 +12,7 @@ import { JsonTreeViewComponent } from "../jsoneditor-component/jsoneditor.compon
 import { SchemaFormGlobalComponent } from "../schemaform-global-component/schemaform-global.component";
 import { ConfDownMapComponent } from "../configuration-download-map/configuration-download-map.component";
 import * as L from 'leaflet';
+import { settingsPathGenerator } from "../../../shared/settings";
 const  {dialog} = (window as any).require('electron').remote;
 
 
@@ -120,20 +121,14 @@ export class ConfigurationComponent {
 
     async entryPointFormInit(selected: EntryPointDataType): Promise<any> {
         let entryPointData = {
-            position: {},
-            radius: 0
+            positionAppearance: {},
+            radiusAppears: 0
         };
         let schema = await this.ajax.formSchema.getSchemaByTypes(selected);
         let layout = await this.ajax.jsonLoader.getAllLayouts();
-/*        if(selected.entryPointType === "POISSON"){
-            layout.entryPointLayout.splice(0,0,{key: "lambda", placeholder: "lambda in minutes"});
-        }else{
-            layout.entryPointLayout.splice(0,0,{key: "timeInstant", placeholder: "User instant appear in seconds"});
-        }*/
         this.entryPointForm = {
             schema: JSON.parse(schema),
             data: entryPointData,
-            //layout: layout.entryPointLayout
         };
         return entryPointData;
     }
@@ -209,10 +204,10 @@ export class ConfigurationComponent {
         this.actualModalOpen.close();
         this.lastSelectedEntryPointType = data;
         let entryPointData = await this.entryPointFormInit(data);
-        entryPointData.position.latitude = this.lastCircleAdded.getLatLng().lat;
-        entryPointData.position.longitude = this.lastCircleAdded.getLatLng().lng;
-        if(this.entryPointForm.schema.properties.radius !== null) {
-            entryPointData.radius = this.lastCircleAdded.getRadius();
+        entryPointData.positionAppearance.latitude = this.lastCircleAdded.getLatLng().lat;
+        entryPointData.positionAppearance.longitude = this.lastCircleAdded.getLatLng().lng;
+        if(this.entryPointForm.schema.properties.radiusAppears !== null) {
+            entryPointData.radiusAppears = this.lastCircleAdded.getRadius();
         }
         this.actualModalOpen = this.modalService.open(this.epModalForm);
     }
@@ -221,12 +216,14 @@ export class ConfigurationComponent {
         entryPoint.entryPointType = {};
         entryPoint.entryPointType = this.lastSelectedEntryPointType.entryPointType;
         entryPoint.userType.typeName = this.lastSelectedEntryPointType.userType;
+        console.log(entryPoint);
         this.lastCircleAdded.setLatLng({
-            lat: entryPoint.position.latitude,
-            lng: entryPoint.position.longitude
+            lat: entryPoint.positionAppearance.latitude,
+            lng: entryPoint.positionAppearance.longitude
         });
-        if(entryPoint.hasOwnProperty('radius')) {
-            this.lastCircleAdded.setRadius(entryPoint.radius);
+        console.log(this.lastCircleAdded.getLatLng());
+        if(entryPoint.hasOwnProperty('radiusAppears')) {
+            this.lastCircleAdded.setRadius(entryPoint.radiusAppears);
         } else {
             this.lastCircleAdded.setRadius(50);
         }

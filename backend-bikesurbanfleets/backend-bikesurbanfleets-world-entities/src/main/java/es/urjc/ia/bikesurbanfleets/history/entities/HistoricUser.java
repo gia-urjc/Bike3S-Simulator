@@ -34,7 +34,7 @@ public class HistoricUser implements HistoricEntity {
     @Expose
     private double cyclingVelocity;
 
-     @Expose
+    @Expose
     private User.STATE state;
    
     @Expose

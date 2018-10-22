@@ -216,7 +216,6 @@ export class CsvGenerator {
         }
         return;
     }
-    //aq:
     private async initBikesPerStationInfo(bikesPerStation: BikesPerStationAndTime): Promise<void> {
         this.bikesPerStationTitles[0] = 'id';
         this.bikesPerStationTitles[1] = 'time';

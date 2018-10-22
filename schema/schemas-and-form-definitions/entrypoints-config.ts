@@ -14,20 +14,23 @@ export const EntryPoint = sAnyOf(
         entryPointType: sConst('POISSON'),
         distribution: Distributions.poisson,
         userType: UserProperties,
-        position: GeoPoint,
+        positionAppearance: GeoPoint,
+        destinationPlace: GeoPoint,
         timeRange: sObject({
             start: UInt,
             end: UInt
-        }).require.all().restrict(),
-        radius: sNumber().xMin(0),
+        }),
+        radiusAppears: sNumber().xMin(0),
+        radiusGoTo: sNumber().xMin(0),
         totalUsers: sInteger().xMin(0)
-    }).require('entryPointType', 'userType', 'distribution', 'position'),
+    }).require('entryPointType', 'userType', 'distribution', 'positionAppearance', 'destinationPlace', 'radiusAppears', 'radiusGoTo'),
     sObject({
         entryPointType: sConst('SINGLEUSER'),
         userType: UserProperties,
-        position: GeoPoint,
-        timeInstant: UInt
-    }).require('entryPointType', 'userType', 'position', 'timeInstant')
+        positionAppearance: GeoPoint,
+        destinationPlace: GeoPoint,
+        timeInstant: UInt,
+    }).require('entryPointType', 'userType', 'positionAppearance', 'destinationPlace', 'timeInstant')
 );
 
 /*export const layout = 

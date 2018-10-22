@@ -184,49 +184,27 @@ public abstract class User implements Entity {
         this.id = idGenerator.next();
         this.rando = new SimpleRandom(seed);
 
-        //first get the parameters form the configuration json
-        this.readConfigParameters(userdef);
-
         this.bike = null;
         this.reservedBike = false;
         this.reservedSlot = false;
         this.destinationStation = null;
         this.state=STATE.APPEARED;
-        
         this.reservation = null;
         this.memory = new UserMemory(this);
+
+        // ******* Historic treatment *******
+        // it's necessary to register the user here, to detect changes 
+        // in the event execution
+        History.registerEntity(this);
+
+        //first get the parameters form the configuration json
+        this.readConfigParameters(userdef);
         this.services = services;
         this.infraestructure = services.getInfrastructureManager();
         this.recommendationSystem = services.getRecommendationSystem();
         this.informationSystem = services.getInformationSystem();
-        this.graph = services.getGraphManager();
-        History.registerEntity(this);
+        this.graph = services.getGraphManager(); 
         this.memory = new UserMemory(this);
-    }
-
-    //substitutes the default values of the parameters of param with the values provided the json description uderdef (if a parameter is present)
-    public void getParameters(JsonObject userdef, Object param) throws IllegalArgumentException, IllegalAccessException {
-        if (param == null) 
-            return;
-        //read specific parameters
-        JsonObject jsonparameters = userdef.getAsJsonObject("userType").getAsJsonObject("parameters");
-        //if no parameters are specified, the original parameters are used
-        if (jsonparameters == null) {
-            return;
-        }
-
-        //if parameters are present substitute their values with the values from the parameters specified in jason
-        Field[] fields = param.getClass().getDeclaredFields();
-        JsonElement aux;
-        Gson gson = new Gson();
-        for (Field f : fields) {
-            aux = jsonparameters.get(f.getName());
-            if (aux != null) {
-                f.setAccessible(true);
-                f.set(param, gson.fromJson(aux, f.getType()));
-            }
-        }
-        return;
     }
 
     public STATE getState() {

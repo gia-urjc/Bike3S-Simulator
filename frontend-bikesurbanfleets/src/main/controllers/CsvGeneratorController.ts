@@ -1,7 +1,8 @@
+import { DataGenerator } from '../dataAnalysis/generators/DataGenerator';
 import { app } from "electron";
 import * as paths from 'path';
 import { IpcUtil, Channel } from "../util";
-import { DataGenerator } from "../dataAnalysis/analysis/generators/DataGenerator";
+
 
 export interface CsvArgs {
     historyPath: string;
