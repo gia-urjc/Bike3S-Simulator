@@ -1,26 +1,22 @@
 {
+	"reservationTime": 500,
+    "totalSimulationTime": 86400,
+    "debugMode": true,
+    "randomSeed": 10,
     "boundingBox": {
         "northWest": {
-            "latitude": 40.56698287529177,
-            "longitude": -3.8768005371093754
+            "latitude": 40.4215886,
+            "longitude": -3.7134038
         },
         "southEast": {
-            "latitude": 40.30759108012253,
-            "longitude": -3.481292724609375
+            "latitude": 40.4121931,
+            "longitude": -3.69826
         }
     },
-    "debugMode": true,
-    "graphManagerType": "GRAPH_HOPPER",
-    "reservationTime": 1000,
-    "randomSeed": 10,
-    "totalSimulationTime": 86399,
-     "recommendationSystemType": {
+    "recommendationSystemType": {
         "typeName": "HOLGERRECOMENDER",
         "parameters": {
-            "maxDistanceRecommendation": 80,
-            "MINCAP_TO_RECOMEND" : 3,
-            "MAXDIFF" : 500,
-            "MAXTOTALDIST" : 1000
         }
-      }
+    },
+    "graphManagerType": "GRAPH_HOPPER"
 }
