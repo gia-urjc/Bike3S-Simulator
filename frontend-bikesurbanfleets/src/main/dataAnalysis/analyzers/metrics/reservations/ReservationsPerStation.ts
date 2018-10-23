@@ -1,29 +1,29 @@
-import  { User, Reservation } from '../../../systemDataTypes/Entities';
+import  { Station, Reservation } from '../../../systemDataTypes/Entities';
 import { Observer } from '../../ObserverPattern';
-import { Data } from "../Data";
-import { SystemInfo } from "../SystemInfo";
+import { Data } from "../../Data";
+import { SystemInfo } from "../../SystemInfo";
 import { ReservationData } from './ReservationData';
 
-export class ReservationsPerUser implements SystemInfo, Observer {
-    basicData: Array<User>;
+export class ReservationsPerStation implements SystemInfo, Observer {
+    basicData: Array<Station>;
     data: Data;
 
-    public static async create(users: Array<User>): Promise<ReservationsPerUser> {
-        let reservationValues = new ReservationsPerUser(users);
+    public static async create(stations: Array<Station>): Promise<ReservationsPerStation> {
+        let reservationValues = new ReservationsPerStation(stations);
         try {
             await reservationValues.init();
         }
         catch(error) {
-            throw new Error('Error creating requested data'+error);
+            throw new Error('Error creating requested data: '+error);
         }
         return reservationValues;
     }
-
-    public constructor(users: Array<User>) {
-        this.basicData = users;
+    
+    public constructor(stations: Array<Station>) {
+        this.basicData = stations;
         this.data = new ReservationData();
     }
-    
+
     public async init(): Promise<void> {
         try {
             this.data.init(this.basicData);
@@ -35,7 +35,7 @@ export class ReservationsPerUser implements SystemInfo, Observer {
     }
     
     public update(reservation: Reservation): void {
-        let key: number = reservation.user.id;
+        let key: number = reservation.station.id;
         
         switch (reservation.type) { 
             case 'BIKE': { 
@@ -57,15 +57,13 @@ export class ReservationsPerUser implements SystemInfo, Observer {
                 }
                 break;
             }
-                
-            default: 
+
+            default:
                 throw new Error('Reservation type not identified');
         }
     }
-    
+        
     public getData(): Data {
         return this.data;
     }
-              
-}    
-      
+}

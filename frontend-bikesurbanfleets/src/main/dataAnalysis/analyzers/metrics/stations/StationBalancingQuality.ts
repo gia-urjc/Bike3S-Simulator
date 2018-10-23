@@ -1,7 +1,7 @@
 import { Station } from '../../../systemDataTypes/Entities';
-import { AbsoluteValue } from '../AbsoluteValue';
-import { Data } from '../Data';
-import { SystemInfo } from '../SystemInfo';
+import { AbsoluteValue } from '../../AbsoluteValue';
+import { Data } from '../../Data';
+import { SystemInfo } from '../../SystemInfo';
 import { BikesPerTime, BikesPerStationAndTime, StationBikesPerTimeList } from './BikesPerStationAndTime';
 
 export class StationBalancingAbsoluteValue implements AbsoluteValue {

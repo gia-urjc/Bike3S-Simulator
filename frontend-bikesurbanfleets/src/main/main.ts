@@ -9,14 +9,11 @@ import { JsonLoaderController } from './controllers/JsonLoaderController';
 import { MapDownloadController } from './controllers/MapDownloadController';
 import { SchemaFormGeneratorController } from './controllers/SchemaFormGeneratorController';
 import { Settings } from './settings';
-import { DataGenerator } from "./dataAnalysis/analysis/generators/DataGenerator";
+import { DataGenerator } from "./dataAnalysis/generators/DataGenerator";
 
 import { ipcMain, ipcRenderer } from 'electron';
-import { Data } from './dataAnalysis/analysis/absoluteValues/Data';
-import { StationBalancingQuality } from './dataAnalysis/analysis/absoluteValues/stations/StationBalancingQuality';
-import { BikesPerStationAndTime } from './dataAnalysis/analysis/absoluteValues/stations/BikesPerStationAndTime';
-import { SystemReservations } from './dataAnalysis/analysis/systemEntities/SystemReservations';
-import { SystemStations } from './dataAnalysis/analysis/systemEntities/SystemStations';
+import { SystemReservations } from './dataAnalysis/historyEntities/SystemReservations';
+import { SystemStations } from './dataAnalysis/historyEntities/SystemStations';
 import { Reservation } from './dataAnalysis/systemDataTypes/Entities';
 
 export namespace Main {

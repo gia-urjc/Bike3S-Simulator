@@ -1,6 +1,6 @@
 import { Entity } from '../../../systemDataTypes/Entities';
-import { Data } from '../Data';
-import { AbsoluteValue } from '../AbsoluteValue';
+import { Data } from '../../Data';
+import { AbsoluteValue } from '../../AbsoluteValue';
 import { ReservationAbsoluteValue } from "./ReservationAbsoluteValue";
 
 export class ReservationData implements Data {

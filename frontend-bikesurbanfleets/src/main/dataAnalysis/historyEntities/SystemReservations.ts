@@ -1,6 +1,7 @@
-import { HistoryEntitiesJson } from "../../../../shared/history";
-import { HistoryReaderController } from "../../../controllers/HistoryReaderController";
-import { Reservation } from "../../systemDataTypes/Entities";
+
+import { HistoryEntitiesJson } from '../../../shared/history';
+import { HistoryReaderController } from "../../controllers/HistoryReaderController";
+import { Reservation } from "../systemDataTypes/Entities";
 
 export class SystemReservations {
     private reservations: Array<Reservation>;

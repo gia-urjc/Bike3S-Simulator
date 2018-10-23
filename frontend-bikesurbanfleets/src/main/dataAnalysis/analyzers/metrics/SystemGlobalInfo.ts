@@ -1,6 +1,6 @@
 
-import { User } from "../systemDataTypes/Entities";
-import { SystemInfo } from "./absoluteValues/SystemInfo";
+import { User } from "../../systemDataTypes/Entities";
+import { SystemInfo } from "../SystemInfo";
 
 export class SystemGlobalInfo {
     static readonly NAMES: Array<string> = [
