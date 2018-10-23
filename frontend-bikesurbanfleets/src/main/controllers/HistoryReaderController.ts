@@ -106,8 +106,12 @@ export class HistoryReaderController {
         if (!HistoryReaderController.ajv.validate(HistoryReaderController.entityFileSchema, entities)) {
             throw new Error(HistoryReaderController.ajv.errorsText());
         }
-
         return entities;
+    }
+        
+    async getGlobalValues(): Promise<any> {
+        const values = await fs.readJson(paths.join(this.historyPath, 'final-global-values.json'));
+        return values;
     }
 
     async previousChangeFile(): Promise<Array<HistoryTimeEntry>>  {

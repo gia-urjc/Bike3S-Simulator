@@ -1,7 +1,8 @@
+import { HistoryReaderController } from '../../../../controllers/HistoryReaderController';
 import { AbsoluteValue } from "../../AbsoluteValue";
 import { Data } from "../../Data";
 import { SystemInfo } from "../../SystemInfo";
-import { BikesPerStationAndTime, StationBikesPerTimeList } from './BikesPerStationAndTime';
+import { BikesPerStationAndTime, StationBikesPerTimeList, BikesPerTime } from './BikesPerStationAndTime';
 
 export class TimeInterval {
     start: number;
@@ -47,16 +48,18 @@ export class EmptyStateData implements Data {
 export class EmptyStationInfo implements SystemInfo {
     basicData: BikesPerStationAndTime;
     data: Data;
+    totalSimulationTime: number;
 
-    public static create(stationsInfo: BikesPerStationAndTime): EmptyStationInfo {
-        let emptyStations: EmptyStationInfo = new EmptyStationInfo(stationsInfo);
+    public static create(stationsInfo: BikesPerStationAndTime, time: number): EmptyStationInfo {
+        let emptyStations: EmptyStationInfo = new EmptyStationInfo(stationsInfo, time);
         emptyStations.init();
         return emptyStations;
     }
    
-    public constructor(stationsInfo: BikesPerStationAndTime) {
+    public constructor(stationsInfo: BikesPerStationAndTime, time: number) {
         this.basicData = stationsInfo;
-        this.data = new EmptyStateData(); 
+        this.data = new EmptyStateData();
+        this.totalSimulationTime = time; 
     }
        
      public async init(): Promise<void> {
@@ -72,19 +75,25 @@ export class EmptyStationInfo implements SystemInfo {
         let time = 0;
         let startTime = -1;
         let endTime = -1;
-        let index: number = 0;
+        let bikesPerTime: BikesPerTime;
+        let list: Array<BikesPerTime> = stationInfo.getList();
          
-        stationInfo.getList().forEach ( (bikesPerTime) => {
+        for (let i = 0; i < list.length; i++) {
+            bikesPerTime = list[i];
             if (startTime === -1) {
                 if (bikesPerTime.availableBikes === 0) {
-                    if (index !== (stationInfo.getList().length-1)) {
-                        startTime = bikesPerTime.time;
+                    startTime = bikesPerTime.time;
+                    if (i  === (stationInfo.getList().length - 1)) {   // it is the last instant registered
+                        endTime = this.totalSimulationTime;
+                        let interval: TimeInterval = new TimeInterval(startTime, endTime);
+                        intervals.push(interval);
+                        time += interval.end - interval.start;
+                        startTime = -1;
+                        endTime = -1;
                     }
-                    // TODO: it is is the only value
                 }
             }
             else {
-            
                 if (bikesPerTime.availableBikes !== 0) {
                     endTime = bikesPerTime.time;
                     let interval: TimeInterval = new TimeInterval(startTime, endTime);
@@ -94,8 +103,7 @@ export class EmptyStationInfo implements SystemInfo {
                     endTime = -1;
                 }
             }
-            index++;
-        });
+        }
         return new EmptyStateAbsoluteValue(intervals, time);
     }
     
