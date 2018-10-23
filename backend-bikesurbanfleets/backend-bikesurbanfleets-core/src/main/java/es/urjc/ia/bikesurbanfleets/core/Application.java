@@ -30,7 +30,6 @@ public class Application {
     private static String validator;
     private static boolean callFromFrontend;
 
-    private static String PROJECT_HOME = "/Users/albertofernandez/git/Bike3S/";
     
    
     
@@ -71,7 +70,7 @@ public class Application {
             auxiliaryDir.mkdirs();
         }
 
-  /*      CommandLine cmd;
+        CommandLine cmd;
         try {
             cmd = commandParser(args);
         } catch (ParseException e1) {
@@ -89,20 +88,8 @@ public class Application {
         historyOutputPath = cmd.getOptionValue("historyOutput");
         validator = cmd.getOptionValue("validator");
         callFromFrontend = cmd.hasOption("callFromFrontend");
-*/
-        globalSchema = "";
-        usersSchema = "";
-        stationsSchema = "";
-        String test="informed";
-        globalConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/global_configuration.json";
-        usersConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/users_configuration.json";
-        stationsConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/stations_configuration.json";
-        mapPath = PROJECT_HOME + "Bike3STests/madrid.osm";
-        historyOutputPath = PROJECT_HOME + "Bike3STests/"+ test +"/hist";
-        validator = "";
-        callFromFrontend = true;
-       
-   //     checkParams(); // If not valid, throws exception
+        
+        checkParams(); // If not valid, throws exception
         ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
 
         try {
