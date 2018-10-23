@@ -1,4 +1,4 @@
-import {DataGenerator} from './dataAnalysis/analysis/generators/DataGenerator';
+import {DataGenerator} from './dataAnalysis/generators/DataGenerator';
 import * as program from 'commander';
 
 namespace Main {

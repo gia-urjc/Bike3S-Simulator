@@ -1,6 +1,6 @@
-import { AbsoluteValue } from "../AbsoluteValue";
-import { Data } from "../Data";
-import { SystemInfo } from "../SystemInfo";
+import { AbsoluteValue } from "../../AbsoluteValue";
+import { Data } from "../../Data";
+import { SystemInfo } from "../../SystemInfo";
 import { BikesPerStationAndTime, StationBikesPerTimeList } from './BikesPerStationAndTime';
 
 export class TimeInterval {

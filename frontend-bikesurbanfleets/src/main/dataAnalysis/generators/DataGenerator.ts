@@ -1,26 +1,27 @@
-import { HistoryReaderController } from "../../../controllers/HistoryReaderController";
-import { Iterator } from '../iterators/Iterator';
-import { SystemInfo } from "../absoluteValues/SystemInfo";
-import { RentalsAndReturnsPerStation } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerStation";
-import { RentalsAndReturnsPerUser } from "../absoluteValues/rentalsAndReturns/RentalsAndReturnsPerUser";
-import { ReservationsPerStation } from "../absoluteValues/reservations/ReservationsPerStation";
-import { ReservationsPerUser } from "../absoluteValues/reservations/ReservationsPerUser";
-import { BikesPerStationAndTime } from "../absoluteValues/stations/BikesPerStationAndTime";
-import { EmptyStationInfo } from "../absoluteValues/stations/EmptyStationInfo";
-import { ReservationIterator } from "../iterators/ReservationIterator";
-import { TimeEntryIterator } from "../iterators/TimeEntryIterator";
-import { SystemReservations } from "../systemEntities/SystemReservations";
-import { SystemStations } from "../systemEntities/SystemStations";
-import { SystemUsers } from "../systemEntities/SystemUsers";
+import { HistoryReaderController } from "../../controllers/HistoryReaderController";
+import { Iterator } from '../analyzers/iterators/Iterator';
+import { SystemInfo } from "../analyzers/SystemInfo";
+import { RentalsAndReturnsPerStation } from "../analyzers/metrics/rentalsAndReturns/RentalsAndReturnsPerStation";
+import { RentalsAndReturnsPerUser } from "../analyzers/metrics/rentalsAndReturns/RentalsAndReturnsPerUser";
+import { ReservationsPerStation } from "../analyzers/metrics/reservations/ReservationsPerStation";
+import { ReservationsPerUser } from "../analyzers/metrics/reservations/ReservationsPerUser";
+import { BikesPerStationAndTime } from "../analyzers/metrics/stations/BikesPerStationAndTime";
+import { EmptyStationInfo } from "../analyzers/metrics/stations/EmptyStationInfo";
+import { ReservationIterator } from "../analyzers/iterators/ReservationIterator";
+import { TimeEntryIterator } from "../analyzers/iterators/TimeEntryIterator";
+import { SystemReservations } from "../historyEntities/SystemReservations";
+import { SystemStations } from "../historyEntities/SystemStations";
+import { SystemUsers } from "../historyEntities/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
-import { SystemGlobalInfo } from '../SystemGlobalInfo';
-import { StationBalancingQuality } from '../absoluteValues/stations/StationBalancingQuality';
-import { UserTimeAtSystem } from '../absoluteValues/users/UserTimeAtSystem';
+import { SystemGlobalInfo } from '../analyzers/metrics/SystemGlobalInfo';
+import { StationBalancingQuality } from '../analyzers/metrics/stations/StationBalancingQuality';
+import { UserFactInstantInfo } from '../analyzers/metrics/users/UserFactInstantInfo';
+import { UserTimeAtSystem } from '../analyzers/metrics/users/UserTimeAtSystem';
 
 export class DataGenerator {
     private readonly RESERVATIONS: number = 3;  // 3 data related to reservations must be initialized
     private readonly RENTALS_AND_RETURNS: number = 3;  // 2 data related to rentals and returns must be initialized
-    private readonly CALCULATION: number = 3;  // both iterators must have calculated all its data before writing them 
+    private readonly CALCULATION: number = 4;  // both iterators must have calculated all its data before writing them 
     private readonly BIKES_PER_STATION: number = 2;  // this data needs to be initialized with both reservation and station information
 
     private csv: boolean;  // it indicates if a csv file must be generated    
@@ -41,6 +42,7 @@ export class DataGenerator {
     private info: Map<string, SystemInfo>;  // it contains all the results of the data analysis
     private globalInfo: SystemGlobalInfo; 
     private bikesPerStation: BikesPerStationAndTime;
+    private userInstants: UserFactInstantInfo;
     private iterators: Map<string, Iterator>;
 
     public static async create(historyPath: string, csvPath?: string, schemaPath?: string): Promise<DataGenerator> {
@@ -66,6 +68,7 @@ export class DataGenerator {
         this.bikesPerStationCounter = 0;
         this.info = new Map();
         this.bikesPerStation = new BikesPerStationAndTime();
+        this.userInstants = new UserFactInstantInfo();
         this.iterators = new Map();
         this.systemStations = new SystemStations();
         this.systemUsers = new SystemUsers();
@@ -147,10 +150,8 @@ export class DataGenerator {
             this.info.set(RentalsAndReturnsPerUser.name, rentalsAndReturns);  
             this.initRentalsAndReturns(rentalsAndReturns);
             
-            let userTime: UserTimeAtSystem = new UserTimeAtSystem(this.systemUsers.getUsers());
-            timeEntryIterator.subscribe(userTime);
-            this.info.set(UserTimeAtSystem.name, userTime);
-            userTime.init().then( () => {
+            timeEntryIterator.subscribe(this.userInstants);
+            this.userInstants.init(this.systemUsers.getUsers()).then( () => {
                 this.rentalAndReturnCounter++;
                 this.calculateRentalsAndReturns();
             });
@@ -185,14 +186,24 @@ export class DataGenerator {
                     emptyStations.init().then( () => {
                         this.calculationCounter++;
                         this.calculateGlobalInfo();
-                    });                 
+                    });
+                                     
                     let bikesBalance: StationBalancingQuality = new StationBalancingQuality(this.bikesPerStation);
                     bikesBalance.setStations(this.systemStations.getStations());
                     this.info.set(StationBalancingQuality.name, bikesBalance);
                     bikesBalance.init().then( () => {
                         this.calculationCounter++;
                         this.calculateGlobalInfo();
-                    });              
+                    });
+                    
+                    let userTimeIntervals: UserTimeAtSystem = new UserTimeAtSystem(this.userInstants);
+                    this.info.set(UserTimeAtSystem.name, userTimeIntervals);
+                    userTimeIntervals.init().then( () => {
+                        this.calculationCounter++;
+                        this.calculateGlobalInfo();                        
+                    });
+                                  
+ 
                 
                     });
             }

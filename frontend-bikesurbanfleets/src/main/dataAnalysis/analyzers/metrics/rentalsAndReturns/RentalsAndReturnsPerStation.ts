@@ -1,8 +1,8 @@
 import  { Station, User } from '../../../systemDataTypes/Entities';
 import  { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { Observer } from "../../ObserverPattern";
-import { Data } from "../Data";
-import { SystemInfo } from "../SystemInfo";
+import { Data } from "../../Data";
+import { SystemInfo } from "../../SystemInfo";
 import { RentalAndReturnData } from './RentalAndReturnData';
 
 export class RentalsAndReturnsPerStation implements SystemInfo, Observer {

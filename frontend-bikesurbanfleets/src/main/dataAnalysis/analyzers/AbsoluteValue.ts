@@ -1,4 +1,4 @@
-import { PlainObject } from "../../../../shared/util";
+import { PlainObject } from "../../../shared/util";
 
 export interface AbsoluteValue extends PlainObject {
     
