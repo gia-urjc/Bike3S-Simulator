@@ -79,7 +79,7 @@ export class DataGenerator {
     private async init(): Promise<void> {
         try {
             this.history = await HistoryReaderController.create(this.historyPath, this.schemaPath);
-            let globalValues: any = await history.getGlobalValues();
+            let globalValues: any = await this.history.getGlobalValues();
             this.totalSimulationTime = globalValues.totalTimeSimulation;
             console.log('total time: '+this.totalSimulationTime);
         }

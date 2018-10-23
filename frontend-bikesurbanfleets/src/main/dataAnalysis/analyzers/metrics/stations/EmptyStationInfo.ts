@@ -14,7 +14,7 @@ export class TimeInterval {
     }
     
     public toString(): string {
-        return this.start+":"+this.end+" ";
+        return this.start+"-"+this.end+" ";
     }
 }
  
@@ -64,6 +64,7 @@ export class EmptyStationInfo implements SystemInfo {
        
      public async init(): Promise<void> {
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
+            console.log('station: '+stationId);
             let emptyState: EmptyStateAbsoluteValue = this.createEmptyStateFor(stationInfo);
             this.data.absoluteValues.set(stationId, emptyState);
         });
@@ -73,34 +74,45 @@ export class EmptyStationInfo implements SystemInfo {
     private createEmptyStateFor(stationInfo: StationBikesPerTimeList): EmptyStateAbsoluteValue {
         let intervals: Array<TimeInterval> = new Array();
         let time = 0;
+        let interval: TimeInterval;
         let startTime = -1;
         let endTime = -1;
         let bikesPerTime: BikesPerTime;
         let list: Array<BikesPerTime> = stationInfo.getList();
+        console.log('hello');
+        
+        if (list.length === 0)
+            console.log('no data registered for this station');
          
         for (let i = 0; i < list.length; i++) {
             bikesPerTime = list[i];
             if (startTime === -1) {
                 if (bikesPerTime.availableBikes === 0) {
                     startTime = bikesPerTime.time;
+                    console.log('starting interval');
                 }
             }
             else {
                 if (bikesPerTime.availableBikes !== 0) {
                     endTime = bikesPerTime.time;
-                    let interval: TimeInterval = new TimeInterval(startTime, endTime);
+                    console.log('ending interval');
+                    interval = new TimeInterval(startTime, endTime);
                     intervals.push(interval);
                     time += interval.end - interval.start;
                     startTime = -1;
                     endTime = -1;
                 }
             }
+            console.log('interval: '+interval.toString());
+            console.log('time: '+time);
         }
         if (startTime !== -1) {
             endTime = this.totalSimulationTime;
-            let interval: TimeInterval = new TimeInterval(startTime, endTime);
+            interval = new TimeInterval(startTime, endTime);
             intervals.push(interval);
             time += interval.end - interval.start;
+            console.log('interval: '+interval.toString());
+            console.log('time: '+time);
         }
         return new EmptyStateAbsoluteValue(intervals, time);
     }
