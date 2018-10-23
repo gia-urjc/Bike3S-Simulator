@@ -16,7 +16,7 @@ export const GlobalConfig = new JsonSchema(options, sObject({
         southEast: GeoPoint,
     }).require.all().restrict(),
     debugMode: sBoolean()
-}).require('totalSimulationTime', 'reservationTime', 'boundingBox', 'recommendationSystemType', 'graphManagerType', 'maxDistanceRecommendation'));
+}).require('totalSimulationTime', 'reservationTime', 'boundingBox', 'recommendationSystemType', 'graphManagerType'));
 
 export const layout = 
 [
