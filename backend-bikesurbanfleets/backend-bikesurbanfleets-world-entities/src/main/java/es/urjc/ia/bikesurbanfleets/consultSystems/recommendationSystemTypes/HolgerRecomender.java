@@ -18,12 +18,12 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 @RecommendationSystemType("HOLGERRECOMENDER")
 public class HolgerRecomender extends RecommendationSystem {
 
-    private class StationData {
+    class StationData {
 
         public Station station = null;
         double distance = 0.0;
-        int bikes = 0;
-        int capacity = 0;
+        double stationUtility = 0.0;
+        double distanceutility = 0.0;
         double utility = 0.0;
     }
     static public Comparator<StationData> byUtility() {
@@ -31,13 +31,13 @@ public class HolgerRecomender extends RecommendationSystem {
     }
 
     @RecommendationSystemParameters
-    public class RecommendationParameters {
+    class RecommendationParameters {
 
         /**
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
-        private int MINCAP_TO_RECOMEND=5;
+        int MINCAP_TO_RECOMEND=5;
         //maximum difference to teh closest station
         private  double MAXDIFF = 500;
         //maximum distance to be recomended (except closest station which would be recomended in any case)
@@ -45,7 +45,7 @@ public class HolgerRecomender extends RecommendationSystem {
 
     }
 
-    private RecommendationParameters parameters;
+    RecommendationParameters parameters;
 
     public HolgerRecomender(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception{
         super(infraestructureManager);
@@ -65,24 +65,24 @@ public class HolgerRecomender extends RecommendationSystem {
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
         //get the list of closest stations
         // goes through the list
-        // if a station has more than 40% of ratio recomend it
-        List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations());
-        List<StationData> temp, stationdat;
-        List<Recommendation> result;
-        stationdat = calculateDataTake(stations, point);
-
+        List<StationData> stationdat = new ArrayList<StationData>();
+        double closesStationDistance=getBasicStationData(point, true,stationdat);
+        double equlibrium =calculateStationBasicUtilities(stationdat, true);
+        calculateFinalUtilities(stationdat, equlibrium, closesStationDistance);
+        
         if (!stationdat.isEmpty()) {
-            temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
-            for (int i=0; i<10; i++){
-                System.out.println("stat "+ i + " utility: " + temp.get(i).utility);  
-                System.out.println("      dist: " + temp.get(i).distance);  
-                System.out.println("      bikes: " + temp.get(i).station.availableBikes());  
-            }
-            result = temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
+            List<StationData> temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
+            for (int i = 0; i < 10; i++) {
+                System.out.println("stat " + i + " utility: " + temp.get(i).utility);
+                System.out.println("      dist: " + temp.get(i).distance);
+                System.out.println("      bikes: " + temp.get(i).station.availableBikes());
+                 System.out.println("      dist_utility: " + temp.get(i).distanceutility);
+                System.out.println("      station_utility: " + temp.get(i).stationUtility);
+           }
+            return temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
         }
-        return result;
     }
 
     @Override
@@ -90,81 +90,84 @@ public class HolgerRecomender extends RecommendationSystem {
         //get the list of closest stations
         // goes through the list
         // if a station has more than 40% of ratio recomend it
-        List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations());
-        List<StationData> temp, stationdat;
-        List<Recommendation> result;
-        stationdat = calculateDataReturn(stations, point);
+        List<StationData> stationdat = new ArrayList<StationData>();
+        double closesStationDistance=getBasicStationData(point, false ,stationdat);
+        double equlibrium =calculateStationBasicUtilities(stationdat, false);
+        calculateFinalUtilities(stationdat, equlibrium, closesStationDistance);
 
         if (!stationdat.isEmpty()) {
-            temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
-            result = temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
+            List<StationData> temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
+            return  temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
         }
-        return result;
     }
 
-    private List<StationData> calculateDataTake(List<Station> stations, GeoPoint point) {
-        List<StationData> aux = new ArrayList<StationData>();
-        double closeststationdistance = Double.MAX_VALUE;
-        Station beststation=null;
+    //puts the basic distance data and calculates the closest station distance
+    //if retnt=true is for taking, else for leaving bike
+    protected double getBasicStationData(GeoPoint point, boolean rent, List<StationData> stationdat) {
+        double closesStationDistance = 0.0D;
+        stationdat.clear();
+        //get stations that have bikes/slots
+        List<Station> stations;
+        if (rent) {
+            stations = validStationsToRentBike(infraestructureManager.consultStations());
+        } else {
+            stations = validStationsToReturnBike(infraestructureManager.consultStations());
+        }
+
+        //setup basic station data (distance and get closest stationdistance)
+        closesStationDistance = Double.MAX_VALUE;
         for (Station s : stations) {
             StationData sd = new StationData();
             sd.station = s;
-            sd.capacity = s.getCapacity();
-            sd.bikes = s.availableBikes();
             sd.distance = s.getPosition().distanceTo(point);
-            if (closeststationdistance >= sd.distance) {
-                closeststationdistance = sd.distance;
-                beststation=sd.station;
+            if (closesStationDistance >= sd.distance) {
+                closesStationDistance = sd.distance;
             }
-            aux.add(sd);
+            stationdat.add(sd);
         }
-
-        System.out.println("nearest station"+beststation.toString());
-        //now calculate utility
-        double MAXDIST = 500;
-        for (StationData sd : aux) {
-            //calculate distance utility
-            double distanceUtility = calculateDistanceUtility(closeststationdistance, sd.distance);
-            //calculate stationutility
-            double stationUtility = calculateStationUtilityTake(sd);
-            //set utility
-            sd.utility = stationUtility * distanceUtility;
-        }
-        return aux;
-    }
-    
-    private List<StationData> calculateDataReturn(List<Station> stations, GeoPoint point) {
-        List<StationData> aux = new ArrayList<StationData>();
-        double closeststationdistance = Double.MAX_VALUE;
-        for (Station s : stations) {
-            StationData sd = new StationData();
-            sd.station = s;
-            sd.capacity = s.getCapacity();
-            sd.bikes = s.availableBikes();
-            sd.distance = s.getPosition().distanceTo(point);
-            if (closeststationdistance >= sd.distance) {
-                closeststationdistance = sd.distance;
-            }
-            aux.add(sd);
-        }
-
-        //now calculate utility
-        double MAXDIST = 500;
-        for (StationData sd : aux) {
-            //calculate distance utility
-            double distanceUtility = calculateDistanceUtility(closeststationdistance, sd.distance);
-            //calculate stationutility
-            double stationUtility = calculateStationUtilityReturn(sd);
-            //set utility
-            sd.utility = stationUtility * distanceUtility;
-        }
-        return aux;
+        return closesStationDistance;
     }
 
+        protected void calculateFinalUtilities(List<StationData> stations, double stationutilityequilibrium, double closestsdistance) {
 
-    private double calculateDistanceUtility(double closest, double newdist) {
+        for (StationData sd : stations) {
+            //calculate distance utility
+            sd.distanceutility = calculateDistanceUtility(closestsdistance, sd.distance);
+            //calculate stationutility
+            sd.stationUtility = normatizeToUtility(sd.stationUtility, 0, stationutilityequilibrium);
+            //set utility
+            sd.utility = sd.stationUtility * sd.distanceutility;
+        }
+    }
+
+    //calculates the unnormalized station utilities of all stations
+    //returns the average stationutility of all stations
+    protected double calculateStationBasicUtilities(List<StationData> stations, boolean rent) {
+
+        //now calculate utility
+        double stationutilsum = 0.0D;
+        double numberstations = 0.0D;
+        if (rent) {
+            for (StationData sd : stations) {
+                //calculate stationutility
+                sd.stationUtility = sd.station.availableBikes();
+                stationutilsum += sd.stationUtility;
+                numberstations++;
+            }
+        } else {
+            for (StationData sd : stations) {
+                //calculate stationutility
+                sd.stationUtility = sd.station.availableSlots();
+                stationutilsum += sd.stationUtility;
+                numberstations++;
+            }
+        }
+        return stationutilsum / numberstations;
+    }
+
+     protected double calculateDistanceUtility(double closest, double newdist) {
         if (newdist == closest) {
             return 1.0;
         }
@@ -175,23 +178,7 @@ public class HolgerRecomender extends RecommendationSystem {
             return 0.0;
         }
         return 1 - ((newdist - closest) / parameters.MAXDIFF);
+    //  return   50D/(Math.pow(newdist - closest,1.1D)+51D);
     }
     
-    private double calculateStationUtilityTake(StationData sd) {
-    //    int halfcap= (int) Math.ceil(((double) sd.capacity) /3.5D);
-        if (sd.station.availableBikes()>=parameters.MINCAP_TO_RECOMEND) {
-            return 1;
-        }
-        return ((double)sd.station.availableBikes() / (double) parameters.MINCAP_TO_RECOMEND);
-    }
-
-    private double calculateStationUtilityReturn(StationData sd) {
-    //    int halfcap= (int) Math.ceil(((double) sd.capacity) /8D);
-    
-        if (sd.station.availableSlots()>=parameters.MINCAP_TO_RECOMEND) {
-            return 1;
-        }
-        return ((double)sd.station.availableSlots() / (double)parameters.MINCAP_TO_RECOMEND);
-    }
-
 }

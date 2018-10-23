@@ -46,7 +46,7 @@ public class SimulationServices {
 
         this.infrastructureManager = new InfraestructureManager(configData.getStations(), configData.getBbox());
         this.graphManager = initGraphManager(configData.getGraphManagerType(), configData.getGraphParameters());
-        this.informationSystem = new InformationSystem(this.infrastructureManager);
+       this.informationSystem = new InformationSystem(this.infrastructureManager);
         this.recommendationSystem = initRecommendationSystem(configData.getRecomSystemType());
     }
 
