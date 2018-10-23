@@ -14,7 +14,7 @@ export class TimeInterval {
     }
     
     public toString(): string {
-        return "("+this.start+", "+this.end+")";
+        return this.start+":"+this.end+" ";
     }
 }
  
@@ -83,14 +83,6 @@ export class EmptyStationInfo implements SystemInfo {
             if (startTime === -1) {
                 if (bikesPerTime.availableBikes === 0) {
                     startTime = bikesPerTime.time;
-                    if (i  === (stationInfo.getList().length - 1)) {   // it is the last instant registered
-                        endTime = this.totalSimulationTime;
-                        let interval: TimeInterval = new TimeInterval(startTime, endTime);
-                        intervals.push(interval);
-                        time += interval.end - interval.start;
-                        startTime = -1;
-                        endTime = -1;
-                    }
                 }
             }
             else {
@@ -103,6 +95,12 @@ export class EmptyStationInfo implements SystemInfo {
                     endTime = -1;
                 }
             }
+        }
+        if (startTime !== -1) {
+            endTime = this.totalSimulationTime;
+            let interval: TimeInterval = new TimeInterval(startTime, endTime);
+            intervals.push(interval);
+            time += interval.end - interval.start;
         }
         return new EmptyStateAbsoluteValue(intervals, time);
     }

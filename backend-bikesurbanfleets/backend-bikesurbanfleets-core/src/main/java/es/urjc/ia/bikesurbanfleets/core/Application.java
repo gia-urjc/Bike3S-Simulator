@@ -5,6 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
+import es.urjc.ia.bikesurbanfleets.core.config.ConfigJsonReader;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
 import org.apache.commons.cli.CommandLine;
@@ -31,9 +32,6 @@ public class Application {
     private static boolean callFromFrontend;
 
     
-   
-    
-    
     private static CommandLine commandParser(String[] args) throws ParseException {
         
         Options options = new Options();
@@ -55,15 +53,6 @@ public class Application {
     
     public static void main(String[] args) throws Exception {
 
-    	
-    	 System.out.println(PROJECT_HOME);
-    	 
-    	 System.out.println(System.getProperty("user.dir"));
-    	 PROJECT_HOME = System.getProperty("user.dir") +File.separator+"..";
-    	 System.out.println(PROJECT_HOME);
-    	 
-    	 if (1==1)
-    	 return; //exit(0);
         //Create auxiliary folder
         File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
         if(!auxiliaryDir.exists()) {
