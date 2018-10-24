@@ -54,7 +54,7 @@ public class ApplicationHolger {
     
     public static void main(String[] args) throws Exception {
 
-        String test="paperAT2018/halfbikes/obedient_Holger_recomender_random_10bikes";
+        String test="paperAT2018/halfbikes/obedient_Holger_recomender_surroundingequilib";
         String basedir="/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/";
         GlobalInfo.DEBUG_DIR=basedir+test+ "/debug";
         System.out.println("Test:"+test);

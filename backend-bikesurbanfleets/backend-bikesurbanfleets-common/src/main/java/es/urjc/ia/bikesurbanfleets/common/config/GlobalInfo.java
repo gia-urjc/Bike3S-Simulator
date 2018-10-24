@@ -58,6 +58,10 @@ public class GlobalInfo {
         return totalSimulationTime;
     }
 
+    public void setRecommendationSystemType(JsonObject recommendationSystemType) {
+        this.recommendationSystemType = recommendationSystemType;
+    }
+
     public boolean isDebugMode() {
         return debugMode;
     }

@@ -43,4 +43,12 @@ public abstract class RecommendationSystem {
 
     public abstract List<Recommendation> recommendStationToReturnBike(GeoPoint point);
 
+    //auxiliary function to normalize values in a linear way to the range [0,1]
+    protected double normatizeToUtility(double value, double minvalue, double maxvalue){
+        if (maxvalue<=minvalue) throw new RuntimeException("invalid program state");
+        if (value<=minvalue) return 0.0D;
+        if (value>=maxvalue) return 1.0D;
+        return (value-minvalue)/(maxvalue-minvalue);
+    }
+    
 }
