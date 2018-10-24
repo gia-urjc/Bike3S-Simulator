@@ -39,6 +39,7 @@ public class HolgerScript {
     private static String baseTestsDir;
     private static String mapPath;
     private static String schemaPath;
+    private static String dataAnalyzerPath;
 
     public static void main(String[] args) throws Exception {
         HolgerScript hs = new HolgerScript();
@@ -46,7 +47,7 @@ public class HolgerScript {
         String testFile = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/Script/tests.json";
         mapPath = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/madrid.osm";
         schemaPath = "/Users/holger/workspace/BikeProjects/Bike3S/build/schema";
-
+        dataAnalyzerPath="/Users/holger/workspace/BikeProjects/Bike3S/build/data-analyser";
         hs.executeTests(testFile);
     }
 
@@ -98,7 +99,7 @@ public class HolgerScript {
             testdir = testdir + i;
             testnames.add(testdir);
             runSimulationTest(testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
-    //        runResultAanalisis(testdir);
+            runResultAanalisis(testdir);
         }
     }
 
@@ -160,14 +161,21 @@ public class HolgerScript {
     }
     
     private void runResultAanalisis(String testdir) throws IOException, InterruptedException {
-         String execString ="node data-analyser.js -h " +
-                 historyDir + "/" + testdir +
+         File auxiliaryDir = new File(analisisDir + testdir);
+        if (!auxiliaryDir.exists()) {
+            auxiliaryDir.mkdirs();
+        }
+        String execString ="node "+
+                  dataAnalyzerPath +"/data-analyser.js analyse -h " +
+                 historyDir +  testdir +
                  " -s " +
                  schemaPath +
                  " -c " +
-                 analisisDir + "/" + testdir;
-                 
-        ProcessBuilder pb = new ProcessBuilder(execString);
+                 analisisDir + testdir;
+        System.out.println( System.getenv("PATH"));
+        String path="setenv PATH " + System.getenv("PATH");
+        ProcessBuilder pb = new ProcessBuilder("node -v");
+        
         Process p = pb.start(); // Start the process.
         p.waitFor(); // Wait for the process to finish.
         System.out.println("Script executed successfully");
