@@ -47,26 +47,8 @@ public class HolgerDistanceProbabilityRecomender  extends HolgerRecomender  {
             }
             //to do: select alternativestation if I can improve a lot and it is closed
             //
-            if(alternativestation )
-        }
-            //calculate distance utility
-            sd.distanceutility = calculateDistanceUtility(closestsdistance, sd.distance);
-            //calculate stationutility
-            sd.stationUtility = normatizeToUtility(sd.stationUtility, 0, stationutilityequilibrium);
-            //set utility
-            sd.utility = sd.stationUtility * sd.distanceutility;
         }
     }
 
-    private void selectRandom(List<HolgerRecomender.StationData> aux, double utilitysum) {
-        //set the utility of one station randomly to 1.1 (highest)
-        double aux2 = rand.nextDouble(0.0, utilitysum);
-        double aux3 = 0.0D;
-        for (HolgerRecomender.StationData sd : aux) {
-            aux3 += sd.utility;
-            if (aux3 >= aux2) {
-                sd.utility = 1.1D;
-                break;
-            }
-        }
-    }
+
+ }

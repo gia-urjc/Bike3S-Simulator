@@ -32,6 +32,7 @@ public class HolgerScript {
     }
 
     //Program parameters
+    private static String baseDir;
     private static String debugDir;
     private static String historyDir;
     private static String analisisDir;
@@ -42,7 +43,7 @@ public class HolgerScript {
     public static void main(String[] args) throws Exception {
         HolgerScript hs = new HolgerScript();
        //treat tests
-        String testFile = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/Script";
+        String testFile = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/Script/tests.json";
         mapPath = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/madrid.osm";
         schemaPath = "/Users/holger/workspace/BikeProjects/Bike3S/build/schema";
 
@@ -59,10 +60,11 @@ public class HolgerScript {
         Gson gson = new Gson();
         FileReader reader = new FileReader(testFile);
         Tests tests = gson.fromJson(reader, Tests.class);
+        baseDir=tests.basedir;
         //create new dir on basedir
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH:mm:ss");
         Date date = new Date();
-        baseTestsDir = tests.basedir + dateFormat.format(date);
+        baseTestsDir = baseDir + "/"+ dateFormat.format(date);
         auxiliaryDir = new File(baseTestsDir);
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
@@ -96,7 +98,7 @@ public class HolgerScript {
             testdir = testdir + i;
             testnames.add(testdir);
             runSimulationTest(testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
-            runResultAanalisis(testdir);
+    //        runResultAanalisis(testdir);
         }
     }
 
@@ -115,10 +117,14 @@ public class HolgerScript {
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
-        String globalConfig = baseTestsDir + "/conf/global_configuration.json";
-        String usersConfig = baseTestsDir + "/conf/users_configuration.json";
-        String stationsConfig = baseTestsDir + "/conf/stations_configuration.json";
+        String globalConfig = baseDir + "/conf/global_configuration.json";
+        String usersConfig = baseDir + "/conf/users_configuration.json";
+        String stationsConfig = baseDir + "/conf/stations_configuration.json";
         String historyOutputPath = historyDir + "/" + testdir;
+        auxiliaryDir = new File(historyOutputPath);
+        if (!auxiliaryDir.exists()) {
+            auxiliaryDir.mkdirs();
+        }
 
         ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
 
