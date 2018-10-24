@@ -8,6 +8,7 @@ export type FlatKeys<T, K extends keyof T = keyof T> = {
 
 export type Flatten<T, K extends keyof T = keyof T> = {
     [S in FlatKeys<T, K>]: {
+        // @ts-ignore
         [P in keyof T]: T[P] & Record<FlatKeys<T, Diff<keyof T, P>>, never>
     }[K][S]
 };
@@ -17,6 +18,7 @@ export type True = '1';
 
 export type If<C extends True | False, Then, Else> = { '0': Else, '1': Then }[C];
 
+// @ts-ignore
 export type PureKeys<T> = Diff<keyof T, keyof Object>;
 
 export type Is<T, U> = (Record<PureKeys<T & U>, False> & Record<any, True>)[Diff<PureKeys<T>, PureKeys<U>>];
