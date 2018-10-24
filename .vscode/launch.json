@@ -55,7 +55,7 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build_frontend",
-            "runtimeExecutable": "electron",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "runtimeArgs": [
                 "./build"
             ],
