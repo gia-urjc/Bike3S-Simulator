@@ -1,0 +1,60 @@
+{
+  "prototype": [
+    "id",
+    "type",
+    "walkingVelocity",
+    "cyclingVelocity",
+    "state",
+    "reservations",
+    "position",
+    "route",
+    "bike",
+    "destinationStation"
+  ],
+  "instances": [
+    {
+      "id": 1,
+      "type": "USER_PAPERAT2018_OBHOLGER",
+      "walkingVelocity": 0.0,
+      "cyclingVelocity": 0.0,
+      "state": "APPEARED",
+      "reservations": {
+        "type": "reservations",
+        "id": []
+      }
+    },
+    {
+      "id": 2,
+      "type": "USER_PAPERAT2018_OBHOLGER",
+      "walkingVelocity": 0.0,
+      "cyclingVelocity": 0.0,
+      "state": "APPEARED",
+      "reservations": {
+        "type": "reservations",
+        "id": []
+      }
+    },
+    {
+      "id": 3,
+      "type": "USER_PAPERAT2018_INF",
+      "walkingVelocity": 0.0,
+      "cyclingVelocity": 0.0,
+      "state": "APPEARED",
+      "reservations": {
+        "type": "reservations",
+        "id": []
+      }
+    },
+    {
+      "id": 4,
+      "type": "USER_PAPERAT2018_INF",
+      "walkingVelocity": 0.0,
+      "cyclingVelocity": 0.0,
+      "state": "APPEARED",
+      "reservations": {
+        "type": "reservations",
+        "id": []
+      }
+    }
+  ]
+}

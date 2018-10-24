@@ -1,4 +1,4 @@
-{  "basedir" : "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/Script",
+{  "basedir" : "/Users/carlos/my_projects/Bike3S/Bike3STests/Script",
     "tests": [
     { "recommendationSystemType": {
         "typeName": "HOLGERRECOMENDER",

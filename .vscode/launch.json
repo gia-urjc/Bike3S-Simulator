@@ -6,6 +6,17 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - HolgerScript",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "es.urjc.ia.bikesurbanfleets.core.HolgerScript",
+            "args": "",
+            "projectName": "bikesurbanfleets-core"
+        },
+        {
+            "type": "java",
             "name": "ApplicationHolger",
             "request": "launch",
             "cwd": "${workspaceFolder}",
@@ -38,20 +49,19 @@
             "args": "-globalConfig ${workspaceRoot}/backend-configuration-files/example-configuration/global-configuration.json -usersConfig ${workspaceRoot}/backend-configuration-files/example-configuration/users-configuration.json -stationsConfig ${workspaceRoot}/backend-configuration-files/example-configuration/stations-configuration.json -historyOutput ${workspaceRoot}/build/history -mapPath ${workspaceRoot}/backend-configuration-files/maps/madrid.osm -callFromFrontend",
             "projectName": "bikesurbanfleets-core"
         },
-        
         {
             "name": "Debug Frontend Main Process",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceRoot}",
+            "preLaunchTask": "build_frontend",
             "runtimeExecutable": "electron",
             "runtimeArgs": [
                 "./build"
             ],
-            // This is the important stuff
             "program": "${workspaceRoot}/build/frontend/main.js",
             "outFiles": [
-            "${workspaceRoot}/build/**/*.js"
+                "${workspaceRoot}/build/**/*.js"
             ],
             "sourceMaps": true
         }
