@@ -10,8 +10,8 @@ export class UserTimeAbsoluteValue implements AbsoluteValue {
     static readonly NUM_ATTR: number = 4;
     exitReason: string;
     timeFromApperancePlaceToOriginStation: number;
-    timeFromOriginStationToDestinationStation: number;
-    timeFromDestinationStationToAbandonmentPlace: number;
+    timeFromOriginStationToDestinationStation: any;
+    timeFromDestinationStationToAbandonmentPlace: any;
     
     public constructor(reason: string, origin: number, midle: number, destination: number) {
         this.exitReason = reason;
@@ -54,8 +54,8 @@ export class UserTimeAtSystem implements SystemInfo {
     
     public async init(): Promise<void> {
         let firstTime: number;
-        let secondTime: number;
-        let thirdTime: number;
+        let secondTime: any;
+        let thirdTime: any;
         
         this.basicData.getInstantsPerUser().forEach( (info, userId) => {
             if (info.rentalInstant !== 0) {
@@ -65,8 +65,8 @@ export class UserTimeAtSystem implements SystemInfo {
             }
             else {   // user has left the system before renting a bike
                 firstTime = info.abandonmentInstant - info.appearanceInstant;
-                secondTime = 0;
-                thirdTime = 0;
+                secondTime = "";
+                thirdTime = "";
             }
             this.data.absoluteValues.set(userId, new UserTimeAbsoluteValue(info.exitReason, firstTime, secondTime, thirdTime));
         });

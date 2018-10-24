@@ -41,11 +41,6 @@ public class HolgerRecomenderSurroundingStations extends RecommendationSystem {
     @RecommendationSystemParameters
     private class RecommendationParameters {
 
-        /**
-         * It is the maximum distance in meters between the recommended stations
-         * and the indicated geographical point.
-         */
-        private int MINCAP_TO_RECOMEND = 10;
         //maximum difference to teh closest station
         private double MAXDIFF = 500;
         //maximum distance to be recomended (except closest station which would be recomended in any case)

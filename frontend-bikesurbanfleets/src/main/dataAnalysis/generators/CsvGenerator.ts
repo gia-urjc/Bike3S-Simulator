@@ -117,13 +117,13 @@ export class CsvGenerator {
         while (j < UserTimeAbsoluteValue.NUM_ATTR) {
             let timeValues: AbsoluteValue | undefined = timeIntervals.getData().absoluteValues.get(user.id);
             if (timeValues !== undefined) {
-                let absValueList: Array<number> = timeValues.getAbsoluteValuesAsArray();
-                if (absValueList[j] !== 0) {
+                let absValueList: Array<any> = timeValues.getAbsoluteValuesAsArray();
+    //            if (absValueList[j] !== 0) {
                     jsonObj[this.userInfoTitles[i]] = absValueList[j];
-                }
-                else {
-                    jsonObj[this.userInfoTitles[i]] = "";
-                }
+    //            }
+    //            else {
+    //                jsonObj[this.userInfoTitles[i]] = "";
+    //            }
                 i++;
                 j++;
             }
