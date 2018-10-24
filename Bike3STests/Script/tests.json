@@ -1,0 +1,52 @@
+{  "basedir" : "/Users/carlos/my_projects/Bike3S/Bike3STests/Script",
+    "tests": [
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+            "maxDistanceRecommendation": 80,
+            "MINCAP_TO_RECOMEND" : 3,
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+            "maxDistanceRecommendation": 80,
+            "MINCAP_TO_RECOMEND" : 3,
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_INF",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+            "maxDistanceRecommendation": 80,
+            "MINCAP_TO_RECOMEND" : 3,
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_UNINF",
+        "parameters": {
+            
+        }
+      }
+    }
+  ]
+}

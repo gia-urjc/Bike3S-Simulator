@@ -1,0 +1,1654 @@
+[
+  {
+    "time": 13,
+    "events": [
+      {
+        "name": "EventUserAppears",
+        "changes": {
+          "users": [
+            {
+              "walkingVelocity": {
+                "old": 0.0,
+                "new": 1.9444444444444444
+              },
+              "cyclingVelocity": {
+                "old": 0.0,
+                "new": 2.2918105778695455
+              },
+              "state": {
+                "old": "APPEARED",
+                "new": "WALK_TO_STATION"
+              },
+              "position": {
+                "old": null,
+                "new": {
+                  "latitude": 40.425185595188324,
+                  "longitude": -3.6988909361270226
+                }
+              },
+              "route": {
+                "old": null,
+                "new": {
+                  "points": [
+                    {
+                      "latitude": 40.425185595188324,
+                      "longitude": -3.6988909361270226
+                    },
+                    {
+                      "latitude": 40.42508469024103,
+                      "longitude": -3.698954450566834
+                    },
+                    {
+                      "latitude": 40.42536501792144,
+                      "longitude": -3.6997229687807627
+                    },
+                    {
+                      "latitude": 40.424914257785254,
+                      "longitude": -3.7007459335195856
+                    },
+                    {
+                      "latitude": 40.42500049825759,
+                      "longitude": -3.7007796473975403
+                    },
+                    {
+                      "latitude": 40.42429585958188,
+                      "longitude": -3.7018754415633257
+                    },
+                    {
+                      "latitude": 40.424261400645854,
+                      "longitude": -3.701726243683537
+                    },
+                    {
+                      "latitude": 40.42403378540353,
+                      "longitude": -3.7017504580710185
+                    },
+                    {
+                      "latitude": 40.42404552006823,
+                      "longitude": -3.702089459495756
+                    },
+                    {
+                      "latitude": 40.42397724756864,
+                      "longitude": -3.7020937954241484
+                    },
+                    {
+                      "latitude": 40.42397689819336,
+                      "longitude": -3.7020843029022217
+                    }
+                  ],
+                  "totalDistance": 391.7755308421853
+                }
+              },
+              "destinationStation": {
+                "old": null,
+                "new": {
+                  "type": "stations",
+                  "id": 58
+                }
+              },
+              "id": 1
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "time": 17,
+    "events": [
+      {
+        "name": "EventUserAppears",
+        "changes": {
+          "users": [
+            {
+              "walkingVelocity": {
+                "old": 0.0,
+                "new": 1.3888888888888888
+              },
+              "cyclingVelocity": {
+                "old": 0.0,
+                "new": 2.649333333333333
+              },
+              "state": {
+                "old": "APPEARED",
+                "new": "WALK_TO_STATION"
+              },
+              "position": {
+                "old": null,
+                "new": {
+                  "latitude": 40.42226930241179,
+                  "longitude": -3.6989875755820427
+                }
+              },
+              "route": {
+                "old": null,
+                "new": {
+                  "points": [
+                    {
+                      "latitude": 40.42226930241179,
+                      "longitude": -3.6989875755820427
+                    },
+                    {
+                      "latitude": 40.42222482186433,
+                      "longitude": -3.6988767608546667
+                    },
+                    {
+                      "latitude": 40.42249375035972,
+                      "longitude": -3.698690504551467
+                    },
+                    {
+                      "latitude": 40.422235746693666,
+                      "longitude": -3.69792634326562
+                    },
+                    {
+                      "latitude": 40.42228698730469,
+                      "longitude": -3.697895050048828
+                    }
+                  ],
+                  "totalDistance": 121.4569098914318
+                }
+              },
+              "destinationStation": {
+                "old": null,
+                "new": {
+                  "type": "stations",
+                  "id": 61
+                }
+              },
+              "id": 2
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "time": 104,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToRentBikeWithoutReservation",
+        "changes": {
+          "stations": [
+            {
+              "bikes": {
+                "old": {
+                  "type": "bikes",
+                  "id": [
+                    495,
+                    496,
+                    497,
+                    498,
+                    499,
+                    500,
+                    501,
+                    502,
+                    503,
+                    504,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                  ]
+                },
+                "new": {
+                  "type": "bikes",
+                  "id": [
+                    null,
+                    496,
+                    497,
+                    498,
+                    499,
+                    500,
+                    501,
+                    502,
+                    503,
+                    504,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                  ]
+                }
+              },
+              "id": 61
+            }
+          ],
+          "users": [
+            {
+              "state": {
+                "old": "WALK_TO_STATION",
+                "new": "WITH_BIKE"
+              },
+              "position": {
+                "old": {
+                  "latitude": 40.42226930241179,
+                  "longitude": -3.6989875755820427
+                },
+                "new": {
+                  "latitude": 40.42228698730469,
+                  "longitude": -3.697895050048828
+                }
+              },
+              "route": {
+                "old": {
+                  "points": [
+                    {
+                      "latitude": 40.42226930241179,
+                      "longitude": -3.6989875755820427
+                    },
+                    {
+                      "latitude": 40.42222482186433,
+                      "longitude": -3.6988767608546667
+                    },
+                    {
+                      "latitude": 40.42249375035972,
+                      "longitude": -3.698690504551467
+                    },
+                    {
+                      "latitude": 40.422235746693666,
+                      "longitude": -3.69792634326562
+                    },
+                    {
+                      "latitude": 40.42228698730469,
+                      "longitude": -3.697895050048828
+                    }
+                  ],
+                  "totalDistance": 121.4569098914318
+                },
+                "new": {
+                  "points": [
+                    {
+                      "latitude": 40.42228698730469,
+                      "longitude": -3.697895050048828
+                    },
+                    {
+                      "latitude": 40.422235746693666,
+                      "longitude": -3.69792634326562
+                    },
+                    {
+                      "latitude": 40.422348650299355,
+                      "longitude": -3.69824533235085
+                    },
+                    {
+                      "latitude": 40.42148270655012,
+                      "longitude": -3.6986817501190696
+                    },
+                    {
+                      "latitude": 40.42129085409546,
+                      "longitude": -3.6980776942836724
+                    },
+                    {
+                      "latitude": 40.42113625454462,
+                      "longitude": -3.696469672690399
+                    },
+                    {
+                      "latitude": 40.42112358855732,
+                      "longitude": -3.695659049503335
+                    },
+                    {
+                      "latitude": 40.41997936561658,
+                      "longitude": -3.6956443346063272
+                    },
+                    {
+                      "latitude": 40.41902699513049,
+                      "longitude": -3.695561819424372
+                    },
+                    {
+                      "latitude": 40.41894243103882,
+                      "longitude": -3.6959963745474007
+                    },
+                    {
+                      "latitude": 40.41873381477745,
+                      "longitude": -3.696719825939532
+                    },
+                    {
+                      "latitude": 40.4186894838219,
+                      "longitude": -3.6964860639680786
+                    },
+                    {
+                      "latitude": 40.41883607399842,
+                      "longitude": -3.6958406574094442
+                    },
+                    {
+                      "latitude": 40.41875281375839,
+                      "longitude": -3.695818678196192
+                    },
+                    {
+                      "latitude": 40.41910373611235,
+                      "longitude": -3.6940562433165964
+                    },
+                    {
+                      "latitude": 40.419091070125056,
+                      "longitude": -3.69389642835922
+                    },
+                    {
+                      "latitude": 40.41914825333241,
+                      "longitude": -3.6938431567067616
+                    },
+                    {
+                      "latitude": 40.41913093073214,
+                      "longitude": -3.6937589651441343
+                    },
+                    {
+                      "latitude": 40.41901488793675,
+                      "longitude": -3.6937503969762564
+                    },
+                    {
+                      "latitude": 40.41891225618673,
+                      "longitude": -3.6937988257512187
+                    },
+                    {
+                      "latitude": 40.41669365949989,
+                      "longitude": -3.6944276547676544
+                    },
+                    {
+                      "latitude": 40.41572135871026,
+                      "longitude": -3.6946791118684215
+                    },
+                    {
+                      "latitude": 40.415609786263325,
+                      "longitude": -3.6946735239328485
+                    },
+                    {
+                      "latitude": 40.4154807049516,
+                      "longitude": -3.6946316144160543
+                    },
+                    {
+                      "latitude": 40.41514822278503,
+                      "longitude": -3.694411636019013
+                    },
+                    {
+                      "latitude": 40.41463189753812,
+                      "longitude": -3.6942488408293315
+                    },
+                    {
+                      "latitude": 40.41392167092685,
+                      "longitude": -3.693932936204961
+                    },
+                    {
+                      "latitude": 40.41260366318979,
+                      "longitude": -3.693419591190359
+                    },
+                    {
+                      "latitude": 40.4125930461122,
+                      "longitude": -3.6939711204313737
+                    },
+                    {
+                      "latitude": 40.41177981522187,
+                      "longitude": -3.6938051587448677
+                    },
+                    {
+                      "latitude": 40.410374821954406,
+                      "longitude": -3.693833470951769
+                    },
+                    {
+                      "latitude": 40.409922199173025,
+                      "longitude": -3.6940741247104287
+                    },
+                    {
+                      "latitude": 40.40959679505818,
+                      "longitude": -3.6934283456227557
+                    },
+                    {
+                      "latitude": 40.40932168236349,
+                      "longitude": -3.692760587321831
+                    },
+                    {
+                      "latitude": 40.40921588411665,
+                      "longitude": -3.6924625640912927
+                    },
+                    {
+                      "latitude": 40.40916652401909,
+                      "longitude": -3.6923591872832
+                    },
+                    {
+                      "latitude": 40.40909667482443,
+                      "longitude": -3.692273319339901
+                    },
+                    {
+                      "latitude": 40.40892773290562,
+                      "longitude": -3.6923243558181307
+                    },
+                    {
+                      "latitude": 40.40886458923365,
+                      "longitude": -3.6923902934578874
+                    },
+                    {
+                      "latitude": 40.40879082848409,
+                      "longitude": -3.6924336930908344
+                    },
+                    {
+                      "latitude": 40.40871147979896,
+                      "longitude": -3.692452319542743
+                    },
+                    {
+                      "latitude": 40.40798169541318,
+                      "longitude": -3.692986339918964
+                    },
+                    {
+                      "latitude": 40.407325858041474,
+                      "longitude": -3.693527997140467
+                    },
+                    {
+                      "latitude": 40.40717218981323,
+                      "longitude": -3.693626158542026
+                    },
+                    {
+                      "latitude": 40.406888508950665,
+                      "longitude": -3.693894193184991
+                    },
+                    {
+                      "latitude": 40.40675588861307,
+                      "longitude": -3.694048792735833
+                    },
+                    {
+                      "latitude": 40.40653702780315,
+                      "longitude": -3.6941206908402
+                    },
+                    {
+                      "latitude": 40.40548034918637,
+                      "longitude": -3.695062071719663
+                    },
+                    {
+                      "latitude": 40.40483568768581,
+                      "longitude": -3.6956882930328314
+                    },
+                    {
+                      "latitude": 40.40474032025204,
+                      "longitude": -3.695714742594542
+                    },
+                    {
+                      "latitude": 40.40425137588944,
+                      "longitude": -3.695771739537382
+                    },
+                    {
+                      "latitude": 40.40406734654458,
+                      "longitude": -3.6921388363571204
+                    },
+                    {
+                      "latitude": 40.40293504453305,
+                      "longitude": -3.6922317823521444
+                    },
+                    {
+                      "latitude": 40.40306973008322,
+                      "longitude": -3.694494887668957
+                    },
+                    {
+                      "latitude": 40.403221130371094,
+                      "longitude": -3.694476842880249
+                    }
+                  ],
+                  "totalDistance": 3554.0752894467664
+                }
+              },
+              "bike": {
+                "old": null,
+                "new": {
+                  "type": "bikes",
+                  "id": 495
+                }
+              },
+              "destinationStation": {
+                "old": {
+                  "type": "stations",
+                  "id": 61
+                },
+                "new": {
+                  "type": "stations",
+                  "id": 125
+                }
+              },
+              "id": 2
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "time": 214,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToRentBikeWithoutReservation",
+        "changes": {
+          "stations": [
+            {
+              "bikes": {
+                "old": {
+                  "type": "bikes",
+                  "id": [
+                    450,
+                    451,
+                    452,
+                    453,
+                    454,
+                    455,
+                    456,
+                    457,
+                    458,
+                    459,
+                    460,
+                    461,
+                    462,
+                    463,
+                    464,
+                    465,
+                    466,
+                    467,
+                    468,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                  ]
+                },
+                "new": {
+                  "type": "bikes",
+                  "id": [
+                    null,
+                    451,
+                    452,
+                    453,
+                    454,
+                    455,
+                    456,
+                    457,
+                    458,
+                    459,
+                    460,
+                    461,
+                    462,
+                    463,
+                    464,
+                    465,
+                    466,
+                    467,
+                    468,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                  ]
+                }
+              },
+              "id": 58
+            }
+          ],
+          "users": [
+            {
+              "state": {
+                "old": "WALK_TO_STATION",
+                "new": "WITH_BIKE"
+              },
+              "position": {
+                "old": {
+                  "latitude": 40.425185595188324,
+                  "longitude": -3.6988909361270226
+                },
+                "new": {
+                  "latitude": 40.42397689819336,
+                  "longitude": -3.7020843029022217
+                }
+              },
+              "route": {
+                "old": {
+                  "points": [
+                    {
+                      "latitude": 40.425185595188324,
+                      "longitude": -3.6988909361270226
+                    },
+                    {
+                      "latitude": 40.42508469024103,
+                      "longitude": -3.698954450566834
+                    },
+                    {
+                      "latitude": 40.42536501792144,
+                      "longitude": -3.6997229687807627
+                    },
+                    {
+                      "latitude": 40.424914257785254,
+                      "longitude": -3.7007459335195856
+                    },
+                    {
+                      "latitude": 40.42500049825759,
+                      "longitude": -3.7007796473975403
+                    },
+                    {
+                      "latitude": 40.42429585958188,
+                      "longitude": -3.7018754415633257
+                    },
+                    {
+                      "latitude": 40.424261400645854,
+                      "longitude": -3.701726243683537
+                    },
+                    {
+                      "latitude": 40.42403378540353,
+                      "longitude": -3.7017504580710185
+                    },
+                    {
+                      "latitude": 40.42404552006823,
+                      "longitude": -3.702089459495756
+                    },
+                    {
+                      "latitude": 40.42397724756864,
+                      "longitude": -3.7020937954241484
+                    },
+                    {
+                      "latitude": 40.42397689819336,
+                      "longitude": -3.7020843029022217
+                    }
+                  ],
+                  "totalDistance": 391.7755308421853
+                },
+                "new": {
+                  "points": [
+                    {
+                      "latitude": 40.42397689819336,
+                      "longitude": -3.7020843029022217
+                    },
+                    {
+                      "latitude": 40.42397724756864,
+                      "longitude": -3.7020937954241484
+                    },
+                    {
+                      "latitude": 40.423872480330004,
+                      "longitude": -3.702100449102382
+                    },
+                    {
+                      "latitude": 40.423846962090884,
+                      "longitude": -3.7021499954644588
+                    },
+                    {
+                      "latitude": 40.42385702037492,
+                      "longitude": -3.702290252647331
+                    },
+                    {
+                      "latitude": 40.423618788055,
+                      "longitude": -3.702488065566601
+                    },
+                    {
+                      "latitude": 40.424122261050094,
+                      "longitude": -3.70377478086445
+                    },
+                    {
+                      "latitude": 40.423201741796774,
+                      "longitude": -3.7046552532461714
+                    },
+                    {
+                      "latitude": 40.4237230961857,
+                      "longitude": -3.705308669179127
+                    },
+                    {
+                      "latitude": 40.42376984857999,
+                      "longitude": -3.7053917431546393
+                    },
+                    {
+                      "latitude": 40.42408854717214,
+                      "longitude": -3.7062895381366356
+                    },
+                    {
+                      "latitude": 40.42429064417535,
+                      "longitude": -3.7067406708018633
+                    },
+                    {
+                      "latitude": 40.424299398607744,
+                      "longitude": -3.7070301258645233
+                    },
+                    {
+                      "latitude": 40.42435546422799,
+                      "longitude": -3.707475111800621
+                    },
+                    {
+                      "latitude": 40.42429176176246,
+                      "longitude": -3.7090661833226575
+                    },
+                    {
+                      "latitude": 40.424397746273826,
+                      "longitude": -3.7091334248140475
+                    },
+                    {
+                      "latitude": 40.42450317199163,
+                      "longitude": -3.7091289544655894
+                    },
+                    {
+                      "latitude": 40.425729165056254,
+                      "longitude": -3.7092565456611637
+                    },
+                    {
+                      "latitude": 40.42628274320698,
+                      "longitude": -3.7093366394043708
+                    },
+                    {
+                      "latitude": 40.42706766189041,
+                      "longitude": -3.7094180369992116
+                    },
+                    {
+                      "latitude": 40.427315393700795,
+                      "longitude": -3.7094703773290747
+                    },
+                    {
+                      "latitude": 40.42734705866904,
+                      "longitude": -3.7094612503676396
+                    },
+                    {
+                      "latitude": 40.42848923270008,
+                      "longitude": -3.7095815772469694
+                    },
+                    {
+                      "latitude": 40.42874068980085,
+                      "longitude": -3.709570215111305
+                    },
+                    {
+                      "latitude": 40.429696413048276,
+                      "longitude": -3.7089439937981368
+                    },
+                    {
+                      "latitude": 40.42984393454739,
+                      "longitude": -3.7088942611715403
+                    },
+                    {
+                      "latitude": 40.429949174000676,
+                      "longitude": -3.7089784527341676
+                    },
+                    {
+                      "latitude": 40.430122213738905,
+                      "longitude": -3.710526869681333
+                    },
+                    {
+                      "latitude": 40.4302382565343,
+                      "longitude": -3.711860337373473
+                    },
+                    {
+                      "latitude": 40.431736195796795,
+                      "longitude": -3.711718403809929
+                    },
+                    {
+                      "latitude": 40.431800270791356,
+                      "longitude": -3.7134089405851576
+                    },
+                    {
+                      "latitude": 40.43065285740539,
+                      "longitude": -3.7135040680340428
+                    },
+                    {
+                      "latitude": 40.43064498901367,
+                      "longitude": -3.713341236114502
+                    }
+                  ],
+                  "totalDistance": 2069.7887937548903
+                }
+              },
+              "bike": {
+                "old": null,
+                "new": {
+                  "type": "bikes",
+                  "id": 450
+                }
+              },
+              "destinationStation": {
+                "old": {
+                  "type": "stations",
+                  "id": 58
+                },
+                "new": {
+                  "type": "stations",
+                  "id": 128
+                }
+              },
+              "id": 1
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "time": 1117,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBikeWithoutReservation",
+        "changes": {
+          "stations": [
+            {
+              "bikes": {
+                "old": {
+                  "type": "bikes",
+                  "id": [
+                    1187,
+                    1188,
+                    1189,
+                    1190,
+                    1191,
+                    1192,
+                    1193,
+                    1194,
+                    1195,
+                    1196,
+                    1197,
+                    1198,
+                    1199,
+                    1200,
+                    1201,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                  ]
+                },
+                "new": {
+                  "type": "bikes",
+                  "id": [
+                    1187,
+                    1188,
+                    1189,
+                    1190,
+                    1191,
+                    1192,
+                    1193,
+                    1194,
+                    1195,
+                    1196,
+                    1197,
+                    1198,
+                    1199,
+                    1200,
+                    1201,
+                    450,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                  ]
+                }
+              },
+              "id": 128
+            }
+          ],
+          "users": [
+            {
+              "state": {
+                "old": "WITH_BIKE",
+                "new": "WALK_TO_DESTINATION"
+              },
+              "position": {
+                "old": {
+                  "latitude": 40.42397689819336,
+                  "longitude": -3.7020843029022217
+                },
+                "new": {
+                  "latitude": 40.43064498901367,
+                  "longitude": -3.713341236114502
+                }
+              },
+              "route": {
+                "old": {
+                  "points": [
+                    {
+                      "latitude": 40.42397689819336,
+                      "longitude": -3.7020843029022217
+                    },
+                    {
+                      "latitude": 40.42397724756864,
+                      "longitude": -3.7020937954241484
+                    },
+                    {
+                      "latitude": 40.423872480330004,
+                      "longitude": -3.702100449102382
+                    },
+                    {
+                      "latitude": 40.423846962090884,
+                      "longitude": -3.7021499954644588
+                    },
+                    {
+                      "latitude": 40.42385702037492,
+                      "longitude": -3.702290252647331
+                    },
+                    {
+                      "latitude": 40.423618788055,
+                      "longitude": -3.702488065566601
+                    },
+                    {
+                      "latitude": 40.424122261050094,
+                      "longitude": -3.70377478086445
+                    },
+                    {
+                      "latitude": 40.423201741796774,
+                      "longitude": -3.7046552532461714
+                    },
+                    {
+                      "latitude": 40.4237230961857,
+                      "longitude": -3.705308669179127
+                    },
+                    {
+                      "latitude": 40.42376984857999,
+                      "longitude": -3.7053917431546393
+                    },
+                    {
+                      "latitude": 40.42408854717214,
+                      "longitude": -3.7062895381366356
+                    },
+                    {
+                      "latitude": 40.42429064417535,
+                      "longitude": -3.7067406708018633
+                    },
+                    {
+                      "latitude": 40.424299398607744,
+                      "longitude": -3.7070301258645233
+                    },
+                    {
+                      "latitude": 40.42435546422799,
+                      "longitude": -3.707475111800621
+                    },
+                    {
+                      "latitude": 40.42429176176246,
+                      "longitude": -3.7090661833226575
+                    },
+                    {
+                      "latitude": 40.424397746273826,
+                      "longitude": -3.7091334248140475
+                    },
+                    {
+                      "latitude": 40.42450317199163,
+                      "longitude": -3.7091289544655894
+                    },
+                    {
+                      "latitude": 40.425729165056254,
+                      "longitude": -3.7092565456611637
+                    },
+                    {
+                      "latitude": 40.42628274320698,
+                      "longitude": -3.7093366394043708
+                    },
+                    {
+                      "latitude": 40.42706766189041,
+                      "longitude": -3.7094180369992116
+                    },
+                    {
+                      "latitude": 40.427315393700795,
+                      "longitude": -3.7094703773290747
+                    },
+                    {
+                      "latitude": 40.42734705866904,
+                      "longitude": -3.7094612503676396
+                    },
+                    {
+                      "latitude": 40.42848923270008,
+                      "longitude": -3.7095815772469694
+                    },
+                    {
+                      "latitude": 40.42874068980085,
+                      "longitude": -3.709570215111305
+                    },
+                    {
+                      "latitude": 40.429696413048276,
+                      "longitude": -3.7089439937981368
+                    },
+                    {
+                      "latitude": 40.42984393454739,
+                      "longitude": -3.7088942611715403
+                    },
+                    {
+                      "latitude": 40.429949174000676,
+                      "longitude": -3.7089784527341676
+                    },
+                    {
+                      "latitude": 40.430122213738905,
+                      "longitude": -3.710526869681333
+                    },
+                    {
+                      "latitude": 40.4302382565343,
+                      "longitude": -3.711860337373473
+                    },
+                    {
+                      "latitude": 40.431736195796795,
+                      "longitude": -3.711718403809929
+                    },
+                    {
+                      "latitude": 40.431800270791356,
+                      "longitude": -3.7134089405851576
+                    },
+                    {
+                      "latitude": 40.43065285740539,
+                      "longitude": -3.7135040680340428
+                    },
+                    {
+                      "latitude": 40.43064498901367,
+                      "longitude": -3.713341236114502
+                    }
+                  ],
+                  "totalDistance": 2069.7887937548903
+                },
+                "new": {
+                  "points": [
+                    {
+                      "latitude": 40.43064498901367,
+                      "longitude": -3.713341236114502
+                    },
+                    {
+                      "latitude": 40.43065285740539,
+                      "longitude": -3.7135040680340428
+                    },
+                    {
+                      "latitude": 40.43052951199535,
+                      "longitude": -3.7135143549309078
+                    },
+                    {
+                      "latitude": 40.43052819266414,
+                      "longitude": -3.7134870521172254
+                    }
+                  ],
+                  "totalDistance": 29.868516335609346
+                }
+              },
+              "bike": {
+                "old": {
+                  "type": "bikes",
+                  "id": 450
+                },
+                "new": null
+              },
+              "destinationStation": {
+                "old": {
+                  "type": "stations",
+                  "id": 128
+                },
+                "new": null
+              },
+              "id": 1
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "time": 1132,
+    "events": [
+      {
+        "name": "EventUserArrivesAtDestinationInCity",
+        "changes": {
+          "users": [
+            {
+              "state": {
+                "old": "WALK_TO_DESTINATION",
+                "new": "EXIT_AFTER_REACHING_DESTINATION"
+              },
+              "position": {
+                "old": {
+                  "latitude": 40.43064498901367,
+                  "longitude": -3.713341236114502
+                },
+                "new": {
+                  "latitude": 40.43052819266414,
+                  "longitude": -3.7134870521172254
+                }
+              },
+              "id": 1
+            }
+          ]
+        }
+      },
+      {
+        "name": "EventUserLeavesSystem",
+        "changes": {
+          "users": [
+            {
+              "state": {
+                "old": "EXIT_AFTER_REACHING_DESTINATION",
+                "new": "LEFT_SYSTEM"
+              },
+              "position": {
+                "old": {
+                  "latitude": 40.43052819266414,
+                  "longitude": -3.7134870521172254
+                },
+                "new": null
+              },
+              "route": {
+                "old": {
+                  "points": [
+                    {
+                      "latitude": 40.43064498901367,
+                      "longitude": -3.713341236114502
+                    },
+                    {
+                      "latitude": 40.43065285740539,
+                      "longitude": -3.7135040680340428
+                    },
+                    {
+                      "latitude": 40.43052951199535,
+                      "longitude": -3.7135143549309078
+                    },
+                    {
+                      "latitude": 40.43052819266414,
+                      "longitude": -3.7134870521172254
+                    }
+                  ],
+                  "totalDistance": 29.868516335609346
+                },
+                "new": null
+              },
+              "id": 1
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "time": 1445,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBikeWithoutReservation",
+        "changes": {
+          "stations": [
+            {
+              "bikes": {
+                "old": {
+                  "type": "bikes",
+                  "id": [
+                    1151,
+                    1152,
+                    1153,
+                    1154,
+                    1155,
+                    1156,
+                    1157,
+                    1158,
+                    1159,
+                    1160,
+                    1161,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                  ]
+                },
+                "new": {
+                  "type": "bikes",
+                  "id": [
+                    1151,
+                    1152,
+                    1153,
+                    1154,
+                    1155,
+                    1156,
+                    1157,
+                    1158,
+                    1159,
+                    1160,
+                    1161,
+                    495,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                  ]
+                }
+              },
+              "id": 125
+            }
+          ],
+          "users": [
+            {
+              "state": {
+                "old": "WITH_BIKE",
+                "new": "WALK_TO_DESTINATION"
+              },
+              "position": {
+                "old": {
+                  "latitude": 40.42228698730469,
+                  "longitude": -3.697895050048828
+                },
+                "new": {
+                  "latitude": 40.403221130371094,
+                  "longitude": -3.694476842880249
+                }
+              },
+              "route": {
+                "old": {
+                  "points": [
+                    {
+                      "latitude": 40.42228698730469,
+                      "longitude": -3.697895050048828
+                    },
+                    {
+                      "latitude": 40.422235746693666,
+                      "longitude": -3.69792634326562
+                    },
+                    {
+                      "latitude": 40.422348650299355,
+                      "longitude": -3.69824533235085
+                    },
+                    {
+                      "latitude": 40.42148270655012,
+                      "longitude": -3.6986817501190696
+                    },
+                    {
+                      "latitude": 40.42129085409546,
+                      "longitude": -3.6980776942836724
+                    },
+                    {
+                      "latitude": 40.42113625454462,
+                      "longitude": -3.696469672690399
+                    },
+                    {
+                      "latitude": 40.42112358855732,
+                      "longitude": -3.695659049503335
+                    },
+                    {
+                      "latitude": 40.41997936561658,
+                      "longitude": -3.6956443346063272
+                    },
+                    {
+                      "latitude": 40.41902699513049,
+                      "longitude": -3.695561819424372
+                    },
+                    {
+                      "latitude": 40.41894243103882,
+                      "longitude": -3.6959963745474007
+                    },
+                    {
+                      "latitude": 40.41873381477745,
+                      "longitude": -3.696719825939532
+                    },
+                    {
+                      "latitude": 40.4186894838219,
+                      "longitude": -3.6964860639680786
+                    },
+                    {
+                      "latitude": 40.41883607399842,
+                      "longitude": -3.6958406574094442
+                    },
+                    {
+                      "latitude": 40.41875281375839,
+                      "longitude": -3.695818678196192
+                    },
+                    {
+                      "latitude": 40.41910373611235,
+                      "longitude": -3.6940562433165964
+                    },
+                    {
+                      "latitude": 40.419091070125056,
+                      "longitude": -3.69389642835922
+                    },
+                    {
+                      "latitude": 40.41914825333241,
+                      "longitude": -3.6938431567067616
+                    },
+                    {
+                      "latitude": 40.41913093073214,
+                      "longitude": -3.6937589651441343
+                    },
+                    {
+                      "latitude": 40.41901488793675,
+                      "longitude": -3.6937503969762564
+                    },
+                    {
+                      "latitude": 40.41891225618673,
+                      "longitude": -3.6937988257512187
+                    },
+                    {
+                      "latitude": 40.41669365949989,
+                      "longitude": -3.6944276547676544
+                    },
+                    {
+                      "latitude": 40.41572135871026,
+                      "longitude": -3.6946791118684215
+                    },
+                    {
+                      "latitude": 40.415609786263325,
+                      "longitude": -3.6946735239328485
+                    },
+                    {
+                      "latitude": 40.4154807049516,
+                      "longitude": -3.6946316144160543
+                    },
+                    {
+                      "latitude": 40.41514822278503,
+                      "longitude": -3.694411636019013
+                    },
+                    {
+                      "latitude": 40.41463189753812,
+                      "longitude": -3.6942488408293315
+                    },
+                    {
+                      "latitude": 40.41392167092685,
+                      "longitude": -3.693932936204961
+                    },
+                    {
+                      "latitude": 40.41260366318979,
+                      "longitude": -3.693419591190359
+                    },
+                    {
+                      "latitude": 40.4125930461122,
+                      "longitude": -3.6939711204313737
+                    },
+                    {
+                      "latitude": 40.41177981522187,
+                      "longitude": -3.6938051587448677
+                    },
+                    {
+                      "latitude": 40.410374821954406,
+                      "longitude": -3.693833470951769
+                    },
+                    {
+                      "latitude": 40.409922199173025,
+                      "longitude": -3.6940741247104287
+                    },
+                    {
+                      "latitude": 40.40959679505818,
+                      "longitude": -3.6934283456227557
+                    },
+                    {
+                      "latitude": 40.40932168236349,
+                      "longitude": -3.692760587321831
+                    },
+                    {
+                      "latitude": 40.40921588411665,
+                      "longitude": -3.6924625640912927
+                    },
+                    {
+                      "latitude": 40.40916652401909,
+                      "longitude": -3.6923591872832
+                    },
+                    {
+                      "latitude": 40.40909667482443,
+                      "longitude": -3.692273319339901
+                    },
+                    {
+                      "latitude": 40.40892773290562,
+                      "longitude": -3.6923243558181307
+                    },
+                    {
+                      "latitude": 40.40886458923365,
+                      "longitude": -3.6923902934578874
+                    },
+                    {
+                      "latitude": 40.40879082848409,
+                      "longitude": -3.6924336930908344
+                    },
+                    {
+                      "latitude": 40.40871147979896,
+                      "longitude": -3.692452319542743
+                    },
+                    {
+                      "latitude": 40.40798169541318,
+                      "longitude": -3.692986339918964
+                    },
+                    {
+                      "latitude": 40.407325858041474,
+                      "longitude": -3.693527997140467
+                    },
+                    {
+                      "latitude": 40.40717218981323,
+                      "longitude": -3.693626158542026
+                    },
+                    {
+                      "latitude": 40.406888508950665,
+                      "longitude": -3.693894193184991
+                    },
+                    {
+                      "latitude": 40.40675588861307,
+                      "longitude": -3.694048792735833
+                    },
+                    {
+                      "latitude": 40.40653702780315,
+                      "longitude": -3.6941206908402
+                    },
+                    {
+                      "latitude": 40.40548034918637,
+                      "longitude": -3.695062071719663
+                    },
+                    {
+                      "latitude": 40.40483568768581,
+                      "longitude": -3.6956882930328314
+                    },
+                    {
+                      "latitude": 40.40474032025204,
+                      "longitude": -3.695714742594542
+                    },
+                    {
+                      "latitude": 40.40425137588944,
+                      "longitude": -3.695771739537382
+                    },
+                    {
+                      "latitude": 40.40406734654458,
+                      "longitude": -3.6921388363571204
+                    },
+                    {
+                      "latitude": 40.40293504453305,
+                      "longitude": -3.6922317823521444
+                    },
+                    {
+                      "latitude": 40.40306973008322,
+                      "longitude": -3.694494887668957
+                    },
+                    {
+                      "latitude": 40.403221130371094,
+                      "longitude": -3.694476842880249
+                    }
+                  ],
+                  "totalDistance": 3554.0752894467664
+                },
+                "new": {
+                  "points": [
+                    {
+                      "latitude": 40.403221130371094,
+                      "longitude": -3.694476842880249
+                    },
+                    {
+                      "latitude": 40.40306973008322,
+                      "longitude": -3.694494887668957
+                    },
+                    {
+                      "latitude": 40.403091692993605,
+                      "longitude": -3.694812663528606
+                    },
+                    {
+                      "latitude": 40.402437159473536,
+                      "longitude": -3.694889590774989
+                    },
+                    {
+                      "latitude": 40.40240381812462,
+                      "longitude": -3.6949419311048524
+                    },
+                    {
+                      "latitude": 40.40242635613143,
+                      "longitude": -3.6953435174080025
+                    },
+                    {
+                      "latitude": 40.40236395751754,
+                      "longitude": -3.6953496641371326
+                    },
+                    {
+                      "latitude": 40.402399534040676,
+                      "longitude": -3.6959863162633697
+                    },
+                    {
+                      "latitude": 40.40201024119579,
+                      "longitude": -3.6960310197479505
+                    },
+                    {
+                      "latitude": 40.40208216947893,
+                      "longitude": -3.6971059794440024
+                    },
+                    {
+                      "latitude": 40.40192617570612,
+                      "longitude": -3.6971239788477344
+                    }
+                  ],
+                  "totalDistance": 370.1213365786941
+                }
+              },
+              "bike": {
+                "old": {
+                  "type": "bikes",
+                  "id": 495
+                },
+                "new": null
+              },
+              "destinationStation": {
+                "old": {
+                  "type": "stations",
+                  "id": 125
+                },
+                "new": null
+              },
+              "id": 2
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "time": 1711,
+    "events": [
+      {
+        "name": "EventUserArrivesAtDestinationInCity",
+        "changes": {
+          "users": [
+            {
+              "state": {
+                "old": "WALK_TO_DESTINATION",
+                "new": "EXIT_AFTER_REACHING_DESTINATION"
+              },
+              "position": {
+                "old": {
+                  "latitude": 40.403221130371094,
+                  "longitude": -3.694476842880249
+                },
+                "new": {
+                  "latitude": 40.40192617570612,
+                  "longitude": -3.6971239788477344
+                }
+              },
+              "id": 2
+            }
+          ]
+        }
+      },
+      {
+        "name": "EventUserLeavesSystem",
+        "changes": {
+          "users": [
+            {
+              "state": {
+                "old": "EXIT_AFTER_REACHING_DESTINATION",
+                "new": "LEFT_SYSTEM"
+              },
+              "position": {
+                "old": {
+                  "latitude": 40.40192617570612,
+                  "longitude": -3.6971239788477344
+                },
+                "new": null
+              },
+              "route": {
+                "old": {
+                  "points": [
+                    {
+                      "latitude": 40.403221130371094,
+                      "longitude": -3.694476842880249
+                    },
+                    {
+                      "latitude": 40.40306973008322,
+                      "longitude": -3.694494887668957
+                    },
+                    {
+                      "latitude": 40.403091692993605,
+                      "longitude": -3.694812663528606
+                    },
+                    {
+                      "latitude": 40.402437159473536,
+                      "longitude": -3.694889590774989
+                    },
+                    {
+                      "latitude": 40.40240381812462,
+                      "longitude": -3.6949419311048524
+                    },
+                    {
+                      "latitude": 40.40242635613143,
+                      "longitude": -3.6953435174080025
+                    },
+                    {
+                      "latitude": 40.40236395751754,
+                      "longitude": -3.6953496641371326
+                    },
+                    {
+                      "latitude": 40.402399534040676,
+                      "longitude": -3.6959863162633697
+                    },
+                    {
+                      "latitude": 40.40201024119579,
+                      "longitude": -3.6960310197479505
+                    },
+                    {
+                      "latitude": 40.40208216947893,
+                      "longitude": -3.6971059794440024
+                    },
+                    {
+                      "latitude": 40.40192617570612,
+                      "longitude": -3.6971239788477344
+                    }
+                  ],
+                  "totalDistance": 370.1213365786941
+                },
+                "new": null
+              },
+              "id": 2
+            }
+          ]
+        }
+      }
+    ]
+  }
+]
