@@ -165,16 +165,24 @@ public class HolgerScript {
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
-        String execString ="node "+
-                  dataAnalyzerPath +"/data-analyser.js analyse -h " +
-                 historyDir +  testdir +
-                 " -s " +
-                 schemaPath +
-                 " -c " +
-                 analisisDir + testdir;
-        System.out.println( System.getenv("PATH"));
-        String path="setenv PATH " + System.getenv("PATH");
-        ProcessBuilder pb = new ProcessBuilder("node -v");
+        
+        List<String> command = new ArrayList<String>();
+        command.add("node");
+        command.add(dataAnalyzerPath +"/data-analyser.js");
+        command.add("analyse");
+        command.add("-h");
+        command.add(historyDir +  testdir);
+        command.add("-s");
+        command.add(schemaPath);
+        command.add("-c");
+        command.add(analisisDir + testdir);
+      
+        
+        for (String s: command) {
+            System.out.print(s + " ");
+        }
+        System.out.println();
+        ProcessBuilder pb = new ProcessBuilder(command);
         
         Process p = pb.start(); // Start the process.
         p.waitFor(); // Wait for the process to finish.
