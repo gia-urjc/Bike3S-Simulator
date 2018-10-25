@@ -64,4 +64,5 @@ We should create two Run Configurations, one to generate users, and the other, t
 # Common problems
 
 > I can't run the simulator
+
 Be sure of accomplish the Prerequisites and Setup section of the [Quick Start Guide](../README.md)
