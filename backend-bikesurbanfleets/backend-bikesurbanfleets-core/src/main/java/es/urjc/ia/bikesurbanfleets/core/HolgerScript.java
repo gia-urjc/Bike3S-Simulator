@@ -44,7 +44,7 @@ public class HolgerScript {
     public static void main(String[] args) throws Exception {
         HolgerScript hs = new HolgerScript();
        //treat tests
-        String testFile = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/Script/tests.json";
+        String testFile = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/paperAT2018/dia_entero_500meters_without_velocity/tests.json";
         mapPath = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/madrid.osm";
         schemaPath = "/Users/holger/workspace/BikeProjects/Bike3S/build/schema";
         dataAnalyzerPath="/Users/holger/workspace/BikeProjects/Bike3S/build/data-analyser";
@@ -101,6 +101,7 @@ public class HolgerScript {
             runSimulationTest(testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
             runResultAanalisis(testdir);
         }
+        runscriptR()
     }
 
     private boolean exists(String name, List<String> names) {
