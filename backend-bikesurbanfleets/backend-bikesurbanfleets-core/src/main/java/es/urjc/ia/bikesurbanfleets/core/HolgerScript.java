@@ -101,7 +101,7 @@ public class HolgerScript {
             runSimulationTest(testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
             runResultAanalisis(testdir);
         }
-        runscriptR()
+        //runscriptR()
     }
 
     private boolean exists(String name, List<String> names) {
