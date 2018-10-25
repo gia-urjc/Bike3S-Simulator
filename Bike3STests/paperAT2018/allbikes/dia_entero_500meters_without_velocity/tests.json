@@ -1,0 +1,61 @@
+{  "basedir" : "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/paperAT2018/dia_entero_500meters_without_velocity",
+    "tests": [
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER_SURROUNDING",
+        "parameters": {
+            "MaxDistanceSurroundingStations": 800,
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_INF",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_UNINF",
+        "parameters": {
+            
+        }
+      }
+    }
+  ]
+}

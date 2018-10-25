@@ -21,8 +21,5 @@ tempUsersConf/
 *.osm
 Bike3STests/**/hist/
 Bike3STests/**/debug/
-/Bike3STests/paperAT2018/dia_entero_150meters_without_velocity/
-/Bike3STests/paperAT2018/dia_entero_500meters_with_velocity/
-/Bike3STests/paperAT2018/dia_entero_500meters_without_velocity/
-/Bike3STests/paperAT2018/dia_entero_150meters_with_velocity/24_10_2018_18:21:21/debug/
-/Bike3STests/paperAT2018/dia_entero_150meters_with_velocity/24_10_2018_18:21:21/history/
+Bike3STests/**/history/
+/Bike3STests/paperAT2018/halfbikes_old/
