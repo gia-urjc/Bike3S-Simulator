@@ -48,9 +48,11 @@ export class StationBalancingQuality implements SystemInfo {
         for (let i = 0; i < list.length; i++) {
             stationBikes = list[i];
             summation += Math.abs(stationBikes.availableBikes - capacity/2) * (stationBikes.time/3600 - pastTime/3600);
+            let diff: number = +stationBikes.time/3600-pastTime/3600;
             pastTime = stationBikes.time;
         }
-        summation  += Math.abs(stationBikes.availableBikes - capacity/2) * (this.totalSimulationTime/3600 - pastTime/3600);  
+        summation  += Math.abs(stationBikes.availableBikes - capacity/2) * (this.totalSimulationTime/3600 - pastTime/3600);
+            let diff: number = this.totalSimulationTime/3600-pastTime/3600;
         return summation;
     }
     
