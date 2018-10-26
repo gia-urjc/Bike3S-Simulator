@@ -1,5 +1,7 @@
-# Backend Setup - IntelliJ IDEA
+# Backend Setup - IntelliJ IDEA CE
 ## Instructions
+
+First of all be sure to have every prerequisite installed. Prerequisites are defined in 
 
 ### 1. Import the project
  - Open IntelliJ IDEA. 
@@ -21,7 +23,17 @@ We should create two Run Configurations, one to generate users, and the other, t
 - Click on `Run` &rarr; `Edit Configuration`.
 - Select the button `+` &rarr; `Application` and name this Run Configuration as you want.
 - Select in Main class the `Application.java` of the `backend-bikesurbanfleets-config-usersgenerator`
-- Inside `Program arguments`, copy and paste the next arguments: [Users generator arguments](bikesurbanfleets-config-usergenerator_Args.md)
+- Inside `Program arguments`, copy and paste the next arguments: 
+
+```
+-entryPointsSchema ../build/schema/entrypoints-config.json
+-globalSchema ../build/schema/global-config.json 
+-entryPointsInput ../backend-configuration-files/example-configuration/entry-points-configuration.json
+-globalInput ../backend-configuration-files/example-configuration/global-configuration.json 
+-output ../backend-configuration-files/example-configuration/users-configuration.json
+-validator ../build/jsonschema-validator/jsonschema-validator.js
+```
+
 - Select on `Use classpath of module` the module: `bikesurbanfleets-config-usersgenerator`.
 - Click `Apply`, then click `Ok`.  
 
@@ -31,8 +43,26 @@ We should create two Run Configurations, one to generate users, and the other, t
 - Click on `Run` &rarr; `Edit Configuration`.
 - Select the button `+` &rarr; `Application`.
 - Select in Main class the `Application.java` of the `backend-bikesurbanfleets-core` and name this Run Configuration as you want.
-- Inside `Program arguments`, copy and paste the next arguments: [Core arguments](bikesurbanfleets-core_Args.md)
+- Inside `Program arguments`, copy and paste the next arguments:
+
+```
+-globalSchema ../build/schema/global-config.json
+-usersSchema ../build/schema/users-config.json
+-stationsSchema ../build/schema/stations-config.json
+-globalConfig ../backend-configuration-files/example-configuration/global-configuration.json
+-usersConfig ../backend-configuration-files/example-configuration/users-configuration.json
+-stationsConfig ../backend-configuration-files/example-configuration/stations-configuration.json
+-mapPath ../backend-configuration-files/maps/madrid.osm
+-validator ../build/jsonschema-validator/jsonschema-validator.js
+```
+
 - Select on `Use classpath of module` the module: `bikesurbanfleets-core`.
 - Click `Apply`, then click `Ok`.  
 
 ![Gif with instructions to import the project](gifs/backend_intellij_3.gif)
+
+# Common problems
+
+> I can't run the simulator
+
+Be sure of accomplish the Prerequisites and Setup section of the [Quick Start Guide](../README.md)

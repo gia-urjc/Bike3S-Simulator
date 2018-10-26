@@ -38,6 +38,7 @@ export class DataGenerator {
     private systemStations: SystemStations;
     private systemUsers: SystemUsers;
     private systemReservations: SystemReservations;
+    private totalSimulationTime: number;
     
     private info: Map<string, SystemInfo>;  // it contains all the results of the data analysis
     private globalInfo: SystemGlobalInfo; 
@@ -78,6 +79,9 @@ export class DataGenerator {
     private async init(): Promise<void> {
         try {
             this.history = await HistoryReaderController.create(this.historyPath, this.schemaPath);
+            let globalValues: any = await this.history.getGlobalValues();
+            this.totalSimulationTime = globalValues.totalTimeSimulation;
+            console.log('total time: '+this.totalSimulationTime);
         }
         catch(error) {
             throw new Error('Error reading history file: '+error);
@@ -181,14 +185,14 @@ export class DataGenerator {
         if(iterator) {
             if (this.rentalAndReturnCounter === this.RENTALS_AND_RETURNS && this.bikesPerStationCounter === this.BIKES_PER_STATION) {
                 iterator.iterate().then( () => {
-                    let emptyStations: EmptyStationInfo = new EmptyStationInfo(this.bikesPerStation);
+                    let emptyStations: EmptyStationInfo = new EmptyStationInfo(this.bikesPerStation, this.totalSimulationTime);
                     this.info.set(EmptyStationInfo.name, emptyStations);
                     emptyStations.init().then( () => {
                         this.calculationCounter++;
                         this.calculateGlobalInfo();
                     });
                                      
-                    let bikesBalance: StationBalancingQuality = new StationBalancingQuality(this.bikesPerStation);
+                    let bikesBalance: StationBalancingQuality = new StationBalancingQuality(this.bikesPerStation, this.totalSimulationTime);
                     bikesBalance.setStations(this.systemStations.getStations());
                     this.info.set(StationBalancingQuality.name, bikesBalance);
                     bikesBalance.init().then( () => {

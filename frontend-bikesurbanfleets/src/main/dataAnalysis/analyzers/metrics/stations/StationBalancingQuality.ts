@@ -25,11 +25,13 @@ export class StationBalancingQuality implements SystemInfo {
     basicData: BikesPerStationAndTime;
     data: Data;
     stations: Map<number, Station>;
+    totalSimulationTime: number;
     
-    public constructor(bikesInfo: BikesPerStationAndTime) {
+    public constructor(bikesInfo: BikesPerStationAndTime, time: number) {
         this.basicData = bikesInfo;
         this.data = new StationBalancingData();
-        this.stations = new Map(); 
+        this.stations = new Map();
+        this.totalSimulationTime =  time;
     }
     
     public setStations(stations: Array<Station>): void {
@@ -40,14 +42,17 @@ export class StationBalancingQuality implements SystemInfo {
     
     private quality(capacity: number, list: Array<BikesPerTime>): number {
         let summation: number = 0;
-        let individualValue: number = 0;
         let pastTime: number = 0;  // in hours
+        let stationBikes: BikesPerTime;
+        
         for (let i = 0; i < list.length; i++) {
-            let stationBikes: BikesPerTime = list[i];
-            individualValue = Math.abs(stationBikes.availableBikes - capacity/2) * (stationBikes.time/3600 - pastTime);
-            pastTime = stationBikes.time/3600;
-            summation += individualValue;
+            stationBikes = list[i];
+            summation += Math.abs(stationBikes.availableBikes - capacity/2) * (stationBikes.time/3600 - pastTime/3600);
+            let diff: number = +stationBikes.time/3600-pastTime/3600;
+            pastTime = stationBikes.time;
         }
+        summation  += Math.abs(stationBikes.availableBikes - capacity/2) * (this.totalSimulationTime/3600 - pastTime/3600);
+            let diff: number = this.totalSimulationTime/3600-pastTime/3600;
         return summation;
     }
     

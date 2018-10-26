@@ -5,6 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
+import es.urjc.ia.bikesurbanfleets.core.config.ConfigJsonReader;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
 import es.urjc.ia.bikesurbanfleets.history.History;
