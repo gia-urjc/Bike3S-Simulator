@@ -10,6 +10,7 @@ import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersConfig;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
 import es.urjc.ia.bikesurbanfleets.history.FinalGlobalValues;
 import es.urjc.ia.bikesurbanfleets.history.History;
@@ -62,7 +63,6 @@ public class SimulationEngine {
 
         this.eventsQueue = new PriorityQueue<>(processUsers(services));
         Reservation.VALID_TIME = globalInfo.getReservationTime();
-        Debug.DEBUG_MODE = globalInfo.isDebugMode();
 
         //needed if there's no reservations in the system
         History.reservationClass(HistoricReservation.class);
@@ -71,6 +71,8 @@ public class SimulationEngine {
     private List<EventUserAppears> processUsers(SimulationServices services) {
         List<EventUserAppears> eventUserAppearsList = new ArrayList<>();
         UserFactory userFactory = new UserFactory();
+        IdGenerator idusers=new IdGenerator();
+
         SimpleRandom simprand=new SimpleRandom(globalInfo.getRandomSeed());
         for (JsonObject userdef: usersInfo.getUsers()) {
             int seed=simprand.nextInt();
@@ -87,9 +89,6 @@ public class SimulationEngine {
     }
 
     public void run() throws Exception {
-
-        History.init(globalInfo.getHistoryOutputPath());
-        Debug.init();
 
         // Those variables are used to control de percentage of the simulation done
         int totalUsers = eventsQueue.size();
@@ -113,7 +112,7 @@ public class SimulationEngine {
                 MessageGuiFormatter.showPercentageForGui(percentage);
             }
 
-            if(Debug.DEBUG_MODE) {
+            if(Debug.isDebugmode()) {
                 System.out.println(event.toString());
             }
 
@@ -129,8 +128,6 @@ public class SimulationEngine {
                 History.writeGlobalInformation(finalGlobalValues);
             }
         }
-
-        History.close();
     }
 
 }

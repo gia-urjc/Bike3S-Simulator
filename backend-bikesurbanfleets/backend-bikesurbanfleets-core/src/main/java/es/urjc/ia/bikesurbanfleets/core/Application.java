@@ -7,6 +7,12 @@ import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
+import es.urjc.ia.bikesurbanfleets.history.History;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.log.Debug;
+import es.urjc.ia.bikesurbanfleets.users.User;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -78,17 +84,32 @@ public class Application {
         callFromFrontend = cmd.hasOption("callFromFrontend");
         
         checkParams(); // If not valid, throws exception
-        ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
 
         try {
+             //set up the global variables and singleton classes
+            Bike.resetIdGenerator();
+            Station.resetIdGenerator();
+            User.resetIdGenerator();
+            Reservation.resetIdGenerator();
+            
+            //read global configuration
+            ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
             GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
-            UsersConfig usersInfo = jsonReader.readUsersConfiguration();
-            StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
-            System.out.println("DEBUG MODE: " + globalInfo.isDebugMode());
             if(historyOutputPath != null) {
                 globalInfo.setHistoryOutputPath(historyOutputPath);
             }
 
+            //now initialize history and debug 
+            Debug.init(globalInfo.isDebugMode());
+            System.out.println("DEBUG MODE: " + Debug.isDebugmode());
+            
+            History.init(globalInfo.getHistoryOutputPath());
+
+
+            //initialize stations and users
+            UsersConfig usersInfo = jsonReader.readUsersConfiguration();
+            StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
+  
             //TODO mapPath not obligatory for other graph managers
             if(mapPath != null) {
                 SimulationEngine simulation = new SimulationEngine(globalInfo, stationsInfo, usersInfo, mapPath);
@@ -97,6 +118,9 @@ public class Application {
             else {
                 MessageGuiFormatter.showErrorsForGui("You should specify a map directory");
             }
+            Debug.close();
+            History.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
