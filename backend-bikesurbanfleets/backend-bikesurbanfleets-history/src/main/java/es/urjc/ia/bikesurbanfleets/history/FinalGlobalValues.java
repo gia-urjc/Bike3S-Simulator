@@ -1,7 +1,5 @@
 package es.urjc.ia.bikesurbanfleets.history;
 
-import com.google.gson.annotations.Expose;
-
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 
 /**
@@ -42,7 +40,5 @@ public class FinalGlobalValues {
     public void setTotalTimeSimulation(int totalTimeSimulation) {
         this.totalTimeSimulation = totalTimeSimulation;
     }
-
-
 
 }

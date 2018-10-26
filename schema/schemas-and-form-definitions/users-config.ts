@@ -30,12 +30,14 @@ export const typeParameters = {
     USER_PAPERAT2018_UNINF: {
         minRentalAttempts: UInt
     },
+    USER_PAPERAT2018_OBHOLGER: {
+        minRentalAttempts: UInt
+    },
     /*
     USER_ECONOMIC_INCENTIVE: {
         minRentalAttempts: UInt,
     },
     */
-    /*
     USER_GENERAL:{
         willReserve: sBoolean,
         minReservationAttempts: UInt,
@@ -46,7 +48,7 @@ export const typeParameters = {
         reservationTimeoutPercentage: Percentage,
         failedReservationPercentage: Percentage
     },
-    */ 
+
     /*
     USER_TOURIST: {
         touristDestination: GeoPoint,

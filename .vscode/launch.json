@@ -1,0 +1,69 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos 
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - HolgerScript",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "es.urjc.ia.bikesurbanfleets.core.HolgerScript",
+            "args": "",
+            "projectName": "bikesurbanfleets-core"
+        },
+        {
+            "type": "java",
+            "name": "ApplicationHolger",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "es.urjc.ia.bikesurbanfleets.core.ApplicationHolger",
+            "args": "",
+            "projectName": "bikesurbanfleets-core"
+        },
+        {
+            "type": "java",
+            "name": "Debug User Generator",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "es.urjc.ia.bikesurbanfleets.usersgenerator.Application",
+            "args": "-entryPointsInput ${workspaceRoot}/backend-configuration-files/example-configuration/entry-points-configuration.json -globalInput ${workspaceRoot}/backend-configuration-files/example-configuration/global-configuration.json -output ${workspaceRoot}/backend-configuration-files/example-configuration/users-configuration.json -callFromFrontend",
+            "projectName": "bikesurbanfleets-config-usersgenerator",
+            "vmArgs": "-DLogFilePath='${HOME}/.Bike3S/'"
+        },
+        {
+            "type": "java",
+            "name": "Debug Simulator core",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "es.urjc.ia.bikesurbanfleets.core.Application",
+            "args": "-globalConfig ${workspaceRoot}/backend-configuration-files/example-configuration/global-configuration.json -usersConfig ${workspaceRoot}/backend-configuration-files/example-configuration/users-configuration.json -stationsConfig ${workspaceRoot}/backend-configuration-files/example-configuration/stations-configuration.json -historyOutput ${workspaceRoot}/build/history -mapPath ${workspaceRoot}/backend-configuration-files/maps/madrid.osm -callFromFrontend",
+            "projectName": "bikesurbanfleets-core"
+        },
+        {
+            "name": "Debug Frontend Main Process",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "build_frontend",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                "./build"
+            ],
+            "program": "${workspaceRoot}/build/frontend/main.js",
+            "outFiles": [
+                "${workspaceRoot}/build/**/*.js"
+            ],
+            "sourceMaps": true
+        }
+    ]
+}

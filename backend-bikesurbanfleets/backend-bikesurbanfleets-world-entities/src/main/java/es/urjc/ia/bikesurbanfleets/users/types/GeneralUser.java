@@ -108,7 +108,7 @@ public class GeneralUser extends User {
     }
 
 
-    private Parameters parameters;
+   private Parameters parameters;
 
    public GeneralUser(JsonObject userdef, SimulationServices services, long seed) throws Exception{
         super(services, userdef, seed);
@@ -125,19 +125,57 @@ public class GeneralUser extends User {
      }
 
 
+   //parameteros reservas
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
         return parameters.willReserve ?
-                getMemory().getReservationTimeoutsCounter() >= parameters.minReservationTimeouts : rando.nextBoolean();
+                getMemory().getReservationTimeoutsCounter() >= parameters.minReservationTimeouts : false;
     }
 
 
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
         return parameters.willReserve ?
-                getMemory().getReservationAttemptsCounter() >= parameters.minReservationAttempts : rando.nextBoolean();
+                getMemory().getReservationAttemptsCounter() >= parameters.minReservationAttempts : false;
     }
 
+        @Override
+    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
+        int arrivalTime = timeToReach();
+        return parameters.willReserve && arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION;
+    }
+
+    @Override
+    public boolean decidesToReserveBikeAtNewDecidedStation() {
+       return parameters.willReserve ?
+              getMemory().getReservationTimeoutsCounter() >= parameters.minReservationTimeouts : false;
+    }
+
+    @Override
+    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
+        int arrivalTime = timeToReach();
+        return parameters.willReserve && arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION;
+    }
+
+    @Override
+    public boolean decidesToReserveSlotAtNewDecidedStation() {
+        int percentage = rando.nextInt(0, 100);
+        return parameters.willReserve && percentage < parameters.slotReservationPercentage;
+    }
+
+    @Override
+    public boolean decidesToDetermineOtherStationAfterTimeout() {
+        int percentage = rando.nextInt(0, 100);
+        return parameters.willReserve && percentage < parameters.reservationTimeoutPercentage;
+    }
+
+    @Override
+    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
+        int percentage = rando.nextInt(0, 100);
+        return parameters.willReserve && percentage < parameters.failedReservationPercentage;
+    }
+
+    // leafe system if no bike found
 
     @Override
     public boolean decidesToLeaveSystemWhenBikesUnavailable() {
@@ -166,41 +204,6 @@ public class GeneralUser extends User {
         return destination;
     }
 
-    @Override
-    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-        int arrivalTime = timeToReach();
-        return parameters.willReserve && arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION;
-    }
-
-    @Override
-    public boolean decidesToReserveBikeAtNewDecidedStation() {
-        int percentage = rando.nextInt(0, 100);
-        return parameters.willReserve && percentage < parameters.bikeReservationPercentage;
-    }
-
-    @Override
-    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        int arrivalTime = timeToReach();
-        return parameters.willReserve && arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION;
-    }
-
-    @Override
-    public boolean decidesToReserveSlotAtNewDecidedStation() {
-        int percentage = rando.nextInt(0, 100);
-        return parameters.willReserve && percentage < parameters.slotReservationPercentage;
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterTimeout() {
-        int percentage = rando.nextInt(0, 100);
-        return parameters.willReserve && percentage < parameters.reservationTimeoutPercentage;
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        int percentage = rando.nextInt(0, 100);
-        return parameters.willReserve && percentage < parameters.failedReservationPercentage;
-    }
 
     //**********************************************
     //decisions related to either go directly to the destination or going arround

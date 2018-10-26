@@ -167,8 +167,8 @@ public abstract class User implements Entity {
         }
 
         //optional parameters
-        this.walkingVelocity = rando.nextInt(3, 8) / 3.6;
-        this.cyclingVelocity = rando.nextInt(10, 21) / 3.6;
+        this.walkingVelocity = 1.12;
+        this.cyclingVelocity = 6.0;
         aux = userdef.get("walkingVelocity");
         if (aux != null) {
             walkingVelocity = aux.getAsDouble();

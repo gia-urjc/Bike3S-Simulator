@@ -3,16 +3,6 @@ import { sNumber } from "json-schema-builder-ts/dist/types";
 
 
 export const typeParameters = {
-    HOLGERRECOMENDER: {
-        MINCAP_TO_RECOMEND: UInt,
-        MAXDIFF: UInt,
-        MAXTOTALDIST: UInt
-    },
-    HOLGERRECOMENDER_RANDOM: {
-        MINCAP_TO_RECOMEND: UInt,
-        MAXDIFF: UInt,
-        MAXTOTALDIST: UInt
-    },
     AVAILABLE_RESOURCES: {
         maxDistanceRecommendation: UInt
     },
@@ -38,5 +28,22 @@ export const typeParameters = {
         maxDistanceRecommendation: UInt,
         COMPENSATION: sNumber(),
         EXTRA: sNumber()
+    },
+    HOLGER_DistanceProbabilityRECOMENDER: {
+        MAXDIFF : sNumber(),
+        MAXTOTALDIST: sNumber()
+    },
+    HOLGERRECOMENDER: {
+        MAXDIFF: sNumber(),
+        MAXTOTALDIST: sNumber()
+    },
+    HOLGERRECOMENDER_RANDOM: {
+        MAXDIFF: sNumber(),
+        MAXTOTALDIST: sNumber()
+    },
+    HOLGERRECOMENDER_SURROUNDING: {
+        MAXDIFF: sNumber(),
+        MAXTOTALDIST: sNumber(),
+        MaxDistanceSurroundingStations: sNumber()
     }
 };
