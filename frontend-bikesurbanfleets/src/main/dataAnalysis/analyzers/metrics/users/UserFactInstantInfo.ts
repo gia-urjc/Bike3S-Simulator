@@ -25,7 +25,7 @@ export class UserFactInstantInfo implements Observer {
         this.instantsPerUser = new Map();
     }
     
-    public async init(users: Array<User>): Promise<void> {
+    public init(users: Array<User>): void {
         for (let user of users) {
             this.instantsPerUser.set(user.id, new UserInstant('', 0, 0, 0, 0));
         }

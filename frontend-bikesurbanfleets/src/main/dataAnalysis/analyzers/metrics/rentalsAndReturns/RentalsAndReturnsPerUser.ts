@@ -11,7 +11,7 @@ export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
     public static async create(users: Array<User>) {
         let rentalsAndReturnsValues = new RentalsAndReturnsPerUser(users);
         try {
-            await rentalsAndReturnsValues.init();
+            rentalsAndReturnsValues.init();
         }
         catch(error) {
             throw new Error('Error creating requested data: '+error);
@@ -24,9 +24,9 @@ export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
         this.data = new RentalAndReturnData();
     }
   
-    public async init(): Promise<void> {
+    public init(): void {
         try {
-            await this.data.initData(this.basicData);
+            this.data.initData(this.basicData);
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);

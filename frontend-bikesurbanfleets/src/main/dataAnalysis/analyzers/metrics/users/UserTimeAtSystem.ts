@@ -1,8 +1,5 @@
-import { User } from '../../../systemDataTypes/Entities';
-import { TimeEntry, Event } from '../../../systemDataTypes/SystemInternalData';
 import { AbsoluteValue } from '../../AbsoluteValue';
 import { Data } from '../../Data';
-import { Observer } from '../../ObserverPattern';
 import { SystemInfo } from '../../SystemInfo';
 import { UserFactInstantInfo } from './UserFactInstantInfo';
 
@@ -52,7 +49,7 @@ export class UserTimeAtSystem implements SystemInfo {
         this.data = new UserTimeData();
     }
     
-    public async init(): Promise<void> {
+    public init(): void {
         let firstTime: number;
         let secondTime: any;
         let thirdTime: any;
