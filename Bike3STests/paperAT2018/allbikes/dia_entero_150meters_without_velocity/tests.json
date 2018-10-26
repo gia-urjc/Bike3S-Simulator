@@ -1,5 +1,4 @@
-{  "basedir" : "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/paperAT2018/dia_entero_150meters_without_velocity",
-    "tests": [
+{  "tests": [
     { "recommendationSystemType": {
         "typeName": "HOLGERRECOMENDER_SURROUNDING",
         "parameters": {

@@ -28,8 +28,6 @@ import java.util.List;
 public class HolgerScript {
 
     private class Tests {
-
-        String basedir;
         private List<JsonObject> tests;
     }
 
@@ -46,12 +44,16 @@ public class HolgerScript {
 
     public static void main(String[] args) throws Exception {
         HolgerScript hs = new HolgerScript();
-       //treat tests
-        String testFile = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/paperAT2018/allbikes/dia_entero_150meters_with_velocity/tests.json";
-        mapPath = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/madrid.osm";
-        schemaPath = "/Users/holger/workspace/BikeProjects/Bike3S/build/schema";
-        dataAnalyzerPath="/Users/holger/workspace/BikeProjects/Bike3S/build/data-analyser";
-        analysisScriptPath="/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/analysis_scripts/";
+        //treat tests
+        String projectDir="/Users/holger/workspace/BikeProjects/Bike3S/";
+        
+        baseDir=projectDir+"Bike3STests/paperAT2018/allbikes/dia_entero_150meters_without_velocity";
+        
+        String testFile = baseDir+"/tests.json";
+        mapPath = projectDir+"Bike3STests/madrid.osm";
+        schemaPath = projectDir+"build/schema";
+        dataAnalyzerPath=projectDir+"build/data-analyser";
+        analysisScriptPath=projectDir+"Bike3STests/analysis_scripts/";
         hs.executeTests(testFile);
     }
 
@@ -65,7 +67,6 @@ public class HolgerScript {
         Gson gson = new Gson();
         FileReader reader = new FileReader(testFile);
         Tests tests = gson.fromJson(reader, Tests.class);
-        baseDir=tests.basedir;
         //create new dir on basedir
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH:mm:ss");
         Date date = new Date();
