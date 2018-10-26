@@ -79,23 +79,22 @@ export class EmptyStationInfo implements SystemInfo {
         let endTime = -1;
         let bikesPerTime: BikesPerTime;
         let list: Array<BikesPerTime> = stationInfo.getList();
-        console.log('hello');
-        
-        if (list.length === 0)
-            console.log('no data registered for this station');
-         
+               
         for (let i = 0; i < list.length; i++) {
             bikesPerTime = list[i];
             if (startTime === -1) {
                 if (bikesPerTime.availableBikes === 0) {
                     startTime = bikesPerTime.time;
-                    console.log('starting interval');
                 }
             }
             else {
                 if (bikesPerTime.availableBikes !== 0) {
-                    endTime = bikesPerTime.time;
-                    console.log('ending interval');
+                    if (bikesPerTime.time <= this.totalSimulationTime) {
+                        endTime = bikesPerTime.time;
+                    }
+                    else {
+                        endTime = this.totalSimulationTime;
+                    }
                     interval = new TimeInterval(startTime, endTime);
                     intervals.push(interval);
                     time += interval.end - interval.start;
@@ -103,16 +102,12 @@ export class EmptyStationInfo implements SystemInfo {
                     endTime = -1;
                 }
             }
-            console.log('interval: '+interval.toString());
-            console.log('time: '+time);
         }
         if (startTime !== -1) {
             endTime = this.totalSimulationTime;
             interval = new TimeInterval(startTime, endTime);
             intervals.push(interval);
             time += interval.end - interval.start;
-            console.log('interval: '+interval.toString());
-            console.log('time: '+time);
         }
         return new EmptyStateAbsoluteValue(intervals, time);
     }
