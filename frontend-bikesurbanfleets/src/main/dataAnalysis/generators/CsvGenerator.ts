@@ -194,8 +194,8 @@ export class CsvGenerator {
             emptyStations.getData().absoluteValues.forEach( (v, k) => {
                 let jsonObj: JsonObject = {};
                 jsonObj.id = k;
-                jsonObj[this.emptyStationTitles[0]] = v.intervalsToString();
-                jsonObj[this.emptyStationTitles[1]] = v.totalTime;
+                jsonObj[this.emptyStationTitles[1]] = v.intervalsToString();
+                jsonObj[this.emptyStationTitles[2]] = v.totalTime;
                 this.emptyStationData.push(jsonObj);
             });
         }

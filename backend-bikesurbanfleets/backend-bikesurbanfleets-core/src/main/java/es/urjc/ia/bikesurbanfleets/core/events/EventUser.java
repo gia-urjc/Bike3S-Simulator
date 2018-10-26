@@ -170,7 +170,7 @@ public abstract class EventUser implements Event {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.getDestinationStation();
         
-        if(Debug.DEBUG_MODE) {
+        if(Debug.isDebugmode()) {
             System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
         }
         if (user.decidesToReserveBikeAtSameStationAfterTimeout()) {
@@ -197,7 +197,7 @@ public abstract class EventUser implements Event {
 
         if (destination != null) {
 
-            if(Debug.DEBUG_MODE) {
+            if(Debug.isDebugmode()) {
                 System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
             }
             if (user.decidesToReserveBikeAtNewDecidedStation()) {
@@ -255,7 +255,7 @@ public abstract class EventUser implements Event {
     protected List<Event> manageSlotReservationDecisionAtSameStationAfterTimeout() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.getDestinationStation();
-        if(Debug.DEBUG_MODE) {
+        if(Debug.isDebugmode()) {
             System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
         }
         if (user.decidesToReserveSlotAtSameStationAfterTimeout()) {
@@ -273,7 +273,7 @@ public abstract class EventUser implements Event {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.determineStationToReturnBike();
         
-        if(Debug.DEBUG_MODE) {
+        if(Debug.isDebugmode()) {
             System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
         }
 

@@ -29,6 +29,7 @@ export class DataGenerator {
     private systemStations: SystemStations;
     private systemUsers: SystemUsers;
     private systemReservations: SystemReservations;
+    private totalSimulationTime: number;
     
     private info: Map<string, SystemInfo>;  // it contains all the results of the data analysis
     private globalInfo: SystemGlobalInfo; 
@@ -65,6 +66,9 @@ export class DataGenerator {
     private init(): void {
         try {
             this.history = HistoryReader.create(this.historyPath, this.schemaPath);
+            let globalValues: any = this.history.getGlobalValues();
+            this.totalSimulationTime = globalValues.totalTimeSimulation;
+            console.log('total time: '+this.totalSimulationTime);
         }
         catch(error) {
             throw new Error('Error reading history file: '+error);
@@ -74,12 +78,10 @@ export class DataGenerator {
 
     private initReservations(reservations: SystemInfo): void {
         reservations.init();
-        return;
     }
 
     private initRentalsAndReturns(rentalsAndReturns: SystemInfo): void {
         rentalsAndReturns.init();
-        return;
     }
 
     public generate(): void {
@@ -116,10 +118,10 @@ export class DataGenerator {
         this.info.set(ReservationsPerUser.name, reservationsPerUser);
         this.initReservations(reservationsPerUser);
 
-        let rentalsAndReturns: RentalsAndReturnsPerUser = new RentalsAndReturnsPerUser(this.systemUsers.getUsers()); 
-        timeEntryIterator.subscribe(rentalsAndReturns);
-        this.info.set(RentalsAndReturnsPerUser.name, rentalsAndReturns);  
-        this.initRentalsAndReturns(rentalsAndReturns);
+        let rentalsAndReturnsPerUser: RentalsAndReturnsPerUser = new RentalsAndReturnsPerUser(this.systemUsers.getUsers()); 
+        timeEntryIterator.subscribe(rentalsAndReturnsPerUser);
+        this.info.set(RentalsAndReturnsPerUser.name, rentalsAndReturnsPerUser);  
+        this.initRentalsAndReturns(rentalsAndReturnsPerUser);
         
         timeEntryIterator.subscribe(this.userInstants);
         this.userInstants.init(this.systemUsers.getUsers());
@@ -127,8 +129,6 @@ export class DataGenerator {
         this.calculateReservations();
         this.calculateRentalsAndReturns();
         this.calculateGlobalInfo();
-
-        return; 
     }
 
     private calculateReservations(): void {
@@ -147,11 +147,11 @@ export class DataGenerator {
         let iterator: Iterator | undefined = this.iterators.get(TimeEntryIterator.name);
         if(iterator) {
             iterator.iterate();
-            let emptyStations: EmptyStationInfo = new EmptyStationInfo(this.bikesPerStation);
+            let emptyStations: EmptyStationInfo = new EmptyStationInfo(this.bikesPerStation, this.totalSimulationTime);
             this.info.set(EmptyStationInfo.name, emptyStations);
             emptyStations.init();
                                 
-            let bikesBalance: StationBalancingQuality = new StationBalancingQuality(this.bikesPerStation);
+            let bikesBalance: StationBalancingQuality = new StationBalancingQuality(this.bikesPerStation, this.totalSimulationTime);
             bikesBalance.setStations(this.systemStations.getStations());
             this.info.set(StationBalancingQuality.name, bikesBalance);
             bikesBalance.init();
@@ -188,7 +188,7 @@ export class DataGenerator {
                 generator.generate(this.info, this.globalInfo, this.bikesPerStation, this.systemStations.getStations(), this.systemUsers.getUsers());
             }
             catch(error) {
-              throw new Error('Error generating csv file: '+error);
+                throw new Error('Error generating csv file: '+error);
             }
         }
         return;

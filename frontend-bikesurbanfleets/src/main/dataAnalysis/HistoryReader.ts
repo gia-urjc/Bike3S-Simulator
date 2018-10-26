@@ -136,4 +136,9 @@ export class HistoryReader {
             end: range[1]
         };
     }
+
+    getGlobalValues(): any {
+        const values = fs.readJsonSync(paths.join(this.historyPath, 'final-global-values.json'));
+        return values;
+    }
 }

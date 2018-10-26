@@ -1,7 +1,8 @@
+import { HistoryReaderController } from '../../../../controllers/HistoryReaderController';
 import { AbsoluteValue } from "../../AbsoluteValue";
 import { Data } from "../../Data";
 import { SystemInfo } from "../../SystemInfo";
-import { BikesPerStationAndTime, StationBikesPerTimeList } from './BikesPerStationAndTime';
+import { BikesPerStationAndTime, StationBikesPerTimeList, BikesPerTime } from './BikesPerStationAndTime';
 
 export class TimeInterval {
     start: number;
@@ -13,7 +14,7 @@ export class TimeInterval {
     }
     
     public toString(): string {
-        return "("+this.start+", "+this.end+")";
+        return this.start+"-"+this.end+" ";
     }
 }
  
@@ -47,20 +48,23 @@ export class EmptyStateData implements Data {
 export class EmptyStationInfo implements SystemInfo {
     basicData: BikesPerStationAndTime;
     data: Data;
+    totalSimulationTime: number;
 
-    public static create(stationsInfo: BikesPerStationAndTime): EmptyStationInfo {
-        let emptyStations: EmptyStationInfo = new EmptyStationInfo(stationsInfo);
+    public static create(stationsInfo: BikesPerStationAndTime, time: number): EmptyStationInfo {
+        let emptyStations: EmptyStationInfo = new EmptyStationInfo(stationsInfo, time);
         emptyStations.init();
         return emptyStations;
     }
    
-    public constructor(stationsInfo: BikesPerStationAndTime) {
+    public constructor(stationsInfo: BikesPerStationAndTime, time: number) {
         this.basicData = stationsInfo;
-        this.data = new EmptyStateData(); 
+        this.data = new EmptyStateData();
+        this.totalSimulationTime = time; 
     }
        
      public init(): void {
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
+            console.log('station: '+stationId);
             let emptyState: EmptyStateAbsoluteValue = this.createEmptyStateFor(stationInfo);
             this.data.absoluteValues.set(stationId, emptyState);
         });
@@ -70,27 +74,41 @@ export class EmptyStationInfo implements SystemInfo {
     private createEmptyStateFor(stationInfo: StationBikesPerTimeList): EmptyStateAbsoluteValue {
         let intervals: Array<TimeInterval> = new Array();
         let time = 0;
+        let interval: TimeInterval;
         let startTime = -1;
         let endTime = -1;
-         
-        stationInfo.getList().forEach ( (bikesPerTime) => {
+        let bikesPerTime: BikesPerTime;
+        let list: Array<BikesPerTime> = stationInfo.getList();
+               
+        for (let i = 0; i < list.length; i++) {
+            bikesPerTime = list[i];
             if (startTime === -1) {
                 if (bikesPerTime.availableBikes === 0) {
                     startTime = bikesPerTime.time;
                 }
             }
             else {
-                // TODO: add 1 instant to time if it is the last stationInfo data
                 if (bikesPerTime.availableBikes !== 0) {
-                    endTime = bikesPerTime.time;
-                    let interval: TimeInterval = new TimeInterval(startTime, endTime);
+                    if (bikesPerTime.time <= this.totalSimulationTime) {
+                        endTime = bikesPerTime.time;
+                    }
+                    else {
+                        endTime = this.totalSimulationTime;
+                    }
+                    interval = new TimeInterval(startTime, endTime);
                     intervals.push(interval);
                     time += interval.end - interval.start;
                     startTime = -1;
                     endTime = -1;
                 }
             }
-        });
+        }
+        if (startTime !== -1) {
+            endTime = this.totalSimulationTime;
+            interval = new TimeInterval(startTime, endTime);
+            intervals.push(interval);
+            time += interval.end - interval.start;
+        }
         return new EmptyStateAbsoluteValue(intervals, time);
     }
     

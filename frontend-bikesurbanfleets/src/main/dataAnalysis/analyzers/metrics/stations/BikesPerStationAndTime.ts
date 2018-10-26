@@ -169,14 +169,13 @@ export class BikesPerStationAndTime implements Observer {
     return counter;
   }
   
-  // TODO: should it return undefined if id doesn't exist?
-  private getReservation(id: number): Reservation | undefined {
+   private getReservation(id: number): Reservation | undefined {
     for(let reservation of this.reservations) {
       if (reservation.id === id) {
         return reservation;
       }
     }
-      return undefined;
+    return undefined;
   }
     
     public getStations(): Map<number, StationBikesPerTimeList> {

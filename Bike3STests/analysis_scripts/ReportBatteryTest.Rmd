@@ -1,0 +1,100 @@
+---
+title: "ReportBatteryTests"
+output: html_document
+params:
+  path: ./analisis 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(htmlTable)
+library(knitr)
+library(kableExtra)
+
+options(table_counter = TRUE)
+```
+
+
+## Comparativa de las medias para el time.to.origin.station
+```{r listFiles, echo=FALSE}
+listcsv <- list.files(path = params$path,
+           pattern = "users.csv", #an optional regular expression. Only file names which match the regular expression will be returned.
+              #pattern = "*.csv" # creates the list of all the csv files in the directory
+           all.files = FALSE, # If FALSE, only the names of visible files are returned. If TRUE, all file names will be returned.
+           full.names = TRUE, #If TRUE, muestra toda la ruta. Si no muestra sólo el nombre de la carpeta
+           recursive = TRUE,#Should subdirectory names be included in recursive listings?
+           ignore.case = FALSE, 
+           include.dirs = FALSE, 
+           no.. = FALSE)
+
+# Creo los dataFrames necesarios:
+tablaTimeToStation<-c("","")
+tablaCyclingTime<-c("","")
+tablatimeToDestinationPlace<-c("","")
+
+for (k in 1:length(listcsv)){
+ 
+  # Leo fichero
+  users  <- read.csv(listcsv[k],
+                   header = TRUE,
+                   sep = ";"
+                   )
+
+  # Elimino las filas que tienen la celda en blanco
+  timeToStation <- users$time.to.origin.station[!is.na(users$time.to.origin.station)]
+  cyclingTime <- users$cycling.time[!is.na(users$cycling.time)]
+  timeToDestinationPlace <- users$time.to.destination.place[!is.na(users$time.to.destination.place)]
+  
+  
+  #Creo una columna por cada iteración
+  cadenaAux  <- sapply(listcsv[k],function(x) {x <- gsub("./analisis/","",x)}) #Elimino la cadena..
+  cadenaAux  <- sapply(cadenaAux,function(x) {x <- gsub("/users.csv","",x)}) #Elimino la cadena..
+  
+  timeToStationAux <- c(cadenaAux, mean (timeToStation))
+  cyclingTimeAux <- c(cadenaAux, mean (cyclingTime))
+  timeToDestinationPlaceAux <- c(cadenaAux , mean (timeToDestinationPlace))
+  
+  #Añado a la tabla las columnas
+  (tablaTimeToStation<-cbind(tablaTimeToStation,timeToStationAux))
+  (tablaCyclingTime<-cbind(tablaCyclingTime,cyclingTimeAux))
+  (tablatimeToDestinationPlace<-cbind(tablatimeToDestinationPlace,timeToDestinationPlaceAux))
+}
+
+
+tablaTimeToStation <-  t(tablaTimeToStation) # Hago una transposición de la tabla para que se muestre mejor en la tabla de la interfaz
+
+
+htmlTable(tablaTimeToStation,
+          align = "c",
+          caption = "Medias de time.to.origin.station",
+            rnames = c(rep(paste("",""),nrow(tablaTimeToStation))),
+           col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+)
+
+```
+<br>
+
+## Comparativa de las medias para el cycling.time
+```{r listFiles.cycling.time, echo=FALSE}
+tablaCyclingTime <-  t(tablaCyclingTime) # Hago una transposición de la tabla para que se muestre mejor en la tabla de la interfaz
+htmlTable(tablaCyclingTime,
+          align = "c",
+          caption = "Medias de cycling.time",
+            rnames = c(rep(paste("",""),nrow(tablaCyclingTime))),
+           col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+)
+
+```
+<br>
+
+## Comparativa de las medias para el time.to.destination.place
+```{r listFiles.time.to.destination.place, echo=FALSE}
+tablatimeToDestinationPlace <-  t(tablatimeToDestinationPlace) # Hago una transposición de la tabla para que se muestre mejor en la tabla de la interfaz
+htmlTable(tablatimeToDestinationPlace,
+          align = "c",
+          caption = "Medias de time.to.destination.place",
+            rnames = c(rep(paste("",""),nrow(tablatimeToDestinationPlace))),
+           col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+)
+
+```
