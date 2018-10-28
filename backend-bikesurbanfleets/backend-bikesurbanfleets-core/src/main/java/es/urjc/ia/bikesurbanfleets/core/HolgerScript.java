@@ -47,7 +47,7 @@ public class HolgerScript {
         //treat tests
         String projectDir="/Users/holger/workspace/BikeProjects/Bike3S/";
         
-        baseDir=projectDir+"Bike3STests/paperAT2018/allbikes/dia_entero_150meters_without_velocity";
+        baseDir=projectDir+"Bike3STests/paperAT2018/allbikes/test";
         
         String testFile = baseDir+"/tests.json";
         mapPath = projectDir+"Bike3STests/madrid.osm";
@@ -106,7 +106,7 @@ public class HolgerScript {
             runSimulationTest(testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
             runResultAanalisis(testdir);
         }
-        runscriptR();
+  //      runscriptR();
     }
 
     private boolean exists(String name, List<String> names) {
@@ -198,7 +198,8 @@ public class HolgerScript {
         command.add(analisisDir + testdir);
       
         
-        System.out.println();
+        System.out.println("executing: node " + dataAnalyzerPath +"/data-analyser.js analyse -h " + historyDir +  testdir
+        + " -s " + schemaPath + " -c " + analisisDir + testdir);
         ProcessBuilder pb = new ProcessBuilder(command);
         
         Process p = pb.start(); // Start the process.
