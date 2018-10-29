@@ -2,7 +2,7 @@ import { Station } from '../../../systemDataTypes/Entities';
 import { AbsoluteValue } from '../../AbsoluteValue';
 import { Data } from '../../Data';
 import { SystemInfo } from '../../SystemInfo';
-import { BikesPerTime, BikesPerStationAndTime, StationBikesPerTimeList } from './BikesPerStationAndTime';
+import { BikesPerTime, BikesPerStationAndTime } from './BikesPerStationAndTime';
 
 export class StationBalanceAbsoluteValue implements AbsoluteValue {
     quality: number;
@@ -50,11 +50,12 @@ export class StationBalanceQuality implements SystemInfo {
             summation += Math.abs(stationBikes.availableBikes - capacity/2) * (stationBikes.time - pastTime);
             pastTime = stationBikes.time;
         }
+        // @ts-ignore
         summation += Math.abs(stationBikes.availableBikes - capacity/2) * (this.totalSimulationTime - pastTime);
         return summation/this.totalSimulationTime;
     }
     
-    public async init(): Promise<void> {
+    public init(): void {
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
             let station: Station | undefined = this.stations.get(stationId);
             if (station) {

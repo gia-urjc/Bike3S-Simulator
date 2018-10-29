@@ -40,13 +40,17 @@ import java.util.List;
 @HistoryReference(HistoricUser.class)
 public abstract class User implements Entity {
 
+    public static IdGenerator idgenerator;
+    
+    public static void resetIdGenerator(){
+        idgenerator=new IdGenerator();
+    }
+
     public enum STATE {
         APPEARED, WALK_TO_STATION, WITH_BIKE, WALK_TO_DESTINATION, EXIT_AFTER_TIMEOUT,
         EXIT_AFTER_FAILED_RESERVATION,EXIT_AFTER_FAILED_RENTAL, EXIT_AFTER_REACHING_DESTINATION, LEFT_SYSTEM 
     }
     
-    private static IdGenerator idGenerator = new IdGenerator();
-
     private int id;
     private STATE state;
 
@@ -181,7 +185,7 @@ public abstract class User implements Entity {
 
     public User(SimulationServices services, JsonObject userdef, long seed) {
 
-        this.id = idGenerator.next();
+        this.id = idgenerator.next();
         this.rando = new SimpleRandom(seed);
 
         this.bike = null;

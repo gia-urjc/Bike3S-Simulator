@@ -15,13 +15,18 @@ import es.urjc.ia.bikesurbanfleets.history.HistoryReference;
 @HistoryReference(HistoricBike.class)
 public class Bike implements Entity {
 
-    private static IdGenerator idGenerator = new IdGenerator();
+    public static IdGenerator idgenerator;
+    
+    public static void resetIdGenerator(){
+        idgenerator=new IdGenerator();
+    }
+    
 
     private int id;
     private boolean reserved;
 
     public Bike() {
-        this.id  = idGenerator.next();
+        this.id  = idgenerator.next();
         this.reserved = false;
         History.registerEntity(this);
     }

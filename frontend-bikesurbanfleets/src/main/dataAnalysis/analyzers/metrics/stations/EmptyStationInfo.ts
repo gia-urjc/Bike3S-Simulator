@@ -62,7 +62,7 @@ export class EmptyStationInfo implements SystemInfo {
         this.totalSimulationTime = time; 
     }
        
-     public async init(): Promise<void> {
+     public init(): void {
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
             console.log('station: '+stationId);
             let emptyState: EmptyStateAbsoluteValue = this.createEmptyStateFor(stationInfo);

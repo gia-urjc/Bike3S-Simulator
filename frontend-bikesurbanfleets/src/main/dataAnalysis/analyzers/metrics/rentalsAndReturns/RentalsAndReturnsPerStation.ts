@@ -12,7 +12,7 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
     public static async create(stations: Array<Station>) {
         let stationValues = new RentalsAndReturnsPerStation(stations);
         try {
-            await stationValues.init();
+            stationValues.init();
         }
         catch(error) {
             throw new Error('Error creating requested data: '+error);
@@ -28,7 +28,7 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
 
     public async init() {
         try {
-           await this.data.initData(this.basicData);
+            this.data.initData(this.basicData);
         }
         catch(error) {
             throw new Error('Error initializing data: '+error);

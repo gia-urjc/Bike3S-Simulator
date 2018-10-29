@@ -1,14 +1,14 @@
 
 import { HistoryEntitiesJson } from '../../../shared/history';
-import { HistoryReaderController } from "../../controllers/HistoryReaderController";
 import { Reservation } from "../systemDataTypes/Entities";
+import { HistoryReader } from '../HistoryReader';
 
 export class SystemReservations {
     private reservations: Array<Reservation>;
     
-    public async init(history: HistoryReaderController): Promise<void> {
+    public init(history: HistoryReader): void {
         try {
-            let reservationEntities: HistoryEntitiesJson = await history.getEntities('reservations');
+            let reservationEntities: HistoryEntitiesJson = history.getEntities('reservations');
             this.reservations = <Reservation[]> reservationEntities.instances;
         }
         catch(error) {
@@ -17,7 +17,7 @@ export class SystemReservations {
     }
 
     public getReservations(): Array<Reservation> {
-        return this.reservations; 
+        return this.reservations;
     }
     
 }

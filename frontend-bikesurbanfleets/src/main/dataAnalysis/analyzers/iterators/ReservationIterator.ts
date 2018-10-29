@@ -1,5 +1,5 @@
 import { Reservation } from '../../systemDataTypes/Entities';
-import { Observer, Observable } from '../ObserverPattern';
+import { Observer } from '../ObserverPattern';
 import { Iterator } from "./Iterator";
 
 export class ReservationIterator implements Iterator {
@@ -14,7 +14,7 @@ export class ReservationIterator implements Iterator {
         this.reservations = reservations;
     }
     
-    public async iterate(): Promise<void> {
+    public iterate(): void {
         for (let reservation of this.reservations) {
             this.notify(reservation);
         }

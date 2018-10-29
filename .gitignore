@@ -11,6 +11,7 @@ node_modules/
 /build/
 /.fusebox/
 /.schema/
+.vscode/settings.json
 /libs/
 /csvFiles/
 tempHistory/
