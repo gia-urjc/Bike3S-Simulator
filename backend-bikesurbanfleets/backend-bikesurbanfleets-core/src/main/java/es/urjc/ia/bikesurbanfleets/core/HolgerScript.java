@@ -50,7 +50,11 @@ public class HolgerScript {
 
         baseDir = projectDir + "Bike3STests/paperAT2018/allbikes/dia_entero_150meters_with_velocity";
 
-         String testFile = baseDir + "/tests.json";
+   //     analisisDir=baseDir+"/29_10_2018_16_26_09/analisis/";
+   //     new ResultsComparator(analisisDir, analisisDir + "compareResults.csv", totalsimulationtime).compareTestResults();
+      
+        
+        String testFile = baseDir + "/tests.json";
         mapPath = projectDir + "Bike3STests/madrid.osm";
         schemaPath = projectDir + "build/schema";
         dataAnalyzerPath = projectDir + "build/data-analyser";

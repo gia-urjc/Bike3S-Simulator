@@ -164,7 +164,7 @@ public class ResultsComparator {
         //now write the test results
         for (String t : testresults.keySet()) {
             TestResult res = testresults.get(t);
-            for (int k = 0; k < 6; k++) {
+            for (int k = 0; k < 5; k++) {
                 record[k] = "";
             }
             record[0] = t;
@@ -267,7 +267,7 @@ public class ResultsComparator {
     }
 
     private void analyzeStationBalancing(String test, StationData dat) throws IOException {
-        List<String[]> data = readAllDataAtOnce(analysisdir + test + "/stationBalancingQuality.csv");
+        List<String[]> data = readAllDataAtOnce(analysisdir + test + "/stationBalanceQuality.csv");
         int totalstations = 0;
         for (String[] line : data) {
             totalstations++;
