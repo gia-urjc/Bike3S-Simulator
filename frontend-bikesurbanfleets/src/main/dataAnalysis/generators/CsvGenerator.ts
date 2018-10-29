@@ -3,7 +3,7 @@ import { Station, User, Entity } from "../systemDataTypes/Entities";
 import { SystemGlobalInfo } from "../analyzers/metrics/SystemGlobalInfo";
 import { AbsoluteValue } from "../analyzers/AbsoluteValue";
 import { SystemInfo } from "../analyzers/SystemInfo";
-import { StationBalancingQuality, StationBalancingData } from '../analyzers/metrics/stations/StationBalancingQuality';
+import { StationBalanceQuality, StationBalancingData } from '../analyzers/metrics/stations/StationBalanceQuality';
 import { BikesPerTime, BikesPerStationAndTime } from '../analyzers/metrics/stations/BikesPerStationAndTime';
 import { RentalAndReturnAbsoluteValue } from "../analyzers/metrics/rentalsAndReturns/RentalAndReturnAbsoluteValue";
 import { RentalAndReturnData } from "../analyzers/metrics/rentalsAndReturns/RentalAndReturnData";
@@ -205,7 +205,7 @@ export class CsvGenerator {
     private async initBikesBalancingInfo(info: Map<string, SystemInfo>): Promise<void> {
         this.bikesBalanceTitles[0] = 'id';
         this.bikesBalanceTitles[1] = StationBalancingData.NAMES;
-        let bikesBalance: SystemInfo | undefined = info.get(StationBalancingQuality.name); 
+        let bikesBalance: SystemInfo | undefined = info.get(StationBalanceQuality.name); 
         if (bikesBalance) {
             bikesBalance.getData().absoluteValues.forEach( (value, stationId) => {
                 let obj: JsonObject = {};
