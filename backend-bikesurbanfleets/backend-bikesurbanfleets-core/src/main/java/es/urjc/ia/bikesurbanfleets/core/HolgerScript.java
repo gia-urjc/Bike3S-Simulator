@@ -28,6 +28,7 @@ import java.util.List;
 public class HolgerScript {
 
     private class Tests {
+
         private List<JsonObject> tests;
     }
 
@@ -40,24 +41,23 @@ public class HolgerScript {
     private static String mapPath;
     private static String schemaPath;
     private static String dataAnalyzerPath;
-    private static String analysisScriptPath;
+     private static int totalsimulationtime;
 
     public static void main(String[] args) throws Exception {
         HolgerScript hs = new HolgerScript();
         //treat tests
-        String projectDir="/Users/holger/workspace/BikeProjects/Bike3S/";
-        
-        baseDir=projectDir+"Bike3STests/paperAT2018/allbikes/test";
-        
-        String testFile = baseDir+"/tests.json";
-        mapPath = projectDir+"Bike3STests/madrid.osm";
-        schemaPath = projectDir+"build/schema";
-        dataAnalyzerPath=projectDir+"build/data-analyser";
-        analysisScriptPath=projectDir+"Bike3STests/analysis_scripts/";
+        String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/";
+
+        baseDir = projectDir + "Bike3STests/paperAT2018/halfbikes/dia_entero_150meters_with_velocity";
+
+         String testFile = baseDir + "/tests.json";
+        mapPath = projectDir + "Bike3STests/madrid.osm";
+        schemaPath = projectDir + "build/schema";
+        dataAnalyzerPath = projectDir + "build/data-analyser";
         hs.executeTests(testFile);
     }
 
-    private void executeTests( String testFile) throws FileNotFoundException, IOException, InterruptedException {
+    private void executeTests(String testFile) throws FileNotFoundException, IOException, InterruptedException {
         //Create auxiliary folders
         File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
         if (!auxiliaryDir.exists()) {
@@ -68,9 +68,9 @@ public class HolgerScript {
         FileReader reader = new FileReader(testFile);
         Tests tests = gson.fromJson(reader, Tests.class);
         //create new dir on basedir
-        DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
         Date date = new Date();
-        baseTestsDir = baseDir + "/"+ dateFormat.format(date);
+        baseTestsDir = baseDir + "/" + dateFormat.format(date);
         auxiliaryDir = new File(baseTestsDir);
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
@@ -91,6 +91,13 @@ public class HolgerScript {
             auxiliaryDir.mkdirs();
         }
 
+        String globalConfig = baseDir + "/conf/global_configuration.json";
+        String usersConfig = baseDir + "/conf/users_configuration.json";
+        String stationsConfig = baseDir + "/conf/stations_configuration.json";
+        ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
+        GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
+        totalsimulationtime=globalInfo.getTotalSimulationTime();
+
         //now loop through the tests
         ArrayList<String> testnames = new ArrayList<String>();
         for (JsonObject t : tests.tests) {
@@ -103,34 +110,34 @@ public class HolgerScript {
             }
             testdir = testdir + i;
             testnames.add(testdir);
-            runSimulationTest(testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
+            runSimulationTest(globalInfo, jsonReader, testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
             runResultAanalisis(testdir);
         }
-  //      runscriptR();
+        new ResultsComparator(analisisDir, analisisDir + "compareResults.csv", totalsimulationtime).compareTestResults();
     }
 
     private boolean exists(String name, List<String> names) {
-        for (String s:names) {
-            if (s.equals(name)) 
+        for (String s : names) {
+            if (s.equals(name)) {
                 return true;
+            }
         }
         return false;
     }
-    private void runSimulationTest(String testdir, JsonObject usertype, JsonObject recomendertype) {
+
+    private void runSimulationTest(GlobalInfo globalInfo, ConfigJsonReader jsonReader, String testdir, JsonObject usertype, JsonObject recomendertype) {
         //Create auxiliary folders
-        GlobalInfo.DEBUG_DIR = debugDir + "/"+ testdir;
+        GlobalInfo.DEBUG_DIR = debugDir + "/" + testdir;
         File auxiliaryDir = new File(GlobalInfo.DEBUG_DIR);
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
-        String globalConfig = baseDir + "/conf/global_configuration.json";
-        String usersConfig = baseDir + "/conf/users_configuration.json";
-        String stationsConfig = baseDir + "/conf/stations_configuration.json";
         String historyOutputPath = historyDir + "/" + testdir;
         auxiliaryDir = new File(historyOutputPath);
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
+        globalInfo.setHistoryOutputPath(historyOutputPath);
 
         try {
             //set up the global variables and singleton classes
@@ -138,31 +145,24 @@ public class HolgerScript {
             Station.resetIdGenerator();
             User.resetIdGenerator();
             Reservation.resetIdGenerator();
-            
-            //read global configuration
-            ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
-            GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
-            if(historyOutputPath != null) {
-                globalInfo.setHistoryOutputPath(historyOutputPath);
-            }
 
             //now initialize history and debug 
             Debug.init(globalInfo.isDebugMode());
             System.out.println("DEBUG MODE: " + Debug.isDebugmode());
-            
+
             History.init(globalInfo.getHistoryOutputPath());
 
             //modify recomenderspecification with the one from the test
             globalInfo.setRecommendationSystemType(recomendertype);
-            
+
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             //modify user type specification with the one from the test
-            List<JsonObject> users=usersInfo.getUsers();
-            for (JsonObject user: users){
+            List<JsonObject> users = usersInfo.getUsers();
+            for (JsonObject user : users) {
                 user.remove("userType");
                 user.add("userType", usertype);
             }
-            
+
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
 
             if (mapPath != null) {
@@ -173,64 +173,37 @@ public class HolgerScript {
             }
             Debug.close();
             History.close();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
     }
-    
+
     private void runResultAanalisis(String testdir) throws IOException, InterruptedException {
         File auxiliaryDir = new File(analisisDir + testdir);
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
-        
+
         List<String> command = new ArrayList<String>();
         command.add("node");
-        command.add(dataAnalyzerPath +"/data-analyser.js");
+        command.add(dataAnalyzerPath + "/data-analyser.js");
         command.add("analyse");
         command.add("-h");
-        command.add(historyDir +  testdir);
+        command.add(historyDir + testdir);
         command.add("-s");
         command.add(schemaPath);
         command.add("-c");
         command.add(analisisDir + testdir);
-      
-        
-        System.out.println("executing: node " + dataAnalyzerPath +"/data-analyser.js analyse -h " + historyDir +  testdir
-        + " -s " + schemaPath + " -c " + analisisDir + testdir);
+
+        System.out.println("executing: node " + dataAnalyzerPath + "/data-analyser.js analyse -h " + historyDir + testdir
+                + " -s " + schemaPath + " -c " + analisisDir + testdir);
         ProcessBuilder pb = new ProcessBuilder(command);
-        
+
         Process p = pb.start(); // Start the process.
         p.waitFor(); // Wait for the process to finish.
         System.out.println("Script executed successfully");
     }
-    
-   private void runscriptR() throws IOException, InterruptedException {
- //        Rscript -e "rmarkdown::render('ReportBatteryTest.Rmd', params = list(path = './analisis'))"
-
-        //copy the script file to the directory
-        File scriptfile=new File(analysisScriptPath +"/ReportBatteryTest.Rmd");
-        File tempfile=new File(analisisDir +"/ReportBatteryTest.Rmd");
-        Files.copy(scriptfile.toPath(), tempfile.toPath(), REPLACE_EXISTING);
-        
-        List<String> command = new ArrayList<String>();
-        command.add("Rscript");
-        command.add("-e");
-        String aux="rmarkdown::render('ReportBatteryTest.Rmd', "
-                + "params = list(path = '"+ analisisDir +"'))";
-        command.add(aux);
-        System.out.println("Rscript -e "+aux);
-        ProcessBuilder pb = new ProcessBuilder(command);
-        pb.directory(new File(analisisDir));
-       
-        Process p = pb.start(); // Start the process.
-        p.waitFor(); // Wait for the process to finish.
-        System.out.println("Script executed successfully");
-        
-        //delete analysisscript
-        Files.delete(tempfile.toPath());
-  }
 
 }
