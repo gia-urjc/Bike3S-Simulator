@@ -13,7 +13,7 @@ import { SystemStations } from "../historyEntities/SystemStations";
 import { SystemUsers } from "../historyEntities/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
 import { SystemGlobalInfo } from '../analyzers/metrics/SystemGlobalInfo';
-import { StationBalancingQuality } from '../analyzers/metrics/stations/StationBalancingQuality';
+import { StationBalanceQuality } from '../analyzers/metrics/stations/StationBalanceQuality';
 import { UserFactInstantInfo } from '../analyzers/metrics/users/UserFactInstantInfo';
 import { UserTimeAtSystem } from '../analyzers/metrics/users/UserTimeAtSystem';
 import { HistoryReader } from '../HistoryReader';
@@ -151,9 +151,9 @@ export class DataGenerator {
             this.info.set(EmptyStationInfo.name, emptyStations);
             emptyStations.init();
                                 
-            let bikesBalance: StationBalancingQuality = new StationBalancingQuality(this.bikesPerStation, this.totalSimulationTime);
+            let bikesBalance: StationBalanceQuality = new StationBalanceQuality(this.bikesPerStation, this.totalSimulationTime);
             bikesBalance.setStations(this.systemStations.getStations());
-            this.info.set(StationBalancingQuality.name, bikesBalance);
+            this.info.set(StationBalanceQuality.name, bikesBalance);
             bikesBalance.init();
             
             let userTimeIntervals: UserTimeAtSystem = new UserTimeAtSystem(this.userInstants);
