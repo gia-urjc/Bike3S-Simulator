@@ -48,7 +48,7 @@ public class HolgerScript {
         //treat tests
         String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/";
 
-        baseDir = projectDir + "Bike3STests/paperAT2018/halfbikes/dia_entero_150meters_with_velocity";
+        baseDir = projectDir + "Bike3STests/paperAT2018/allbikes/dia_entero_150meters_with_velocity";
 
          String testFile = baseDir + "/tests.json";
         mapPath = projectDir + "Bike3STests/madrid.osm";
