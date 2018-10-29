@@ -4,7 +4,7 @@ import { Data } from '../../Data';
 import { SystemInfo } from '../../SystemInfo';
 import { BikesPerTime, BikesPerStationAndTime, StationBikesPerTimeList } from './BikesPerStationAndTime';
 
-export class StationBalancingAbsoluteValue implements AbsoluteValue {
+export class StationBalanceAbsoluteValue implements AbsoluteValue {
     quality: number;
     
     constructor(quality: number) {
@@ -12,7 +12,7 @@ export class StationBalancingAbsoluteValue implements AbsoluteValue {
     }
 }
 
-export class StationBalancingData implements Data {
+export class StationBalanceData implements Data {
     static readonly NAMES: string = 'balancing quality';
     absoluteValues: Map<number, AbsoluteValue>;
         
@@ -29,7 +29,7 @@ export class StationBalanceQuality implements SystemInfo {
     
     public constructor(bikesInfo: BikesPerStationAndTime, time: number) {
         this.basicData = bikesInfo;
-        this.data = new StationBalancingData();
+        this.data = new StationBalanceData();
         this.stations = new Map();
         this.totalSimulationTime =  time;
     }
@@ -47,11 +47,11 @@ export class StationBalanceQuality implements SystemInfo {
         
         for (let i = 0; i < list.length; i++) {
             stationBikes = list[i];
-            summation += Math.abs(stationBikes.availableBikes - capacity/2) * (stationBikes.time- pastTime);
+            summation += Math.abs(stationBikes.availableBikes - capacity/2) * (stationBikes.time - pastTime);
             pastTime = stationBikes.time;
         }
-        summation  += Math.abs(stationBikes.availableBikes - capacity/2) * (this.totalSimulationTime - pastTime)/this.totalSimulationTime;
-        return summation;
+        summation += Math.abs(stationBikes.availableBikes - capacity/2) * (this.totalSimulationTime - pastTime);
+        return summation/this.totalSimulationTime;
     }
     
     public async init(): Promise<void> {
@@ -60,7 +60,7 @@ export class StationBalanceQuality implements SystemInfo {
             if (station) {
                 let capacity: number = station.capacity;
                 let qualityValue: number = this.quality(capacity, stationInfo.getList());
-                this.data.absoluteValues.set(stationId, new StationBalancingAbsoluteValue(qualityValue));
+                this.data.absoluteValues.set(stationId, new StationBalanceAbsoluteValue(qualityValue));
                 let abs: AbsoluteValue | undefined = this.data.absoluteValues.get(stationId); 
             }
         });
