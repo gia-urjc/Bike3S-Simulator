@@ -24,7 +24,7 @@ public class FileWriterMap {
         return fileWriter;
     }
 
-    public void closeAllFileWriters() {
+    public void closeAllFileWriters() throws IOException {
         if (fileWriterByClass != null) {
             for (Map<Integer, FileWriter> map : fileWriterByClass.values()) {
                 if (map != null) {
