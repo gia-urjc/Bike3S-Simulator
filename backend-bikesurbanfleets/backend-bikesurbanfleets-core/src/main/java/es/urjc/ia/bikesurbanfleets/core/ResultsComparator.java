@@ -34,7 +34,7 @@ public class ResultsComparator {
     public ResultsComparator(String analysisdir, String outputFile, int totalsimtime) {
         this.analysisdir = analysisdir;
         this.outputFile = outputFile;
-        this.totalsimtime=totalsimtime;
+        this.totalsimtime = totalsimtime;
     }
 
     public void compareTestResults() throws IOException {
@@ -75,20 +75,20 @@ public class ResultsComparator {
         WiteStationdata(testresults, csvWriter);
         writer.close();
     }
-    
+
     private void WitGeneraldata(CSVWriter csvWriter) throws IOException {
-         // Write empty line
+        // Write empty line
         csvWriter.writeNext(new String[]{""});
-       //Now set the String array for writing
-        String[] record = { "total simulation time (min)", Double.toString((double)totalsimtime/60D)};
-         //write header
+        //Now set the String array for writing
+        String[] record = {"total simulation time (min)", Double.toString((double) totalsimtime / 60D)};
+        //write header
         csvWriter.writeNext(record);
-     }
+    }
 
     private void WiteUserdata(TreeMap<String, TestResult> testresults, CSVWriter csvWriter) throws IOException {
-          // Write empty line
+        // Write empty line
         csvWriter.writeNext(new String[]{""});
-       //get max value of fails
+        //get max value of fails
         int maxrentfails = 0;
         int maxreturnfails = 0;
         for (TestResult tr : testresults.values()) {
@@ -141,7 +141,7 @@ public class ResultsComparator {
                 record[7 + key] = Integer.toString(res.userdata.usertakefails.get(key));
             }
             for (Integer key : res.userdata.userreturnfails.keySet()) {
-                record[7 + maxrentfails + 1+ key] = Integer.toString(res.userdata.userreturnfails.get(key));
+                record[7 + maxrentfails + 1 + key] = Integer.toString(res.userdata.userreturnfails.get(key));
             }
             //write line
             csvWriter.writeNext(record);
@@ -171,8 +171,8 @@ public class ResultsComparator {
             record[1] = Integer.toString(res.stationdata.totalstations);
             record[2] = Integer.toString(res.stationdata.numstationwithemtytimes);
             record[3] = Double.toString(res.stationdata.totalemptytimes / 60D);
-            record[4] = Double.toString((res.stationdata.totaldeviationfromequilibrium)/
-                    ((double)res.stationdata.totalstations));
+            record[4] = Double.toString((res.stationdata.totaldeviationfromequilibrium)
+                    / ((double) res.stationdata.totalstations));
             //write line
             csvWriter.writeNext(record);
         }
@@ -214,7 +214,9 @@ public class ResultsComparator {
         int totalabandonos = 0;
         TreeMap<Integer, Integer> usertakefails = new TreeMap<>();
         TreeMap<Integer, Integer> userreturnfails = new TreeMap<>();
+        boolean abandonado = false;
         for (String[] line : data) {
+            abandonado = false;
             tostationcounter++;
             totaltostationtime += Integer.parseInt(line[1]);
             if (!(line[2].equals(""))) {
@@ -230,6 +232,7 @@ public class ResultsComparator {
                     throw new RuntimeException("error in results");
                 }
                 totalabandonos++;
+                abandonado = true;
             } else if (!(line[9].equals("1")) || !(line[11].equals("1"))) {
                 throw new RuntimeException("error in results");
             }
@@ -239,11 +242,13 @@ public class ResultsComparator {
             } else {
                 usertakefails.put(Integer.parseInt(line[10]), current + 1);
             }
-            current = userreturnfails.get(Integer.parseInt(line[12]));
-            if (current == null) {
-                userreturnfails.put(Integer.parseInt(line[12]), 1);
-            } else {
-                userreturnfails.put(Integer.parseInt(line[12]), current + 1);
+            if (!abandonado) {
+                current = userreturnfails.get(Integer.parseInt(line[12]));
+                if (current == null) {
+                    userreturnfails.put(Integer.parseInt(line[12]), 1);
+                } else {
+                    userreturnfails.put(Integer.parseInt(line[12]), current + 1);
+                }
             }
         }
         dat.avtostationtime = totaltostationtime / ((double) tostationcounter);
@@ -284,14 +289,14 @@ public class ResultsComparator {
         FileReader filereader = new FileReader(file);
         CSVParser parser
                 = new CSVParserBuilder()
-                .withSeparator(';')
-                .build();
+                        .withSeparator(';')
+                        .build();
         CSVReader csvReader
                 = new CSVReaderBuilder(filereader)
-                .withSkipLines(1)
-                .withCSVParser(parser)
-                .build();
-         List<String[]> allData = csvReader.readAll();
+                        .withSkipLines(1)
+                        .withCSVParser(parser)
+                        .build();
+        List<String[]> allData = csvReader.readAll();
 
         return allData;
     }
