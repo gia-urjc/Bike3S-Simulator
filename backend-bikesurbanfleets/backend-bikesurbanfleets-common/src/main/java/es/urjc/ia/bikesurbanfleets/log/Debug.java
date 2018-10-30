@@ -30,7 +30,8 @@ public class Debug {
         return DEBUG_MODE;
     }
     public static void close() throws IOException {
-        fileWriterMap = new FileWriterMap();
+        if (fileWriterMap!=null) fileWriterMap.closeAllFileWriters();
+        fileWriterMap = null;
     }
     
     public static void log(String message, Entity entity, Event event) throws IOException {

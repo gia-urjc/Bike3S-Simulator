@@ -48,7 +48,10 @@ public class HolgerScript {
         //treat tests
         String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/";
 
-        baseDir = projectDir + "Bike3STests/paperAT2018/allbikes/dia_entero_150meters_with_velocity";
+        baseDir = projectDir + "Bike3STests/paperAT2018/halfbikes_halfcapacity/dia_entero_150meters_with_velocity";
+    //    baseDir = projectDir + "Bike3STests/paperAT2018/halfbikes/dia_entero_150meters_with_velocity";
+    //    baseDir = projectDir + "Bike3STests/paperAT2018/allbikes/dia_entero_150meters_with_velocity";
+        baseDir = projectDir + "Bike3STests/paperAT2018/allbikes/test";
 
    //     analisisDir=baseDir+"/29_10_2018_16_26_09/analisis/";
    //     new ResultsComparator(analisisDir, analisisDir + "compareResults.csv", totalsimulationtime).compareTestResults();
@@ -58,7 +61,10 @@ public class HolgerScript {
         mapPath = projectDir + "Bike3STests/madrid.osm";
         schemaPath = projectDir + "build/schema";
         dataAnalyzerPath = projectDir + "build/data-analyser";
+        System.out.println("tests execution started");
         hs.executeTests(testFile);
+        System.out.println("tests execution finished");
+
     }
 
     private void executeTests(String testFile) throws FileNotFoundException, IOException, InterruptedException {
