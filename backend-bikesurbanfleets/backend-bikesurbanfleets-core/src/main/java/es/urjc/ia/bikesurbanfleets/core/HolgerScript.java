@@ -13,10 +13,7 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.text.DateFormat;
@@ -45,10 +42,12 @@ public class HolgerScript {
     public static void main(String[] args) throws Exception {
         HolgerScript hs = new HolgerScript();
         //treat tests
-        String projectDir="/Users/holger/workspace/BikeProjects/Bike3S/";
-        
+        //String projectDir="/Users/holger/workspace/BikeProjects/Bike3S/";
+
+        String projectDir= System.getProperty("user.dir") + File.separator;
+
         baseDir=projectDir+"Bike3STests/paperAT2018/allbikes/test";
-        
+        System.out.println("baseDir " + baseDir);
         String testFile = baseDir+"/tests.json";
         mapPath = projectDir+"Bike3STests/madrid.osm";
         schemaPath = projectDir+"build/schema";
@@ -106,7 +105,7 @@ public class HolgerScript {
             runSimulationTest(testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
             runResultAanalisis(testdir);
         }
-  //      runscriptR();
+        runscriptR();
     }
 
     private boolean exists(String name, List<String> names) {
@@ -208,29 +207,34 @@ public class HolgerScript {
     }
     
    private void runscriptR() throws IOException, InterruptedException {
- //        Rscript -e "rmarkdown::render('ReportBatteryTest.Rmd', params = list(path = './analisis'))"
 
-        //copy the script file to the directory
-        File scriptfile=new File(analysisScriptPath +"/ReportBatteryTest.Rmd");
-        File tempfile=new File(analisisDir +"/ReportBatteryTest.Rmd");
-        Files.copy(scriptfile.toPath(), tempfile.toPath(), REPLACE_EXISTING);
-        
-        List<String> command = new ArrayList<String>();
-        command.add("Rscript");
-        command.add("-e");
-        String aux="rmarkdown::render('ReportBatteryTest.Rmd', "
-                + "params = list(path = '"+ analisisDir +"'))";
-        command.add(aux);
-        System.out.println("Rscript -e "+aux);
-        ProcessBuilder pb = new ProcessBuilder(command);
-        pb.directory(new File(analisisDir));
-       
-        Process p = pb.start(); // Start the process.
-        p.waitFor(); // Wait for the process to finish.
-        System.out.println("Script executed successfully");
-        
-        //delete analysisscript
-        Files.delete(tempfile.toPath());
+       List<String> command = new ArrayList<String>();
+       command.add(analysisScriptPath+"./generateMarkdown.sh");
+       command.add(analysisScriptPath);
+       command.add(analisisDir+"report.html");
+       command.add(analisisDir);
+
+       System.out.println("\nexecuting: " + command.toString().replaceAll(",",""));
+       ProcessBuilder pb = new ProcessBuilder(command);
+       pb.directory(new File(analisisDir));
+
+       Process p = pb.start(); // Start the process.
+       p.waitFor(); // Wait for the process to finish.
+
+       //Obtengo la salida de la ejecución del proceso
+       System.out.println("----------------------------------------");
+       BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+       StringBuilder builder = new StringBuilder();
+       String line = null;
+       while ( (line = reader.readLine()) != null) {
+           builder.append(line);
+           builder.append(System.getProperty("line.separator"));
+       }
+
+       String resultExecution = builder.toString();
+       System.out.println(resultExecution);
+       System.out.println("----------------------------------------");
+
+       System.out.println("Script executed successfully");
   }
-
 }

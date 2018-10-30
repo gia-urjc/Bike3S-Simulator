@@ -2,10 +2,8 @@
 title: "ReportBatteryTests"
 output: html_document
 params:
-  path: /Users/ibernabe/IntellijProjects/Bike3STests/paperAT2018/allbikes/test/29_10_2018_14:41:17/analisis 
+  path: ./analisis 
 ---
-<!-- path recibe un parametro, por defecto es: ./analisis-->
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
