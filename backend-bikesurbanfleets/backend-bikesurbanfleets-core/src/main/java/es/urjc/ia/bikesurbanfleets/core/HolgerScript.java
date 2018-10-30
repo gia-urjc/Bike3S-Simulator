@@ -48,7 +48,9 @@ public class HolgerScript {
 
         String projectDir= System.getProperty("user.dir") + File.separator;
 
-        baseDir=projectDir+"Bike3STests/paperAT2018/allbikes/test";
+        baseDir=projectDir+"Bike3STests/paperAT2018/halfbikes_halfcapacity/dia_entero_150meters_with_velocity";
+        
+        
         System.out.println("baseDir " + baseDir);
         String testFile = baseDir+"/tests.json";
         mapPath = projectDir+"Bike3STests/madrid.osm";
@@ -57,7 +59,7 @@ public class HolgerScript {
         analysisScriptPath=projectDir+"Bike3STests/analysis_scripts/";
         hs.executeTests(testFile);
         System.out.println("tests execution finished");
-
+        System.gc();
     }
 
     private void executeTests(String testFile) throws FileNotFoundException, IOException, InterruptedException {

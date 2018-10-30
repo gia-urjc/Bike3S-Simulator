@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.log.Debug;
 
 /**
  *
@@ -69,6 +70,7 @@ public class HolgerRecomenderSurroundingStations extends RecommendationSystem {
         
         if (!stationdat.isEmpty()) {
             List<StationData> temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
+           if (Debug.isDebugmode()) {
             for (int i = 0; i < 10; i++) {
                 System.out.println("stat " + i + " utility: " + temp.get(i).utility);
                 System.out.println("      dist: " + temp.get(i).distance);
@@ -76,6 +78,7 @@ public class HolgerRecomenderSurroundingStations extends RecommendationSystem {
                 System.out.println("      dist_utility: " + temp.get(i).distanceutility);
                 System.out.println("      station_utility: " + temp.get(i).stationUtility);
             }
+           }
             return temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
