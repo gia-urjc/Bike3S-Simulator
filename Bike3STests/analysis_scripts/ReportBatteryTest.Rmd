@@ -129,7 +129,7 @@ htmlTable(tablatimeToDestinationPlace,
 ### Calidad de balanceo de las estaciones 
 ```{r listFiles.demand.satisfation, echo=FALSE}
 listcsv <- list.files(path = params$path,
-           pattern = "stationBalancingQuality.csv", #an optional regular expression. Only file names which match the regular expression will be returned.
+           pattern = "stationBalanceQuality.csv", #an optional regular expression. Only file names which match the regular expression will be returned.
            all.files = FALSE, # If FALSE, only the names of visible files are returned. If TRUE, all file names will be returned.
            full.names = TRUE, #If TRUE, muestra toda la ruta. Si no muestra sólo el nombre de la carpeta
            recursive = TRUE,#Should subdirectory names be included in recursive listings?

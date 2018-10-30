@@ -3,7 +3,7 @@ import { Station, User, Entity } from "../systemDataTypes/Entities";
 import { SystemGlobalInfo } from "../analyzers/metrics/SystemGlobalInfo";
 import { AbsoluteValue } from "../analyzers/AbsoluteValue";
 import { SystemInfo } from "../analyzers/SystemInfo";
-import { StationBalancingQuality, StationBalancingData } from '../analyzers/metrics/stations/StationBalancingQuality';
+import { StationBalanceQuality, StationBalanceData } from '../analyzers/metrics/stations/StationBalanceQuality';
 import { BikesPerTime, BikesPerStationAndTime } from '../analyzers/metrics/stations/BikesPerStationAndTime';
 import { RentalAndReturnAbsoluteValue } from "../analyzers/metrics/rentalsAndReturns/RentalAndReturnAbsoluteValue";
 import { RentalAndReturnData } from "../analyzers/metrics/rentalsAndReturns/RentalAndReturnData";
@@ -202,15 +202,15 @@ export class CsvGenerator {
         return;
     }
     
-    private initBikesBalancingInfo(info: Map<string, SystemInfo>): void {
+    private initBikesBalanceInfo(info: Map<string, SystemInfo>): void {
         this.bikesBalanceTitles[0] = 'id';
-        this.bikesBalanceTitles[1] = StationBalancingData.NAMES;
-        let bikesBalance: SystemInfo | undefined = info.get(StationBalancingQuality.name); 
+        this.bikesBalanceTitles[1] = StationBalanceData.NAMES;
+        let bikesBalance: SystemInfo | undefined = info.get(StationBalanceQuality.name); 
         if (bikesBalance) {
             bikesBalance.getData().absoluteValues.forEach( (value, stationId) => {
                 let obj: JsonObject = {};
                 obj[this.bikesBalanceTitles[0]] = stationId;
-                obj[this.bikesBalanceTitles[1]] = value.quality;
+                obj[this.bikesBalanceTitles[1]] = value.quality.toFixed(2);
                 this.bikesBalanceData.push(obj);
             });
         }
@@ -250,7 +250,7 @@ export class CsvGenerator {
         this.initEmptyStationInfo(entityInfo);
         this.transformEmptyStationJsonToCsv();
     
-        this.initBikesBalancingInfo(entityInfo);
+        this.initBikesBalanceInfo(entityInfo);
         this.transformBikesBalanceJsonToCsv();
     
         this.initBikesPerStationInfo(bikesPerStation);
@@ -260,13 +260,15 @@ export class CsvGenerator {
 
 	private transformStationJsonToCsv(): void {
         let csv = json2csv({ data: this.stationData, fields: this.stationInfoTitles, withBOM: true, del: ';' });
+        csv += '\r\n';
         this.checkFolders();
         fs.writeFileSync(`${this.csvPath}/stations.csv`, csv);
         console.log('stations file saved');
 	}
     
     private transformUserJsonToCsv(): void {
-        let csv = json2csv({ data: this.userData, fields: this.userInfoTitles, withBOM: true, del: ';' });
+        let csv = json2csv({ data: this.userData, fields: this.userInfoTitles, withBOM: true, del: ';' , });
+        csv += '\r\n';
         this.checkFolders();
         fs.writeFileSync(`${this.csvPath}/users.csv`, csv);
         console.log('user file saved');
@@ -274,6 +276,7 @@ export class CsvGenerator {
 
     private transformGlobalInfoJsonToCsv(): void {
         let csv = json2csv({data: [this.globalInfo], fields: this.globalInfoTitles, withBOM: true, del: ';' });
+        csv += '\r\n';
         this.checkFolders();
         fs.writeFileSync(`${this.csvPath}/global_values.csv`, csv);
         console.log('global values file saved');
@@ -281,6 +284,7 @@ export class CsvGenerator {
     
     private transformEmptyStationJsonToCsv(): void {
         let csv = json2csv({data: this.emptyStationData, fields: this.emptyStationTitles, withBOM: true, del: ';' });
+        csv += '\r\n';
         this.checkFolders();
         fs.writeFileSync(`${this.csvPath}/empty_stations.csv`, csv);      
         console.log('empty stations file saved');
@@ -294,13 +298,15 @@ export class CsvGenerator {
     
     private transformBikesBalanceJsonToCsv(): void {
         let csv = json2csv({ data: this.bikesBalanceData, fields: this.bikesBalanceTitles, withBOM: true, del: ';' });
+        csv += '\r\n';
         this.checkFolders();
-        fs.writeFileSync(`${this.csvPath}/stationBalancingQuality.csv`, csv);
+        fs.writeFileSync(`${this.csvPath}/stationBalanceQuality.csv`, csv);
         console.log('Bikes balance quality file saved');
     }
     
     private transformBikesPerStationJsonToCsv(): void {
         let csv = json2csv({ data: this.bikesPerStationData, fields: this.bikesPerStationTitles, withBOM: true, del: ';' });
+        csv += '\r\n';
         this.checkFolders();
         fs.writeFileSync(`${this.csvPath}/bikesPerStationAndTime.csv`, csv);
         console.log('Bikes per station and time file saved');

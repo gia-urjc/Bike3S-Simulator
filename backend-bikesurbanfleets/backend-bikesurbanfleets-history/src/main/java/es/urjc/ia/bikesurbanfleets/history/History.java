@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 public class History {
 
-    private final static int TIMEENTRIES_PER_FILE = 1000;
+    private final static int TIMEENTRIES_PER_FILE = 10000;
 
     private static String DEFAULT_HISTORY_OUTPUT_PATH = "history";
 
@@ -122,6 +122,9 @@ public class History {
         }
 
         writeTimeEntries();
+        initialEntities = null;
+        updatedEntities = null;
+        serializedEvents = null;
     }
 
     /**
