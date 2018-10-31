@@ -130,7 +130,7 @@ public class UserUninformed extends User {
         List<Station> stations = infraestructure.consultStations();
         List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
         //Remove station if the user is in this station
-        System.out.println("List Size" + stations.size());
+ //       System.out.println("List Size" + stations.size());
         List<Station> finalStations = informationSystem.getStationsBikeOrderedByDistanceNoFiltered(this.destinationPlace);
         finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
