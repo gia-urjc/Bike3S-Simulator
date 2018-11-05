@@ -9,7 +9,7 @@
             "longitude": -3.481292724609375
         }
     },
-    "debugMode": true,
+    "debugMode": false,
     "graphManagerType": "GRAPH_HOPPER",
     "reservationTime": 1000,
     "randomSeed": 10,

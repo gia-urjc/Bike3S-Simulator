@@ -1,30 +1,30 @@
-import { HistoryReaderController } from '../../../controllers/HistoryReaderController';
 import { HistoryIterator } from '../../HistoryIterator';
 import { TimeEntry } from '../../systemDataTypes/SystemInternalData';
-import { Observer, Observable } from '../ObserverPattern';
+import { Observer } from '../ObserverPattern';
 import { Iterator } from './Iterator';
+import { HistoryReader } from '../../HistoryReader';
 
 export class TimeEntryIterator implements Iterator {
     private observers: Array<Observer>;
-    private history: HistoryReaderController;
+    private history: HistoryReader;
     
     public constructor() {
         this.observers = new Array<Observer>();
     }
     
-    public setHistory(history: HistoryReaderController): void {
+    public setHistory(history: HistoryReader): void {
         this.history = history;
     }
     
-    public async iterate(): Promise<void> {
+    public iterate(): void {
         let it: HistoryIterator; 
         try {
-            it = await HistoryIterator.create(this.history);
-            let timeEntry: TimeEntry | undefined = await it.nextTimeEntry();
+            it = HistoryIterator.create(this.history);
+            let timeEntry: TimeEntry | undefined = it.nextTimeEntry();
        
             while(timeEntry !== undefined) {
                 this.notify(timeEntry);
-                timeEntry = await it.nextTimeEntry();
+                timeEntry = it.nextTimeEntry();
             }
         }
         catch(error) {

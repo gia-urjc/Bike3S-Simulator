@@ -14,6 +14,7 @@ import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters
 import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.log.Debug;
 
 @RecommendationSystemType("HOLGERRECOMENDER")
 public class HolgerRecomender extends RecommendationSystem {
@@ -26,6 +27,7 @@ public class HolgerRecomender extends RecommendationSystem {
         double distanceutility = 0.0;
         double utility = 0.0;
     }
+
     static public Comparator<StationData> byUtility() {
         return (s1, s2) -> Double.compare(s2.utility, s1.utility);
     }
@@ -34,17 +36,17 @@ public class HolgerRecomender extends RecommendationSystem {
     class RecommendationParameters {
 
         //maximum difference to teh closest station
-        private  double MAXDIFF = 500;
+        private double MAXDIFF = 500;
         //maximum distance to be recomended (except closest station which would be recomended in any case)
-        private  double MAXTOTALDIST = 1000;
+        private double MAXTOTALDIST = 1000;
 
     }
 
     RecommendationParameters parameters;
 
-    public HolgerRecomender(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception{
+    public HolgerRecomender(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
         super(infraestructureManager);
-       //***********Parameter treatment*****************************
+        //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
         //if no parameters are used this code just has to be commented
         //"getparameters" is defined in USER such that a value of Parameters 
@@ -61,19 +63,21 @@ public class HolgerRecomender extends RecommendationSystem {
         //get the list of closest stations
         // goes through the list
         List<StationData> stationdat = new ArrayList<StationData>();
-        double closesStationDistance=getBasicStationData(point, true,stationdat);
-        double equlibrium =calculateStationBasicUtilities(stationdat, true);
+        double closesStationDistance = getBasicStationData(point, true, stationdat);
+        double equlibrium = calculateStationBasicUtilities(stationdat, true);
         calculateFinalUtilities(stationdat, equlibrium, closesStationDistance);
-        
+
         if (!stationdat.isEmpty()) {
             List<StationData> temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
-            for (int i = 0; i < 10; i++) {
-                System.out.println("stat " + i + " utility: " + temp.get(i).utility);
-                System.out.println("      dist: " + temp.get(i).distance);
-                System.out.println("      bikes: " + temp.get(i).station.availableBikes());
-                 System.out.println("      dist_utility: " + temp.get(i).distanceutility);
-                System.out.println("      station_utility: " + temp.get(i).stationUtility);
-           }
+            if (Debug.isDebugmode()) {
+                for (int i = 0; i < 10; i++) {
+                    System.out.println("stat " + i + " utility: " + temp.get(i).utility);
+                    System.out.println("      dist: " + temp.get(i).distance);
+                    System.out.println("      bikes: " + temp.get(i).station.availableBikes());
+                    System.out.println("      dist_utility: " + temp.get(i).distanceutility);
+                    System.out.println("      station_utility: " + temp.get(i).stationUtility);
+                }
+            }
             return temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
@@ -86,13 +90,13 @@ public class HolgerRecomender extends RecommendationSystem {
         // goes through the list
         // if a station has more than 40% of ratio recomend it
         List<StationData> stationdat = new ArrayList<StationData>();
-        double closesStationDistance=getBasicStationData(point, false ,stationdat);
-        double equlibrium =calculateStationBasicUtilities(stationdat, false);
+        double closesStationDistance = getBasicStationData(point, false, stationdat);
+        double equlibrium = calculateStationBasicUtilities(stationdat, false);
         calculateFinalUtilities(stationdat, equlibrium, closesStationDistance);
 
         if (!stationdat.isEmpty()) {
             List<StationData> temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
-            return  temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
+            return temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
         }
@@ -125,7 +129,7 @@ public class HolgerRecomender extends RecommendationSystem {
         return closesStationDistance;
     }
 
-        protected void calculateFinalUtilities(List<StationData> stations, double stationutilityequilibrium, double closestsdistance) {
+    protected void calculateFinalUtilities(List<StationData> stations, double stationutilityequilibrium, double closestsdistance) {
 
         for (StationData sd : stations) {
             //calculate distance utility
@@ -162,7 +166,7 @@ public class HolgerRecomender extends RecommendationSystem {
         return stationutilsum / numberstations;
     }
 
-     protected double calculateDistanceUtility(double closest, double newdist) {
+    protected double calculateDistanceUtility(double closest, double newdist) {
         if (newdist == closest) {
             return 1.0;
         }
@@ -173,7 +177,7 @@ public class HolgerRecomender extends RecommendationSystem {
             return 0.0;
         }
         return 1 - ((newdist - closest) / parameters.MAXDIFF);
-    //  return   50D/(Math.pow(newdist - closest,1.1D)+51D);
+        //  return   50D/(Math.pow(newdist - closest,1.1D)+51D);
     }
-    
+
 }

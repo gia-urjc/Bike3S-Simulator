@@ -13,16 +13,27 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 public class Debug {
 
-    public static boolean DEBUG_MODE;
+    private static boolean DEBUG_MODE;
     private static FileWriterMap fileWriterMap = new FileWriterMap();
-    private static final Path DEBUG_PATH = Paths.get(GlobalInfo.DEBUG_DIR + "/debug_logs");
+    private static Path DEBUG_PATH = Paths.get(GlobalInfo.DEBUG_DIR + "/debug_logs");
 
-    public static void init() throws IOException {
+    public static void init(boolean debugmode) throws IOException {
+        fileWriterMap = new FileWriterMap();
+        DEBUG_PATH = Paths.get(GlobalInfo.DEBUG_DIR + "/debug_logs");
+        DEBUG_MODE=debugmode;
         if(DEBUG_MODE) {
             FileUtils.deleteDirectory(new File(DEBUG_PATH.toAbsolutePath().toString()));
         }
     }
 
+    public static boolean isDebugmode(){
+        return DEBUG_MODE;
+    }
+    public static void close() throws IOException {
+        if (fileWriterMap!=null) fileWriterMap.closeAllFileWriters();
+        fileWriterMap = null;
+    }
+    
     public static void log(String message, Entity entity, Event event) throws IOException {
         if(DEBUG_MODE) {
             FileWriter writer = fileWriterMap.getFileWriter(entity);

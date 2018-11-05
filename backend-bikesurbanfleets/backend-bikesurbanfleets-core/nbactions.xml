@@ -12,6 +12,7 @@
             <properties>
                 <exec.args>-classpath %classpath es.urjc.ia.bikesurbanfleets.core.HolgerScript</exec.args>
                 <exec.executable>java</exec.executable>
+                <exec.workingdir>/Users/holger/workspace/BikeProjects/Bike3S</exec.workingdir>
             </properties>
         </action>
         <action>
@@ -27,6 +28,7 @@
                 <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath es.urjc.ia.bikesurbanfleets.core.HolgerScript</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
+                <exec.workingdir>/Users/holger/workspace/BikeProjects/Bike3S</exec.workingdir>
             </properties>
         </action>
         <action>
@@ -41,6 +43,7 @@
             <properties>
                 <exec.args>-classpath %classpath es.urjc.ia.bikesurbanfleets.core.HolgerScript</exec.args>
                 <exec.executable>java</exec.executable>
+                <exec.workingdir>/Users/holger/workspace/BikeProjects/Bike3S</exec.workingdir>
             </properties>
         </action>
     </actions>

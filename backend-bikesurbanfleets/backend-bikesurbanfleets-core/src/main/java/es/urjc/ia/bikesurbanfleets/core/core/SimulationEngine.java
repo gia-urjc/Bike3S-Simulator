@@ -10,6 +10,7 @@ import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersConfig;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
 import es.urjc.ia.bikesurbanfleets.history.FinalGlobalValues;
 import es.urjc.ia.bikesurbanfleets.history.History;
@@ -25,8 +26,9 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 /**
- * This is the most important class which makes the simulation possible.
- * It uses a queue to manage the events proccessing.
+ * This is the most important class which makes the simulation possible. It uses
+ * a queue to manage the events proccessing.
+ *
  * @author IAgroup
  *
  */
@@ -38,10 +40,11 @@ public class SimulationEngine {
     private List<Station> stations;
 
     /**
-     * It creates an event queue where its events are sorted by the time instant when they'll occur.
+     * It creates an event queue where its events are sorted by the time instant
+     * when they'll occur.
      */
     public SimulationEngine(GlobalInfo globalInfo, StationsConfig stationsInfo, UsersConfig usersInfo,
-                            String mapDir) throws Exception {
+            String mapDir) throws Exception {
         this.globalInfo = globalInfo;
         this.usersInfo = usersInfo;
         this.stations = stationsInfo.getStations();
@@ -53,16 +56,15 @@ public class SimulationEngine {
 
         SimulationServiceConfigData servicesConfigData = new SimulationServiceConfigData();
         servicesConfigData.setBbox(globalInfo.getBoundingBox())
-            .setGraphManagerType(globalInfo.getGraphManagerType())
-            .setGraphParameters(graphParameters)
-            .setRecomSystemType(globalInfo.getRecommendationSystemTypeJsonDescription())
-            .setStations(stationsInfo.getStations());
+                .setGraphManagerType(globalInfo.getGraphManagerType())
+                .setGraphParameters(graphParameters)
+                .setRecomSystemType(globalInfo.getRecommendationSystemTypeJsonDescription())
+                .setStations(stationsInfo.getStations());
 
         SimulationServices services = new SimulationServices(servicesConfigData);
 
         this.eventsQueue = new PriorityQueue<>(processUsers(services));
         Reservation.VALID_TIME = globalInfo.getReservationTime();
-        Debug.DEBUG_MODE = globalInfo.isDebugMode();
 
         //needed if there's no reservations in the system
         History.reservationClass(HistoricReservation.class);
@@ -71,9 +73,11 @@ public class SimulationEngine {
     private List<EventUserAppears> processUsers(SimulationServices services) {
         List<EventUserAppears> eventUserAppearsList = new ArrayList<>();
         UserFactory userFactory = new UserFactory();
-        SimpleRandom simprand=new SimpleRandom(globalInfo.getRandomSeed());
-        for (JsonObject userdef: usersInfo.getUsers()) {
-            int seed=simprand.nextInt();
+        IdGenerator idusers = new IdGenerator();
+
+        SimpleRandom simprand = new SimpleRandom(globalInfo.getRandomSeed());
+        for (JsonObject userdef : usersInfo.getUsers()) {
+            int seed = simprand.nextInt();
             User user = userFactory.createUser(userdef, services, seed);
             int instant = user.getInstant();
             GeoPoint position = user.getPosition();
@@ -88,12 +92,10 @@ public class SimulationEngine {
 
     public void run() throws Exception {
 
-        History.init(globalInfo.getHistoryOutputPath());
-        Debug.init();
-
         // Those variables are used to control de percentage of the simulation done
         int totalUsers = eventsQueue.size();
         double percentage = 0;
+        double oldpercentagepresented = 0;
         int lastInstant = 0;
 
         MessageGuiFormatter.showPercentageForGui(percentage);
@@ -103,17 +105,21 @@ public class SimulationEngine {
 
             //check if the instant is after the last one
             if (event.getInstant() < lastInstant) {
-            	throw new RuntimeException("Illegal event execution");
+                throw new RuntimeException("Illegal event execution");
             }
-            lastInstant=event.getInstant();
-            
+            lastInstant = event.getInstant();
+
             // Shows the actual percentage in the stdout for frontend
-            if(event.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
-                percentage += (((double) 1 /(double) totalUsers) * 100);
-                MessageGuiFormatter.showPercentageForGui(percentage);
+            if (event.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
+                //show only every 5 percent
+                percentage += (((double) 1 / (double) totalUsers) * 100);
+                if (percentage >= oldpercentagepresented + 5D) {
+                    MessageGuiFormatter.showPercentageForGui(percentage);
+                    oldpercentagepresented = percentage;
+                }
             }
 
-            if(Debug.DEBUG_MODE) {
+            if (Debug.isDebugmode()) {
                 System.out.println(event.toString());
             }
 
@@ -122,15 +128,14 @@ public class SimulationEngine {
             History.registerEvent(event);
 
             // if it is the last event, save the global values of the simulation
-            if(eventsQueue.isEmpty()) {
+            if (eventsQueue.isEmpty()) {
                 FinalGlobalValues finalGlobalValues = new FinalGlobalValues();
                 finalGlobalValues.setTotalTimeSimulation(this.globalInfo.getTotalSimulationTime());
                 finalGlobalValues.setBoundingBox(this.globalInfo.getBoundingBox());
                 History.writeGlobalInformation(finalGlobalValues);
             }
         }
-
-        History.close();
+        MessageGuiFormatter.showPercentageForGui(100D);
     }
 
 }

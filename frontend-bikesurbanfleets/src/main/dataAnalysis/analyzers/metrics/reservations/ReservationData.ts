@@ -39,11 +39,10 @@ export class ReservationData implements Data {
         }
     }
    
-    public async init(entities: Array<Entity>): Promise<void> {
+    public init(entities: Array<Entity>): void {
         for(let entity of entities) {
             this.absoluteValues.set(entity.id, new ReservationAbsoluteValue());                
-        }        
-        return;
+        }
     }
        
 }

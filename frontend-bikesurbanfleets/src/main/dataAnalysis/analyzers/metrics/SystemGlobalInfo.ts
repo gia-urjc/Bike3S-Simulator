@@ -47,7 +47,11 @@ export class SystemGlobalInfo {
     
     rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => successfulRentals += v.successfulRentals);
     rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => successfulReturns += v.successfulReturns);
-    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => failedRentals += v.failedRentals);
+    rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => {
+        if(v.successfulRentals === 1) {
+            failedRentals += v.failedRentals;
+        }
+    });
     rentalsAndReturns.getData().absoluteValues.forEach( (v, k) => failedReturns += v.failedReturns);
     
     //totalRentals = successfulRentals + failedRentals;

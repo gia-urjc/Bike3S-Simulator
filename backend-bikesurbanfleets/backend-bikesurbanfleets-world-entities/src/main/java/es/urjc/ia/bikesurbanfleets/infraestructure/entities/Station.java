@@ -21,8 +21,6 @@ import java.util.Objects;
 @HistoryReference(HistoricStation.class)
 public class Station implements Entity {
 
-    private static IdGenerator idGenerator = new IdGenerator();
-
     private int id;
     private final GeoPoint position;
     private int capacity;
@@ -32,8 +30,13 @@ public class Station implements Entity {
     private int reservedBikes;
     private int reservedSlots;
 
+    public static IdGenerator idgenerator;
+    
+    public static void resetIdGenerator(){
+        idgenerator=new IdGenerator();
+    }
     public Station(GeoPoint position, int capacity, List<Bike> bikes) {
-        this.id = idGenerator.next();
+        this.id = idgenerator.next();
         this.position = position;
         this.capacity = capacity;
         this.bikes = bikes;

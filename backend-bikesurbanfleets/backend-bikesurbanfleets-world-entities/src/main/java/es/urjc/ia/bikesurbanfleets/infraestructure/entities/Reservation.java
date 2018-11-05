@@ -34,8 +34,6 @@ public class Reservation implements Entity {
      */
     public static int VALID_TIME;
 
-    private static IdGenerator idGenerator = new IdGenerator();
-
     private int id;
     private int startInstant;  // instant when user makes the reservation
     private int endInstant;  // instant when reservation is resolved or expired
@@ -43,6 +41,12 @@ public class Reservation implements Entity {
     private ReservationState state;
     private User user;
     private Station station;
+    
+    public static IdGenerator idgenerator;
+    
+    public static void resetIdGenerator(){
+        idgenerator=new IdGenerator();
+    }
     /**
      * It is the bike which the user reserves or the rented bike which the user wants to return.
      */
@@ -53,7 +57,7 @@ public class Reservation implements Entity {
      */
 
     public Reservation(int startInstant, ReservationType type, User user, Station station, Bike bike) {
-        this.id = idGenerator.next();
+        this.id = idgenerator.next();
         this.startInstant = startInstant;
         this.endInstant = -1; // reservation has'nt ended
         this.type = type;
@@ -68,7 +72,7 @@ public class Reservation implements Entity {
      * As it doesn't receive a bike parameter, it creates a failed reservation
      */
     public Reservation(int startInstant, ReservationType type, User user, Station station) {
-        this.id = idGenerator.next();
+        this.id = idgenerator.next();
         this.startInstant = startInstant;
         this.endInstant = startInstant;
         this.type = type;

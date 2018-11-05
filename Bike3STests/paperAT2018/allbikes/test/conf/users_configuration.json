@@ -1,0 +1,43 @@
+{
+  "initialUsers": [
+    {
+      "position": {
+        "latitude": 40.40753794382319,
+        "longitude": -3.6901901077319645
+      },
+      "id_end_stattion": 107,
+      "destinationPlace": {
+        "latitude": 40.42228178894087,
+        "longitude": -3.6840159582664174
+      },
+      "id_initial_station": 85,
+      "userType": {
+        "typeName": "USER_COMMUTER",
+        "parameters": {}
+      },
+      "cyclingVelocity": 3.9989693498422274,
+      "timeInstant": 2,
+      "travelTime": 402,
+      "userId": 0
+    },
+    {
+      "position": {
+        "latitude": 40.45644847307633,
+        "longitude": -3.6765001776937507
+      },
+      "id_end_stattion": 55,
+      "destinationPlace": {
+        "latitude": 40.4070443679192,
+        "longitude": -3.6927602510720163
+      },
+      "id_initial_station": 172,
+      "userType": {
+        "typeName": "USER_COMMUTER",
+        "parameters": {}
+      },
+      "cyclingVelocity": 4.968095238095238,
+      "timeInstant": 2,
+      "travelTime": 2131,
+      "userId": 1
+    }  ]
+}

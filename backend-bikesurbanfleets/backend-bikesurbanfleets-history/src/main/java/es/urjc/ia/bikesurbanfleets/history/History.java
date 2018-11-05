@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 public class History {
 
-    private final static int TIMEENTRIES_PER_FILE = 100;
+    private final static int TIMEENTRIES_PER_FILE = 10000;
 
     private static String DEFAULT_HISTORY_OUTPUT_PATH = "history";
 
@@ -69,6 +69,11 @@ public class History {
      * @param outPath It contains the path where the history will be stored
      */
     public static void init(String outPath) throws IOException {
+        reservationClass=null;
+        initialEntities = new EntityCollection();
+        updatedEntities = new EntityCollection();
+        serializedEvents = new TreeMap<Integer, List<EventEntry>>();
+        outputPath = Paths.get(DEFAULT_HISTORY_OUTPUT_PATH);
         if(outPath != null) {
             outputPath = Paths.get(outPath);
         }
@@ -117,6 +122,9 @@ public class History {
         }
 
         writeTimeEntries();
+        initialEntities = null;
+        updatedEntities = null;
+        serializedEvents = null;
     }
 
     /**

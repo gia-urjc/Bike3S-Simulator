@@ -8,10 +8,10 @@ export class ReservationsPerUser implements SystemInfo, Observer {
     basicData: Array<User>;
     data: Data;
 
-    public static async create(users: Array<User>): Promise<ReservationsPerUser> {
+    public static create(users: Array<User>): ReservationsPerUser {
         let reservationValues = new ReservationsPerUser(users);
         try {
-            await reservationValues.init();
+            reservationValues.init();
         }
         catch(error) {
             throw new Error('Error creating requested data'+error);
@@ -24,7 +24,7 @@ export class ReservationsPerUser implements SystemInfo, Observer {
         this.data = new ReservationData();
     }
     
-    public async init(): Promise<void> {
+    public init(): void {
         try {
             this.data.init(this.basicData);
         }

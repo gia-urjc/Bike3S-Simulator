@@ -133,8 +133,7 @@ public class GeoPoint {
 
     @Override
     public String toString() {
-        String result = "Latitude: " + latitude;
-        result += "| Longitude: " + longitude + " \n";
+        String result = "Latitude/longitude: (" + latitude + " , " + longitude + ") ";
         return result;
     }
 }

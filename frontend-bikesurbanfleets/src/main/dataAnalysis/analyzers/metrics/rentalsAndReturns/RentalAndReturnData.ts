@@ -39,7 +39,7 @@ export class RentalAndReturnData implements Data {
         }
     }
     
-    public async initData(entities: Array<Entity>): Promise<void> {
+    public initData(entities: Array<Entity>): void {
         for(let entity of entities) {
             this.absoluteValues.set(entity.id, new RentalAndReturnAbsoluteValue);
         }
