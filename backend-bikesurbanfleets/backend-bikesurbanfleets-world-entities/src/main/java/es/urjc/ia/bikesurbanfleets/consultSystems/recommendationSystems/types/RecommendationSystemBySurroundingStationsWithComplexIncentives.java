@@ -50,10 +50,11 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                 .collect(Collectors.toList());
         List<StationQuality> qualities = new ArrayList<>();
+        List<Station> allStations = validStationsToRentBike(infraestructureManager.consultStations());
 
         for (int i = 0; i < stations.size(); i++) {
             Station station = stations.get(i);
-            double quality = qualityToRent(stations, station);
+            double quality = qualityToRent(allStations, station);
             qualities.add(new StationQuality(station, quality));
         }
 
@@ -64,9 +65,9 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
         Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
         return qualities.stream().sorted(byQuality).map(sq -> {
             Station s = sq.getStation();
-            Incentive<Integer> incentive = new Incentive(0);
+            Incentive<Integer> incentive = new Incentive<Integer>(0);
             if (s.getId() != nearestStation.getId()) {
-                incentive = new Incentive(new Integer((int)Math.round(calculateIncentive(point, stationQuality, sq))));
+                incentive = new Incentive<Integer>(new Integer((int)Math.round(calculateIncentive(point, stationQuality, sq))));
             }
             return new Recommendation(s, incentive);
         }).collect(Collectors.toList());
@@ -78,10 +79,11 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                 .collect(Collectors.toList());
         List<StationQuality> qualities = new ArrayList<>();
+        List<Station> allStations = validStationsToReturnBike(infraestructureManager.consultStations());
 
         for (int i = 0; i < stations.size(); i++) {
             Station station = stations.get(i);
-            double quality = qualityToReturn(stations, station);
+            double quality = qualityToReturn(allStations, station);
             qualities.add(new StationQuality(station, quality));
         }
 
@@ -92,9 +94,9 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
         Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
         return qualities.stream().sorted(byQuality).map(sq -> {
             Station s = sq.getStation();
-            Incentive<Integer> incentive = new Incentive(0);
+            Incentive<Integer> incentive = new Incentive<Integer>(0);
             if (s.getId() != nearestStation.getId()) {
-                incentive = new Incentive(new Integer((int)Math.round(calculateIncentive(point, stationQuality, sq))));
+                incentive = new Incentive<Integer>(new Integer((int)Math.round(calculateIncentive(point, stationQuality, sq))));
             }
             return new Recommendation(s, incentive);
         }).collect(Collectors.toList());
@@ -104,8 +106,15 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
         double summation = 0;
         if (!stations.isEmpty()) {
             double factor, multiplication;
+            double maxDistance = parameters.maxDistanceRecommendation;
+            double distance = 0.0;
+            stations.stream().filter(s -> s.getPosition()
+            		.distanceTo(station.getPosition()) < maxDistance)
+            .collect(Collectors.toList());
+
             for (Station s : stations) {
-                factor = (parameters.maxDistanceRecommendation - station.getPosition().distanceTo(s.getPosition())) / parameters.maxDistanceRecommendation;
+        						distance = station.getPosition().distanceTo(s.getPosition());
+                factor = (maxDistance - distance) / maxDistance;
                 multiplication = s.availableBikes() * factor;
                 summation += multiplication;
             }
@@ -117,8 +126,15 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
         double summation = 0;
         if (!stations.isEmpty()) {
             double factor, multiplication;
+            double maxDistance = parameters.maxDistanceRecommendation;
+            double distance = 0.0;
+            stations.stream().filter(s -> s.getPosition()
+            		.distanceTo(station.getPosition()) < maxDistance)
+            .collect(Collectors.toList());
+                    
             for (Station s : stations) {
-                factor = (parameters.maxDistanceRecommendation - station.getPosition().distanceTo(s.getPosition())) / parameters.maxDistanceRecommendation;
+            		distance = station.getPosition().distanceTo(s.getPosition());
+                factor = (maxDistance - distance) / maxDistance; 
                 multiplication = s.availableSlots() * factor;
                 summation += multiplication;
             }

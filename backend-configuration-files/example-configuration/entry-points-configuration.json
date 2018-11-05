@@ -43,7 +43,7 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_OBEDIENT",
+                "typeName": "USER_ECONOMIC_INCENTIVES",
                 "parameters": {}
             },
             "destinationPlace": {
@@ -63,7 +63,7 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_OBEDIENT",
+                "typeName": "USER_ECONOMIC_INCENTIVES",
                 "parameters": {}
             },
             "destinationPlace": {

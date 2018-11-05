@@ -1,8 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
 import com.google.gson.JsonElement;
-
-
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
@@ -120,8 +118,6 @@ public class UserEconomicIncentives extends User {
     public Station determineStationToRentBike() {
         Station destination = null;
         List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
-        //Remove station if the user is in this station
- //       recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()) && recommendation.getStation().availableBikes() == 0);
         List<Station> stations = informationSystem.getStations();
         Station nearestStation = nearestStationToRent(stations, this.getPosition());
 
@@ -138,7 +134,7 @@ public class UserEconomicIncentives extends User {
         							destination = recommendedStations.get(i).getStation();
         					}
         					System.out.println("station "+station.getId());
-        					System.out.println("incentive: "+incentive);
+        					System.out.println("incentive: "+incentive.getValue());
         					System.out.println("min expected incentive: "+(compensation+extra));
             i++;
         			}
@@ -154,7 +150,7 @@ public class UserEconomicIncentives extends User {
         Station destination = null;
         List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(this.getDestinationPlace());
         //Remove station if the user is in this station
-    //    recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
+        recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
         List<Station> stations = informationSystem.getStations();
         Station nearestStation = nearestStationToReturn(stations, this.getDestinationPlace());
         if (!recommendedStations.isEmpty()) {
@@ -203,17 +199,22 @@ public class UserEconomicIncentives extends User {
 
     private double compensation(GeoPoint point, Station nearestStation, Station recommendedStation) {
     	double distanceToNearestStation = nearestStation.getPosition().distanceTo(point);
-    	double distanceToRecommendedStation  = recommendedStation.getPosition().distanceTo(point);
+    	double distanceToRecommendedStation = recommendedStation.getPosition().distanceTo(point);
     	return (distanceToRecommendedStation - distanceToNearestStation)/parameters.COMPENSATION;
     }
     
     private double qualityToRent(List<Station> stations, Station station) {
 		double summation = 0;
 		if (!stations.isEmpty()) {
-			double factor, multiplication;
+			double factor = 0.0;
+			double multiplication = 1.0;
 			double maxDistance = parameters.maxdistance;
+			double distance = 0.0;
 			for (Station s: stations) {
-				factor = (maxDistance - station.getPosition().distanceTo(s.getPosition()))/maxDistance;
+				distance = station.getPosition().distanceTo(s.getPosition());
+				if (maxDistance > distance) {
+					factor = (maxDistance - distance)/maxDistance;
+				}
 				multiplication = s.availableBikes()*factor;
 				summation += multiplication; 
 			}
@@ -224,10 +225,15 @@ public class UserEconomicIncentives extends User {
 	private double qualityToReturn(List<Station> stations, Station station) {
 		double summation = 0;
 		if (!stations.isEmpty()) {
-			double factor, multiplication;
+			double factor = 0.0;
+			double multiplication = 1.0;
 			double maxDistance = parameters.maxdistance;
+			double distance = 0.0;
 			for (Station s: stations) {
-				factor = (maxDistance - station.getPosition().distanceTo(s.getPosition()))/maxDistance;
+				distance = station.getPosition().distanceTo(s.getPosition());
+				if (maxDistance > distance) {
+					factor = (maxDistance - distance)/maxDistance;
+				}
 				multiplication = s.availableSlots()*factor;
 				summation += multiplication; 
 			}

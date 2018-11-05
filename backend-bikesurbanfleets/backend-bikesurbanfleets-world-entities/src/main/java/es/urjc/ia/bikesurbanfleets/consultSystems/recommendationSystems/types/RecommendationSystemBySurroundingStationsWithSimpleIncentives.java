@@ -49,10 +49,11 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 				.filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
 				.collect(Collectors.toList());
 		List<StationQuality> qualities = new ArrayList<>();
+		List<Station> allStations = infraestructureManager.consultStations();
 		
 		for(int i=0; i<stations.size(); i++) {
 			Station station = stations.get(i);
-			double quality = qualityToRent(stations, station);
+			double quality = qualityToRent(allStations, station);
 			qualities.add(new StationQuality(station, quality));
 		}
 		
@@ -63,14 +64,14 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 	 
 	 List<Recommendation> recommendations = new ArrayList<>();
 		int numStations = qualities.size();
-		Incentive<Integer> incentive = new Incentive(0);
+		Incentive<Integer> incentive = new Incentive<Integer>(0);
 		double compensation, extra;
 		for (int i=0; i<numStations; i++) {
 			Station s = qualities.get(i).getStation();
 			if (s.getId() != nearestStation.getId()) {
 				compensation = compensation(point, nearestStation, s);
 				extra = (numStations - i)*parameters.EXTRA; 
-				incentive = new Incentive(new Integer((int)Math.round(compensation+extra)));
+				incentive = new Incentive<Integer>(new Integer((int)Math.round(compensation+extra)));
 			}
 			recommendations.add(new Recommendation(s, incentive));
 		}
@@ -97,14 +98,14 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 		
 		List<Recommendation> recommendations = new ArrayList<>();
 		int numStations = qualities.size();
-		Incentive<Integer>  incentive = new Incentive(0);
+		Incentive<Integer>  incentive = new Incentive<Integer>(0);
 		double compensation, extra;
 		for (int i=0; i<numStations; i++) {
 			Station s = qualities.get(i).getStation();
 			if (s.getId() != nearestStation.getId()) {
 				compensation = compensation(point, nearestStation, s);
 				extra = (numStations - i)*parameters.EXTRA; 
-				incentive = new Incentive(new Integer((int)Math.round(compensation+extra)));
+				incentive = new Incentive<Integer>(new Integer((int)Math.round(compensation+extra)));
 			}
 			recommendations.add(new Recommendation(s, incentive));
 		}
@@ -114,9 +115,15 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 	private double qualityToRent(List<Station> stations, Station station) {
 		double summation = 0;
 		if (!stations.isEmpty()) {
-			double factor, multiplication;
+			double factor = 0.0;
+			double multiplication = 1.0;
+			double maxDistance = parameters.maxDistanceRecommendation;
+			double distance = 0.0;
 			for (Station s: stations) {
-				factor = (parameters.maxDistanceRecommendation - station.getPosition().distanceTo(s.getPosition()))/parameters.maxDistanceRecommendation;
+				distance = station.getPosition().distanceTo(s.getPosition());
+				if (maxDistance > distance) {
+					factor = (maxDistance - distance)/maxDistance;
+				}
 				multiplication = s.availableBikes()*factor;
 				summation += multiplication; 
 			}
@@ -127,9 +134,16 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 	private double qualityToReturn(List<Station> stations, Station station) {
 		double summation = 0;
 		if (!stations.isEmpty()) {
-			double factor, multiplication;
+			double factor = 0.0;
+			double multiplication = 1.0;
+			double maxDistance = parameters.maxDistanceRecommendation;
+			double distance = 0.0;
+			
 			for (Station s: stations) {
-				factor = (parameters.maxDistanceRecommendation - station.getPosition().distanceTo(s.getPosition()))/parameters.maxDistanceRecommendation;
+				distance = station.getPosition().distanceTo(s.getPosition());
+				if (maxDistance > distance) {
+					factor = (maxDistance - distance)/maxDistance;
+				}
 				multiplication = s.availableSlots()*factor;
 				summation += multiplication; 
 			}

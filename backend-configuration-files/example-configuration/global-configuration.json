@@ -14,7 +14,7 @@
         }
     },
     "recommendationSystemType": {
-        "typeName": "HOLGERRECOMENDER",
+        "typeName": "SURROUNDING_STATIONS_SIMPLE_INCENTIVES",
         "parameters": {
         }
     },
