@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
 
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
@@ -10,9 +10,10 @@ import java.util.stream.Collectors;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -55,7 +56,7 @@ public class RecommendationSystemByDistanceResourcesRatio extends Recommendation
             Comparator<Station> byDistanceBikesRatio = StationComparator.byProportionBetweenDistanceAndBikes(point);
             temp = stations.stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                     .sorted(byDistanceBikesRatio).collect(Collectors.toList());
-            result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
+            result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
         }
         return result;
     }
@@ -69,7 +70,7 @@ public class RecommendationSystemByDistanceResourcesRatio extends Recommendation
             Comparator<Station> byDistanceSlotsRatio = StationComparator.byProportionBetweenDistanceAndSlots(point);
             temp = stations.stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                     .sorted(byDistanceSlotsRatio).collect(Collectors.toList());
-            result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
+            result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
         }
         return result;
     }

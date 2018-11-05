@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
 
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
@@ -9,9 +9,11 @@ import java.util.stream.Collectors;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.Incentive;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -62,9 +64,9 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
         Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
         return qualities.stream().sorted(byQuality).map(sq -> {
             Station s = sq.getStation();
-            double incentive = 0.0;
+            Incentive<Integer> incentive = new Incentive(0);
             if (s.getId() != nearestStation.getId()) {
-                incentive = calculateIncentive(point, stationQuality, sq);
+                incentive = new Incentive(new Integer((int)Math.round(calculateIncentive(point, stationQuality, sq))));
             }
             return new Recommendation(s, incentive);
         }).collect(Collectors.toList());
@@ -90,9 +92,9 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
         Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
         return qualities.stream().sorted(byQuality).map(sq -> {
             Station s = sq.getStation();
-            double incentive = 0.0;
+            Incentive<Integer> incentive = new Incentive(0);
             if (s.getId() != nearestStation.getId()) {
-                incentive = calculateIncentive(point, stationQuality, sq);
+                incentive = new Incentive(new Integer((int)Math.round(calculateIncentive(point, stationQuality, sq))));
             }
             return new Recommendation(s, incentive);
         }).collect(Collectors.toList());

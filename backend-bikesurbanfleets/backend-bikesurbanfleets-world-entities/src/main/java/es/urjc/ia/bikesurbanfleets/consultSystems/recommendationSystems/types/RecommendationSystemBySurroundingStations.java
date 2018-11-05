@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
 
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
@@ -9,9 +9,10 @@ import java.util.stream.Collectors;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -55,7 +56,7 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
             qualities.add(new StationQuality(station, quality));
         }
         Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
-        return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), 0.0)).collect(Collectors.toList());
+        return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
 
     }
 
@@ -74,7 +75,7 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
             qualities.add(new StationQuality(station, quality));
         }
         Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
-        return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), 0.0)).collect(Collectors.toList());
+        return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
     }
 
     private double qualityToRent(Station station, GeoPoint point) {

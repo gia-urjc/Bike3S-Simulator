@@ -1,12 +1,13 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -24,8 +25,8 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("AVAILABLE_RESOURCES_RATIO_PAPER")
-public class RecommendationSystemByAvailableResourcesRatioPaper extends RecommendationSystem {
+@RecommendationSystemType("AVAILABLE_RESOURCES")
+public class RecommendationSystemByAvailableResources extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -34,13 +35,13 @@ public class RecommendationSystemByAvailableResourcesRatioPaper extends Recommen
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
-        private int maxDistanceRecommendation = 650;
+        private int maxDistanceRecommendation = 800;
 
     }
 
     private RecommendationParameters parameters;
 
-    public RecommendationSystemByAvailableResourcesRatioPaper(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
+    public RecommendationSystemByAvailableResources(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
         super(infraestructureManager);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -51,8 +52,8 @@ public class RecommendationSystemByAvailableResourcesRatioPaper extends Recommen
         // that means that teh paramerts are all optional
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
-         getParameters(recomenderdef, this.parameters);
-  }
+        getParameters(recomenderdef, this.parameters);
+   }
 
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
@@ -62,10 +63,9 @@ public class RecommendationSystemByAvailableResourcesRatioPaper extends Recommen
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
-            Comparator<Station> byBikesRatio = StationComparator.byBikesCapacityRatio();
-            temp = stations.stream().sorted(byBikesRatio).collect(Collectors.toList());
-            temp.forEach(s -> System.out.println("Station " + s.getId() + ": " + (double) s.availableBikes() / s.getCapacity()));
-            result = temp.stream().map(station -> new Recommendation(station, 0.0)).collect(Collectors.toList());
+            Comparator<Station> byBikes = StationComparator.byAvailableBikes();
+            temp = stations.stream().sorted(byBikes).collect(Collectors.toList());
+            result = temp.stream().map(station -> new Recommendation(station, null)).collect(Collectors.toList());
         }
         return result;
     }
@@ -76,10 +76,9 @@ public class RecommendationSystemByAvailableResourcesRatioPaper extends Recommen
         List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
-            Comparator<Station> bySlotsRatio = StationComparator.bySlotsCapacityRatio();
-            temp = stations.stream().sorted(bySlotsRatio).collect(Collectors.toList());
-            temp.forEach(s -> System.out.println("Station " + s.getId() + ": " + s.availableBikes() / s.getCapacity()));
-            result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
+            Comparator<Station> bySlots = StationComparator.byAvailableSlots();
+            temp = stations.stream().sorted(bySlots).collect(Collectors.toList());
+            result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
         }
 
         return result;

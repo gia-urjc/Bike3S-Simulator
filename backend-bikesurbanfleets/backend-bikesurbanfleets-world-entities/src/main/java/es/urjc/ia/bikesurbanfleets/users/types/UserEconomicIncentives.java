@@ -1,12 +1,15 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
 import com.google.gson.JsonElement;
+
+
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
-import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.Incentive;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -127,11 +130,11 @@ public class UserEconomicIncentives extends User {
         			while (destination == null && i < recommendedStations.size()) {
         					Station station = recommendedStations.get(i).getStation();
         					
-        					double incentive = recommendedStations.get(i).getIncentive();
+        					Incentive<Integer> incentive = recommendedStations.get(i).getIncentive();
         					double quality = qualityToRent(stations, station);
         					double compensation = compensation(this.getPosition(), nearestStation, station);
         					double extra = quality*parameters.EXTRA/100;
-        					if (incentive >= (compensation+extra)) {
+        					if (incentive.getValue() >= (int)(compensation+extra)) {
         							destination = recommendedStations.get(i).getStation();
         					}
         					System.out.println("station "+station.getId());
@@ -158,11 +161,11 @@ public class UserEconomicIncentives extends User {
             int i = 0;
             while (destination == null && i < recommendedStations.size()) {
                 Station station = recommendedStations.get(i).getStation();
-                double incentive = recommendedStations.get(i).getIncentive();
+                Incentive<Integer> incentive = recommendedStations.get(i).getIncentive();
                 double quality = qualityToReturn(stations, station);
                 double compensation = compensation(this.getDestinationPlace(), nearestStation, station);
                 double extra = quality*parameters.EXTRA/100;
-                if (incentive >= (compensation+extra)) {
+                if (incentive.getValue() >= (int)(compensation+extra)) {
                         destination = recommendedStations.get(i).getStation();
                 }
                 System.out.println("station "+station.getId());

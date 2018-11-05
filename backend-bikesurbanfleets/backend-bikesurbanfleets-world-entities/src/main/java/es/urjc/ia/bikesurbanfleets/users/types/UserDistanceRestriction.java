@@ -10,6 +10,7 @@ import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a user whose behaviour is the same of UserReasonable with the 
@@ -122,7 +123,10 @@ public class UserDistanceRestriction extends User {
     @Override
     public Station determineStationToRentBike() {
         Station destination = null;
-        List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceBikesRatio(this.getPosition(), parameters.maxDistance);
+        List<Station> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition())
+        		.stream().map((recommendation -> recommendation.getStation()))
+        		.filter(station -> station.getPosition().distanceTo(this.getPosition()) <= parameters.maxDistance)
+        		.collect(Collectors.toList());
         //Remove station if the user is in this station
         //recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
         if (!recommendedStations.isEmpty()) {
@@ -134,7 +138,9 @@ public class UserDistanceRestriction extends User {
     @Override
      public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> recommendedStations = informationSystem.getStationsOrderedByDistanceSlotsRatio(destinationPlace);
+        List<Station> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace)
+        		.stream().map((recommendation -> recommendation.getStation()))
+        		.collect(Collectors.toList());
         //Remove station if the user is in this station
     //    recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
         if (!recommendedStations.isEmpty()) {

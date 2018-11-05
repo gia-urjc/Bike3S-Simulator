@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
 
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
@@ -9,9 +9,11 @@ import java.util.stream.Collectors;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.Incentive;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -61,14 +63,14 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 	 
 	 List<Recommendation> recommendations = new ArrayList<>();
 		int numStations = qualities.size();
-		double incentive = 0.0;
+		Incentive<Integer> incentive = new Incentive(0);
 		double compensation, extra;
 		for (int i=0; i<numStations; i++) {
 			Station s = qualities.get(i).getStation();
 			if (s.getId() != nearestStation.getId()) {
 				compensation = compensation(point, nearestStation, s);
 				extra = (numStations - i)*parameters.EXTRA; 
-				incentive = compensation+extra;
+				incentive = new Incentive(new Integer((int)Math.round(compensation+extra)));
 			}
 			recommendations.add(new Recommendation(s, incentive));
 		}
@@ -95,14 +97,14 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 		
 		List<Recommendation> recommendations = new ArrayList<>();
 		int numStations = qualities.size();
-		double incentive = 0.0;
+		Incentive<Integer>  incentive = new Incentive(0);
 		double compensation, extra;
 		for (int i=0; i<numStations; i++) {
 			Station s = qualities.get(i).getStation();
 			if (s.getId() != nearestStation.getId()) {
 				compensation = compensation(point, nearestStation, s);
 				extra = (numStations - i)*parameters.EXTRA; 
-				incentive = compensation+extra;
+				incentive = new Incentive(new Integer((int)Math.round(compensation+extra)));
 			}
 			recommendations.add(new Recommendation(s, incentive));
 		}

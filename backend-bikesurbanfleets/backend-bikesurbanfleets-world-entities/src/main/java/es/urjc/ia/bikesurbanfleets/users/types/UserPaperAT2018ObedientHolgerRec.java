@@ -7,7 +7,7 @@ package es.urjc.ia.bikesurbanfleets.users.types;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.users.UserType;

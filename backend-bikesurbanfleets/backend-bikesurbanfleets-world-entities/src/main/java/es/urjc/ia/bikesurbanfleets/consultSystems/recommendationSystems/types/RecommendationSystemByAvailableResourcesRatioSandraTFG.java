@@ -1,13 +1,14 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
 import es.urjc.ia.bikesurbanfleets.comparators.StationComparator;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
  *
  */
 @RecommendationSystemType("AVAILABLE_RESOURCES_RATIO")
-public class RecommendationSystemByAvailableResourcesRatio extends RecommendationSystem {
+public class RecommendationSystemByAvailableResourcesRatioSandraTFG extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -52,7 +53,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
      */
     private SimpleRandom rand;
 
-    public RecommendationSystemByAvailableResourcesRatio(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
+    public RecommendationSystemByAvailableResourcesRatioSandraTFG(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
         super(infraestructureManager);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -135,7 +136,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
 
             nearer.addAll(farther);
             temp = rebalanceWhenRenting(nearer);
-            result = temp.stream().map(station -> new Recommendation(station, 0.0)).collect(Collectors.toList());
+            result = temp.stream().map(station -> new Recommendation(station, null)).collect(Collectors.toList());
         }
         return result;
     }
@@ -152,7 +153,7 @@ public class RecommendationSystemByAvailableResourcesRatio extends Recommendatio
             farther = farther.stream().sorted(bySlotsRatio).collect(Collectors.toList());
             nearer.addAll(farther);
             temp = rebalanceWhenReturning(nearer);
-            result = temp.stream().map(station -> new Recommendation(station, 0.0)).collect(Collectors.toList());
+            result = temp.stream().map(station -> new Recommendation(station, null)).collect(Collectors.toList());
         }
 
         return result;
