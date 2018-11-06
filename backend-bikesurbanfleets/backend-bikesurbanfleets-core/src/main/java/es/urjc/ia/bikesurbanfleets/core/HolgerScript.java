@@ -48,7 +48,7 @@ public class HolgerScript {
 
         String projectDir= System.getProperty("user.dir") + File.separator;
 
-        baseDir=projectDir+"Bike3STests/paperAT2018/halfbikes_halfcapacity/dia_entero_500meters_with_velocity";
+        baseDir=projectDir+"Bike3STests/paperAT2018/allbikes/dia_entero_150meters_with_velocity";
         
         
         System.out.println("baseDir " + baseDir);
