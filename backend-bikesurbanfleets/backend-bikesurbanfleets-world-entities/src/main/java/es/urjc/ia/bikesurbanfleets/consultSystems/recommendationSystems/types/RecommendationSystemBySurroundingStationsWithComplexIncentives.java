@@ -24,8 +24,8 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
     public class RecommendationParameters {
 
         private int maxDistanceRecommendation = 700;
-        private double COMPENSATION = 10;  // 1 cent per 15 meters 
-        private double EXTRA = 1.44;
+        private double COMPENSATION = 13;  // 1 cent per 12 meters 
+        private double EXTRA = 1;
     }
 
     private RecommendationParameters parameters;

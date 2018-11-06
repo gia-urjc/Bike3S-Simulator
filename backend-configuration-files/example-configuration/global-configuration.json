@@ -14,7 +14,7 @@
         }
     },
     "recommendationSystemType": {
-        "typeName": "SURROUNDING_STATIONS_SIMPLE_INCENTIVES",
+        "typeName": "SURROUNDING_STATIONS_COMPLEX_INCENTIVES",
         "parameters": {
         }
     },
