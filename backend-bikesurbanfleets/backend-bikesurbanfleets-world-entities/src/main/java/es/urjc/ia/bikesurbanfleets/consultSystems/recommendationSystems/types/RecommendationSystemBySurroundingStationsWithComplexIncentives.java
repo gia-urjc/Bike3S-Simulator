@@ -77,12 +77,12 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 	        double distanceToRecommendedStation = recommendedStation.getPosition().distanceTo(point);
 	        return (distanceToRecommendedStation - distanceToNearestStation) / COMPENSATION;
 	    }
-	    
-	    @Override
+
 	    public Incentive calculateIncentive(GeoPoint point, StationQuality nearestStationQuality, StationQuality recommendedStationQuality) {
 	        double compensation = compensation(point, nearestStationQuality.getStation(), recommendedStationQuality.getStation());
 	        double extra = extra(nearestStationQuality, recommendedStationQuality);
 	        Incentive money = new Money((int)Math.round(compensation + extra));
+	        return money;
 	    }
 	}
 
