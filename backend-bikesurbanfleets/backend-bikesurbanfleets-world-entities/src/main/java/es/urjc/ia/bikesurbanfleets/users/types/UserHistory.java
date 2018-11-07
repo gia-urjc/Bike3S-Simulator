@@ -13,44 +13,44 @@ import es.urjc.ia.bikesurbanfleets.users.User;
 import java.util.List;
 
 /**
- * This class represents a user who always follows the first system recommendations i. e., that 
- * which consist of renting a bike at the station which has more available bikes and returning 
- * the bike at the station which has more available slots. 
- * This user never reserves neither bikes nor slots at destination stations as he knows that the 
- * system is recommending him that station because it is the station which has more available 
- * bikes or slots, so he knows that, almost certainly, he'll be able to rent or to return a bike. 
-  * Moreover, he always chooses the shortest routes to get his destination.
- * 
+ * This class represents a user (employee, student, etc) who uses the bike as a public transport 
+ * in order to arrive at his destination place (work, university, etc).
+ * Then, this user always decides the destination station just after renting the bike 
+ * in order to arrive at work, university,... as soon as possible.
+ * Moreover, he always chooses both the closest origin station to himself and the closest 
+ * station to his destination. Also, he always chooses the shortest routes to get the stations.
+ * Also, this type of user always determines a new destination station after 
+ * a reservation failed attempt and always decides to continue to the previously chosen 
+ * station after a timeout event with the intention of losing as little time as possible.
+ * And, of course, he never leaves the system as he needs to ride on bike in order to arrive at work/university. 
+ *   
  * @author IAgroup
- */
-@UserType("USER_AVAILABLE_RESOURCES")
-public class UserAvailableResources extends User {
+  */
+@UserType("USER_COMMUTER")
+public class UserHistory extends User {
 
     @UserParameters
     public class Parameters {
 
         //default constructor used if no parameters are specified
         private Parameters() {}
-        
         /**
-         * It is the number of times that the user will try to rent a bike (without a bike
+         * It is the number of times that the user musts try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
         private int minRentalAttempts = 2;
 
-
         @Override
         public String toString() {
-            return "Parameters{" +
-                    "minRentalAttempts=" + minRentalAttempts+
-            '}';
+            return "UserEmployeeParameters{" +
+                    ", minRentalAttempts=" + minRentalAttempts +
+                    '}';
         }
 
     }
-
     private Parameters parameters;
-
-    public UserAvailableResources(JsonObject userdef, SimulationServices services, long seed) throws Exception{
+    
+    public UserHistory(JsonObject userdef, SimulationServices services, long seed) throws Exception{
         super(services, userdef, seed);
         //***********Parameter treatment*****************************
         //if this user has parameters this is the right declaration
@@ -62,7 +62,7 @@ public class UserAvailableResources extends User {
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new Parameters();
         getParameters(userdef.getAsJsonObject("userType"), this.parameters);
-    }
+     }
 
 
     //**********************************************
@@ -113,6 +113,30 @@ public class UserAvailableResources extends User {
         else return false;
      }
 
+   
+    @Override
+    public Station determineStationToRentBike() {
+        List<Station> recommendedStations = informationSystem.getStationsToRentBikeOrderedByDistance(this.getPosition());
+        Station destination = null;
+        //Remove station if the user is in this station
+        recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition())  && station.availableBikes() == 0);
+        if (!recommendedStations.isEmpty()) {
+        destination = recommendedStations.get(0);
+        }
+        return destination;
+    }
+        
+    @Override
+     public Station determineStationToReturnBike() {
+        List<Station> recommendedStations = informationSystem.getStationsToReturnBikeOrderedByDistance(destinationPlace);
+        Station destination = null;
+        //Remove station if the user is in this station
+    //    recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
+        if (!recommendedStations.isEmpty()) {
+            destination = recommendedStations.get(0);
+        }
+        return destination;
+    }
 
     //**********************************************
     //decisions related to either go directly to the destination or going arround
@@ -127,36 +151,9 @@ public class UserAvailableResources extends User {
         return null;
     }
 
- 
-    
-    @Override
-    public Station determineStationToRentBike() {
-        List<Station> recommendedStations = informationSystem.getStationsOrderedByNumberOfBikes();
-        Station destination = null;
-        //Remove station if the user is in this station
-      //  recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()) && station.availableBikes() == 0);
-        if (!recommendedStations.isEmpty()) {
-            destination = recommendedStations.get(0);
-        }
-        return destination;
-    }
-
-    @Override
-     public Station determineStationToReturnBike() {
-        List<Station> recommendedStations = informationSystem.getStationsOrderedByNumberOfSlots();
-        Station destination = null;
-        //Remove station if the user is in this station
-     //   recommendedStations.removeIf(station -> station.getPosition().equals(this.getPosition()));
-        if (!recommendedStations.isEmpty()) {
-            destination = recommendedStations.get(0);
-        }
-       return destination;
-    }
-    
- 
     @Override
     public String toString() {
-        return "UserAvailableResources{" +
+        return super.toString() + "UserDistanceRestriction{" +
                 "parameters=" + parameters +
                 '}';
     }

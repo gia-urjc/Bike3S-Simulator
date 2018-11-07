@@ -3,20 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
+
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
+
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystem;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 
 /**
@@ -79,7 +82,7 @@ public class HolgerRecomenderSurroundingStations extends RecommendationSystem {
                 System.out.println("      station_utility: " + temp.get(i).stationUtility);
             }
            }
-            return temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
+            return temp.stream().map(s -> new Recommendation(s.station, null)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
         }
@@ -97,7 +100,7 @@ public class HolgerRecomenderSurroundingStations extends RecommendationSystem {
 
         if (!stationdat.isEmpty()) {
             List<StationData> temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
-            return  temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
+            return  temp.stream().map(s -> new Recommendation(s.station, null)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
         }

@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
 
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
@@ -9,15 +9,15 @@ import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemParameters;
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.log.Debug;
 
-@RecommendationSystemType("HOLGERRECOMENDER")
-public class HolgerRecomender extends RecommendationSystem {
+@RecommendationSystemType("FULLCAPRECOMENDER")
+public class FullCapacityRecomender extends es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystem {
 
     class StationData {
 
@@ -44,7 +44,7 @@ public class HolgerRecomender extends RecommendationSystem {
 
     RecommendationParameters parameters;
 
-    public HolgerRecomender(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
+    public FullCapacityRecomender(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
         super(infraestructureManager);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -78,7 +78,7 @@ public class HolgerRecomender extends RecommendationSystem {
                     System.out.println("      station_utility: " + temp.get(i).stationUtility);
                 }
             }
-            return temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
+            return temp.stream().map(s -> new Recommendation(s.station, null)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
         }
@@ -96,7 +96,7 @@ public class HolgerRecomender extends RecommendationSystem {
 
         if (!stationdat.isEmpty()) {
             List<StationData> temp = stationdat.stream().sorted(byUtility()).collect(Collectors.toList());
-            return temp.stream().map(s -> new Recommendation(s.station, 0.0)).collect(Collectors.toList());
+            return temp.stream().map(s -> new Recommendation(s.station, null)).collect(Collectors.toList());
         } else {
             throw new RuntimeException("no recomended station");
         }
@@ -135,11 +135,19 @@ public class HolgerRecomender extends RecommendationSystem {
             //calculate distance utility
             sd.distanceutility = calculateDistanceUtility(closestsdistance, sd.distance);
             //calculate stationutility
-            sd.stationUtility = normatizeToUtility(sd.stationUtility, 0, stationutilityequilibrium);
+            sd.stationUtility = sinoidUtility(sd);
             //set utility
             sd.utility = sd.stationUtility * sd.distanceutility;
         }
     }
+    //the employed fomula is (0.5/(1+2^(-(x-6))))+(0.5/(1+2^(-(x-18))))
+    // if you put this formula in https://www.mathsisfun.com/data/function-grapher.php you see its behaviour 
+    protected double sinoidUtility(StationData sd) {
+     
+        double part1= 0.5D/(1D+Math.pow(2D, -(sd.stationUtility-sd.station.getCapacity()/4D)));
+        double part2= 0.5D/(1D+Math.pow(2D, -(sd.stationUtility-(sd.station.getCapacity()*3D/4D))));
+        return part1+part2;
+    } 
 
     //calculates the unnormalized station utilities of all stations
     //returns the average stationutility of all stations

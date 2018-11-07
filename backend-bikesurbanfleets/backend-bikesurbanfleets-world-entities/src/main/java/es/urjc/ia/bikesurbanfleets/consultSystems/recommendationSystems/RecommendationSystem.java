@@ -1,10 +1,10 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.Recommendation;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 

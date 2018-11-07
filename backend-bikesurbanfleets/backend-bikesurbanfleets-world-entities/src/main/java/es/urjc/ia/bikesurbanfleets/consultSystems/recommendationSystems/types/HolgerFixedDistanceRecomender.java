@@ -1,13 +1,15 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
 
 import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import es.urjc.ia.bikesurbanfleets.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types.FullCapacityRecomender.StationData;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 
 @RecommendationSystemType("HOLGER_FixedDistanceRECOMENDER")

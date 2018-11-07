@@ -4,8 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommendation;
+
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
-import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystemTypes.Recommendation;
+
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -85,8 +87,6 @@ public class UserObedient extends User {
     public Station determineStationToRentBike() {
         Station destination = null;
         List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
-        //Remove station if the user is in this station
- //       recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()) && recommendation.getStation().availableBikes() == 0);
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0).getStation();
         }
