@@ -14,6 +14,8 @@ import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommen
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.Incentive;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.Money;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.StationQuality;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
@@ -64,14 +66,14 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 	 
 	 List<Recommendation> recommendations = new ArrayList<>();
 		int numStations = qualities.size();
-		Incentive<Integer> incentive = new Incentive<Integer>(0);
+		Incentive incentive = new Money(0);
 		double compensation, extra;
 		for (int i=0; i<numStations; i++) {
 			Station s = qualities.get(i).getStation();
 			if (s.getId() != nearestStation.getId()) {
 				compensation = compensation(point, nearestStation, s);
 				extra = (numStations - i)*parameters.EXTRA; 
-				incentive = new Incentive<Integer>(new Integer((int)Math.round(compensation+extra)));
+				incentive = new Money((int)Math.round(compensation+extra));
 			}
 			recommendations.add(new Recommendation(s, incentive));
 		}
@@ -98,14 +100,14 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 		
 		List<Recommendation> recommendations = new ArrayList<>();
 		int numStations = qualities.size();
-		Incentive<Integer>  incentive = new Incentive<Integer>(0);
+		Incentive incentive = new Money(0);
 		double compensation, extra;
 		for (int i=0; i<numStations; i++) {
 			Station s = qualities.get(i).getStation();
 			if (s.getId() != nearestStation.getId()) {
 				compensation = compensation(point, nearestStation, s);
 				extra = (numStations - i)*parameters.EXTRA; 
-				incentive = new Incentive<Integer>(new Integer((int)Math.round(compensation+extra)));
+				incentive = new Money((int)Math.round(compensation+extra));
 			}
 			recommendations.add(new Recommendation(s, incentive));
 		}

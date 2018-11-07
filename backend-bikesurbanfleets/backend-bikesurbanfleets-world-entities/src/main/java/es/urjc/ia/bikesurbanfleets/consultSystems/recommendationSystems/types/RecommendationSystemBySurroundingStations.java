@@ -13,6 +13,7 @@ import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommen
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.StationQuality;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 

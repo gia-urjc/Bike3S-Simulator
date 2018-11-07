@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.types;
+package es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives;
 
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
