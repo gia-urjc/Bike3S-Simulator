@@ -14,7 +14,6 @@ import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.Recommen
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.Incentive;
-import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.IncentiveManager;
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.Money;
 import es.urjc.ia.bikesurbanfleets.consultSystems.recommendationSystems.incentives.StationQuality;
 import es.urjc.ia.bikesurbanfleets.infraestructure.InfraestructureManager;
@@ -23,7 +22,7 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 @RecommendationSystemType("SURROUNDING_STATIONS_COMPLEX_INCENTIVES")
 public class RecommendationSystemBySurroundingStationsWithComplexIncentives extends RecommendationSystem {
 	
-	private class IncentiveManagerSurroundingStations implements IncentiveManager {
+	private class IncentiveManagerSurroundingStations {
 		private double COMPENSATION = 14;  // 1 cent per 12 meters 
 		private double EXTRA = 1.01;
     
@@ -83,7 +82,7 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 	    public Incentive calculateIncentive(GeoPoint point, StationQuality nearestStationQuality, StationQuality recommendedStationQuality) {
 	        double compensation = compensation(point, nearestStationQuality.getStation(), recommendedStationQuality.getStation());
 	        double extra = extra(nearestStationQuality, recommendedStationQuality);
-	        Incentive money = new Money(Math.round(compensation + extra));
+	        Incentive money = new Money((int)Math.round(compensation + extra));
 	    }
 	}
 
