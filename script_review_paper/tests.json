@@ -1,0 +1,15 @@
+{  "tests": [
+    { "recommendationSystemType": {
+        "typeName": "HOLGER_FixedDistanceRECOMENDER",
+        "parameters": {
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_INF",
+        "parameters": {
+            
+        }
+      }
+    }
+  ]
+}

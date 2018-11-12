@@ -1,0 +1,53 @@
+{  "tests": [
+    { "recommendationSystemType": {
+        "typeName": "HOLGER_FixedDistanceRECOMENDER",
+        "parameters": {
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_UNINF",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "HOLGER_FixedDistanceRECOMENDER",
+        "parameters": {
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_INF",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "AVAILABLE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "AVAILABLE_RESOURCES_RATIO_PAPER",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+            
+        }
+      }
+    }
+  ]
+}

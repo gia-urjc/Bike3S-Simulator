@@ -44,16 +44,16 @@ public class HolgerScript {
     public static void main(String[] args) throws Exception {
         HolgerScript hs = new HolgerScript();
         //treat tests
-        //String projectDir="/Users/holger/workspace/BikeProjects/Bike3S/";
+        String projectDir="/home/darwin/Documentos/my_projects/Bike3S-0.8.0/";
 
-        String projectDir= System.getProperty("user.dir") + File.separator;
+        //String projectDir= System.getProperty("user.dir") + File.separator;
 
-        baseDir=projectDir+"Bike3STests/paperAT2018/allbikes/dia_entero_150meters_with_velocity";
+        baseDir=projectDir+"script_review_paper";
         
         
         System.out.println("baseDir " + baseDir);
         String testFile = baseDir+"/tests.json";
-        mapPath = projectDir+"Bike3STests/madrid.osm";
+        mapPath = projectDir+"backend-configuration-files/maps/madrid.osm";
         schemaPath = projectDir+"build/schema";
         dataAnalyzerPath=projectDir+"build/data-analyser";
         analysisScriptPath=projectDir+"Bike3STests/analysis_scripts/";

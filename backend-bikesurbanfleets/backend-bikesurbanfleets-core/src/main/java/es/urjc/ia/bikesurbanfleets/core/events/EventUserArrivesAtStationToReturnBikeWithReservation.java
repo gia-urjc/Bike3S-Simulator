@@ -35,21 +35,16 @@ public class EventUserArrivesAtStationToReturnBikeWithReservation extends EventU
     }
 
     @Override
-    public List<Event> execute() {
+    public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        try {
-            user.setInstant(this.instant);
-            user.setPosition(station.getPosition());
-            user.setState(User.STATE.WALK_TO_DESTINATION);
-            user.returnBikeWithReservationTo(station);
-            GeoPoint point = user.getDestinationPlace();
-            int arrivalTime = user.goToPointInCity(point);
-            debugEventLog("User returns the bike with reservation. Destination in city: "+point.toString());
-            newEvents.add(new EventUserArrivesAtDestinationInCity(this.instant+arrivalTime, user, point));
-        }
-        catch(Exception e) {
-            exceptionTreatment(e);
-        }
+        user.setInstant(this.instant);
+        user.setPosition(station.getPosition());
+        user.setState(User.STATE.WALK_TO_DESTINATION);
+        user.returnBikeWithReservationTo(station);
+        GeoPoint point = user.getDestinationPlace();
+        int arrivalTime = user.goToPointInCity(point);
+        debugEventLog("User returns the bike with reservation. Destination in city: "+point.toString());
+        newEvents.add(new EventUserArrivesAtDestinationInCity(this.instant+arrivalTime, user, point));
         return newEvents;
     }
 

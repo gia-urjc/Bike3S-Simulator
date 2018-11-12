@@ -2,7 +2,8 @@
 title: "ReportBatteryTests"
 output: html_document
 params:
-  path: /Users/ibernabe/IntellijProjects/Bike3STests/paperAT2018/allbikes/test/29_10_2018_14:41:17/analisis 
+  path: /Users/ibernabe/IntellijProjects/Bike3STests/paperAT2018/allbikes/test/09_11_2018_13_12_15/analisis
+  #path: /Users/ibernabe/IntellijProjects/Bike3STests/paperAT2018/allbikes/test/31_10_2018_12_06_41/analisis
 ---
 <!-- path recibe un parametro, por defecto es: ./analisis-->
 
@@ -11,7 +12,6 @@ params:
 knitr::opts_chunk$set(echo = TRUE)
 library(htmlTable)
 library(knitr)
-library(kableExtra)
 
 options(table_counter = TRUE)
 ```
@@ -53,14 +53,21 @@ for (k in 1:length(listcsv)){
   cyclingTime <- users$cycling.time[!is.na(users$cycling.time)]
   timeToDestinationPlace <- users$time.to.destination.place[!is.na(users$time.to.destination.place)]
   
+  
+  #Modifico los textos en el dataframe
+  listcsv[k] <- sapply(listcsv[k],function(x) {x <- gsub("/users.csv","",x)
+                                                             x <-  gsub(params$path,"",x)
+                                                            x <-   gsub("/","",x)
+                                                                })
+  
   #Creo una columna por cada iteración
-  value <-format( mean (timeToStation), digits=2, nsmall=2)
+  value <-format( mean (timeToStation)/60, digits=2, nsmall=2)
   timeToStationAux <- t(c(listcsv[k],value))
   
-  value <-format( mean (cyclingTime), digits=2, nsmall=2)
+  value <-format( mean (cyclingTime)/60, digits=2, nsmall=2)
   cyclingTimeAux <- t(c(listcsv[k],value))
   
-  value <-format( mean (timeToDestinationPlace), digits=2, nsmall=2)
+  value <-format( mean (timeToDestinationPlace)/60, digits=2, nsmall=2)
   timeToDestinationPlaceAux <- t(c(listcsv[k],value))
 
   #Añado a la tabla las columnas
@@ -69,25 +76,11 @@ for (k in 1:length(listcsv)){
   (tablatimeToDestinationPlace<-rbind(tablatimeToDestinationPlace,timeToDestinationPlaceAux))
 }
 
-#Modifico los textos en el dataframe
-tablaTimeToStation <- sapply(tablaTimeToStation,function(x) {x <- gsub("/users.csv","",x)
-                                                             x <-  gsub(params$path,"",x)
-                                                            x <-   gsub("/","",x)
-                                                                })
-tablaCyclingTime <- sapply(tablaCyclingTime,function(x) {x <- gsub("/users.csv","",x)
-                                                             x <-  gsub(params$path,"",x)
-                                                            x <-   gsub("/","",x)
-                                                                })
-tablatimeToDestinationPlace <- sapply(tablatimeToDestinationPlace,function(x) {x <- gsub("/users.csv","",x)
-                                                             x <-  gsub(params$path,"",x)
-                                                            x <-   gsub("/","",x)
-                                                                })
-
 htmlTable(tablaTimeToStation,
           align = "l", # Alineación a la izquierda
           caption = "Medias de time.to.origin.station",
           rnames = c(rep(paste("",""),nrow(tablaTimeToStation))),
-          header =  paste(c("Test","Medias")),
+          header =  paste(c("Test","Medias (min.)")),
           align.header = "ll",
           col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
           css.class= "table"
@@ -101,7 +94,7 @@ htmlTable(tablaCyclingTime,
           align = "l", # Alineación a la izquierda
           caption = "Medias de cycling.time",
           rnames = c(rep(paste("",""),nrow(tablaCyclingTime))),
-          header =  paste(c("Test","Medias")),
+          header =  paste(c("Test","Medias (min.)")),
           align.header = "ll",
           col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
           css.class= "table"
@@ -114,7 +107,7 @@ htmlTable(tablatimeToDestinationPlace,
           align = "l", # Alineación a la izquierda
           caption = "Medias de destination.place",
           rnames = c(rep(paste("",""),nrow(tablatimeToDestinationPlace))),
-          header =  paste(c("Test","Medias")),
+          header =  paste(c("Test","Medias (min.)")),
           align.header = "ll",
           col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
           css.class= "table"
@@ -151,19 +144,19 @@ for (k in 1:length(listcsv)){
                    sep = ";"
                    )
 
-  value <-format( mean (stations$balancing.quality), digits=2, nsmall=2)
+   #Modifico los textos en el dataframe
+  listcsv[k] <- sapply(listcsv[k],function(x) {x <- gsub("/stationBalanceQuality.csv","",x)
+                                                             x <-  gsub(params$path,"",x)
+                                                            x <-   gsub("/","",x)
+                                                                })
   
+  value <-format( mean (stations$balancing.quality), digits=2, nsmall=2)
   
   stationBalancingQualityAux <- t(c(listcsv[k],value))
 
   #Añado a la tabla las columnas
   tablaStationBalancingQuality<-rbind(tablaStationBalancingQuality,stationBalancingQualityAux)
 }
-
-tablaStationBalancingQuality <- sapply(tablaStationBalancingQuality,function(x) {x <- gsub("/stationBalancingQuality.csv","",x)
-                                                             x <-  gsub(params$path,"",x)
-                                                            x <-   gsub("/","",x)
-                                                                })
 
 htmlTable(tablaStationBalancingQuality,
           align = "l", # Alineación a la izquierda
@@ -202,6 +195,11 @@ for (k in 1:length(listcsv)){
                      header = TRUE,
                      sep = ";"
   )
+   #Modifico los textos en el dataframe
+  listcsv[k] <- sapply(listcsv[k],function(x) {x <- gsub("/global_values.csv","",x)
+                                                             x <-  gsub(params$path,"",x)
+                                                            x <-   gsub("/","",x)
+                                                                })
   path <- listcsv[k]
   
   #value <-format( mean (timeToStation), digits=2, nsmall=2)
@@ -215,15 +213,11 @@ for (k in 1:length(listcsv)){
   #Añado a la tabla las columnas
   (tablaStationBalancingQuality<-rbind(tablaStationBalancingQuality,Aux))
 }
-tablaStationBalancingQuality <- sapply(tablaStationBalancingQuality,function(x) {x <- gsub("/global_values.csv","",x)
-                                                             x <-  gsub(params$path,"",x)
-                                                            x <-   gsub("/","",x)
-                                                                })
 
 htmlTable(tablaStationBalancingQuality,
           align = "l", # Alineación a la izquierda
           caption = "global_values",
-          rnames = c(rep(paste("",""),nrow(tablaStationBalancingQuality))),
+          #rnames = c(rep(paste("",""),nrow(tablaStationBalancingQuality))),
           header =  paste(c("Test", "Demand Satisfaction","Hire efficiency", "Return efficiency")),
           align.header = "ll",
           col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares

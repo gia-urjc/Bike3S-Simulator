@@ -20,7 +20,7 @@ public class EventUserArrivesAtDestinationInCity extends EventUser {
 	}
 	
 	@Override
-	public List<Event> execute() {
+	public List<Event> execute() throws Exception {
                 List<Event> newEvents = new ArrayList<>();
 		user.setInstant(this.instant);
                 user.setPosition(currentPosition);

@@ -55,7 +55,7 @@ public abstract class EventUser implements Event {
     /**
      * It proccesses the event so that the relevant changes at the system occur.
      */
-    public abstract List<Event> execute();
+    public abstract List<Event> execute() throws Exception;
 
 
     /*
@@ -286,15 +286,6 @@ public abstract class EventUser implements Event {
             newEvents.add(new EventUserArrivesAtStationToReturnBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
         }
         return newEvents;
-    }
-    
-    protected void exceptionTreatment(Exception e) {
-        MessageGuiFormatter.showErrorsForGui(e);
-        System.out.println(user.toString());
-        user.leaveSystem();
-        debugEventLog("Exception occurred");
-        debugEventLog(ExceptionUtils.getStackTrace(e));
-        debugClose(user, user.getId());
     }
 
 }

@@ -28,29 +28,23 @@ public class EventSlotReservationTimeout extends EventUser {
     }
 
     @Override
-    public List<Event> execute()  {
+    public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        try {
-            user.setInstant(this.instant);
-            user.setPosition(positionTimeOut);
-            user.setState(User.STATE.WITH_BIKE);
-            reservation.expire();
-            user.cancelsSlotReservation(user.getDestinationStation());
-            user.getMemory().update(UserMemory.FactType.SLOT_RESERVATION_TIMEOUT);
+        user.setInstant(this.instant);
+        user.setPosition(positionTimeOut);
+        user.setState(User.STATE.WITH_BIKE);
+        reservation.expire();
+        user.cancelsSlotReservation(user.getDestinationStation());
+        user.getMemory().update(UserMemory.FactType.SLOT_RESERVATION_TIMEOUT);
 
-            debugEventLog();
-            if (!user.decidesToDetermineOtherStationAfterTimeout()){
-                debugEventLog("User decides to manage slot reservation at other Station");
-                newEvents = manageSlotReservationDecisionAtSameStationAfterTimeout();
-            } else {
-                debugEventLog("User decides to manage slot reservation at the same Station");
-                newEvents = manageSlotReservationDecisionAtOtherStation();
-            }
+        debugEventLog();
+        if (!user.decidesToDetermineOtherStationAfterTimeout()){
+            debugEventLog("User decides to manage slot reservation at other Station");
+            newEvents = manageSlotReservationDecisionAtSameStationAfterTimeout();
+        } else {
+            debugEventLog("User decides to manage slot reservation at the same Station");
+            newEvents = manageSlotReservationDecisionAtOtherStation();
         }
-        catch(Exception e) {
-            exceptionTreatment(e);
-        }
-
         return newEvents;
     }
 

@@ -21,19 +21,13 @@ public class EventUserAppears extends EventUser {
     }
 
     @Override
-    public List<Event> execute() {
+    public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        try {
-            user.setInstant(this.instant);
-            user.setPosition(position);
-            user.setState(User.STATE.WALK_TO_STATION);
-            debugEventLog();
-            newEvents = manageBikeReservationDecisionAtOtherStation();
-        }
-        catch(Exception e) {
-            exceptionTreatment(e);
-        }
-
+        user.setInstant(this.instant);
+        user.setPosition(position);
+        user.setState(User.STATE.WALK_TO_STATION);
+        debugEventLog();
+        newEvents = manageBikeReservationDecisionAtOtherStation();
         return newEvents;
     }
 

@@ -27,27 +27,22 @@ public class EventUserArrivesAtStationToReturnBikeWithoutReservation extends Eve
     }
 
     @Override
-    public List<Event> execute() {
+    public List<Event> execute() throws Exception {
         List<Event> newEvents = new ArrayList<>();
-        try {
-            user.setInstant(this.instant);
-            user.setPosition(station.getPosition());
-            user.setState(User.STATE.WITH_BIKE);
-            debugEventLog();
-            if(!user.returnBikeWithoutReservationTo(station)) {
-                user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);
-                debugEventLog("User can't return bike. Station info: " + station.toString()) ;
-                newEvents = manageSlotReservationDecisionAtOtherStation();
-            } else {
-                GeoPoint point = user.getDestinationPlace();
-                int arrivalTime = user.goToPointInCity(point);
-                user.setState(User.STATE.WALK_TO_DESTINATION);
-                debugEventLog("User returns the bike without reservation. Destination in city: "+point.toString());
-                newEvents.add(new EventUserArrivesAtDestinationInCity(this.instant+arrivalTime, user, point));	
-            }
-        }
-        catch(Exception e) {
-            exceptionTreatment(e);
+        user.setInstant(this.instant);
+        user.setPosition(station.getPosition());
+        user.setState(User.STATE.WITH_BIKE);
+        debugEventLog();
+        if(!user.returnBikeWithoutReservationTo(station)) {
+            user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);
+            debugEventLog("User can't return bike. Station info: " + station.toString()) ;
+            newEvents = manageSlotReservationDecisionAtOtherStation();
+        } else {
+            GeoPoint point = user.getDestinationPlace();
+            int arrivalTime = user.goToPointInCity(point);
+            user.setState(User.STATE.WALK_TO_DESTINATION);
+            debugEventLog("User returns the bike without reservation. Destination in city: " + point.toString());
+            newEvents.add(new EventUserArrivesAtDestinationInCity(this.instant + arrivalTime, user, point));
         }
         return newEvents;
     }
