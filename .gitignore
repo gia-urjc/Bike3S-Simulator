@@ -20,7 +20,7 @@ tempCsv/
 tempUsersConf/
 *.txt
 *.osm
-Bike3STests/**/hist/
-Bike3STests/**/debug/
-Bike3STests/**/history/
+**/hist/
+**/debug/
+**/history/
 /Bike3STests/paperAT2018/halfbikes_old/

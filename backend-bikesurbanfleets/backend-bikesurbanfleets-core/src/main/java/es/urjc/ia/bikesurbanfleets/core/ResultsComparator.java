@@ -101,24 +101,27 @@ public class ResultsComparator {
         }
 
         //Now set the String array for writing
-        String[] record = new String[7 + maxrentfails + maxreturnfails + 2];
+        String[] record = new String[10 + maxrentfails + maxreturnfails + 2];
 
         //setup header
         record[0] = "Testname";
         record[1] = "#users";
-        record[2] = "Av. time to station (min)";
-        record[3] = "Av. time from orig to dest station (min)";
-        record[4] = "Av. time to final destination (min)";
-        record[5] = "Av. total time (min)";
-        record[6] = "# abandoned";
+        record[2] = "DS";
+        record[3] = "HE";
+        record[4] = "RE";
+        record[5] = "Av. time to station (min)";
+        record[6] = "Av. time from orig to dest station (min)";
+        record[7] = "Av. time to final destination (min)";
+        record[8] = "Av. total time (min)";
+        record[9] = "# abandoned";
         int i = 0;
         while (i <= maxrentfails) {
-            record[7 + i] = "# with " + i + " rental fails";
+            record[10 + i] = "# with " + i + " rental fails";
             i++;
         }
         int j = 0;
         while (j <= maxreturnfails) {
-            record[7 + i + j] = "# with " + j + " return fails";
+            record[10 + i + j] = "# with " + j + " return fails";
             j++;
         }
         //write header
@@ -127,21 +130,24 @@ public class ResultsComparator {
         //now write the test results
         for (String t : testresults.keySet()) {
             TestResult res = testresults.get(t);
-            for (int k = 0; k < 7 + maxrentfails + maxreturnfails + 2; k++) {
+            for (int k = 0; k < 10 + maxrentfails + maxreturnfails + 2; k++) {
                 record[k] = "";
             }
             record[0] = t;
             record[1] = Integer.toString(res.userdata.totalusersr);
-            record[2] = Double.toString(res.userdata.avtostationtime / 60D);
-            record[3] = Double.toString(res.userdata.avbetweenstationtime / 60D);
-            record[4] = Double.toString(res.userdata.avfromstationtime / 60D);
-            record[5] = Double.toString((res.userdata.avfromstationtime + res.userdata.avbetweenstationtime + res.userdata.avtostationtime) / 60D);
-            record[6] = Integer.toString(res.userdata.avabandonos);
+            record[2] = Double.toString(res.userdata.DS);
+            record[3] = Double.toString(res.userdata.HE);
+            record[4] = Double.toString(res.userdata.RE);
+            record[5] = Double.toString(res.userdata.avtostationtime / 60D);
+            record[6] = Double.toString(res.userdata.avbetweenstationtime / 60D);
+            record[7] = Double.toString(res.userdata.avfromstationtime / 60D);
+            record[8] = Double.toString((res.userdata.avfromstationtime + res.userdata.avbetweenstationtime + res.userdata.avtostationtime) / 60D);
+            record[9] = Integer.toString(res.userdata.avabandonos);
             for (Integer key : res.userdata.usertakefails.keySet()) {
-                record[7 + key] = Integer.toString(res.userdata.usertakefails.get(key));
+                record[10 + key] = Integer.toString(res.userdata.usertakefails.get(key));
             }
             for (Integer key : res.userdata.userreturnfails.keySet()) {
-                record[7 + maxrentfails + 1 + key] = Integer.toString(res.userdata.userreturnfails.get(key));
+                record[10 + maxrentfails + 1 + key] = Integer.toString(res.userdata.userreturnfails.get(key));
             }
             //write line
             csvWriter.writeNext(record);
@@ -199,6 +205,9 @@ public class ResultsComparator {
         double avbetweenstationtime = 0;
         double avfromstationtime = 0;
         int avabandonos = 0;
+        double DS=0.0D;
+        double HE=0.0D;
+        double RE=0.0D;
         TreeMap<Integer, Integer> usertakefails = new TreeMap<>();
         TreeMap<Integer, Integer> userreturnfails = new TreeMap<>();
     }
@@ -212,53 +221,62 @@ public class ResultsComparator {
         double totalfromstationtime = 0;
         int fromstationcounter = 0;
         int totalabandonos = 0;
+        int totalusers=0;
+        int failedRentalsUsersWithBike=0;
+        int failedResturnsUsersWithBike=0;
         TreeMap<Integer, Integer> usertakefails = new TreeMap<>();
         TreeMap<Integer, Integer> userreturnfails = new TreeMap<>();
-        boolean abandonado = false;
         for (String[] line : data) {
-            abandonado = false;
-            tostationcounter++;
-            totaltostationtime += Integer.parseInt(line[1]);
-            if (!(line[2].equals(""))) {
-                betweenstationcounter++;
-                totalbetweenstationtime += Integer.parseInt(line[2]);
-            }
-            if (!(line[3].equals(""))) {
-                fromstationcounter++;
-                totalfromstationtime += Integer.parseInt(line[3]);
-            }
-            if (!(line[4].equals("EXIT_AFTER_REACHING_DESTINATION"))) {
-                if (!(line[9].equals("0")) || !(line[11].equals("0"))) {
+            totalusers++;
+            if (line[4].equals("EXIT_AFTER_REACHING_DESTINATION")) {
+                if (!(line[9].equals("1")) || !(line[11].equals("1"))) {
                     throw new RuntimeException("error in results");
                 }
-                totalabandonos++;
-                abandonado = true;
-            } else if (!(line[9].equals("1")) || !(line[11].equals("1"))) {
-                throw new RuntimeException("error in results");
-            }
-            Integer current = usertakefails.get(Integer.parseInt(line[10]));
-            if (current == null) {
-                usertakefails.put(Integer.parseInt(line[10]), 1);
-            } else {
-                usertakefails.put(Integer.parseInt(line[10]), current + 1);
-            }
-            if (!abandonado) {
+                tostationcounter++;
+                totaltostationtime += Integer.parseInt(line[1]);
+                if (!(line[2].equals(""))) {
+                    betweenstationcounter++;
+                    totalbetweenstationtime += Integer.parseInt(line[2]);
+                }
+                if (!(line[3].equals(""))) {
+                    fromstationcounter++;
+                    totalfromstationtime += Integer.parseInt(line[3]);
+                }
+                failedRentalsUsersWithBike+=Integer.parseInt(line[10]);
+                Integer current = usertakefails.get(Integer.parseInt(line[10]));
+                if (current == null) {
+                    usertakefails.put(Integer.parseInt(line[10]), 1);
+                } else {
+                    usertakefails.put(Integer.parseInt(line[10]), current + 1);
+                }
+                failedResturnsUsersWithBike+=Integer.parseInt(line[12]);
                 current = userreturnfails.get(Integer.parseInt(line[12]));
                 if (current == null) {
                     userreturnfails.put(Integer.parseInt(line[12]), 1);
                 } else {
                     userreturnfails.put(Integer.parseInt(line[12]), current + 1);
                 }
+            } else { //abandonados
+                if (!(line[9].equals("0")) || !(line[11].equals("0"))) {
+                    throw new RuntimeException("error in results");
+                }
+                totalabandonos++;
             }
         }
+        if (tostationcounter!=betweenstationcounter || tostationcounter!=fromstationcounter ){
+                     throw new RuntimeException("error in results");           
+        }
         dat.avtostationtime = totaltostationtime / ((double) tostationcounter);
-        dat.totalusersr = tostationcounter;
+        dat.totalusersr = totalusers ;
         dat.avbetweenstationtime = totalbetweenstationtime / ((double) betweenstationcounter);
         dat.avfromstationtime = totalfromstationtime / ((double) fromstationcounter);
         dat.avabandonos = totalabandonos;
         dat.usertakefails = usertakefails;
         dat.userreturnfails = userreturnfails;
-    }
+        dat.DS=((double) (tostationcounter))/((double)totalusers);
+        dat.HE=((double) (tostationcounter))/((double)(tostationcounter+failedRentalsUsersWithBike));
+        dat.RE=((double) (tostationcounter))/((double)(tostationcounter+failedResturnsUsersWithBike));
+   }
 
     private void analyzeEmptyStations(String test, StationData dat) throws IOException {
         List<String[]> data = readAllDataAtOnce(analysisdir + test + "/empty_stations.csv");
