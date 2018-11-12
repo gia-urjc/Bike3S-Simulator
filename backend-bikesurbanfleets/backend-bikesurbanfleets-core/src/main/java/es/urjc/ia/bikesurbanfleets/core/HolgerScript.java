@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class HolgerScript {
 
@@ -47,7 +48,7 @@ public class HolgerScript {
         String projectDir="/Users/holger/workspace/BikeProjects/Bike3S8.0/tests/";
         //String projectDir= System.getProperty("user.dir") + File.separator;
 
-        baseDir=projectDir+"script_review_paper";
+        baseDir=projectDir+"tests_holger_rec";
         
         
         System.out.println("baseDir " + baseDir);
@@ -210,7 +211,8 @@ public class HolgerScript {
         ProcessBuilder pb = new ProcessBuilder(command);
 
         Process p = pb.start(); // Start the process.
-        p.waitFor(); // Wait for the process to finish.
+        p.waitFor(25,TimeUnit.SECONDS); // Wait for the process to finish.
+        p.destroy();
         System.out.println("Script executed successfully");
     }
     
@@ -227,7 +229,8 @@ public class HolgerScript {
        pb.directory(new File(analisisDir));
 
        Process p = pb.start(); // Start the process.
-       p.waitFor(); // Wait for the process to finish.
+        p.waitFor(25,TimeUnit.SECONDS); // Wait for the process to finish.
+        p.destroy();
 
        //Obtengo la salida de la ejecución del proceso
        System.out.println("----------------------------------------");

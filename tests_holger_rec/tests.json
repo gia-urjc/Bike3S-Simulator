@@ -1,0 +1,90 @@
+{  "tests": [
+    { "recommendationSystemType": {
+        "typeName": "HOLGER_FixedDistanceRECOMENDER",
+        "parameters": {
+            "MaxDistanceSurroundingStations": 800,
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "FULLCAPRECOMENDER",
+        "parameters": {
+            "MaxDistanceSurroundingStations": 800,
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER_SURROUNDING",
+        "parameters": {
+            "MaxDistanceSurroundingStations": 800,
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_INF",
+        "parameters": {
+            
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+            "MAXDIFF" : 500,
+            "MAXTOTALDIST" : 1000
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_UNINF",
+        "parameters": {
+            
+        }
+      }
+    }
+  ]
+}
