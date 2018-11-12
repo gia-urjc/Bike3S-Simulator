@@ -34,7 +34,7 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
-        private int maxDistanceRecommendation = 800;
+        private int maxDistanceRecommendation = 600;
 
     }
 
@@ -78,6 +78,10 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
             Comparator<Station> bySlots = StationComparator.byAvailableSlots();
             temp = stations.stream().sorted(bySlots).collect(Collectors.toList());
             result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());
+        } else { //if no best station has been found in the max distance
+           Comparator<Station> byDistance = StationComparator.byDistance(point);
+           temp = validStationsToReturnBike(infraestructureManager.consultStations()).stream().sorted(byDistance).collect(Collectors.toList());
+           result = temp.stream().map(s -> new Recommendation(s, 0.0)).collect(Collectors.toList());           
         }
 
         return result;

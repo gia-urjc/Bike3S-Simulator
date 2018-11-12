@@ -12,24 +12,25 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author holger
  */
 @UserType("USER_PAPERAT2018_OBHOLGER")
-public class UserPaperAT2018ObedientHolgerRec extends UserPaperAT2018Uninformed {
+public class UserPaperAT2018Obedient extends UserPaperAT2018Uninformed {
     
-        public UserPaperAT2018ObedientHolgerRec(JsonObject userdef, SimulationServices services, long seed) throws Exception{
+        public UserPaperAT2018Obedient(JsonObject userdef, SimulationServices services, long seed) throws Exception{
         super(userdef, services, seed);
       }
 
     @Override
     public Station determineStationToRentBike() {
+        
         Station destination = null;
-        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition());
-        //Remove station if the user is in this station
- //       recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()) && recommendation.getStation().availableBikes() == 0);
+        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition()).stream()
+                .filter(recomendation -> recomendation.getStation().getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0).getStation();
         }
@@ -43,6 +44,8 @@ public class UserPaperAT2018ObedientHolgerRec extends UserPaperAT2018Uninformed 
         List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace);
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0).getStation();
+        } else {
+            throw new RuntimeException("user cant return a bike, recomender did not tell return station");
         }
         return destination;
     }

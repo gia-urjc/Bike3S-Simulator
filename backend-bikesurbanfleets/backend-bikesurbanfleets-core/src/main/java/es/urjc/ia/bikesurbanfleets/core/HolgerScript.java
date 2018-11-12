@@ -44,8 +44,7 @@ public class HolgerScript {
     public static void main(String[] args) throws Exception {
         HolgerScript hs = new HolgerScript();
         //treat tests
-        String projectDir="/home/darwin/Documentos/my_projects/Bike3S-0.8.0/";
-
+        String projectDir="/Users/holger/workspace/BikeProjects/Bike3S8.0/tests/";
         //String projectDir= System.getProperty("user.dir") + File.separator;
 
         baseDir=projectDir+"script_review_paper";

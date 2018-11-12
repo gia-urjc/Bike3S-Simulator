@@ -22,13 +22,31 @@ public class StationComparator {
 	}
 
 	public static Comparator<Station> byProportionBetweenDistanceAndBikes(GeoPoint point) {
-		return (s1, s2) -> Double.compare(s1.getPosition()
-				.distanceTo(point)/s1.availableBikes(), s2.getPosition().distanceTo(point)/s2.availableBikes());
+		return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point)/
+                                                    (double) s1.availableBikes(),
+                                                  s2.getPosition().distanceTo(point)/
+                                                    (double) s2.availableBikes());
 	}
 
 	public static Comparator<Station> byProportionBetweenDistanceAndSlots(GeoPoint point) {
-		return (s1, s2) -> Double.compare(s1.getPosition()
-				.distanceTo(point)/s1.availableSlots(), s2.getPosition().distanceTo(point)/s2.availableSlots());
+		return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point)/
+                                                    (double) s1.availableSlots(),
+                                                  s2.getPosition().distanceTo(point)/
+                                                    (double) s2.availableBikes());
+	}
+        
+	public static Comparator<Station> byProportionBetweenDistanceAndBikeRatio(GeoPoint point) {
+		return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point)/
+                                                    ((double)s1.availableBikes()/(double)s1.getCapacity()),
+                                                  s2.getPosition().distanceTo(point)/
+                                                    ((double)s2.availableBikes()/(double)s2.getCapacity()));
+	}
+
+	public static Comparator<Station> byProportionBetweenDistanceAndSlotRatio(GeoPoint point) {
+		return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point)/
+                                                    ((double)s1.availableSlots()/(double)s1.getCapacity()),
+                                                  s2.getPosition().distanceTo(point)/
+                                                    ((double)s2.availableSlots()/(double)s2.getCapacity()));
 	}
 
 	public static Comparator<Station> byBikesCapacityRatio() {

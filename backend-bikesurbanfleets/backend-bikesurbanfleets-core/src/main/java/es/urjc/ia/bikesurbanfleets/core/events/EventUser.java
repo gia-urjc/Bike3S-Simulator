@@ -19,12 +19,13 @@ import java.util.List;
 /**
  * This class represents all events which are related to a user, i. e., posible
  * actions that a user can do at the sytem and facts derived from his actions.
- * It provides methods to manage reservation decisions and reservations themselves
- * at any event which involves a user.
+ * It provides methods to manage reservation decisions and reservations
+ * themselves at any event which involves a user.
  *
  * @author IAgroup
  */
 public abstract class EventUser implements Event {
+
     /**
      * It is the time instant when event happens.
      */
@@ -62,30 +63,31 @@ public abstract class EventUser implements Event {
         =================
         DEBUG METHODS
         =================
-    */
-
+     */
     /**
-     * If debug mode is activated in the configuration file, logs will be activated to debug users
+     * If debug mode is activated in the configuration file, logs will be
+     * activated to debug users
+     *
      * @throws IOException
      */
     public void debugEventLog(String message) {
         try {
             Debug.log(message, user, this);
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             MessageGuiFormatter.showErrorsForGui(e);
         }
     }
 
     /**
-     * If debug mode is activated in the configuration file, logs will be activated to debug users
+     * If debug mode is activated in the configuration file, logs will be
+     * activated to debug users
+     *
      * @throws IOException
      */
     public void debugEventLog() {
         try {
             Debug.log(user, this);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             MessageGuiFormatter.showErrorsForGui(e);
         }
     }
@@ -98,26 +100,27 @@ public abstract class EventUser implements Event {
         }
     }
 
-
-
     /*
         =================
         END - DEBUG METHODS
         =================
-    */
-
+     */
     /**
      * It tries to make the bike reservation:
      * <ul>
-     * <li>If it is possible, user may have time to reach the station  while reservation is active or may not.
-     * <li>If it isn't possible, in case of the user decides not to leave the system,
-     * he makes a decision: to arrive at chosen station without reservation or
-     * to repeat all the process after deciding to reserve at a new chosen station.
+     * <li>If it is possible, user may have time to reach the station while
+     * reservation is active or may not.
+     * <li>If it isn't possible, in case of the user decides not to leave the
+     * system, he makes a decision: to arrive at chosen station without
+     * reservation or to repeat all the process after deciding to reserve at a
+     * new chosen station.
      * </ul>
      *
-     * @param destination: it is the station for which user wants to make a bike reservation.
-     *                     This parameter can be the previous chosen station or a new decided destination station.
-     * @return a list of generated events that will occur as a consequence of trying to reserve a bike.
+     * @param destination: it is the station for which user wants to make a bike
+     * reservation. This parameter can be the previous chosen station or a new
+     * decided destination station.
+     * @return a list of generated events that will occur as a consequence of
+     * trying to reserve a bike.
      */
     private List<Event> manageBikeReservation(Station destination) throws Exception {
         List<Event> newEvents = new ArrayList<>();
@@ -161,16 +164,17 @@ public abstract class EventUser implements Event {
     }
 
     /**
-     * It is a recursive method.
-     * At this method, user decides if he'll try to make again the bike reservation at previous chosen station.
+     * It is a recursive method. At this method, user decides if he'll try to
+     * make again the bike reservation at previous chosen station.
      *
-     * @return a list of generated events that will ocurr as a consequence of making the decision.
+     * @return a list of generated events that will ocurr as a consequence of
+     * making the decision.
      */
     protected List<Event> manageBikeReservationDecisionAtSameStationAfterTimeout() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.getDestinationStation();
-        
-        if(Debug.isDebugmode()) {
+
+        if (Debug.isDebugmode()) {
             System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
         }
         if (user.decidesToReserveBikeAtSameStationAfterTimeout()) {
@@ -185,29 +189,34 @@ public abstract class EventUser implements Event {
     }
 
     /**
-     * This is a recursive method.
-     * At this method, user decides if he'll try to make a bike reservation at a new chosen station.
+     * This is a recursive method. At this method, user decides if he'll try to
+     * make a bike reservation at a new chosen station.
      *
-     * @return a list of generated events as a consequence of making the decision.
+     * @return a list of generated events as a consequence of making the
+     * decision.
      * @throws Exception
      */
     protected List<Event> manageBikeReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.determineStationToRentBike();
 
-        if (destination != null) {
+        if (destination == null) { //user decides to leafe system (no station is returned)
+            debugEventLog("User leave the system because he does not find a return station");
+            user.setState(User.STATE.EXIT_BECAUSE_NO_STATION_FOUND);
+            newEvents.add(new EventUserLeavesSystem(this.getInstant(), user));
+            return newEvents;
+        }
 
-            if(Debug.isDebugmode()) {
-                System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
-            }
-            if (user.decidesToReserveBikeAtNewDecidedStation()) {
-                debugEventLog("User decides to reserve bike at new decided station");
-                newEvents = manageBikeReservation(destination);
-            } else {   // user decides not to reserve
-                int arrivalTime = user.goToStation(destination);
-                debugEventLog("User decides to go directly to the new decided station without bike reservation");
-                newEvents.add(new EventUserArrivesAtStationToRentBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
-            }
+        if (Debug.isDebugmode()) {
+            System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
+        }
+        if (user.decidesToReserveBikeAtNewDecidedStation()) {
+            debugEventLog("User decides to reserve bike at new decided station");
+            newEvents = manageBikeReservation(destination);
+        } else {   // user decides not to reserve
+            int arrivalTime = user.goToStation(destination);
+            debugEventLog("User decides to go directly to the new decided station without bike reservation");
+            newEvents.add(new EventUserArrivesAtStationToRentBikeWithoutReservation(this.getInstant() + arrivalTime, user, destination));
         }
         return newEvents;
     }
@@ -237,7 +246,7 @@ public abstract class EventUser implements Event {
             user.addReservation(reservation);
             user.getMemory().update(UserMemory.FactType.SLOT_FAILED_RESERVATION);
             debugEventLog("User has not been able to reserve a slot");
-            
+
             if (!user.decidesToDetermineOtherStationAfterFailedReservation()) {  // user waljs to the initially chosen station
                 int arrivalTime = user.goToStation(destination);
                 debugEventLog("User decides to go to the initially chosen station without slot reservation");
@@ -250,12 +259,11 @@ public abstract class EventUser implements Event {
         this.getEntities().add(destination);
         return newEvents;
     }
-         
-        
+
     protected List<Event> manageSlotReservationDecisionAtSameStationAfterTimeout() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.getDestinationStation();
-        if(Debug.isDebugmode()) {
+        if (Debug.isDebugmode()) {
             System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
         }
         if (user.decidesToReserveSlotAtSameStationAfterTimeout()) {
@@ -272,8 +280,8 @@ public abstract class EventUser implements Event {
     protected List<Event> manageSlotReservationDecisionAtOtherStation() throws Exception {
         List<Event> newEvents = new ArrayList<>();
         Station destination = user.determineStationToReturnBike();
-        
-        if(Debug.isDebugmode()) {
+
+        if (Debug.isDebugmode()) {
             System.out.println("Destination before user arrival: " + destination.toString() + " " + user.toString());
         }
 

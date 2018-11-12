@@ -1,15 +1,112 @@
 {  "tests": [
     { "recommendationSystemType": {
-        "typeName": "HOLGER_FixedDistanceRECOMENDER",
+        "typeName": "AVAILABLE_RESOURCES",
         "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_UNINF",
+        "parameters": {
+              "maxDistanceToRentBike" : 600           
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "AVAILABLE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600
         }
     }, 
       "userType": {
         "typeName": "USER_PAPERAT2018_INF",
         "parameters": {
-            
+             "maxDistanceToRentBike" : 600           
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "AVAILABLE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+              "maxDistanceToRentBike" : 600           
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "RESOURCES_RATIO",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+             "maxDistanceToRentBike" : 600           
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "DISTANCE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+              "maxDistanceToRentBike" : 600           
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "DISTANCE_RATIO",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+             "maxDistanceToRentBike" : 600           
         }
       }
     }
+,
+    { "recommendationSystemType": {
+        "typeName": "SURROUNDING_AVAILABLE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600,
+	    "MaxDistanceSurroundingStations" : 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+             "maxDistanceToRentBike" : 600           
+        }
+      }
+    }
+,
+    { "recommendationSystemType": {
+        "typeName": "SURROUNDING_DISTANCE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600,
+	    "MaxDistanceSurroundingStations" : 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_PAPERAT2018_OBHOLGER",
+        "parameters": {
+             "maxDistanceToRentBike" : 600           
+        }
+      }
+    }
+
   ]
 }
