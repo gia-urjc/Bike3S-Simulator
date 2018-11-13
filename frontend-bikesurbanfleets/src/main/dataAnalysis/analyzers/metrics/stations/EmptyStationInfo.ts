@@ -64,7 +64,6 @@ export class EmptyStationInfo implements SystemInfo {
        
      public init(): void {
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
-            console.log('station: '+stationId);
             let emptyState: EmptyStateAbsoluteValue = this.createEmptyStateFor(stationInfo);
             this.data.absoluteValues.set(stationId, emptyState);
         });

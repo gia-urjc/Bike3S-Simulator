@@ -37,7 +37,6 @@ export class HistoryReader {
             HistoryReader.entityFileSchema = fs.readJsonSync(paths.join(schemaPath, 'entities.json'));
             HistoryReader.changeFileSchema = fs.readJsonSync(paths.join(schemaPath, 'timeentries.json'));
         }
-        console.log(reader.historyPath);
         reader.changeFiles = without(fs.readdirSync(reader.historyPath), 'entities', '.DS_Store', 'final-global-values.json').sort((a, b) => {
             const [x, y] = [a, b].map((s) => parseInt(s.split('-')[0]));
             return x - y;

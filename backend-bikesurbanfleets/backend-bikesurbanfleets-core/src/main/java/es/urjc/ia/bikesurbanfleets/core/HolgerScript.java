@@ -45,7 +45,7 @@ public class HolgerScript {
     public static void main(String[] args) throws Exception {
         HolgerScript hs = new HolgerScript();
         //treat tests
-        String projectDir="/Users/holger/workspace/BikeProjects/Bike3S8.0/tests/";
+        String projectDir="/home/darwin/Documentos/my_projects/Bike3S/";
         //String projectDir= System.getProperty("user.dir") + File.separator;
 
         baseDir=projectDir+"tests_holger_rec";
@@ -211,8 +211,7 @@ public class HolgerScript {
         ProcessBuilder pb = new ProcessBuilder(command);
 
         Process p = pb.start(); // Start the process.
-        p.waitFor(25,TimeUnit.SECONDS); // Wait for the process to finish.
-        p.destroy();
+        p.waitFor(); // Wait for the process to finish
         System.out.println("Script executed successfully");
     }
     
@@ -229,8 +228,7 @@ public class HolgerScript {
        pb.directory(new File(analisisDir));
 
        Process p = pb.start(); // Start the process.
-        p.waitFor(25,TimeUnit.SECONDS); // Wait for the process to finish.
-        p.destroy();
+       p.waitFor(); // Wait for the process to finish.
 
        //Obtengo la salida de la ejecución del proceso
        System.out.println("----------------------------------------");

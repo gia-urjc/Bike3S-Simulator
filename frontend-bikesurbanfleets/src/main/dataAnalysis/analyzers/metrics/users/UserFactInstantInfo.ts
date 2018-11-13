@@ -28,9 +28,6 @@ export class UserFactInstantInfo implements Observer {
     public init(users: Array<User>): void {
         for (let user of users) {
             this.instantsPerUser.set(user.id, new UserInstant('', 0, 0, 0, 0));
-            if (user.id === 668 || user.id === 670) {
-                console.log('here is user '+user.id);
-            }
         }
         return;
     }
@@ -46,8 +43,6 @@ export class UserFactInstantInfo implements Observer {
             key = user.id;
             info = this.instantsPerUser.get(key);
             
-            if (!info)
-                console.log('user: '+key);
             switch(event.name) {
                 case 'EventUserAppears': {
                     if (info) { 

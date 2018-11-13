@@ -68,7 +68,6 @@ export class DataGenerator {
             this.history = HistoryReader.create(this.historyPath, this.schemaPath);
             let globalValues: any = this.history.getGlobalValues();
             this.totalSimulationTime = globalValues.totalTimeSimulation;
-            console.log('total time: '+this.totalSimulationTime);
         }
         catch(error) {
             throw new Error('Error reading history file: '+error);
