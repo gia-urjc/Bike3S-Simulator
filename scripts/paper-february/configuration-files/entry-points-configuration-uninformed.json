@@ -8,11 +8,11 @@
                     "minRentalAttempts": 2
                 }
             },
-            "position": {
+            "positionAppearance": {
                 "latitude": 40.419969,
                 "longitude": -3.709819
             },
-            "radius": 200,
+            "radiusAppears": 200,
             "totalUsers": 1250,
             "distribution": {
                 "lambda": 0.11574074074074073

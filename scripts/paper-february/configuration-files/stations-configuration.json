@@ -32,7 +32,6 @@
             },
             "capacity": 20
         },
-
         {
             "bikes": 10,
             "position": {

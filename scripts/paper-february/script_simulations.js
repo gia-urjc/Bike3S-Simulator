@@ -21,17 +21,17 @@ rootPath.temp.concurrentBackends = () => path.join(rootPath.temp(), 'concurrent-
 let globalConfiguration = 'global-configuration.json';
 let stationsConfiguration = 'stations-configuration.json';
 let entryPointConfigurationList = [
-    //'entry-points-configuration-uninformed.json',
-    //'entry-points-configuration-informed.json',
-    //'entry-points-configuration-obedient.json',
-    //'entry-points-configuration-informedR.json',
-    //'entry-points-configuration-obedientR.json'
+    'entry-points-configuration-uninformed.json',
+    'entry-points-configuration-informed.json',
+    'entry-points-configuration-obedient.json',
+    'entry-points-configuration-informedR.json',
+    'entry-points-configuration-obedientR.json',
     'entry-points-configuration-informed-and-obedient.json'
 ];
 
 let totalTime = 10800;
-//let numUsersList = [125, 250, 375, 500, 625, 750, 875, 1000, 1125, 1250];
-let numUsersList = [63, 125, 187, 250, 312, 375, 438, 500, 563, 625];
+let numUsersList = [125, 250, 375, 500, 625, 750, 875, 1000, 1125, 1250];
+//let numUsersList = [500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000];
 
 
 function createTempFolders() {
