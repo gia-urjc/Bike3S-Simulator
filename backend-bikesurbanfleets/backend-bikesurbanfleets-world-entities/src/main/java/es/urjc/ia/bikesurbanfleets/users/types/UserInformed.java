@@ -1,127 +1,37 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package es.urjc.ia.bikesurbanfleets.users.types;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
-import es.urjc.ia.bikesurbanfleets.users.UserParameters;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
-import es.urjc.ia.bikesurbanfleets.users.User;
-
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * This class represents a user who makes most of his decissions randomly. This
- * user always chooses the closest destination station and the shortest route to
- * reach it. Moreover, this type of user only leaves the system when he has
- * tried to make a bike reservation in all the system's stations and he hasn't
- * been able.
  *
- * @author IAgroup
- *
+ * @author holger
  */
 @UserType("USER_INFORMED")
-public class UserInformed extends User {
+public class UserInformed extends UserUninformed {
 
-    @UserParameters
-    private class Parameters {
-
-        //default constructor used if no parameters are specified
-        private Parameters() {}
-        /**
-         * It is the number of times that the user will try to rent a bike
-         * (without a bike reservation) before deciding to leave the system.
-         */
-        private int minRentalAttempts = 2;
-
-        @Override
-        public String toString() {
-            return "Parameters{"
-                    + "minRentalAttempts=" + minRentalAttempts
-                    + '}';
-        }
-
-    }
-
-    private Parameters parameters;
-
-//                   user = (User) constructor.newInstance(userdef, services, seed);
-    public UserInformed(JsonObject userdef, SimulationServices services, long seed) throws Exception{
-        super(services, userdef, seed);
-        //***********Parameter treatment*****************************
-        //if this user has parameters this is the right declaration
-        //if no parameters are used this code just has to be commented
-        //"getparameters" is defined in USER such that a value of Parameters 
-        // is overwritten if there is a values specified in the jason description of the user
-        // if no value is specified in jason, then the orriginal value of that field is mantained
-        // that means that teh paramerts are all optional
-        // if you want another behaviour, then you should overwrite getParameters in this calss
-        this.parameters = new Parameters();
-        getParameters(userdef.getAsJsonObject("userType"), this.parameters);
-     }
-
-    //**********************************************
-    //Decision related to reservations
-    @Override
-    public boolean decidesToLeaveSystemAfterTimeout() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToLeaveSystemAffterFailedReservation() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToReserveBikeAtNewDecidedStation() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToReserveSlotAtNewDecidedStation() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterTimeout() {
-        return false;
-    }
-
-    @Override
-    public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        return false;
-    }
-
-    //**********************************************
-    //decisions related to taking and leaving a bike
-    @Override
-    public boolean decidesToLeaveSystemWhenBikesUnavailable() {
-        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) {
-            return true;
-        } else {
-            return false;
-        }
+    public UserInformed(JsonObject userdef, SimulationServices services, long seed) throws Exception {
+        super(userdef, services, seed);
     }
 
     @Override
     public Station determineStationToRentBike() {
+
         Station destination = null;
-        List<Station> recommendedStations = informationSystem.getStationsToRentBikeOrderedByDistance(this.getPosition());
-        if (!recommendedStations.isEmpty()) {
-            destination = recommendedStations.get(0);
+        List<Station> finalStations = informationSystem.getStationsToRentBikeOrderedByDistance(this.getPosition()).stream()
+                .filter(station -> station.getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
+        if (!finalStations.isEmpty()) {
+            destination = finalStations.get(0);
         }
         return destination;
     }
@@ -129,24 +39,12 @@ public class UserInformed extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        GeoPoint destinationPlace = this.destinationPlace;
-        List<Station> recommendedStations = informationSystem.getStationsToReturnBikeOrderedByDistance(destinationPlace);
+        List<Station> recommendedStations = informationSystem.getStationsToReturnBikeOrderedByDistance(this.destinationPlace);
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0);
+        } else {
+            throw new RuntimeException("user cant return a bike, no slots");
         }
         return destination;
     }
-
-    //**********************************************
-    //decisions related to either go directly to the destination or going arround
-    @Override
-    public boolean decidesToGoToPointInCity() {
-        return false;
-    }
-
-    @Override
-    public GeoPoint getPointInCity() {
-        return null;
-    }
-
 }

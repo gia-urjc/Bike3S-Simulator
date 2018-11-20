@@ -1,7 +1,5 @@
- package es.urjc.ia.bikesurbanfleets.users.types;
+package es.urjc.ia.bikesurbanfleets.users.types;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
@@ -10,9 +8,9 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
 import es.urjc.ia.bikesurbanfleets.users.User;
-import java.lang.reflect.Field;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a user who doesn't know anything about the state of the system.
@@ -35,8 +33,12 @@ public class UserUninformed extends User {
          * It is the number of times that the user will try to rent a bike (without a bike
          * reservation) before deciding to leave the system.
          */
-        private int minRentalAttempts = 1;
+         int minRentalAttempts = 3;
 
+         int maxDistanceToRentBike = 600;
+
+         GeoPoint intermediatePosition=null;
+                
         @Override
         public String toString() {
             return "Parameters{" +
@@ -46,7 +48,7 @@ public class UserUninformed extends User {
 
     }
 
-    private Parameters parameters;
+    Parameters parameters;
 
     public UserUninformed(JsonObject userdef, SimulationServices services, long seed) throws Exception{
         super(services, userdef, seed);
@@ -112,10 +114,11 @@ public class UserUninformed extends User {
 
     @Override
     public Station determineStationToRentBike() {
+        
         Station destination = null;
-        List<Station> stations = infraestructure.consultStations();
         List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts();
-        List<Station> finalStations = informationSystem.getStationsBikeOrderedByDistanceNoFiltered(this.getPosition());
+        List<Station> finalStations = informationSystem.getStationsBikeOrderedByDistanceNoFiltered(this.getPosition()).stream()
+                .filter(station -> station.getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
         finalStations.removeAll(triedStations);
 
         if (!finalStations.isEmpty()) {
@@ -127,14 +130,13 @@ public class UserUninformed extends User {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> stations = infraestructure.consultStations();
         List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
-        //Remove station if the user is in this station
- //       System.out.println("List Size" + stations.size());
         List<Station> finalStations = informationSystem.getStationsBikeOrderedByDistanceNoFiltered(this.destinationPlace);
         finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
         	destination = finalStations.get(0);
+        } else {
+            throw new RuntimeException("user cant return a bike, no slots");
         }
         return destination;
     }
@@ -144,13 +146,15 @@ public class UserUninformed extends User {
 
     @Override
     public boolean decidesToGoToPointInCity() {
-        return false;
+        if (parameters.intermediatePosition==null) return false;
+        else return true;
     }
 
     @Override
     public GeoPoint getPointInCity() {
-        return null;
+        return parameters.intermediatePosition;
     }
 
  
 }
+
