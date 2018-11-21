@@ -26,11 +26,11 @@
                     "minRentalAttempts": 2
                 }
             },
-            "position": {
+            "positionAppearance": {
                 "latitude": 40.418969,
                 "longitude": -3.700819
             },
-            "radius": 200,
+            "radiusAppears": 200,
             "totalUsers": 1250,
             "distribution": {
                 "lambda": 0.11574074074074073
@@ -44,11 +44,11 @@
                     "minRentalAttempts": 2
                 }
             },
-            "position": {
+            "positionAppearance": {
                 "latitude": 40.4131931,
                 "longitude": -3.70456
             },
-            "radius": 200,
+            "radiusAppears": 200,
             "totalUsers": 1250,
             "distribution": {
                 "lambda": 0.11574074074074073
@@ -62,11 +62,11 @@
                     "minRentalAttempts": 2
                 }
             },
-            "position": {
+            "positionAppearance": {
                 "latitude": 40.4131931,
                 "longitude": -3.7104038
             },
-            "radius": 200,
+            "radiusAppears": 200,
             "totalUsers": 1250,
             "distribution": {
                 "lambda": 0.11574074074074073

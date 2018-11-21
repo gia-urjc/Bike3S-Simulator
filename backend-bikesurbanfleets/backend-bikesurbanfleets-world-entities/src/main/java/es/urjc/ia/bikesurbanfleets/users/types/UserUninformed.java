@@ -38,6 +38,8 @@ public class UserUninformed extends User {
          int maxDistanceToRentBike = 600;
 
          GeoPoint intermediatePosition=null;
+
+         boolean willReserve = false;
                 
         @Override
         public String toString() {
@@ -68,7 +70,7 @@ public class UserUninformed extends User {
     //Decision related to reservations
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
-        return false;
+        return this.parameters.willReserve;
     }
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {

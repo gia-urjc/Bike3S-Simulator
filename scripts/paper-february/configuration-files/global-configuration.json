@@ -14,8 +14,9 @@
         }
     },
     "recommendationSystemType": {
-        "typeName": "HOLGERRECOMENDER",
+        "typeName": "RESOURCES_RATIO",
         "parameters": {
+            "maxDistanceRecommendation": 600
         }
     },
     "graphManagerType": "GRAPH_HOPPER"

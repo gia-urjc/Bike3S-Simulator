@@ -5,6 +5,8 @@ const path = require('path');
 const rootPath = () => process.cwd();
 const csv=require('csvtojson');
 const json2csv = require('json2csv');
+const random = require('random');
+const seedrandom = require('seedrandom');
 
 
 rootPath.configurationFiles = () => path.join(rootPath(), 'configuration-files');
@@ -26,19 +28,27 @@ let entryPointConfigurationList = [
     'entry-points-configuration-obedient.json',
     'entry-points-configuration-informedR.json',
     'entry-points-configuration-obedientR.json',
-    'entry-points-configuration-informed-and-obedient.json'
+//    'entry-points-configuration-informed-and-obedient.json'
 ];
-
 let totalTime = 10800;
 let numUsersList = [125, 250, 375, 500, 625, 750, 875, 1000, 1125, 1250];
 //let numUsersList = [500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000];
-
 
 function createTempFolders() {
     if(!fs.existsSync(rootPath.temp())) {
         fs.mkdirSync(rootPath.temp());
     }
 }
+
+function generateDestinationPoint(boundingBox) {
+    let latitude = random.float(min = boundingBox.northWest.latitude, max = boundingBox.southEast.latitude)
+    let longitude = random.float(min = boundingBox.northWest.longitude, max = boundingBox.southEast.longitude)
+    return destinationPoint = {
+        latitude: latitude,
+        longitude: longitude
+    }
+}
+
 function beforeScript() {
     return new Promise((resolve, reject) => {
         const buildDev = spawn('node', ['fuse', 'build:dev-backend'], {
@@ -62,13 +72,14 @@ function beforeScript() {
     });
 }
 
-function generateUsersConfig(totalTime, numUsers, globalConf, entryPointConf) {
+function generateUsersConfig(totalTime, numUsers, globalConf, entryPointConf, bbox) {
     return new Promise((resolve, reject) => {
         let entryPointsFile = fs.readJsonSync(path.join(rootPath.configurationFiles(), entryPointConf));
         let lambda = 1/(totalTime/numUsers);
         for(let i = 0; i < entryPointsFile.entryPoints.length; i++) {
             entryPointsFile.entryPoints[i].totalUsers = numUsers;
             entryPointsFile.entryPoints[i].distribution.lambda = lambda;
+            entryPointsFile.entryPoints[i].destinationPlace = generateDestinationPoint(bbox)
         }
         fs.writeFileSync(path.join(rootPath.configurationFiles(), entryPointConf), JSON.stringify(entryPointsFile, null, 4));
         const userGen = spawn('java', [
@@ -196,11 +207,14 @@ function writeCSVs(dataDS, dataHE, dataRE) {
 
     csvName = "RE.csv";
     fs.writeFileSync(path.join(rootPath.temp.generatedCsv(), csvName), REcsv);
-
 }
 
 async function main() {
     await beforeScript();
+    let globalConfJson = fs.readJsonSync(path.join(rootPath.configurationFiles(), globalConfiguration));
+    let seed = globalConfJson.randomSeed;
+    let bbox = globalConfJson.boundingBox;
+    random.use(seedrandom(seed.toString()));
     createTempFolders();
     let demandSatisfactionCSV = [];
     let hireEffieciencyCSV = [];
@@ -211,7 +225,7 @@ async function main() {
         let returnEfficiency = {};
         let simulations = 0;
         for(let numUsers of numUsersList) {
-            await generateUsersConfig(totalTime, numUsers, globalConfiguration, epConfiguration, epConfiguration);
+            await generateUsersConfig(totalTime, numUsers, globalConfiguration, epConfiguration, epConfiguration, bbox);
             console.log(`Users generated - ${epConfiguration} - ${numUsers}`);
             await simulate(epConfiguration, numUsers);
             console.log(`Simulated - ${epConfiguration} - ${numUsers}`);
