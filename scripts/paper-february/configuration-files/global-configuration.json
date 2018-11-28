@@ -1,6 +1,6 @@
 {
     "reservationTime": 2000,
-    "totalSimulationTime": 86400,
+    "totalSimulationTime": 86399,
     "debugMode": false,
     "randomSeed": 201,
     "boundingBox": {
@@ -16,7 +16,7 @@
     "recommendationSystemType": {
         "typeName": "RESOURCES_RATIO",
         "parameters": {
-            "maxDistanceRecommendation": 600
+            "maxDistanceRecommendation": 300
         }
     },
     "graphManagerType": "GRAPH_HOPPER"

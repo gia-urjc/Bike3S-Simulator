@@ -1,0 +1,204 @@
+{
+    "entryPoints": [
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 150,
+                    "willReserve": true
+                }
+            },
+            "positionAppearance": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            },
+            "radiusAppears": 100,
+            "totalUsers": 1250,
+            "distribution": {
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 150,
+                    "willReserve": true
+                }
+            },
+            "positionAppearance": {
+                "latitude": 40.418969,
+                "longitude": -3.700819
+            },
+            "radiusAppears": 100,
+            "totalUsers": 1250,
+            "distribution": {
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 150,
+                    "willReserve": true
+                }
+            },
+            "positionAppearance": {
+                "latitude": 40.4131931,
+                "longitude": -3.70456
+            },
+            "radiusAppears": 100,
+            "totalUsers": 1250,
+            "distribution": {
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_INFORMED",
+                "parameters": {
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 150,
+                    "willReserve": true
+                }
+            },
+            "positionAppearance": {
+                "latitude": 40.4131931,
+                "longitude": -3.7104038
+            },
+            "radiusAppears": 100,
+            "totalUsers": 1250,
+            "distribution": {
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_OBEDIENT",
+                "parameters": {
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 150,
+                    "willReserve": true
+                }
+            },
+            "positionAppearance": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            },
+            "radiusAppears": 100,
+            "totalUsers": 1250,
+            "distribution": {
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_OBEDIENT",
+                "parameters": {
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 150,
+                    "willReserve": true
+                }
+            },
+            "positionAppearance": {
+                "latitude": 40.418969,
+                "longitude": -3.700819
+            },
+            "radiusAppears": 100,
+            "totalUsers": 1250,
+            "distribution": {
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_OBEDIENT",
+                "parameters": {
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 150,
+                    "willReserve": true
+                }
+            },
+            "positionAppearance": {
+                "latitude": 40.4131931,
+                "longitude": -3.70456
+            },
+            "radiusAppears": 100,
+            "totalUsers": 1250,
+            "distribution": {
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            }
+        },
+        {
+            "entryPointType": "POISSON",
+            "userType": {
+                "typeName": "USER_OBEDIENT",
+                "parameters": {
+                    "minRentalAttempts": 2,
+                    "willReserve": true,
+                    "maxDistanceToRent": 150
+                }
+            },
+            "positionAppearance": {
+                "latitude": 40.4131931,
+                "longitude": -3.7104038
+            },
+            "radiusAppears": 100,
+            "totalUsers": 1250,
+            "distribution": {
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
+            }
+        }
+    ]
+}

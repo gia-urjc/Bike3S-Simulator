@@ -7,15 +7,18 @@ const csv=require('csvtojson');
 const json2csv = require('json2csv');
 const random = require('random');
 const seedrandom = require('seedrandom');
+const utils = require('./utils')
 
 
 rootPath.configurationFiles = () => path.join(rootPath(), 'configuration-files');
+rootPath.map = () => path.join(rootPath.projectRoot(), 'backend-configuration-files/maps/madrid.osm');
 rootPath.projectRoot = () => path.join(rootPath(), '../../');
 rootPath.build = () => path.join(rootPath.projectRoot(), 'build');
 rootPath.build.schema = () => path.join(rootPath.build(), 'schema');
 rootPath.build.jsonSchemaValidator = () => path.join(rootPath.build(), 'jsonschema-validator');
 rootPath.temp = () => path.join(rootPath(), 'temp');
-rootPath.temp.history = () => path.join(rootPath.temp(), 'history');
+rootPath.temp.hist = () => path.join(rootPath.temp(), 'history');
+rootPath.temp.allHist = () => path.join(rootPath.temp(), 'all_histories');
 rootPath.temp.csv = () => path.join(rootPath.temp(), 'csv');
 rootPath.temp.generatedCsv = () => path.join(rootPath.temp(), 'generated-csv');
 rootPath.temp.concurrentBackends = () => path.join(rootPath.temp(), 'concurrent-backend');
@@ -28,21 +31,16 @@ let entryPointConfigurationList = [
     'entry-points-configuration-obedient.json',
     'entry-points-configuration-informedR.json',
     'entry-points-configuration-obedientR.json',
-//    'entry-points-configuration-informed-and-obedient.json'
+    'entry-points-configuration-informed-and-obedient.json',
+    //'entry-points-configuration-informedR-and-obedientR.json'
 ];
 let totalTime = 10800;
-let numUsersList = [125, 250, 375, 500, 625, 750, 875, 1000, 1125, 1250];
-//let numUsersList = [500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000];
-
-function createTempFolders() {
-    if(!fs.existsSync(rootPath.temp())) {
-        fs.mkdirSync(rootPath.temp());
-    }
-}
+//let numUsersList = [1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000, 3250, 3500];
+let numUsersList = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
 
 function generateDestinationPoint(boundingBox) {
-    let latitude = random.float(min = boundingBox.northWest.latitude, max = boundingBox.southEast.latitude)
-    let longitude = random.float(min = boundingBox.northWest.longitude, max = boundingBox.southEast.longitude)
+    let latitude = random.float(min = boundingBox.northWest.latitude, max = boundingBox.southEast.latitude);
+    let longitude = random.float(min = boundingBox.northWest.longitude, max = boundingBox.southEast.longitude);
     return destinationPoint = {
         latitude: latitude,
         longitude: longitude
@@ -72,14 +70,24 @@ function beforeScript() {
     });
 }
 
+function writeDestinationPlaces(bbox) {
+    usersConfiguration = fs.readJsonSync(`${rootPath.configurationFiles()}/users-configuration.json`);
+    for(let i = 0; i < usersConfiguration.initialUsers.length; i++) {
+        let destinationPlace = generateDestinationPoint(bbox);
+        usersConfiguration.initialUsers[i].destinationPlace = destinationPlace;
+    }
+    fs.writeFileSync(`${rootPath.configurationFiles()}/users-configuration.json`, JSON.stringify(usersConfiguration, null, 4));
+}
+
 function generateUsersConfig(totalTime, numUsers, globalConf, entryPointConf, bbox) {
     return new Promise((resolve, reject) => {
         let entryPointsFile = fs.readJsonSync(path.join(rootPath.configurationFiles(), entryPointConf));
-        let lambda = 1/(totalTime/numUsers);
+        let numUsersByEntryPoint = numUsers / entryPointsFile.entryPoints.length;
+        let lambda = 1/((totalTime/numUsersByEntryPoint) / 60);
         for(let i = 0; i < entryPointsFile.entryPoints.length; i++) {
-            entryPointsFile.entryPoints[i].totalUsers = numUsers;
+            entryPointsFile.entryPoints[i].totalUsers = Math.floor(numUsersByEntryPoint);
+            entryPointsFile.entryPoints[i].userType.parameters.maxDistanceToRent = 300;
             entryPointsFile.entryPoints[i].distribution.lambda = lambda;
-            entryPointsFile.entryPoints[i].destinationPlace = generateDestinationPoint(bbox)
         }
         fs.writeFileSync(path.join(rootPath.configurationFiles(), entryPointConf), JSON.stringify(entryPointsFile, null, 4));
         const userGen = spawn('java', [
@@ -93,7 +101,8 @@ function generateUsersConfig(totalTime, numUsers, globalConf, entryPointConf, bb
                 `-validator ${rootPath.build.jsonSchemaValidator()}/jsonschema-validator.js`
             ], {
                 cwd: rootPath.build(),
-                shell: true
+                shell: true,
+                stdio: 'inherit'
             });
 
         userGen.on('error', (error) => {
@@ -102,6 +111,7 @@ function generateUsersConfig(totalTime, numUsers, globalConf, entryPointConf, bb
 
         userGen.on('close', (code) => {
             if (code === 0) {
+                writeDestinationPlaces(bbox);
                 resolve();
             } else {
                 log.time().red(`Exit code: ${code}`).echo();
@@ -114,7 +124,6 @@ function generateUsersConfig(totalTime, numUsers, globalConf, entryPointConf, bb
 function simulate() {
     return new Promise((resolve, reject) => {
         let configurationFile = fs.readJsonSync(path.join(rootPath.configurationFiles(), globalConfiguration));
-        configurationFile.historyOutputPath = rootPath.temp.history();
         fs.writeFileSync(path.join(rootPath.configurationFiles(), globalConfiguration),
             JSON.stringify(configurationFile, null, 4));
         const simulator = spawn('java', [
@@ -126,6 +135,8 @@ function simulate() {
             `-globalConfig ${rootPath.configurationFiles()}/global-configuration.json`,
             `-usersConfig ${rootPath.configurationFiles()}/users-configuration.json`,
             `-stationsConfig ${rootPath.configurationFiles()}/stations-configuration.json`,
+            `-mapPath ${rootPath.map()}`,
+            `-historyOutput ${rootPath.temp.hist()}`,
             `-validator ${rootPath.build.jsonSchemaValidator()}/jsonschema-validator.js`
         ], {
             cwd: rootPath.build(),
@@ -153,7 +164,7 @@ function generateAllData() {
         const dataAnalyser = spawn('node', [
             'data-analyser.js',
             'analyse',
-            `-h ${rootPath.temp.history()}`,
+            `-h ${rootPath.temp.hist()}`,
             `-s ${rootPath.build.schema()}`,
             `-c ${rootPath.temp.csv()}`
         ], {
@@ -179,7 +190,7 @@ function generateAllData() {
 
 function readDataFromCsv() {
     return new Promise((resolve, reject) => {
-        csv().fromFile(path.join(rootPath.temp.csv(), 'global_values.csv'))
+        csv({delimiter: "auto"}).fromFile(path.join(rootPath.temp.csv(), 'global_values.csv'))
             .on('json',(jsonObj)=>{
                 resolve(jsonObj);
             })
@@ -210,12 +221,11 @@ function writeCSVs(dataDS, dataHE, dataRE) {
 }
 
 async function main() {
-    await beforeScript();
+    //await beforeScript();
     let globalConfJson = fs.readJsonSync(path.join(rootPath.configurationFiles(), globalConfiguration));
     let seed = globalConfJson.randomSeed;
     let bbox = globalConfJson.boundingBox;
-    random.use(seedrandom(seed.toString()));
-    createTempFolders();
+    utils.createTempFolders(rootPath);
     let demandSatisfactionCSV = [];
     let hireEffieciencyCSV = [];
     let returnEfficiencyCSV = [];
@@ -225,18 +235,24 @@ async function main() {
         let returnEfficiency = {};
         let simulations = 0;
         for(let numUsers of numUsersList) {
-            await generateUsersConfig(totalTime, numUsers, globalConfiguration, epConfiguration, epConfiguration, bbox);
+            random.use(seedrandom(seed.toString()));
+            await generateUsersConfig(totalTime, numUsers, globalConfiguration, epConfiguration, bbox);
             console.log(`Users generated - ${epConfiguration} - ${numUsers}`);
             await simulate(epConfiguration, numUsers);
             console.log(`Simulated - ${epConfiguration} - ${numUsers}`);
             console.log("Analysing " + epConfiguration + "-" + numUsers);
-            await generateAllData(epConfiguration, numUsers);
+            await generateAllData();
             let dataAnalysis = await readDataFromCsv();
-            demandSatisfaction[numUsers.toString()] = dataAnalysis.demand_satisfaction;
-            hireEfficency[numUsers.toString()] = dataAnalysis.hire_efficiency;
-            returnEfficiency[numUsers.toString()] = dataAnalysis.return_efficiency;
+            newHistoryFolder = path.join(rootPath.temp.allHist(), `${epConfiguration}_${numUsers}`)
+            utils.createFolder(newHistoryFolder);
+            utils.copyFolderRecursiveSync(rootPath.temp.hist(), newHistoryFolder); 
+            utils.deleteFolderRecursive(rootPath.temp.hist())
+            console.log(dataAnalysis)
+            demandSatisfaction[numUsers.toString()] = dataAnalysis['Demand satisfaction'];
+            hireEfficency[numUsers.toString()] = dataAnalysis['Hire eficiency'];
+            returnEfficiency[numUsers.toString()] = dataAnalysis['Return eficiency'];
             simulations++;
-            console.log("Analysed " + epConfiguration + "-" + "numUsers");
+            console.log("Analysed " + epConfiguration + "-" + numUsers);
         }
         demandSatisfactionCSV.push(demandSatisfaction);
         hireEffieciencyCSV.push(hireEfficency);

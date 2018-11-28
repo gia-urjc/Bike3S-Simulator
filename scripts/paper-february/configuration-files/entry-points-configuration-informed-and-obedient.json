@@ -5,7 +5,8 @@
             "userType": {
                 "typeName": "USER_INFORMED",
                 "parameters": {
-                    "minRentalAttempts": 2
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 300
                 }
             },
             "positionAppearance": {
@@ -13,9 +14,14 @@
                 "longitude": -3.709819
             },
             "radiusAppears": 100,
-            "totalUsers": 625,
+            "totalUsers": 1250,
             "distribution": {
-                "lambda": 0.057870370370370364
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
             }
         },
         {
@@ -23,7 +29,8 @@
             "userType": {
                 "typeName": "USER_INFORMED",
                 "parameters": {
-                    "minRentalAttempts": 2
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 300
                 }
             },
             "positionAppearance": {
@@ -31,9 +38,14 @@
                 "longitude": -3.700819
             },
             "radiusAppears": 100,
-            "totalUsers": 625,
+            "totalUsers": 1250,
             "distribution": {
-                "lambda": 0.057870370370370364
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
             }
         },
         {
@@ -41,7 +53,8 @@
             "userType": {
                 "typeName": "USER_INFORMED",
                 "parameters": {
-                    "minRentalAttempts": 2
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 300
                 }
             },
             "positionAppearance": {
@@ -49,9 +62,14 @@
                 "longitude": -3.70456
             },
             "radiusAppears": 100,
-            "totalUsers": 625,
+            "totalUsers": 1250,
             "distribution": {
-                "lambda": 0.057870370370370364
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
             }
         },
         {
@@ -59,7 +77,8 @@
             "userType": {
                 "typeName": "USER_INFORMED",
                 "parameters": {
-                    "minRentalAttempts": 2
+                    "minRentalAttempts": 2,
+                    "maxDistanceToRent": 300
                 }
             },
             "positionAppearance": {
@@ -67,9 +86,14 @@
                 "longitude": -3.7104038
             },
             "radiusAppears": 100,
-            "totalUsers": 625,
+            "totalUsers": 1250,
             "distribution": {
-                "lambda": 0.057870370370370364
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
             }
         },
         {
@@ -78,7 +102,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 600
+                    "maxDistanceToRent": 300
                 }
             },
             "positionAppearance": {
@@ -86,9 +110,14 @@
                 "longitude": -3.709819
             },
             "radiusAppears": 100,
-            "totalUsers": 625,
+            "totalUsers": 1250,
             "distribution": {
-                "lambda": 0.057870370370370364
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
             }
         },
         {
@@ -97,7 +126,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 600
+                    "maxDistanceToRent": 300
                 }
             },
             "positionAppearance": {
@@ -105,9 +134,14 @@
                 "longitude": -3.700819
             },
             "radiusAppears": 100,
-            "totalUsers": 625,
+            "totalUsers": 1250,
             "distribution": {
-                "lambda": 0.057870370370370364
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
             }
         },
         {
@@ -116,7 +150,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 600
+                    "maxDistanceToRent": 300
                 }
             },
             "positionAppearance": {
@@ -124,9 +158,14 @@
                 "longitude": -3.70456
             },
             "radiusAppears": 100,
-            "totalUsers": 625,
+            "totalUsers": 1250,
             "distribution": {
-                "lambda": 0.057870370370370364
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
             }
         },
         {
@@ -135,7 +174,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 600
+                    "maxDistanceToRent": 300
                 }
             },
             "positionAppearance": {
@@ -143,9 +182,14 @@
                 "longitude": -3.7104038
             },
             "radiusAppears": 100,
-            "totalUsers": 625,
+            "totalUsers": 1250,
             "distribution": {
-                "lambda": 0.057870370370370364
+                "lambda": 6.944444444444444
+            },
+            "radiusGoTo": 10,
+            "destinationPlace": {
+                "latitude": 40.419969,
+                "longitude": -3.709819
             }
         }
     ]
