@@ -169,7 +169,7 @@ export class CsvGenerator {
         let reservations: SystemInfo | undefined = info.get(ReservationsPerUser.name);
         let rentalsAndReturns: SystemInfo | undefined = info.get(RentalsAndReturnsPerUser.name);
         if (timeIntervals && reservations && rentalsAndReturns) {   
-        this.createJsonForUsers(users, timeIntervals, reservations, rentalsAndReturns);
+            this.createJsonForUsers(users, timeIntervals, reservations, rentalsAndReturns);
         }
         return;
     }

@@ -106,7 +106,7 @@ export class DataGenerator {
         let rentalsAndReturnsPerStation: RentalsAndReturnsPerStation = new RentalsAndReturnsPerStation(this.systemStations.getStations()); 
         timeEntryIterator.subscribe(rentalsAndReturnsPerStation);
         this.info.set(RentalsAndReturnsPerStation.name, rentalsAndReturnsPerStation);  
-        this.initRentalsAndReturns(rentalsAndReturnsPerStation);  // it's async
+        this.initRentalsAndReturns(rentalsAndReturnsPerStation); 
         
         this.bikesPerStation.init(this.systemStations.getStations());
         
@@ -169,10 +169,11 @@ export class DataGenerator {
     private calculateGlobalInfo(): void {
         this.globalInfo = new SystemGlobalInfo(this.systemUsers.getUsers());
         let reservations: SystemInfo | undefined = this.info.get(ReservationsPerStation.name);
-        let rentalsAndReturns: SystemInfo | undefined = this.info.get(RentalsAndReturnsPerStation.name);
+        let rentalsAndReturnsPerStation: SystemInfo | undefined = this.info.get(RentalsAndReturnsPerStation.name);
+        let rentalsAndReturnsPerUser: SystemInfo | undefined = this.info.get(RentalsAndReturnsPerUser.name);
         
-        if(reservations && rentalsAndReturns) {
-            this.globalInfo.calculateGlobalData(reservations, rentalsAndReturns);
+        if(reservations && rentalsAndReturnsPerStation && rentalsAndReturnsPerUser) {
+            this.globalInfo.calculateGlobalData(reservations, rentalsAndReturnsPerStation, rentalsAndReturnsPerUser);
             if (this.csv) {
                 this.write();
             }

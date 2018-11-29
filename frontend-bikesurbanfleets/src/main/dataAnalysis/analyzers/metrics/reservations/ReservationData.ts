@@ -4,7 +4,11 @@ import { AbsoluteValue } from '../../AbsoluteValue';
 import { ReservationAbsoluteValue } from "./ReservationAbsoluteValue";
 
 export class ReservationData implements Data {
-    static readonly NAMES: Array<string> = ['Successful bike reservations', 'Failed bike reservations', 'Successful slot reservations', 'Failed slot reservations'];
+    static readonly NAMES: Array<string> = [
+        'Successful bike reservations',
+        'Failed bike reservations',
+        'Successful slot reservations',
+        'Failed slot reservations'];
     absoluteValues: Map<number, AbsoluteValue>;
     
     public constructor() {

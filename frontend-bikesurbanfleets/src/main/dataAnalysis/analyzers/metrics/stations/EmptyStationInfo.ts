@@ -37,7 +37,9 @@ export class EmptyStateAbsoluteValue implements AbsoluteValue {
 }
 
 export class EmptyStateData implements Data {
-    static readonly NAMES: Array<string> = ['Time intervals', 'Total time'];
+    static readonly NAMES: Array<string> = [
+        'Time intervals',
+        'Total time'];
     absoluteValues: Map<number, AbsoluteValue>;
     
     constructor() {

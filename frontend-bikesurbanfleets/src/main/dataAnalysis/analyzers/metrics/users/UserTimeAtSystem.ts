@@ -28,10 +28,11 @@ export class UserTimeAbsoluteValue implements AbsoluteValue {
 }
 
 export class UserTimeData implements Data {
-    static readonly NAMES: Array<string> = ['time to origin station',
+    static readonly NAMES: Array<string> = [
+        'time to origin station',
         'cycling time', 
         'time to destination place',
-    'exit reason'];
+        'exit reason'];
     absoluteValues: Map<number, AbsoluteValue>;
      
      public constructor() {

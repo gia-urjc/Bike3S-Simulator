@@ -6,7 +6,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },
@@ -31,7 +31,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },
@@ -56,7 +56,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },
@@ -81,7 +81,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },

@@ -6,7 +6,7 @@
                 "typeName": "USER_INFORMED",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300
+                    "maxDistanceToRent": 600
                 }
             },
             "positionAppearance": {
@@ -30,7 +30,7 @@
                 "typeName": "USER_INFORMED",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300
+                    "maxDistanceToRent": 600
                 }
             },
             "positionAppearance": {
@@ -54,7 +54,7 @@
                 "typeName": "USER_INFORMED",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300
+                    "maxDistanceToRent": 600
                 }
             },
             "positionAppearance": {
@@ -78,7 +78,7 @@
                 "typeName": "USER_INFORMED",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300
+                    "maxDistanceToRent": 600
                 }
             },
             "positionAppearance": {
@@ -102,7 +102,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300
+                    "maxDistanceToRent": 600
                 }
             },
             "positionAppearance": {
@@ -126,7 +126,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300
+                    "maxDistanceToRent": 600
                 }
             },
             "positionAppearance": {
@@ -150,7 +150,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300
+                    "maxDistanceToRent": 600
                 }
             },
             "positionAppearance": {
@@ -174,7 +174,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 300
+                    "maxDistanceToRent": 600
                 }
             },
             "positionAppearance": {

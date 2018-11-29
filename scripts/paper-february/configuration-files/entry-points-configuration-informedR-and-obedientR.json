@@ -6,7 +6,7 @@
                 "typeName": "USER_INFORMED",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 150,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },
@@ -31,7 +31,7 @@
                 "typeName": "USER_INFORMED",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 150,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },
@@ -56,7 +56,7 @@
                 "typeName": "USER_INFORMED",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 150,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },
@@ -81,7 +81,7 @@
                 "typeName": "USER_INFORMED",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 150,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },
@@ -106,7 +106,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 150,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },
@@ -131,7 +131,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 150,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },
@@ -156,7 +156,7 @@
                 "typeName": "USER_OBEDIENT",
                 "parameters": {
                     "minRentalAttempts": 2,
-                    "maxDistanceToRent": 150,
+                    "maxDistanceToRent": 600,
                     "willReserve": true
                 }
             },
@@ -182,7 +182,7 @@
                 "parameters": {
                     "minRentalAttempts": 2,
                     "willReserve": true,
-                    "maxDistanceToRent": 150
+                    "maxDistanceToRent": 600
                 }
             },
             "positionAppearance": {

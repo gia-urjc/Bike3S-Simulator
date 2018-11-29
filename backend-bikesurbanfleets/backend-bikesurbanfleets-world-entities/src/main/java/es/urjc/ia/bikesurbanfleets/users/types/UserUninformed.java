@@ -37,6 +37,10 @@ public class UserUninformed extends User {
 
          int maxDistanceToRentBike = 600;
 
+         int maxTimeOuts = 2;
+
+         int maxFailedReservation = 2;
+
          GeoPoint intermediatePosition=null;
 
          boolean willReserve = false;
@@ -70,39 +74,40 @@ public class UserUninformed extends User {
     //Decision related to reservations
     @Override
     public boolean decidesToLeaveSystemAfterTimeout() {
-        return this.parameters.willReserve;
+        return this.getMemory().getReservationTimeoutsCounter() >= parameters.maxTimeOuts;
     }
     @Override
     public boolean decidesToLeaveSystemAffterFailedReservation() {
-        return false;
+        return this.getMemory().getReservationAttemptsCounter() >= parameters.maxFailedReservation;
     }
     @Override
     public boolean decidesToReserveBikeAtSameStationAfterTimeout() {
-        return false;
+        return this.parameters.willReserve;
     }
 
     @Override
     public boolean decidesToReserveBikeAtNewDecidedStation() {
-        return false;
+        return this.parameters.willReserve;
     }
 
     @Override
     public boolean decidesToReserveSlotAtSameStationAfterTimeout() {
-        return false;
+        return this.parameters.willReserve;
     }
 
     @Override
     public boolean decidesToReserveSlotAtNewDecidedStation() {
-        return false;
+        return this.parameters.willReserve;
     }
+
     @Override
     public boolean decidesToDetermineOtherStationAfterTimeout() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean decidesToDetermineOtherStationAfterFailedReservation() {
-        return false;
+        return this.parameters.willReserve;
     }
 
     //**********************************************

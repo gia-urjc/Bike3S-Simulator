@@ -6,9 +6,8 @@ export const typeParameters = {
     AVAILABLE_RESOURCES: {
         maxDistanceRecommendation: UInt
     },
-    AVAILABLE_RESOURCES_RATIO: {
+    RESOURCES_RATIO: {
         maxDistanceRecommendation: UInt,
-        N_STATIONS: UInt
     },
     AVAILABLE_RESOURCES_RATIO_PAPER: {
         maxDistanceRecommendation: UInt

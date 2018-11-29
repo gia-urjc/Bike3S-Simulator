@@ -86,7 +86,7 @@ function generateUsersConfig(totalTime, numUsers, globalConf, entryPointConf, bb
         let lambda = 1/((totalTime/numUsersByEntryPoint) / 60);
         for(let i = 0; i < entryPointsFile.entryPoints.length; i++) {
             entryPointsFile.entryPoints[i].totalUsers = Math.floor(numUsersByEntryPoint);
-            entryPointsFile.entryPoints[i].userType.parameters.maxDistanceToRent = 300;
+            entryPointsFile.entryPoints[i].userType.parameters.maxDistanceToRent = 600;
             entryPointsFile.entryPoints[i].distribution.lambda = lambda;
         }
         fs.writeFileSync(path.join(rootPath.configurationFiles(), entryPointConf), JSON.stringify(entryPointsFile, null, 4));

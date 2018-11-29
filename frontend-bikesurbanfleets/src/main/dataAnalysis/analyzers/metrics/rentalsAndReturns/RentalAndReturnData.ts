@@ -4,7 +4,12 @@ import { AbsoluteValue } from '../../AbsoluteValue';
 import { RentalAndReturnAbsoluteValue } from "./RentalAndReturnAbsoluteValue";
 
 export class RentalAndReturnData implements Data {
-    static readonly NAMES: Array<string> = ['Successful bike rentals', 'Failed bike rentals', 'Successful bike returns','Failed bike returns'];
+    static readonly NAMES: Array<string> = [
+        'Successful bike rentals',
+        'Failed bike rentals',
+        'Successful bike returns',
+        'Failed bike returns'];
+        
     absoluteValues: Map<number, AbsoluteValue>;
     
     public constructor() {
