@@ -1,0 +1,27 @@
+.window {
+    background-color: #F0F0F0;
+    height: 100vh;
+}
+
+label {
+    font-size: 12px !important;
+}
+
+.browse-button {
+    margin-top: 30px;
+}
+
+.hidden-button {
+    display: none;
+}
+
+textarea {
+    resize: none;
+    background-color: #292929;
+    color: white;
+    font-size: 12px;
+}
+
+ngb-tabset {
+    font-size: 14px;
+}

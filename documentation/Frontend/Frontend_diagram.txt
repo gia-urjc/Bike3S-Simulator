@@ -1,0 +1,29 @@
+· AppComponent: Route of the components.
+· Configuration Component:
+       It has:
+                - ModalConfigComponent
+                - MapComponent
+                - InfoListComponent
+       Do:
+                - Let an user create a configuration using a map. This user can also
+                 check what has created checking the map, or seeing a dynamic list
+                 with all the information. 
+· VisualizationComponent:
+       It has:
+                - MapComponent
+                - InfoListComponent
+                - ControlComponent
+       Do:
+                - Control de simulation with a control panel, and shows 
+· MapComponent:
+        Do:
+              - Let an user configure and watch the simulation. It depends on what 
+              controller it is.
+
+· InfoListComponent //GENERIC//:
+        Do:
+              - With a List of Objects, it creates a navigable list of the objects
+              contained in a List.
+·ModalConfigComponent //GENERIC//: 
+       Do: 
+              - Modal forms to add properties in the configuration.

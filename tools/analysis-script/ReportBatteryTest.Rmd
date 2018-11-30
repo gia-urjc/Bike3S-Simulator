@@ -1,0 +1,305 @@
+---
+title: "ReportBatteryTests"
+output: html_document
+params:
+<<<<<<< HEAD
+  path: ./analisis 
+---
+=======
+  path: /Users/ibernabe/IntellijProjects/Bike3STests/paperAT2018/allbikes/test/29_10_2018_14:41:17/analisis 
+---
+<!-- path recibe un parametro, por defecto es: ./analisis-->
+
+>>>>>>> 49526b4b40b17380572b6e872eaaf38338cf4c2b
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(htmlTable)
+library(knitr)
+library(kableExtra)
+
+options(table_counter = TRUE)
+```
+
+
+<<<<<<< HEAD
+## Comparativa de las medias para el time.to.origin.station
+```{r listFiles, echo=FALSE}
+=======
+## Datos del usuario {.tabset .tabset-fade}
+
+### Tiempo del usuario a la estación origen
+```{r listFiles, echo=FALSE}
+
+options(OutDec= ",") #Indico que la , representa los decimales
+
+
+>>>>>>> 49526b4b40b17380572b6e872eaaf38338cf4c2b
+listcsv <- list.files(path = params$path,
+           pattern = "users.csv", #an optional regular expression. Only file names which match the regular expression will be returned.
+              #pattern = "*.csv" # creates the list of all the csv files in the directory
+           all.files = FALSE, # If FALSE, only the names of visible files are returned. If TRUE, all file names will be returned.
+           full.names = TRUE, #If TRUE, muestra toda la ruta. Si no muestra sólo el nombre de la carpeta
+           recursive = TRUE,#Should subdirectory names be included in recursive listings?
+           ignore.case = FALSE, 
+           include.dirs = FALSE, 
+           no.. = FALSE)
+
+# Creo los dataFrames necesarios:
+<<<<<<< HEAD
+tablaTimeToStation<-c("","")
+tablaCyclingTime<-c("","")
+tablatimeToDestinationPlace<-c("","")
+=======
+tablaTimeToStation <-data.frame()
+tablaCyclingTime <-data.frame()
+tablatimeToDestinationPlace <-data.frame()
+>>>>>>> 49526b4b40b17380572b6e872eaaf38338cf4c2b
+
+for (k in 1:length(listcsv)){
+ 
+  # Leo fichero
+  users  <- read.csv(listcsv[k],
+                   header = TRUE,
+                   sep = ";"
+                   )
+
+  # Elimino las filas que tienen la celda en blanco
+  timeToStation <- users$time.to.origin.station[!is.na(users$time.to.origin.station)]
+  cyclingTime <- users$cycling.time[!is.na(users$cycling.time)]
+  timeToDestinationPlace <- users$time.to.destination.place[!is.na(users$time.to.destination.place)]
+  
+<<<<<<< HEAD
+  
+  #Creo una columna por cada iteración
+  cadenaAux  <- sapply(listcsv[k],function(x) {x <- gsub("./analisis/","",x)}) #Elimino la cadena..
+  cadenaAux  <- sapply(cadenaAux,function(x) {x <- gsub("/users.csv","",x)}) #Elimino la cadena..
+  
+  timeToStationAux <- c(cadenaAux, mean (timeToStation))
+  cyclingTimeAux <- c(cadenaAux, mean (cyclingTime))
+  timeToDestinationPlaceAux <- c(cadenaAux , mean (timeToDestinationPlace))
+  
+  #Añado a la tabla las columnas
+  (tablaTimeToStation<-cbind(tablaTimeToStation,timeToStationAux))
+  (tablaCyclingTime<-cbind(tablaCyclingTime,cyclingTimeAux))
+  (tablatimeToDestinationPlace<-cbind(tablatimeToDestinationPlace,timeToDestinationPlaceAux))
+}
+
+
+tablaTimeToStation <-  t(tablaTimeToStation) # Hago una transposición de la tabla para que se muestre mejor en la tabla de la interfaz
+
+
+htmlTable(tablaTimeToStation,
+          align = "c",
+          caption = "Medias de time.to.origin.station",
+            rnames = c(rep(paste("",""),nrow(tablaTimeToStation))),
+           col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+)
+
+```
+<br>
+
+## Comparativa de las medias para el cycling.time
+```{r listFiles.cycling.time, echo=FALSE}
+tablaCyclingTime <-  t(tablaCyclingTime) # Hago una transposición de la tabla para que se muestre mejor en la tabla de la interfaz
+htmlTable(tablaCyclingTime,
+          align = "c",
+          caption = "Medias de cycling.time",
+            rnames = c(rep(paste("",""),nrow(tablaCyclingTime))),
+           col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+)
+
+```
+<br>
+
+## Comparativa de las medias para el time.to.destination.place
+```{r listFiles.time.to.destination.place, echo=FALSE}
+tablatimeToDestinationPlace <-  t(tablatimeToDestinationPlace) # Hago una transposición de la tabla para que se muestre mejor en la tabla de la interfaz
+htmlTable(tablatimeToDestinationPlace,
+          align = "c",
+          caption = "Medias de time.to.destination.place",
+            rnames = c(rep(paste("",""),nrow(tablatimeToDestinationPlace))),
+           col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+)
+
+```
+=======
+  #Creo una columna por cada iteración
+  value <-format( mean (timeToStation), digits=2, nsmall=2)
+  timeToStationAux <- t(c(listcsv[k],value))
+  
+  value <-format( mean (cyclingTime), digits=2, nsmall=2)
+  cyclingTimeAux <- t(c(listcsv[k],value))
+  
+  value <-format( mean (timeToDestinationPlace), digits=2, nsmall=2)
+  timeToDestinationPlaceAux <- t(c(listcsv[k],value))
+
+  #Añado a la tabla las columnas
+  (tablaTimeToStation<-rbind(tablaTimeToStation,timeToStationAux))
+  (tablaCyclingTime<-rbind(tablaCyclingTime,cyclingTimeAux))
+  (tablatimeToDestinationPlace<-rbind(tablatimeToDestinationPlace,timeToDestinationPlaceAux))
+}
+
+#Modifico los textos en el dataframe
+tablaTimeToStation <- sapply(tablaTimeToStation,function(x) {x <- gsub("/users.csv","",x)
+                                                             x <-  gsub(params$path,"",x)
+                                                            x <-   gsub("/","",x)
+                                                                })
+tablaCyclingTime <- sapply(tablaCyclingTime,function(x) {x <- gsub("/users.csv","",x)
+                                                             x <-  gsub(params$path,"",x)
+                                                            x <-   gsub("/","",x)
+                                                                })
+tablatimeToDestinationPlace <- sapply(tablatimeToDestinationPlace,function(x) {x <- gsub("/users.csv","",x)
+                                                             x <-  gsub(params$path,"",x)
+                                                            x <-   gsub("/","",x)
+                                                                })
+
+htmlTable(tablaTimeToStation,
+          align = "l", # Alineación a la izquierda
+          caption = "Medias de time.to.origin.station",
+          rnames = c(rep(paste("",""),nrow(tablaTimeToStation))),
+          header =  paste(c("Test","Medias")),
+          align.header = "ll",
+          col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+          css.class= "table"
+)
+
+```
+
+### Tiempo del usuario en la bicicleta
+```{r listFiles.cycling.time, echo=FALSE}
+htmlTable(tablaCyclingTime,
+          align = "l", # Alineación a la izquierda
+          caption = "Medias de cycling.time",
+          rnames = c(rep(paste("",""),nrow(tablaCyclingTime))),
+          header =  paste(c("Test","Medias")),
+          align.header = "ll",
+          col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+          css.class= "table"
+)
+```
+
+### Tiempo del usuario al lugar de destino
+```{r listFiles.time.to.destination.place, echo=FALSE}
+htmlTable(tablatimeToDestinationPlace,
+          align = "l", # Alineación a la izquierda
+          caption = "Medias de destination.place",
+          rnames = c(rep(paste("",""),nrow(tablatimeToDestinationPlace))),
+          header =  paste(c("Test","Medias")),
+          align.header = "ll",
+          col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+          css.class= "table"
+)
+```
+
+##
+
+<hr>
+<br>
+
+### Calidad de balanceo de las estaciones 
+```{r listFiles.demand.satisfation, echo=FALSE}
+listcsv <- list.files(path = params$path,
+           pattern = "stationBalanceQuality.csv", #an optional regular expression. Only file names which match the regular expression will be returned.
+           all.files = FALSE, # If FALSE, only the names of visible files are returned. If TRUE, all file names will be returned.
+           full.names = TRUE, #If TRUE, muestra toda la ruta. Si no muestra sólo el nombre de la carpeta
+           recursive = TRUE,#Should subdirectory names be included in recursive listings?
+           ignore.case = FALSE, 
+           include.dirs = FALSE, 
+           no.. = FALSE)
+
+
+
+# Creo los dataFrames necesarios:
+tablaStationBalancingQuality <-data.frame()
+
+
+for (k in 1:length(listcsv)){
+ 
+  # Leo fichero
+  stations  <- read.csv(listcsv[k],
+                   header = TRUE,
+                   sep = ";"
+                   )
+
+  value <-format( mean (stations$balancing.quality), digits=2, nsmall=2)
+  
+  
+  stationBalancingQualityAux <- t(c(listcsv[k],value))
+
+  #Añado a la tabla las columnas
+  tablaStationBalancingQuality<-rbind(tablaStationBalancingQuality,stationBalancingQualityAux)
+}
+
+tablaStationBalancingQuality <- sapply(tablaStationBalancingQuality,function(x) {x <- gsub("/stationBalancingQuality.csv","",x)
+                                                             x <-  gsub(params$path,"",x)
+                                                            x <-   gsub("/","",x)
+                                                                })
+
+htmlTable(tablaStationBalancingQuality,
+          align = "l", # Alineación a la izquierda
+          caption = "stationBalancingQuality",
+          rnames = c(rep(paste("",""),nrow(tablaStationBalancingQuality))),
+          header =  paste(c("Test", "Medias")),
+          align.header = "ll",
+          col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+          css.class= "table"
+)
+
+
+```
+
+<hr>
+<br>
+
+### Comparación de los valores globales
+```{r global_values, echo=FALSE}
+
+listcsv <- list.files(path = params$path,
+                      pattern = "global_values.csv", #an optional regular expression. Only file names which match the regular expression will be returned.
+                      all.files = FALSE, # If FALSE, only the names of visible files are returned. If TRUE, all file names will be returned.
+                      full.names = TRUE, #If TRUE, muestra toda la ruta. Si no muestra sólo el nombre de la carpeta
+                      recursive = TRUE,#Should subdirectory names be included in recursive listings?
+                      ignore.case = FALSE, 
+                      include.dirs = FALSE, 
+                      no.. = FALSE)
+
+# Creo los dataFrames necesarios:
+tablaStationBalancingQuality <-data.frame()
+
+for (k in 1:length(listcsv)){
+  # Leo fichero
+  valores  <- read.csv(listcsv[k],
+                     header = TRUE,
+                     sep = ";"
+  )
+  path <- listcsv[k]
+  
+  #value <-format( mean (timeToStation), digits=2, nsmall=2)
+  
+ 
+  Aux <-  t(c(path, 
+              format( valores$Demand.satisfaction, digits=2, nsmall=2),
+              format( valores$Hire.eficiency, digits=2, nsmall=2),
+              format( valores$Return.eficiency, digits=2, nsmall=2)))
+  
+  #Añado a la tabla las columnas
+  (tablaStationBalancingQuality<-rbind(tablaStationBalancingQuality,Aux))
+}
+tablaStationBalancingQuality <- sapply(tablaStationBalancingQuality,function(x) {x <- gsub("/global_values.csv","",x)
+                                                             x <-  gsub(params$path,"",x)
+                                                            x <-   gsub("/","",x)
+                                                                })
+
+htmlTable(tablaStationBalancingQuality,
+          align = "l", # Alineación a la izquierda
+          caption = "global_values",
+          rnames = c(rep(paste("",""),nrow(tablaStationBalancingQuality))),
+          header =  paste(c("Test", "Demand Satisfaction","Hire efficiency", "Return efficiency")),
+          align.header = "ll",
+          col.rgroup = c("none", "#F7F7F7"), # coloreo las filas impares
+          css.class= "table"
+)
+```
+
+>>>>>>> 49526b4b40b17380572b6e872eaaf38338cf4c2b

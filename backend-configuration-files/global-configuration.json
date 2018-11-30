@@ -1,0 +1,22 @@
+{
+	"reservationTime": 500,
+    "totalSimulationTime": 10800,
+    "debugMode": true,
+    "randomSeed": 10,
+    "boundingBox": {
+        "northWest": {
+            "latitude": 40.4215886,
+            "longitude": -3.7134038
+        },
+        "southEast": {
+            "latitude": 40.4121931,
+            "longitude": -3.69826
+        }
+    },
+    "recommendationSystemType": {
+        "typeName": "HOLGERRECOMENDER",
+        "parameters": {
+        }
+    },
+    "graphManagerType": "GRAPH_HOPPER"
+}

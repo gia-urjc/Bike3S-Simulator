@@ -1,0 +1,45 @@
+<div class="container">
+    <div class="btn-toolbar p-2">
+        <div class="btn-group mr-2">
+            <button class="btn btn-outline-secondary"
+                    (click)="engine.stepBackward()"
+                    [disabled]="is(STATE.LOADING, STATE.START, STATE.RUNNING)">
+                <fa [icon]="'step-backward'" [fixed]="true"></fa>
+            </button>
+            <button class="btn btn-outline-secondary center-control"
+                    (click)="togglePlayPause()"
+                    [disabled]="is(STATE.LOADING) || is([STATE.START, engine.speed < 0], [STATE.END, engine.speed > 0]) || engine.speedControl.errors">
+                <fa [icon]="engine.mainActionIcon"></fa>
+            </button>
+            <button class="btn btn-outline-secondary"
+                    (click)="engine.stepForward()"
+                    [disabled]="is(STATE.LOADING, STATE.END, STATE.RUNNING)">
+                <fa [icon]="'step-forward'" [fixed]="true"></fa>
+            </button>
+        </div>
+        <div class="input-group mr-2">
+            <span class="input-group-btn decrease-speed">
+                <button class="btn btn-outline-secondary"
+                        (click)="changeSpeed(-10)"
+                        [disabled]="is(STATE.LOADING) || is([STATE.START, engine.speed - 10 <= 0])">
+                    <fa [icon]="'minus'" [fixed]="true"></fa>
+                </button>
+            </span>
+            <input type="text" class="form-control center-control"
+                   [class.is-invalid]="engine.speedControl.errors"
+                   [formControl]="engine.speedControl">
+            <span class="input-group-btn">
+                <button class="btn btn-outline-secondary"
+                        (click)="changeSpeed(+10)"
+                        [disabled]="is(STATE.LOADING) || is([STATE.END, engine.speed + 10 >= 0])">
+                    <fa [icon]="'plus'" [fixed]="true"></fa>
+                </button>
+            </span>
+        </div>
+        <div class="input-group time-view">
+            <input class="form-control" [ngModel]="formattedTime" readonly>
+        </div>
+        <button class="visualitation-button btn btn-default" (click)="selectHistoryFolder()">Load History</button>
+    </div>
+</div>
+<map-view [markers]="constructor.activeLayers" [isVisualitation]="true"></map-view>

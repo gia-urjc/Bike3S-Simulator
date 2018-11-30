@@ -1,0 +1,25 @@
+#image-container {
+    padding-right: 100px;
+    padding-left: 45px;
+    padding-top: 30px;
+}
+
+#buttons-container {
+    text-align: center;
+    padding-right: 40px;
+    padding-top: 150px;
+}
+
+.menu-button {
+    margin-top: 10px;
+    background: white;
+    padding-left: 15px;
+    padding-rigth: 15px;
+    font-size: 14px;
+    transition: background-color 0.5s ease;
+    width: 200px;
+}
+
+.menu-button:hover {
+    background: lightgrey;
+}

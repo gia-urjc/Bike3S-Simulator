@@ -1,0 +1,19 @@
+<div class="modal-header">
+    <h4 class="modal-title">Loading Global Configuration</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div *ngIf="isError" class="alert alert-danger">
+    <p><strong>Error!</strong> {{message}}</p>
+    <p>
+        This error is caused because you've selected the wrong configuration file or your configuration file has not a valid format
+    </p>
+</div>
+<div *ngIf="!isError" class="alert alert-success">
+    {{message}}
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">Ok</button>
+</div>

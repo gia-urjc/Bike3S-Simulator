@@ -1,0 +1,112 @@
+{
+  "name": "Bike3S",
+  "version": "0.7.0",
+  "main": "frontend/main.js",
+  "author": "URJC <contact@ia.urjc.es>",
+  "description": "This software can create and analyse Bike Sharing System Simulations",
+  "homepage": "https://github.com/stimonm/Bike3S",
+  "scripts": {
+    "start:electron": "electron ./build",
+    "start:electron:main-debug": "electron --inspect=5858 ./build",
+    "start:electron:main-debug:break": "electron --inspect-brk=5858 ./build",
+    "distribute": "node fuse build:dist && cd build && npm install && electron-builder",
+    "debug:frontend": "node fuse build:dev"
+  },
+  "build": {
+    "appId": "es.urjc.bike3s",
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "icon.ico"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "AppImage"
+      ],
+      "icon": "icon.icns"
+    },
+    "mac": {
+      "icon": "icon.icns"
+    },
+    "asar": false,
+    "files": [
+      "!/node_modules/*"
+    ]
+  },
+  "dependencies": {
+    "@angular/animations": "^5.1.0",
+    "@angular/cdk": "^5.1.0",
+    "@angular/common": "^5.1.0",
+    "@angular/compiler": "^5.1.0",
+    "@angular/core": "^5.1.0",
+    "@angular/flex-layout": "^5.0.0-beta.14",
+    "@angular/forms": "^5.1.0",
+    "@angular/http": "^5.1.0",
+    "@angular/material": "^5.1.0",
+    "@angular/platform-browser": "^5.1.0",
+    "@angular/platform-browser-dynamic": "^5.1.0",
+    "@angular/platform-server": "^5.1.0",
+    "@angular/router": "^5.1.0",
+    "@angular/tsc-wrapped": "^4.4.6",
+    "@angular/upgrade": "^5.1.0",
+    "@asymmetrik/ngx-leaflet": "^2.5.3",
+    "@asymmetrik/ngx-leaflet-draw": "^2.7.1",
+    "@ng-bootstrap/ng-bootstrap": "^1.0.0-beta.7",
+    "ajv": "^5.0.0",
+    "angular-in-memory-web-api": "^0.5.2",
+    "angular2-json-schema-form": "^0.7.0-alpha.1",
+    "angular2-toaster": "^5.0.1",
+    "bootstrap": "^4.0.0-beta.2",
+    "commander": "^2.12.2",
+    "conic-gradient": "github:leaverou/conic-gradient",
+    "core-js": "^2.5.3",
+    "csvtojson": "^1.1.9",
+    "font-awesome": "^4.7.0",
+    "fs-extra": "^4.0.3",
+    "install": "^0.11.0",
+    "jquery": "^3.3.1",
+    "json-schema-builder-ts": "github:cruizba/json-schema-builder",
+    "json2csv": "^3.11.5",
+    "jsoneditor": "^5.14.1",
+    "leaflet": "^1.2.0",
+    "leaflet-draw": "0.4",
+    "lodash": "^4.17.4",
+    "moment": "^2.20.1",
+    "ng-font-awesome": "github:tao-cumplido/ng-font-awesome",
+    "npm": "^5.6.0",
+    "popper.js": "^1.14.3",
+    "request": "^2.87.0",
+    "request-progress": "^3.0.0",
+    "rxjs": "^5.5.5",
+    "tree-kill": "^1.2.0",
+    "zone.js": "^0.8.18"
+  },
+  "devDependencies": {
+    "@types/commander": "^2.12.2",
+    "@types/fs-extra": "^4.0.7",
+    "@types/jquery": "^3.3.1",
+    "@types/jsoneditor": "^5.5.2",
+    "@types/leaflet": "^1.2.3",
+    "@types/leaflet-draw": "^0.4.11",
+    "@types/lodash": "^4.14.91",
+    "@types/moment": "^2.13.0",
+    "@types/node": "^8.5.1",
+    "@types/reflect-metadata": "0.0.5",
+    "angular-ide": "^0.9.52",
+    "electron": "^2.0.4",
+    "electron-builder": "^20.17.1",
+    "electron-installer-squirrel-windows": "^1.3.0",
+    "express": "^4.16.2",
+    "fliplog": "^1.0.4",
+    "fuse-box": "^2.4.0",
+    "json-schema-builder-ts": "github:cruizba/json-schema-builder",
+    "napa": "^3.0.0",
+    "ng2-fused": "^0.5.1",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2",
+    "uglify-js": "^3.4.3"
+  }
+}

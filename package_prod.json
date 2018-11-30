@@ -1,0 +1,41 @@
+{
+    "name": "Bike3S",
+    "version": "0.7.0",
+    "main": "frontend/main.js",
+    "author": "URJC <contact@ia.urjc.es>",
+    "description": "This software can create and analyse Bike Sharing System Simulations",
+    "homepage": "https://github.com/stimonm/Bike3S",
+    "scripts": {
+      "start:electron": "electron ./build",
+      "distribute": "node fuse build:dist && cd build && npm install && electron-builder -mwl",
+      "debug:frontend": "node fuse build:dev"
+    },
+    "build": {
+      "appId": "es.urjc.bike3s",
+      "win": {
+        "target": [
+          {
+            "target": "nsis"
+          },
+          {
+            "target": "portable"
+          }
+        ],
+        "icon": "icon.ico"
+      },
+      "linux": {
+        "target": [
+          "deb",
+          "AppImage"
+        ],
+        "icon": "icon.icns"
+      },
+      "mac": {
+        "icon": "icon.icns"
+      },
+      "asar": false,
+      "files": [
+        "!/node_modules/*"
+      ]
+    }
+  }

@@ -1,0 +1,24 @@
+:host .center-control {
+    width: 6rem;
+}
+
+:host .decrease-speed {
+    z-index: 3;
+}
+
+:host .time-view {
+    width: 6rem;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.visualitation-button {
+    transition: background-color 0.5s ease;
+    background: white;
+    font-size: 14px;
+    border-color: black;
+    margin-left: 5px;
+}
+
+.visualitation-button:hover {
+    background: lightgrey;
+}

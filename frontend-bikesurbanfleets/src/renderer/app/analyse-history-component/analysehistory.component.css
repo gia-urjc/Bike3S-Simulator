@@ -1,0 +1,25 @@
+.window {
+    background-color: #F0F0F0;
+    font-size: 12px;
+    height: 100vh;
+}
+
+button {
+    font-size: 12px !important;
+}
+
+.browse-button {
+    margin-top: 30px;
+}
+
+.hidden-button {
+    display: none;
+}
+
+.row {
+    padding: 15px;
+}
+
+.submit-button {
+    margin-left: 14px;
+}

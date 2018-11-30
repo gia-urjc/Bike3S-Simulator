@@ -1,0 +1,85 @@
+<form>
+    <div class="row">
+        <div class="col-sm-10">
+            <label for="globalConfigurationInput">Global Configuration Path</label>
+            <input type="text" [(ngModel)]="globalConfiguration" name="global_conf_1" class="form-control" id="globalConfigurationInput" placeholder="Global Configuration Path">
+        </div>
+        <div class="col-sm-2">
+            <button class="browse-button btn btn-default" (click)="globalConfiguration = selectFile()">Select File</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10">
+            <label for="usersConfigurationInput">Users Configuration Path</label>
+            <input type="text" [(ngModel)]="usersConfiguration" name="entry_points" class="form-control" id="usersConfigurationInput" placeholder="Users Configuration Path">
+        </div>
+        <div class="col-sm-2">
+            <button class="browse-button btn btn-default" (click)="usersConfiguration = selectFile()">Select File</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10">
+            <label for="stationsConfigurationInput">Stations Configuration Path</label>
+            <input type="text" [(ngModel)]="stationsConfiguration" name="stations" class="form-control" id="stationsConfigurationInput" placeholder="Stations Configuration Path">
+        </div>
+        <div class="col-sm-2">
+            <button class="browse-button btn btn-default" (click)="stationsConfiguration = selectFile()">Select File</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10">
+            <label for="mapInput">Map Path</label>
+            <input [(ngModel)]="mapPath" name="map_path" type="text" class="form-control" id="mapInput" placeholder="Map Path">
+        </div>
+        <div class="col-sm-2">
+            <button class="browse-button btn btn-default" (click)="mapPath = selectMap()">Select File</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10">
+            <label for="usersOutput">History output Path</label>
+            <input [(ngModel)]="historyOutputPath" name="users_output" type="text" class="form-control" id="usersOutput" placeholder="History output Path">
+        </div>
+        <div class="col-sm-2">
+            <button class="browse-button btn btn-default" (click)="historyOutputPath = selectFolder(s)">Select Folder</button>
+        </div>
+    </div>
+    <button class="submit-button btn btn-default" (click)="runSimulation()">Simulate</button>
+</form>
+
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">{{resultMessage}}</h4>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="errors">
+            <p>Console errors</p>
+            <textarea id="exceptions-textarea-core" name="exceptions-textarea" readonly rows="8" cols="63">{{exceptions}}</textarea>
+        </div>
+        <div *ngIf="!finished">
+            <simulationspinner-component></simulationspinner-component>
+        </div>
+        <hr *ngIf="!finished">
+        <div class="info-modal" *ngIf="this.percentage === 0">
+            <span>Loading map <img class="icon-loading" alt="Loading animation" src="assets/gears_loading.gif"></span>
+        </div>
+        <div class="info-modal" *ngIf="this.percentage !== 0">
+            <span>Map Loaded <img class="icon-ok" alt="Ok icon" src="assets/ok.png"></span>
+        </div>
+        <div class="info-modal" *ngIf="this.percentage !== 0 && this.percentage !== 100">
+            <span>Simulating <img class="icon-loading" alt="Loading animation" src="assets/cycling.gif"></span>
+        </div>
+        <div class="info-modal" *ngIf="this.percentage === 100">
+            <span>Simulation Finished <img class="icon-ok" alt="Ok icon" src="assets/ok.png"></span>
+        </div>
+        <hr>
+        <p><ngb-progressbar id="progress-bar" type="success" [value]="percentage" [striped]="true" [animated]="true">{{percentage}}</ngb-progressbar></p>
+    </div>
+    <div class="modal-footer">
+        <button *ngIf="!finished" type="button" class="btn btn-outline-dark" (click)="cancelSimulation()">Cancel</button>
+        <button *ngIf="finished" type="button" class="btn btn-outline-dark" (click)="c('Close click')">Close</button>
+
+    </div>
+</ng-template>
+
+<button class="hidden-button" id="modal-button" (click)="open(content)"></button>

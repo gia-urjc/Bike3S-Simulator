@@ -1,0 +1,165 @@
+{
+    "stations": [
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4197429,
+                "longitude": -3.7080733
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4192095,
+                "longitude": -3.711504
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4182146,
+                "longitude": -3.7103538
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4200783,
+                "longitude": -3.7065376
+            },
+            "capacity": 20
+        },
+
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4205886,
+                "longitude": -3.7058415
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4156057,
+                "longitude": -3.7095084
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4163638,
+                "longitude": -3.7068969
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4172781,
+                "longitude": -3.7063837
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4173114,
+                "longitude": -3.7064809
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4150099,
+                "longitude": -3.7061032
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4146755,
+                "longitude": -3.7036825
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4157138,
+                "longitude": -3.7031808
+            },
+            "capacity": 20
+        }, 
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4197204,
+                "longitude": -3.7015235
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4197872,
+                "longitude": -3.7014814
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4184192,
+                "longitude": -3.7032414
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4181663,
+                "longitude": -3.69926
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4144226,
+                "longitude": -3.7007164
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4167281,
+                "longitude": -3.7124038
+            },
+            "capacity": 20
+        },
+        {
+            "bikes": 10,
+            "position": {
+                "latitude": 40.4141931,
+                "longitude": -3.7103285
+            },
+            "capacity": 20
+        },
+        {
+        	"bikes": 10,
+        	"position": {
+        		"latitude": 40.4170009,
+        		"longitude": -3.7024207
+        	},
+        	"capacity": 20
+        }
+    ]
+}

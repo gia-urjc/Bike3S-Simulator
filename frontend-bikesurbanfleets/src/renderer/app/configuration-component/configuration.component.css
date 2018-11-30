@@ -1,0 +1,75 @@
+label[_ngcontent-c5]{
+    font-size: 12px;
+    font-weight: bold;
+}
+
+button {
+    font-size: 12px;
+}
+
+.window {
+    background-color: #F0F0F0;
+    font-size: 12px;
+}
+
+p.help-block {
+    font-size: 12px !important;
+}
+
+.dropdown-item {
+    font-size: 12px;
+}
+
+.tab-content {
+    height: 80vh;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.conf {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 12px;
+}
+
+.tab-content {
+    margin: 15px;
+    overflow-y: scroll;
+}
+
+.hidden-button {
+    display: none;
+}
+
+#conf-buttons {
+    display: flex; 
+    justify-content: flex-end
+}
+
+.conf-button {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.fixed-button-save {
+    position: fixed; /* Set the navbar to fixed position */
+    top: 35px; /* Position the navbar at the top of the page */
+    right: 25px;
+    z-index: 1000;
+}
+
+.fixed-button-load {
+    position: fixed;
+    top: 35px;
+    right: 170px;
+    z-index: 1000;
+}
+
+.fixed-button-down-map {
+    position: fixed;
+    top: 35px;
+    right: 330px;
+    z-index: 1000; 
+}
