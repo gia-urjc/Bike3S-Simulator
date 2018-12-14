@@ -40,7 +40,7 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
         super(instant, user);
         this.involvedEntities = new ArrayList<>(Arrays.asList(user, station));
         this.newEntities = null;
-        this.oldEntities=null;
+        this.oldEntities = null;
         this.station = station;
         this.activereservation = false;
         this.reservation = null;
@@ -57,19 +57,19 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
                 throw new RuntimeException("invalid program flow: user should have a valid reservatyion");
             }
             bike = user.removeBikeWithReservationFrom(station, reservation, this.instant);
-        } else {//try to get a bike
+        } else { //try to get a bike
             bike = user.removeBikeWithoutReservationFrom(station);
         }
-        //now generate the next event
+        // now generate the next event
         Event e;
         if (bike) { //user got a bike without an reservation
             debugEventLog("User removed Bike");
-            e= manageDecisionWithBike();
+            e = manageDecisionWithBike();
         } else { //was not able to get a bike
             user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE);
             debugEventLog("User did not get a bike");
             UserDecision ud = user.decideAfterFailedRental();
-            e= manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_FAILED_BIKE_RENTAL);
+            e = manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_FAILED_BIKE_RENTAL);
         }
        
         //set the result of the event

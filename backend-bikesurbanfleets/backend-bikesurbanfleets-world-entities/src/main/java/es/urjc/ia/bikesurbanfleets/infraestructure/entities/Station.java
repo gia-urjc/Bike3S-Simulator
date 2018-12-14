@@ -26,7 +26,7 @@ public class Station implements Entity {
     private int id;
     private final GeoPoint position;
     private int capacity;
-    private List<Bike> slots;
+    private List<Bike> slots;  //the can have or not a bike placed on it
     private TreeMap<Integer, Reservation> reservations;
 
     private int reservedBikes;
@@ -46,7 +46,7 @@ public class Station implements Entity {
         this.slots = slots;
         this.reservedBikes = 0;
         this.reservedSlots = 0;
-        this.oficialID=oficialID;
+        this.oficialID = oficialID;
         this.reservations = new TreeMap<Integer, Reservation>();
     }
 
@@ -131,6 +131,7 @@ public class Station implements Entity {
         reservation.expire(instant);
         Bike bike = reservation.getBike();
         int i = slots.indexOf(bike);
+        //holger
         slots.set(i, null);
         bike.setReserved(false);
         this.reservedBikes--;
@@ -190,7 +191,8 @@ public class Station implements Entity {
      */
     public Bike removeBikeWithReservation(Reservation reservation, User user, int instant) {
         Reservation res = reservations.get(reservation.getId());
-        if (!res.equals(reservation) || res.getState() != Reservation.ReservationState.ACTIVE || res.getType() != Reservation.ReservationType.BIKE || res.getUser().getId() != user.getId()) {
+        if (!res.equals(reservation) || res.getState() != Reservation.ReservationState.ACTIVE || res.getType() != Reservation.ReservationType.BIKE || res.getUser().getId() != user.getId()
+        		|| reservedBikes <= 0) {
             throw new RuntimeException("invalid program state: removeBikeWithReservation");
         }
         Bike bike = reservation.getBike();
@@ -228,6 +230,7 @@ public class Station implements Entity {
         if (!returned) {
             throw new RuntimeException("invalid program state: returnBikeWithReservation");
         }
+        //holger
         bike.setReserved(false);
         this.reservedSlots--;
         reservation.resolve(instant);
@@ -246,7 +249,7 @@ public class Station implements Entity {
     public boolean returnBikeWithoutReservation(Bike bike) {
         boolean returned = false;
         if (this.availableSlots() == 0) {
-            return false;
+            retu@rn false;
         }
         for (int i = 0; i < slots.size(); i++) {
             if (slots.get(i) == null) {

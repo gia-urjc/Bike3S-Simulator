@@ -15,7 +15,7 @@ public class UserDecisionGoToPointInCity implements UserDecision{
     public final GeoPoint point;
     
     public UserDecisionGoToPointInCity(GeoPoint point){
-        this.point=point;
+        this.point = point;
     }
 
 }

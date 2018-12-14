@@ -286,7 +286,7 @@ public abstract class User implements Entity {
         if (!this.reservation.equals(reservation)) {
             throw new RuntimeException("invalid program state: cancelBikeReservation");
         }
-       reservation=null;
+       reservation = null;
     }
 
     /**
@@ -299,7 +299,7 @@ public abstract class User implements Entity {
        if (!this.reservation.equals(reservation)) {
             throw new RuntimeException("invalid program state: cancelBikeReservation");
         }
-        reservation=null;
+        reservation = null;
     }
 
     /**
