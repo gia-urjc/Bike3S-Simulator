@@ -46,7 +46,7 @@ public class EventUserTriesToReserveBike extends EventUser {
             e= manageUserDecisionAfterReservation(reservation);
         } else {  // user has notbeen able to reserve a bike
             this.oldEntities = new ArrayList<>(Arrays.asList(reservation));
-            user.getMemory().update(UserMemory.FactType.BIKE_FAILED_RESERVATION);
+            user.getMemory().update(UserMemory.FactType.BIKE_FAILED_RESERVATION, station);
             debugEventLog("User has not been able to reserve bike");
             UserDecision ud = user.decideAfterFailedBikeReservation();
             e= manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_FAILED_BIKE_RENTAL);

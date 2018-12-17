@@ -175,7 +175,9 @@ public class UserUninformedReservation extends User {
     protected Station determineStationToRentBike() {
         
         Station destination = null;
-        List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts();
+        List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts(); // although this list should be empty
+        triedStations.addAll(getMemory().getStationsWithReservationRentalFailedAttempts()); 
+
         List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition()).stream()
                 .filter(station -> station.getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
         finalStations.removeAll(triedStations);
@@ -189,7 +191,9 @@ public class UserUninformedReservation extends User {
     @Override
     protected Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
+        List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts(); // although this list should be empty
+        triedStations.addAll(getMemory().getStationsWithReservationReturnFailedAttempts()); 
+
         List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace);
         finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {

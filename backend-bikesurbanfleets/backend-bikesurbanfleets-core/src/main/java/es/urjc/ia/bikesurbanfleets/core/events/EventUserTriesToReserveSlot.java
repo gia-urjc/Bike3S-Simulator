@@ -45,7 +45,7 @@ public class EventUserTriesToReserveSlot extends EventUser {
             e= manageUserDecisionAfterSlotReservation(reservation);
         } else {  // user has notbeen able to reserve a slot
             this.oldEntities = new ArrayList<>(Arrays.asList(reservation));
-            user.getMemory().update(UserMemory.FactType.SLOT_FAILED_RESERVATION);
+            user.getMemory().update(UserMemory.FactType.SLOT_FAILED_RESERVATION,station);
             debugEventLog("User has not been able to reserve slot");
             UserDecisionStation ud = user.decideAfterFailedSlotReservation();
             e= manageUserReturnDecision(ud);
