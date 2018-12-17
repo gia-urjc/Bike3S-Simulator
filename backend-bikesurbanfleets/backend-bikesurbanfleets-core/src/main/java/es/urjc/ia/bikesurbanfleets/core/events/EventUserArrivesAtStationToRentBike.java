@@ -66,7 +66,7 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
             debugEventLog("User removed Bike");
             e= manageDecisionWithBike();
         } else { //was not able to get a bike
-            user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE);
+            user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE,station);
             debugEventLog("User did not get a bike");
             UserDecision ud = user.decideAfterFailedRental();
             e= manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_FAILED_BIKE_RENTAL);
