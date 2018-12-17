@@ -1,0 +1,8 @@
+
+Testname;#users;DS;HE;RE;Av. time to station (min);Av. time from orig to dest station (min);Av. time to final destination (min);Av. total time (min);# abandoned;# with 0 rental fails;# with 1 rental fails;# with 0 return fails
+USER_INFORMED_AVAILABLE_RESOURCES0;14877;1.0;1.0;1.0;2.5520322197575678;9.867706302794023;2.5564719589522977;14.976210481503887;0;14877;;14877
+USER_UNINFORMED_AVAILABLE_RESOURCES0;14877;1.0;0.999462546187437;1.0;2.5526237368645113;9.867561784409938;2.5564719589522977;14.976657480226747;0;14869;8;14877
+
+test;#stations;#stations with empty times;sum emptytimes all stations(min);average equilibrium dev. over all stations and total time (bikes)
+USER_INFORMED_AVAILABLE_RESOURCES0;173;2;108.63333333333334;15.227052023121386
+USER_UNINFORMED_AVAILABLE_RESOURCES0;173;2;141.2;15.23017341040462

@@ -40,7 +40,7 @@ public class CompareTestApplication {
 
         String projectDir = System.getProperty("user.dir") + File.separator + "Bike3S";
 
-        baseDir = projectDir + "/scripts/script_prueba";
+        baseDir = projectDir + "/scripts/many_bikes";
 
         System.out.println("baseDir " + baseDir);
         String testFile = baseDir + "/tests.json";
