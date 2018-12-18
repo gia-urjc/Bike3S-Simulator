@@ -66,7 +66,7 @@ public class UserUninformedReservation extends User {
             }
         }
     }
-
+    //TODO: change the implementation of this decision
     @Override
     public UserDecision decideAfterBikeReservationTimeout() {
             Station s = this.getDestinationStation();

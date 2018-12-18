@@ -30,7 +30,7 @@ public class EventUserWantsToReturnBike extends EventUser {
         user.setPosition(currentPosition);
         debugEventLog("At enter the event");
         UserDecisionStation ud = user.decideAfterFinishingRide();
-        Event e= manageUserReturnDecision(ud);
+        Event e = manageUserReturnDecision(ud);
         
         //set the result of the event
         //the result of EventUserWantsToReturnBike is always success

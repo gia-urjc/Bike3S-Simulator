@@ -46,6 +46,10 @@ public abstract class User implements Entity {
     }
     
     private int id;
+    
+    /**
+     * It indicates what the user is doing at current moment, i.e., his/her state 
+     */
     private STATE state;
 
     /**
@@ -202,7 +206,21 @@ public abstract class User implements Entity {
     }
 
     public void addReservation(Reservation reservation) {
-        this.reservation = reservation;
+    	if (reservation.getState() == Reservation.ReservationState.EXPIRED 
+    			|| reservation.getState() == Reservation.ReservationState.SUCCESSFUL) {
+    		
+    	}
+    	else if (reservation.getState() == Reservation.ReservationState.ACTIVE) {   
+    		this.reservation = reservation;
+    	}
+    	else {
+    		if  (reservation.getType() == Reservation.ReservationType.BIKE) {
+    			this.getMemory().update(UserMemory.FactType.BIKE_FAILED_RESERVATION, reservation.getStation());
+    		}
+    		else {
+    			this.getMemory().update(UserMemory.FactType.SLOT_FAILED_RESERVATION, reservation.getStation());
+    		}
+    	}
         this.memory.getReservations().add(reservation);
     }
 
@@ -235,15 +253,15 @@ public abstract class User implements Entity {
     }
 
     public boolean hasBikeReservation() {
-        if (reservation==null ) return false;
-        return reservation.getType()==Reservation.ReservationType.BIKE 
-                && reservation.getState()==Reservation.ReservationState.ACTIVE;
+        if (reservation == null) return false;
+        return reservation.getType() == Reservation.ReservationType.BIKE 
+                && reservation.getState() == Reservation.ReservationState.ACTIVE;
     }
 
     public boolean hasSlotReservation() {
-        if (reservation==null ) return false;
-        return reservation.getType()==Reservation.ReservationType.SLOT 
-                && reservation.getState()==Reservation.ReservationState.ACTIVE;
+        if (reservation == null) return false;
+        return reservation.getType() == Reservation.ReservationType.SLOT 
+                && reservation.getState() == Reservation.ReservationState.ACTIVE;
     }
 
     public Station getDestinationStation() {
@@ -282,27 +300,13 @@ public abstract class User implements Entity {
      * @param station: it is station for which user wants to cancel his bike
      * reservation.
      */
-    public void cancelBikeReservationByTimeout(Reservation reservation) {
+    public void cancelReservationByTimeout(Reservation reservation) {
         if (!this.reservation.equals(reservation)) {
             throw new RuntimeException("invalid program state: cancelBikeReservation");
         }
        reservation = null;
     }
-
-    /**
-     * User cancels his slot reservation 
-     *
-     * @param reservation: it is reservation ti be canceled  
-     * reservation.
-     */
-    public void cancelSlotReservationByTimeout(Reservation reservation) {
-       if (!this.reservation.equals(reservation)) {
-            throw new RuntimeException("invalid program state: cancelBikeReservation");
-        }
-        reservation = null;
-    }
-
-    /**
+       /**
      * User tries to remove a bike from specified station.
      *
      * @param station: it is the station where he wnats to remove (rent) a bike.
@@ -323,12 +327,12 @@ public abstract class User implements Entity {
      * @param station: it is the station where user goes to rent a bike.
      */
     public boolean removeBikeWithReservationFrom(Station station, Reservation res, int instant) {
-        if (hasBike() || !hasBikeReservation() || !res.equals(reservation) ) {
+        if (hasBike() || !hasBikeReservation() || !res.equals(reservation)) {
             throw new RuntimeException ("invalid program state: user.removeBikeWithReservationFrom");
         }
         this.bike = station.removeBikeWithReservation(reservation, this, instant);
         this.reservation = null;
-        if (bike!=null) return true;
+        if (hasBike()) return true;
         throw new RuntimeException("invalid program flow: removeBikeWithReservationFrom");
     }
 
@@ -362,11 +366,18 @@ public abstract class User implements Entity {
         if (!hasBike() || !hasSlotReservation() || !res.equals(reservation) || !station.returnBikeWithReservation(this.bike, reservation, this, instant) ) {
             throw new RuntimeException ("invalid program state: user.returnBikeWithReservationTo");
         }
-        this.bike=null;
+        this.bike = null;
         this.reservation = null;
         return true;
    }
-
+    
+    /**
+     * It calculates the available routes between user position and his/her destination
+     * @param destinationPoint is the geographical point the user wants to reach
+     * @return the shortest route if user destination is not equals to his/her current position 
+     * @throws GeoRouteCreationException
+     * @throws GraphHopperIntegrationException
+     */
     private GeoRoute calculateRoute(GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
         String vehicle = this.bike == null ? "foot" : "bike";
 
@@ -392,7 +403,14 @@ public abstract class User implements Entity {
     protected int timeToReach() {
         return (int) (route.getTotalDistance() / getAverageVelocity());
     }
-
+    
+    /**
+     * It calculates the geographical point of the route the user has reached when 
+     * he/she loose the reservation because of its expiration.
+     * @return the reached geographical point when reservation timeout happens
+     * @throws GeoRouteException
+     * @throws GeoRouteCreationException
+     */
     public GeoPoint reachedPointUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
         return route.calculatePositionByTimeAndVelocity(Reservation.VALID_TIME, this.getAverageVelocity());
     }
@@ -442,63 +460,64 @@ public abstract class User implements Entity {
     
      /**
      * User decides what to do after beeing unable to take a bike at the station he arrived.
-     * possible outcomes is UserDecisionS¡tation with or without reservation or UserDecisionLeafSystem
      *
-     * @return a user decision.
+     * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
+     * or without a bike reservation or UserDecisionLeafSystem
      */
     public abstract UserDecision decideAfterFailedRental();
 
     /**
      * User decides what to do after a failed bike Reservation.
-     * possible outcomes is UserDecisionS¡tation or UserDecisionLeafSystem
      *
-     * @return a user decision.
+     * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
+     * or without a bike reservation or UserDecisionLeafSystem
      */
     public abstract UserDecision decideAfterFailedBikeReservation();
         
     /**
      * User decides what to do after a reservation timeout for a rental has taken place  .
-     * possible outcomes is UserDecisionS¡tation with or without reservation or UserDecisionLeafSystem
      *
-     * @return a user decision.
+     * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
+     * or without a bike reservation or UserDecisionLeafSystem
      */
     public abstract UserDecision decideAfterBikeReservationTimeout();
 
     /**
-     * User decides what to do after a
-     * getting a bike.
-     *Possible outcomes are UserDecisionGoToPointInCity or UserDecisionStation with or without reservation
-     * @return a user decision. possible outcomes is UserDecisionS¡tation
+     * User decides what to do after getting a bike.
+     * 
+     * @return a user decision. possible outcomes is UserDecisionS¡tation (with 
+     * or without a slot reservation)
      */
     public abstract UserDecision decideAfterGettingBike();
-    
+        
     /**
-     * User decides what to do after a failed return intent   .
-     * possible outcomes is UserDecisionStation with or without reservation of a slot
+     * User decides what to do after a failed return attempt.
      *
-     * @return a user decision.
+     * @return a user decision. Possible outcomes is UserDecisionStation with 
+     * or without a slot reservation 
      */
     public abstract UserDecisionStation decideAfterFailedReturn();
 
      /**
-     * User decides what to do after a
-     * finishing a biuke ride to a point in the city .
-     *Possible outcomes are UserDecisionStation with or without reservation of a slot
-     * @return a user decision. 
+     * User decides what to do after finishing a bike ride to a point in the city .
+     * @return a user decision. Possible outcomes are UserDecisionStation with 
+     * or without a slot reservation 
      */
     public abstract UserDecisionStation decideAfterFinishingRide();
 
     /**
      * User decides what to do after a failed Slot Reservation.
      *
-     * @return a user decision. possible outcomes is UserDecisionS¡tation
+     * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
+     * r without a slot reservation
      */
     public abstract UserDecisionStation decideAfterFailedSlotReservation();
     
    /**
      * User decides what to do after a Slot Reservation timeout.
      *
-     * @return a user decision. possible outcomes is UserDecisionS¡tation
+     * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
+     * or without a slot reservation
      */
     public abstract UserDecisionStation decideAfterSlotReservationTimeout();
 
@@ -510,9 +529,8 @@ public abstract class User implements Entity {
      * It randomly chooses a station among the pre-established number of nearest
      * stations.
      */
-    protected abstract Station determineStationToRentBike() ;
+    protected abstract Station determineStationToRentBike();
     protected abstract Station determineStationToReturnBike() ;
-    
     
     @Override
     public String toString() {

@@ -63,12 +63,12 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
         Event e;
         if (returned) { //user returned the bike 
             debugEventLog("User returned Bike");
-            e= manageDecisionAfterBikeReturn();
+            e = manageFactAfterBikeReturn();
         } else { //was not able to get a bike
             user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE, station);
             debugEventLog("User was not able to return the  bike");
             UserDecisionStation ud = user.decideAfterFailedReturn();
-            e= manageUserReturnDecision(ud);
+            e = manageUserReturnDecision(ud);
         }
         //set the result of the event
         //the result of EventUserArrivesAtStationToReturnBike is either SUCCESSFUL_BIKE_RETURN or FAILED_BIKE_RETURN
@@ -78,8 +78,7 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
         return e;
     }
 
-    private Event manageDecisionAfterBikeReturn() throws Exception {
-        List<Event> newEvents = new ArrayList<>();
+    private Event manageFactAfterBikeReturn() throws Exception {
         GeoPoint point = user.getDestinationPlace();
         int arrivalTime = user.goToPointInCity(point);
         user.setState(User.STATE.WALK_TO_DESTINATION);

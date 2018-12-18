@@ -42,14 +42,12 @@ public class EventUserTriesToReserveBike extends EventUser {
         Event e;
         if (reservation.getState() == Reservation.ReservationState.ACTIVE) {   // user has been able to reserve a bike
             this.involvedEntities.add(reservation.getBike());
-            user.addReservation(reservation);
-            e= manageUserDecisionAfterReservation(reservation);
+            e = manageFactsAfterReservation(reservation);
         } else {  // user has notbeen able to reserve a bike
             this.oldEntities = new ArrayList<>(Arrays.asList(reservation));
-            user.getMemory().update(UserMemory.FactType.BIKE_FAILED_RESERVATION, station);
             debugEventLog("User has not been able to reserve bike");
             UserDecision ud = user.decideAfterFailedBikeReservation();
-            e= manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_FAILED_BIKE_RENTAL);
+            e = manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_FAILED_BIKE_RENTAL);
         }
         //set the result of the event
         //the result of EventUserTriesToReserveBike is either SUCCESSFUL_BIKE_RESERVATION or FAILED_BIKE_RESERVATION
@@ -64,11 +62,11 @@ public class EventUserTriesToReserveBike extends EventUser {
      * and there are two possibilities: EventBikeReservationTimeout or
      * EventUserArrivesAtStationToRentBike(with reservation)
      */
-    private Event manageUserDecisionAfterReservation(Reservation reservation) throws Exception {
+    private Event manageFactsAfterReservation(Reservation reservation) throws Exception {
         int arrivalTime = user.goToStation(station);
         user.setState(User.STATE.WALK_TO_STATION);
         debugEventLog("User has been able to reserve bike and walks to the station");
-            if (Reservation.VALID_TIME < arrivalTime) {
+        if (Reservation.VALID_TIME < arrivalTime) {
             GeoPoint pointTimeOut = user.reachedPointUntilTimeOut();
             return new EventBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, station, pointTimeOut);
         } else {

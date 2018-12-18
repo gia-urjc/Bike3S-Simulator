@@ -22,13 +22,12 @@ public class EventUserArrivesAtDestinationInCity extends EventUser {
 
     @Override
     public Event execute() throws Exception {
-        List<Event> newEvents = new ArrayList<>();
         user.setInstant(this.instant);
         user.setPosition(position);
         debugEventLog("At enter the event");
         user.setState(User.STATE.LEAVING);
         debugEventLog("User leaves the system");
-        Event e=  new EventUserLeavesSystem(this.getInstant(), user, Event.EXIT_REASON.EXIT_AFTER_REACHING_DESTINATION);
+        Event e = new EventUserLeavesSystem(this.getInstant(), user, Event.EXIT_REASON.EXIT_AFTER_REACHING_DESTINATION);
        
         //set the result of the event
         //the result of EventUserArrivesAtDestinationInCity is always success

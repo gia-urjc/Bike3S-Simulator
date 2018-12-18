@@ -100,6 +100,18 @@ public class Station implements Entity {
         }
         return bike;
     }
+    
+    private int getIndexOfBike(int id) {
+    	int index = -1;
+    	for (int i = 0; i < slots.size(); i++) {
+    		if (slots.get(i).getId() == id) {
+    			index = i;
+    			break;
+    		}
+    	}
+    	if (index >= 0) return index;
+    	throw new RuntimeException("invalid program flow: bike "+id+" is not in station "+this.getId());
+    }
 
     /**
      * Station locks a bike for a user if there're available bikes
@@ -109,15 +121,17 @@ public class Station implements Entity {
      */
     public Reservation getBikeReservation(User user, int instant) {
         Bike bike = null;
+        Reservation r = null;
         if (availableBikes() > 0) {
             bike = getFirstAvailableBike();
             bike.setReserved(true);
             this.reservedBikes++;
-            Reservation r = new Reservation(instant, user, Reservation.ReservationType.BIKE, this, bike, true);
+            r = new Reservation(instant, user, Reservation.ReservationType.BIKE, this, bike, true);
             reservations.put(r.getId(), r);
-            return r;
         }
-        return new Reservation(instant, user, Reservation.ReservationType.BIKE, this, null, false);
+        r = new Reservation(instant, user, Reservation.ReservationType.BIKE, this, null, false);
+        user.addReservation(r);
+        return r;
     }
 
     /**
@@ -130,22 +144,23 @@ public class Station implements Entity {
         }
         reservation.expire(instant);
         Bike bike = reservation.getBike();
-        int i = slots.indexOf(bike);
-        //holger
-        slots.set(i, null);
         bike.setReserved(false);
         this.reservedBikes--;
+        User user = reservation.getUser();
+        user.cancelReservationByTimeout(reservation);
         reservations.remove(reservation.getId());
     }
 
     public Reservation getSlotReservation(User user, int instant) {
+    	Reservation r = null;
         if (availableSlots() > 0) {
             this.reservedSlots++;
-            Reservation r = new Reservation(instant, user, Reservation.ReservationType.SLOT, this, true);
+            r = new Reservation(instant, user, Reservation.ReservationType.SLOT, this, true);
             reservations.put(r.getId(), r);
-            return r;
         }
-        return new Reservation(instant, user, Reservation.ReservationType.SLOT, this, false);
+        r = new Reservation(instant, user, Reservation.ReservationType.SLOT, this, false);
+        user.addReservation(r);
+        return r;
     }
 
     /**
@@ -158,6 +173,8 @@ public class Station implements Entity {
         }
         reservation.expire(instant);
         this.reservedSlots--;
+        User user = reservation.getUser();
+        user.cancelReservationByTimeout(reservation);
         reservations.remove(reservation.getId());
     }
 
@@ -196,7 +213,7 @@ public class Station implements Entity {
             throw new RuntimeException("invalid program state: removeBikeWithReservation");
         }
         Bike bike = reservation.getBike();
-        int i = slots.indexOf(bike);
+        int i = getIndexOfBike(bike.getId());
         slots.set(i, null);
         bike.setReserved(false);
         this.reservedBikes--;
@@ -230,7 +247,6 @@ public class Station implements Entity {
         if (!returned) {
             throw new RuntimeException("invalid program state: returnBikeWithReservation");
         }
-        //holger
         bike.setReserved(false);
         this.reservedSlots--;
         reservation.resolve(instant);
@@ -249,7 +265,7 @@ public class Station implements Entity {
     public boolean returnBikeWithoutReservation(Bike bike) {
         boolean returned = false;
         if (this.availableSlots() == 0) {
-            retu@rn false;
+            return false;
         }
         for (int i = 0; i < slots.size(); i++) {
             if (slots.get(i) == null) {

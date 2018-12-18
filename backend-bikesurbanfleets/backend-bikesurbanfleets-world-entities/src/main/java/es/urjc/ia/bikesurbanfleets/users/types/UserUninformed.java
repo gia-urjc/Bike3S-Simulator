@@ -93,7 +93,7 @@ public class UserUninformed extends User {
     public UserDecisionStation decideAfterFailedSlotReservation() {
         return null;
     }
-
+    //TODO: should this method appear in User class?  
     @Override
     public UserDecisionStation decideAfterSlotReservationTimeout() {
         return null;

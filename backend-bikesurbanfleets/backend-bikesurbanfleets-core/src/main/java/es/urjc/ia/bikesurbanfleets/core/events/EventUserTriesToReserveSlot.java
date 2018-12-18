@@ -42,13 +42,13 @@ public class EventUserTriesToReserveSlot extends EventUser {
         Event e;
         if (reservation.getState() == Reservation.ReservationState.ACTIVE) {   // user has been able to reserve a slot
             user.addReservation(reservation);
-            e= manageUserDecisionAfterSlotReservation(reservation);
+            e = manageFactsAfterSlotReservation(reservation);
         } else {  // user has notbeen able to reserve a slot
             this.oldEntities = new ArrayList<>(Arrays.asList(reservation));
             user.getMemory().update(UserMemory.FactType.SLOT_FAILED_RESERVATION,station);
             debugEventLog("User has not been able to reserve slot");
             UserDecisionStation ud = user.decideAfterFailedSlotReservation();
-            e= manageUserReturnDecision(ud);
+            e = manageUserReturnDecision(ud);
         }
         //set the result of the event
         //the result of EventUserTriesToReserveSlot is either SUCCESSFUL_SLOT_RESERVATION or FAILED_SLOT_RESERVATION
@@ -63,7 +63,7 @@ public class EventUserTriesToReserveSlot extends EventUser {
      * and there are two possibilities: EventSlotReservationTimeout or
      * EventUserArrivesAtStationToReturnBike(with reservation)
      */
-    private Event manageUserDecisionAfterSlotReservation(Reservation reservation) throws Exception {
+    private Event manageFactsAfterSlotReservation(Reservation reservation) throws Exception {
         int arrivalTime = user.goToStation(station);
         user.setState(User.STATE.WITH_BIKE_TO_STATION);
         debugEventLog("User has been able to reserve slot and goes with bike to the station");
