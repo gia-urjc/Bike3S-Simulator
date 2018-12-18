@@ -30,8 +30,8 @@ function updateIcon(user: User) {
         html: `
             <div>
                 ${reservationBadge}
-                <span class="badge badge-pill badge-${user.bike ? 'danger' : 'primary'}">${user.id}</span>
-                <span class="fa fa-fw fa-${user.bike ? 'bicycle' : 'male'}"></span>
+                <span class="badge badge-pill badge-${(user.hasbike || user.bike) ? 'danger' : 'primary'}">${user.id}</span>
+                <span class="fa fa-fw fa-${(user.hasbike || user.bike) ? 'bicycle' : 'male'}"></span>
             </div>
         `
     });

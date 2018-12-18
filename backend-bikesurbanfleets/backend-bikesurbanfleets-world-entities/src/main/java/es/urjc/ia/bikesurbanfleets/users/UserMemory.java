@@ -57,7 +57,9 @@ public class UserMemory {
     private User user;
 
     private List<Station> stationsWithRentalFailedAttempts;
-    private List<Station> stationsWithReturnFailedAttemptss;
+    private List<Station> stationsWithReturnFailedAttempts;
+    private List<Station> stationsWithReservationRentalFailedAttempts;
+    private List<Station> stationsWithReservationReturnFailedAttempts;
     private List<Reservation> reservations;
     private List<GeoRoute> routesTraveledByBike;
     private List<GeoRoute> walkedRoutes; 
@@ -71,7 +73,9 @@ public class UserMemory {
         this.returnAttemptsCounter = 0;
         this.user = user;
         this.stationsWithRentalFailedAttempts = new ArrayList<>();
-        this.stationsWithReturnFailedAttemptss = new ArrayList<>();
+        this.stationsWithReturnFailedAttempts = new ArrayList<>();
+        this.stationsWithReservationRentalFailedAttempts = new ArrayList<>();
+        this.stationsWithReservationReturnFailedAttempts = new ArrayList<>();
         this.reservations = new ArrayList<>();
         this.routesTraveledByBike = new ArrayList<>();
         this.walkedRoutes = new ArrayList<>();
@@ -105,7 +109,7 @@ public class UserMemory {
     }
 
     public List<Station> getStationsWithReturnFailedAttempts() {
-        return this.stationsWithReturnFailedAttemptss;
+        return this.stationsWithReturnFailedAttempts;
     }
     
     public List<GeoRoute> getRoutesTraveledByBike() {
@@ -140,23 +144,28 @@ public class UserMemory {
     	walkedDistance = distance;
     }
     
-    public void update(FactType fact) throws IllegalArgumentException {
+    public void update(FactType fact, Station s) throws IllegalArgumentException {
         switch(fact) {
             case BIKE_RESERVATION_TIMEOUT: bikeReservationTimeoutsCounter++;
             break;
-            case BIKE_FAILED_RESERVATION: bikeReservationAttemptsCounter++;
+            case BIKE_FAILED_RESERVATION: 
+            	bikeReservationAttemptsCounter++;
+            	stationsWithReservationRentalFailedAttempts.add(s);
             break;
             case SLOT_RESERVATION_TIMEOUT: slotReservationTimeoutsCounter++;
             break;
-            case SLOT_FAILED_RESERVATION: slotReservationAttemptsCounter++;
+            case SLOT_FAILED_RESERVATION: 
+            	slotReservationAttemptsCounter++;
+            	stationsWithReservationReturnFailedAttempts.add(s);
             break;
             case BIKES_UNAVAILABLE:
                 rentalAttemptsCounter++;
-                stationsWithRentalFailedAttempts.add(user.getDestinationStation());
+                //stationsWithRentalFailedAttempts.add(user.getDestinationStation());
+                stationsWithRentalFailedAttempts.add(s);
             break;
             case SLOTS_UNAVAILABLE:
                 returnAttemptsCounter++;
-                stationsWithReturnFailedAttemptss.add(user.getDestinationStation());
+                stationsWithReturnFailedAttempts.add(s);
             break;
             default: throw new IllegalArgumentException(fact.toString() + "is not defined in update method");
         }
@@ -193,5 +202,15 @@ public class UserMemory {
     public double getTimeWalking() {
     	return walkedDistance / user.getWalkingVelocity();
     }
+
+	public List<Station> getStationsWithReservationRentalFailedAttempts() {
+		return stationsWithReservationRentalFailedAttempts;
+	}
+
+
+	public List<Station> getStationsWithReservationReturnFailedAttempts() {
+		return stationsWithReservationReturnFailedAttempts;
+	}
+
 
 }

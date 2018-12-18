@@ -65,7 +65,7 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
             debugEventLog("User returned Bike");
             e= manageDecisionAfterBikeReturn();
         } else { //was not able to get a bike
-            user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE);
+            user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE, station);
             debugEventLog("User was not able to return the  bike");
             UserDecisionStation ud = user.decideAfterFailedReturn();
             e= manageUserReturnDecision(ud);

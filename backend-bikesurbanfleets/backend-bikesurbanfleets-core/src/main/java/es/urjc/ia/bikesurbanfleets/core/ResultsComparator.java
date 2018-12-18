@@ -159,7 +159,7 @@ public class ResultsComparator {
         // Write empty line
         csvWriter.writeNext(new String[]{""});
         //write header
-        String[] record = {"test", "#stations", "#stations with empty times", "sum emptytimes all stations(min)", "average equilibrium dev. over all stations and total time (bikes)"};
+        String[] record = {"test", "#stations", "#stations with empty times", "sum emptytimes all stations(min)", "average equilibrium dev. over all stations and total time (bikes)", "avg empty time"};
         csvWriter.writeNext(record);
 
         int numstationwithemtytimes = 0;
@@ -170,7 +170,7 @@ public class ResultsComparator {
         //now write the test results
         for (String t : testresults.keySet()) {
             TestResult res = testresults.get(t);
-            for (int k = 0; k < 5; k++) {
+            for (int k = 0; k < record.length; k++) {
                 record[k] = "";
             }
             record[0] = t;
@@ -179,6 +179,7 @@ public class ResultsComparator {
             record[3] = Double.toString(res.stationdata.totalemptytimes / 60D);
             record[4] = Double.toString((res.stationdata.totaldeviationfromequilibrium)
                     / ((double) res.stationdata.totalstations));
+            record[5] = Double.toString((res.stationdata.totalemptytimes / 60D)/(res.stationdata.totalstations));
             //write line
             csvWriter.writeNext(record);
         }

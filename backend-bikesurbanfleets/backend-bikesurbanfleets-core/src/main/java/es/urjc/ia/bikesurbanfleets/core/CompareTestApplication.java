@@ -40,11 +40,11 @@ public class CompareTestApplication {
 
         String projectDir = System.getProperty("user.dir") + File.separator + "Bike3S";
 
-        baseDir = projectDir + "/scripts/script_prueba";
+        baseDir = projectDir + "/test_paperAT_alberto";
 
         System.out.println("baseDir " + baseDir);
         String testFile = baseDir + "/tests.json";
-        mapPath = projectDir + "/../madrid.osm";
+        mapPath = projectDir + "/madrid.osm";
         schemaPath = projectDir + "/build/schema";
         dataAnalyzerPath = projectDir + "/build/data-analyser";
         analysisScriptPath = projectDir + "/tools/analysis-script/";

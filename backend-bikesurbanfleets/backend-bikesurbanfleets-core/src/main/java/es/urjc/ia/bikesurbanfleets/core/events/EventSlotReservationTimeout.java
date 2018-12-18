@@ -35,7 +35,7 @@ public class EventSlotReservationTimeout extends EventUser {
         debugEventLog("At enter the event");
         station.cancelSlotReservationByTimeout(reservation, instant);
         user.cancelSlotReservationByTimeout(reservation);
-        user.getMemory().update(UserMemory.FactType.SLOT_RESERVATION_TIMEOUT);
+        user.getMemory().update(UserMemory.FactType.SLOT_RESERVATION_TIMEOUT,station);
         UserDecisionStation ud = user.decideAfterSlotReservationTimeout();
         Event e=  manageUserReturnDecision(ud);
        
