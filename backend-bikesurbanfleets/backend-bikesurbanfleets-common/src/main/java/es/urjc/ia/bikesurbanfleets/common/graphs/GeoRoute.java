@@ -24,7 +24,6 @@ public class GeoRoute {
     /**
      * This is the distance of the entire route.
      */
-    //@Expose
     private double totalDistance;
 
     /**
@@ -36,9 +35,9 @@ public class GeoRoute {
          if (geoPointList.size() < 2) {
             throw new GeoRouteCreationException("Routes should have more than two points");
         } else {
-            this.totalDistance=calculateDistance(geoPointList);
+            this.encodedPoints=encode(geoPointList);
+            this.totalDistance=calculateDistance(encodedPoints);
         }
-        encodedPoints=encode(geoPointList);
     }
 
     public double getTotalDistance() {
@@ -49,7 +48,8 @@ public class GeoRoute {
      * It calculates the distances of the different sections of the route and
      * its total distance.
      */
-    private static double calculateDistance(List<GeoPoint> points) {
+    private static double calculateDistance(String pointString) {
+    	List<GeoPoint> points = decode(pointString);
         Double totalDistance = 0.0;
         for (int i = 0; i < points.size() - 1; i++) {
             GeoPoint currentPoint = points.get(i);
@@ -72,10 +72,10 @@ public class GeoRoute {
      */
     public GeoPoint calculatePositionByTimeAndVelocity(double finalTime, double velocity) throws GeoRouteException, GeoRouteCreationException {
         //get the points as list
-        List<GeoPoint> points=decode(encodedPoints);
+        List<GeoPoint> points = decode(encodedPoints);
         double totalDistance = 0.0;
         double currentTime = 0.0;
-        double currentDistance = 0.0;
+        double currentDistance = 0.0;  // distance of the current part of the route the user is waliking
         GeoPoint currentPoint = null;
         GeoPoint nextPoint = null;
         int i = 0;
@@ -87,6 +87,11 @@ public class GeoRoute {
             currentTime += currentDistance / velocity;
             i++;
         }
+        System.out.println("current time: "+currentTime);
+        System.out.println("total time: "+finalTime);
+        System.out.println("current distance: "+currentDistance);
+        System.out.println("total distance: "+totalDistance);
+        System.out.println("velocity: "+velocity);
         if (currentTime < finalTime) {
             throw new GeoRouteException("Can't create intermediate position");
         }
@@ -97,7 +102,7 @@ public class GeoRoute {
     }
 
     public GeoRoute concatRoute(GeoRoute route) throws GeoRouteCreationException {
-        List<GeoPoint> points1=decode(encodedPoints);
+        List<GeoPoint> points1 = decode(encodedPoints);
         List<GeoPoint> points2=decode(route.encodedPoints);
         List<GeoPoint> newPoints = new ArrayList<>();
         points1.stream().forEach(point -> newPoints.add(point));

@@ -90,27 +90,26 @@ public class Station implements Entity {
         return this.capacity - (int) slots.stream().filter(Objects::nonNull).count() - reservedSlots;
     }
 
-    private Bike getFirstAvailableBike() {
-        Bike bike = null;
-        for (Bike currentBike : slots) {
-            if (currentBike != null && !currentBike.isReserved()) {
-                bike = currentBike;
-                break;
-            }
+    private int getIndexOfFirstAvailableBike() {
+        int index = -1;
+        for (int i = 0; i < slots.size(); i++) {
+        	if (slots.get(i) != null && !slots.get(i).isReserved()) {
+        		index = i;  
+        		break;
+        	}
         }
-        return bike;
+        return index;
     }
     
     private int getIndexOfBike(int id) {
     	int index = -1;
     	for (int i = 0; i < slots.size(); i++) {
-    		if (slots.get(i).getId() == id) {
+    		if (slots.get(i) != null && slots.get(i).getId() == id) {
     			index = i;
     			break;
     		}
     	}
-    	if (index >= 0) return index;
-    	throw new RuntimeException("invalid program flow: bike "+id+" is not in station "+this.getId());
+    	return index;
     }
 
     /**
@@ -123,13 +122,17 @@ public class Station implements Entity {
         Bike bike = null;
         Reservation r = null;
         if (availableBikes() > 0) {
-            bike = getFirstAvailableBike();
+            int i = getIndexOfFirstAvailableBike();
+            if (i < 0 || i >= slots.size()) throw new RuntimeException("Index of available bike found out of bound"); 
+            bike = slots.get(i);
             bike.setReserved(true);
             this.reservedBikes++;
             r = new Reservation(instant, user, Reservation.ReservationType.BIKE, this, bike, true);
             reservations.put(r.getId(), r);
         }
-        r = new Reservation(instant, user, Reservation.ReservationType.BIKE, this, null, false);
+        else {
+        	r = new Reservation(instant, user, Reservation.ReservationType.BIKE, this, null, false);
+        }
         user.addReservation(r);
         return r;
     }
@@ -158,7 +161,9 @@ public class Station implements Entity {
             r = new Reservation(instant, user, Reservation.ReservationType.SLOT, this, true);
             reservations.put(r.getId(), r);
         }
-        r = new Reservation(instant, user, Reservation.ReservationType.SLOT, this, false);
+        else {
+        	r = new Reservation(instant, user, Reservation.ReservationType.SLOT, this, false);
+        }
         user.addReservation(r);
         return r;
     }
@@ -214,6 +219,7 @@ public class Station implements Entity {
         }
         Bike bike = reservation.getBike();
         int i = getIndexOfBike(bike.getId());
+        if (i == -1) throw new RuntimeException("Reserved bike "+bike.getId()+"  not found");
         slots.set(i, null);
         bike.setReserved(false);
         this.reservedBikes--;

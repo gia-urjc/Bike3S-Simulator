@@ -3,7 +3,7 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_INFORMED",
+                "typeName": "USER_INFORMED_RES",
                 "parameters": {}
             },
             "positionAppearance": {
@@ -43,7 +43,7 @@
         {
             "entryPointType": "POISSON",
             "userType": {
-                "typeName": "USER_OBEDIENT",
+                "typeName": "USER_OBEDIENT_RES",
                 "parameters": {}
             },
             "destinationPlace": {
