@@ -208,13 +208,13 @@ public abstract class User implements Entity {
     public void addReservation(Reservation reservation) {
     	if (reservation.getState() == Reservation.ReservationState.EXPIRED 
     			|| reservation.getState() == Reservation.ReservationState.SUCCESSFUL) {
-    		
+    		throw new RuntimeException ("invalid input: added reservations must be active or failed");
     	}
     	else if (reservation.getState() == Reservation.ReservationState.ACTIVE) {   
     		this.reservation = reservation;
     	}
-    	else {
-    		if  (reservation.getType() == Reservation.ReservationType.BIKE) {
+    	else if (reservation.getState() == Reservation.ReservationState.FAILED) {
+    		if (reservation.getType() == Reservation.ReservationType.BIKE) {
     			this.getMemory().update(UserMemory.FactType.BIKE_FAILED_RESERVATION, reservation.getStation());
     		}
     		else {

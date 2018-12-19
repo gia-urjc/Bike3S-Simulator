@@ -160,7 +160,6 @@ public class UserMemory {
             break;
             case BIKES_UNAVAILABLE:
                 rentalAttemptsCounter++;
-                //stationsWithRentalFailedAttempts.add(user.getDestinationStation());
                 stationsWithRentalFailedAttempts.add(s);
             break;
             case SLOTS_UNAVAILABLE:
