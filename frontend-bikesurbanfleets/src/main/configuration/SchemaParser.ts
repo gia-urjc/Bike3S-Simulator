@@ -49,7 +49,7 @@ export default class {
                             _.pull(finalEntryPointSchema.required, 'entryPointType');
                         }
                         finalEntryPointSchema.additionalProperties = true;
-            //            console.log(JSON.stringify(finalEntryPointSchema));
+                        // console.log(JSON.stringify(finalEntryPointSchema));
                         return finalEntryPointSchema;
                     }
                 }

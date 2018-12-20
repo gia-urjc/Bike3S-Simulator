@@ -32,6 +32,10 @@ public class EntryPointDeserializer implements JsonDeserializer<List<EntryPoint>
             entryPoints.add(entryPointFactory.createEntryPoint(jsonEntryPoint, entryPointType));
         }
 
+        for(EntryPoint ep: entryPoints) {
+            System.out.println(ep.toString());
+        }
+
         return entryPoints;
     }
 

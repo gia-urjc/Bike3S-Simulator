@@ -1,7 +1,7 @@
 {
     "entryPoints": [
         {
-            "entryPointType": "POISSON",
+            "entryPointType": "SINGLEUSER",
             "userType": {
                 "typeName": "USER_INFORMED_RES",
                 "parameters": {}
@@ -14,14 +14,10 @@
                 "latitude": 40.41498327528509,
                 "longitude": -3.7037658691406254
             },
-            "radiusAppears": 100,
-            "radiusGoTo": 100, 
-            "distribution": {
-                "lambda": 1
-            }
+            "timeInstant": 60
         },
         {
-            "entryPointType": "POISSON",
+            "entryPointType": "SINGLEUSER",
             "userType": {
                 "typeName": "USER_INFORMED",
                 "parameters": {}
@@ -34,14 +30,10 @@
                 "latitude": 40.418969,
                 "longitude": -3.700819
             },
-            "radiusAppears": 100,
-            "radiusGoTo": 100,
-            "distribution": {
-                "lambda": 1
-            }
+            "timeInstant": 120
         },
         {
-            "entryPointType": "POISSON",
+            "entryPointType": "SINGLEUSER",
             "userType": {
                 "typeName": "USER_OBEDIENT_RES",
                 "parameters": {}
@@ -54,14 +46,10 @@
                 "latitude": 40.4131931,
                 "longitude": -3.70456
             },
-            "radiusAppears": 100,
-            "radiusGoTo": 100,
-            "distribution": {
-                "lambda": 1
-            }
+            "timeInstant": 240 
         },
         {
-            "entryPointType": "POISSON",
+            "entryPointType": "SINGLEUSER",
             "userType": {
                 "typeName": "USER_OBEDIENT",
                 "parameters": {}
@@ -74,11 +62,7 @@
                 "latitude": 40.4131931,
                 "longitude": -3.7104038
             },
-            "radiusAppears": 100,
-            "radiusGoTo": 100,
-            "distribution": {
-                "lambda": 1
-            }
+            "timeInstant": 300
         }
     ]
 }

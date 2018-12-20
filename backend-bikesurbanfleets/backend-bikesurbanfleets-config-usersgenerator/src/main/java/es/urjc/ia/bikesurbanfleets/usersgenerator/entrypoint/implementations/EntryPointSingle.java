@@ -17,31 +17,9 @@ import java.util.List;
 @EntryPointType("SINGLEUSER")
 public class EntryPointSingle extends EntryPoint {
     /**
-     * It is the point where user appears, i. e., where user is located after being generated.
-     */
-    private GeoPoint positionAppearance;
-    
-    /**
-     * It is the point where user wants to go to.
-     */
-    private GeoPoint destinationPlace;
-    /**
-     * Type of user that will be generated.
-     */
-    private UserProperties userType;
-    
-    /**
      * It is the time instant when user appears at the system.
      */
-    private int timeInstant; 
-    
-    public EntryPointSingle(GeoPoint positionAppearance, GeoPoint destinationPlace, UserProperties userType, int instant) {
-        this.entryPointType = this.getClass().getAnnotation(EntryPointType.class).value();
-        this.positionAppearance = positionAppearance;
-        this.userType = userType;
-        this.timeInstant = instant;
-        this.destinationPlace=destinationPlace;
-    }
+    private int timeInstant;
 
     @Override
     public List<SingleUser> generateUsers() {
@@ -50,14 +28,11 @@ public class EntryPointSingle extends EntryPoint {
         singleUsers.add(user);
         return singleUsers;
     }
-    
+
+    @Override
     public String toString() {
-        String result = positionAppearance.toString();
-         result += "| " + destinationPlace+ " \n";
-       
-        result += "| SINGLE user \n";
-        result += "user Type: " + userType + "\n";
-        result += "Instant: " + timeInstant + "\n";
-        return result;
+        return super.toString() + "\n" + "EntryPointSingle{" +
+                "timeInstant=" + timeInstant +
+                '}';
     }
 }

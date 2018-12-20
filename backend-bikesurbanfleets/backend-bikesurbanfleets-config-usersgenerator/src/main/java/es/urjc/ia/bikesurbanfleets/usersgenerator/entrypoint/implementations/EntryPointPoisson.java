@@ -23,34 +23,9 @@ import java.util.List;
 public class EntryPointPoisson extends EntryPoint {
 
     /**
-     * If a radius is given, position is the center of circle
-     * In other case, position is the specific point where user appears
-     */
-    private GeoPoint positionAppearance;
-
-    /**
-     * It is the point where user wants to go to.
-     */
-    private GeoPoint destinationPlace;
- 
-    /**
-     * It is the radius of circle is going to be used to delimit area where users appears
-     */
-    private double radiusAppears;
-
-    /**
-     * It is the radius of circle is going to be used to delimit area where users wants to go to
-     */
-    private double radiusGoTo;
-    /**
      * Type of distribution that users generation will follow
      */
     private DistributionPoisson distribution;
-
-    /**
-     * Type of users that will be generated
-     */
-    private UserProperties userType;
 
     /**
      * It is the range of time within which users can appears, i. e.,
@@ -108,12 +83,10 @@ public class EntryPointPoisson extends EntryPoint {
 
     @Override
     public String toString() {
-        String result = positionAppearance.toString();
-        result += "| " + destinationPlace.toString() + " \n";
-        result += "| EntryPointType" + this.getEntryPointType();
-        result += "| distributionParameter " + distribution.getLambda() + "\n";
-        result += "user Type: " + userType;
-        return result;
+        return super.toString() + "\n" + "EntryPointPoisson{" +
+                "distribution=" + distribution +
+                ", timeRange=" + timeRange +
+                ", totalUsers=" + totalUsers +
+                '}';
     }
-
 }
