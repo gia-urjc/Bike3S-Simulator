@@ -434,9 +434,7 @@ public abstract class User implements Entity {
     final public int goToStation(Station dest) throws Exception {
         destinationStation = dest;
         route = calculateRoute(dest.getPosition());
-        double n = (route.getTotalDistance() / getAverageVelocity());
-        System.out.println("time: "+n+" , "+(int)n);
-        return (int)n;
+        return (int)(route.getTotalDistance() / getAverageVelocity());
     }
 
     /**

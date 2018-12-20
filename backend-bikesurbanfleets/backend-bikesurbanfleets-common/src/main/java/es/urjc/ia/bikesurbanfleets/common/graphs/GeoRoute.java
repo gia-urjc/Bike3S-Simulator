@@ -25,7 +25,7 @@ public class GeoRoute {
      * This is the distance of the entire route.
      */
     private double totalDistance;
-
+    
     /**
      * It creates a route which has at least 2 points.
      *
@@ -37,6 +37,7 @@ public class GeoRoute {
         } else {
             this.encodedPoints=encode(geoPointList);
             this.totalDistance=calculateDistance(encodedPoints);
+            list = geoPointList; 
         }
     }
 
@@ -60,7 +61,7 @@ public class GeoRoute {
         return totalDistance;
     }
 
-    /**
+        /**
      * Given the speed at which the route is traveled and the time during which
      * the entity has been traveling, it calculates the section of the route
      * that the entity has traveled.
@@ -74,11 +75,12 @@ public class GeoRoute {
         //get the points as list
         List<GeoPoint> points = decode(encodedPoints);
         double totalDistance = 0.0;
-        double currentTime = 0.0;
-        double currentDistance = 0.0;  // distance of the current part of the route the user is waliking
-        GeoPoint currentPoint = null;
-        GeoPoint nextPoint = null;
+        double currentTime = 0.0;   // time the user has been travelling through the route to the next inmediate known geographical point when reservation has expired
+        double currentDistance = 0.0;  // distance of the current part of the route the user is travelling through (distance beteween echa pair of geographical points) 
+        GeoPoint currentPoint = null;   //geographical point at which user is at this moment
+        GeoPoint nextPoint = null;   // next geographical p o in t the user is going to reach
         int i = 0;
+        
         while (i < points.size() - 1 && currentTime < finalTime) {
             currentPoint = points.get(i);
             nextPoint = points.get(i + 1);
@@ -87,17 +89,25 @@ public class GeoRoute {
             currentTime += currentDistance / velocity;
             i++;
         }
-        System.out.println("current time: "+currentTime);
-        System.out.println("total time: "+finalTime);
-        System.out.println("current distance: "+currentDistance);
-        System.out.println("total distance: "+totalDistance);
-        System.out.println("velocity: "+velocity);
+               
+        /* If timeout has happened, it is because the user takes to arrive at 
+         * his destination more time that reservation valid time. Then, if time that user 
+         * takes to arrive is lower than reservation valid time, this is an error: timeout mustn't ocurrs 	
+         */
         if (currentTime < finalTime) {
             throw new GeoRouteException("Can't create intermediate position");
         }
-        double x = totalDistance - finalTime * velocity;
-        double intermedDistance = currentDistance - x;
-        GeoPoint newPoint = currentPoint.reachedPoint(intermedDistance, nextPoint);
+        
+        GeoPoint newPoint = nextPoint; 
+        if (currentTime  != finalTime) {
+	        /* finalTime * velocity is the real distance the user has been able to travel until the timeout.
+	         * x is the distance between th known geographical point the user has 
+	         * reached and the real geographical point the user has arrived at.
+	         */
+	        double x = totalDistance - finalTime * velocity;
+	        double intermedDistance = currentDistance - x;
+	        newPoint = currentPoint.reachedPoint(intermedDistance, nextPoint);
+        }
         return newPoint;
     }
 
