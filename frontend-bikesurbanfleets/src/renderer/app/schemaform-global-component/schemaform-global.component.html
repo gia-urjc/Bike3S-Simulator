@@ -3,6 +3,7 @@
         <json-schema-form
             *ngIf="form !== undefined"
             [form]="form"
+            framework="bootstrap-4"
             (onSubmit)="submit($event)"
             (isValid)="valid($event)"
             (onChanges)="onChanges($event)">

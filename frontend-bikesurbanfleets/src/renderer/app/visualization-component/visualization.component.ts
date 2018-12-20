@@ -4,7 +4,6 @@ import * as moment from 'moment';
 
 import { AjaxProtocol } from '../../ajax/AjaxProtocol';
 import { STATE, VisualizationEngine } from './visualization.engine';
-import {ToasterService} from "angular2-toaster";
 const { dialog } = (window as any).require('electron').remote;
 
 @Component({

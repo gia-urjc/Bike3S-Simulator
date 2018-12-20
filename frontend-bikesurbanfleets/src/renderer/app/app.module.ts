@@ -12,7 +12,7 @@ import { MapComponent } from './map/map.component';
 import { Visualization } from './visualization-component/visualization.component';
 import { MenuComponent } from './menu-component/menu.component';
 import {SchemaFormComponent} from './schemaform-component/schemaform.component';
-import {Bootstrap4FrameworkModule, JsonSchemaFormModule} from 'angular2-json-schema-form';
+import { Bootstrap4FrameworkModule } from 'angular6-json-schema-form';
 import {AppRoutingModule} from "./app.routes";
 import {SimulateComponent} from "./simulate-component/simulate.component";
 import {SimulatecoreComponent} from "./simulate-core-component/simulatecore.component";
@@ -38,7 +38,6 @@ import { ConfDownMapComponent } from './configuration-download-map/configuration
         LeafletModule.forRoot(),
         LeafletDrawModule.forRoot(),
         Bootstrap4FrameworkModule,
-        JsonSchemaFormModule.forRoot(Bootstrap4FrameworkModule),
         AppRoutingModule,
         NgbModalModule,
         NgbProgressbarModule,

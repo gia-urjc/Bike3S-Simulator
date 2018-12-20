@@ -69,7 +69,7 @@ export namespace Main {
      ===================*/
 
     function createMenuWindow() {
-        menu = new BrowserWindow({ width: 300, height: 650, resizable: false, fullscreenable: true});
+        menu = new BrowserWindow({ width: 300, height: 650, resizable: true, fullscreenable: true});
 
         menu.loadURL(urlFormat({
             pathname: join(app.getAppPath(), 'frontend', 'index.html'),

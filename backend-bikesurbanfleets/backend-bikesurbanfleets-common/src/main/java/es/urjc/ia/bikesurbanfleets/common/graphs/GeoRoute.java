@@ -37,7 +37,6 @@ public class GeoRoute {
         } else {
             this.encodedPoints=encode(geoPointList);
             this.totalDistance=calculateDistance(encodedPoints);
-            list = geoPointList; 
         }
     }
 
