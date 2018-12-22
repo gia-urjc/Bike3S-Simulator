@@ -24,7 +24,7 @@ export type EntityChanges = {
 export type EntityDescriptions = {
     id: number,
 } & {
-    [key: string]: <any>
+    [key: string]: any
 };
 
 export type HistoryTimeEntry = {

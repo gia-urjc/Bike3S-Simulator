@@ -24,14 +24,18 @@ export class UserFactInstantInfo implements Observer {
         this.instantsPerUser = new Map();
     }
     
-    private getUserInfo(involvedentities:any): UserInstant{
+    private getUserInfo(involvedentities:any): UserInstant | undefined {
         for(let ent of involvedentities) {
             if(ent.type==='users'){
                 const id= ent.id;
-                if(!this.instantsPerUser.has(id)) {
-                    this.instantsPerUser.set(id, new UserInstant('', 0, 0, 0, 0));
+                let userInstant: UserInstant | undefined = this.instantsPerUser.get(id);
+                if(!userInstant) {
+                    let newUserInstant = new UserInstant('', 0, 0, 0, 0);
+                    this.instantsPerUser.set(id, newUserInstant);
+                    userInstant = newUserInstant;
                 }
-                return this.instantsPerUser.get(id);
+                return userInstant;
+                
             }
         }
         return undefined;
@@ -42,6 +46,9 @@ export class UserFactInstantInfo implements Observer {
         
         for(let event of timeEntry.events) {
             const info: UserInstant |undefined =this.getUserInfo(event.involvedEntities);
+            if(!info) {
+                throw new Error("User instant info not found: \n Involved entity: " + event.involvedEntities);
+            }
             switch(event.name) {
                 case 'EventUserAppears': {
                     info.appearanceInstant = timeEntry.time;
@@ -73,4 +80,3 @@ export class UserFactInstantInfo implements Observer {
     }
   
 }
- 

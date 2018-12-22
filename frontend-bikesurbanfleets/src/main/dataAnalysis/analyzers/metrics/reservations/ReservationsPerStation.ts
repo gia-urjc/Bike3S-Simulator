@@ -2,6 +2,7 @@ import { Observer } from '../../ObserverPattern';
 import { Data } from "../../Data";
 import { SystemInfo } from "../../SystemInfo";
 import { ReservationData } from './ReservationData';
+import { TimeEntry } from '../../../systemDataTypes/SystemInternalData';
 
 export class ReservationsPerStation implements SystemInfo, Observer {
     data: Data;
@@ -30,6 +31,9 @@ export class ReservationsPerStation implements SystemInfo, Observer {
             switch(event.name) {
                 case 'EventUserTriesToReserveSlot': {
                     const key=this.getStationId(event.involvedEntities);
+                    if(!key) {
+                        throw new Error("Cant find station with id. Involved entities: \n" + event.involvedEntities);
+                    }
                     if (event.result==='SUCCESSFUL_SLOT_RESERVATION') { 
                         this.data.increaseSuccessfulSlotReservations(key);
                     } else if (event.result==='FAILED_SLOT_RESERVATION') { 
@@ -39,6 +43,9 @@ export class ReservationsPerStation implements SystemInfo, Observer {
                 }
                  case 'EventUserTriesToReserveBike': {
                     const key=this.getStationId(event.involvedEntities);
+                    if(!key) {
+                        throw new Error("Cant find station with id. Involved entities: \n" + event.involvedEntities);
+                    }
                     if (event.result==='SUCCESSFUL_BIKE_RESERVATION') { 
                         this.data.increaseSuccessfulBikeReservations(key);
                     } else if (event.result==='FAILED_BIKE_RESERVATION') { 

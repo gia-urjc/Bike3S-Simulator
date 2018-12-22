@@ -12,9 +12,6 @@ import { Settings } from './settings';
 import { DataGenerator } from "./dataAnalysis/generators/DataGenerator";
 
 import { ipcMain, ipcRenderer } from 'electron';
-import { SystemReservations } from './dataAnalysis/historyEntities/SystemReservations';
-import { SystemStations } from './dataAnalysis/historyEntities/SystemStations';
-import { Reservation } from './dataAnalysis/systemDataTypes/Entities';
 
 export namespace Main {
     let visualization: Electron.BrowserWindow | null;

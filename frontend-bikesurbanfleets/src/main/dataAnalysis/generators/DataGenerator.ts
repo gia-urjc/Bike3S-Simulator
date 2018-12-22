@@ -7,8 +7,8 @@ import { ReservationsPerUser } from "../analyzers/metrics/reservations/Reservati
 import { BikesPerStationAndTime } from "../analyzers/metrics/stations/BikesPerStationAndTime";
 import { EmptyStationInfo } from "../analyzers/metrics/stations/EmptyStationInfo";
 import { TimeEntryIterator } from "../analyzers/iterators/TimeEntryIterator";
-import { SystemStations } from "../historyEntities/SystemStations";
-import { SystemUsers } from "../historyEntities/SystemUsers";
+import { SystemStations } from "../systemDataTypes/SystemStations";
+import { SystemUsers } from "../systemDataTypes/SystemUsers";
 import { CsvGenerator } from "./CsvGenerator";
 import { SystemGlobalInfo } from '../analyzers/metrics/SystemGlobalInfo';
 import { StationBalanceQuality } from '../analyzers/metrics/stations/StationBalanceQuality';

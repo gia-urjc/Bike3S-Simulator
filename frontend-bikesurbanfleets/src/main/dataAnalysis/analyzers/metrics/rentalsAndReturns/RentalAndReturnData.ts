@@ -1,18 +1,17 @@
-import { Entity } from '../../../systemDataTypes/Entities';
 import { Data } from '../../Data';
 import { AbsoluteValue } from '../../AbsoluteValue';
 import { RentalAndReturnAbsoluteValue } from "./RentalAndReturnAbsoluteValue";
 
 export class RentalAndReturnData implements Data {
     static readonly NAMES: Array<string> = ['Successful bike rentals', 'Failed bike rentals', 'Successful bike returns','Failed bike returns'];
-    absoluteValues: Map<number, AbsoluteValue>;
+    absoluteValues: Map<number, RentalAndReturnAbsoluteValue>;
     
     public constructor() {
         this.absoluteValues = new Map();
     }
   
     private getElement(key: number): RentalAndReturnAbsoluteValue {
-        let absValue: AbsoluteValue | undefined = this.absoluteValues.get(key);
+        let absValue: RentalAndReturnAbsoluteValue | undefined = this.absoluteValues.get(key);
         if (!absValue) {
             absValue=new RentalAndReturnAbsoluteValue();  // a gotten map value could be undefined
             this.absoluteValues.set(key, absValue);

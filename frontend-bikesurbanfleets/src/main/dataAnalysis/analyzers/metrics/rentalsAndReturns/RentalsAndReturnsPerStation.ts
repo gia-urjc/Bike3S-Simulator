@@ -30,6 +30,9 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
              switch(event.name) {
                 case 'EventUserArrivesAtStationToReturnBike': {
                     const key=this.getStationId(event.involvedEntities);
+                    if(!key) {
+                        throw new Error("Station can't be found. Involved entity: \n" + event.involvedEntities);
+                    }
                     if (event.result==='SUCCESSFUL_BIKE_RETURN') { 
                         this.data.increaseSuccessfulReturns(key);
                     } else if (event.result==='FAILED_BIKE_RETURN') { 
@@ -39,6 +42,9 @@ export class RentalsAndReturnsPerStation implements SystemInfo, Observer {
                 }
                  case 'EventUserArrivesAtStationToRentBike': {
                     const key=this.getStationId(event.involvedEntities);
+                    if(!key) {
+                        throw new Error("Station can't be found. Involved entity: \n" + event.involvedEntities);
+                    }
                     if (event.result==='SUCCESSFUL_BIKE_RENTAL') { 
                         this.data.increaseSuccessfulRentals(key);
                     } else if (event.result==='FAILED_BIKE_RENTAL') { 

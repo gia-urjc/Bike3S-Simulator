@@ -81,6 +81,7 @@
     "rxjs": "^6.0.0",
     "rxjs-compat": "^6.3.3",
     "tree-kill": "^1.2.0",
+    "uglify-es": "^3.3.9",
     "zone.js": "^0.8.18"
   },
   "devDependencies": {

@@ -1,5 +1,4 @@
 import { JsonObject } from "../../../shared/util";
-import { Station, User, Entity } from "../systemDataTypes/Entities";
 import { SystemGlobalInfo } from "../analyzers/metrics/SystemGlobalInfo";
 import { AbsoluteValue } from "../analyzers/AbsoluteValue";
 import { SystemInfo } from "../analyzers/SystemInfo";
@@ -18,6 +17,7 @@ import { EmptyStationInfo, EmptyStateData } from "../analyzers/metrics/stations/
 import { UserTimeAtSystem, UserTimeData, UserTimeAbsoluteValue } from '../analyzers/metrics/users/UserTimeAtSystem';
 import * as json2csv from 'json2csv';
 import * as fs from 'fs';
+import { HistoryEntity } from "../../../shared/history";
 
 export class CsvGenerator {
     
@@ -54,7 +54,7 @@ export class CsvGenerator {
         this.bikesPerStationData = new Array();
   }
     
-  public createJsonForStations(stations: Array<Entity>, reservations: SystemInfo, rentalsAndReturns: SystemInfo): void {
+  public createJsonForStations(stations: Array<HistoryEntity>, reservations: SystemInfo, rentalsAndReturns: SystemInfo): void {
     let i: number = 1;  // title index
     let j: number = 0;  // data index
       
@@ -100,16 +100,16 @@ export class CsvGenerator {
          return;
     }
      
-     private initStationInfo(info: Map<string, SystemInfo>, stations: Array<Station>): void {
-         let reservations: SystemInfo | undefined = info.get(ReservationsPerStation.name);
-         let rentalsAndReturns: SystemInfo | undefined = info.get(RentalsAndReturnsPerStation.name);
-         if (reservations && rentalsAndReturns) {
-           this.createJsonForStations(stations, reservations, rentalsAndReturns);
-         }
-         return;
+     private initStationInfo(info: Map<string, SystemInfo>, stations: Array<HistoryEntity>): void {
+        let reservations: SystemInfo | undefined = info.get(ReservationsPerStation.name);
+        let rentalsAndReturns: SystemInfo | undefined = info.get(RentalsAndReturnsPerStation.name);
+        if (reservations && rentalsAndReturns) {
+            this.createJsonForStations(stations, reservations, rentalsAndReturns);
+        }
+        return;
      }
     
-  private createJsonForUsers(users: Array<Entity>, timeIntervals: SystemInfo, reservations: SystemInfo, rentalsAndReturns: SystemInfo): void {
+  private createJsonForUsers(users: Array<HistoryEntity>, timeIntervals: SystemInfo, reservations: SystemInfo, rentalsAndReturns: SystemInfo): void {
     let i: number = 1;  // title index
     let j: number = 0;  // data index
       
@@ -120,6 +120,9 @@ export class CsvGenerator {
         
         //get time values
         let timeValues: AbsoluteValue | undefined = timeIntervals.getData().absoluteValues.get(user.id);
+        if(!timeValues) {
+            throw new Error("Time values not found for user: " + user.id);
+        }
         let absValueList: Array<any> = timeValues.getAbsoluteValuesAsArray();
         while (j < UserTimeAbsoluteValue.NUM_ATTR) {
                 jsonObj[this.userInfoTitles[i]] = absValueList[j];
@@ -166,7 +169,7 @@ export class CsvGenerator {
       return;
   }
      
-    private initUserInfo(info: Map<string, SystemInfo>, users: Array<User>): void {
+    private initUserInfo(info: Map<string, SystemInfo>, users: Array<HistoryEntity>): void {
         let timeIntervals: SystemInfo | undefined = info.get(UserTimeAtSystem.name);
         let reservations: SystemInfo | undefined = info.get(ReservationsPerUser.name);
         let rentalsAndReturns: SystemInfo | undefined = info.get(RentalsAndReturnsPerUser.name);
@@ -236,7 +239,7 @@ export class CsvGenerator {
         return;
     } 
 
-    public generate(entityInfo: Map<string, SystemInfo>, globalInfo: SystemGlobalInfo, bikesPerStation: BikesPerStationAndTime, stations: Array<Station>, users: Array<User>): void {
+    public generate(entityInfo: Map<string, SystemInfo>, globalInfo: SystemGlobalInfo, bikesPerStation: BikesPerStationAndTime, stations: Array<HistoryEntity>, users: Array<HistoryEntity>): void {
         this.initStationInfoTitles();
         this.initStationInfo(entityInfo, stations);
         this.transformStationJsonToCsv();
@@ -314,4 +317,4 @@ export class CsvGenerator {
     }
     
     
-}  
+}

@@ -1,8 +1,9 @@
-import { Station } from '../../../systemDataTypes/Entities';
 import { AbsoluteValue } from '../../AbsoluteValue';
 import { Data } from '../../Data';
 import { SystemInfo } from '../../SystemInfo';
 import { BikesPerTime, BikesPerStationAndTime } from './BikesPerStationAndTime';
+import HistoryEntityStation from '../../../historyEntities/HistoryEntityStation';
+
 
 export class StationBalanceAbsoluteValue implements AbsoluteValue {
     quality: number;
@@ -24,7 +25,7 @@ export class StationBalanceData implements Data {
 export class StationBalanceQuality implements SystemInfo {
     basicData: BikesPerStationAndTime;
     data: Data;
-    stations: Map<number, Station>;
+    stations: Map<number, HistoryEntityStation>;
     totalSimulationTime: number;
     
     public constructor(bikesInfo: BikesPerStationAndTime, time: number) {
@@ -34,7 +35,7 @@ export class StationBalanceQuality implements SystemInfo {
         this.totalSimulationTime =  time;
     }
     
-    public setStations(stations: Array<Station>): void {
+    public setStations(stations: Array<HistoryEntityStation>): void {
         for (let station of stations) {
         this.stations.set(station.id, station);
         }
@@ -57,7 +58,7 @@ export class StationBalanceQuality implements SystemInfo {
     
     public init(): void {
         this.basicData.getStations().forEach( (stationInfo, stationId) => {
-            let station: Station | undefined = this.stations.get(stationId);
+            let station: HistoryEntityStation | undefined = this.stations.get(stationId);
             if (station) {
                 let capacity: number = station.capacity;
                 let qualityValue: number = this.quality(capacity, stationInfo.getList());

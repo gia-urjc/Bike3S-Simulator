@@ -16,6 +16,7 @@ node_modules/
 /csvFiles/
 tempHistory/
 logs/
+/scripts/**/[0-9]*
 tempCsv/
 tempUsersConf/
 *.txt

@@ -27,13 +27,13 @@ export class HistoryIterator {
         let timeEntry: TimeEntry | undefined = undefined;
         if (this.currentFile !== undefined) {
             this.pointer++;
-            timeEntry = this.currentFile[this.pointer];
+            timeEntry = <TimeEntry> this.currentFile[this.pointer];
 
             if (timeEntry === undefined) {
                 try {
                     this.currentFile = this.history.nextChangeFile();
                     this.pointer = 0;
-                    timeEntry = this.currentFile[this.pointer];
+                    timeEntry = <TimeEntry> this.currentFile[this.pointer];
                 }
                 catch (error) {
                     this.currentFile = undefined;

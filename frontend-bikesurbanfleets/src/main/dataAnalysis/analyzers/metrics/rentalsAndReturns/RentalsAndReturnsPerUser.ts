@@ -30,6 +30,9 @@ export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
             switch(event.name) {
                 case 'EventUserArrivesAtStationToReturnBike': {
                     const key=this.getUserId(event.involvedEntities);
+                    if(!key) {
+                        throw new Error("Can't find user. Involved Entity: \n" + event.involvedEntities);
+                    }
                     if (event.result==='SUCCESSFUL_BIKE_RETURN') { 
                         this.data.increaseSuccessfulReturns(key);
                     } else if (event.result==='FAILED_BIKE_RETURN') { 
@@ -39,6 +42,9 @@ export class RentalsAndReturnsPerUser implements SystemInfo, Observer {
                 }
                  case 'EventUserArrivesAtStationToRentBike': {
                     const key=this.getUserId(event.involvedEntities);
+                    if(!key) {
+                        throw new Error("Can't find user. Involved Entity: \n" + event.involvedEntities);
+                    }
                     if (event.result==='SUCCESSFUL_BIKE_RENTAL') { 
                         this.data.increaseSuccessfulRentals(key);
                     } else if (event.result==='FAILED_BIKE_RENTAL') { 
