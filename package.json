@@ -81,7 +81,6 @@
     "rxjs": "^6.0.0",
     "rxjs-compat": "^6.3.3",
     "tree-kill": "^1.2.0",
-    "uglify-es": "^3.3.9",
     "zone.js": "^0.8.18"
   },
   "devDependencies": {
@@ -106,6 +105,6 @@
     "ng2-fused": "^0.5.1",
     "tslint": "^5.8.0",
     "typescript": "^2.6.2",
-    "uglify-js": "^3.4.3"
+    "uglify-es": "^3.3.9"
   }
 }
