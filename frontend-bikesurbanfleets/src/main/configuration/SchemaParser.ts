@@ -63,9 +63,15 @@ export default class {
         let bikeSchemas: Array<any> = stationSchema.properties.bikes.anyOf;
         let finalBikeSchema = bikeSchemas[0];
         let finalStationSchema = _.cloneDeep(stationSchema);
-        delete finalStationSchema.properties.bikes.anyOf;
-        finalStationSchema.properties.bikes = finalBikeSchema;
-        delete finalStationSchema.properties.bikes.maximum;
+        let schProperties = finalStationSchema.properties;
+        delete schProperties.bikes.anyOf;
+        schProperties.bikes = finalBikeSchema;
+        delete schProperties.bikes.maximum;
+        delete schProperties.availablebikes;
+        delete schProperties.reservedbikes;
+        delete schProperties.reservedslots;
+        delete schProperties.availableslots;
+        console.log(finalStationSchema);
         return finalStationSchema;
     }
 

@@ -289,14 +289,7 @@ Sparky.task('build:frontend:renderer', () => {
                 template: path.join(projectRoot.frontend.renderer(), 'index.html'),
                 path: '.'
             }),
-            JSONPlugin(),
-            production && QuantumPlugin({
-                bakeApiIntoBundle : false,
-                target : 'electron',
-                treeshake: true,
-                removeExportsInterop: false,
-                uglify: true
-            })
+            JSONPlugin()
         ]
     });
 

@@ -43,12 +43,7 @@ export class ConfigurationComponent {
     /*
     * Variables for configuration
     */
-    globalData: GlobalConfiguration = {
-        boundingBox: {
-            northWest: { latitude: 0, longitude:0 },
-            southEast: { latitude: 0, longitude:0 }
-        }
-    };
+    globalData: GlobalConfiguration;
     entryPoints: Array<EntryPoint> = new Array<any>();
     stations: Array<Station> = new Array<any>();
 
@@ -147,10 +142,6 @@ export class ConfigurationComponent {
         this.map = map;
         this.drawOptions.edit.featureGroup.addTo(this.map);
         this.defineMapEventHandlers();
-    }
-
-    bboxChanged(data: any) {
-        Object.assign(this.globalData.boundingBox, data);
     }
 
     defineMapEventHandlers() {

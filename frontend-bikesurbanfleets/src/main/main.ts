@@ -83,6 +83,10 @@ export namespace Main {
             shell.openExternal(url); // opens links (or dragged documents) in external browser
         });
 
+        
+        menu.webContents.openDevTools();
+        
+
         menu.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/menu');
 		
     }

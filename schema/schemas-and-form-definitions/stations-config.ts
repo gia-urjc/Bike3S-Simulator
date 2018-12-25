@@ -22,8 +22,8 @@ export const Station = sObject({
 
 export const layout = 
 [
-    {key: "position.latitude", placeholder: "Latitude"},
-    {key: "position.longitude", placeholder: "Longitude"},
+    {key: "id", placeholder: "Station id for the simulator"},
+    {key: "oficialID", placeholder: "Optional id"},
     {key: "capacity", type: "number", placeholder: "Capacity of the station"},
     {key: "bikes", type: "number", placeholder: "Number of bikes at the station"}
 ];

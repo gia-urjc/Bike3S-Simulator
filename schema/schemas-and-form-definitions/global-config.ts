@@ -23,13 +23,7 @@ export const layout =
     {key: "totalSimulationTime", placeholder: "Total simulation time in seconds."},
     {key: "reservationTime", placeholder: "Maximum time for reserves in seconds."},
     {key: "randomSeed", placeholder: "Random Seed"},
-    {key: "recommendationSystemType", placeholder: "Type of the Recommendation System"},
     {key: "graphManagerType", placeholder: "Type of graph Manager"},
     {key: "maxDistanceRecommendation", placeholder: "Max distance recommended by the system"},
-    {key: "boundingBox", htmlClass: "bold-text"},
-    {key: "boundingBox.northWest.latitude", placeholder: "Nort-West latitude", title: "North latitude"},
-    {key: "boundingBox.northWest.longitude", placeholder: "Nort-West longitude", title: "North longitude"},
-    {key: "boundingBox.southEast.latitude", placeholder: "South-West latitude", title: "South latitude"},
-    {key: "boundingBox.southEast.longitude", placeholder: "South-West longitude", title: "South longitude"},
     {key: "debugMode", placeholder: "If checked, log files will be generated"}
 ];
