@@ -18,7 +18,9 @@ export class SchemaFormGeneratorController{
                 new Channel('form-schema-entry-user-type', async () => this.schemaFormEntryPointAndUserTypes()),
                 new Channel('form-schema-entry-point-by-type', async (dataTypes: EntryPointDataType) => this.schemaFormEntryPointByTypes(dataTypes)),
                 new Channel('form-schema-station', async () => this.schemaFormStation()),
-                new Channel('form-schema-global', async () => this.schemaFormGlobal())
+                new Channel('form-schema-global', async () => this.schemaFormGlobal()),
+                new Channel('form-schema-recommender-types', async () => this.schemaFormRecommendersTypes()),
+                new Channel('form-schema-recommender-by-type', async (type: string) => this.schemaFormRecommenderByType(type))
             ];
 
             channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));

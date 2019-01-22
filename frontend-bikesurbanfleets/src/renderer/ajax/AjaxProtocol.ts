@@ -21,6 +21,8 @@ export interface FormSchemaAjax {
     getSchemaByTypes(dataTypes: any): Promise<any>;
     getStationSchema(): Promise<any>;
     getGlobalSchema(): Promise<any>;
+    getRecommenderTypesSchema(): Promise<any>;
+    getRecommenderSchemaByType(type: string): Promise<any>;
 }
 
 export interface JsonLoaderAjax {

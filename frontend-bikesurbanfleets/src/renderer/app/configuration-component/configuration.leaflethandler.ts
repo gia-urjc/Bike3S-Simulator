@@ -9,7 +9,6 @@ export class ConfigurationLeaflethandler {
     /*
     * ON DRAW METHODS
     */
-
     static drawBoundingBox(comp: ConfigurationComponent, rectangle: Rectangle | BoundingBox) {
         //Delete current Rectangle from map
         comp.featureGroup.eachLayer((layer: any) => {
@@ -82,14 +81,15 @@ export class ConfigurationLeaflethandler {
     /*
     * ON DELETE METHODS
     */
-
     static deleteBoundingBox(comp: ConfigurationComponent) {
-        Object.assign(comp.globalData, comp.gsForm.actualData);
-        let bBox: BoundingBox = comp.globalData.boundingBox;
-        bBox.northWest.latitude = 0;
-        bBox.northWest.longitude = 0;
-        bBox.southEast.latitude = 0;
-        bBox.southEast.longitude = 0;
+        if(comp.globalData !== undefined) {
+            Object.assign(comp.globalData, comp.gsForm.actualData);
+            let bBox: BoundingBox = comp.globalData.boundingBox;
+            bBox.northWest.latitude = 0;
+            bBox.northWest.longitude = 0;
+            bBox.southEast.latitude = 0;
+            bBox.southEast.longitude = 0;
+        }
         comp.gsForm.resetForm();
         comp.hasBoundingBox = false;
     }

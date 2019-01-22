@@ -88,6 +88,7 @@ class ElectronSettings implements SettingsAjax {
 }
 
 class ElectronFormSchema implements FormSchemaAjax {
+
     async init(): Promise<any> {
         return await readIpc('form-schema-init');
     }
@@ -108,6 +109,12 @@ class ElectronFormSchema implements FormSchemaAjax {
         return await readIpc('form-schema-global');
     }
 
+    async getRecommenderTypesSchema(): Promise<any> {
+        return await readIpc('form-schema-recommender-types');
+    }
+    async getRecommenderSchemaByType(type: string): Promise<any> {
+        return await readIpc('form-schema-recommender-by-type', type);
+    }
 }
 
 class ElectronBackend implements BackendAjax {

@@ -27,6 +27,7 @@ import {FlexLayoutModule} from "@angular/flex-layout";
 import { ConfigurationLoadComponent } from './configuration-load-globalconfig/configuration-load.component';
 import { SchemaFormGlobalComponent } from './schemaform-global-component/schemaform-global.component';
 import { ConfDownMapComponent } from './configuration-download-map/configuration-download-map.component';
+import { ConfigurationRecommendationComponent } from './configuration-recommendation/configuration-recommendation.component';
 
 @NgModule({
     imports: [
@@ -59,7 +60,8 @@ import { ConfDownMapComponent } from './configuration-download-map/configuration
         ConfigurationSaveComponent,
         AnalyseHistoryComponent,
         ConfigurationLoadComponent,
-        ConfDownMapComponent
+        ConfDownMapComponent,
+        ConfigurationRecommendationComponent
     ],
     bootstrap: [AppComponent],
     providers: [{

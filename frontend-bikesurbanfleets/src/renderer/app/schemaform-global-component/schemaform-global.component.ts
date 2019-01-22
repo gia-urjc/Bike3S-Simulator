@@ -59,6 +59,9 @@ export class SchemaFormGlobalComponent {
     }
 
     private validBbox(boundingBox: any): boolean {
+        if(boundingBox === undefined) {
+            return false;
+        }
         return boundingBox.northWest.latitude !== 0 && boundingBox.northWest.longitude !== 0
             && boundingBox.southEast.latitude !== 0 && boundingBox.southEast.longitude !== 0;
     }
