@@ -32,7 +32,7 @@ The package manager NPM is also required but is usually bundled with the Node.js
 Clone the git repository and install all dependencies:
 
 ```
-    git clone https://github.com/stimonm/Bike3S.git
+    git clone https://github.com/gia-urjc/Bike3S-Simulator.git
     cd Bike3S
     npm install
     node fuse configure:dev
@@ -42,7 +42,7 @@ If no errors appeared you have now all prepared for all you want. Run the progra
 
 ## Run the Simulator
 
-Releases are available here: [Releases](https://github.com/stimonm/Bike3S/releases). This releases are not stable yet, so the best way to run the program is execute this command after do the setup
+Releases are available here: [Releases](https://github.com/gia-urjc/Bike3S-Simulator/releases). This releases are not stable yet, so the best way to run the program is execute this command after do the setup
 
 ```
 node fuse build:frontend
