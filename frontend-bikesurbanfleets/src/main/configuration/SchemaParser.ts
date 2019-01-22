@@ -3,8 +3,12 @@ import * as _ from "lodash";
 
 export default class {
 
-    static async getEntryPointSchemaList(configSch: SchemaConfig): Promise<Array<SchemaConfig>> {
+    static getEntryPointSchemaList(configSch: SchemaConfig): Array<SchemaConfig> {
         return configSch.properties.entryPoints.items.anyOf;
+    }
+
+    static getRecommendersSchemaList(configSch: SchemaConfig): Array<SchemaConfig> {
+        return configSch.properties.recommendationSystemType.anyOf;
     }
 
     static async readEntryPointTypes(configSch: SchemaConfig): Promise<Array<string>> {
@@ -18,7 +22,7 @@ export default class {
 
     static async readUserTypes(configSch: SchemaConfig): Promise<Array<string>> {
         let userTypes: Array<string> = [];
-        let entryPointSchemas: Array<SchemaConfig> = await this.getEntryPointSchemaList(configSch);
+        let entryPointSchemas: Array<SchemaConfig> = this.getEntryPointSchemaList(configSch);
         if(await entryPointSchemas.length !== 0) {
             let entryPointProperties = entryPointSchemas[0].properties;
             for(let userSchema of entryPointProperties.userType.anyOf) {
@@ -26,9 +30,26 @@ export default class {
                 userTypes.push(userProperties.typeName.const);
             }
         }
+        else {
+            throw new Error("No user types specified in schemas");
+        }
         return userTypes;
     }
 
+    static async readRecommendersTypes(configSch: SchemaConfig): Promise<Array<string>> {
+        let recommendersTypes: Array<string> = [];
+        let recommendersSchemas: Array<SchemaConfig> = this.getRecommendersSchemaList(configSch);
+        if(recommendersSchemas.length !== 0) {
+            for(let recommendersSchema of recommendersSchemas) {
+                let recommenderProperties = recommendersSchema.properties;
+                recommendersTypes.push(recommenderProperties.typeName.const);
+            }
+        }
+        else {
+            throw new Error("No recommenders specified in schemas");
+        }
+        return recommendersTypes;
+    }
     static async getEntryPointSchema(configSch: SchemaConfig, entryPointType: string, userType: string): Promise <SchemaConfig | undefined> {
         for(let entryPointSchema of await this.getEntryPointSchemaList(configSch)) {
             let entryPointProperties = entryPointSchema.properties;
@@ -56,6 +77,15 @@ export default class {
             }
         }
         
+    }
+
+    static async getRecommenderSchema(configSch: SchemaConfig, recommenderType: string): Promise<SchemaConfig | undefined> {
+        for(let recommenderSchema of await this.getRecommendersSchemaList(configSch)) {
+            if(recommenderSchema.properties.typeName.const === recommenderType) {
+                delete recommenderSchema.properties.typeName;
+                return recommenderSchema; 
+            }
+        }
     }
 
     static async getStationSchema(configSch: SchemaConfig): Promise <SchemaConfig | undefined> {
