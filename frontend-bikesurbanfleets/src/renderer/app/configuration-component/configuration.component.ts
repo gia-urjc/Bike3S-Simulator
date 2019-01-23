@@ -45,6 +45,8 @@ export class ConfigurationComponent {
     globalData: GlobalConfiguration;
     entryPoints: Array<EntryPoint> = new Array<any>();
     stations: Array<Station> = new Array<any>();
+    selectedRecommender: any;
+    recommenderConfigurationData: any;
 
     actualModalOpen: NgbModalRef;
 
@@ -149,6 +151,7 @@ export class ConfigurationComponent {
             let type = event.layerType;
             switch(type) {
                 case 'rectangle': ConfigurationLeaflethandler.drawBoundingBox(this, <Rectangle> layer);
+                console.log(this.selectedRecommender);
                 break;
                 case 'circle': ConfigurationLeaflethandler.drawEntryPoint(this, <Circle> layer);
                 break;
@@ -287,6 +290,11 @@ export class ConfigurationComponent {
             properties: ['openFile', 'createDirectory'],
             filters: [{name: 'JSON Files', extensions: ['json']}]
         })[0].replace(/\\/g, "/");
+    }
+
+    recommenderSelectedHandler(selectedRecommender: any) {
+        this.selectedRecommender = selectedRecommender;
+        console.log(this.selectedRecommender);
     }
 
     async loadGlobalConfig() {

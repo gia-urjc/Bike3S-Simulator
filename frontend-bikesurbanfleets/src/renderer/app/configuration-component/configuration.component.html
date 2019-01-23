@@ -17,7 +17,7 @@
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
                                     <div id="rec-form">
-                                        <configuration-recommendation></configuration-recommendation>
+                                        <configuration-recommendation [selectedRecommender]="selectedRecommender" [recommenderConfigurationData]="recommenderConfigurationData" (recommenderSelectedEvent)="recommenderSelectedHandler($event)"></configuration-recommendation>
                                     </div>
                                 </div>
                             </ng-template>
