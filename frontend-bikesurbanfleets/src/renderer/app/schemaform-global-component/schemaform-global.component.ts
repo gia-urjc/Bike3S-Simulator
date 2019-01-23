@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output, ChangeDetectorRef} from '@angular/core';
-import * as $ from "jquery";
 
 @Component({
     selector: 'schema-global-form',
@@ -17,11 +16,7 @@ export class SchemaFormGlobalComponent {
     @Output('isValid')
     isValid = new EventEmitter<any>();
 
-    @Output('bboxChange')
-    bboxChange = new EventEmitter<any>();
-
     reloading: boolean;
-    globalUpdate: boolean;
 
     actualData: any;
 
@@ -47,22 +42,12 @@ export class SchemaFormGlobalComponent {
     }
 
     onChanges(data: any) {
-        if(this.validBbox(data.boundingBox)) {
-            this.bboxChange.emit(data.boundingBox);
-        }
         this.actualData = data;
-    //    console.log(this.actualData);
+        console.log(this.actualData);
     }
 
     getData() {
         return this.actualData;
     }
 
-    private validBbox(boundingBox: any): boolean {
-        if(boundingBox === undefined) {
-            return false;
-        }
-        return boundingBox.northWest.latitude !== 0 && boundingBox.northWest.longitude !== 0
-            && boundingBox.southEast.latitude !== 0 && boundingBox.southEast.longitude !== 0;
-    }
 }

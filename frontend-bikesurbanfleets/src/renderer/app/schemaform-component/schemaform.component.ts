@@ -17,7 +17,6 @@ export class SchemaFormComponent implements OnInit {
     isValid = new EventEmitter<any>();
 
     reloading: boolean;
-    globalUpdate: boolean;
 
     actualData: any;
 

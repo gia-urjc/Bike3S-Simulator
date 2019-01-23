@@ -12,7 +12,6 @@ import { JsonTreeViewComponent } from "../jsoneditor-component/jsoneditor.compon
 import { SchemaFormGlobalComponent } from "../schemaform-global-component/schemaform-global.component";
 import { ConfDownMapComponent } from "../configuration-download-map/configuration-download-map.component";
 import * as L from 'leaflet';
-import { settingsPathGenerator } from "../../../shared/settings";
 const  {dialog} = (window as any).require('electron').remote;
 
 
