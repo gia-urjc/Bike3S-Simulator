@@ -64,9 +64,9 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 	        return summation;
 	    }
 	    
-	    private double extra(StationQuality nearestStationQuality, StationQuality recommendedStationQuality) {
-	        double quality1 = nearestStationQuality.getQuality();
-	        double quality2 = recommendedStationQuality.getQuality();
+	    private double extra(StationUtilityData nearestStationQuality, StationUtilityData recommendedStationQuality) {
+	        double quality1 = nearestStationQuality.getCurrentUtility();
+	        double quality2 = recommendedStationQuality.getCurrentUtility();
 	        return Math.abs(quality2 - quality1) * EXTRA;
 	    }
 
@@ -76,7 +76,7 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 	        return (distanceToRecommendedStation - distanceToNearestStation) / COMPENSATION;
 	    }
 
-	    public Incentive calculateIncentive(GeoPoint point, StationQuality nearestStationQuality, StationQuality recommendedStationQuality) {
+	    public Incentive calculateIncentive(GeoPoint point, StationUtilityData nearestStationQuality, StationUtilityData recommendedStationQuality) {
 	        double compensation = compensation(point, nearestStationQuality.getStation(), recommendedStationQuality.getStation());
 	        double extra = extra(nearestStationQuality, recommendedStationQuality);
 	        Incentive money = new Money((int)Math.round(compensation + extra));
@@ -112,20 +112,20 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
         List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                 .collect(Collectors.toList());
-        List<StationQuality> qualities = new ArrayList<>();
+        List<StationUtilityData> qualities = new ArrayList<>();
         List<Station> allStations = validStationsToRentBike(infraestructureManager.consultStations());
 
         for (int i = 0; i < stations.size(); i++) {
             Station station = stations.get(i);
             double quality = incentiveManager.qualityToRent(allStations, station);
-            qualities.add(new StationQuality(station, quality));
+            qualities.add(new StationUtilityData(station, quality,point));
         }
 
         Station nearestStation = nearestStationToRent(stations, point);
         double nearestStationQuality = incentiveManager.qualityToRent(stations, nearestStation);
-        StationQuality stationQuality = new StationQuality(nearestStation, nearestStationQuality);
+        StationUtilityData stationQuality = new StationUtilityData(nearestStation, nearestStationQuality, point);
 
-        Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
+        Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getCurrentUtility(), sq1.getCurrentUtility());
         return qualities.stream().sorted(byQuality).map(sq -> {
             Station s = sq.getStation();
             Incentive incentive = new Money(0);
@@ -141,20 +141,20 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
         List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                 .collect(Collectors.toList());
-        List<StationQuality> qualities = new ArrayList<>();
+        List<StationUtilityData> qualities = new ArrayList<>();
         List<Station> allStations = validStationsToReturnBike(infraestructureManager.consultStations());
 
         for (int i = 0; i < stations.size(); i++) {
             Station station = stations.get(i);
             double quality = incentiveManager.qualityToReturn(allStations, station);
-            qualities.add(new StationQuality(station, quality));
+            qualities.add(new StationUtilityData(station, quality,point));
         }
 
         Station nearestStation = nearestStationToReturn(stations, point);
         double nearestStationQuality = incentiveManager.qualityToReturn(stations, nearestStation);
-        StationQuality stationQuality = new StationQuality(nearestStation, nearestStationQuality);
+        StationUtilityData stationQuality = new StationUtilityData(nearestStation, nearestStationQuality,point);
 
-        Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
+        Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getCurrentUtility(), sq1.getCurrentUtility());
         return qualities.stream().sorted(byQuality).map(sq -> {
             Station s = sq.getStation();
             Incentive incentive = new Money(0);

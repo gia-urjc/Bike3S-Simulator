@@ -46,15 +46,15 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
         List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                 .sorted(byBikesRatio).collect(Collectors.toList());
-        List<StationQuality> qualities = new ArrayList<>();
+        List<StationUtilityData> qualities = new ArrayList<>();
 
         int numStations = stations.size() >= 5 ? Math.floorDiv(stations.size(), 5) : stations.size();
         for (int i = 0; i < numStations; i++) {
             Station station = stations.get(i);
             double quality = qualityToRent(station, point);
-            qualities.add(new StationQuality(station, quality));
+            qualities.add(new StationUtilityData(station, quality,point));
         }
-        Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
+        Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getCurrentUtility(), sq1.getCurrentUtility());
         return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
 
     }
@@ -65,15 +65,15 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
         List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                 .sorted(bySlotsRatio).collect(Collectors.toList());
-        List<StationQuality> qualities = new ArrayList<>();
+        List<StationUtilityData> qualities = new ArrayList<>();
 
         int numStations = stations.size() >= 9 ? Math.floorDiv(stations.size(), 3) : stations.size();
         for (int i = 0; i < numStations; i++) {
             Station station = stations.get(i);
             double quality = qualityToReturn(station, point);
-            qualities.add(new StationQuality(station, quality));
+            qualities.add(new StationUtilityData(station, quality, point));
         }
-        Comparator<StationQuality> byQuality = (sq1, sq2) -> Double.compare(sq2.getQuality(), sq1.getQuality());
+        Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getCurrentUtility(), sq1.getCurrentUtility());
         return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
     }
 
