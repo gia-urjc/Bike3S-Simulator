@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 /**
@@ -30,21 +31,37 @@ public class InfraestructureManager {
      */
     private List<Bike> bikes;
         
+    private int maxStationCapacity;
+    private int minStationCapacity;
+
+    public int getMaxStationCapacity() {
+        return maxStationCapacity;
+    }
+
+    public int getMinStationCapacity() {
+        return minStationCapacity;
+    }
     /**
      * It represents the map area where simulation is taking place.
      */
     private BoundingBox bbox;
     
     public InfraestructureManager(List<Station> stations, BoundingBox bbox) throws IOException {
-        this.stations = new ArrayList<>(stations);
+        this.stations = stations;
         this.bikes = stations.stream().map(Station::getSlots).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
+        OptionalInt i =stations.stream().mapToInt(Station::getCapacity).max();
+        if (!i.isPresent()) throw new RuntimeException("invalid program state: no stations");
+        maxStationCapacity=i.getAsInt();
+        i =stations.stream().mapToInt(Station::getCapacity).min();
+        if (!i.isPresent()) throw new RuntimeException("invalid program state: no stations");
+        minStationCapacity=i.getAsInt();      
         this.bbox = bbox;
     }
     
 
     public List<Station> consultStations() {
-        return new ArrayList<Station>(stations);
-    }
+        return stations;
+    } 
     
     public List<Bike> consultBikes() {
     	return this.bikes;

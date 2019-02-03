@@ -35,7 +35,8 @@ public class RecommendationSystemLocalUtilities extends RecommendationSystem {
          * and the indicated geographical point.
          */
         private int maxDistanceRecommendation = 600;
-
+        private double wheightDistanceStationUtility=0.5;
+ 
     }
 
     private RecommendationParameters parameters;
@@ -79,9 +80,9 @@ public class RecommendationSystemLocalUtilities extends RecommendationSystem {
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su=getStationUtility(stations,point, false);
-            Comparator<StationUtilityData> byDescUtilityIncrement = (sq1, sq2) -> Double.compare(sq2.getUtilityIncrement(), sq1.getUtilityIncrement());
+            Comparator<StationUtilityData> byDescUtilityIncrement = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp=su.stream().sorted(byDescUtilityIncrement).collect(Collectors.toList());
-            temp.forEach(s -> System.out.println("Station (ret)" + s.getStation().getId() + ": " + (double) s.getStation().availableBikes() / s.getStation().getCapacity()));
+            temp.forEach(s -> System.out.println("Station (return)" + s.getStation().getId() + ": " + (double) s.getStation().availableBikes() / s.getStation().getCapacity()));
             result= temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } else {
             result=new ArrayList<>();
@@ -95,15 +96,22 @@ public class RecommendationSystemLocalUtilities extends RecommendationSystem {
             double idealAvailable=s.getCapacity()/2D;
 //            double utility=1- Math.abs(s.availableBikes()- idealAvailable)/idealAvailable;
             double utility=1-Math.pow((s.availableBikes()/idealAvailable)-1,2);
-            StationUtilityData sd=new StationUtilityData(s, utility, point);
             double newutility;
             if (rentbike){
                 newutility=1-Math.pow(((s.availableBikes()-1)/idealAvailable)-1,2);
             } else {//return bike 
                 newutility=1-Math.pow(((s.availableBikes()+1)/idealAvailable)-1,2);
             }
-            sd.setUtilityIncrement(newutility);
-            temp.add(sd);
+            double minutilityimprovement=4*(1-infraestructureManager.getMinStationCapacity())/
+                    (infraestructureManager.getMinStationCapacity()*infraestructureManager.getMinStationCapacity());
+            double maxutilityimprovement=4*(infraestructureManager.getMinStationCapacity()-1)/
+                    (infraestructureManager.getMinStationCapacity()*infraestructureManager.getMinStationCapacity());
+            double norm_utility=normatizeToUtility(newutility-utility,minutilityimprovement,maxutilityimprovement);
+            double dist=point.distanceTo(s.getPosition());
+            double norm_distance=normatizeToUtility(newutility-utility,0,parameters.maxDistanceRecommendation);
+            double globalutility=parameters.wheightDistanceStationUtility*norm_distance+
+                    (1-parameters.wheightDistanceStationUtility)*norm_utility;
+            temp.add(new StationUtilityData(s,globalutility));
         }
         return temp;
     }

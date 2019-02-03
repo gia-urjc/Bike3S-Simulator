@@ -52,9 +52,9 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
         for (int i = 0; i < numStations; i++) {
             Station station = stations.get(i);
             double quality = qualityToRent(station, point);
-            qualities.add(new StationUtilityData(station, quality,point));
+            qualities.add(new StationUtilityData(station, quality));
         }
-        Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getCurrentUtility(), sq1.getCurrentUtility());
+        Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
         return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
 
     }
@@ -71,9 +71,9 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
         for (int i = 0; i < numStations; i++) {
             Station station = stations.get(i);
             double quality = qualityToReturn(station, point);
-            qualities.add(new StationUtilityData(station, quality, point));
+            qualities.add(new StationUtilityData(station, quality));
         }
-        Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getCurrentUtility(), sq1.getCurrentUtility());
+        Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
         return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
     }
 

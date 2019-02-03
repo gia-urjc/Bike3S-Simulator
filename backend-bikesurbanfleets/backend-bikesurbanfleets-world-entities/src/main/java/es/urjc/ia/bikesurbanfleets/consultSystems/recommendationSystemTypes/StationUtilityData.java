@@ -5,33 +5,17 @@ import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 
 public class StationUtilityData {
 	private Station station;
-	private double currentUtility;
-        private double distance;
-        private double utilityincrement;
+	private double Utility;        
         
- 
-        
-        
-	public StationUtilityData(Station station, double quality, GeoPoint origin) {
+	public StationUtilityData(Station station, double Utility) {
 		super();
 		this.station = station;
-		this.currentUtility = quality;
-                this.distance=station.getPosition().distanceTo(origin);
+		this.Utility = Utility;
 	}
-        public void setUtilityIncrement(double ui){
-            utilityincrement=ui;
-        }
-        public double getUtilityIncrement(){
-            return utilityincrement;
+        public double getUtility(){
+            return Utility;
         }
 	public Station getStation() {
 		return station;
 	}
-	public double getCurrentUtility() {
-		return currentUtility;
-	}
-	public double getDistance() {
-		return distance;
-	}
-
 }

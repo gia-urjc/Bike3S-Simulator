@@ -54,12 +54,12 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 		for(int i=0; i<stations.size(); i++) {
 			Station station = stations.get(i);
 			double quality = qualityToRent(allStations, station);
-			qualities.add(new StationUtilityData(station, quality,point));
+			qualities.add(new StationUtilityData(station, quality));
 		}
 		
 		Station nearestStation = nearestStationToRent(stations, point);
 		
-	 Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getCurrentUtility(), sq1.getCurrentUtility());
+	 Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
 	 qualities = qualities.stream().sorted(byQuality).collect(Collectors.toList());
 	 
 	 List<Recommendation> recommendations = new ArrayList<>();
@@ -88,12 +88,12 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 		for(int i=0; i<stations.size(); i++) {
 			Station station = stations.get(i);
 			double quality = qualityToReturn(stations, station);
-			qualities.add(new StationUtilityData(station, quality,point));
+			qualities.add(new StationUtilityData(station, quality));
 		}
 		
 		Station nearestStation = nearestStationToReturn(stations, point);
 
-		Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getCurrentUtility(), sq1.getCurrentUtility());
+		Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
 		qualities = qualities.stream().sorted(byQuality).collect(Collectors.toList());
 		
 		List<Recommendation> recommendations = new ArrayList<>();
