@@ -25,9 +25,10 @@ import {ConfigurationSaveComponent} from "./configuration-save-component/configu
 import { AnalyseHistoryComponent } from './analyse-history-component/analysehistory.component';
 import {FlexLayoutModule} from "@angular/flex-layout";
 import { ConfigurationLoadComponent } from './configuration-load-globalconfig/configuration-load.component';
-import { SchemaFormGlobalComponent } from './schemaform-global-component/schemaform-global.component';
 import { ConfDownMapComponent } from './configuration-download-map/configuration-download-map.component';
 import { ConfigurationRecommendationComponent } from './configuration-recommendation/configuration-recommendation.component';
+import { SchemaGenericComponent } from './schemaform-generic-component/schemaform-generic.component';
+import { ConfigurationGlobalComponent } from './configuration-global/configuration-global.component';
 
 @NgModule({
     imports: [
@@ -49,7 +50,8 @@ import { ConfigurationRecommendationComponent } from './configuration-recommenda
         MapComponent,
         Visualization,
         SchemaFormComponent,
-        SchemaFormGlobalComponent,
+        ConfigurationGlobalComponent,
+        SchemaGenericComponent,
         MenuComponent,
         SimulateComponent,
         SimulatecoreComponent,

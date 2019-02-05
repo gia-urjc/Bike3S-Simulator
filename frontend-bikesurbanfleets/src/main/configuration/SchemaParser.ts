@@ -82,8 +82,9 @@ export default class {
     static async getRecommenderSchema(configSch: SchemaConfig, recommenderType: string): Promise<SchemaConfig | undefined> {
         for(let recommenderSchema of await this.getRecommendersSchemaList(configSch)) {
             if(recommenderSchema.properties.typeName.const === recommenderType) {
-                delete recommenderSchema.properties.typeName;
-                return recommenderSchema; 
+                let finalRecommenderSchema = _.cloneDeep(recommenderSchema);
+                delete finalRecommenderSchema.properties.typeName;
+                return finalRecommenderSchema; 
             }
         }
     }
@@ -109,6 +110,8 @@ export default class {
         let finalGlobalSchema: any = _.cloneDeep(configSch);
         delete finalGlobalSchema.$schema;
         delete finalGlobalSchema.properties.reservationTime.maximum; //TODO reference from total time
+        delete finalGlobalSchema.properties.recommendationSystemType;    
+        _.pull(finalGlobalSchema.required, 'boundingBox');
         return finalGlobalSchema;
     }
 }

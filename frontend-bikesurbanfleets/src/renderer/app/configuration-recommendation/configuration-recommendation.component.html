@@ -1,1 +1,4 @@
-<schema-global-form #selectRecommenderForm [form]="globalForm" (isValid)="isValidRecommenderData($event)"></schema-global-form>
+<div *ngIf="!reloading && selectRecommenderFormSchema">
+    <schema-generic-form #selectRecommenderForm [form]="selectRecommenderFormSchema" (isValid)="isValidSelectedRecommender($event)"></schema-generic-form>
+        <schema-generic-form #recommenderForm  *ngIf="recommenderSchema !== undefined" [form]="recommenderSchema" (isValid)="isValidRecommender($event)"></schema-generic-form>
+</div>

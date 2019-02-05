@@ -1,0 +1,3 @@
+<div *ngIf="globalFormSchema !== undefined && !reloading">
+    <schema-generic-form #globalForm [form]="globalFormSchema" (isValid)="isValidGlobalForm($event)"></schema-generic-form>
+</div>

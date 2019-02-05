@@ -8,7 +8,7 @@
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
                                     <div id="globalForm">
-                                        <schema-global-form #globalSchemaForm [form]="globalForm" (isValid)="isGlobalFormValid($event)" (dataSubmited)="globalFormSubmit($event)"></schema-global-form>
+                                        <configuration-global #globalSchemaForm [globalConfigData]="globalData" (globalConfigDataEvent)="globalConfigHandler($event)"></configuration-global>
                                     </div>
                                 </div>
                             </ng-template>
@@ -17,7 +17,7 @@
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
                                     <div id="rec-form">
-                                        <configuration-recommendation [selectedRecommender]="selectedRecommender" [recommenderConfigurationData]="recommenderConfigurationData" (recommenderSelectedEvent)="recommenderSelectedHandler($event)"></configuration-recommendation>
+                                        <configuration-recommendation #recommendationSchemaForm [selectedRecommender]="selectedRecommender" [recommenderConfigurationData]="recommenderConfigurationData" (recommenderSelectedEvent)="recommenderSelectedHandler($event)" (recommenderConfigDataEvent)="recommenderDataHandler($event)"></configuration-recommendation>
                                     </div>
                                 </div>
                             </ng-template>
@@ -46,10 +46,10 @@
             </div>
         </div>
     </div>
+        <div *ngIf="hasBoundingBox" class="fixed-button-down-map col-xs-3">
+            <button (click)="downloadMap()" class="btn btn-primary">Download Map</button>
+        </div>
         <div ngbDropdown class="fixed-button-load dropup col-xs-3">
-            <div *ngIf="hasBoundingBox" class="fixed-button-down-map col-xs-3">
-                <button (click)="downloadMap()" class="btn btn-primary">Download Map</button>
-            </div>
             <button ngbDropdownToggle type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                 Load Configuration
             </button>
@@ -59,8 +59,15 @@
                 <a class="dropdown-item" (click)="loadStations()">Load Stations</a>
             </div>
         </div>
-        <div class="fixed-button-save col-xs-3">
-            <button (click)="generateConfiguration()" class="btn btn-primary">Save Configuration</button>
+        <div ngbDropdown class="fixed-button-save dropup col-xs-3">
+            <button ngbDropdownToggle type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                Save Configuration
+            </button>
+            <div ngbDropdownMenu class="dropdown-menu">
+                <a class="dropdown-item" (click)="saveGlobalConfig()">Save Global Configuration</a>
+                <a class="dropdown-item" (click)="saveEntryPointsConfig()">Save Entry Points</a>
+                <a class="dropdown-item" (click)="saveStationsConfig()">Save Stations</a>
+            </div>
         </div>
 </div>
 

@@ -50,7 +50,6 @@ export interface FormJsonSchema {
 
 export interface GlobalConfiguration {
     [key: string]: any;
-    boundingBox: BoundingBox;
 }
 
 export interface BoundingBox {
@@ -73,5 +72,18 @@ export enum ConfigurationFile {
     GLOBAL_CONFIGURATION,
     ENTRYPOINT_CONFIGURATION,
     STATION_CONFIGURATION
+}
+
+export interface JsonFileInfo {
+    data: any;
+    path: string;
+}
+
+export interface ValidationFormSchemaError {
+    keyword: string;
+    dataPath: "";
+    schemaPath: string;
+    message: string;
+    params: any;
 }
 

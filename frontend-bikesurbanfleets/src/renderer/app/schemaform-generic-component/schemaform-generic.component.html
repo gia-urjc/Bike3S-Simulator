@@ -1,9 +1,10 @@
 <div id="json-form">
     <json-schema-form
-        *ngIf="form !== undefined"
         [form]="form"
         framework="bootstrap-4"
         (onSubmit)="submit($event)"
-        (isValid)="valid($event)">
+        (isValid)="valid($event)"
+        (onChanges)="onChanges($event)"
+        (validationErrors)="validationErrorsHandler($event)">
     </json-schema-form>
 </div>

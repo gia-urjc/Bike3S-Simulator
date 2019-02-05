@@ -1,11 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output, ChangeDetectorRef} from '@angular/core';
+import { ValidationFormSchemaError } from '../../../shared/ConfigurationInterfaces';
 
 @Component({
-    selector: 'schema-global-form',
-    template: require('./schemaform-global.component.html'),
-    styles: [require('./schemaform-global.component.css')]
+    selector: 'schema-generic-form',
+    template: require('./schemaform-generic.component.html'),
+    styles: [require('./schemaform-generic.component.css')]
 })
-export class SchemaFormGlobalComponent {
+export class SchemaGenericComponent {
 
     @Input()
     form: any;
@@ -16,21 +17,22 @@ export class SchemaFormGlobalComponent {
     @Output('isValid')
     isValid = new EventEmitter<any>();
 
-    reloading: boolean;
-
     actualData: any;
+    errors: ValidationFormSchemaError[];
 
     constructor(private cdRef: ChangeDetectorRef) {
     }
 
-    resetForm() {
-        this.reloading = true;
-        this.cdRef.detectChanges();
-        let jsonForm = document.getElementById("json-form");
-        this.reloading = false;
-        if(jsonForm) {
-            jsonForm.click();
-        }
+    getData(): any {
+        return this.actualData;
+    }
+
+    getValidationErrors(): ValidationFormSchemaError[] {
+        return this.errors;
+    }
+
+    validationErrorsHandler(data: any){
+        this.errors = data;
     }
 
     submit(data: any) {
@@ -43,11 +45,6 @@ export class SchemaFormGlobalComponent {
 
     onChanges(data: any) {
         this.actualData = data;
-        console.log(this.actualData);
-    }
-
-    getData() {
-        return this.actualData;
     }
 
 }

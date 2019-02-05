@@ -16,8 +16,6 @@ export class SchemaFormComponent implements OnInit {
     @Output('isValid')
     isValid = new EventEmitter<any>();
 
-    reloading: boolean;
-
     actualData: any;
 
     constructor(private cdRef: ChangeDetectorRef) {
@@ -26,16 +24,6 @@ export class SchemaFormComponent implements OnInit {
     ngOnInit(): void {
         console.log(this.form);
         
-    }
-
-    resetForm() {
-        this.reloading = true;
-        this.cdRef.detectChanges();
-        let jsonForm = document.getElementById("json-form");
-        this.reloading = false;
-        if(jsonForm) {
-            jsonForm.click();
-        }
     }
 
     submit(data: any) {

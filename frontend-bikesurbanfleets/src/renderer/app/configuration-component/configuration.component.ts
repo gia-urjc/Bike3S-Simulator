@@ -4,14 +4,16 @@ import {Layer, Rectangle, FeatureGroup, Circle, Marker} from "leaflet";
 import {LeafletDrawFunctions, EntryPoint, Station} from "./config-definitions";
 import {ConfigurationLeaflethandler} from "./configuration.leaflethandler";
 import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
-import {EntryPointDataType, GlobalConfiguration, ConfigurationFile, FormJsonSchema} from "../../../shared/ConfigurationInterfaces";
+import {EntryPointDataType, GlobalConfiguration, ConfigurationFile, FormJsonSchema, ValidationFormSchemaError} from "../../../shared/ConfigurationInterfaces";
 import {ConfigurationUtils} from "./configuration.utils";
-import {ConfigurationSaveComponent} from "../configuration-save-component/configurationsave.component";
 import { ConfigurationLoadComponent } from "../configuration-load-globalconfig/configuration-load.component";
 import { JsonTreeViewComponent } from "../jsoneditor-component/jsoneditor.component";
-import { SchemaFormGlobalComponent } from "../schemaform-global-component/schemaform-global.component";
 import { ConfDownMapComponent } from "../configuration-download-map/configuration-download-map.component";
 import * as L from 'leaflet';
+import * as _ from 'lodash';
+import { ConfigurationRecommendationComponent } from "../configuration-recommendation/configuration-recommendation.component";
+import { ConfigurationGlobalComponent } from "../configuration-global/configuration-global.component";
+import { ConfigurationSaveComponent } from "../configuration-save-component/configurationsave.component";
 const  {dialog} = (window as any).require('electron').remote;
 
 
@@ -25,7 +27,6 @@ export class ConfigurationComponent {
     /*
     * Form json schema variables
     */
-    globalForm: FormJsonSchema;
     selectEntryPointForm: FormJsonSchema;
     entryPointForm: FormJsonSchema;
     stationForm: FormJsonSchema;
@@ -38,6 +39,9 @@ export class ConfigurationComponent {
         position: { latitude: 0, longitude: 0}
     };
     globalConfigValid: boolean = false;
+    globalConfigErrors: ValidationFormSchemaError[];
+    recommenderValidConfig: boolean = false;
+    recommenderConfigErrors: ValidationFormSchemaError[];
 
     /*
     * Variables for configuration
@@ -48,11 +52,15 @@ export class ConfigurationComponent {
     selectedRecommender: any;
     recommenderConfigurationData: any;
 
+    /*
+    * modal for pop ups
+    */
     actualModalOpen: NgbModalRef;
 
     /*
     * Final configurations
     */
+    finalGlobalConfiguration = {};
     finalEntryPoints = {
         "entryPoints": new Array<any>()
     };
@@ -62,7 +70,8 @@ export class ConfigurationComponent {
 
     hasBoundingBox: boolean;
 
-    @ViewChild('globalSchemaForm') gsForm: SchemaFormGlobalComponent;
+    @ViewChild('globalSchemaForm') gsForm: ConfigurationGlobalComponent;
+    @ViewChild('recommendationSchemaForm') rsForm: ConfigurationRecommendationComponent; 
 
     @ViewChild('selecEntryPointType') epSelectModalForm: TemplateRef<any>;
     @ViewChild('entryPoint') epModalForm: TemplateRef<any>;
@@ -88,23 +97,9 @@ export class ConfigurationComponent {
         this.drawOptions = LeafletDrawFunctions.createLeafletDrawOptions(this.featureGroup);
         (L as any).drawLocal = LeafletDrawFunctions.createCustomMessages();
         await this.ajax.formSchema.init();
-        this.globalFormInit();
         this.selectEntryPointFormInit();
         this.stationFormInit();
         this.ajax.jsonLoader.init();
-    }
-
-    async globalFormInit() {
-        let schema = await this.ajax.formSchema.getGlobalSchema();
-        let layout = await this.ajax.jsonLoader.getAllLayouts();
-        this.globalForm = {
-            schema: JSON.parse(schema),
-            data: this.globalData,
-            options: {
-                addSubmit: false
-            },
-            layout: layout.globalLayout
-        };
     }
 
     async selectEntryPointFormInit(): Promise<void> {
@@ -151,7 +146,6 @@ export class ConfigurationComponent {
             let type = event.layerType;
             switch(type) {
                 case 'rectangle': ConfigurationLeaflethandler.drawBoundingBox(this, <Rectangle> layer);
-                console.log(this.selectedRecommender);
                 break;
                 case 'circle': ConfigurationLeaflethandler.drawEntryPoint(this, <Circle> layer);
                 break;
@@ -183,14 +177,6 @@ export class ConfigurationComponent {
                 }
             }
         });
-    }
-
-    globalFormSubmit($event: any) {
-        this.globalData = $event;
-    }
-
-    isGlobalFormValid($event: any) {
-        this.globalConfigValid = $event;
     }
 
     async selectEntryPointSubmit(data: EntryPointDataType) {
@@ -263,26 +249,74 @@ export class ConfigurationComponent {
         this.featureGroup.removeLayer(this.lastMarkerAdded);
     }
 
-    generateConfiguration() {
-        let path = this.selectFolder();
-        if(this.isGlobalFormValid) {
-            this.globalData = this.gsForm.actualData;
+    saveGlobalConfig() {
+        if(!this.hasBoundingBox) {
+            const modalRef = this.modalService.open(ConfigurationSaveComponent);
+            modalRef.componentInstance.isError = true;
+            modalRef.componentInstance.message = "Bounding Box not defined";
         }
-        const modalRef = this.modalService.open(ConfigurationSaveComponent);
-        modalRef.componentInstance.path = path;
-        modalRef.componentInstance.globalConfiguration = this.globalData;
-        modalRef.componentInstance.entryPointConfiguration = this.finalEntryPoints;
-        modalRef.componentInstance.stationConfiguration = this.finalStations;
-        modalRef.componentInstance.globalConfigValid = this.globalConfigValid;
-        Object.assign(this.globalData, this.gsForm.actualData);
+        else if (this.globalConfigValid && this.recommenderValidConfig) {
+            let finalGlobalConfig: GlobalConfiguration;
+            finalGlobalConfig = this.globalData;
+            finalGlobalConfig.recommendationSystemType = {};
+            finalGlobalConfig.recommendationSystemType.typeName = this.selectedRecommender.recommenderType;
+            finalGlobalConfig.recommendationSystemType.parameters = this.recommenderConfigurationData;
+            let path = this.saveJsonFile();
+            if(path) {
+                const modalRef = this.modalService.open(ConfigurationSaveComponent);
+                modalRef.componentInstance.configurationFile = ConfigurationFile.GLOBAL_CONFIGURATION;
+                modalRef.componentInstance.path = path;
+                modalRef.componentInstance.data = finalGlobalConfig;
+            }
+        }
+    }
+
+    saveEntryPointsConfig() {
+        if(this.finalEntryPoints.entryPoints.length === 0) {
+            const modalRef = this.modalService.open(ConfigurationSaveComponent);
+            modalRef.componentInstance.isError = true;
+            modalRef.componentInstance.message = "No entry points were added";
+        }
+        else {
+            let path = this.saveJsonFile();
+            const modalRef = this.modalService.open(ConfigurationSaveComponent);
+            modalRef.componentInstance.configurationFile = ConfigurationFile.ENTRYPOINT_CONFIGURATION;
+            modalRef.componentInstance.path = path;
+            modalRef.componentInstance.data = this.finalEntryPoints; 
+        }
+    }
+
+    saveStationsConfig() {
+        if(this.finalStations.stations.length === 0) {
+            const modalRef = this.modalService.open(ConfigurationSaveComponent);
+            modalRef.componentInstance.isError = true;
+            modalRef.componentInstance.data = "No stations were added";
+        }
+        else {
+            let path = this.saveJsonFile();
+            const modalRef = this.modalService.open(ConfigurationSaveComponent);
+            modalRef.componentInstance.configurationFile = ConfigurationFile.STATION_CONFIGURATION;
+            modalRef.componentInstance.path = path;
+            modalRef.componentInstance.data = this.finalStations;
+        }
     }
 
     selectFolder(): string {
-            return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0];
+        return dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']})[0];
     }
 
-    saveFile(): string {
-        return dialog.showSaveDialog({filters: [{name: 'OSM Files', extensions: ['osm']}]});
+    saveOSMFile(): string {
+        return dialog.showSaveDialog({
+            filters: [{name: 'OSM Files', extensions: ['osm']}],
+            properties: ['createDirectory']
+        });
+    }
+
+    saveJsonFile(): string {
+        return dialog.showSaveDialog({
+            filters: [{name: 'JSON Files', extensions: ['json']}],
+            properties: ['createDirectory']
+        });
     }
 
     selectFile(): string | undefined {
@@ -294,18 +328,64 @@ export class ConfigurationComponent {
 
     recommenderSelectedHandler(selectedRecommender: any) {
         this.selectedRecommender = selectedRecommender;
-        console.log(this.selectedRecommender);
+    }
+
+    recommenderDataHandler(recommenderData: any) {
+        this.recommenderConfigurationData = recommenderData;
+        this.recommenderValidConfig = this.rsForm.isConfigurationValid();
+        this.recommenderConfigErrors = this.rsForm.getRecommendationFormErrors();
+        console.log(this.recommenderValidConfig);
+        console.log(this.recommenderConfigErrors);
+    }
+
+    globalConfigHandler(globalData: any) {
+        if(this.globalData && (this.globalData.boundingBox || _.isEmpty(this.globalData.boundingBox))) {
+            let boundingBox = this.globalData.boundingBox;
+            this.globalData = globalData;   
+            this.globalData.boundingBox = boundingBox;
+        }
+        else {
+            this.globalData = globalData;
+        }
+        this.globalConfigErrors = this.gsForm.getGlobalFormErrors();
+        this.globalConfigValid = this.gsForm.isGlobalFormValid();
+        console.log(this.globalConfigValid);
+        console.log(this.gsForm.getGlobalFormErrors());
     }
 
     async loadGlobalConfig() {
+        console.log("Old global Config:");
+        console.log(this.globalData);
+        console.log(this.selectedRecommender);
+        console.log(this.recommenderConfigurationData);
         let file = this.selectFile();
         let modalRef: NgbModalRef = this.modalService.open(ConfigurationLoadComponent);
         modalRef.componentInstance.path = file;
         modalRef.componentInstance.configurationFile = ConfigurationFile.GLOBAL_CONFIGURATION;
         modalRef.result.then((globalData) => {
-            Object.assign(this.globalData, globalData);
-            this.gsForm.resetForm();
+            let recommendationSystemLoaded = globalData.recommendationSystemType;
+            delete globalData.recommendationSystemType;
+            this.globalData = globalData;
+            this.selectedRecommender = {};
+            this.selectedRecommender.recommenderType = recommendationSystemLoaded.typeName;
+            this.recommenderConfigurationData = {};
+            this.recommenderConfigurationData.parameters = recommendationSystemLoaded.parameters;
+            this.updateGlobalData(this.globalData);
             ConfigurationLeaflethandler.drawBoundingBox(this, this.globalData.boundingBox);
+            if(this.gsForm) {
+                this.gsForm.globalFormSchema.data = this.globalData;
+                this.gsForm.reload();
+            }
+            else if(this.rsForm) {
+                this.rsForm.selectRecommenderFormSchema.data = this.selectedRecommender;
+                this.rsForm.reload();
+            }
+            (<any>document.getElementById("global-form")).click();
+            console.log("New data: ");
+            console.log(this.globalData);
+            //console.log(this.gsForm.globalConfigData);
+            console.log(this.selectedRecommender);
+            console.log(this.recommenderConfigurationData);
         });
         this.hasBoundingBox = true;
     }
@@ -316,6 +396,7 @@ export class ConfigurationComponent {
         modalRef.componentInstance.path = file;
         modalRef.componentInstance.configurationFile = ConfigurationFile.ENTRYPOINT_CONFIGURATION;
         modalRef.result.then((entryPointsConfig: any) => {
+            console.log(entryPointsConfig);
             for(let entryPoint of entryPointsConfig.entryPoints) {
                 ConfigurationLeaflethandler.drawEntryPoint(this, entryPoint);
             }
@@ -341,12 +422,26 @@ export class ConfigurationComponent {
     }
 
     async downloadMap() {
-        let path = this.saveFile();
-        Object.assign(this.globalData, this.gsForm.actualData.boundingBox);
+        let path = this.saveOSMFile();
         if(path) {
             let modalRef: NgbModalRef = this.modalService.open(ConfDownMapComponent, {backdrop: "static", keyboard: false});
             modalRef.componentInstance.path = path;
             modalRef.componentInstance.boundingBox = this.globalData.boundingBox;
+        }
+    }
+
+    updateGlobalData(globalData: GlobalConfiguration) {
+        if(!this.globalData) {
+            this.globalData = {};
+        }
+        let boundingBox = this.globalData.boundingBox;
+        if(globalData) {
+            this.globalData = globalData;
+        }
+        this.globalData.boundingBox = boundingBox;
+        if(this.gsForm) {
+            this.gsForm.globalConfigData = this.globalData;
+            console.log(this.gsForm.globalConfigData);
         }
     }
 
