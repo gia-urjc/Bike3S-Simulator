@@ -1,4 +1,4 @@
-import {Component, Inject, ViewChild, TemplateRef} from "@angular/core";
+import {Component, Inject, ViewChild, TemplateRef, NgZone} from "@angular/core";
 import {AjaxProtocol} from "../../ajax/AjaxProtocol";
 import {Layer, Rectangle, FeatureGroup, Circle, Marker} from "leaflet";
 import {LeafletDrawFunctions, EntryPoint, Station} from "./config-definitions";
@@ -35,9 +35,7 @@ export class ConfigurationComponent {
     * Aux variables
     */
     lastSelectedEntryPointType: any;
-    lastStation = {
-        position: { latitude: 0, longitude: 0}
-    };
+
     globalConfigValid: boolean = false;
     globalConfigErrors: ValidationFormSchemaError[];
     recommenderValidConfig: boolean = false;
@@ -86,11 +84,23 @@ export class ConfigurationComponent {
     featureGroup: FeatureGroup = new FeatureGroup();        // List of drawn element
     drawOptions: any;                                       // Draw options for leaflet-draw
     map: L.Map;                                             // showed Map
-    lastCircleAdded: Circle;                                // Last circle added
-    lastMarkerAdded: Marker;                                // Last Marker added
+    currentCirleEntryPoint: Circle;                                // Last circle added
+    currentMarkerStation: Marker;                                // Last Marker added
 
     constructor(@Inject('AjaxProtocol') public ajax: AjaxProtocol,
-                public modalService: NgbModal) {}
+                public modalService: NgbModal, private zone:NgZone) {
+        
+        //this is necessary to bind edit and delete buttons from entities placed in the map
+        // to call methods declared in this component
+        //It just makes accesible methods to be called from js scripts not related with angular
+
+        (<any>window).angularComponentRef = {
+            zone: this.zone, 
+            editStation: (station: Station) => this.editStation(station),
+            editEntryPoint: (entryPoint: EntryPoint) => this.editEntryPoint(entryPoint), 
+            component: this
+        };
+    }
 
     async ngOnInit() {
         this.hasBoundingBox = false;
@@ -116,7 +126,6 @@ export class ConfigurationComponent {
             radiusAppears: 0
         };
         let schema = await this.ajax.formSchema.getSchemaByTypes(selected);
-        let layout = await this.ajax.jsonLoader.getAllLayouts();
         this.entryPointForm = {
             schema: JSON.parse(schema),
             data: entryPointData,
@@ -129,7 +138,12 @@ export class ConfigurationComponent {
         let layout = await this.ajax.jsonLoader.getAllLayouts();
         this.stationForm = {
             schema: JSON.parse(schema),
-            data: this.lastStation,
+            data: { 
+                position: {
+                    latitude: 0,
+                    longitude: 0
+                }
+            },
             layout: layout.stationsLayout
         };
     }
@@ -162,7 +176,9 @@ export class ConfigurationComponent {
                     if (index !== null) {
                         this.entryPoints.splice(index, 1);
                         this.finalEntryPoints.entryPoints.splice(index, 1);
-                        this.jsonTreeEp.dataUpdated(this.finalEntryPoints);
+                        if(this.jsonTreeEp) {
+                            this.jsonTreeEp.dataUpdated(this.finalEntryPoints);
+                        }
                     }
                     this.featureGroup.removeLayer(layer);
                 }
@@ -171,7 +187,9 @@ export class ConfigurationComponent {
                     if(index !== null) {
                         this.stations.splice(index, 1);
                         this.finalStations.stations.splice(index, 1);
-                        this.jsonTreeStation.dataUpdated(this.finalStations);
+                        if(this.jsonTreeStation) {
+                            this.jsonTreeStation.dataUpdated(this.finalStations);
+                        }
                     }
                     this.featureGroup.removeLayer(layer);
                 }
@@ -183,33 +201,45 @@ export class ConfigurationComponent {
         this.actualModalOpen.close();
         this.lastSelectedEntryPointType = data;
         let entryPointData = await this.entryPointFormInit(data);
-        entryPointData.positionAppearance.latitude = this.lastCircleAdded.getLatLng().lat;
-        entryPointData.positionAppearance.longitude = this.lastCircleAdded.getLatLng().lng;
+        entryPointData.positionAppearance.latitude = this.currentCirleEntryPoint.getLatLng().lat;
+        entryPointData.positionAppearance.longitude = this.currentCirleEntryPoint.getLatLng().lng;
         if(this.entryPointForm.schema.properties.radiusAppears !== null) {
-            entryPointData.radiusAppears = this.lastCircleAdded.getRadius();
+            entryPointData.radiusAppears = this.currentCirleEntryPoint.getRadius();
         }
         this.actualModalOpen = this.modalService.open(this.epModalForm);
     }
 
     entryPointSubmit(entryPoint: any) {
+
+        //if entry point is present, the method was called from an entry point edition
+        //it's necessary to remove the previous data
+        let entryPointIndex: number | null = ConfigurationUtils
+            .getEntryPointIndexByCircle(this.currentCirleEntryPoint, this.entryPoints);
+
         entryPoint.entryPointType = {};
         entryPoint.entryPointType = this.lastSelectedEntryPointType.entryPointType;
         entryPoint.userType.typeName = this.lastSelectedEntryPointType.userType;
-    //    console.log(entryPoint);
-        this.lastCircleAdded.setLatLng({
+        this.currentCirleEntryPoint.setLatLng({
             lat: entryPoint.positionAppearance.latitude,
             lng: entryPoint.positionAppearance.longitude
         });
-    //    console.log(this.lastCircleAdded.getLatLng());
         if(entryPoint.hasOwnProperty('radiusAppears')) {
-            this.lastCircleAdded.setRadius(entryPoint.radiusAppears);
+            this.currentCirleEntryPoint.setRadius(entryPoint.radiusAppears);
         } else {
-            this.lastCircleAdded.setRadius(50);
+            this.currentCirleEntryPoint.setRadius(50);
         }
-        let newEntryPoint = new EntryPoint(entryPoint, this.lastCircleAdded);
+        let newEntryPoint = new EntryPoint(entryPoint, this.currentCirleEntryPoint);
         newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
-        this.entryPoints.push(newEntryPoint);
-        this.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
+        
+        if(entryPointIndex !== null) {
+            this.entryPoints[entryPointIndex] = newEntryPoint;
+            this.finalEntryPoints.entryPoints[entryPointIndex] = newEntryPoint.getInfo();
+        }
+        else {
+            this.entryPoints.push(newEntryPoint);
+            this.finalEntryPoints.entryPoints.push(newEntryPoint.getInfo());
+        }
+        this.currentCirleEntryPoint.on('click', () => newEntryPoint.updatePopUp());
         this.actualModalOpen.close();
         if(this.jsonTreeEp) {
             this.jsonTreeEp.dataUpdated(this.finalEntryPoints);   
@@ -217,36 +247,57 @@ export class ConfigurationComponent {
     }
 
     stationSubmit(station: any) {
-        this.lastMarkerAdded.setLatLng({
-            lat: station.position.latitude,
-            lng: station.position.longitude
-        });
-        let newStation = new Station(station, this.lastMarkerAdded);
-        this.stations.push(newStation);
-        this.finalStations.stations.push(newStation.getStationInfo());
-        this.lastMarkerAdded.setIcon(newStation.getIcon());
+        
+        //if station is present, the method was called from an station edition
+        //it's necessary to delete the previous data
+        let stationIndex: number | null = ConfigurationUtils.getStationIndexByMarker(this.currentMarkerStation, this.stations);
+
+        station.position.latitude = this.currentMarkerStation.getLatLng().lat;
+        station.position.longitude = this.currentMarkerStation.getLatLng().lng;
+
+        let newStation = new Station(station, this.currentMarkerStation);
+        newStation.getMarker().bindPopup(newStation.getPopUp());
+        if(stationIndex !== null) {
+            this.stations[stationIndex] = newStation;
+            this.finalStations.stations[stationIndex] = newStation.getInfo();
+        }
+        else {
+            this.stations.push(newStation);
+            this.finalStations.stations.push(newStation.getInfo());
+        }
+        this.currentMarkerStation.on('click', () => newStation.updatePopUp());
+        this.currentMarkerStation.setIcon(newStation.getIcon());
         this.actualModalOpen.close();
         if(this.jsonTreeStation) {
             this.jsonTreeStation.dataUpdated(this.finalStations);
         }
+
+        //restart form
+        this.stationFormInit();
     }
     openForm(modalRef: any) {
         this.actualModalOpen = this.modalService.open(modalRef, {backdrop: "static", keyboard: false});
     }
 
     closeFormEntryPoint() {
+        let entryPointIndex: number | null = ConfigurationUtils.getEntryPointIndexByCircle(this.currentCirleEntryPoint, this.entryPoints);
         this.actualModalOpen.close();
-        this.featureGroup.removeLayer(this.lastCircleAdded);
+        if(entryPointIndex === null) {
+            this.featureGroup.removeLayer(this.currentCirleEntryPoint);
+        }
     }
 
     openStationForm(modalRef: any) {
         this.actualModalOpen = this.modalService.open(modalRef, {backdrop: "static", keyboard: false});
-        this.featureGroup.removeLayer(this.lastMarkerAdded);
+        this.featureGroup.removeLayer(this.currentMarkerStation);
     }
 
     closeStationForm() {
+        let stationIndex: number | null = ConfigurationUtils.getStationIndexByMarker(this.currentMarkerStation, this.stations);
         this.actualModalOpen.close();
-        this.featureGroup.removeLayer(this.lastMarkerAdded);
+        if(stationIndex === null) {
+            this.featureGroup.removeLayer(this.currentMarkerStation);
+        }
     }
 
     saveGlobalConfig() {
@@ -354,10 +405,6 @@ export class ConfigurationComponent {
     }
 
     async loadGlobalConfig() {
-        console.log("Old global Config:");
-        console.log(this.globalData);
-        console.log(this.selectedRecommender);
-        console.log(this.recommenderConfigurationData);
         let file = this.selectFile();
         let modalRef: NgbModalRef = this.modalService.open(ConfigurationLoadComponent);
         modalRef.componentInstance.path = file;
@@ -381,11 +428,6 @@ export class ConfigurationComponent {
                 this.rsForm.reload();
             }
             (<any>document.getElementById("global-form")).click();
-            console.log("New data: ");
-            console.log(this.globalData);
-            //console.log(this.gsForm.globalConfigData);
-            console.log(this.selectedRecommender);
-            console.log(this.recommenderConfigurationData);
         });
         this.hasBoundingBox = true;
     }
@@ -419,6 +461,18 @@ export class ConfigurationComponent {
                 this.jsonTreeStation.dataUpdated(this.finalStations);
             }
         });
+    }
+
+    editStation(station: Station) {
+        this.stationForm.data = station.getInfo();
+        this.currentMarkerStation = station.getMarker();
+        this.actualModalOpen = this.modalService.open(this.stationModalForm, {backdrop: "static", keyboard: false});
+    }
+
+    editEntryPoint(entryPoint: EntryPoint) {
+        this.entryPointForm.data = entryPoint.getInfo();
+        this.currentCirleEntryPoint = entryPoint.getCircle();
+        this.actualModalOpen = this.modalService.open(this.epModalForm, {backdrop: "static", keyboard: false});
     }
 
     async downloadMap() {

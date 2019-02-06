@@ -60,7 +60,7 @@ export class ConfigurationLeaflethandler {
     static drawEntryPoint(comp: ConfigurationComponent, cir: Circle | any) {
         if(cir instanceof Circle) {
             $('#form-select-entry-point-button').trigger('click');
-            comp.lastCircleAdded = cir;
+            comp.currentCirleEntryPoint = cir;
             comp.featureGroup.addLayer(cir);
         }
         else {
@@ -70,20 +70,18 @@ export class ConfigurationLeaflethandler {
             let radiusAppears: number = entryPoint.radiusAppears;
             let circle: Circle = new Circle([latitude, longitude], {radius: radiusAppears, color: "#e81b1b"});
             let newEntryPoint = new EntryPoint(entryPoint, circle);
+            circle.on('click', () => newEntryPoint.updatePopUp);
             newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
             comp.entryPoints.push(newEntryPoint);
-            comp.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
+            comp.finalEntryPoints.entryPoints.push(newEntryPoint.getInfo());
             comp.featureGroup.addLayer(circle);
         }
     }
 
     static drawStation(comp: ConfigurationComponent, marker: Marker | any) {
         if(marker instanceof Marker) {
-            comp.lastMarkerAdded = marker;
+            comp.currentMarkerStation = marker;
             comp.featureGroup.addLayer(marker);
-            let pos = comp.lastStation.position;
-            pos.latitude = marker.getLatLng().lat;
-            pos.longitude = marker.getLatLng().lng;
             $('#form-station-button').trigger('click');
         }
         else {
@@ -92,10 +90,14 @@ export class ConfigurationLeaflethandler {
             let longitude = station.position.longitude;
             let newMarker = new Marker([latitude, longitude], {icon: Station.startIcon()});
             let newStation: Station = new Station(station, newMarker); 
-            comp.stations.push(newStation);
-            comp.finalStations.stations.push(newStation.getStationInfo());
-            comp.featureGroup.addLayer(newMarker);
+            newStation.getMarker().bindPopup(newStation.getPopUp());
+            newMarker.on('click', () => newStation.updatePopUp());
             newMarker.setIcon(newStation.getIcon());
+            comp.stations.push(newStation);
+            comp.finalStations.stations.push(newStation.getInfo());
+            comp.featureGroup.addLayer(newMarker);
+            console.log(newStation);
+            console.log(newStation.getPopUp());
         }
     }
 

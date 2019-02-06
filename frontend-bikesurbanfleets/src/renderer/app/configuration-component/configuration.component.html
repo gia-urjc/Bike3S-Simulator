@@ -25,14 +25,14 @@
                         <ngb-tab id="added-entities" title="Entry Points">
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
-                                    <json-tree-view #jsonTreeEp [data]="finalEntryPoints"></json-tree-view>
+                                    <json-tree-view #jsonTreeEp [finalConfiguration]="finalEntryPoints" [arrayOfEntities]="entryPoints"></json-tree-view>
                                 </div>
                             </ng-template>
                         </ngb-tab>
                         <ngb-tab id="added-stations" title="Stations">
                             <ng-template ngbTabContent>
                                 <div class="tab-content">
-                                    <json-tree-view #jsonTreeStation [data]="finalStations"></json-tree-view>
+                                    <json-tree-view #jsonTreeStation [finalConfiguration]="finalStations" [arrayOfEntities]="stations"></json-tree-view>
                                 </div>
                             </ng-template>
                         </ngb-tab>
