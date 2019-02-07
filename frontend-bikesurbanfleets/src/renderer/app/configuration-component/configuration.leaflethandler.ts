@@ -70,8 +70,8 @@ export class ConfigurationLeaflethandler {
             let radiusAppears: number = entryPoint.radiusAppears;
             let circle: Circle = new Circle([latitude, longitude], {radius: radiusAppears, color: "#e81b1b"});
             let newEntryPoint = new EntryPoint(entryPoint, circle);
-            circle.on('click', () => newEntryPoint.updatePopUp);
             newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
+            circle.on('click', () => newEntryPoint.updatePopUp());
             comp.entryPoints.push(newEntryPoint);
             comp.finalEntryPoints.entryPoints.push(newEntryPoint.getInfo());
             comp.featureGroup.addLayer(circle);

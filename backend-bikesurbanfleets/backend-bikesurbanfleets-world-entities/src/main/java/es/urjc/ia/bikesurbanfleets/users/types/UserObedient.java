@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 @UserType("USER_OBEDIENT")
 public class UserObedient extends UserUninformed {
     
-        public UserObedient(JsonObject userdef, SimulationServices services, long seed) throws Exception{
+    public UserObedient(JsonObject userdef, SimulationServices services, long seed) throws Exception{
         super(userdef, services, seed);
-      }
+    }
 
     @Override
     protected Station determineStationToRentBike() {

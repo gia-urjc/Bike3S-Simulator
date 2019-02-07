@@ -311,7 +311,7 @@ export class ConfigurationComponent {
             finalGlobalConfig = this.globalData;
             finalGlobalConfig.recommendationSystemType = {};
             finalGlobalConfig.recommendationSystemType.typeName = this.selectedRecommender.recommenderType;
-            finalGlobalConfig.recommendationSystemType.parameters = this.recommenderConfigurationData;
+            finalGlobalConfig.recommendationSystemType.parameters = this.recommenderConfigurationData.parameters;
             let path = this.saveJsonFile();
             if(path) {
                 const modalRef = this.modalService.open(ConfigurationSaveComponent);
@@ -385,8 +385,6 @@ export class ConfigurationComponent {
         this.recommenderConfigurationData = recommenderData;
         this.recommenderValidConfig = this.rsForm.isConfigurationValid();
         this.recommenderConfigErrors = this.rsForm.getRecommendationFormErrors();
-        console.log(this.recommenderValidConfig);
-        console.log(this.recommenderConfigErrors);
     }
 
     globalConfigHandler(globalData: any) {
@@ -400,8 +398,6 @@ export class ConfigurationComponent {
         }
         this.globalConfigErrors = this.gsForm.getGlobalFormErrors();
         this.globalConfigValid = this.gsForm.isGlobalFormValid();
-        console.log(this.globalConfigValid);
-        console.log(this.gsForm.getGlobalFormErrors());
     }
 
     async loadGlobalConfig() {
@@ -427,6 +423,8 @@ export class ConfigurationComponent {
                 this.rsForm.selectRecommenderFormSchema.data = this.selectedRecommender;
                 this.rsForm.reload();
             }
+            this.globalConfigValid = true; 
+            this.recommenderValidConfig = true;
             (<any>document.getElementById("global-form")).click();
         });
         this.hasBoundingBox = true;
@@ -438,7 +436,6 @@ export class ConfigurationComponent {
         modalRef.componentInstance.path = file;
         modalRef.componentInstance.configurationFile = ConfigurationFile.ENTRYPOINT_CONFIGURATION;
         modalRef.result.then((entryPointsConfig: any) => {
-            console.log(entryPointsConfig);
             for(let entryPoint of entryPointsConfig.entryPoints) {
                 ConfigurationLeaflethandler.drawEntryPoint(this, entryPoint);
             }
@@ -469,9 +466,16 @@ export class ConfigurationComponent {
         this.actualModalOpen = this.modalService.open(this.stationModalForm, {backdrop: "static", keyboard: false});
     }
 
-    editEntryPoint(entryPoint: EntryPoint) {
-        this.entryPointForm.data = entryPoint.getInfo();
+    async editEntryPoint(entryPoint: EntryPoint) {
+        let data: EntryPointDataType = {
+            entryPointType: entryPoint.getInfo().entryPointType,
+            userType: entryPoint.getInfo().userType.typeName
+        };
         this.currentCirleEntryPoint = entryPoint.getCircle();
+        let entryPointData = await this.entryPointFormInit(data);
+        this.lastSelectedEntryPointType = data;
+        this.entryPointForm.data = entryPoint.getInfo();
+
         this.actualModalOpen = this.modalService.open(this.epModalForm, {backdrop: "static", keyboard: false});
     }
 
@@ -495,7 +499,6 @@ export class ConfigurationComponent {
         this.globalData.boundingBox = boundingBox;
         if(this.gsForm) {
             this.gsForm.globalConfigData = this.globalData;
-            console.log(this.gsForm.globalConfigData);
         }
     }
 

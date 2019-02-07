@@ -1,20 +1,7 @@
 import {Circle, DivIcon, FeatureGroup, Marker} from "leaflet";
 import {PlainObject} from "../../../../shared/util";
 
-class ConfigurationHtmlIdGenerator {
-    
-    private static id: number = 0;
-
-
-    public static generateId(): number {
-        let id = this.id;
-        this.id++;
-        return id;
-    }
-}
-
 export abstract class ConfigurationEntity {
-    protected configurationHtmlId: number;
     protected info: any;
 
     abstract getPopUp(): string;
@@ -25,7 +12,6 @@ export abstract class ConfigurationEntity {
     }
     constructor(info: any) {
         this.info = info;
-        this.configurationHtmlId = ConfigurationHtmlIdGenerator.generateId();
     }
 
 }
@@ -71,7 +57,7 @@ export class Station extends ConfigurationEntity {
             className: 'station-marker',
             iconSize: [size, size],
             html: `
-                    <div class="ratio-ring" id="entity-${this.configurationHtmlId}" style="background: url(${gradient.png}) no-repeat;">
+                    <div class="ratio-ring" style="background: url(${gradient.png}) no-repeat;">
                         <div class="bike-counter">${this.info.bikes}</div>
                     </div>
                 `,
@@ -108,8 +94,6 @@ export class EntryPoint extends ConfigurationEntity{
     constructor(entryPointInfo: PlainObject, circle: Circle) {
         super(entryPointInfo);
         this.circle = circle;
-        //Add an id to the circle html element
-        (<Element>this.circle.getElement()).setAttribute("id", `entity-${this.configurationHtmlId}`);
     }
 
     getCircle(): Circle {

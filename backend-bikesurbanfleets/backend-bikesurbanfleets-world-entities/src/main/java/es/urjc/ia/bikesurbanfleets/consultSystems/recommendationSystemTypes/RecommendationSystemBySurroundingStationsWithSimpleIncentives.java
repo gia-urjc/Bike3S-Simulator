@@ -23,9 +23,8 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
 	@RecommendationSystemParameters
 	public class RecommendationParameters {
 		private int maxDistanceRecommendation = 600;
-	private  double COMPENSATION = 10.0; 
-	private  double EXTRA = 1.5;
-	
+	    private  double COMPENSATION = 10.0; 
+	    private  double EXTRA = 1.5;
 	}
 	
 	private RecommendationParameters parameters;

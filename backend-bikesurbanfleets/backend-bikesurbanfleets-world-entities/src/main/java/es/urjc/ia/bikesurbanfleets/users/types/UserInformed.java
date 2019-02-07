@@ -7,7 +7,6 @@
 package es.urjc.ia.bikesurbanfleets.users.types;
 
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.users.UserType;
@@ -21,9 +20,9 @@ import java.util.stream.Collectors;
 @UserType("USER_INFORMED")
 public class UserInformed extends UserUninformed {
     
-        public UserInformed(JsonObject userdef, SimulationServices services, long seed) throws Exception{
+    public UserInformed(JsonObject userdef, SimulationServices services, long seed) throws Exception{
         super(userdef, services, seed);
-      }
+    }
 
     @Override
     protected Station determineStationToRentBike() {
