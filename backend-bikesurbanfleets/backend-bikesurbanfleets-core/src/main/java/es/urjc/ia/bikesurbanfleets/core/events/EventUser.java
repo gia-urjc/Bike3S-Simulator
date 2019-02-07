@@ -3,11 +3,11 @@ package es.urjc.ia.bikesurbanfleets.core.events;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
-import es.urjc.ia.bikesurbanfleets.log.Debug;
-import es.urjc.ia.bikesurbanfleets.users.User;
-import es.urjc.ia.bikesurbanfleets.users.UserDecision;
-import es.urjc.ia.bikesurbanfleets.users.UserDecisionLeaveSystem;
-import es.urjc.ia.bikesurbanfleets.users.UserDecisionStation;
+import es.urjc.ia.bikesurbanfleets.common.log.Debug;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionLeaveSystem;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
 import java.io.IOException;
 import java.util.List;
 

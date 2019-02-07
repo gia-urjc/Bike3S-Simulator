@@ -1,6 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.usersgenerator;
 
-import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.SimulationRandom;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.config.EntryPointInfo;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.EntryPoint;

@@ -3,16 +3,10 @@ package es.urjc.ia.bikesurbanfleets.core;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
-import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
-import es.urjc.ia.bikesurbanfleets.history.History;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
-import es.urjc.ia.bikesurbanfleets.log.Debug;
-import es.urjc.ia.bikesurbanfleets.users.User;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -32,6 +26,7 @@ public class ApplicationAlberto {
     private static String usersConfig;
     private static String stationsConfig;
     private static String mapPath;
+    private static String demandDataPath;
     private static String historyOutputPath;
     private static String validator;
     private static boolean callFromFrontend;
@@ -48,6 +43,7 @@ public class ApplicationAlberto {
         options.addOption("usersConfig", true, "Directory to the users configuration file");
         options.addOption("stationsConfig", true, "Directory to the stations configuration file");
         options.addOption("mapPath", true, "Directory to map");
+        options.addOption("demandDataFile", true, "The csv file with demand data");
         options.addOption("historyOutput", true, "History Path for the simulation");
         options.addOption("validator", true, "Directory to the js validator");
         options.addOption("callFromFrontend", false, "Backend has been called by frontend");
@@ -93,6 +89,7 @@ public class ApplicationAlberto {
         usersConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/users_configuration.json";
         stationsConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/stations_configuration.json";
         mapPath = PROJECT_HOME + "Bike3STests/madrid.osm";
+        demandDataPath = PROJECT_HOME + "Bike3STests/datosViajesBiciMad.csv";
         historyOutputPath = PROJECT_HOME + "Bike3STests/"+ test +"/hist";
         validator = "";
         callFromFrontend = true;
@@ -105,9 +102,12 @@ public class ApplicationAlberto {
             ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
             GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
             if(historyOutputPath != null) {
-                globalInfo.setHistoryOutputPath(historyOutputPath);
+                globalInfo.setOtherHistoryOutputPath(historyOutputPath);
             }
-            globalInfo.setGraphParameters(mapPath);
+            globalInfo.setOtherGraphParameters(mapPath);
+            globalInfo.setOtherDemandDataFilePath(demandDataPath);
+            //setup the objects in globalinfo (GraphManager,DemandManager )
+            globalInfo.initGlobalManagerObjects();
 
             //2. read stations and user configurations
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();

@@ -15,11 +15,8 @@
     </properties>
 
     <modules>
-        <module>backend-bikesurbanfleets-common</module>
         <module>backend-bikesurbanfleets-config-usersgenerator</module>
         <module>backend-bikesurbanfleets-core</module>
-        <module>backend-bikesurbanfleets-history</module>
-        <module>backend-bikesurbanfleets-world-entities</module>
     </modules>
 
     <dependencies>

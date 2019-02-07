@@ -2,7 +2,7 @@ package es.urjc.ia.bikesurbanfleets.usersgenerator;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
-import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
 import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
 import es.urjc.ia.bikesurbanfleets.usersgenerator.config.EntryPointInfo;

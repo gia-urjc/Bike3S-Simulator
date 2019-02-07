@@ -12,24 +12,6 @@
 	<groupId>es.urjc.ia</groupId>
 	<artifactId>bikesurbanfleets-core</artifactId>
 	<version>1.0</version>
-
-	<dependencies>
-        <dependency>
-            <groupId>es.urjc.ia</groupId>
-            <artifactId>bikesurbanfleets-world-entities</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>es.urjc.ia</groupId>
-            <artifactId>bikesurbanfleets-history</artifactId>
-            <version>1.0</version>
-        </dependency>
-	 <dependency>
-	  <groupId>${project.groupId}</groupId>
-	  <artifactId>bikesurbanfleets-common</artifactId>
-	  <version>${project.version}</version>
-	 </dependency>
-	</dependencies>
 	
 	<build>
 		<plugins>

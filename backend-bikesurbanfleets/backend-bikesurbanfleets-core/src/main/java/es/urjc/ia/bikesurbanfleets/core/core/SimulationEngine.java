@@ -2,24 +2,24 @@ package es.urjc.ia.bikesurbanfleets.core.core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
+import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersConfig;
 import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
-import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
 import es.urjc.ia.bikesurbanfleets.history.History;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
-import es.urjc.ia.bikesurbanfleets.log.Debug;
-import es.urjc.ia.bikesurbanfleets.users.User;
-import es.urjc.ia.bikesurbanfleets.users.UserFactory;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.common.log.Debug;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -55,10 +55,10 @@ public final class SimulationEngine {
         //1.   set up the global variables and initialize singleton classes of the simulation
         //this should be done befor setting up the actual entity objects
         Bike.resetIdGenerator();
-        Station.resetIdGenerator();
+        Station.resetIdMap();
         User.resetIdGenerator();
         Reservation.resetIdGenerator();
-        Debug.init(globalInfo.isDebugMode());
+        Debug.init(globalInfo.isDebugMode(), GlobalInfo.DEBUG_DIR);
         System.out.println("DEBUG MODE: " + Debug.isDebugmode());
         Reservation.VALID_TIME = globalInfo.getReservationTime();
 
@@ -72,7 +72,8 @@ public final class SimulationEngine {
         List<Entity> initialentities = new ArrayList<Entity>();
         initialentities.addAll(services.getInfrastructureManager().consultBikes());
         initialentities.addAll(services.getInfrastructureManager().consultStations());
-        History.init(globalInfo, initialentities);
+        History.init(globalInfo.getHistoryOutputPath(), GlobalInfo.TIMEENTRIES_PER_HISTORYFILE,
+                globalInfo.getBoundingBox(), globalInfo.getTotalSimulationTime(), initialentities);
 
         //5.   generate the initial events (userappears)
         List<EventUserAppears> userevents=getUserAppearanceEvents(usersInfo, services, globalInfo.getRandomSeed());

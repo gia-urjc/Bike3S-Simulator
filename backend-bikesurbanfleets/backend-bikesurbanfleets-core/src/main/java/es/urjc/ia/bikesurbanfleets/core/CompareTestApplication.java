@@ -3,7 +3,7 @@ package es.urjc.ia.bikesurbanfleets.core;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
-import es.urjc.ia.bikesurbanfleets.common.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 
@@ -22,29 +22,34 @@ public class CompareTestApplication {
     }
 
     //Program parameters
-    private static String baseDir;
+    private static String testsDir;
     private static String debugDir;
     private static String historyDir;
     private static String analisisDir;
     private static String baseTestsDir;
     private static String mapPath;
+    private static String demandDataPath;
     private static String schemaPath;
     private static String dataAnalyzerPath;
     private static String analysisScriptPath;
-    private static int totalsimulationtime;
 
     public static void main(String[] args) throws Exception {
         CompareTestApplication hs = new CompareTestApplication();
         //treat tests
-        //String projectDir="/Users/holger/workspace/BikeProjects/Bike3S/";
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // the following parameters may have to be changes
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
+        // String projectDir = System.getProperty("user.dir") + File.separator + "Bike3S";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/newTests_half_2_demand";
 
-        String projectDir = System.getProperty("user.dir") + File.separator + "Bike3S";
+        mapPath = projectDir + "/../madrid.osm";
+        demandDataPath = projectDir + "/../datosViajesBiciMad.csv";
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        baseDir = projectDir + "/test_paperAT_alberto";
-
-        System.out.println("baseDir " + baseDir);
-        String testFile = baseDir + "/tests.json";
-        mapPath = projectDir + "/madrid.osm";
+        System.out.println("baseDir " + testsDir);
+        String testFile = testsDir + "/tests.json";
         schemaPath = projectDir + "/build/schema";
         dataAnalyzerPath = projectDir + "/build/data-analyser";
         analysisScriptPath = projectDir + "/tools/analysis-script/";
@@ -66,7 +71,7 @@ public class CompareTestApplication {
         //create new dir on basedir
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
         Date date = new Date();
-        baseTestsDir = baseDir + "/" + dateFormat.format(date);
+        baseTestsDir = testsDir + "/" + dateFormat.format(date);
         auxiliaryDir = new File(baseTestsDir);
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
@@ -87,14 +92,19 @@ public class CompareTestApplication {
             auxiliaryDir.mkdirs();
         }
 
-        String globalConfig = baseDir + "/conf/global_configuration.json";
-        String usersConfig = baseDir + "/conf/users_configuration.json";
-        String stationsConfig = baseDir + "/conf/stations_configuration.json";
+        String globalConfig = testsDir + "/conf/global_configuration.json";
+        String usersConfig = testsDir + "/conf/users_configuration.json";
+        String stationsConfig = testsDir + "/conf/stations_configuration.json";
         ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
         GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
-        globalInfo.setGraphParameters(mapPath);
-        totalsimulationtime = globalInfo.getTotalSimulationTime();
+        
+        //modify globalinfo with other parameters
+        globalInfo.setOtherGraphParameters(mapPath);
+        globalInfo.setOtherDemandDataFilePath(demandDataPath);
 
+        //setup the objects in globalinfo (GraphManager,DemandManager )
+        globalInfo.initGlobalManagerObjects();
+         
         //now loop through the tests
         ArrayList<String> testnames = new ArrayList<String>();
         for (JsonObject t : tests.tests) {
@@ -111,8 +121,8 @@ public class CompareTestApplication {
             runSimulationTest(globalInfo, jsonReader, testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
             runResultAanalisis(testdir);
         }
-        new ResultsComparator(analisisDir, analisisDir + "compareResults.csv", totalsimulationtime).compareTestResults();
-        runscriptR();
+        new ResultsComparator(analisisDir, analisisDir + "compareResults.csv", globalInfo.getTotalSimulationTime()).compareTestResults();
+        //script requires autorization    runscriptR();
     }
 
     private boolean exists(String name, List<String> names) {
@@ -136,12 +146,12 @@ public class CompareTestApplication {
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
-        globalInfo.setHistoryOutputPath(historyOutputPath);
+        globalInfo.setOtherHistoryOutputPath(historyOutputPath);
 
         try {
 
             //modify recomenderspecification with the one from the test
-            globalInfo.setRecommendationSystemType(recomendertype);
+            globalInfo.setOtherRecommendationSystemType(recomendertype);
 
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             //modify user type specification with the one from the test

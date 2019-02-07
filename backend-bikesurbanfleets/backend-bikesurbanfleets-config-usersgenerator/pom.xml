@@ -15,14 +15,6 @@
     <artifactId>bikesurbanfleets-config-usersgenerator</artifactId>
     <version>1.0</version>
 
-    <dependencies>
-        <dependency>
-            <groupId>es.urjc.ia</groupId>
-            <artifactId>bikesurbanfleets-common</artifactId>
-            <version>1.0</version>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -48,6 +40,11 @@
             </plugin>
         </plugins>
     </build>
-
-
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bikesurbanfleets-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -1,12 +1,12 @@
 package es.urjc.ia.bikesurbanfleets.core.events;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.infraestructure.entities.Station;
-import es.urjc.ia.bikesurbanfleets.users.User;
-import es.urjc.ia.bikesurbanfleets.users.UserDecision;
-import es.urjc.ia.bikesurbanfleets.users.UserMemory;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserMemory;
 
 import java.util.ArrayList;
 import java.util.Arrays;

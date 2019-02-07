@@ -6,7 +6,7 @@ import java.util.List;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
-import es.urjc.ia.bikesurbanfleets.users.User;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 
 public class EventUserArrivesAtDestinationInCity extends EventUser {
 
