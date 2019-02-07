@@ -3,16 +3,12 @@ import * as paths from "path";
 import * as fs from "fs-extra";
 import { Channel, IpcUtil } from "../util";
 import { ValidationInfo, validate } from "../../shared/util";
+import { JsonFileInfo } from "../../shared/ConfigurationInterfaces";
 
 export interface JsonSchemaGroup {
     globalSchema: any;
     entryPointSchema: any;
     stationsSchema: any;
-}
-
-export interface JsonInfo {
-    json: any;
-    path: string;
 }
 
 export interface JsonLayoutGroup{
@@ -40,7 +36,9 @@ export class JsonLoaderController {
 
             const channels = [
                 new Channel('get-all-schemas', async () => await jsonLoader.getAllSchemas()),
-                new Channel('write-json', async (jsonInfo: JsonInfo) => await jsonLoader.writeJson(jsonInfo)),
+                new Channel('write-json-global', async (jsonInfo: JsonFileInfo) => await jsonLoader.saveGlobalConfig(jsonInfo)),
+                new Channel('write-json-entry-points', async (jsonInfo: JsonFileInfo) => await jsonLoader.saveEntryPointsConfig(jsonInfo)),
+                new Channel('write-json-stations', async (jsonInfo: JsonFileInfo) => await jsonLoader.saveStationsConfig(jsonInfo)),
                 new Channel('load-json-global', async (path: string) => await jsonLoader.loadGlobalConfig(path)),
                 new Channel('load-json-entry-points', async (path: string) => await jsonLoader.loadEntryPointsConfig(path)),
                 new Channel('load-json-stations', async (path: string) => await jsonLoader.loadStationsConfig(path)),
@@ -73,32 +71,61 @@ export class JsonLoaderController {
         };
     }
 
-    async writeJson(jsonInfo: JsonInfo): Promise<boolean> {
+    async loadGlobalConfig(path: string): Promise<any> {
         try {
-            await fs.writeFile(jsonInfo.path, JSON.stringify(jsonInfo.json, null, 4));
-            return true;
+            return await this.loadAndValidateJson(this.globalConfigurationSchema, path);
         }
-        catch (e) {
+        catch (e){ 
             throw new Error(e);
         }
     }
 
-    async loadGlobalConfig(path: string): Promise<any> {
-        let data = await this.loadAndValidateJson(this.globalConfigurationSchema, path);
-        return data;
-    }
-
     async loadEntryPointsConfig(path: string): Promise<any> {
-        let data = await this.loadAndValidateJson(this.entryPointsConfSchema, path);
-        return data;
+        try {
+            return await this.loadAndValidateJson(this.entryPointsConfSchema, path);
+        }
+        catch(e) {
+            throw new Error(e);
+        }
     }
 
     async loadStationsConfig(path: string) {
-        let data = await this.loadAndValidateJson(this.stationConfigurationSchema, path);
-        return data;
+        try {
+            return await this.loadAndValidateJson(this.stationConfigurationSchema, path);
+        }
+        catch(e) {
+            throw new Error(e);
+        }
     }
 
-    async loadAndValidateJson(schema:string, path: string): Promise<any> {
+    async saveGlobalConfig(jsonInfo: JsonFileInfo) {
+        try {
+            return await this.saveAndValidateJson(this.globalConfigurationSchema, jsonInfo.path, jsonInfo.data);
+        }
+        catch(e) {
+            throw new Error(e);
+        }
+    }
+
+    async saveEntryPointsConfig(jsonInfo: JsonFileInfo) {
+        try {
+            return await this.saveAndValidateJson(this.entryPointsConfSchema, jsonInfo.path, jsonInfo.data);
+        }
+        catch(e) {
+            throw new Error(e);
+        }
+    }
+
+    async saveStationsConfig(jsonInfo: JsonFileInfo) {
+        try {
+            return await this.saveAndValidateJson(this.stationConfigurationSchema, jsonInfo.path, jsonInfo.data);
+        }
+        catch(e) {
+            throw new Error(e);
+        }
+    }
+
+    private async loadAndValidateJson(schema: any, path: string): Promise<any> {
         try {
             let data = await fs.readJSON(path);
             let validation: ValidationInfo = validate(schema, data);
@@ -106,6 +133,30 @@ export class JsonLoaderController {
                 throw new Error(validation.errors);
             }
             return data;
+        }
+        catch (e) {
+            throw new Error(e);
+        }
+    }
+
+    private async writeJson(path:string, data: any): Promise<boolean> {
+        try {
+            await fs.writeFile(path, JSON.stringify(data, null, 4));
+            return true;
+        }
+        catch (e) {
+            throw new Error(e);
+        }
+    }
+
+    private async saveAndValidateJson(schema: any, path:string, data: any): Promise<any> {
+        try {
+            let validation: ValidationInfo = validate(schema, data);
+            if(!validation.result) {
+                throw new Error(validation.errors);
+            }
+            this.writeJson(path, data);
+            return true;
         }
         catch (e) {
             throw new Error(e);

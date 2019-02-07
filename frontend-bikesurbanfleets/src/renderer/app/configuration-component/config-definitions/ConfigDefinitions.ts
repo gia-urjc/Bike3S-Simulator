@@ -1,8 +1,23 @@
 import {Circle, DivIcon, FeatureGroup, Marker} from "leaflet";
 import {PlainObject} from "../../../../shared/util";
 
-export class Station{
-    private stationInfo: any;
+export abstract class ConfigurationEntity {
+    protected info: any;
+
+    abstract getPopUp(): string;
+    abstract openPopUp(): void;
+
+    getInfo() {
+        return this.info;
+    }
+    constructor(info: any) {
+        this.info = info;
+    }
+
+}
+
+export class Station extends ConfigurationEntity {
+    
     private marker: Marker;
 
     static startIcon() {
@@ -23,12 +38,8 @@ export class Station{
     }
 
     public constructor(stationsInfo: any, marker: Marker) {
-        this.stationInfo = stationsInfo;
+        super(stationsInfo);
         this.marker = marker;
-    }
-
-    public getStationInfo(): any {
-        return this.stationInfo;
     }
 
     public getMarker(): Marker {
@@ -37,7 +48,7 @@ export class Station{
 
     public getIcon(): DivIcon {
         const size = 30;
-        const slotRatio = (this.stationInfo.capacity - this.stationInfo.bikes) / this.stationInfo.capacity * 100;
+        const slotRatio = (this.info.capacity - this.info.bikes) / this.info.capacity * 100;
         const gradient = new ConicGradient({
             stops: `tomato ${slotRatio}%, mediumseagreen 0`,
             size: size,
@@ -47,35 +58,42 @@ export class Station{
             iconSize: [size, size],
             html: `
                     <div class="ratio-ring" style="background: url(${gradient.png}) no-repeat;">
-                        <div class="bike-counter">${this.stationInfo.bikes}</div>
+                        <div class="bike-counter">${this.info.bikes}</div>
                     </div>
                 `,
         });
     }
 
     public getPopUp(): string {
+        (<any>window).stationToEdit = this;
         return `
             <div>
-                <strong>Station #${this.stationInfo.bikes}</strong>
+                <strong>Station id: ${this.info.id}</strong>
             </div>
-            <div>Capacity: ${this.stationInfo.capacity}</div>
+            <div>Capacity: ${this.info.capacity}</div>
+            <div>Number of bikes: ${this.info.bikes}</div>
+            <button onclick='window.angularComponentRef.zone.run(() => {window.angularComponentRef.editStation(window.stationToEdit)});'>Edit</button>
         `;
+    }
+
+    updatePopUp(): void {
+        (<any>window).stationToEdit = this;
+    }
+
+    public openPopUp(): void {
+        (<any>window).stationToEdit = this;
+        this.getMarker().openPopup();
     }
 
 }
 
-export class EntryPoint {
+export class EntryPoint extends ConfigurationEntity{
 
-    private entryPointInfo: PlainObject;
     private circle: Circle;
 
     constructor(entryPointInfo: PlainObject, circle: Circle) {
-        this.entryPointInfo = entryPointInfo;
+        super(entryPointInfo);
         this.circle = circle;
-    }
-
-    getEntryPointInfo(): PlainObject {
-        return this.entryPointInfo;
     }
 
     getCircle(): Circle {
@@ -83,23 +101,36 @@ export class EntryPoint {
     }
 
     getPopUp(): string {
+        (<any>window).entryPointToEdit = this;
         let popUp = `
             <div>
                 <strong>Entry Point</strong>
             </div>
             <div>
-                <strong>Type: </strong> ${this.entryPointInfo.entryPointType}
+                <strong>Type: </strong> ${this.info.entryPointType}
             </div>
             <div>
-                <strong>UserType: </strong> ${this.entryPointInfo.userType.typeName}
+                <strong>UserType: </strong> ${this.info.userType.typeName}
             </div>`;
-        if (this.entryPointInfo.entryPointType === "POISSON") {
+        if (this.info.entryPointType === "POISSON") {
             popUp += `
             <div>
-                <strong>λ :</strong> ${this.entryPointInfo.distribution.lambda}
+                <strong>λ :</strong> ${this.info.distribution.lambda}
             </div>`;
         }
+        popUp += `
+            <button onclick='window.angularComponentRef.zone.run(() => {window.angularComponentRef.editEntryPoint(window.entryPointToEdit)});'>Edit</button>
+        `;
         return popUp;
+    }
+
+    updatePopUp(): void {
+        (<any>window).entryPointToEdit = this;
+    }
+
+    openPopUp(): void {
+        (<any>window).entryPointToEdit = this;
+        this.getCircle().openPopup();
     }
 }
 

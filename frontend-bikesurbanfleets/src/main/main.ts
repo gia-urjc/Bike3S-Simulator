@@ -66,7 +66,7 @@ export namespace Main {
      ===================*/
 
     function createMenuWindow() {
-        menu = new BrowserWindow({ width: 300, height: 650, resizable: true, fullscreenable: true});
+        menu = new BrowserWindow({ width: 300, height: 650, resizable: false, fullscreenable: true});
 
         menu.loadURL(urlFormat({
             pathname: join(app.getAppPath(), 'frontend', 'index.html'),
@@ -83,9 +83,9 @@ export namespace Main {
             shell.openExternal(url); // opens links (or dragged documents) in external browser
         });
 
-        
+        /*        
         menu.webContents.openDevTools();
-        
+        */
 
         menu.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/menu');
 		
@@ -284,7 +284,12 @@ export namespace Main {
     
 
     export async function test(): Promise<void> {
-       let generator: DataGenerator = await DataGenerator.create('build/history', 'csvFiles', 'build/schema');
+        try {
+            let generator: DataGenerator = await DataGenerator.create('build/history', 'csvFiles', 'build/schema');
+        }
+        catch(e) {
+            console.log("No history to debug in build");
+        }
     }
        
 }
