@@ -49,7 +49,7 @@ public class DemandManager {
    */     CSVReader csvReader 
                 = new CSVReaderBuilder(filereader)
                         .withSkipLines(1)
-                        .wwithCSVParser(parser)
+                        .withCSVParser(parser)
                         .build();
             String[] line;
             while ((line = csvReader.readNext()) != null) {
