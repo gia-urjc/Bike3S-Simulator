@@ -11,11 +11,6 @@ export class SchemaFormGeneratorController{
     private static stationConfigurationSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/stations-config.json'));
     private static entryPointsConfSchema: any = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entrypoints-config.json'));
 
-
-    static create() {
-        return new SchemaFormGeneratorController();
-    }
-
     static enableIpc(): void {
         IpcUtil.openChannel('form-schema-init', async () => {
 
@@ -23,7 +18,9 @@ export class SchemaFormGeneratorController{
                 new Channel('form-schema-entry-user-type', async () => this.schemaFormEntryPointAndUserTypes()),
                 new Channel('form-schema-entry-point-by-type', async (dataTypes: EntryPointDataType) => this.schemaFormEntryPointByTypes(dataTypes)),
                 new Channel('form-schema-station', async () => this.schemaFormStation()),
-                new Channel('form-schema-global', async () => this.schemaFormGlobal())
+                new Channel('form-schema-global', async () => this.schemaFormGlobal()),
+                new Channel('form-schema-recommender-types', async () => this.schemaFormRecommendersTypes()),
+                new Channel('form-schema-recommender-by-type', async (type: string) => this.schemaFormRecommenderByType(type))
             ];
 
             channels.forEach((channel) => IpcUtil.openChannel(channel.name, channel.callback));
@@ -67,6 +64,26 @@ export class SchemaFormGeneratorController{
         else {
             throw new Error("Entry Point type or user Type is not valid");
         }
+    }
+
+    public static async schemaFormRecommendersTypes(): Promise<SchemaConfig> {
+        let schema: SchemaConfig;
+        let recommenderTypes: Array<string> = await SchemaParser.readRecommendersTypes(this.globalConfigurationSchema);
+        schema = {
+            type: "object",
+            properties: {
+                recommenderType: {
+                    type: "string",
+                    enum: recommenderTypes
+                },
+            },
+            required: ["recommenderType"]
+        };
+        return schema;
+    }
+
+    public static async schemaFormRecommenderByType(recommenderType: string): Promise<SchemaConfig | undefined> {
+        return await SchemaParser.getRecommenderSchema(this.globalConfigurationSchema, recommenderType);
     }
 
     public static async schemaFormStation(): Promise<string | undefined> {

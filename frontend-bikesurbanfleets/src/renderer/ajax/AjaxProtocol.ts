@@ -1,8 +1,8 @@
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
 import {CoreSimulatorArgs, UserGeneratorArgs} from "../../shared/BackendInterfaces";
-import { MapDownloadArgs } from '../../shared/ConfigurationInterfaces';
-import { JsonSchemaGroup, JsonInfo, JsonLayoutGroup } from '../../main/controllers/JsonLoaderController';
+import { MapDownloadArgs, JsonFileInfo } from '../../shared/ConfigurationInterfaces';
+import { JsonSchemaGroup, JsonLayoutGroup } from '../../main/controllers/JsonLoaderController';
 import { CsvArgs } from '../../main/controllers/CsvGeneratorController';
 
 export interface HistoryAjax {
@@ -21,6 +21,8 @@ export interface FormSchemaAjax {
     getSchemaByTypes(dataTypes: any): Promise<any>;
     getStationSchema(): Promise<any>;
     getGlobalSchema(): Promise<any>;
+    getRecommenderTypesSchema(): Promise<any>;
+    getRecommenderSchemaByType(type: string): Promise<any>;
 }
 
 export interface JsonLoaderAjax {
@@ -30,7 +32,9 @@ export interface JsonLoaderAjax {
     loadJsonGlobal(path: string): Promise<any>;
     loadJsonEntryPoints(path: string): Promise<any>;
     loadJsonStations(path: string): Promise<any>;
-    writeJson(jsonInfo: JsonInfo): Promise<boolean>;
+    saveJsonGlobal(jsonInfo: JsonFileInfo): Promise<boolean>;
+    saveJsonEntryPoints(jsonInfo: JsonFileInfo): Promise<boolean>;
+    saveJsonStations(jsonInfo: JsonFileInfo): Promise<boolean>;
     close(): Promise<void>;
 }
 

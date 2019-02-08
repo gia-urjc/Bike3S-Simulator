@@ -27,12 +27,7 @@ export class ConfigurationLoadComponent {
     }
 
     async ngOnInit() {
-        try {
-            await this.ajax.jsonLoader.init();
-        }
-        catch(error) {
-            dialog.showErrorBox("Error", `Error loading schemas: ${error}`);
-        }
+        this.ajax.jsonLoader.init();
         switch(this.configurationFile) {
             case ConfigurationFile.GLOBAL_CONFIGURATION: await this.loadGlobalConfig(); break;
             case ConfigurationFile.ENTRYPOINT_CONFIGURATION: await this.loadEntryPointConfig(); break;

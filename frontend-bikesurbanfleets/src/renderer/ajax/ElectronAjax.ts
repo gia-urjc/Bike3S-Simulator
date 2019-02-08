@@ -3,9 +3,9 @@ import { Event } from 'electron';
 import { HistoryEntitiesJson, HistoryTimeEntry } from '../../shared/history';
 import { JsonValue } from '../../shared/util';
 import { AjaxProtocol, BackendAjax, FormSchemaAjax, HistoryAjax, JsonLoaderAjax, SettingsAjax, CsvGeneratorAjax, MapDownloaderAjax } from './AjaxProtocol';
-import { EntryPointDataType, MapDownloadArgs } from "../../shared/ConfigurationInterfaces";
+import { EntryPointDataType, MapDownloadArgs, JsonFileInfo } from "../../shared/ConfigurationInterfaces";
 import { CoreSimulatorArgs, UserGeneratorArgs } from "../../shared/BackendInterfaces";
-import { JsonSchemaGroup, JsonInfo, JsonLayoutGroup } from '../../main/controllers/JsonLoaderController';
+import { JsonSchemaGroup, JsonLayoutGroup } from '../../main/controllers/JsonLoaderController';
 import { CsvArgs } from '../../main/controllers/CsvGeneratorController';
 
 // https://github.com/electron/electron/issues/7300#issuecomment-274269710
@@ -88,6 +88,7 @@ class ElectronSettings implements SettingsAjax {
 }
 
 class ElectronFormSchema implements FormSchemaAjax {
+
     async init(): Promise<any> {
         return await readIpc('form-schema-init');
     }
@@ -108,6 +109,12 @@ class ElectronFormSchema implements FormSchemaAjax {
         return await readIpc('form-schema-global');
     }
 
+    async getRecommenderTypesSchema(): Promise<any> {
+        return await readIpc('form-schema-recommender-types');
+    }
+    async getRecommenderSchemaByType(type: string): Promise<any> {
+        return await readIpc('form-schema-recommender-by-type', type);
+    }
 }
 
 class ElectronBackend implements BackendAjax {
@@ -159,12 +166,18 @@ class JsonLoader implements JsonLoaderAjax {
         return await readIpc('load-json-stations', path);
     }
 
-    async writeJson(jsonInfo: JsonInfo): Promise<boolean> {
-        return await readIpc('write-json', jsonInfo);
-    }
-
     async close(): Promise<void> {
         return await readIpc('json-loader-close');
+    }
+
+    async saveJsonGlobal(jsonInfo: JsonFileInfo): Promise<boolean> {
+        return await readIpc('write-json-global', jsonInfo);
+    }
+    async saveJsonEntryPoints(jsonInfo: JsonFileInfo): Promise<boolean> {
+        return await readIpc('write-json-entry-points', jsonInfo);
+    }
+    async saveJsonStations(jsonInfo: JsonFileInfo): Promise<boolean> {
+        return await readIpc('write-json-stations', jsonInfo);
     }
 }
 

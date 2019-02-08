@@ -2,19 +2,21 @@ import * as $ from "jquery";
 import {Circle, Layer, Marker, Rectangle} from "leaflet";
 import {ConfigurationComponent} from "./configuration.component";
 import { EntryPoint, Station } from "./config-definitions";
-import { BoundingBox } from "../../../shared/ConfigurationInterfaces";
+import { BoundingBox, GlobalConfiguration } from "../../../shared/ConfigurationInterfaces";
 
 export class ConfigurationLeaflethandler {
 
     /*
     * ON DRAW METHODS
     */
-
     static drawBoundingBox(comp: ConfigurationComponent, rectangle: Rectangle | BoundingBox) {
         //Delete current Rectangle from map
+        let newRectangleBbox: Rectangle;
         comp.featureGroup.eachLayer((layer: any) => {
             if(layer instanceof Rectangle) {
                 comp.featureGroup.removeLayer(layer);
+                comp.globalData.boundingBox = {};
+                comp.updateGlobalData(comp.globalData);
             }
         });
 
@@ -22,7 +24,7 @@ export class ConfigurationLeaflethandler {
         // created based in the rectangle drawn in the map
         if(rectangle instanceof Rectangle) {
             comp.featureGroup.addLayer(rectangle);
-            comp.hasBoundingBox = true;
+            newRectangleBbox = rectangle;
         }
 
         //If bbox is passed (not the rectangle figure), the call comes after loading a global configuration
@@ -32,15 +34,33 @@ export class ConfigurationLeaflethandler {
             let northWestLng = rectangle.northWest.longitude;
             let southEastLat = rectangle.southEast.latitude;
             let southEastLon = rectangle.southEast.longitude;
-            let newRectangleBbox = new Rectangle([[northWestLat, northWestLng], [southEastLat, southEastLon]]);
+            newRectangleBbox = new Rectangle([[northWestLat, northWestLng], [southEastLat, southEastLon]]);
             comp.featureGroup.addLayer(newRectangleBbox);
         }
+        if(!comp.globalData) {
+            comp.globalData = {};
+        }
+        let newGlobalData: GlobalConfiguration = comp.globalData;
+        newGlobalData.boundingBox = {
+            northWest: {
+                latitude: (<any>newRectangleBbox).getLatLngs()[0][1].lat,
+                longitude: (<any>newRectangleBbox).getLatLngs()[0][1].lng
+            },
+            southEast: {
+                latitude: (<any>newRectangleBbox).getLatLngs()[0][3].lat,
+                longitude: (<any>newRectangleBbox).getLatLngs()[0][3].lng
+            }
+        };
+        comp.hasBoundingBox = true;
+        comp.updateGlobalData(comp.globalData);
+        //Press a button to update the render
+        (<any>document.getElementById("global-form")).click();
     }
 
     static drawEntryPoint(comp: ConfigurationComponent, cir: Circle | any) {
         if(cir instanceof Circle) {
             $('#form-select-entry-point-button').trigger('click');
-            comp.lastCircleAdded = cir;
+            comp.currentCirleEntryPoint = cir;
             comp.featureGroup.addLayer(cir);
         }
         else {
@@ -51,19 +71,17 @@ export class ConfigurationLeaflethandler {
             let circle: Circle = new Circle([latitude, longitude], {radius: radiusAppears, color: "#e81b1b"});
             let newEntryPoint = new EntryPoint(entryPoint, circle);
             newEntryPoint.getCircle().bindPopup(newEntryPoint.getPopUp());
+            circle.on('click', () => newEntryPoint.updatePopUp());
             comp.entryPoints.push(newEntryPoint);
-            comp.finalEntryPoints.entryPoints.push(newEntryPoint.getEntryPointInfo());
+            comp.finalEntryPoints.entryPoints.push(newEntryPoint.getInfo());
             comp.featureGroup.addLayer(circle);
         }
     }
 
     static drawStation(comp: ConfigurationComponent, marker: Marker | any) {
         if(marker instanceof Marker) {
-            comp.lastMarkerAdded = marker;
+            comp.currentMarkerStation = marker;
             comp.featureGroup.addLayer(marker);
-            let pos = comp.lastStation.position;
-            pos.latitude = marker.getLatLng().lat;
-            pos.longitude = marker.getLatLng().lng;
             $('#form-station-button').trigger('click');
         }
         else {
@@ -72,25 +90,26 @@ export class ConfigurationLeaflethandler {
             let longitude = station.position.longitude;
             let newMarker = new Marker([latitude, longitude], {icon: Station.startIcon()});
             let newStation: Station = new Station(station, newMarker); 
-            comp.stations.push(newStation);
-            comp.finalStations.stations.push(newStation.getStationInfo());
-            comp.featureGroup.addLayer(newMarker);
+            newStation.getMarker().bindPopup(newStation.getPopUp());
+            newMarker.on('click', () => newStation.updatePopUp());
             newMarker.setIcon(newStation.getIcon());
+            comp.stations.push(newStation);
+            comp.finalStations.stations.push(newStation.getInfo());
+            comp.featureGroup.addLayer(newMarker);
+            console.log(newStation);
+            console.log(newStation.getPopUp());
         }
     }
 
     /*
     * ON DELETE METHODS
     */
-
     static deleteBoundingBox(comp: ConfigurationComponent) {
-        Object.assign(comp.globalData, comp.gsForm.actualData);
-        let bBox: BoundingBox = comp.globalData.boundingBox;
-        bBox.northWest.latitude = 0;
-        bBox.northWest.longitude = 0;
-        bBox.southEast.latitude = 0;
-        bBox.southEast.longitude = 0;
-        comp.gsForm.resetForm();
+        if(!comp.globalData) {
+            comp.globalData = {};
+        }
+        comp.globalData.boundingBox = {};
+        comp.updateGlobalData(comp.globalData);
         comp.hasBoundingBox = false;
     }
 }

@@ -10,13 +10,12 @@ export const GlobalConfig = new JsonSchema(options, sObject({
     randomSeed: sInteger().min(1),
     recommendationSystemType: RecomProperties,
     graphManagerType: sEnum('GRAPH_HOPPER'),
-    maxDistanceRecommendation: sNumber().min(0),
     boundingBox: sObject({
         northWest: GeoPoint,
         southEast: GeoPoint,
     }).require.all().restrict(),
     debugMode: sBoolean()
-}).require('totalSimulationTime', 'reservationTime', 'boundingBox', 'recommendationSystemType', 'graphManagerType'));
+}).require('totalSimulationTime', 'reservationTime', 'boundingBox', 'graphManagerType'));
 
 export const layout = 
 [
@@ -24,6 +23,5 @@ export const layout =
     {key: "reservationTime", placeholder: "Maximum time for reserves in seconds."},
     {key: "randomSeed", placeholder: "Random Seed"},
     {key: "graphManagerType", placeholder: "Type of graph Manager"},
-    {key: "maxDistanceRecommendation", placeholder: "Max distance recommended by the system"},
     {key: "debugMode", placeholder: "If checked, log files will be generated"}
 ];

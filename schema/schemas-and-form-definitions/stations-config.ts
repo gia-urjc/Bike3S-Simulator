@@ -6,7 +6,7 @@ import {sAnyOf} from "json-schema-builder-ts/dist/operators/schematical";
 const Bike = sObject();
 
 export const Station = sObject({
-    id: sInteger(),
+    id: UInt,
     oficialID: UInt,
     availablebikes: sInteger().min(0).max(rData('1/capacity')),
     reservedbikes: sInteger().min(0).max(rData('1/capacity')),
