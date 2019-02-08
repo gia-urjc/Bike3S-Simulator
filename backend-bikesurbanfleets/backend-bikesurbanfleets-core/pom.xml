@@ -38,5 +38,11 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+    <dependencies>
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>4.4</version>
+        </dependency>
+    </dependencies>
 </project>

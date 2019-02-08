@@ -135,11 +135,14 @@ public class GlobalInfo {
 
     //ints the graph manager and the demand manager
     public void initGlobalManagerObjects() {
+        System.out.println("load GraphManager");
         initGraphManager();
+        System.out.println("GraphManager loaded");
         if (loadDemandData) {
+            System.out.println("load DemandManager");
             initDemandManager();
+            System.out.println("DemandManager loaded");
         }
-        initGraphManager();
     }
 
     private void initGraphManager() {

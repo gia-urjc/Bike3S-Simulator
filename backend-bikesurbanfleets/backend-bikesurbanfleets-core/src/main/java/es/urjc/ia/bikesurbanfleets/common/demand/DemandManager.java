@@ -9,7 +9,8 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-import com.opencsv.RFC4180Parser;
+import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
+import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 
@@ -33,31 +34,30 @@ public class DemandManager {
         return dem.m[month.ordinal()].d[day.ordinal()].getReturnDemand(stationID, hour);
     }
 
-    double getReturnDemandGlobal(int stationID, Month month, Day day, int hour) {
-        return dem.m[month.ordinal()].d[day.ordinal()].getReturnDemand(stationID, hour);
+    double getReturnDemandGlobal( Month month, Day day, int hour) {
+        return dem.m[month.ordinal()].d[day.ordinal()].getReturnDemandGlobal( hour);
     }
 
     public void ReadData(String file) {
-        CSVReader reader;
+        String[] line = new String[1];
         try {
-        FileReader filereader = new FileReader(file);
-        RFC4180Parser parser
-                = new RFC4180Parser();
-              /*          .withSeparator(',')
-                        .withQuoteChar('"') 
-                        .build();
-   */     CSVReader csvReader 
-                = new CSVReaderBuilder(filereader)
-                        .withSkipLines(1)
-                        .withCSVParser(parser)
-                        .build();
-            String[] line;
+            FileReader filereader = new FileReader(file);
+            CSVParser parser = new CSVParserBuilder()
+                    .withSeparator(';')
+                    //.withIgnoreQuotations(true)
+                    //.withEscapeChar('@')
+                    .build();
+            CSVReader csvReader
+                    = new CSVReaderBuilder(filereader)
+                            .withSkipLines(1)
+                            .withCSVParser(parser)
+                            .build();
             while ((line = csvReader.readNext()) != null) {
                 int station = Integer.parseInt(line[0]);
                 String date = line[1];
-                int year = Integer.parseInt(date.substring(0, 4));
-                int month = Integer.parseInt(date.substring(5, 7));
-                int day = Integer.parseInt(date.substring(8, 10));
+                int year = Integer.parseInt(date.substring(6, 10));
+                int month = Integer.parseInt(date.substring(3, 5));
+                int day = Integer.parseInt(date.substring(0, 2));
                 int returnNum = Integer.parseInt(line[2]);
                 int takeNum = Integer.parseInt(line[3]);
                 int hour = Integer.parseInt(line[4]);
@@ -80,7 +80,14 @@ public class DemandManager {
 
     class Demand {
 
-        Monthdata m[] = new Monthdata[12];
+        Monthdata m[];
+
+        Demand() {
+            m = new Monthdata[15];
+            for (int i = 0; i < 15; i++) {
+                m[i] = new Monthdata();
+            }
+        }
 
         void add(int station, int month, String day, int hour, int take, int ret) {
             int d;
@@ -95,15 +102,15 @@ public class DemandManager {
                 d = 3;
             } else if (day.equals("vie")) {
                 d = 4;
-            } else if (day.equals( "sab")) {
+            } else if (day.equals("sab")) {
                 d = 5;
             } else if (day.equals("dom")) {
                 d = 6;
             } else {
-                throw new RuntimeException("invalid day text");
+                throw new RuntimeException("invalid day text:" + day);
             }
             if (month < 1 || month > 12) {
-                throw new RuntimeException("invalid day text");
+                throw new RuntimeException("invalid month:" + month);
             } else {
                 mo = month - 1;
             }
@@ -119,9 +126,17 @@ public class DemandManager {
         }
 
     }
+
     class Monthdata {
 
-        DayData d[] = new DayData[9];
+        Monthdata() {
+            d = new DayData[9];
+            for (int i = 0; i < 9; i++) {
+                d[i] = new DayData();
+            }
+        }
+
+        DayData d[];
 
         void add(int station, int day, int hour, int take, int ret) {
             d[day].add(station, hour, take, ret);
@@ -145,14 +160,15 @@ public class DemandManager {
                 valueMap.put(station, d);
             }
             d.add(hour, take, ret);
+            global.add(hour, take, ret);
         }
 
         double getTakeDemandGlobal(int hour) {
-            return (global.h[hour][0] / (double) global.numEntries);
+            return (global.h[hour][0] / (double) global.h[hour][2]);
         }
 
         double getReturnDemandGlobal(int hour) {
-            return (global.h[hour][1] / (double) global.numEntries);
+            return (global.h[hour][1] / (double) global.h[hour][2]);
         }
 
         double getTakeDemand(int station, int hour) {
@@ -160,7 +176,7 @@ public class DemandManager {
             if (d == null) {
                 throw new RuntimeException("no station demand data available; invalid program state");
             }
-            return (d.h[hour][0] / (double) d.numEntries);
+            return (d.h[hour][0] / (double) d.h[hour][2]);
         }
 
         double getReturnDemand(int station, int hour) {
@@ -168,19 +184,43 @@ public class DemandManager {
             if (d == null) {
                 throw new RuntimeException("no station demand data available; invalid program state");
             }
-            return (d.h[hour][1] / (double) d.numEntries);
+            return (d.h[hour][1] / (double) d.h[hour][2]);
         }
     }
 
     class StationData {
 
-        int h[][] = new int[24][2];
-        int numEntries = 0;
+        int h[][] = new int[24][3];
 
         void add(int hour, int take, int ret) {
             h[hour][0] += take;
             h[hour][1] += ret;
-            numEntries++;
+            h[hour][2]++;
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
+        String demandDataPath = projectDir + "/../datosViajesBiciMad.csv";
+        DemandManager demandManager = new DemandManager();
+        demandManager.ReadData(demandDataPath);
+        Month[] m = Month.values();
+        Day[] d = Day.values();
+        for (Month mm : m) {
+            for (Day dd : d) {
+                for (int i = 0; i < 24; i++) {
+                    System.out.println(
+                            "demand Month:" + mm + " day: " + dd + " hour: " + i
+                            + "take: " + demandManager.getTakeDemandGlobal(mm, dd, i)
+                            + "return: " + demandManager.getReturnDemandGlobal(mm, dd, i)
+                            + "entries: " + demandManager.dem.m[mm.ordinal()].d[dd.ordinal()].global.h[i][2]);
+                    
+
+                }
+
+            }
+        }
+
     }
 }
