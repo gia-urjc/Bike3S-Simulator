@@ -33,7 +33,7 @@ Clone the git repository and install all dependencies:
 
 ```
     git clone https://github.com/gia-urjc/Bike3S-Simulator.git
-    cd Bike3S
+    cd Bike3S-Simulator
     npm install
     node fuse configure:dev
 ```
