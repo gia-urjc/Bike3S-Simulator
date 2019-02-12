@@ -44,7 +44,7 @@ public class CompareTestApplication {
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/newTests_half_2_demand";
 
         mapPath = projectDir + "/../madrid.osm";
-        demandDataPath = projectDir + "/../datosViajesBiciMad.csv";
+        demandDataPath = projectDir + "/../demandDataMadrid0817_0918.csv";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
