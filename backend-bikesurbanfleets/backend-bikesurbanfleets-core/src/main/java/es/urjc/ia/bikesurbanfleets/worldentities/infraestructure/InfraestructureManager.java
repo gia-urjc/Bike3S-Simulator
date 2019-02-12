@@ -36,6 +36,10 @@ public class InfraestructureManager {
     private int minStationCapacity;
 
     private DemandManager demandManager;
+
+    public DemandManager getDemandManager() {
+        return demandManager;
+    }
     
     public int getMaxStationCapacity() {
         return maxStationCapacity;

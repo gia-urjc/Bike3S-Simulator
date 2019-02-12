@@ -21,6 +21,4 @@ tempCsv/
 tempUsersConf/
 *.txt
 *.osm
-**/history
-**/debug
 /nbproject/private/

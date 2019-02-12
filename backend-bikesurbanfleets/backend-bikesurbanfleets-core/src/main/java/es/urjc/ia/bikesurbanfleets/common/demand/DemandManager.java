@@ -30,19 +30,19 @@ public class DemandManager {
     }
     Demand dem = new Demand();
 
-    DemandResult getTakeDemandStation(int stationID, Month month, Day day, int hour) {
+    public DemandResult getTakeDemandStation(int stationID, Month month, Day day, int hour) {
         return dem.getDemandStation(stationID, month, day, hour, true);
     }
 
-    DemandResult getReturnDemandStation(int stationID, Month month, Day day, int hour) {
+    public DemandResult getReturnDemandStation(int stationID, Month month, Day day, int hour) {
         return dem.getDemandStation(stationID, month, day, hour, false);
     }
 
-    DemandResult getTakeDemandGlobal(Month month, Day day, int hour) {
+    public DemandResult getTakeDemandGlobal(Month month, Day day, int hour) {
         return dem.getDemandGlobal(month, day, hour, true);
     }
 
-    DemandResult getReturnDemandGlobal(Month month, Day day, int hour) {
+    public DemandResult getReturnDemandGlobal(Month month, Day day, int hour) {
         return dem.getDemandGlobal(month, day, hour, false);
     }
 
