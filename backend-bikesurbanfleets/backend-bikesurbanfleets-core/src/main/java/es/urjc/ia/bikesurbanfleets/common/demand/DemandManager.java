@@ -69,13 +69,13 @@ public class DemandManager {
                 int takeNum = Integer.parseInt(line[5]);
                 int returnNum = Integer.parseInt(line[6]);
                 String dayOfWeek = line[7];
-                if (station <=11) {
+        //        if (station <11) {
                  //   System.out.println();
                  //   for (String s : line) {
                  //       System.out.print(s + " ");
                  //   }
                   dem.add(station, month, dayOfWeek, hour, takeNum, returnNum);
-                               }
+          //                     }
             }
             dem.setGlobalDemand();
         } catch (Exception ex) {
@@ -162,7 +162,8 @@ public class DemandManager {
 
         void setGlobalDemand() {
             globalDemand = new HashMap< Month, HashMap<Day, double[][]>>(15);
-            for (StationData stationdata : stationMap.values()) {
+            for (int key : stationMap.keySet()) {
+                StationData stationdata=stationMap.get(key);
 
                 for (Month stationmonth : stationdata.monthMap.keySet()) {
                     MonthData stationmonthdata = stationdata.monthMap.get(stationmonth);
@@ -187,6 +188,9 @@ public class DemandManager {
                         }
 
                         for (int i = 0; i < 24; i++) {
+ //                               if (i==0 && stationmonth==Month.Jan && stationday==Day.Mon){
+   //                                 System.out.println("add");
+     //                           } 
                             globaldaydata[i][0] = globaldaydata[i][0]
                                     + ((double) stationdaydata.data[i][0] / (double) stationdaydata.data[i][2]);
                             globaldaydata[i][1] = globaldaydata[i][1]
