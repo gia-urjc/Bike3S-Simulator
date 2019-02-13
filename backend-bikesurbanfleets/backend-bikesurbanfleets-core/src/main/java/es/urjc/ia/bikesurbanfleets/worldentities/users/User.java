@@ -126,9 +126,9 @@ public abstract class User implements Entity {
     protected SimulationServices services;
 
     /**
-     * It is the time instant of the simulation.
+     * It is the time instant the user appears in the system.
      */
-    private int instant;
+    private int appearanceInstant;
 
     /* random class for generating random events in the user */
     protected SimpleRandom rando;
@@ -151,9 +151,9 @@ public abstract class User implements Entity {
         }
         aux = userdef.get("timeInstant");
         if (aux != null) {
-            instant = aux.getAsInt();
+            appearanceInstant = aux.getAsInt();
         } else {
-            throw new IllegalArgumentException("instant missing");
+            throw new IllegalArgumentException("timeInstant missing");
         }
 
         //optional parameters
@@ -192,6 +192,10 @@ public abstract class User implements Entity {
         return state;
     }
 
+    public int getAppearanceInstant() {
+        return appearanceInstant;
+    }
+
     public void setState(STATE state) {
         this.state = state;
     }
@@ -228,14 +232,6 @@ public abstract class User implements Entity {
         return this.reservation;
     }
     
-     public int getInstant() {
-        return instant;
-    }
-
-    public void setInstant(int instant) {
-        this.instant = instant;
-    }
-
     public GeoPoint getPosition() {
         return position;
     }
@@ -424,7 +420,6 @@ public abstract class User implements Entity {
         setPosition(null);
         route = null;
         destinationStation = null;
-        instant = -1;
     }
 
     /**

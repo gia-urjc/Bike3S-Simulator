@@ -65,9 +65,10 @@ public final class SimulationEngine {
         //2.   set up stations (with bikes)
         List<Station> stations = setUpStations(stationsInfo);
 
-        //3.   set up general services for the simulation
+        //3.   set up general services for the simulation and the simulationdate and time values
         SimulationServices services = new SimulationServices(globalInfo, stations);
-
+        SimulationDateTime.intSimulationDateTime(globalInfo.getStartDateTime());
+ 
         //4. get all initial entities and set up the history
         List<Entity> initialentities = new ArrayList<Entity>();
         initialentities.addAll(services.getInfrastructureManager().consultBikes());
@@ -110,7 +111,7 @@ public final class SimulationEngine {
         for (JsonObject userdef : usersInfo.getUsers()) {
             int seed = simprand.nextInt();
             User user = userFactory.createUser(userdef, services, seed);
-            int instant = user.getInstant();
+            int instant = user.getAppearanceInstant();
             GeoPoint position = user.getPosition();
             // Is necessary to have the user position initialized to null to write changes.
             // Position is asigned again in EventUserAppears
@@ -129,6 +130,7 @@ public final class SimulationEngine {
         int lastInstant = 0;
         int order = 0;
         Event event = null;
+        int currentInstant;
 
         MessageGuiFormatter.showPercentageForGui(percentage);
         try {
@@ -136,16 +138,20 @@ public final class SimulationEngine {
             while (!eventsQueue.isEmpty()) {
                 event = eventsQueue.poll();  // retrieves and removes first element
 
-                //check if the instant is after the last one
-                if (event.getInstant() < lastInstant) {
+                //check if the instant is after the last one 
+                currentInstant=event.getInstant();
+                if (currentInstant < lastInstant) {
                     throw new RuntimeException("Illegal event execution");
                 }
-                if (event.getInstant() > lastInstant) {
+                if (currentInstant > lastInstant) {
                     order = 0;
                 } else {
                     order++;
                 }
 
+                //set the current simulation date and instant
+                SimulationDateTime.setCurrentSimulationInstant(currentInstant);
+                
                 // Shows the actual percentage in the stdout for frontend
                 if (event.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
                     //show only every 5 percent

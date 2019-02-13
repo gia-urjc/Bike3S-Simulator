@@ -118,8 +118,6 @@ public class ApplicationHolger {
             }
             globalInfo.setOtherGraphParameters(mapPath);
             globalInfo.setOtherDemandDataFilePath(demandDataPath);
-            //setup the objects in globalinfo (GraphManager,DemandManager )
-            globalInfo.initGlobalManagerObjects();
 
             //2. read stations and user configurations
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();

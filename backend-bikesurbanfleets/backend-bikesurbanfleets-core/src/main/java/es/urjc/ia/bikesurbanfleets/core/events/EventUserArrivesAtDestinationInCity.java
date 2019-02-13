@@ -22,7 +22,6 @@ public class EventUserArrivesAtDestinationInCity extends EventUser {
 
     @Override
     public Event execute() throws Exception {
-        user.setInstant(this.instant);
         user.setPosition(position);
         debugEventLog("At enter the event");
         user.setState(User.STATE.LEAVING);

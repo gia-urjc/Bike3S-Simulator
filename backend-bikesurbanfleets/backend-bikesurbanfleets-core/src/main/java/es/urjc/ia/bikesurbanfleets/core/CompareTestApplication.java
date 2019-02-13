@@ -41,7 +41,7 @@ public class CompareTestApplication {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
         // String projectDir = System.getProperty("user.dir") + File.separator + "Bike3S";
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/newTests_half_2_demand";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/test";
 
         mapPath = projectDir + "/../madrid.osm";
         demandDataPath = projectDir + "/../demandDataMadrid0817_0918.csv";
@@ -70,6 +70,7 @@ public class CompareTestApplication {
         Tests tests = gson.fromJson(reader, Tests.class);
         //create new dir on basedir
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
+        
         Date date = new Date();
         baseTestsDir = testsDir + "/" + dateFormat.format(date);
         auxiliaryDir = new File(baseTestsDir);
@@ -102,9 +103,6 @@ public class CompareTestApplication {
         globalInfo.setOtherGraphParameters(mapPath);
         globalInfo.setOtherDemandDataFilePath(demandDataPath);
 
-        //setup the objects in globalinfo (GraphManager,DemandManager )
-        globalInfo.initGlobalManagerObjects();
-         
         //now loop through the tests
         ArrayList<String> testnames = new ArrayList<String>();
         for (JsonObject t : tests.tests) {

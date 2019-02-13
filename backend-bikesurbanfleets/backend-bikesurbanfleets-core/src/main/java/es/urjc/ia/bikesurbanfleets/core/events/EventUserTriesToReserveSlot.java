@@ -33,7 +33,6 @@ public class EventUserTriesToReserveSlot extends EventUser {
 
     @Override
     public Event execute() throws Exception {
-        user.setInstant(this.instant);
         debugEventLog("At enter the event");
 
         Reservation reservation = station.getSlotReservation(user, this.instant);

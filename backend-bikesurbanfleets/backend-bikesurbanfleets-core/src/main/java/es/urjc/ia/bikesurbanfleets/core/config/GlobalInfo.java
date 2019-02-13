@@ -1,18 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.core.config;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.common.demand.DemandManager;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManagerParameters;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManagerType;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
-import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import org.reflections.Reflections;
 
 public class GlobalInfo {
 
@@ -24,14 +13,21 @@ public class GlobalInfo {
 
     /**
      * if true, demand data will be loaded.
+     * if false or not present in the json description, demand data will not be used
      */
-    private boolean loadDemandData;
+    private boolean loadDemandData=false;
 
     /**
      * It is the time period during a reservation is valid or active.
      */
     private int reservationTime;
 
+    /**
+     * It is the start date and time of a simulation.
+     * if null, (and no date is specified in the jason file) 
+     * no date and time data is used
+     */
+    private String startDateTime=null;
     /**
      * It is the moment when the system stops creating entry points for the
      * simulation, so it ends.
@@ -46,7 +42,7 @@ public class GlobalInfo {
     /**
      * It is the seed which initializes the random instance.
      */
-    private long randomSeed;
+    private long randomSeed=23;
 
     /**
      * It delimits the simulation area.
@@ -74,10 +70,13 @@ public class GlobalInfo {
 
     private JsonObject graphParameters;
 
-    //the GraphManager for the simulation
-    private GraphManager graphManager;
-    //the DemandManager for teh simulation
-    private DemandManager demandManager;
+    public String getGraphManagerType() {
+        return graphManagerType;
+    }
+
+    public JsonObject getGraphParameters() {
+        return graphParameters;
+    }
 
     public int getReservationTime() {
         return reservationTime;
@@ -119,75 +118,22 @@ public class GlobalInfo {
         this.demandDataFilePath = demandDataFilePath;
     }
 
+    public boolean isLoadDemandData() {
+        return loadDemandData;
+    }
+
+    public String getDemandDataFilePath() {
+        return demandDataFilePath;
+    }
+
     public void setOtherGraphParameters(String mapPath) {
         // TODO make it flexible to different properties
         this.graphParameters = new JsonObject();
         graphParameters.addProperty("mapDir", mapPath);
     }
 
-    public GraphManager getGraphManager() {
-        return graphManager;
+    public String getStartDateTime() {
+        return startDateTime;
     }
-
-    public DemandManager getDemandManager() {
-        return demandManager;
-    }
-
-    //ints the graph manager and the demand manager
-    public void initGlobalManagerObjects() {
-        System.out.println("load GraphManager");
-        initGraphManager();
-        System.out.println("GraphManager loaded");
-        if (loadDemandData) {
-            System.out.println("load DemandManager");
-            initDemandManager();
-            System.out.println("DemandManager loaded");
-        }
-    }
-
-    private void initGraphManager() {
-        Gson gson = new Gson();
-
-        Reflections reflections = new Reflections();
-        Set<Class<?>> graphClasses = reflections.getTypesAnnotatedWith(GraphManagerType.class);
-
-        for (Class<?> graphClass : graphClasses) {
-            String graphTypeAnnotation = graphClass.getAnnotation(GraphManagerType.class).value();
-            if (graphTypeAnnotation.equals(graphManagerType)) {
-                List<Class<?>> innerClasses = Arrays.asList(graphClass.getClasses());
-                Class<?> graphParametersClass = null;
-
-                for (Class<?> innerClass : innerClasses) {
-                    if (innerClass.getAnnotation(GraphManagerParameters.class) != null) {
-                        graphParametersClass = innerClass;
-                        break;
-                    }
-                }
-
-                try {
-                    if (graphParametersClass != null) {
-                        Constructor constructor = graphClass.getConstructor(graphParametersClass, String.class);
-                        graphManager = (GraphManager) constructor.newInstance(gson.fromJson(graphParameters, graphParametersClass), TEMP_DIR);
-                    } else {
-                        Constructor constructor = graphClass.getConstructor();
-                        graphManager = (GraphManager) constructor.newInstance(TEMP_DIR);
-                    }
-                } catch (Exception e) {
-                    MessageGuiFormatter.showErrorsForGui("Error Creating Graph Manager");
-                    throw new RuntimeException("Error Creating Graph Manager");
-                }
-            }
-        }
-        if (graphManager == null) {
-            MessageGuiFormatter.showErrorsForGui("Error Creating Graph Manager");
-            throw new RuntimeException("Error Creating Graph Manager");
-        }
-
-    }
-
-    private void initDemandManager() {
-        demandManager = new DemandManager();
-        demandManager.ReadData(demandDataFilePath);
-    }
-
+    
 }

@@ -55,7 +55,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistance extends Recomm
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        demandManager=infraestructureManager.getDemandManager();
+ //       demandManager=infraestructureManager.getDemandManager();
   }
 
     @Override
@@ -100,7 +100,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistance extends Recomm
     public List<StationUtilityData> getStationUtility(List<Station> stations,GeoPoint point, boolean rentbike) {
         List<StationUtilityData> temp=new ArrayList<>();
         for (Station s:stations){
-            demandManager.getTakeDemandStation(s.getId(), DemandManager.Month.Oct, DemandManager.Day.Sat, hour)
+//            demandManager.getTakeDemandStation(s.getId(), DemandManager.Month.Oct, DemandManager.Day.Sat, hour)
             double idealAvailable=s.getCapacity()/2D;
             double utility=1-Math.pow((s.availableBikes()/idealAvailable)-1,2);
             double newutility;
