@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import java.util.List;
 
 import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
+import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfraestructureManager;
  
@@ -13,8 +14,8 @@ public class HolgerRecomenderRandom extends HolgerRecomender {
 
     private SimpleRandom rand;
 
-    public HolgerRecomenderRandom(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
-        super(recomenderdef, infraestructureManager);
+    public HolgerRecomenderRandom(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+        super(recomenderdef, ss);
         this.rand = new SimpleRandom(1);
     }
 

@@ -17,22 +17,63 @@ import java.util.HashMap;
  * @author holger
  */
 public class DemandManager {
+    
+    public enum Month {
+        Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dic, Summer, Winter, All;
+        public static Month toDemandMangerMonth(java.time.Month m){
+            switch (m){
+                case JANUARY: return Jan;
+                case FEBRUARY: return Feb;
+                case MARCH: return Mar;
+                case APRIL: return Apr;
+                case MAY: return May;
+                case JUNE: return Jun;
+                case JULY: return Jul;
+                case AUGUST: return Aug;
+                case SEPTEMBER: return Sep;
+                case OCTOBER: return Oct;
+                case NOVEMBER: return Nov;
+                case DECEMBER: return Dic;
+             }
+            return null;
+        }  
+    }
+
+    public enum Day {
+        Mon, Tue, Wed, Thu, Fri, Sat, Sun, Weekday, Weekend;
+        public static Day toDemandMangerDay(java.time.DayOfWeek d){
+            switch (d){
+                case MONDAY: return Mon;
+                case TUESDAY: return Tue;
+                case WEDNESDAY: return Wed;
+                case THURSDAY: return Thu;
+                case FRIDAY: return Fri;
+                case SATURDAY: return Sat;
+                case SUNDAY: return Sun;
+              }
+            return null;
+        }  
+    }
+
 
     public class DemandResult {
 
-        boolean hasdemand;
-        double demand;
+         boolean hasdemand;
+         double demand;
 
         DemandResult(boolean hasdemand, double demand) {
             this.hasdemand = hasdemand;
             this.demand = demand;
         }
+        public boolean hasDemand(){ return hasdemand;}
+        public double demand(){ return demand;}
     }
     Demand dem = new Demand();
 
     public DemandResult getTakeDemandStation(int stationID, Month month, Day day, int hour) {
         return dem.getDemandStation(stationID, month, day, hour, true);
     }
+
 
     public DemandResult getReturnDemandStation(int stationID, Month month, Day day, int hour) {
         return dem.getDemandStation(stationID, month, day, hour, false);
@@ -84,14 +125,6 @@ public class DemandManager {
         }
     }
 
-    public enum Month {
-        Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dic, Summer, Winter, All
-    }
-
-    public enum Day {
-        Mon, Tue, Wen, Thu, Fri, Sat, Sun, Weekday, Weekend
-    }
-
     class Demand {
 
         HashMap< Integer, StationData> stationMap;
@@ -110,7 +143,7 @@ public class DemandManager {
             } else if (day.equals("mar")) {
                 d = Day.Tue;
             } else if (day.equals("mie")) {
-                d = Day.Wen;
+                d = Day.Wed;
             } else if (day.equals("jue")) {
                 d = Day.Thu;
             } else if (day.equals("vie")) {

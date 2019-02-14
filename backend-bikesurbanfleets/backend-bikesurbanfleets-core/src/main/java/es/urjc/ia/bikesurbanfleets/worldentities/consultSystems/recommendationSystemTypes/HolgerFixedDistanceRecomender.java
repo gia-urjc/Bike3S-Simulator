@@ -1,6 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystemTypes;
 
 import com.google.gson.JsonObject;
+import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import java.util.ArrayList;
 
 import java.util.Comparator;
@@ -17,8 +18,8 @@ public class HolgerFixedDistanceRecomender  extends HolgerRecomender  {
         return (s1, s2) -> Double.compare(s1.distance, s2.distance);
     }
 
-   public HolgerFixedDistanceRecomender(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception{
-        super(recomenderdef, infraestructureManager);
+   public HolgerFixedDistanceRecomender(JsonObject recomenderdef, SimulationServices ss) throws Exception{
+        super(recomenderdef, ss);
     }
 
     protected void calculateFinalUtilities(List<StationData> stations, double stationutilityequilibrium, double closestsdistance) {

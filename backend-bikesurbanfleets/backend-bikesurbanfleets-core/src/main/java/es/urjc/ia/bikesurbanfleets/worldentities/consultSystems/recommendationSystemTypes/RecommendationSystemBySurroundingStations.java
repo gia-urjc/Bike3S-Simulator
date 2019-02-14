@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
@@ -26,8 +27,8 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
 
     private RecommendationParameters parameters;
 
-    public RecommendationSystemBySurroundingStations(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
-        super(infraestructureManager);
+    public RecommendationSystemBySurroundingStations(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+        super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
         //if no parameters are used this code just has to be commented
@@ -52,7 +53,9 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
         for (int i = 0; i < numStations; i++) {
             Station station = stations.get(i);
             double quality = qualityToRent(station, point);
-            qualities.add(new StationUtilityData(station, quality));
+            StationUtilityData sd=new StationUtilityData(station);
+            sd.setUtility(quality);
+            qualities.add(sd);
         }
         Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
         return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
@@ -71,7 +74,9 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
         for (int i = 0; i < numStations; i++) {
             Station station = stations.get(i);
             double quality = qualityToReturn(station, point);
-            qualities.add(new StationUtilityData(station, quality));
+            StationUtilityData sd=new StationUtilityData(station);
+            sd.setUtility(quality);
+            qualities.add(sd);
         }
         Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
         return qualities.stream().sorted(byQuality).map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());

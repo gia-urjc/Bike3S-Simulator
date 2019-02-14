@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
@@ -92,8 +93,8 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 
     private RecommendationParameters parameters;
 
-    public RecommendationSystemBySurroundingStationsWithComplexIncentives(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
-        super(infraestructureManager);
+    public RecommendationSystemBySurroundingStationsWithComplexIncentives(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+        super(ss);
         incentiveManager = new IncentiveManagerSurroundingStations(); 
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -118,12 +119,15 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
         for (int i = 0; i < stations.size(); i++) {
             Station station = stations.get(i);
             double quality = incentiveManager.qualityToRent(allStations, station);
-            qualities.add(new StationUtilityData(station, quality));
+            StationUtilityData sd=new StationUtilityData(station);
+            sd.setUtility(quality);
+            qualities.add(sd);
         }
 
         Station nearestStation = nearestStationToRent(stations, point);
         double nearestStationQuality = incentiveManager.qualityToRent(stations, nearestStation);
-        StationUtilityData stationQuality = new StationUtilityData(nearestStation, nearestStationQuality);
+        StationUtilityData stationQuality=new StationUtilityData(nearestStation);
+        stationQuality.setUtility(nearestStationQuality);
 
         Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
         return qualities.stream().sorted(byQuality).map(sq -> {
@@ -147,12 +151,15 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
         for (int i = 0; i < stations.size(); i++) {
             Station station = stations.get(i);
             double quality = incentiveManager.qualityToReturn(allStations, station);
-            qualities.add(new StationUtilityData(station, quality));
+            StationUtilityData sd=new StationUtilityData(station);
+            sd.setUtility(quality);
+            qualities.add(sd);
         }
 
         Station nearestStation = nearestStationToReturn(stations, point);
         double nearestStationQuality = incentiveManager.qualityToReturn(stations, nearestStation);
-        StationUtilityData stationQuality = new StationUtilityData(nearestStation, nearestStationQuality);
+        StationUtilityData stationQuality=new StationUtilityData(nearestStation);
+        stationQuality.setUtility(nearestStationQuality);
 
         Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
         return qualities.stream().sorted(byQuality).map(sq -> {

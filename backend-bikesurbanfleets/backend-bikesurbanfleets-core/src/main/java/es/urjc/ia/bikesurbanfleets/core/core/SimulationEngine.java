@@ -65,27 +65,32 @@ public final class SimulationEngine {
         //2.   set up stations (with bikes)
         List<Station> stations = setUpStations(stationsInfo);
 
-        //3.   set up general services for the simulation and the simulationdate and time values
-        SimulationServices services = new SimulationServices(globalInfo, stations);
+        //3.   set up general services for the simulation and initiualize them
+        SimulationServices services = new SimulationServices();
+        services.initSimulationServices(globalInfo, stations);
+        
+        //4. set the simulation date and time
         SimulationDateTime.intSimulationDateTime(globalInfo.getStartDateTime());
  
-        //4. get all initial entities and set up the history
+        //5. get all initial entities and set up the history
         List<Entity> initialentities = new ArrayList<Entity>();
         initialentities.addAll(services.getInfrastructureManager().consultBikes());
         initialentities.addAll(services.getInfrastructureManager().consultStations());
         History.init(globalInfo.getHistoryOutputPath(), GlobalInfo.TIMEENTRIES_PER_HISTORYFILE,
                 globalInfo.getBoundingBox(), globalInfo.getTotalSimulationTime(), initialentities);
 
-        //5.   generate the initial events (userappears)
+        //6.   generate the initial events (userappears)
         List<EventUserAppears> userevents=getUserAppearanceEvents(usersInfo, services, globalInfo.getRandomSeed());
         eventsQueue = new PriorityQueue<>(userevents.size()+20,eventComparatorByTime());
         eventsQueue.addAll(userevents);
 
+        //7.
         //******************************************
         //do simulation
         //******************************************
         this.run();
 
+        //8.
         //******************************************
         //close everything afterwards
         //******************************************

@@ -15,6 +15,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSy
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.common.log.Debug;
+import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 
 @RecommendationSystemType("HOLGERRECOMENDER")
 public class HolgerRecomender extends RecommendationSystem {
@@ -44,8 +45,8 @@ public class HolgerRecomender extends RecommendationSystem {
 
     RecommendationParameters parameters;
 
-    public HolgerRecomender(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
-        super(infraestructureManager);
+    public HolgerRecomender(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+        super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
         //if no parameters are used this code just has to be commented

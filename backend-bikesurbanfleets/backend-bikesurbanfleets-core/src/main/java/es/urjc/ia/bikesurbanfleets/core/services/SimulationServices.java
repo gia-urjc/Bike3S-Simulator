@@ -35,23 +35,22 @@ public class SimulationServices {
     
     private Gson gson = new Gson();
  
-    public SimulationServices(GlobalInfo globalInfo, List<Station> stations)
-            throws IOException {
-
+    public SimulationServices(){    }
+    
+    public void initSimulationServices(GlobalInfo globalInfo, List<Station> stations) throws IOException{
         //setup the infrastructureManager
         this.infrastructureManager = new InfraestructureManager(stations);
         //setup the information system
         this.informationSystem = new InformationSystem(this.infrastructureManager);
-
+        //setup the demandManager
+        this.demandManager = initDemandManager(globalInfo.isLoadDemandData(), globalInfo.getDemandDataFilePath());
         //setup the information system
         Reflections reflections = new Reflections();
-        //setup the recomendation system
-        this.recommendationSystem = initRecommendationSystem(reflections, globalInfo.getRecommendationSystemTypeJsonDescription());
         //setup the graph manager
         this.graphManager = initGraphManager(reflections, globalInfo.getGraphManagerType(), 
                 globalInfo.getGraphParameters(), GlobalInfo.TEMP_DIR);
-        //setup the demandManager
-        this.demandManager = initDemandManager(globalInfo.isLoadDemandData(), globalInfo.getDemandDataFilePath());
+        //setup the recomendation system
+        this.recommendationSystem = initRecommendationSystem(reflections, globalInfo.getRecommendationSystemTypeJsonDescription());
         checkService();
     }
     
@@ -114,8 +113,8 @@ public class SimulationServices {
             if (recomTypeAnnotation.equals(type)) {
 
                 try {
-                    Constructor constructor = recommendationSystemClass.getConstructor(JsonObject.class, InfraestructureManager.class);
-                    RecommendationSystem recomSys = (RecommendationSystem) constructor.newInstance(recsystemdef, this.infrastructureManager);
+                    Constructor constructor = recommendationSystemClass.getConstructor(JsonObject.class, SimulationServices.class);
+                    RecommendationSystem recomSys = (RecommendationSystem) constructor.newInstance(recsystemdef, this);
                     return recomSys;
                 } catch (Exception e) {
                     MessageGuiFormatter.showErrorsForGui("Error Creating Recommendation System");
@@ -127,23 +126,22 @@ public class SimulationServices {
     }
 
     public InfraestructureManager getInfrastructureManager() throws IllegalStateException {
-        checkService();
         return this.infrastructureManager;
     }
 
     public RecommendationSystem getRecommendationSystem() {
-        checkService();
         return this.recommendationSystem;
     }
 
     public InformationSystem getInformationSystem() {
-        checkService();
         return this.informationSystem;
     }
 
     public GraphManager getGraphManager() {
-        checkService();
         return graphManager;
+    }
+    public DemandManager getDemandManager() {
+        return demandManager;
     }
 
     private void checkService() throws IllegalStateException {

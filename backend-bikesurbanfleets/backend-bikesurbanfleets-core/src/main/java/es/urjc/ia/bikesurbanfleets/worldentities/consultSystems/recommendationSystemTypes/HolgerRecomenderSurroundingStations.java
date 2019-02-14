@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.common.log.Debug;
+import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 
 /**
  *
@@ -53,8 +54,8 @@ public class HolgerRecomenderSurroundingStations extends RecommendationSystem {
 
     private RecommendationParameters parameters;
 
-    public HolgerRecomenderSurroundingStations(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
-        super(infraestructureManager);
+    public HolgerRecomenderSurroundingStations(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+        super(ss);
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
     }

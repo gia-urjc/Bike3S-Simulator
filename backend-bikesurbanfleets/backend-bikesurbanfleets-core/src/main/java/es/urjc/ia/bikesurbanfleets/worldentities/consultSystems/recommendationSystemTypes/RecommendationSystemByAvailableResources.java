@@ -3,6 +3,7 @@ package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationS
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
@@ -40,8 +41,8 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
 
     private RecommendationParameters parameters;
 
-    public RecommendationSystemByAvailableResources(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
-        super(infraestructureManager);
+    public RecommendationSystemByAvailableResources(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+        super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
         //if no parameters are used this code just has to be commented

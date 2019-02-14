@@ -3,6 +3,7 @@ package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationS
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
@@ -41,8 +42,8 @@ public class RecommendationSystemLocalUtilitiesWithDistance extends Recommendati
 
     private RecommendationParameters parameters;
 
-    public RecommendationSystemLocalUtilitiesWithDistance(JsonObject recomenderdef, InfraestructureManager infraestructureManager) throws Exception {
-        super(infraestructureManager);
+    public RecommendationSystemLocalUtilitiesWithDistance(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+        super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
         //if no parameters are used this code just has to be commented
@@ -65,8 +66,13 @@ public class RecommendationSystemLocalUtilitiesWithDistance extends Recommendati
             List<StationUtilityData> su=getStationUtility(stations,point, true);
             Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp=su.stream().sorted(DescUtility).collect(Collectors.toList());
-             temp.forEach(s -> System.out.println("Station (take)" + s.getStation().getId() + ": " + s.getStation().availableBikes() + " " 
-                    + s.getStation().getCapacity() + " " + s.getUtility() + " " + s.getDistance()));
+            System.out.println();
+            temp.forEach(s -> System.out.println("Station (take)" + s.getStation().getId() + ": "
+                    + s.getStation().availableBikes() + " "
+                    + s.getStation().getCapacity() + " " 
+                    + s.getOptimalocupation() + " "
+                    + s.getDistance() + " "
+                    + s.getUtility() ));
             result= temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } else {
             result=new ArrayList<>();
@@ -83,8 +89,13 @@ public class RecommendationSystemLocalUtilitiesWithDistance extends Recommendati
             List<StationUtilityData> su=getStationUtility(stations,point, false);
             Comparator<StationUtilityData> byDescUtilityIncrement = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp=su.stream().sorted(byDescUtilityIncrement).collect(Collectors.toList());
-            temp.forEach(s -> System.out.println("Station (return)" + s.getStation().getId() + ": " + s.getStation().availableBikes() + " " 
-                    + s.getStation().getCapacity() + " " + s.getUtility() + " " + s.getDistance()));
+            System.out.println();
+            temp.forEach(s -> System.out.println("Station (return)" + s.getStation().getId() + ": "
+                    + s.getStation().availableBikes() + " "
+                    + s.getStation().getCapacity() + " " 
+                    + s.getOptimalocupation() + " "
+                    + s.getDistance() + " "
+                    + s.getUtility() ));
             result= temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } else { //if no best station has been found in the max distance
            Comparator<Station> byDistance = StationComparator.byDistance(point);
@@ -113,8 +124,11 @@ public class RecommendationSystemLocalUtilitiesWithDistance extends Recommendati
             double maxinc=(4D*(mincap-1))/Math.pow(mincap,2);
             double auxnormutil=((newutility-utility+maxinc)/(2*maxinc));
             double globalutility= dist/auxnormutil; 
-      */      StationUtilityData sd=new StationUtilityData(s,globalutility);
+      */      
+            StationUtilityData sd=new StationUtilityData(s);
+            sd.setUtility(globalutility);
             sd.setDistance(dist);
+            sd.setOptimalocupation(idealAvailable);
             temp.add(sd);
         }
         return temp;

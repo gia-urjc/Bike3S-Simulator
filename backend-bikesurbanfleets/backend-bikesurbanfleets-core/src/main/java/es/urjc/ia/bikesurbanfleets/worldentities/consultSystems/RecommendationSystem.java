@@ -1,9 +1,11 @@
 package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems;
 
+import es.urjc.ia.bikesurbanfleets.common.demand.DemandManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystemTypes.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfraestructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
@@ -14,7 +16,8 @@ public abstract class RecommendationSystem {
      * It provides information about the infraestructure state.
      */
     protected InfraestructureManager infraestructureManager;
-
+    protected DemandManager demandManager;
+    
     /**
      * It filters stations which have not available bikes.
      *
@@ -35,8 +38,9 @@ public abstract class RecommendationSystem {
                 .collect(Collectors.toList());
     }
 
-    public RecommendationSystem(InfraestructureManager infraestructureManager) {
-        this.infraestructureManager = infraestructureManager;
+    public RecommendationSystem(SimulationServices simulationServices) {
+        this.infraestructureManager = simulationServices.getInfrastructureManager();
+        this.demandManager=simulationServices.getDemandManager();
     }
 
     public abstract List<Recommendation> recommendStationToRentBike(GeoPoint point);
