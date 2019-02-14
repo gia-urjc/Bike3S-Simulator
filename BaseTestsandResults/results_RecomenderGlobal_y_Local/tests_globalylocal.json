@@ -1,0 +1,33 @@
+{  "tests": [
+    { "recommendationSystemType": {
+        "typeName": "GLOBAL_UTILITY_W_DISTANCE",
+        "parameters": {
+            "maxDistanceRecommendation": 600,
+	    "wheightDistanceStationUtility": 0.3
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_OBEDIENT",
+        "parameters": {
+             "maxDistanceToRentBike" : 600           
+        }
+      }
+    }
+,
+    { "recommendationSystemType": {
+        "typeName": "LOCAL_UTILITY_W_DISTANCE",
+        "parameters": {
+            "maxDistanceRecommendation": 600,
+	    "wheightDistanceStationUtility": 0.3
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_OBEDIENT",
+        "parameters": {
+             "maxDistanceToRentBike" : 600           
+        }
+      }
+    }
+
+  ]
+}

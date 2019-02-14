@@ -1,5 +1,5 @@
 {
-	"reservationTime": 500,
+    "reservationTime": 500,
     "totalSimulationTime": 80000,
     "debugMode": true,
     "randomSeed": 10,
@@ -13,9 +13,13 @@
             "longitude": -3.69826
         }
     },
+    "loadDemandData": true,
+    "startDateTime": "2017-10-05T00:00:00",
+
     "recommendationSystemType": {
-        "typeName": "HOLGERRECOMENDER",
+        "typeName": "AVAILABLE_RESOURCES",
         "parameters": {
+            "maxDistanceRecommendation": 600
         }
     },
     "graphManagerType": "GRAPH_HOPPER"

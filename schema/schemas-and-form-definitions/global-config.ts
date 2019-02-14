@@ -14,7 +14,9 @@ export const GlobalConfig = new JsonSchema(options, sObject({
         northWest: GeoPoint,
         southEast: GeoPoint,
     }).require.all().restrict(),
-    debugMode: sBoolean()
+    debugMode: sBoolean(),
+    loadDemandData: sBoolean(),
+    startDateTime: sString
 }).require('totalSimulationTime', 'reservationTime', 'boundingBox', 'graphManagerType'));
 
 export const layout = 
@@ -24,4 +26,6 @@ export const layout =
     {key: "randomSeed", placeholder: "Random Seed"},
     {key: "graphManagerType", placeholder: "Type of graph Manager"},
     {key: "debugMode", placeholder: "If checked, log files will be generated"}
+    {key: "loadDemandData", placeholder: "Specifies whether or not demand data should be loaded (false if not specified)"}
+    {key: "startDateTime", placeholder: "Specifies the day and start time of the simulation (will not be used if not set)"}
 ];
