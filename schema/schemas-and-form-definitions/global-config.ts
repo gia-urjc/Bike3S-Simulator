@@ -25,7 +25,7 @@ export const layout =
     {key: "reservationTime", placeholder: "Maximum time for reserves in seconds."},
     {key: "randomSeed", placeholder: "Random Seed"},
     {key: "graphManagerType", placeholder: "Type of graph Manager"},
-    {key: "debugMode", placeholder: "If checked, log files will be generated"}
-    {key: "loadDemandData", placeholder: "Specifies whether or not demand data should be loaded (false if not specified)"}
+    {key: "debugMode", placeholder: "If checked, log files will be generated"},
+    {key: "loadDemandData", placeholder: "Specifies whether or not demand data should be loaded (false if not specified)"},
     {key: "startDateTime", placeholder: "Specifies the day and start time of the simulation (will not be used if not set)"}
 ];
