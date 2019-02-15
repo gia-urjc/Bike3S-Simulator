@@ -370,7 +370,8 @@ public class DemandManager {
 
     public static void main(String[] args) throws Exception {
 
-        String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
+//        String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
+        String projectDir = "/Users/albertofernandez/git/Bike3S-Simulator";
         String demandDataPath = projectDir + "/../demandDataMadrid0817_0918.csv";
         DemandManager demandManager = new DemandManager();
         demandManager.ReadData(demandDataPath);
