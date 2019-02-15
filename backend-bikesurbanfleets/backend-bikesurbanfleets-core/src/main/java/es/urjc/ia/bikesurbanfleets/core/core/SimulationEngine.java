@@ -65,10 +65,14 @@ public final class SimulationEngine {
         //2.   set up stations (with bikes)
         List<Station> stations = setUpStations(stationsInfo);
 
-        //3.   set up general services for the simulation
-        SimulationServices services = new SimulationServices(globalInfo, stations);
-
-        //4. get all initial entities and set up the history
+        //3.   set up general services for the simulation and initiualize them
+        SimulationServices services = new SimulationServices();
+        services.initSimulationServices(globalInfo, stations);
+        
+        //4. set the simulation date and time
+        SimulationDateTime.intSimulationDateTime(globalInfo.getStartDateTime());
+ 
+        //5. get all initial entities and set up the history
         List<Entity> initialentities = new ArrayList<Entity>();
         initialentities.addAll(services.getInfrastructureManager().consultBikes());
         initialentities.addAll(services.getInfrastructureManager().consultStations());

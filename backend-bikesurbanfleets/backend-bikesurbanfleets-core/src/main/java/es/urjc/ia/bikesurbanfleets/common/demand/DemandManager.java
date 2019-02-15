@@ -17,6 +17,43 @@ import java.util.HashMap;
  * @author holger
  */
 public class DemandManager {
+    
+    public enum Month {
+        Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dic, Summer, Winter, All;
+        public static Month toDemandMangerMonth(java.time.Month m){
+            switch (m){
+                case JANUARY: return Jan;
+                case FEBRUARY: return Feb;
+                case MARCH: return Mar;
+                case APRIL: return Apr;
+                case MAY: return May;
+                case JUNE: return Jun;
+                case JULY: return Jul;
+                case AUGUST: return Aug;
+                case SEPTEMBER: return Sep;
+                case OCTOBER: return Oct;
+                case NOVEMBER: return Nov;
+                case DECEMBER: return Dic;
+             }
+            return null;
+        }  
+    }
+
+    public enum Day {
+        Mon, Tue, Wed, Thu, Fri, Sat, Sun, Weekday, Weekend;
+        public static Day toDemandMangerDay(java.time.DayOfWeek d){
+            switch (d){
+                case MONDAY: return Mon;
+                case TUESDAY: return Tue;
+                case WEDNESDAY: return Wed;
+                case THURSDAY: return Thu;
+                case FRIDAY: return Fri;
+                case SATURDAY: return Sat;
+                case SUNDAY: return Sun;
+              }
+            return null;
+        }  
+    }
 
 
     public class DemandResult {
@@ -367,8 +404,7 @@ public class DemandManager {
 
     public static void main(String[] args) throws Exception {
 
-//        String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
-        String projectDir = "/Users/albertofernandez/git/Bike3S-Simulator";
+        String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
         String demandDataPath = projectDir + "/../demandDataMadrid0817_0918.csv";
         DemandManager demandManager = new DemandManager();
         demandManager.ReadData(demandDataPath);
