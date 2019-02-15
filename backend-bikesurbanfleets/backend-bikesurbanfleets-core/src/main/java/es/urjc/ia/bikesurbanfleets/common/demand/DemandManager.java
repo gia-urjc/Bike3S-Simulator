@@ -18,21 +18,25 @@ import java.util.HashMap;
  */
 public class DemandManager {
 
+
     public class DemandResult {
 
-        boolean hasdemand;
-        double demand;
+         boolean hasdemand;
+         double demand;
 
         DemandResult(boolean hasdemand, double demand) {
             this.hasdemand = hasdemand;
             this.demand = demand;
         }
+        public boolean hasDemand(){ return hasdemand;}
+        public double demand(){ return demand;}
     }
     Demand dem = new Demand();
 
     public DemandResult getTakeDemandStation(int stationID, Month month, Day day, int hour) {
         return dem.getDemandStation(stationID, month, day, hour, true);
     }
+
 
     public DemandResult getReturnDemandStation(int stationID, Month month, Day day, int hour) {
         return dem.getDemandStation(stationID, month, day, hour, false);
@@ -69,26 +73,19 @@ public class DemandManager {
                 int takeNum = Integer.parseInt(line[5]);
                 int returnNum = Integer.parseInt(line[6]);
                 String dayOfWeek = line[7];
-        //        if (station <11) {
-                 //   System.out.println();
-                 //   for (String s : line) {
-                 //       System.out.print(s + " ");
-                 //   }
-                  dem.add(station, month, dayOfWeek, hour, takeNum, returnNum);
+       /*         if (day==5 && month==10) {
+                    System.out.println();
+                    for (String s : line) {
+                        System.out.print(s + " ");
+                    }
+                }
+        */           dem.add(station, month, dayOfWeek, hour, takeNum, returnNum);
           //                     }
             }
             dem.setGlobalDemand();
         } catch (Exception ex) {
             throw new RuntimeException("error reading demand data");
         }
-    }
-
-    public enum Month {
-        Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dic, Summer, Winter, All
-    }
-
-    public enum Day {
-        Mon, Tue, Wen, Thu, Fri, Sat, Sun, Weekday, Weekend
     }
 
     class Demand {
@@ -109,7 +106,7 @@ public class DemandManager {
             } else if (day.equals("mar")) {
                 d = Day.Tue;
             } else if (day.equals("mie")) {
-                d = Day.Wen;
+                d = Day.Wed;
             } else if (day.equals("jue")) {
                 d = Day.Thu;
             } else if (day.equals("vie")) {
@@ -378,7 +375,31 @@ public class DemandManager {
         Month[] m = Month.values();
         Day[] d = Day.values();
         System.out.println("!!!!!Station demand:");
-        int stationsum = 0;
+        
+        Month mm=Month.Oct;
+        Day dd= Day.Thu;
+             for (int i = 0; i < 24; i++) {
+                    for (Integer si : demandManager.dem.stationMap.keySet()) {
+                        DemandResult take = demandManager.getTakeDemandStation(si, mm,dd, i);
+                        DemandResult ret = demandManager.getReturnDemandStation(si, mm,dd, i);
+                        if (!take.hasdemand || !ret.hasdemand) {
+                            System.out.println(
+                                    "Station : " + si + " : demand Month: " + mm + " : day: " + dd + " : hour: " + i
+                                    + " : take: not avail."
+                                    + " : return: not avail."
+                                    + " : entries: not avail.");
+
+                        } else {
+                            System.out.println(
+                                    "Station : " + si + " : demand Month: " + mm + " : day: " + dd + " : hour: " + i
+                                    + " : take: " + take.demand
+                                    + " : return: " + ret.demand
+                                    + " : entries: " + demandManager.dem.getEntries(si, mm, dd, i));
+                        }
+                    }
+                }
+        
+  /*      int stationsum = 0;
         for (Month mm : m) {
             for (Day dd : d) {
                 for (int i = 0; i < 24; i++) {
@@ -427,5 +448,7 @@ public class DemandManager {
             }
 
         }
+*/
     }
+
 }

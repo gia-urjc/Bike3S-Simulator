@@ -20,6 +20,8 @@ public class GeoRoute {
      */
     @Expose
     private String encodedPoints;
+    
+    private List<GeoPoint> routePoints;
 
     /**
      * This is the distance of the entire route.
@@ -36,7 +38,8 @@ public class GeoRoute {
             throw new GeoRouteCreationException("Routes should have more than two points");
         } else {
             this.encodedPoints=encode(geoPointList);
-            this.totalDistance=calculateDistance(encodedPoints);
+            this.routePoints=geoPointList;
+            this.totalDistance=calculateDistance();
        }
     }
 
@@ -48,8 +51,8 @@ public class GeoRoute {
      * It calculates the distances of the different sections of the route and
      * its total distance.
      */
-    private double calculateDistance(String pointString) {
-    	List<GeoPoint> points = decode(pointString);
+    private double calculateDistance() {
+    	List<GeoPoint> points = routePoints;
         Double totalDistance = 0.0;
         for (int i = 0; i < points.size() - 1; i++) {
             GeoPoint currentPoint = points.get(i);
@@ -72,7 +75,7 @@ public class GeoRoute {
      */
     public GeoPoint calculatePositionByTimeAndVelocity(double finalTime, double velocity) throws GeoRouteException, GeoRouteCreationException {
         //get the points as list
-        List<GeoPoint> points = decode(encodedPoints);
+        List<GeoPoint> points = routePoints;
          
         double totalDistance = 0.0;
         double currentTime = 0.0;   // time the user has been travelling through the route to the next inmediate known geographical point when reservation has expired
@@ -112,8 +115,8 @@ public class GeoRoute {
     }
 
     public GeoRoute concatRoute(GeoRoute route) throws GeoRouteCreationException {
-        List<GeoPoint> points1 = decode(encodedPoints);
-        List<GeoPoint> points2=decode(route.encodedPoints);
+        List<GeoPoint> points1 = routePoints;
+        List<GeoPoint> points2=route.routePoints;
         List<GeoPoint> newPoints = new ArrayList<>();
         points1.stream().forEach(point -> newPoints.add(point));
         points2.stream().forEach(point -> newPoints.add(point));
@@ -148,7 +151,7 @@ public class GeoRoute {
 
     @Override
     public String toString() {
-        List<GeoPoint> points=decode(encodedPoints);
+        List<GeoPoint> points=routePoints;
         String result = "Points: \n";
         for (GeoPoint p : points) {
             result += p.getLatitude() + "," + p.getLongitude() + "\n";

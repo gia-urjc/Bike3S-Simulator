@@ -48,7 +48,6 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
 
     @Override
     public Event execute() throws Exception {
-        user.setInstant(this.instant);
         user.setPosition(station.getPosition());
         debugEventLog("At enter the event");
         boolean bike = false;

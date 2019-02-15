@@ -30,7 +30,6 @@ public class EventSlotReservationTimeout extends EventUser {
 
     @Override
     public Event execute() throws Exception {
-        user.setInstant(this.instant);
         user.setPosition(positionTimeOut);
         debugEventLog("At enter the event");
         station.cancelSlotReservationByTimeout(reservation, instant);
