@@ -15,7 +15,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSy
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystems.incentives.Incentive;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystems.incentives.Money;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfraestructureManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 
 @RecommendationSystemType("SURROUNDING_STATIONS_COMPLEX_INCENTIVES")
@@ -110,11 +110,11 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
-        List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToRentBike(infrastructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                 .collect(Collectors.toList());
         List<StationUtilityData> qualities = new ArrayList<>();
-        List<Station> allStations = validStationsToRentBike(infraestructureManager.consultStations());
+        List<Station> allStations = validStationsToRentBike(infrastructureManager.consultStations());
 
         for (int i = 0; i < stations.size(); i++) {
             Station station = stations.get(i);
@@ -142,11 +142,11 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
 
     @Override
     public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
-        List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                 .collect(Collectors.toList());
         List<StationUtilityData> qualities = new ArrayList<>();
-        List<Station> allStations = validStationsToReturnBike(infraestructureManager.consultStations());
+        List<Station> allStations = validStationsToReturnBike(infrastructureManager.consultStations());
 
         for (int i = 0; i < stations.size(); i++) {
             Station station = stations.get(i);

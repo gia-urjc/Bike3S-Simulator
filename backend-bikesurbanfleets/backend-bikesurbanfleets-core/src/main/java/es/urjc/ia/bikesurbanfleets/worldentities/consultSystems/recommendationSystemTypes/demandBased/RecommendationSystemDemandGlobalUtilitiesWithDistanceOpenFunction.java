@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("LOCAL_UTILITY_W_DISTANCE_DEMAND_OPENFUNCTION")
-public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction extends RecommendationSystem {
+@RecommendationSystemType("GLOBAL_UTILITY_W_DISTANCE_DEMAND_OPENFUNCTION")
+public class RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -48,7 +48,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
 
     private RecommendationParameters parameters;
 
-    public RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -113,6 +113,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
     }
 
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint point, boolean rentbike) {
+        InfrastructureManager.UsageData ud = infrastructureManager.getCurrentUsagedata();
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
 
@@ -127,10 +128,13 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
             } else {//return bike 
                 newutility = getUtility(s, +1, idealbikes, maxidealbikes);
             }
+            double normedUtilityDiff = (newutility - utility)
+                    * (idealbikes/ ud.currentGlobalBikeDemand) * ud.numberStations;
+
             double dist = point.distanceTo(s.getPosition());
             double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
-                    + (1 - parameters.wheightDistanceStationUtility) * (newutility - utility);
+                    + (1 - parameters.wheightDistanceStationUtility) * normedUtilityDiff;
 
             /*       double mincap=(double)infraestructureManager.getMinStationCapacity();
             double maxinc=(4D*(mincap-1))/Math.pow(mincap,2);

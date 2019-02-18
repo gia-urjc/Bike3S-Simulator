@@ -13,7 +13,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfraestructureManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 
 @RecommendationSystemType("SURROUNDING_STATIONS")
@@ -44,7 +44,7 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
         Comparator<Station> byBikesRatio = StationComparator.byBikesCapacityRatio();
-        List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToRentBike(infrastructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                 .sorted(byBikesRatio).collect(Collectors.toList());
         List<StationUtilityData> qualities = new ArrayList<>();
@@ -65,7 +65,7 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
     @Override
     public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
         Comparator<Station> bySlotsRatio = StationComparator.bySlotsCapacityRatio();
-        List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
                 .sorted(bySlotsRatio).collect(Collectors.toList());
         List<StationUtilityData> qualities = new ArrayList<>();
@@ -84,7 +84,7 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
 
     private double qualityToRent(Station station, GeoPoint point) {
         double summation = 0;
-        List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToRentBike(infrastructureManager.consultStations()).stream()
                 .filter(s -> s.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
         if (!stations.isEmpty()) {
             double factor, multiplication;
@@ -99,7 +99,7 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
 
     private double qualityToReturn(Station station, GeoPoint point) {
         double summation = 0;
-        List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream()
                 .filter(s -> s.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
         if (!stations.isEmpty()) {
             double factor, multiplication;
