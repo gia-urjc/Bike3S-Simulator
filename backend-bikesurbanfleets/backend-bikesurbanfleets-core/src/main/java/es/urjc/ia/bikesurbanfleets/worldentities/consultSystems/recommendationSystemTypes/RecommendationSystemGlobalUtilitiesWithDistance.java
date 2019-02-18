@@ -8,7 +8,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfraestructureManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
         List<Recommendation> result;
-        List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToRentBike(infrastructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
@@ -81,8 +81,8 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
     }
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
-        List<Recommendation> result;
-        List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream().
+        List<Recommendation> result=new ArrayList<>();;
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().
                 filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
@@ -97,11 +97,7 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
                     + s.getDistance() + " "
                     + s.getUtility() ));
             result= temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
-        } else { //if no best station has been found in the max distance
-           Comparator<Station> byDistance = StationComparator.byDistance(point);
-           List<Station> temp = validStationsToReturnBike(infraestructureManager.consultStations()).stream().sorted(byDistance).collect(Collectors.toList());
-           result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());           
-        }
+        } 
         return result;
     }
     
@@ -117,7 +113,7 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
             } else {//return bike 
                 newutility=1-Math.pow(((s.availableBikes()+1)/idealAvailable)-1,2);
             }
-            double normedUtilityDiff=(newutility-utility)*((double)s.getCapacity()/(double)infraestructureManager.getMaxStationCapacity());
+            double normedUtilityDiff=(newutility-utility)*((double)s.getCapacity()/(double)infrastructureManager.getMaxStationCapacity());
             double dist=point.distanceTo(s.getPosition());
             double norm_distance=1-normatizeTo01(dist,0,parameters.maxDistanceRecommendation);
             double globalutility=parameters.wheightDistanceStationUtility*norm_distance+

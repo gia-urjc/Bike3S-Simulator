@@ -28,7 +28,7 @@ public class UserObedientReservation extends UserUninformedReservation {
     protected Station determineStationToRentBike() {
         
         Station destination = null;
-        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition()).stream()
+        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToRentBike(this.getPosition()).stream()
                 .filter(recomendation -> recomendation.getStation().getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0).getStation();
@@ -40,7 +40,7 @@ public class UserObedientReservation extends UserUninformedReservation {
     protected Station determineStationToReturnBike() {
         Station destination = null;
                
-        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace);
+        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToReturnBike(destinationPlace);
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0).getStation();
         } else {

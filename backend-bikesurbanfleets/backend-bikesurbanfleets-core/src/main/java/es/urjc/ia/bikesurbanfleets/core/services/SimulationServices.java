@@ -12,7 +12,7 @@ import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfraestructureManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import org.reflections.Reflections;
 
@@ -27,24 +27,23 @@ public class SimulationServices {
     private final String INIT_EXCEPTION_MESSAGE = "Simulation Service is not correctly started."
             + " You should init all the services";
 
-    private InfraestructureManager infrastructureManager;
+    private InfrastructureManager infrastructureManager;
     private RecommendationSystem recommendationSystem;
     private InformationSystem informationSystem;
     private GraphManager graphManager;
-    private DemandManager demandManager;
     
     private Gson gson = new Gson();
  
     public SimulationServices(){    }
     
     public void initSimulationServices(GlobalInfo globalInfo, List<Station> stations) throws IOException{
+        //setup the demandManager
+        DemandManager demandManager = initDemandManager(globalInfo.isLoadDemandData(), globalInfo.getDemandDataFilePath());
         //setup the infrastructureManager
-        this.infrastructureManager = new InfraestructureManager(stations);
+        this.infrastructureManager = new InfrastructureManager(stations, demandManager);
         //setup the information system
         this.informationSystem = new InformationSystem(this.infrastructureManager);
-        //setup the demandManager
-        this.demandManager = initDemandManager(globalInfo.isLoadDemandData(), globalInfo.getDemandDataFilePath());
-        //setup the information system
+        
         Reflections reflections = new Reflections();
         //setup the graph manager
         this.graphManager = initGraphManager(reflections, globalInfo.getGraphManagerType(), 
@@ -125,7 +124,7 @@ public class SimulationServices {
         return null;
     }
 
-    public InfraestructureManager getInfrastructureManager() throws IllegalStateException {
+    public InfrastructureManager getInfrastructureManager() throws IllegalStateException {
         return this.infrastructureManager;
     }
 
@@ -139,9 +138,6 @@ public class SimulationServices {
 
     public GraphManager getGraphManager() {
         return graphManager;
-    }
-    public DemandManager getDemandManager() {
-        return demandManager;
     }
 
     private void checkService() throws IllegalStateException {

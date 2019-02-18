@@ -15,7 +15,6 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSy
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import java.time.LocalDateTime;
-import java.time.Month;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,8 +30,8 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("LOCAL_UTILITY_W_DISTANCE_DEMAND_OPENFUNCTION")
-public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction extends RecommendationSystem {
+@RecommendationSystemType("GLOBAL_UTILITY_W_DISTANCE_DEMAND_CLOSEDFUNCTION")
+public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -48,7 +47,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
 
     private RecommendationParameters parameters;
 
-    public RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -77,9 +76,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
             temp.forEach(s -> System.out.println("Station (take)" + s.getStation().getId() + ": "
                     + s.getStation().availableBikes() + " "
                     + s.getStation().getCapacity() + " "
-                    + s.getMinoptimalocupation() + " "
                     + s.getOptimalocupation() + " "
-                    + s.getMaxopimalocupation() + " "
                     + s.getDistance() + " "
                     + s.getUtility()));
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
@@ -102,9 +99,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
             temp.forEach(s -> System.out.println("Station (return)" + s.getStation().getId() + ": "
                     + s.getStation().availableBikes() + " "
                     + s.getStation().getCapacity() + " "
-                    + s.getMinoptimalocupation() + " "
                     + s.getOptimalocupation() + " "
-                    + s.getMaxopimalocupation() + " "
                     + s.getDistance() + " "
                     + s.getUtility()));
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
@@ -113,12 +108,14 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
     }
 
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint point, boolean rentbike) {
+        InfrastructureManager.UsageData ud = infrastructureManager.getCurrentUsagedata();
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
 
             StationUtilityData sd = new StationUtilityData(s);
+
             double idealbikes = infrastructureManager.getBikeDemand(s);
-            double maxidealbikes = s.getCapacity() -infrastructureManager.getSlotDemand(s);
+            double maxidealbikes = s.getCapacity() - infrastructureManager.getSlotDemand(s);
 
             double utility = getUtility(s, 0, idealbikes, maxidealbikes);
             double newutility;
@@ -127,24 +124,19 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
             } else {//return bike 
                 newutility = getUtility(s, +1, idealbikes, maxidealbikes);
             }
+            double normedUtilityDiff = (newutility - utility)
+                    * (idealbikes/ ud.currentGlobalBikeDemand) * ud.numberStations;
             double dist = point.distanceTo(s.getPosition());
             double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
-                    + (1 - parameters.wheightDistanceStationUtility) * (newutility - utility);
+                    + (1 - parameters.wheightDistanceStationUtility) * normedUtilityDiff;
 
             /*       double mincap=(double)infraestructureManager.getMinStationCapacity();
             double maxinc=(4D*(mincap-1))/Math.pow(mincap,2);
             double auxnormutil=((newutility-utility+maxinc)/(2*maxinc));
             double globalutility= dist/auxnormutil; 
-             */
-            sd.setUtility(globalutility);
-            sd.setMaxopimalocupation(maxidealbikes);
-            sd.setMinoptimalocupation(idealbikes);
-            if (idealbikes > maxidealbikes) {
-                sd.setOptimalocupation((idealbikes + maxidealbikes) / 2D);
-            } else {
-                sd.setOptimalocupation(Double.NaN);
-            }
+             */ sd.setUtility(globalutility);
+            sd.setOptimalocupation((idealbikes + maxidealbikes) / 2D);
             sd.setDistance(dist);
             temp.add(sd);
         }
@@ -154,23 +146,12 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
     private double getUtility(Station s, int bikeincrement, double idealbikes, double maxidealbikes) {
         double cap = s.getCapacity();
         double ocupation = s.availableBikes() + bikeincrement;
-        if (idealbikes <= maxidealbikes) {
-            if (ocupation <= idealbikes) {
-                return 1 - Math.pow(((ocupation - idealbikes) / idealbikes), 2);
-            } else if (ocupation >= maxidealbikes) {
-                return 1 - Math.pow(((ocupation - maxidealbikes) / (cap - maxidealbikes)), 2);
-            } else {//if ocupation is just between max and min
-                return 1;
-            }
-        } else { //idealbikes > max idealbikes
-            double bestocupation = (idealbikes + maxidealbikes) / 2D;
-            if (ocupation <= bestocupation) {
-                return 1 - Math.pow(((ocupation - bestocupation) / bestocupation), 2);
-            } else {
-                double aux = cap - bestocupation;
-                return 1 - Math.pow(((ocupation - bestocupation) / aux), 2);
-            }
-
+        double bestocupation = (idealbikes + maxidealbikes) / 2D;
+        if (ocupation <= bestocupation) {
+            return 1 - Math.pow(((ocupation - bestocupation) / bestocupation), 2);
+        } else {
+            double aux = cap - bestocupation;
+            return 1 - Math.pow(((ocupation - bestocupation) / aux), 2);
         }
     }
 }

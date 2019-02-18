@@ -12,7 +12,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSy
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystemTypes.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystemTypes.StationUtilityData;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfraestructureManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -66,7 +66,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
         List<Recommendation> result;
-        List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToRentBike(infrastructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
@@ -90,8 +90,8 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
     }
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
-        List<Recommendation> result;
-        List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream().
+        List<Recommendation> result= new ArrayList<>();
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().
                 filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
@@ -108,11 +108,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
                     + s.getDistance() + " "
                     + s.getUtility() ));
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
-        } else { //if no best station has been found in the max distance
-            Comparator<Station> byDistance = StationComparator.byDistance(point);
-            List<Station> temp = validStationsToReturnBike(infraestructureManager.consultStations()).stream().sorted(byDistance).collect(Collectors.toList());
-            result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
-        }
+        } 
         return result;
     }
 
@@ -154,11 +150,13 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
     }
 
     private double getIdealBikes(Station s) {
+        DemandManager dm = infrastructureManager.getDemandManager();
+
         LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
         LocalDateTime futuredate=current.plusHours(1);
-        DemandManager.DemandResult currenttakedem = demandManager.getTakeDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(current.getMonth()),
+        DemandManager.DemandResult currenttakedem = dm.getTakeDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(current.getMonth()),
                 DemandManager.Day.toDemandMangerDay(current.getDayOfWeek()), current.getHour());
-        DemandManager.DemandResult futuretakedem = demandManager.getTakeDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(futuredate.getMonth()),
+        DemandManager.DemandResult futuretakedem = dm.getTakeDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(futuredate.getMonth()),
                 DemandManager.Day.toDemandMangerDay(futuredate.getDayOfWeek()), futuredate.getHour());
         if (currenttakedem.hasDemand() && futuretakedem.hasDemand()) {
             double futureprop=((double)current.getMinute())/59D;
@@ -170,11 +168,12 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
     }
 
     private double getIdealSlots(Station s) {
+        DemandManager dm = infrastructureManager.getDemandManager();
         LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
         LocalDateTime futuredate=current.plusHours(1);
-        DemandManager.DemandResult currentretdem = demandManager.getReturnDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(current.getMonth()),
+        DemandManager.DemandResult currentretdem = dm.getReturnDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(current.getMonth()),
                 DemandManager.Day.toDemandMangerDay(current.getDayOfWeek()), current.getHour());
-        DemandManager.DemandResult futureretdem = demandManager.getReturnDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(futuredate.getMonth()),
+        DemandManager.DemandResult futureretdem = dm.getReturnDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(futuredate.getMonth()),
                 DemandManager.Day.toDemandMangerDay(futuredate.getDayOfWeek()), futuredate.getHour());
         if (currentretdem.hasDemand() && futureretdem.hasDemand()) {
             double futureprop=((double)current.getMinute())/59D;

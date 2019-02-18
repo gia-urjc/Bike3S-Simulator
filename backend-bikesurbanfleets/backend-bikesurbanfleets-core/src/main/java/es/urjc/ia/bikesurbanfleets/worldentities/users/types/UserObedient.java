@@ -11,6 +11,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Statio
 import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -28,19 +29,35 @@ public class UserObedient extends UserUninformed {
     protected Station determineStationToRentBike() {
         
         Station destination = null;
-        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToRentBike(this.getPosition()).stream()
+        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToRentBike(this.getPosition()).stream()
                 .filter(recomendation -> recomendation.getStation().getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
+
+  //      List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts();
+  //      removeTriedStations(recommendedStations, triedStations);
+
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0).getStation();
         }
         return destination;
+    }
+    private void removeTriedStations(List<Recommendation> rec,List<Station> tried) {
+ 
+        Predicate<Recommendation> pr;
+        if (tried.size()>0){
+            for (Station stried: tried){
+                pr = p-> p.getStation() == stried;
+                rec.removeIf(pr);
+            }
+         }
     }
 
     @Override
     protected Station determineStationToReturnBike() {
         Station destination = null;
                
-        List<Recommendation> recommendedStations = recommendationSystem.recommendStationToReturnBike(destinationPlace);
+        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToReturnBike(destinationPlace);
+  //      List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
+  //      removeTriedStations(recommendedStations, triedStations);
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0).getStation();
         } else {

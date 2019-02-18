@@ -13,7 +13,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.comparators.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfraestructureManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -73,7 +73,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToRentBike(infraestructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToRentBike(infrastructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
@@ -87,7 +87,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToReturnBike(infraestructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
@@ -95,11 +95,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
             Comparator<StationSurroundingData> byQuality = (sq1, sq2) -> Double.compare(sq2.quality, sq1.quality);
             List<StationSurroundingData> temp = stationdata.stream().sorted(byQuality).collect(Collectors.toList());
             result = temp.stream().map(StationSurroundingData -> new Recommendation(StationSurroundingData.station, null)).collect(Collectors.toList());
-        } else { //if no best station has been found in the max distance
-            Comparator<Station> byDistance = StationComparator.byDistance(point);
-            List<Station> temp = validStationsToReturnBike(infraestructureManager.consultStations()).stream().sorted(byDistance).collect(Collectors.toList());
-            result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
-        }
+        } 
 
         return result;
     }
@@ -109,7 +105,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
 
         for (Station candidatestation : stations) {
             double summation = 0;
-            List<Station> otherstations = infraestructureManager.consultStations().stream()
+            List<Station> otherstations = infrastructureManager.consultStations().stream()
                     .filter(other -> candidatestation.getPosition().distanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
             double factor, multiplication;
             for (Station other : otherstations) {
@@ -127,7 +123,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
 
         for (Station candidatestation : stations) {
             double summation = 0;
-            List<Station> otherstations = infraestructureManager.consultStations().stream()
+            List<Station> otherstations = infrastructureManager.consultStations().stream()
                     .filter(other -> candidatestation.getPosition().distanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
             double factor, multiplication;
             for (Station other : otherstations) {
