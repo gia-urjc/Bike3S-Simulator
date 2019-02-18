@@ -16,7 +16,7 @@ export const GlobalConfig = new JsonSchema(options, sObject({
     }).require.all().restrict(),
     debugMode: sBoolean(),
     loadDemandData: sBoolean(),
-    startDateTime: sString
+    startDateTime: sString(),
 }).require('totalSimulationTime', 'reservationTime', 'boundingBox', 'graphManagerType'));
 
 export const layout = 
