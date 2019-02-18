@@ -11,6 +11,24 @@ public class StationUtilityData {
     private double minoptimalocupation;
     private double maxopimalocupation;
     private double optimalocupation;
+    private double capacity;
+    private double ocupation;
+
+    public double getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(double capacity) {
+        this.capacity = capacity;
+    }
+
+    public double getOcupation() {
+        return ocupation;
+    }
+
+    public void setOcupation(double ocupation) {
+        this.ocupation = ocupation;
+    }
 
     public double getDistance() {
         return distance;

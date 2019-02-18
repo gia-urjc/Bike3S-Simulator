@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.common.util;
 
+import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.math3.util.Precision;
 
@@ -28,6 +29,6 @@ public class MessageGuiFormatter {
     }
 
     public static void showPercentageForGui(double percentage) {
-        System.out.println(PERCENTAGE_PATTERN + Precision.round(percentage, 2));
+        System.out.println(PERCENTAGE_PATTERN + Precision.round(percentage, 2) + "Time:" + SimulationDateTime.getCurrentSimulationDateTime() );
     }
 }

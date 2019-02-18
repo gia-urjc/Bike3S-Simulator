@@ -110,14 +110,14 @@ public class DemandManager {
                 int takeNum = Integer.parseInt(line[5]);
                 int returnNum = Integer.parseInt(line[6]);
                 String dayOfWeek = line[7];
-       /*         if (day==5 && month==10) {
+           /*     if (day==5 && month==10) {
                     System.out.println();
                     for (String s : line) {
                         System.out.print(s + " ");
                     }
-                }
-        */           dem.add(station, month, dayOfWeek, hour, takeNum, returnNum);
-          //                     }
+         */      
+                    dem.add(station, month, dayOfWeek, hour, takeNum, returnNum);
+           //     }
             }
             dem.setGlobalDemand();
         } catch (Exception ex) {

@@ -73,15 +73,22 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction e
             List<StationUtilityData> su = getStationUtility(stations, point, true);
             Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp = su.stream().sorted(DescUtility).collect(Collectors.toList());
+   
             System.out.println();
-            temp.forEach(s -> System.out.println("Station (take)" + s.getStation().getId() + ": "
+            System.out.println("Time:" +SimulationDateTime.getCurrentSimulationDateTime());
+            temp.forEach(s -> {
+                if  (s.getOptimalocupation()!=Double.NaN && (s.getOptimalocupation()<=0 || 
+                        s.getOptimalocupation()>=s.getStation().getCapacity())){  
+                System.out.println("Station (take)" + s.getStation().getId() + ": "
                     + s.getStation().availableBikes() + " "
                     + s.getStation().getCapacity() + " "
                     + s.getMinoptimalocupation() + " "
                     + s.getOptimalocupation() + " "
                     + s.getMaxopimalocupation() + " "
                     + s.getDistance() + " "
-                    + s.getUtility()));
+                    + s.getUtility());
+                }
+            });
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } else {
             result = new ArrayList<>();
@@ -99,14 +106,21 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction e
             Comparator<StationUtilityData> byDescUtilityIncrement = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp = su.stream().sorted(byDescUtilityIncrement).collect(Collectors.toList());
             System.out.println();
-            temp.forEach(s -> System.out.println("Station (return)" + s.getStation().getId() + ": "
+            System.out.println("Time:" +SimulationDateTime.getCurrentSimulationDateTime());
+            temp.forEach(s -> {
+                if  (s.getOptimalocupation()!=Double.NaN && (s.getOptimalocupation()<=0 || 
+                      s.getOptimalocupation()>=s.getStation().getCapacity())){  
+ 
+                System.out.println("Station (return)" + s.getStation().getId() + ": "
                     + s.getStation().availableBikes() + " "
                     + s.getStation().getCapacity() + " "
                     + s.getMinoptimalocupation() + " "
                     + s.getOptimalocupation() + " "
                     + s.getMaxopimalocupation() + " "
                     + s.getDistance() + " "
-                    + s.getUtility()));
+                    + s.getUtility());
+                }
+            });
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } 
         return result;
@@ -130,6 +144,7 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction e
             }
             double normedUtilityDiff = (newutility - utility)
                     * (idealbikes/ ud.currentGlobalBikeDemand) * ud.numberStations;
+//                    * (idealbikes/ ud.maxdemand) ;
 
             double dist = point.distanceTo(s.getPosition());
             double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
@@ -167,7 +182,8 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction e
                 return 1;
             }
         } else { //idealbikes > max idealbikes
-            double bestocupation = (idealbikes + maxidealbikes) / 2D;
+            double bestocupation = (idealbikes  + maxidealbikes) / 2D;
+  //          double bestocupation = (idealbikes * cap)/(cap - maxidealbikes  ) ;
             if (ocupation <= bestocupation) {
                 return 1 - Math.pow(((ocupation - bestocupation) / bestocupation), 2);
             } else {
