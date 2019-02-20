@@ -88,13 +88,13 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
         return result;
     }
 
-    public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
+    public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
         List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+                .filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
-            List<StationSurroundingData> stationdata = getStationQualityandDistanceReturning(stations, point);
+            List<StationSurroundingData> stationdata = getStationQualityandDistanceReturning(stations, destination);
             List<StationSurroundingData> temp = stationdata.stream().sorted(byProportionBetweenDistanceAndQuality).collect(Collectors.toList());
             result = temp.stream().map(StationSurroundingData -> new Recommendation(StationSurroundingData.station, null)).collect(Collectors.toList());
         } 

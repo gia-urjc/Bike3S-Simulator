@@ -84,9 +84,9 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
     }
 
     @Override
-    public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
+    public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
+                .filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation)
                 .collect(Collectors.toList());
         List<StationUtilityData> qualities = new ArrayList<>();
 
@@ -98,7 +98,7 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
             qualities.add(sd);
         }
 
-        Station nearestStation = nearestStationToReturn(stations, point);
+        Station nearestStation = nearestStationToReturn(stations, destination);
 
         Comparator<StationUtilityData> byQuality = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
         qualities = qualities.stream().sorted(byQuality).collect(Collectors.toList());
@@ -110,7 +110,7 @@ public class RecommendationSystemBySurroundingStationsWithSimpleIncentives exten
         for (int i = 0; i < numStations; i++) {
             Station s = qualities.get(i).getStation();
             if (s.getId() != nearestStation.getId()) {
-                compensation = compensation(point, nearestStation, s);
+                compensation = compensation(destination, nearestStation, s);
                 extra = (numStations - i) * parameters.EXTRA;
                 incentive = new Money((int) Math.round(compensation + extra));
             }

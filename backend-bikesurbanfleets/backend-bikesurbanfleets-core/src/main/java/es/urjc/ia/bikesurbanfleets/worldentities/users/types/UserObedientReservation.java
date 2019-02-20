@@ -40,7 +40,7 @@ public class UserObedientReservation extends UserUninformedReservation {
     protected Station determineStationToReturnBike() {
         Station destination = null;
                
-        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToReturnBike(destinationPlace);
+        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToReturnBike(this.getPosition(),destinationPlace);
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0).getStation();
         } else {

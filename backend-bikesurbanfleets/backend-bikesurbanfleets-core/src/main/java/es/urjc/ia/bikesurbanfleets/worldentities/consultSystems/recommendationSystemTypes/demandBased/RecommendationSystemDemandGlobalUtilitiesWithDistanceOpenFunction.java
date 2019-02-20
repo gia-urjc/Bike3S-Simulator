@@ -96,13 +96,13 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction e
         return result;
     }
 
-    public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
+    public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
         List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().
-                filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+                filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
-            List<StationUtilityData> su = getStationUtility(stations, point, false);
+            List<StationUtilityData> su = getStationUtility(stations, destination, false);
             Comparator<StationUtilityData> byDescUtilityIncrement = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp = su.stream().sorted(byDescUtilityIncrement).collect(Collectors.toList());
             System.out.println();

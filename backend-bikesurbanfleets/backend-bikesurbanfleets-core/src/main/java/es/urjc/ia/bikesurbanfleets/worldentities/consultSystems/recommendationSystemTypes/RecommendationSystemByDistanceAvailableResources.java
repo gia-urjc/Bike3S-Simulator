@@ -70,12 +70,12 @@ public class RecommendationSystemByDistanceAvailableResources extends Recommenda
     }
 
     @Override
-    public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
+    public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Station> temp;
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
         if (!stations.isEmpty()) {
-            Comparator<Station> byDistanceSlotsRatio = StationComparator.byProportionBetweenDistanceAndSlots(point);
+            Comparator<Station> byDistanceSlotsRatio = StationComparator.byProportionBetweenDistanceAndSlots(destination);
             temp = stations.stream().sorted(byDistanceSlotsRatio).collect(Collectors.toList());
             result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
         } 

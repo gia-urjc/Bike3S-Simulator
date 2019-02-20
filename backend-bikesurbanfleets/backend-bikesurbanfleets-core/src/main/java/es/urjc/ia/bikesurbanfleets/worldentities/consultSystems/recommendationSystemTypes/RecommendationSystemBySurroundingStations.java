@@ -63,17 +63,17 @@ public class RecommendationSystemBySurroundingStations extends RecommendationSys
     }
 
     @Override
-    public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
+    public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         Comparator<Station> bySlotsRatio = StationComparator.bySlotsCapacityRatio();
         List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
+                .filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation)
                 .sorted(bySlotsRatio).collect(Collectors.toList());
         List<StationUtilityData> qualities = new ArrayList<>();
 
         int numStations = stations.size() >= 9 ? Math.floorDiv(stations.size(), 3) : stations.size();
         for (int i = 0; i < numStations; i++) {
             Station station = stations.get(i);
-            double quality = qualityToReturn(station, point);
+            double quality = qualityToReturn(station, destination);
             StationUtilityData sd=new StationUtilityData(station);
             sd.setUtility(quality);
             qualities.add(sd);

@@ -114,7 +114,7 @@ public class UserEconomicIncentives extends UserObedient {
     @Override
     public Station determineStationToReturnBike() {
         Station destination = null;
-        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToReturnBike(this.getDestinationPlace());
+        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToReturnBike(this.getPosition(), this.getDestinationPlace());
         //Remove station if the user is in this station
         recommendedStations.removeIf(recommendation -> recommendation.getStation().getPosition().equals(this.getPosition()));
         List<Station> stations = informationSystem.getAllStations();

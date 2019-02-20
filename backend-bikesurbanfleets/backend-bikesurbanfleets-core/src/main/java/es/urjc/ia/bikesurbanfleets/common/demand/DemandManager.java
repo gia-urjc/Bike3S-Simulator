@@ -9,7 +9,9 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import java.io.FileReader;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 /**
@@ -70,10 +72,25 @@ public class DemandManager {
     }
     Demand dem = new Demand();
 
+    public DemandResult getTakeDemandStation(int stationID, LocalDateTime t) {
+        return getTakeDemandStation(stationID, Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+    }
+
+    public DemandResult getReturnDemandStation(int stationID, LocalDateTime t) {
+        return getReturnDemandStation(stationID, Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+    }
+
+    public DemandResult getTakeDemandGlobal(LocalDateTime t) {
+        return getTakeDemandGlobal(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+    }
+
+    public DemandResult getReturnDemandGlobal(LocalDateTime t) {
+        return getTakeDemandGlobal(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+    }
+
     public DemandResult getTakeDemandStation(int stationID, Month month, Day day, int hour) {
         return dem.getDemandStation(stationID, month, day, hour, true);
     }
-
 
     public DemandResult getReturnDemandStation(int stationID, Month month, Day day, int hour) {
         return dem.getDemandStation(stationID, month, day, hour, false);

@@ -46,13 +46,13 @@ public abstract class RecommendationSystem {
 
     protected abstract List<Recommendation> recommendStationToRentBike(GeoPoint point);
 
-    protected abstract List<Recommendation> recommendStationToReturnBike(GeoPoint point);
+    protected abstract List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination);
 
     public List<Recommendation> getRecomendedStationToRentBike(GeoPoint point){
         return addAlternativeRecomendations(point,recommendStationToRentBike(point), true);
      }
-    public List<Recommendation> getRecomendedStationToReturnBike(GeoPoint point){
-        return addAlternativeRecomendations(point,recommendStationToReturnBike(point), false);
+    public List<Recommendation> getRecomendedStationToReturnBike(GeoPoint currentposition, GeoPoint destination){
+        return addAlternativeRecomendations(destination,recommendStationToReturnBike(currentposition,destination), false);
      }
        
     private boolean containsStation(List<Recommendation> recs, Station s){

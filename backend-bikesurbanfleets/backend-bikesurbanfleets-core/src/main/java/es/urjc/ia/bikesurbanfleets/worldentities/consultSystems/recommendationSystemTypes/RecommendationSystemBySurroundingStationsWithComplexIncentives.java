@@ -141,9 +141,9 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
     }
 
     @Override
-    public List<Recommendation> recommendStationToReturnBike(GeoPoint point) {
+    public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation)
+                .filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation)
                 .collect(Collectors.toList());
         List<StationUtilityData> qualities = new ArrayList<>();
         List<Station> allStations = validStationsToReturnBike(infrastructureManager.consultStations());
@@ -156,7 +156,7 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
             qualities.add(sd);
         }
 
-        Station nearestStation = nearestStationToReturn(stations, point);
+        Station nearestStation = nearestStationToReturn(stations, destination);
         double nearestStationQuality = incentiveManager.qualityToReturn(stations, nearestStation);
         StationUtilityData stationQuality=new StationUtilityData(nearestStation);
         stationQuality.setUtility(nearestStationQuality);
@@ -166,7 +166,7 @@ public class RecommendationSystemBySurroundingStationsWithComplexIncentives exte
             Station s = sq.getStation();
             Incentive incentive = new Money(0);
             if (s.getId() != nearestStation.getId()) {
-                incentive = incentiveManager.calculateIncentive(point, stationQuality, sq);
+                incentive = incentiveManager.calculateIncentive(destination, stationQuality, sq);
             }
             return new Recommendation(s, incentive);
         }).collect(Collectors.toList());

@@ -7,6 +7,8 @@ import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Statio
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
@@ -61,7 +63,8 @@ public class InfrastructureManager {
     }
 
     public class UsageData {
-        public int numberStations=0;
+
+        public int numberStations = 0;
         public int totalNumberBikes = 0;
         public int numberBikesRent = 0;
         public int numberBikesAvailableInStations = 0;
@@ -71,46 +74,46 @@ public class InfrastructureManager {
         public double currentGlobalBikeDemand = 0;
         public double currentGlobalSlotDemand = 0;
         public int totalCapacity = 0;
-        public double maxdemand=0;
-        public double mindemand=0;
+        public double maxdemand = 0;
+        public double mindemand = 0;
     }
 
     public UsageData getCurrentUsagedata() {
         UsageData ud = new UsageData();
-        double max=Double.NEGATIVE_INFINITY;
-        double min=Double.MAX_VALUE;
+        double max = Double.NEGATIVE_INFINITY;
+        double min = Double.MAX_VALUE;
         double aux;
         for (Station s : stations) {
             ud.numberBikesAvailableInStations += s.availableBikes();
             ud.numberSlotsAvailableInStations += s.availableSlots();
             ud.numberBikesReservedInStations += s.getReservedBikes();
             ud.numberSlotsReservedInStations += s.getReservedSlots();
-            aux=getBikeDemand(s);
-            if (aux>max) max=aux;
-            if (aux<min) min =aux;
+            aux = getBikeDemand(s);
+            if (aux > max) {
+                max = aux;
+            }
+            if (aux < min) {
+                min = aux;
+            }
         }
-        ud.numberStations=stations.size();
-        ud.maxdemand=max;
-        ud.mindemand=min;
+        ud.numberStations = stations.size();
+        ud.maxdemand = max;
+        ud.mindemand = min;
         ud.totalNumberBikes = bikes.size();
         ud.totalCapacity = ud.numberBikesAvailableInStations + ud.numberBikesReservedInStations
                 + ud.numberSlotsAvailableInStations + ud.numberSlotsReservedInStations;
         ud.numberBikesRent = ud.totalNumberBikes
                 - (ud.numberBikesAvailableInStations + ud.numberBikesReservedInStations);
-        int currentGlobalBikeDemand = 0;
-        int currentGlobalSlotDemand = 0;
 
         LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        DemandManager.DemandResult dem = demandManager.getTakeDemandGlobal(DemandManager.Month.toDemandMangerMonth(current.getMonth()),
-                DemandManager.Day.toDemandMangerDay(current.getDayOfWeek()), current.getHour());
+        DemandManager.DemandResult dem = demandManager.getTakeDemandGlobal(current);
         if (dem.hasDemand()) {
             ud.currentGlobalBikeDemand = dem.demand();
         } else {
             System.out.println("[WARNING:] no global bike demand data available at date " + current + ": we assume a demand of 50% of station capacities");
             ud.currentGlobalBikeDemand = ud.totalCapacity / 2D;
         }
-        dem = demandManager.getReturnDemandGlobal(DemandManager.Month.toDemandMangerMonth(current.getMonth()),
-                DemandManager.Day.toDemandMangerDay(current.getDayOfWeek()), current.getHour());
+        dem = demandManager.getReturnDemandGlobal(current);
         if (dem.hasDemand()) {
             ud.currentGlobalSlotDemand = dem.demand();
         } else {
@@ -128,8 +131,7 @@ public class InfrastructureManager {
         DemandManager dm = demandManager;
 
         LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        DemandManager.DemandResult takedem = dm.getTakeDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(current.getMonth()),
-                DemandManager.Day.toDemandMangerDay(current.getDayOfWeek()), current.getHour());
+        DemandManager.DemandResult takedem = dm.getTakeDemandStation(s.getId(), current);
         if (takedem.hasDemand()) {
             return takedem.demand();
         } else {
@@ -137,12 +139,74 @@ public class InfrastructureManager {
             return s.getCapacity() / 2D;
         }
     }
+    static double POBABILITY_USERSOBEY = 0.9;
+
+    private class PotentialEvent {
+
+        boolean take; //or return
+        int settime;
+        int expectedendtime;
+
+        PotentialEvent(boolean take, int settime, int expectedendtime) {
+            this.take = take;
+            this.settime = settime;
+            this.expectedendtime = expectedendtime;
+        }
+    }
+
+    private HashMap<Integer, List<PotentialEvent>> registeredBikeEventsPerStation = new HashMap<>();
+
+    private int getExpectedBikechanges(int stationid, double timeoffset) {
+        int changes = 0;
+        List<PotentialEvent> list = registeredBikeEventsPerStation.get(stationid);
+        if (list == null) {
+            return changes;
+        }
+        long currentinstant = SimulationDateTime.getCurrentSimulationInstant();
+        Iterator<PotentialEvent> i = list.iterator();
+        while (i.hasNext()) {
+            PotentialEvent e = i.next(); // must be called before you can call i.remove()
+            if (e.expectedendtime < currentinstant) {
+                i.remove();
+            } else if (e.expectedendtime<=currentinstant+timeoffset){
+                if (e.take) {
+                    changes--;
+                } else {
+                    changes++;
+                }
+            } //if e.expectedendtime>currentinstant+timeoffset does not count
+        }
+        return changes;
+    }
+
+
+ public double getAvailableBikeProbability(Station s, double timeoffset) {
+
+        int estimatedbikes = (int)Math.floor(s.availableBikes() + getExpectedBikechanges(s.getId(),timeoffset ) * POBABILITY_USERSOBEY) ;
+        double takedemandattimeoffset=(getBikeDemand(s)*timeoffset)/3600D;
+        double retdemandatofsettime=(getSlotDemand(s)*timeoffset)/3600D;
+        
+        //probability that a bike exists 
+        double prob =SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, estimatedbikes);
+        
+        return prob;
+}
+public double getAvailableSlotProbability(Station s, double timeoffset) {
+
+        int estimatedslots = (int)Math.floor(s.availableSlots() + getExpectedBikechanges(s.getId(),timeoffset ) * POBABILITY_USERSOBEY) ;
+        double takedemandattimeoffset=(getBikeDemand(s)*timeoffset)/3600D;
+        double retdemandatofsettime=(getSlotDemand(s)*timeoffset)/3600D;
+        
+        //probability that a bike exists 
+        double prob =SellamDistribution.calculateCDFSkellamProbability(takedemandattimeoffset, retdemandatofsettime, estimatedslots);
+        
+        return prob;
+}
 
     public double getSlotDemand(Station s) {
         DemandManager dm = demandManager;
         LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        DemandManager.DemandResult retdem = dm.getReturnDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(current.getMonth()),
-                DemandManager.Day.toDemandMangerDay(current.getDayOfWeek()), current.getHour());
+        DemandManager.DemandResult retdem = dm.getReturnDemandStation(s.getId(), current);
         if (retdem.hasDemand()) {
             return (retdem.demand());
         } else {

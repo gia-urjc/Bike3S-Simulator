@@ -55,7 +55,7 @@ public class UserObedient extends UserUninformed {
     protected Station determineStationToReturnBike() {
         Station destination = null;
                
-        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToReturnBike(destinationPlace);
+        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToReturnBike(this.getPosition(),destinationPlace);
   //      List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
   //      removeTriedStations(recommendedStations, triedStations);
         if (!recommendedStations.isEmpty()) {
