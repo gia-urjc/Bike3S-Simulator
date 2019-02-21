@@ -42,6 +42,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double walkingVelocity = 1.12;
         private double cyclingVelocity = 6.0;
+        private double requiredProbability=1.1;
+        private double probabilityUsersObey=1;
 
 
     }
@@ -61,6 +63,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
         //       demandManager=infraestructureManager.getDemandManager();
+        this.infrastructureManager.POBABILITY_USERSOBEY=this.parameters.probabilityUsersObey; 
     }
 
     @Override
@@ -72,11 +75,18 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, null, currentposition, true);
             Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
-            List<StationUtilityData> temp = su.stream().sorted(DescUtility).collect(Collectors.toList());
+            List<StationUtilityData> temp = su.stream().sorted(special).collect(Collectors.toList());
    
             System.out.println();
             System.out.println("Time:" +SimulationDateTime.getCurrentSimulationDateTime());
-            temp.forEach(s -> {
+            if (temp.get(0).getUtility()<0.999D){
+                System.out.println("LOW PROB take " +  lowprobs + " " + temp.get(0).getUtility());
+                lowprobs++;
+            }
+            probst+=temp.get(0).getUtility();
+            callst++;
+            System.out.println("Expected successrate take:" +(probst/callst));
+             temp.forEach(s -> {
                 System.out.println("Station (take)" + s.getStation().getId() + ": "
                     + s.getStation().availableBikes() + " "
                     + s.getStation().getCapacity() + " "
@@ -86,12 +96,22 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
                
             });
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
+            //add values to the expeted takes
+            StationUtilityData first=temp.get(0);
+            double dist=currentposition.distanceTo(first.getStation().getPosition());
+            this.infrastructureManager.addExpectedBikechange(first.getStation().getId(), 
+                    (int) (dist/this.parameters.walkingVelocity), true);
         } else {
             result = new ArrayList<>();
         }
         return result;
     }
 
+    private int lowprobs=0;
+    private double probsr=0D;
+    private int callsr=0;
+    private double probst=0D;
+    private int callst=0;
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
         List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().
@@ -100,9 +120,17 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, destination, currentposition, false);
             Comparator<StationUtilityData> byDescUtilityIncrement = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
-            List<StationUtilityData> temp = su.stream().sorted(byDescUtilityIncrement).collect(Collectors.toList());
+            List<StationUtilityData> temp = su.stream().sorted(special).collect(Collectors.toList());
             System.out.println();
             System.out.println("Time:" +SimulationDateTime.getCurrentSimulationDateTime());
+            if (temp.get(0).getUtility()<0.999D){
+                System.out.println("LOW PROB return " +  lowprobs + " " + temp.get(0).getUtility());
+                lowprobs++;
+            }
+            probsr+=temp.get(0).getUtility();
+            callsr++;
+            System.out.println("Expected successrate return:" +(probsr/callsr));
+           
             temp.forEach(s -> {
    
                 System.out.println("Station (return)" + s.getStation().getId() + ": "
@@ -114,9 +142,28 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
                 
             });
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
+
+            //add values to the expeted returns
+            StationUtilityData first=temp.get(0);
+            double dist=currentposition.distanceTo(first.getStation().getPosition());
+            this.infrastructureManager.addExpectedBikechange(first.getStation().getId(), 
+                    (int) (dist/this.parameters.cyclingVelocity), false);
+
         } 
         return result;
     }
+    
+    Comparator<StationUtilityData> special = (sq1, sq2) -> {
+        double p=this.parameters.requiredProbability;
+        if (sq1.getUtility()>=p && sq2.getUtility()<p) return -1;
+        if (sq1.getUtility()<p && sq2.getUtility()>=p) return +1;
+        if (sq1.getUtility()>=p && sq2.getUtility()>=p) {
+            return Double.compare(sq1.getDistance(), sq2.getDistance());
+        }
+        //if (sq1.getUtility()<p && sq2.getUtility()<p) {
+            return Double.compare(sq2.getUtility(), sq1.getUtility());
+        //}
+ };
 
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint destination, GeoPoint currentposition, boolean rentbike) {
         InfrastructureManager.UsageData ud = infrastructureManager.getCurrentUsagedata();
@@ -147,7 +194,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
             double auxnormutil=((newutility-utility+maxinc)/(2*maxinc));
             double globalutility= dist/auxnormutil; 
              */
-            sd.setUtility(globalutility);
+            sd.setUtility(prob);
             sd.setOptimalocupation(prob);
             sd.setDistance(dist);
             temp.add(sd);

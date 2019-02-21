@@ -7,6 +7,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Statio
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -139,7 +140,7 @@ public class InfrastructureManager {
             return s.getCapacity() / 2D;
         }
     }
-    static double POBABILITY_USERSOBEY = 0.9;
+    public double POBABILITY_USERSOBEY = 0.9;
 
     private class PotentialEvent {
 
@@ -178,6 +179,15 @@ public class InfrastructureManager {
         }
         return changes;
     }
+    public void addExpectedBikechange(int stationid, int endtime, boolean take) {
+        int changes = 0;
+        List<PotentialEvent> list = registeredBikeEventsPerStation.get(stationid);
+        if (list == null) {
+            list=new ArrayList<>();
+            registeredBikeEventsPerStation.put(stationid, list);
+        }
+        list.add(new PotentialEvent(take,(int)SimulationDateTime.getCurrentSimulationInstant(),endtime));
+     }
 
 
  public double getAvailableBikeProbability(Station s, double timeoffset) {
