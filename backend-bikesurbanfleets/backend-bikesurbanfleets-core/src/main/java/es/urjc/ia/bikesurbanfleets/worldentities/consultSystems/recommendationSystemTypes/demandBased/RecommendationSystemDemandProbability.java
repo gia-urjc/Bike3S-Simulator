@@ -42,7 +42,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double walkingVelocity = 1.12;
         private double cyclingVelocity = 6.0;
-        private double requiredProbability=1.1;
+        private double requiredProbability=0.999;
         private double probabilityUsersObey=1;
 
 
@@ -69,8 +69,10 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint currentposition) {
         List<Recommendation> result;
-        List<Station> stations = validStationsToRentBike(infrastructureManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(currentposition) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+ //       List<Station> aux=validStationsToRentBike(infrastructureManager.consultStations());
+        List<Station> aux=(infrastructureManager.consultStations());
+        List<Station> stations = aux;//.stream()
+        //        .filter(station -> station.getPosition().distanceTo(currentposition) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, null, currentposition, true);
@@ -79,8 +81,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
    
             System.out.println();
             System.out.println("Time:" +SimulationDateTime.getCurrentSimulationDateTime());
-            if (temp.get(0).getUtility()<0.999D){
-                System.out.println("LOW PROB take " +  lowprobs + " " + temp.get(0).getUtility());
+            if (temp.get(0).getUtility()<parameters.requiredProbability){
+                System.out.println("LOW PROB take " +  temp.get(0).getUtility() + " " +lowprobs);
                 lowprobs++;
             }
             probst+=temp.get(0).getUtility();
@@ -103,6 +105,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
                     (int) (dist/this.parameters.walkingVelocity), true);
         } else {
             result = new ArrayList<>();
+            System.out.println("no recommednation take at Time:" +SimulationDateTime.getCurrentSimulationDateTime());
+            
         }
         return result;
     }
@@ -114,8 +118,10 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
     private int callst=0;
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().
-                filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+//       List<Station> aux=validStationsToRentBike(infrastructureManager.consultStations());
+        List<Station> aux=(infrastructureManager.consultStations());
+        List<Station> stations = aux;//.stream().
+          //      filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, destination, currentposition, false);
@@ -123,8 +129,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
             List<StationUtilityData> temp = su.stream().sorted(special).collect(Collectors.toList());
             System.out.println();
             System.out.println("Time:" +SimulationDateTime.getCurrentSimulationDateTime());
-            if (temp.get(0).getUtility()<0.999D){
-                System.out.println("LOW PROB return " +  lowprobs + " " + temp.get(0).getUtility());
+            if (temp.get(0).getUtility()<parameters.requiredProbability){
+                System.out.println("LOW PROB take " +  temp.get(0).getUtility() + " " +lowprobs);
                 lowprobs++;
             }
             probsr+=temp.get(0).getUtility();
@@ -149,7 +155,10 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
             this.infrastructureManager.addExpectedBikechange(first.getStation().getId(), 
                     (int) (dist/this.parameters.cyclingVelocity), false);
 
-        } 
+        } else {
+            System.out.println("no recommednation return at Time:" +SimulationDateTime.getCurrentSimulationDateTime());
+            
+        }
         return result;
     }
     
@@ -184,10 +193,10 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
                 dist = s.getPosition().distanceTo(destination);
             }
                     
-            double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
+ //           double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
  //           double globalutility = parameters.wheightDistanceStationUtility * norm_distance
  //                   + (1 - parameters.wheightDistanceStationUtility) * normedUtilityDiff;
-            double globalutility =  norm_distance * prob;
+ //           double globalutility =  norm_distance * prob;
 
             /*       double mincap=(double)infraestructureManager.getMinStationCapacity();
             double maxinc=(4D*(mincap-1))/Math.pow(mincap,2);

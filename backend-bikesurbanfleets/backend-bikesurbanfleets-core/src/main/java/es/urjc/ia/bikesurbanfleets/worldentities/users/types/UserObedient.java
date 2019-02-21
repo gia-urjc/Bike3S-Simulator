@@ -32,8 +32,8 @@ public class UserObedient extends UserUninformed {
         List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToRentBike(this.getPosition()).stream()
                 .filter(recomendation -> recomendation.getStation().getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
 
-  //      List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts();
-  //      removeTriedStations(recommendedStations, triedStations);
+        List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts();
+        removeTriedStations(recommendedStations, triedStations);
 
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0).getStation();
@@ -56,8 +56,8 @@ public class UserObedient extends UserUninformed {
         Station destination = null;
                
         List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToReturnBike(this.getPosition(),destinationPlace);
-  //      List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
-  //      removeTriedStations(recommendedStations, triedStations);
+        List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
+        removeTriedStations(recommendedStations, triedStations);
         if (!recommendedStations.isEmpty()) {
         	destination = recommendedStations.get(0).getStation();
         } else {
