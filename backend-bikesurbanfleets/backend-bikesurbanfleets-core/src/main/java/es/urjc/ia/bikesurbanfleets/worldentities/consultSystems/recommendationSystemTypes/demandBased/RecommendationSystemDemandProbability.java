@@ -43,6 +43,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         private double walkingVelocity = 1.12;
         private double cyclingVelocity = 6.0;
         private double requiredProbability = 0.999;
+        private double secondProbability = 0.6;
+        private double thirdProbability = 0.3;
         private double probabilityUsersObey = 1;
 
     }
@@ -69,30 +71,32 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
     public List<Recommendation> recommendStationToRentBike(GeoPoint currentposition) {
         List<Recommendation> result;
         //       List<Station> aux=validStationsToRentBike(infrastructureManager.consultStations());
-        List<Station> aux = validStationsToRentBike(infrastructureManager.consultStations());
-        List<Station> stations = aux.stream()
-                .filter(station -> station.getPosition().distanceTo(currentposition) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+        List<Station> aux = (infrastructureManager.consultStations());
+        List<Station> stations = aux;//.stream()
+        //         .filter(station -> station.getPosition().distanceTo(currentposition) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, null, currentposition, true);
-            List<StationUtilityData> temp = su.stream().sorted(special).collect(Collectors.toList());
+            List<StationUtilityData> temp = su.stream().sorted(special0bis).collect(Collectors.toList());
 
+            //      if (temp.get(0).getUtility() < parameters.requiredProbability) {
+            System.out.println();
+            System.out.println("Time:" + SimulationDateTime.getCurrentSimulationDateTime());
             if (temp.get(0).getUtility() < parameters.requiredProbability) {
-                System.out.println();
-                System.out.println("Time:" + SimulationDateTime.getCurrentSimulationDateTime());
                 System.out.println("LOW PROB take " + temp.get(0).getUtility() + " " + lowprobs);
                 lowprobs++;
-                System.out.println("Expected successrate take:" + (probst / callst));
-                temp.forEach(s -> {
-                    System.out.println("Station (take)" + s.getStation().getId() + ": "
-                            + s.getStation().availableBikes() + " "
-                            + s.getStation().getCapacity() + " "
-                            + s.getOptimalocupation() + " "
-                            + s.getDistance() + " "
-                            + s.getUtility());
-
-                });
             }
+            System.out.println("Expected successrate take:" + (probst / callst));
+            temp.forEach(s -> {
+                System.out.println("Station (take)" + s.getStation().getId() + ": "
+                        + s.getStation().availableBikes() + " "
+                        + s.getStation().getCapacity() + " "
+                        + s.getOptimalocupation() + " "
+                        + s.getDistance() + " "
+                        + s.getUtility());
+
+            });
+            //}
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
             //add values to the expeted takes
             StationUtilityData first = temp.get(0);
@@ -118,30 +122,32 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
 //       List<Station> aux=validStationsToReturnBike(infrastructureManager.consultStations());
-        List<Station> aux = validStationsToReturnBike(infrastructureManager.consultStations());
-        List<Station> stations = aux.stream().
-                filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+        List<Station> aux = (infrastructureManager.consultStations());
+        List<Station> stations = aux;//.stream().
+        //            filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, destination, currentposition, false);
-            Comparator<StationUtilityData> byDescUtilityIncrement = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
-            List<StationUtilityData> temp = su.stream().sorted(special).collect(Collectors.toList());
+            List<StationUtilityData> temp = su.stream().sorted(special0bis).collect(Collectors.toList());
+            //     if (temp.get(0).getUtility() < parameters.requiredProbability) {
+            System.out.println();
+            System.out.println("Time:" + SimulationDateTime.getCurrentSimulationDateTime());
             if (temp.get(0).getUtility() < parameters.requiredProbability) {
-                System.out.println();
-                System.out.println("Time:" + SimulationDateTime.getCurrentSimulationDateTime());
                 System.out.println("LOW PROB return " + temp.get(0).getUtility() + " " + lowprobs);
                 lowprobs++;
-                System.out.println("Expected successrate return:" + (probsr / callsr));
-                temp.forEach(s -> {
-                    System.out.println("Station (return)" + s.getStation().getId() + ": "
-                            + s.getStation().availableBikes() + " "
-                            + s.getStation().getCapacity() + " "
-                            + s.getOptimalocupation() + " "
-                            + s.getDistance() + " "
-                            + s.getUtility());
-
-                });
             }
+            lowprobs++;
+            System.out.println("Expected successrate return:" + (probsr / callsr));
+            temp.forEach(s -> {
+                System.out.println("Station (return)" + s.getStation().getId() + ": "
+                        + s.getStation().availableBikes() + " "
+                        + s.getStation().getCapacity() + " "
+                        + s.getOptimalocupation() + " "
+                        + s.getDistance() + " "
+                        + s.getUtility());
+
+            });
+            //      }
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
 
             //add values to the expeted returns
@@ -157,8 +163,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         }
         return result;
     }
-
-    Comparator<StationUtilityData> special = (sq1, sq2) -> {
+    //original comp
+    Comparator<StationUtilityData> special0 = (sq1, sq2) -> {
         double p = this.parameters.requiredProbability;
         if (sq1.getUtility() >= p && sq2.getUtility() < p) {
             return -1;
@@ -174,6 +180,128 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         //}
     };
 
+    Comparator<StationUtilityData> special0bis = (sq1, sq2) -> {
+        double p = this.parameters.requiredProbability;
+        double p2 = this.parameters.secondProbability;
+        double p3 = this.parameters.thirdProbability;
+        double maxdist = this.parameters.maxDistanceRecommendation;
+        //case in the closer area
+        //the best probs in the maximum distance are put first, ordered by distance
+        if (sq1.getDistance() <= maxdist && sq2.getDistance() <= maxdist && sq1.getUtility() >= p2 && sq2.getUtility() >= p2) {
+            if (sq1.getUtility() >= p && sq2.getUtility() < p) {
+                return -1;
+            }
+            if (sq1.getUtility() < p && sq2.getUtility() >= p) {
+                return +1;
+            }
+            if (sq1.getUtility() >= p && sq2.getUtility() >= p) {
+                return Double.compare(sq1.getDistance(), sq2.getDistance());
+            }
+            //if (sq1.getUtility()<p && sq2.getUtility()<p) {
+            return Double.compare(sq2.getUtility(), sq1.getUtility());
+        }
+        if (sq1.getDistance() <= maxdist && sq1.getUtility() >= p2 && !(sq2.getUtility() >= p2 && sq2.getDistance() <= maxdist)) {
+            return -1;
+        }
+        if (!(sq1.getDistance() <= maxdist && sq1.getUtility() >= p2) && (sq2.getUtility() >= p2 && sq2.getDistance() <= maxdist)) {
+            return +1;
+        }
+
+        if (sq1.getUtility() >= p2 && sq2.getUtility() >= p2) {
+            return Double.compare(sq1.getDistance(), sq2.getDistance());
+        }
+        if (sq1.getUtility() >= p2 && sq2.getUtility() < p2) {
+            return -1;
+        }
+        if (sq1.getUtility() < p2 && sq2.getUtility() >= p2) {
+            return 1;
+        }
+        return Double.compare(sq1.getDistance(), sq2.getDistance());
+    };
+
+    Comparator<StationUtilityData> special = (sq1, sq2) -> {
+        double p = this.parameters.requiredProbability;
+        double p2 = this.parameters.secondProbability;
+        double p3 = this.parameters.thirdProbability;
+        double maxdist = this.parameters.maxDistanceRecommendation;
+        //the best probs in the maximum distance are put first, ordered by distance
+        if (sq1.getUtility() >= p && sq2.getUtility() >= p && sq1.getDistance() <= maxdist && sq2.getDistance() <= maxdist) {
+            return Double.compare(sq1.getDistance(), sq2.getDistance());
+        }
+        if (sq1.getUtility() >= p && sq1.getDistance() <= maxdist && !(sq2.getUtility() >= p && sq2.getDistance() <= maxdist)) {
+            return -1;
+        }
+        if (!(sq1.getUtility() >= p && sq1.getDistance() <= maxdist) && sq2.getUtility() >= p && sq2.getDistance() <= maxdist) {
+            return +1;
+        }
+        if (sq1.getUtility() == sq2.getUtility() && sq1.getDistance() == sq2.getDistance()) {
+            return 0;
+        }
+        //second probability bound
+        if (sq1.getUtility() >= p2 && sq2.getUtility() >= p2) {
+            return Double.compare(sq1.getDistance(), sq2.getDistance());
+        }
+        if (sq1.getUtility() >= p2 && !(sq2.getUtility() >= p2)) {
+            return -1;
+        }
+        if (!(sq1.getUtility() >= p2) && sq2.getUtility() >= p2) {
+            return +1;
+        }
+        //third probability
+        if (sq1.getUtility() >= p3 && sq2.getUtility() >= p3) {
+            return Double.compare(sq1.getDistance(), sq2.getDistance());
+        }
+        if (sq1.getUtility() >= p3 && !(sq2.getUtility() >= p3)) {
+            return -1;
+        }
+        if (!(sq1.getUtility() >= p3) && sq2.getUtility() >= p3) {
+            return +1;
+        }
+        //rest
+        return Double.compare(sq1.getDistance(), sq2.getDistance());
+    };
+    Comparator<StationUtilityData> special2 = (sq1, sq2) -> {
+        double p = this.parameters.requiredProbability;
+        double p2 = this.parameters.secondProbability;
+        double p3 = this.parameters.thirdProbability;
+        double maxdist = this.parameters.maxDistanceRecommendation;
+        //the best probs in the maximum distance are put first, ordered by distance
+        if (sq1.getUtility() >= p && sq2.getUtility() >= p && sq1.getDistance() <= maxdist && sq2.getDistance() <= maxdist) {
+            return Double.compare(sq1.getDistance(), sq2.getDistance());
+        }
+        if (sq1.getUtility() >= p && sq1.getDistance() <= maxdist && !(sq2.getUtility() >= p && sq2.getDistance() <= maxdist)) {
+            return -1;
+        }
+        if (!(sq1.getUtility() >= p && sq1.getDistance() <= maxdist) && sq2.getUtility() >= p && sq2.getDistance() <= maxdist) {
+            return +1;
+        }
+        if (sq1.getUtility() == sq2.getUtility() && sq1.getDistance() == sq2.getDistance()) {
+            return 0;
+        }
+        //second probability bound
+        if (sq1.getUtility() >= p2 && sq2.getUtility() >= p2) {
+            return Double.compare(sq1.getDistance(), sq2.getDistance());
+        }
+        if (sq1.getUtility() >= p2 && !(sq2.getUtility() >= p2)) {
+            return -1;
+        }
+        if (!(sq1.getUtility() >= p2) && sq2.getUtility() >= p2) {
+            return +1;
+        }
+        //third probability
+        if (sq1.getUtility() >= p3 && sq2.getUtility() >= p3) {
+            return Double.compare(sq1.getDistance(), sq2.getDistance());
+        }
+        if (sq1.getUtility() >= p3 && !(sq2.getUtility() >= p3)) {
+            return -1;
+        }
+        if (!(sq1.getUtility() >= p3) && sq2.getUtility() >= p3) {
+            return +1;
+        }
+        //rest
+        return Double.compare(sq1.getDistance(), sq2.getDistance());
+    };
+
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint destination, GeoPoint currentposition, boolean rentbike) {
         InfrastructureManager.UsageData ud = infrastructureManager.getCurrentUsagedata();
         List<StationUtilityData> temp = new ArrayList<>();
@@ -185,11 +313,11 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
             double dist = 0;
             if (rentbike) {
                 dist = currentposition.distanceTo(s.getPosition());
-                double off= dist / this.parameters.walkingVelocity;
-                prob = infrastructureManager.getAvailableBikeProbability(s,off);
+                double off = dist / this.parameters.walkingVelocity;
+                prob = infrastructureManager.getAvailableBikeProbability(s, off);
             } else {
                 dist = currentposition.distanceTo(s.getPosition());
-                double off= dist / this.parameters.cyclingVelocity;
+                double off = dist / this.parameters.cyclingVelocity;
                 prob = infrastructureManager.getAvailableSlotProbability(s, off);
                 dist = s.getPosition().distanceTo(destination);
             }
