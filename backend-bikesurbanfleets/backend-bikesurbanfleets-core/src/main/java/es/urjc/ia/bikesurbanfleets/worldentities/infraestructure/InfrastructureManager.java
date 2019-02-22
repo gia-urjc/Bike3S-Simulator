@@ -30,6 +30,7 @@ public class InfrastructureManager {
 
     private DemandManager demandManager;
 
+    private boolean demandmissingwarning=false; 
     /**
      * These are all the bikes from all stations at the system.
      */
@@ -111,14 +112,18 @@ public class InfrastructureManager {
         if (dem.hasDemand()) {
             ud.currentGlobalBikeDemand = dem.demand();
         } else {
-            System.out.println("[WARNING:] no global bike demand data available at date " + current + ": we assume a demand of 50% of station capacities");
+            if (demandmissingwarning) {
+                System.out.println("[WARNING:] no global bike demand data available at date " + current + ": we assume a demand of 50% of station capacities");
+            }
             ud.currentGlobalBikeDemand = ud.totalCapacity / 2D;
         }
         dem = demandManager.getReturnDemandGlobal(current);
         if (dem.hasDemand()) {
             ud.currentGlobalSlotDemand = dem.demand();
         } else {
-            System.out.println("[WARNING:] no global bike demand data available at date " + current + ": we assume a demand of 50% of station capacities");
+            if (demandmissingwarning) {
+                System.out.println("[WARNING:] no global bike demand data available at date " + current + ": we assume a demand of 50% of station capacities");
+            }
             ud.currentGlobalSlotDemand = ud.totalCapacity / 2D;
         }
         return ud;
@@ -136,7 +141,9 @@ public class InfrastructureManager {
         if (takedem.hasDemand()) {
             return takedem.demand();
         } else {
-            System.out.println("[WARNING:] no bike demand data available for station: " + s.getId() + " at date " + current + ": we assume a demand of bikes of half the capacity");
+            if (demandmissingwarning) {
+                System.out.println("[WARNING:] no bike demand data available for station: " + s.getId() + " at date " + current + ": we assume a demand of bikes of half the capacity");
+            }        
             return s.getCapacity() / 2D;
         }
     }
@@ -179,19 +186,19 @@ public class InfrastructureManager {
         }
         return changes;
     }
-    public void addExpectedBikechange(int stationid, int endtime, boolean take) {
+    public void addExpectedBikechange(int stationid, int timeoffset, boolean take) {
         int changes = 0;
         List<PotentialEvent> list = registeredBikeEventsPerStation.get(stationid);
         if (list == null) {
             list=new ArrayList<>();
             registeredBikeEventsPerStation.put(stationid, list);
         }
-        list.add(new PotentialEvent(take,(int)SimulationDateTime.getCurrentSimulationInstant(),endtime));
+        int current=(int)SimulationDateTime.getCurrentSimulationInstant();
+        list.add(new PotentialEvent(take,current,current+timeoffset));
      }
 
 
  public double getAvailableBikeProbability(Station s, double timeoffset) {
-
         int estimatedbikes = (int)Math.floor(s.availableBikes() + getExpectedBikechanges(s.getId(),timeoffset ) * POBABILITY_USERSOBEY) ;
         double takedemandattimeoffset=(getBikeDemand(s)*timeoffset)/3600D;
         double retdemandatofsettime=(getSlotDemand(s)*timeoffset)/3600D;
@@ -202,7 +209,6 @@ public class InfrastructureManager {
         return prob;
 }
 public double getAvailableSlotProbability(Station s, double timeoffset) {
-
         int estimatedslots = (int)Math.floor(s.availableSlots() + getExpectedBikechanges(s.getId(),timeoffset ) * POBABILITY_USERSOBEY) ;
         double takedemandattimeoffset=(getBikeDemand(s)*timeoffset)/3600D;
         double retdemandatofsettime=(getSlotDemand(s)*timeoffset)/3600D;
@@ -220,7 +226,9 @@ public double getAvailableSlotProbability(Station s, double timeoffset) {
         if (retdem.hasDemand()) {
             return (retdem.demand());
         } else {
-            System.out.println("[WARNING:] no slot demand data available for station: " + s.getId() + " at date " + current + ": we assume a demand of slots of half the capacity");
+            if (demandmissingwarning) {
+                System.out.println("[WARNING:] no slot demand data available for station: " + s.getId() + " at date " + current + ": we assume a demand of slots of half the capacity");            
+            }
             return s.getCapacity() / 2D;
         }
     }

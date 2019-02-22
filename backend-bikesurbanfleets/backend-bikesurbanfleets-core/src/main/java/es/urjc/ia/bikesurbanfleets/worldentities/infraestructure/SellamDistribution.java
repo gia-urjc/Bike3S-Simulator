@@ -46,7 +46,7 @@ public class SellamDistribution {
             else sum=sum+ c*Math.pow(ratio,i)*bessi(Math.abs(i),2D*mean);
         }
         if (sum==Double.NaN || sum==1D) {
-            int k=0;
+            sum=1D;
             
         }
         return sum;
