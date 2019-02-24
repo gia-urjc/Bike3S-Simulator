@@ -76,12 +76,12 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
             System.out.println();
             temp.forEach(s -> System.out.println("Station (take)" + s.getStation().getId() + ": "
                     + s.getStation().availableBikes() + " "
-                    + s.getStation().getCapacity() + " " 
+                    + s.getStation().getCapacity() + " "
                     + s.getMinoptimalocupation() + " "
                     + s.getOptimalocupation() + " "
                     + s.getMaxopimalocupation() + " "
                     + s.getDistance() + " "
-                    + s.getUtility() ));
+                    + s.getUtility()));
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } else {
             result = new ArrayList<>();
@@ -90,7 +90,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
     }
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
-        List<Recommendation> result= new ArrayList<>();
+        List<Recommendation> result = new ArrayList<>();
         List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().
                 filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
@@ -101,25 +101,25 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
             System.out.println();
             temp.forEach(s -> System.out.println("Station (return)" + s.getStation().getId() + ": "
                     + s.getStation().availableBikes() + " "
-                    + s.getStation().getCapacity() + " " 
+                    + s.getStation().getCapacity() + " "
                     + s.getMinoptimalocupation() + " "
                     + s.getOptimalocupation() + " "
                     + s.getMaxopimalocupation() + " "
                     + s.getDistance() + " "
-                    + s.getUtility() ));
+                    + s.getUtility()));
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
-        } 
+        }
         return result;
     }
 
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint point, boolean rentbike) {
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
-            
+
             StationUtilityData sd = new StationUtilityData(s);
-            double idealbikes = getIdealBikes(s);
-            double maxidealbikes = s.getCapacity() - getIdealSlots(s);
-           
+            double idealbikes = infrastructureManager.getFutueScaledBikeDemandNextHour(s);
+            double maxidealbikes = s.getCapacity() - infrastructureManager.getFutueScaledSlotDemandNextHour(s);
+
             double utility = getUtility(s, 0, idealbikes, maxidealbikes);
             double newutility;
             if (rentbike) {
@@ -136,52 +136,19 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
             double maxinc=(4D*(mincap-1))/Math.pow(mincap,2);
             double auxnormutil=((newutility-utility+maxinc)/(2*maxinc));
             double globalutility= dist/auxnormutil; 
-             */ 
+             */
             sd.setUtility(globalutility);
             sd.setMaxopimalocupation(maxidealbikes);
             sd.setMinoptimalocupation(idealbikes);
-            if (idealbikes>maxidealbikes) {
-                sd.setOptimalocupation((idealbikes + maxidealbikes)/2D);
-            } else sd.setOptimalocupation(Double.NaN);
+            if (idealbikes > maxidealbikes) {
+                sd.setOptimalocupation((idealbikes + maxidealbikes) / 2D);
+            } else {
+                sd.setOptimalocupation(Double.NaN);
+            }
             sd.setDistance(dist);
             temp.add(sd);
         }
         return temp;
-    }
-
-    private double getIdealBikes(Station s) {
-        DemandManager dm = infrastructureManager.getDemandManager();
-
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        LocalDateTime futuredate=current.plusHours(1);
-        DemandManager.DemandResult currenttakedem = dm.getTakeDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(current.getMonth()),
-                DemandManager.Day.toDemandMangerDay(current.getDayOfWeek()), current.getHour());
-        DemandManager.DemandResult futuretakedem = dm.getTakeDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(futuredate.getMonth()),
-                DemandManager.Day.toDemandMangerDay(futuredate.getDayOfWeek()), futuredate.getHour());
-        if (currenttakedem.hasDemand() && futuretakedem.hasDemand()) {
-            double futureprop=((double)current.getMinute())/59D;
-            return futuretakedem.demand()*futureprop + (1-futureprop)*currenttakedem.demand();
-        } else {
-            System.out.println("[WARNING:] no bike demand data available for station: " + s.getId() + " at date " + current + ": we assume a demand of bikes of half the capacity");
-            return s.getCapacity() / 2D;
-        }
-    }
-
-    private double getIdealSlots(Station s) {
-        DemandManager dm = infrastructureManager.getDemandManager();
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        LocalDateTime futuredate=current.plusHours(1);
-        DemandManager.DemandResult currentretdem = dm.getReturnDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(current.getMonth()),
-                DemandManager.Day.toDemandMangerDay(current.getDayOfWeek()), current.getHour());
-        DemandManager.DemandResult futureretdem = dm.getReturnDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(futuredate.getMonth()),
-                DemandManager.Day.toDemandMangerDay(futuredate.getDayOfWeek()), futuredate.getHour());
-        if (currentretdem.hasDemand() && futureretdem.hasDemand()) {
-            double futureprop=((double)current.getMinute())/59D;
-            return futureretdem.demand()*futureprop + (1-futureprop)*currentretdem.demand();
-        } else {
-            System.out.println("[WARNING:] no slot demand data available for station: " + s.getId() + " at date " + current + ": we assume a demand of slots of half the capacity");
-            return s.getCapacity() / 2D;
-        }
     }
 
     private double getUtility(Station s, int bikeincrement, double idealbikes, double maxidealbikes) {
@@ -196,7 +163,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
                 return 1;
             }
         } else { //idealbikes > max idealbikes
-            double bestocupation = (idealbikes + maxidealbikes)/2D;
+            double bestocupation = (idealbikes + maxidealbikes) / 2D;
             if (ocupation <= bestocupation) {
                 return 1 - Math.pow(((ocupation - bestocupation) / bestocupation), 2);
             } else {

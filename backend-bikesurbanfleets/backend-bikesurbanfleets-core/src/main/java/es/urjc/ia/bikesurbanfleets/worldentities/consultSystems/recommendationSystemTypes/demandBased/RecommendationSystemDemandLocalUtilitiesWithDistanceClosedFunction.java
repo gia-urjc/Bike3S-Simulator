@@ -114,8 +114,8 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
             
             StationUtilityData sd = new StationUtilityData(s);
 
-            double bikedemand=infrastructureManager.getBikeDemand(s);
-            double slotdem=infrastructureManager.getSlotDemand(s);
+            double bikedemand=infrastructureManager.getCurrentBikeDemand(s);
+            double slotdem=infrastructureManager.getCurrentBikeDemand(s);
             double idealAvailable = (bikedemand + s.getCapacity() - slotdem)/2D;
                     
             double utility = getUtility(s.availableBikes(), s.getCapacity(), idealAvailable);

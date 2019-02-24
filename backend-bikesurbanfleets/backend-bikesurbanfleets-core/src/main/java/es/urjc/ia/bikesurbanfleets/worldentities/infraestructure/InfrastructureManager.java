@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
@@ -30,7 +32,7 @@ public class InfrastructureManager {
 
     private DemandManager demandManager;
 
-    private boolean demandmissingwarning=false; 
+    private boolean demandmissingwarning = false;
     /**
      * These are all the bikes from all stations at the system.
      */
@@ -76,8 +78,8 @@ public class InfrastructureManager {
         public double currentGlobalBikeDemand = 0;
         public double currentGlobalSlotDemand = 0;
         public int totalCapacity = 0;
-        public double maxdemand = 0;
-        public double mindemand = 0;
+        public double maxBikedemand = 0;
+        public double minBikedemand = 0;
     }
 
     public UsageData getCurrentUsagedata() {
@@ -90,7 +92,7 @@ public class InfrastructureManager {
             ud.numberSlotsAvailableInStations += s.availableSlots();
             ud.numberBikesReservedInStations += s.getReservedBikes();
             ud.numberSlotsReservedInStations += s.getReservedSlots();
-            aux = getBikeDemand(s);
+            aux = getCurrentBikeDemand(s);
             if (aux > max) {
                 max = aux;
             }
@@ -99,8 +101,8 @@ public class InfrastructureManager {
             }
         }
         ud.numberStations = stations.size();
-        ud.maxdemand = max;
-        ud.mindemand = min;
+        ud.maxBikedemand = max;
+        ud.minBikedemand = min;
         ud.totalNumberBikes = bikes.size();
         ud.totalCapacity = ud.numberBikesAvailableInStations + ud.numberBikesReservedInStations
                 + ud.numberSlotsAvailableInStations + ud.numberSlotsReservedInStations;
@@ -108,64 +110,36 @@ public class InfrastructureManager {
                 - (ud.numberBikesAvailableInStations + ud.numberBikesReservedInStations);
 
         LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        DemandManager.DemandResult dem = demandManager.getTakeDemandGlobal(current);
-        if (dem.hasDemand()) {
-            ud.currentGlobalBikeDemand = dem.demand();
-        } else {
-            if (demandmissingwarning) {
-                System.out.println("[WARNING:] no global bike demand data available at date " + current + ": we assume a demand of 50% of station capacities");
-            }
-            ud.currentGlobalBikeDemand = ud.totalCapacity / 2D;
-        }
-        dem = demandManager.getReturnDemandGlobal(current);
-        if (dem.hasDemand()) {
-            ud.currentGlobalSlotDemand = dem.demand();
-        } else {
-            if (demandmissingwarning) {
-                System.out.println("[WARNING:] no global bike demand data available at date " + current + ": we assume a demand of 50% of station capacities");
-            }
-            ud.currentGlobalSlotDemand = ud.totalCapacity / 2D;
-        }
+        ud.currentGlobalBikeDemand = demandManager.getTakeDemandGlobal(current);
+        ud.currentGlobalSlotDemand = demandManager.getReturnDemandGlobal(current);
         return ud;
     }
 
-    public DemandManager getDemandManager() {
-        return demandManager;
-    }
-
-    public double getBikeDemand(Station s) {
-        DemandManager dm = demandManager;
-
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        DemandManager.DemandResult takedem = dm.getTakeDemandStation(s.getId(), current);
-        if (takedem.hasDemand()) {
-            return takedem.demand();
-        } else {
-            if (demandmissingwarning) {
-                System.out.println("[WARNING:] no bike demand data available for station: " + s.getId() + " at date " + current + ": we assume a demand of bikes of half the capacity");
-            }        
-            return s.getCapacity() / 2D;
-        }
-    }
     public double POBABILITY_USERSOBEY = 0.9;
 
     private class PotentialEvent {
 
         boolean take; //or return
-        int settime;
         int expectedendtime;
 
-        PotentialEvent(boolean take, int settime, int expectedendtime) {
+        PotentialEvent(boolean take, int expectedendtime) {
             this.take = take;
-            this.settime = settime;
             this.expectedendtime = expectedendtime;
         }
     }
 
-    private HashMap<Integer, List<PotentialEvent>> registeredBikeEventsPerStation = new HashMap<>();
+    //the list will be ordered by the expectedendtime
+    private HashMap<Integer, LinkedList<PotentialEvent>> registeredBikeEventsPerStation = new HashMap<>();
 
+    //global variables used for getExpectedBikechanges
+        private int changes = 0;
+        private int minpostchanges=0;
+        private int maxpostchanges=0;
     private int getExpectedBikechanges(int stationid, double timeoffset) {
-        int changes = 0;
+         changes = 0;
+         minpostchanges=0;
+         maxpostchanges=0;
+         int postchanges=0;
         List<PotentialEvent> list = registeredBikeEventsPerStation.get(stationid);
         if (list == null) {
             return changes;
@@ -176,61 +150,112 @@ public class InfrastructureManager {
             PotentialEvent e = i.next(); // must be called before you can call i.remove()
             if (e.expectedendtime < currentinstant) {
                 i.remove();
-            } else if (e.expectedendtime<=currentinstant+timeoffset){
+            } else if (e.expectedendtime < currentinstant + timeoffset) {
                 if (e.take) {
                     changes--;
                 } else {
                     changes++;
                 }
-            } //if e.expectedendtime>currentinstant+timeoffset does not count
+            } else {// e.expectedendtime>currentinstant+timeoffset are taken in to consideration if compromised is true
+                if (e.take) {
+                    postchanges--;
+                } else {
+                    postchanges++;
+                }
+                if (postchanges<minpostchanges) minpostchanges=postchanges;
+                if (postchanges>maxpostchanges) maxpostchanges=postchanges;
+            }
         }
         return changes;
     }
+
     public void addExpectedBikechange(int stationid, int timeoffset, boolean take) {
         int changes = 0;
-        List<PotentialEvent> list = registeredBikeEventsPerStation.get(stationid);
+        LinkedList<PotentialEvent> list = registeredBikeEventsPerStation.get(stationid);
         if (list == null) {
-            list=new ArrayList<>();
+            list = new LinkedList<>();
             registeredBikeEventsPerStation.put(stationid, list);
         }
-        int current=(int)SimulationDateTime.getCurrentSimulationInstant();
-        list.add(new PotentialEvent(take,current,current+timeoffset));
-     }
-
-
- public double getAvailableBikeProbability(Station s, double timeoffset) {
-        int estimatedbikes = (int)Math.floor(s.availableBikes() + getExpectedBikechanges(s.getId(),timeoffset ) * POBABILITY_USERSOBEY) ;
-        double takedemandattimeoffset=(getBikeDemand(s)*timeoffset)/3600D;
-        double retdemandatofsettime=(getSlotDemand(s)*timeoffset)/3600D;
-        
-        //probability that a bike exists 
-        double prob =SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, estimatedbikes);
-        
-        return prob;
-}
-public double getAvailableSlotProbability(Station s, double timeoffset) {
-        int estimatedslots = (int)Math.floor(s.availableSlots() + getExpectedBikechanges(s.getId(),timeoffset ) * POBABILITY_USERSOBEY) ;
-        double takedemandattimeoffset=(getBikeDemand(s)*timeoffset)/3600D;
-        double retdemandatofsettime=(getSlotDemand(s)*timeoffset)/3600D;
-        
-        //probability that a bike exists 
-        double prob =SellamDistribution.calculateCDFSkellamProbability(takedemandattimeoffset, retdemandatofsettime, estimatedslots);
-        
-        return prob;
-}
-
-    public double getSlotDemand(Station s) {
-        DemandManager dm = demandManager;
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        DemandManager.DemandResult retdem = dm.getReturnDemandStation(s.getId(), current);
-        if (retdem.hasDemand()) {
-            return (retdem.demand());
-        } else {
-            if (demandmissingwarning) {
-                System.out.println("[WARNING:] no slot demand data available for station: " + s.getId() + " at date " + current + ": we assume a demand of slots of half the capacity");            
+        int endtime = (int) SimulationDateTime.getCurrentSimulationInstant() + timeoffset;
+        //put the element in its position in the list
+        boolean done = false;
+        for (int i = list.size() - 1; i >= 0; i--) {
+            if (list.get(i).expectedendtime <= endtime) {
+                list.add(i + 1, new PotentialEvent(take, endtime));
+                done = true;
+                break;
             }
-            return s.getCapacity() / 2D;
         }
+        if (!done) {
+            list.add(0, new PotentialEvent(take, endtime));
+        }
+    }
+
+    public double getAvailableBikeProbability(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
+        int estimatedbikes = s.availableBikes();
+        if (takeintoaccountexpected) {
+            getExpectedBikechanges(s.getId(), timeoffset); 
+            double compromisedbikechanges=changes;
+            if (takeintoaccountcompromised) {
+                compromisedbikechanges+=minpostchanges;
+            }
+            estimatedbikes+= (int) Math.floor(compromisedbikechanges* POBABILITY_USERSOBEY);
+        }
+        double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
+        double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
+        //probability that a bike exists 
+        int k = 1 - estimatedbikes;
+        double prob = SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
+
+        return prob;
+    }
+
+    public double getAvailableSlotProbability(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
+        int estimatedslots = s.availableSlots();
+        if (takeintoaccountexpected) {
+            getExpectedBikechanges(s.getId(), timeoffset); 
+            double compromisedbikechanges=changes;
+            if (takeintoaccountcompromised) {
+                compromisedbikechanges+=maxpostchanges;
+            }
+            estimatedslots-= (int) Math.floor(compromisedbikechanges* POBABILITY_USERSOBEY);
+        }
+        double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
+        double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
+
+        //probability that a bike exists 
+        int k = 1 - estimatedslots;
+        double prob = SellamDistribution.calculateCDFSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
+
+        return prob;
+    }
+
+    public double getCurrentSlotDemand(Station s) {
+        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
+        return demandManager.getReturnDemandStation(s.getId(), current);
+    }
+
+    public double getCurrentBikeDemand(Station s) {
+        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
+        return demandManager.getTakeDemandStation(s.getId(), current);
+    }
+
+    public double getFutueScaledSlotDemandNextHour(Station s) {
+        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
+        LocalDateTime futuredate = current.plusHours(1);
+        double currendem = demandManager.getReturnDemandStation(s.getId(), current);
+        double futuredem = demandManager.getReturnDemandStation(s.getId(), futuredate);
+        double futureprop = ((double) current.getMinute()) / 59D;
+        return futuredem * futureprop + (1 - futureprop) * currendem;
+    }
+
+    public double getFutueScaledBikeDemandNextHour(Station s) {
+        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
+        LocalDateTime futuredate = current.plusHours(1);
+        double currendem = demandManager.getTakeDemandStation(s.getId(), current);
+        double futuredem = demandManager.getTakeDemandStation(s.getId(), futuredate);
+        double futureprop = ((double) current.getMinute()) / 59D;
+        return futuredem * futureprop + (1 - futureprop) * currendem;
     }
 
     public List<Station> consultStations() {

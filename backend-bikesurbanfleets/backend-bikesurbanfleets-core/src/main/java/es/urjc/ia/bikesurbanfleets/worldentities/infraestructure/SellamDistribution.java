@@ -22,6 +22,9 @@ public class SellamDistribution {
 
    // calculates prob of my1 -my2
    public static double calculateSkellamProbability(double my1, double my2, int k){
+        if (my1<=0.0000000000001D  ||my2<=0.0000000000001D) {
+            throw new RuntimeException(" my values to small for good results of distribution");
+        }
         double c=Math.exp(-(my1+my2));
         double ratio=Math.sqrt(my1/my2);
         double mean=Math.sqrt(my1*my2);
@@ -30,22 +33,30 @@ public class SellamDistribution {
     }
 
    static int highest_value=30;
-   // calculates prob of my1 -my2
-   public static double calculateCDFSkellamProbability(double my1, double my2, int bikes){
-        if (my1<=0.00000000001D) my1=0.00000000001D;
-        if (my2<=0.00000000001D) my2=0.00000000001D;
-       
+   // calculates accumulated prob P(X>=k) of my1 -my2
+   public static double calculateCDFSkellamProbability(double my1, double my2, int k){
+      
+        if (my1==0){
+            return 1-calculateCDFPoissonProbability( my2,  -k+1);
+        } else if (my2==0){
+            return calculateCDFPoissonProbability( my1,  k);
+        }  
+        if (my1<=0.0000000000001D  ||my2<=0.0000000000001D) {
+            throw new RuntimeException(" my values to small for good results of distribution");
+        }
         double c=Math.exp(-(my1+my2));
         double ratio=Math.sqrt(my1/my2);
         double mean=Math.sqrt(my1*my2);
         double sum=0;
-        for (int i=-bikes+1; i<=highest_value;i++){
+        for (int i=k; i<=highest_value;i++){
             int j=Math.abs(i);
-            if (j==0) sum=sum+ c*Math.pow(ratio,i)*bessi0(2D*mean);
-            else if (j==1) sum=sum+ c*Math.pow(ratio,i)*bessi1(2D*mean);
-            else sum=sum+ c*Math.pow(ratio,i)*bessi(Math.abs(i),2D*mean);
+            double s;
+            if (j==0) s= c*Math.pow(ratio,i)*bessi0(2D*mean);
+            else if (j==1) s= c*Math.pow(ratio,i)*bessi1(2D*mean);
+            else s= c*Math.pow(ratio,i)*bessi(Math.abs(i),2D*mean);
+            sum+=s;
         }
-        if (sum==Double.NaN || sum==1D) {
+        if (sum==Double.NaN || sum>=1D) {
             sum=1D;
             
         }
@@ -109,5 +120,40 @@ public class SellamDistribution {
             ans *= bessi0(x)/bi;
             return (((x < 0.0) && ((n % 2) == 0)) ? -ans : ans);
         }
+    }
+    
+    //P(X>=num)
+    public static double calculateCDFPoissonProbability(double my1, int num){
+        if (my1 <0)
+                throw new IllegalArgumentException("illegal arguments Poisson");
+        if (num<=0) return 1;
+        if (my1==0) {
+            if (num>0)return 0;
+            else return 1; }        
+        //my1>0
+        double c=Math.exp(-(my1));
+        double sum=0;
+        for (int i=Math.min(num, 0); i<=highest_value;i++){
+            int j=Math.abs(i);
+            sum=sum + c*Math.pow(my1, i)/Factorial(i);
+        }
+        if (sum==Double.NaN || sum>=1D) {
+            sum=1D;
+            
+        }
+        return sum;
+    }
+
+    public static double Factorial(int i) {
+        
+        long factorial = 1; // declarar e inicializar factorial en 1
+        
+        while(i != 0)
+        {
+            factorial *= i;
+            i--;
+        }
+        return i;
+ 
     }
 }

@@ -19,89 +19,139 @@ import java.util.HashMap;
  * @author holger
  */
 public class DemandManager {
-    
+
+    //if no demand data is available, the average of all stations in the same period is returned
+    //this is the minimum demand that is assumed if teh obtained demand is 0
+    private final static double MIN_DEMAND = 0.05;
+
     public enum Month {
         Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dic, Summer, Winter, All;
-        public static Month toDemandMangerMonth(java.time.Month m){
-            switch (m){
-                case JANUARY: return Jan;
-                case FEBRUARY: return Feb;
-                case MARCH: return Mar;
-                case APRIL: return Apr;
-                case MAY: return May;
-                case JUNE: return Jun;
-                case JULY: return Jul;
-                case AUGUST: return Aug;
-                case SEPTEMBER: return Sep;
-                case OCTOBER: return Oct;
-                case NOVEMBER: return Nov;
-                case DECEMBER: return Dic;
-             }
+
+        public static Month toDemandMangerMonth(java.time.Month m) {
+            switch (m) {
+                case JANUARY:
+                    return Jan;
+                case FEBRUARY:
+                    return Feb;
+                case MARCH:
+                    return Mar;
+                case APRIL:
+                    return Apr;
+                case MAY:
+                    return May;
+                case JUNE:
+                    return Jun;
+                case JULY:
+                    return Jul;
+                case AUGUST:
+                    return Aug;
+                case SEPTEMBER:
+                    return Sep;
+                case OCTOBER:
+                    return Oct;
+                case NOVEMBER:
+                    return Nov;
+                case DECEMBER:
+                    return Dic;
+            }
             return null;
-        }  
+        }
     }
 
     public enum Day {
         Mon, Tue, Wed, Thu, Fri, Sat, Sun, Weekday, Weekend;
-        public static Day toDemandMangerDay(java.time.DayOfWeek d){
-            switch (d){
-                case MONDAY: return Mon;
-                case TUESDAY: return Tue;
-                case WEDNESDAY: return Wed;
-                case THURSDAY: return Thu;
-                case FRIDAY: return Fri;
-                case SATURDAY: return Sat;
-                case SUNDAY: return Sun;
-              }
+
+        public static Day toDemandMangerDay(java.time.DayOfWeek d) {
+            switch (d) {
+                case MONDAY:
+                    return Mon;
+                case TUESDAY:
+                    return Tue;
+                case WEDNESDAY:
+                    return Wed;
+                case THURSDAY:
+                    return Thu;
+                case FRIDAY:
+                    return Fri;
+                case SATURDAY:
+                    return Sat;
+                case SUNDAY:
+                    return Sun;
+            }
             return null;
-        }  
+        }
     }
 
+    private class DemandResult {
 
-    public class DemandResult {
-
-         boolean hasdemand;
-         double demand;
+        boolean hasdemand;
+        double demand;
 
         DemandResult(boolean hasdemand, double demand) {
             this.hasdemand = hasdemand;
             this.demand = demand;
         }
-        public boolean hasDemand(){ return hasdemand;}
-        public double demand(){ return demand;}
     }
     Demand dem = new Demand();
 
-    public DemandResult getTakeDemandStation(int stationID, LocalDateTime t) {
+    public double getTakeDemandStation(int stationID, LocalDateTime t) {
         return getTakeDemandStation(stationID, Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
-    public DemandResult getReturnDemandStation(int stationID, LocalDateTime t) {
+    public double getReturnDemandStation(int stationID, LocalDateTime t) {
         return getReturnDemandStation(stationID, Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
-    public DemandResult getTakeDemandGlobal(LocalDateTime t) {
+    public double getTakeDemandGlobal(LocalDateTime t) {
         return getTakeDemandGlobal(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
-    public DemandResult getReturnDemandGlobal(LocalDateTime t) {
+    public double getReturnDemandGlobal(LocalDateTime t) {
         return getTakeDemandGlobal(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
-    public DemandResult getTakeDemandStation(int stationID, Month month, Day day, int hour) {
-        return dem.getDemandStation(stationID, month, day, hour, true);
+    public double getTakeDemandStation(int stationID, Month month, Day day, int hour) {
+        DemandResult r = dem.getDemandStation(stationID, month, day, hour, true);
+        double result;
+        if (!r.hasdemand) {
+            result = dem.getAverageStationDemand(month, day, hour, true);
+        } else {
+            result = r.demand;
+        }
+        if (result < MIN_DEMAND) {
+            return MIN_DEMAND;
+        }
+        return result;
     }
 
-    public DemandResult getReturnDemandStation(int stationID, Month month, Day day, int hour) {
-        return dem.getDemandStation(stationID, month, day, hour, false);
+    public double getReturnDemandStation(int stationID, Month month, Day day, int hour) {
+        DemandResult r = dem.getDemandStation(stationID, month, day, hour, false);
+        double result;
+        if (!r.hasdemand) {
+            result = dem.getAverageStationDemand(month, day, hour, false);
+        } else {
+            result = r.demand;
+        }
+        if (result < MIN_DEMAND) {
+            return MIN_DEMAND;
+        }
+        return result;
     }
 
-    public DemandResult getTakeDemandGlobal(Month month, Day day, int hour) {
-        return dem.getDemandGlobal(month, day, hour, true);
+    public double getTakeDemandGlobal(Month month, Day day, int hour) {
+        double result = dem.getDemandGlobal(month, day, hour, true);
+        if (result < MIN_DEMAND) {
+            return MIN_DEMAND;
+        }
+        return result;
     }
 
-    public DemandResult getReturnDemandGlobal(Month month, Day day, int hour) {
-        return dem.getDemandGlobal(month, day, hour, false);
+    public double getReturnDemandGlobal(Month month, Day day, int hour) {
+        double result = dem.getDemandGlobal(month, day, hour, false);
+        if (result < MIN_DEMAND) {
+            return MIN_DEMAND;
+        }
+        return result;
     }
 
     public void ReadData(String file) {
@@ -115,9 +165,9 @@ public class DemandManager {
                     .build();
             CSVReader csvReader
                     = new CSVReaderBuilder(filereader)
-                            .withSkipLines(1)
-                            .withCSVParser(parser)
-                            .build();
+                    .withSkipLines(1)
+                    .withCSVParser(parser)
+                    .build();
             while ((line = csvReader.readNext()) != null) {
                 int station = Integer.parseInt(line[0]);
                 int day = Integer.parseInt(line[1]);
@@ -127,14 +177,14 @@ public class DemandManager {
                 int takeNum = Integer.parseInt(line[5]);
                 int returnNum = Integer.parseInt(line[6]);
                 String dayOfWeek = line[7];
-           /*     if (day==5 && month==10) {
+                /*     if (day==5 && month==10) {
                     System.out.println();
                     for (String s : line) {
                         System.out.print(s + " ");
                     }
-         */      
-                    dem.add(station, month, dayOfWeek, hour, takeNum, returnNum);
-           //     }
+                 */
+                dem.add(station, month, dayOfWeek, hour, takeNum, returnNum);
+                //     }
             }
             dem.setGlobalDemand();
         } catch (Exception ex) {
@@ -142,10 +192,15 @@ public class DemandManager {
         }
     }
 
-    class Demand {
+    private class Demand {
 
         HashMap< Integer, StationData> stationMap;
         HashMap< Month, HashMap<Day, double[][]>> globalDemand;
+        int numberstations;
+
+        int getNumberStations() {
+            return stationMap.size();
+        }
 
         Demand() {
             stationMap = new HashMap< Integer, StationData>();
@@ -214,7 +269,7 @@ public class DemandManager {
         void setGlobalDemand() {
             globalDemand = new HashMap< Month, HashMap<Day, double[][]>>(15);
             for (int key : stationMap.keySet()) {
-                StationData stationdata=stationMap.get(key);
+                StationData stationdata = stationMap.get(key);
 
                 for (Month stationmonth : stationdata.monthMap.keySet()) {
                     MonthData stationmonthdata = stationdata.monthMap.get(stationmonth);
@@ -239,9 +294,9 @@ public class DemandManager {
                         }
 
                         for (int i = 0; i < 24; i++) {
- //                               if (i==0 && stationmonth==Month.Jan && stationday==Day.Mon){
-   //                                 System.out.println("add");
-     //                           } 
+                            //                               if (i==0 && stationmonth==Month.Jan && stationday==Day.Mon){
+                            //                                 System.out.println("add");
+                            //                           } 
                             globaldaydata[i][0] = globaldaydata[i][0]
                                     + ((double) stationdaydata.data[i][0] / (double) stationdaydata.data[i][2]);
                             globaldaydata[i][1] = globaldaydata[i][1]
@@ -252,22 +307,26 @@ public class DemandManager {
             }
         }
 
+        double getAverageStationDemand(Month month, Day day, int hour, boolean take) {
+            return (getDemandGlobal(month, day, hour, take) / stationMap.size());
+        }
+
         //if take==true returns the take demand otherwise returns the return demand
-        DemandResult getDemandGlobal(Month month, Day day, int hour, boolean take) {
+        double getDemandGlobal(Month month, Day day, int hour, boolean take) {
             HashMap<Day, double[][]> globalmonthdata = globalDemand.get(month);
             if (globalmonthdata == null) {
-                return new DemandResult(false, Double.NaN);
+                throw new RuntimeException("no global demand available for this period");
             }
 
             double[][] globaldaydata = globalmonthdata.get(day);
             if (globaldaydata == null) {
-                return new DemandResult(false, Double.NaN);
+                throw new RuntimeException("no global demand available for this period");
             }
 
             if (take) {
-                return new DemandResult(true, globaldaydata[hour][0]); 
+                return globaldaydata[hour][0];
             } else {
-                 return new DemandResult(true, globaldaydata[hour][1]); 
+                return globaldaydata[hour][1];
             }
         }
 
@@ -428,31 +487,23 @@ public class DemandManager {
         Month[] m = Month.values();
         Day[] d = Day.values();
         System.out.println("!!!!!Station demand:");
-        
-        Month mm=Month.Oct;
-        Day dd= Day.Thu;
-             for (int i = 0; i < 24; i++) {
-                    for (Integer si : demandManager.dem.stationMap.keySet()) {
-                        DemandResult take = demandManager.getTakeDemandStation(si, mm,dd, i);
-                        DemandResult ret = demandManager.getReturnDemandStation(si, mm,dd, i);
-                        if (!take.hasdemand || !ret.hasdemand) {
-                            System.out.println(
-                                    "Station : " + si + " : demand Month: " + mm + " : day: " + dd + " : hour: " + i
-                                    + " : take: not avail."
-                                    + " : return: not avail."
-                                    + " : entries: not avail.");
 
-                        } else {
-                            System.out.println(
-                                    "Station : " + si + " : demand Month: " + mm + " : day: " + dd + " : hour: " + i
-                                    + " : take: " + take.demand
-                                    + " : return: " + ret.demand
-                                    + " : entries: " + demandManager.dem.getEntries(si, mm, dd, i));
-                        }
-                    }
-                }
-        
-  /*      int stationsum = 0;
+        Month mm = Month.Oct;
+        Day dd = Day.Thu;
+        for (int i = 0; i < 24; i++) {
+            for (Integer si : demandManager.dem.stationMap.keySet()) {
+                double take = demandManager.getTakeDemandStation(si, mm, dd, i);
+                double ret = demandManager.getReturnDemandStation(si, mm, dd, i);
+                System.out.println(
+                        "Station : " + si + " : demand Month: " + mm + " : day: " + dd + " : hour: " + i
+                        + " : take: " + take
+                        + " : return: " + ret
+                        + " : entries: " + demandManager.dem.getEntries(si, mm, dd, i));
+
+            }
+        }
+
+        /*      int stationsum = 0;
         for (Month mm : m) {
             for (Day dd : d) {
                 for (int i = 0; i < 24; i++) {
@@ -501,7 +552,7 @@ public class DemandManager {
             }
 
         }
-*/
+         */
     }
 
 }

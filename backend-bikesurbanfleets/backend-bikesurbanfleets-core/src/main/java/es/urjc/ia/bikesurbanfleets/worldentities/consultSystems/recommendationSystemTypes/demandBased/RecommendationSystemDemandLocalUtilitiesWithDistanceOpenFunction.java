@@ -117,8 +117,8 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
         for (Station s : stations) {
 
             StationUtilityData sd = new StationUtilityData(s);
-            double idealbikes = infrastructureManager.getBikeDemand(s);
-            double maxidealbikes = s.getCapacity() -infrastructureManager.getSlotDemand(s);
+            double idealbikes = infrastructureManager.getCurrentBikeDemand(s);
+            double maxidealbikes = s.getCapacity() -infrastructureManager.getCurrentSlotDemand(s);
 
             double utility = getUtility(s, 0, idealbikes, maxidealbikes);
             double newutility;

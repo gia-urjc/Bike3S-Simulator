@@ -184,7 +184,7 @@ public class RecommendetionSystemDemandSurroundingDistanceOpenfunction extends R
         double factor, multiplication;
         for (Station other : otherstations) {
             factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
-            multiplication = getIdealBikes(other) * factor;
+            multiplication = infrastructureManager.getCurrentBikeDemand(other) * factor;
             accideal += multiplication;
         }
         return accideal;
@@ -195,7 +195,7 @@ public class RecommendetionSystemDemandSurroundingDistanceOpenfunction extends R
         double factor, multiplication;
         for (Station other : otherstations) {
             factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
-            multiplication = getIdealSlots(other) * factor;
+            multiplication = infrastructureManager.getCurrentSlotDemand(other) * factor;
             accideal += multiplication;
         }
         return accideal;
@@ -222,31 +222,6 @@ public class RecommendetionSystemDemandSurroundingDistanceOpenfunction extends R
         return accocc;
     }
 
-    private double getIdealBikes(Station s) {
-        DemandManager dm=infrastructureManager.getDemandManager();
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        DemandManager.DemandResult takedem = dm.getTakeDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(current.getMonth()),
-                DemandManager.Day.toDemandMangerDay(current.getDayOfWeek()), current.getHour());
-        if (takedem.hasDemand()) {
-            return takedem.demand();
-        } else {
-            System.out.println("[WARNING:] no bike demand data available for station: " + s.getId() + " at date " + current + ": we assume a demand of bikes of half the capacity");
-            return s.getCapacity() / 2D;
-        }
-    }
-
-    private double getIdealSlots(Station s) {
-        DemandManager dm=infrastructureManager.getDemandManager();
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        DemandManager.DemandResult retdem = dm.getReturnDemandStation(s.getId(), DemandManager.Month.toDemandMangerMonth(current.getMonth()),
-                DemandManager.Day.toDemandMangerDay(current.getDayOfWeek()), current.getHour());
-        if (retdem.hasDemand()) {
-            return (retdem.demand());
-        } else {
-            System.out.println("[WARNING:] no slot demand data available for station: " + s.getId() + " at date " + current + ": we assume a demand of slots of half the capacity");
-            return s.getCapacity() / 2D;
-        }
-    }
 
     private double getUtility(int bikeincrement, double idealbikes, double maxidealbikes, double capacity, double avbikes ) {
         double ocupation = avbikes + bikeincrement;
