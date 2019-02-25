@@ -11,6 +11,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSy
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystemTypes.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystemTypes.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.SellamDistribution;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 
 import java.util.ArrayList;
@@ -27,8 +28,8 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_PROBABILITY")
-public class RecommendationSystemDemandProbability extends RecommendationSystem {
+@RecommendationSystemType("DEMAND_PROBABILITY_PREDICTION")
+public class RecommendationSystemDemandProbabilityGlobalPrediction extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -42,8 +43,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double walkingVelocity = 1.12/1.25D;
         private double cyclingVelocity = 6.0/1.25D;
-        private double requiredProbability=0.99;
-        private double secondProbability=0.7;
+        private double requiredProbability=0.999;
+        private double secondProbability=0.6;
         private double[][] probabilityorder = 
  /*           {{100,0.99}, {100,0.9}, {100,0.8}, {100,0.7}, 
              {250,0.99}, {250,0.9}, {250,0.8}, {100,0.6}, {100,0.5}, {250,0.7}, {500,0.99}, {500,0.9}, 
@@ -57,15 +58,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
              {750,0.8}, {750,0.7}, {750,0.6}, {1000,0.99}, 
              {1000,0.9}, {1000,0.8}, {1000,0.7}, {1000,0.6}, {1000,0.5}, {10000,0.3}            
             };
-*/        /*  {{500,0.999}, {500,0.95},{500,0.9},{500,0.85},{500,0.8},{500,0.75},{500,0.7}, {500,0.65},{500,0.6},
+*/          {{500,0.999}, {500,0.95},{500,0.9},{500,0.85},{500,0.8},{500,0.75},{500,0.7}, {500,0.65},{500,0.6},
              {10000,0.6},{10000,0.3}            
-            };*/
-            {{600,0.999},
-             {600,0.99}, {600,0.98}, {600,0.95},{600,0.92},{600,0.89},{600,0.86},{600,0.83},{600,0.8},
-             {600,0.77}, {600,0.74},{600,0.71},{600,0.68},{600,0.65},{600,0.62},
-             {600,0.59},
-             {800,0.9}, {800,0.75},{800,0.6}, 
-             {10000,0.6}            
             };
         private double[] distancethreads = {100, 250, 500, 750, 1000};
         private double thirdProbability = 0.8;
@@ -78,7 +72,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
 
     private RecommendationParameters parameters;
 
-    public RecommendationSystemDemandProbability(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandProbabilityGlobalPrediction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -103,7 +97,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         //         .filter(station -> station.getPosition().distanceTo(currentposition) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
-            List<StationUtilityData> su = getStationUtility(stations, null, currentposition, true);
+            List<StationUtilityData> su = getStationUtilityRentBike(stations, currentposition);
             List<StationUtilityData> temp = su.stream().sorted(comp).collect(Collectors.toList());
 
             probst += temp.get(0).getProbability();
@@ -116,17 +110,16 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
                 lowprobs++;
             }
             System.out.println("Expected successrate take:" + (probst / callst));
-    //        temp.forEach(s -> 
+            temp.forEach(s -> 
 {
-                StationUtilityData s=temp.get(0);
+  //              StationUtilityData s=temp.get(0);
                 System.out.format("Station %3d (take) %2d %2d %10f %6f %n", + s.getStation().getId() ,
                          s.getStation().availableBikes() ,
                          s.getStation().getCapacity(),
                          s.getDistance() ,
                          s.getProbability());
-
             }
-//);
+);
             //}
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
             //add values to the expeted takes
@@ -156,7 +149,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         //            filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
-            List<StationUtilityData> su = getStationUtility(stations, destination, currentposition, false);
+            List<StationUtilityData> su = getStationUtilityReturnBike(stations, destination, currentposition);
             List<StationUtilityData> temp = su.stream().sorted(comp).collect(Collectors.toList());
             probsr += temp.get(0).getProbability();
             callsr++;
@@ -169,17 +162,17 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
             }
             lowprobs++;
             System.out.println("Expected successrate return:" + (probsr / callsr));
-    //        temp.forEach(s -> 
+            temp.forEach(s -> 
             {
 
-            StationUtilityData s=temp.get(0);
+       //     StationUtilityData s=temp.get(0);
                 System.out.format("Station %3d (return) %2d %2d %10f %6f %n", + s.getStation().getId() ,
                          s.getStation().availableBikes() ,
                          s.getStation().getCapacity(),
                          s.getDistance() ,
                          s.getProbability());
             }
-     //       );
+            );
       //            }
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
 
@@ -211,7 +204,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         //}
     };
 
-    Comparator<StationUtilityData> special0best = (sq1, sq2) -> {
+    Comparator<StationUtilityData> special0bis = (sq1, sq2) -> {
         double p = this.parameters.requiredProbability;
         double p2 = this.parameters.secondProbability;
         double p3 = this.parameters.thirdProbability;
@@ -229,8 +222,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
                 return Double.compare(sq1.getDistance(), sq2.getDistance());
             }
             //if (sq1.getProbability()<p && sq2.getProbability()<p) {
-            return Double.compare(sq2.getProbability(), sq1.getProbability());
-         //   return Double.compare(sq1.getDistance(), sq2.getDistance());
+         //   return Double.compare(sq2.getProbability(), sq1.getProbability());
+            return Double.compare(sq1.getDistance(), sq2.getDistance());
         }
         if (sq1.getDistance() <= maxdist && sq1.getProbability() >= p2 && !(sq2.getProbability() >= p2 && sq2.getDistance() <= maxdist)) {
             return -1;
@@ -300,61 +293,90 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         return parameters.probabilityorder.length;
     }
     Comparator<StationUtilityData> special3 = (sq1, sq2) -> {
-        int ret;
         int i1=findindex(sq1);
         int i2=findindex(sq2);
-        if (i1<i2) ret= -1;
-        else if (i1>i2) ret= +1;
-        else ret= Double.compare(sq1.getDistance(),sq2.getDistance());
-  /*     int ret2=specialbesti.compare(sq1,sq2);
-  /*      if (!((ret2>0 && ret>0) || (ret2==0 && ret==0) || (ret2<0 && ret<0)) ){
-            System.out.println("different compare res3 resbis sq1 sq2:" + ret + " " + ret2
-                    + " " + sq1.getDistance() + " " + sq1.getProbability()+ 
-                    " " + sq2.getDistance() + " " + sq2.getProbability());   
-        }
-   */     return ret;
+        if (i1<i2) return -1;
+        if (i1>i2) return +1;
+        return Double.compare(sq1.getDistance(),sq2.getDistance());
     };
-    Comparator<StationUtilityData> comp=special0best;
+    Comparator<StationUtilityData> comp=special0bis;
 
-    public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint destination, GeoPoint currentposition, boolean rentbike) {
+    public List<StationUtilityData> getStationUtilityRentBike(List<Station> stations, GeoPoint currentposition) {
         InfrastructureManager.UsageData ud = infrastructureManager.getCurrentUsagedata();
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
-
             StationUtilityData sd = new StationUtilityData(s);
 
-            double prob = 0;
-            double dist = 0;
-            if (rentbike) {
-                dist = currentposition.distanceTo(s.getPosition());
-                double off = dist / this.parameters.walkingVelocity;
-                if (off<1) off=0;
-                prob = infrastructureManager.getAvailableBikeProbability(s, off,
+            //get probability of renting or returning a bike sucessfully
+            double dist = currentposition.distanceTo(s.getPosition());
+            double off = dist / this.parameters.walkingVelocity;
+            if (off<1) off=0;
+            double prob = infrastructureManager.getAvailableBikeProbability(s, off,
                        parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised);
-            } else {
-                dist = currentposition.distanceTo(s.getPosition());
-                double off = dist / this.parameters.cyclingVelocity;
-                if (off<1) off=0;
-                prob = infrastructureManager.getAvailableSlotProbability(s, off,
-                parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised);
-                dist = s.getPosition().distanceTo(destination);
-            }
-
-            //           double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
-            //           double globalutility = parameters.wheightDistanceStationUtility * norm_distance
-            //                   + (1 - parameters.wheightDistanceStationUtility) * normedUtilityDiff;
-            //           double globalutility =  norm_distance * prob;
-
-            /*       double mincap=(double)infraestructureManager.getMinStationCapacity();
-            double maxinc=(4D*(mincap-1))/Math.pow(mincap,2);
-            double auxnormutil=((newutility-utility+maxinc)/(2*maxinc));
-            double globalutility= dist/auxnormutil; 
-             */
+            
+            //now calculate the change in the global utility if the bike is taken/returned in this station
+            // defined here like: prob(bikedemand, station)*change in probability of taking a bike +
+            // prob(slotdemand, station)*change in probability of returning a bike 
+            // the values are calculated at the time where the event would occure
+            
+            double posttakebikeprob = getPostAvailableBikeProbability(s, off,
+                       parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised);
+            
+            
             sd.setProbability(prob);
             sd.setDistance(dist);
             temp.add(sd);
         }
         return temp;
+    }
+    public List<StationUtilityData> getStationUtilityReturnBike(List<Station> stations, GeoPoint destination, GeoPoint currentposition) {
+        InfrastructureManager.UsageData ud = infrastructureManager.getCurrentUsagedata();
+        List<StationUtilityData> temp = new ArrayList<>();
+        for (Station s : stations) {
+            StationUtilityData sd = new StationUtilityData(s);
+
+            //get probability of renting or returning a bike sucessfully
+            double prob = 0;
+            double dist = currentposition.distanceTo(s.getPosition());
+            double off = dist / this.parameters.cyclingVelocity;
+            if (off<1) off=0;
+            prob = infrastructureManager.getAvailableSlotProbability(s, off,
+                parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised);
+            dist = s.getPosition().distanceTo(destination);
+            
+            //now calculate the change in the global utility if the bike is taken/returned in this station
+            // defined here like: prob(bikedemand, station)*change in probability of taking a bike +
+            // prob(slotdemand, station)*change in probability of returning a bike 
+            // the values are calculated at the time where the event would occure
+            
+            
+            sd.setProbability(prob);
+            sd.setOptimalocupation(prob);
+            sd.setDistance(dist);
+            temp.add(sd);
+        }
+        return temp;
+    }
+    
+    public double getPostAvailableBikeProbability(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
+/*        int estimatedbikes = s.availableBikes()-1;
+        if (takeintoaccountexpected) {
+            infrastructureManager.getExpectedBikechanges(s.getId(), timeoffset); 
+            estimatedbikes+= (int) Math.floor(changes* POBABILITY_USERSOBEY);
+            if (takeintoaccountcompromised) {
+    //            if ((estimatedbikes+minpostchanges)<=0){
+                    estimatedbikes+= (int) Math.floor(minpostchanges* POBABILITY_USERSOBEY);
+    //            }
+            }
+        }
+        double takedemandattimeoffset = (infrastructureManager.getCurrentBikeDemand(s) * timeoffset) / 3600D;
+        double retdemandatofsettime = (infrastructureManager.getCurrentSlotDemand(s) * timeoffset) / 3600D;
+        //probability that a bike exists 
+        int k = 1 - estimatedbikes;
+        double probbike = SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
+        double probslot = SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
+*/
+        return 1D;//prob;
     }
 
 }

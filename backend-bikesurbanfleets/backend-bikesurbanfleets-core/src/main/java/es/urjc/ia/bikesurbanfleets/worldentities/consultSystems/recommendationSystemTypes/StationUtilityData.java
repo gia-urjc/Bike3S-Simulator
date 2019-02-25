@@ -13,6 +13,7 @@ public class StationUtilityData {
     private double optimalocupation;
     private double capacity;
     private double ocupation;
+    private double probability;
 
     public double getCapacity() {
         return capacity;
@@ -77,6 +78,14 @@ public class StationUtilityData {
 
     public void setOptimalocupation(double optimalocupation) {
         this.optimalocupation = optimalocupation;
+    }
+
+    public double getProbability() {
+        return probability;
+    }
+
+    public void setProbability(double probability) {
+        this.probability = probability;
     }
 
 }

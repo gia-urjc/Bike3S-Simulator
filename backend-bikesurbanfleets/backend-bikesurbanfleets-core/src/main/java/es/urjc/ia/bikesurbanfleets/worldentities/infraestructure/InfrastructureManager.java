@@ -195,11 +195,12 @@ public class InfrastructureManager {
         int estimatedbikes = s.availableBikes();
         if (takeintoaccountexpected) {
             getExpectedBikechanges(s.getId(), timeoffset); 
-            double compromisedbikechanges=changes;
+            estimatedbikes+= (int) Math.floor(changes* POBABILITY_USERSOBEY);
             if (takeintoaccountcompromised) {
-                compromisedbikechanges+=minpostchanges;
+    //            if ((estimatedbikes+minpostchanges)<=0){
+                    estimatedbikes+= (int) Math.floor(minpostchanges* POBABILITY_USERSOBEY);
+    //            }
             }
-            estimatedbikes+= (int) Math.floor(compromisedbikechanges* POBABILITY_USERSOBEY);
         }
         double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
         double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
@@ -214,11 +215,12 @@ public class InfrastructureManager {
         int estimatedslots = s.availableSlots();
         if (takeintoaccountexpected) {
             getExpectedBikechanges(s.getId(), timeoffset); 
-            double compromisedbikechanges=changes;
+            estimatedslots-= (int) Math.floor(changes* POBABILITY_USERSOBEY);
             if (takeintoaccountcompromised) {
-                compromisedbikechanges+=maxpostchanges;
+     //           if ((estimatedslots-maxpostchanges)<=0){
+                    estimatedslots-= (int) Math.floor(maxpostchanges* POBABILITY_USERSOBEY);
+     //           }
             }
-            estimatedslots-= (int) Math.floor(compromisedbikechanges* POBABILITY_USERSOBEY);
         }
         double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
         double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
@@ -239,8 +241,17 @@ public class InfrastructureManager {
         LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
         return demandManager.getTakeDemandStation(s.getId(), current);
     }
+    public double getFutureSlotDemand(Station s, int secondsoffset) {
+        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(secondsoffset);
+        return demandManager.getReturnDemandStation(s.getId(), current);
+    }
 
-    public double getFutueScaledSlotDemandNextHour(Station s) {
+    public double getFutureBikeDemand(Station s, int secondsoffset) {
+        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(secondsoffset);
+        return demandManager.getTakeDemandStation(s.getId(), current);
+    }
+
+    public double getCurrentFutueScaledSlotDemandNextHour(Station s) {
         LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
         LocalDateTime futuredate = current.plusHours(1);
         double currendem = demandManager.getReturnDemandStation(s.getId(), current);
@@ -249,7 +260,7 @@ public class InfrastructureManager {
         return futuredem * futureprop + (1 - futureprop) * currendem;
     }
 
-    public double getFutueScaledBikeDemandNextHour(Station s) {
+    public double getCurrentFutueScaledBikeDemandNextHour(Station s) {
         LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
         LocalDateTime futuredate = current.plusHours(1);
         double currendem = demandManager.getTakeDemandStation(s.getId(), current);
