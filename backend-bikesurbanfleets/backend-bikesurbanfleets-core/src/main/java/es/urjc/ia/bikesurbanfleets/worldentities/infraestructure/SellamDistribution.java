@@ -20,16 +20,29 @@ public class SellamDistribution {
         System.out.printf("%10.6f", a);
      }
 
-   // calculates prob of my1 -my2
-   public static double calculateSkellamProbability(double my1, double my2, int k){
+   // calculates prob of P(x=k) of my1 -my2
+   public static double calculateSkellamProbability(double my1, double my2, int k){     
+        if (my1==0){
+            return 1-calculatePoissonProbability( my2,  -k+1);
+        } else if (my2==0){
+            return calculatePoissonProbability( my1,  k);
+        }  
+        if (my1<=0.0000000000001D  ||my2<=0.0000000000001D) {
+            throw new RuntimeException(" my values to small for good results of distribution");
+        }
         if (my1<=0.0000000000001D  ||my2<=0.0000000000001D) {
             throw new RuntimeException(" my values to small for good results of distribution");
         }
         double c=Math.exp(-(my1+my2));
         double ratio=Math.sqrt(my1/my2);
-        double mean=Math.sqrt(my1*my2);
-        double value=c*Math.pow(ratio,k)*bessi(Math.abs(k),2D*mean);
-        return value;
+        double mean=Math.sqrt(my1*my2);        
+        int j=Math.abs(k);
+        double s;
+        if (j==0) s= c*Math.pow(ratio,k)*bessi0(2D*mean);
+        else if (j==1) s= c*Math.pow(ratio,k)*bessi1(2D*mean);
+        else s= c*Math.pow(ratio,k)*bessi(j,2D*mean);
+        if (s==Double.NaN || s>=1D) return 1D;
+        return s;
     }
 
    static int highest_value=30;
@@ -122,24 +135,34 @@ public class SellamDistribution {
         }
     }
     
+    //P(X==num)
+    public static double calculatePoissonProbability(double my1, int num){
+        if (my1 <0)
+                throw new IllegalArgumentException("illegal arguments Poisson");
+        if (num<0) return 0;
+        if (my1==0 && num>0) return 0;
+        if (my1==0 && num==0) return 1;
+        //my1>0 && num>=0
+        double c=Math.exp(-(my1));
+        double v=c*Math.pow(my1, num)/Factorial(num);
+        if (v==Double.NaN || v>=1D) return 1D;
+        return v;
+    }
     //P(X>=num)
     public static double calculateCDFPoissonProbability(double my1, int num){
         if (my1 <0)
                 throw new IllegalArgumentException("illegal arguments Poisson");
         if (num<=0) return 1;
-        if (my1==0) {
-            if (num>0)return 0;
-            else return 1; }        
-        //my1>0
+        if (my1==0 && num>0) return 0;
+        if (my1==0 && num<=0) return 1;
+        //my1>0 && num>0
         double c=Math.exp(-(my1));
         double sum=0;
         for (int i=Math.min(num, 0); i<=highest_value;i++){
-            int j=Math.abs(i);
             sum=sum + c*Math.pow(my1, i)/Factorial(i);
         }
         if (sum==Double.NaN || sum>=1D) {
             sum=1D;
-            
         }
         return sum;
     }

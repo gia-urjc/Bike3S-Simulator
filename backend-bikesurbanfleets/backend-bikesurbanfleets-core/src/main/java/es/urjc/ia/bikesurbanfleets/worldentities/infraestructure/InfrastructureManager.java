@@ -132,17 +132,17 @@ public class InfrastructureManager {
     private HashMap<Integer, LinkedList<PotentialEvent>> registeredBikeEventsPerStation = new HashMap<>();
 
     //global variables used for getExpectedBikechanges
-        private int changes = 0;
-        private int minpostchanges=0;
-        private int maxpostchanges=0;
-    private int getExpectedBikechanges(int stationid, double timeoffset) {
-         changes = 0;
-         minpostchanges=0;
-         maxpostchanges=0;
+    public class ExpBikeChangeResult{
+        public int changes = 0;
+        public int minpostchanges=0;
+        public int maxpostchanges=0;
+    }  
+    public ExpBikeChangeResult getExpectedBikechanges(int stationid, double timeoffset) {
+        ExpBikeChangeResult er=new ExpBikeChangeResult();
          int postchanges=0;
         List<PotentialEvent> list = registeredBikeEventsPerStation.get(stationid);
         if (list == null) {
-            return changes;
+            return er;
         }
         long currentinstant = SimulationDateTime.getCurrentSimulationInstant();
         Iterator<PotentialEvent> i = list.iterator();
@@ -152,9 +152,9 @@ public class InfrastructureManager {
                 i.remove();
             } else if (e.expectedendtime < currentinstant + timeoffset) {
                 if (e.take) {
-                    changes--;
+                    er.changes--;
                 } else {
-                    changes++;
+                    er.changes++;
                 }
             } else {// e.expectedendtime>currentinstant+timeoffset are taken in to consideration if compromised is true
                 if (e.take) {
@@ -162,11 +162,11 @@ public class InfrastructureManager {
                 } else {
                     postchanges++;
                 }
-                if (postchanges<minpostchanges) minpostchanges=postchanges;
-                if (postchanges>maxpostchanges) maxpostchanges=postchanges;
+                if (postchanges<er.minpostchanges) er.minpostchanges=postchanges;
+                if (postchanges>er.maxpostchanges) er.maxpostchanges=postchanges;
             }
         }
-        return changes;
+        return er;
     }
 
     public void addExpectedBikechange(int stationid, int timeoffset, boolean take) {
@@ -194,11 +194,11 @@ public class InfrastructureManager {
     public double getAvailableBikeProbability(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
         int estimatedbikes = s.availableBikes();
         if (takeintoaccountexpected) {
-            getExpectedBikechanges(s.getId(), timeoffset); 
-            estimatedbikes+= (int) Math.floor(changes* POBABILITY_USERSOBEY);
+            ExpBikeChangeResult er=getExpectedBikechanges(s.getId(), timeoffset); 
+            estimatedbikes+= (int) Math.floor(er.changes* POBABILITY_USERSOBEY);
             if (takeintoaccountcompromised) {
     //            if ((estimatedbikes+minpostchanges)<=0){
-                    estimatedbikes+= (int) Math.floor(minpostchanges* POBABILITY_USERSOBEY);
+                    estimatedbikes+= (int) Math.floor(er.minpostchanges* POBABILITY_USERSOBEY);
     //            }
             }
         }
@@ -214,11 +214,11 @@ public class InfrastructureManager {
     public double getAvailableSlotProbability(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
         int estimatedslots = s.availableSlots();
         if (takeintoaccountexpected) {
-            getExpectedBikechanges(s.getId(), timeoffset); 
-            estimatedslots-= (int) Math.floor(changes* POBABILITY_USERSOBEY);
+            ExpBikeChangeResult er=getExpectedBikechanges(s.getId(), timeoffset); 
+            estimatedslots-= (int) Math.floor(er.changes* POBABILITY_USERSOBEY);
             if (takeintoaccountcompromised) {
      //           if ((estimatedslots-maxpostchanges)<=0){
-                    estimatedslots-= (int) Math.floor(maxpostchanges* POBABILITY_USERSOBEY);
+                    estimatedslots-= (int) Math.floor(er.maxpostchanges* POBABILITY_USERSOBEY);
      //           }
             }
         }
@@ -249,6 +249,15 @@ public class InfrastructureManager {
     public double getFutureBikeDemand(Station s, int secondsoffset) {
         LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(secondsoffset);
         return demandManager.getTakeDemandStation(s.getId(), current);
+    }
+    public double getFutureGlobalSlotDemand(int secondsoffset) {
+        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(secondsoffset);
+        return demandManager.getReturnDemandGlobal( current);
+    }
+
+    public double getFutureGlobalBikeDemand(int secondsoffset) {
+        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(secondsoffset);
+        return demandManager.getTakeDemandGlobal(current);
     }
 
     public double getCurrentFutueScaledSlotDemandNextHour(Station s) {

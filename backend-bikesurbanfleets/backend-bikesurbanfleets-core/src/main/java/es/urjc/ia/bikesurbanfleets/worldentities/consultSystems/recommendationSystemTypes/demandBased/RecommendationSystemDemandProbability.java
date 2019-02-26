@@ -43,7 +43,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         private double walkingVelocity = 1.12/1.25D;
         private double cyclingVelocity = 6.0/1.25D;
         private double requiredProbability=0.99;
-        private double secondProbability=0.7;
+        private double secondProbability=0.62;
         private double[][] probabilityorder = 
  /*           {{100,0.99}, {100,0.9}, {100,0.8}, {100,0.7}, 
              {250,0.99}, {250,0.9}, {250,0.8}, {100,0.6}, {100,0.5}, {250,0.7}, {500,0.99}, {500,0.9}, 

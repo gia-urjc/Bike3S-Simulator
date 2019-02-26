@@ -319,9 +319,8 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
             // prob(slotdemand, station)*change in probability of returning a bike 
             // the values are calculated at the time where the event would occure
             
-            double posttakebikeprob = getPostAvailableBikeProbability(s, off,
-                       parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised);
-            
+            sd.setUtility(getGlobalProbabilityImprovementIfTake(
+                 s, off, parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised));
             
             sd.setProbability(prob);
             sd.setDistance(dist);
@@ -349,23 +348,29 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
             // prob(slotdemand, station)*change in probability of returning a bike 
             // the values are calculated at the time where the event would occure
             
-            
+            sd.setUtility(getGlobalProbabilityImprovementIfReturn(
+                 s, off, parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised));
+
             sd.setProbability(prob);
-            sd.setOptimalocupation(prob);
             sd.setDistance(dist);
             temp.add(sd);
         }
         return temp;
     }
     
-    public double getPostAvailableBikeProbability(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
-/*        int estimatedbikes = s.availableBikes()-1;
+    public double getGlobalProbabilityImprovementIfTake(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
+
+        //first calculate the difference in the probabilities of gettinga a bike or slot if the bike is taken at the station
+        int estimatedbikes = s.availableBikes();
+        int estimatedslots = s.availableSlots();
         if (takeintoaccountexpected) {
-            infrastructureManager.getExpectedBikechanges(s.getId(), timeoffset); 
-            estimatedbikes+= (int) Math.floor(changes* POBABILITY_USERSOBEY);
+            InfrastructureManager.ExpBikeChangeResult er=infrastructureManager.getExpectedBikechanges(s.getId(), timeoffset); 
+            estimatedbikes+= (int) Math.floor(er.changes* infrastructureManager.POBABILITY_USERSOBEY);
+            estimatedslots-= (int) Math.floor(er.changes* infrastructureManager.POBABILITY_USERSOBEY);
             if (takeintoaccountcompromised) {
     //            if ((estimatedbikes+minpostchanges)<=0){
-                    estimatedbikes+= (int) Math.floor(minpostchanges* POBABILITY_USERSOBEY);
+                    estimatedbikes+= (int) Math.floor(er.minpostchanges* infrastructureManager.POBABILITY_USERSOBEY);
+                    estimatedslots-= (int) Math.floor(er.maxpostchanges* infrastructureManager.POBABILITY_USERSOBEY);
     //            }
             }
         }
@@ -373,10 +378,54 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
         double retdemandatofsettime = (infrastructureManager.getCurrentSlotDemand(s) * timeoffset) / 3600D;
         //probability that a bike exists 
         int k = 1 - estimatedbikes;
-        double probbike = SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
-        double probslot = SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
-*/
-        return 1D;//prob;
+        double probbikediff = -SellamDistribution.calculateSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
+        k = 1 - estimatedslots - 1;
+        double probslotdiff = SellamDistribution.calculateSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
+
+        //now calculate the demands at the future point relative to the global demand
+        double futtakedemand = infrastructureManager.getFutureBikeDemand(s,(int)timeoffset);
+        double futreturndemand = infrastructureManager.getFutureSlotDemand(s,(int)timeoffset);
+        double futglobaltakedem=infrastructureManager.getFutureGlobalBikeDemand((int)timeoffset);
+        double futglobalretdem=infrastructureManager.getFutureGlobalSlotDemand((int)timeoffset);
+        
+        double relativeimprovemente=(futtakedemand/futglobaltakedem)*probbikediff +
+                (futreturndemand/futglobalretdem)*probslotdiff;
+        return relativeimprovemente;
+    }
+
+    public double getGlobalProbabilityImprovementIfReturn(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
+
+        //first calculate the difference in the probabilities of gettinga a bike or slot if the bike is taken at the station
+        int estimatedbikes = s.availableBikes();
+        int estimatedslots = s.availableSlots();
+        if (takeintoaccountexpected) {
+            InfrastructureManager.ExpBikeChangeResult er=infrastructureManager.getExpectedBikechanges(s.getId(), timeoffset); 
+            estimatedbikes+= (int) Math.floor(er.changes* infrastructureManager.POBABILITY_USERSOBEY);
+            estimatedslots-= (int) Math.floor(er.changes* infrastructureManager.POBABILITY_USERSOBEY);
+            if (takeintoaccountcompromised) {
+    //            if ((estimatedbikes+minpostchanges)<=0){
+                    estimatedbikes+= (int) Math.floor(er.minpostchanges* infrastructureManager.POBABILITY_USERSOBEY);
+                    estimatedslots-= (int) Math.floor(er.maxpostchanges* infrastructureManager.POBABILITY_USERSOBEY);
+    //            }
+            }
+        }
+        double takedemandattimeoffset = (infrastructureManager.getCurrentBikeDemand(s) * timeoffset) / 3600D;
+        double retdemandatofsettime = (infrastructureManager.getCurrentSlotDemand(s) * timeoffset) / 3600D;
+        //probability that a bike exists 
+        int k = 1 - estimatedbikes -1;
+        double probbikediff = -SellamDistribution.calculateSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
+        k = 1 - estimatedslots;
+        double probslotdiff = SellamDistribution.calculateSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
+
+        //now calculate the demands at the future point relative to the global demand
+        double futtakedemand = infrastructureManager.getFutureBikeDemand(s,(int)timeoffset);
+        double futreturndemand = infrastructureManager.getFutureSlotDemand(s,(int)timeoffset);
+        double futglobaltakedem=infrastructureManager.getFutureGlobalBikeDemand((int)timeoffset);
+        double futglobalretdem=infrastructureManager.getFutureGlobalSlotDemand((int)timeoffset);
+        
+        double relativeimprovemente=(futtakedemand/futglobaltakedem)*probbikediff +
+                (futreturndemand/futglobalretdem)*probslotdiff;
+        return relativeimprovemente;
     }
 
 }
