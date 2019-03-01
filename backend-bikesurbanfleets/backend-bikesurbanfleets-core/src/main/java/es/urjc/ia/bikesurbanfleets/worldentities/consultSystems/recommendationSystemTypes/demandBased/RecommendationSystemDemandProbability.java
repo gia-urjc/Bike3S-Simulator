@@ -118,7 +118,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
             System.out.println("Expected successrate take:" + (probst / callst));
             temp.forEach(s -> 
 {
-     //           StationUtilityData s=temp.get(0);
+   //             StationUtilityData s=temp.get(0);
                 System.out.format("Station %3d (take) %2d %2d %10f %6f %n", + s.getStation().getId() ,
                          s.getStation().availableBikes() ,
                          s.getStation().getCapacity(),
@@ -128,7 +128,12 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
             }
 );
             //}
-            result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
+            result = temp.stream().map(sq -> {
+                Recommendation r=new Recommendation(sq.getStation(), null);
+                r.setProbability(sq.getProbability());
+                return r;
+            }
+            ).collect(Collectors.toList());
             //add values to the expeted takes
             StationUtilityData first = temp.get(0);
             double dist = currentposition.distanceTo(first.getStation().getPosition());
@@ -172,7 +177,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
             temp.forEach(s -> 
             {
 
-  //          StationUtilityData s=temp.get(0);
+   //         StationUtilityData s=temp.get(0);
                 System.out.format("Station %3d (return) %2d %2d %10f %6f %n", + s.getStation().getId() ,
                          s.getStation().availableBikes() ,
                          s.getStation().getCapacity(),
@@ -181,7 +186,12 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
             }
             );
       //            }
-            result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
+            result = temp.stream().map(sq -> {
+                Recommendation r=new Recommendation(sq.getStation(), null);
+                r.setProbability(sq.getProbability());
+                return r;
+            }
+            ).collect(Collectors.toList());
 
             //add values to the expeted returns
             StationUtilityData first = temp.get(0);
