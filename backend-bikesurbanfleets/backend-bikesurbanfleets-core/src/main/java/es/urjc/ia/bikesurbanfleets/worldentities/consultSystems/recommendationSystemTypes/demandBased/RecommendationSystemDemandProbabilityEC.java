@@ -38,7 +38,7 @@ public class RecommendationSystemDemandProbabilityEC extends RecommendationSyste
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
-        private int maxDistanceRecommendation = 1000;
+        private int maxDistanceRecommendation = 600;
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double walkingVelocity = 1.12 / 2D;//2.25D; //with 3 the time is quite worse
         private double cyclingVelocity = 6.0 / 2D;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
@@ -244,10 +244,11 @@ public class RecommendationSystemDemandProbabilityEC extends RecommendationSyste
         if (newSD.getProbability() <= oldSD.getProbability())  return false;
         // if here  newSD.getProbability() > oldSD.getProbability()
         if (oldSD.getProbability() > this.parameters.desireableProbability) {
-            double distdiff=(newSD.getDistance()-oldSD.getDistance())*this.parameters.factor;
+           double distdiff=(newSD.getDistance()-oldSD.getDistance())*this.parameters.factor;
             double probdiff=newSD.getProbability()-oldSD.getProbability();
             if (probdiff>distdiff) return true;
             return false;
+
         } 
         if (newSD.getProbability() >=this.parameters.desireableProbability) return true;  
         double distdiff=(newSD.getDistance()-oldSD.getDistance())*this.parameters.factor;
