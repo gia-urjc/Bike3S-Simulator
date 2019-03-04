@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_PROBABILITY")
-public class RecommendationSystemDemandProbability extends RecommendationSystem {
+@RecommendationSystemType("DEMAND_PROBABILITY_expected_compromised")
+public class RecommendationSystemDemandProbabilityEC extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -42,18 +42,20 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double walkingVelocity = 1.12 / 2D;//2.25D; //with 3 the time is quite worse
         private double cyclingVelocity = 6.0 / 2D;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
-        private double upperProbabilityBound = 0.99;
-        private double desireableProbability = 0.6; //bueno 0.5
+        private double upperProbabilityBound = 0.999;
+        private double desireableProbability = 0.6; 
 
         private double probabilityUsersObey = 1;
         private double factor = 1D / (double) (2000);
-        private boolean takeintoaccountexpected = true;
-        private boolean takeintoaccountcompromised = true;
     }
+    
+    boolean takeintoaccountexpected = true;
+    boolean takeintoaccountcompromised = true;
 
+    boolean printHints=false;
     private RecommendationParameters parameters;
 
-    public RecommendationSystemDemandProbability(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandProbabilityEC(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -77,7 +79,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtilityRent(stations, null, currentposition);
-            printResults(su, true);
+            if (printHints) printRecomendations(su, true);
             result = su.stream().map(sq -> {
                 Recommendation r=new Recommendation(sq.getStation(), null);
                 r.setProbability(sq.getProbability());
@@ -91,12 +93,13 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
                     (int) (dist / this.parameters.walkingVelocity), true);
         } else {
             result = new ArrayList<>();
-            System.out.println("no recommednation take at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
+            System.out.println("no recommendation for take at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
         }
         return result;
     }
 
-    private void printResults(List<StationUtilityData> su, boolean take) {
+    private void printRecomendations(List<StationUtilityData> su, boolean take) {
+        if (printHints) {
         int max = su.size();//Math.min(5, su.size());
         System.out.println();
         if (take) {
@@ -116,11 +119,13 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
         }
         for (int i = 0; i < max; i++) {
             StationUtilityData s = su.get(i);
-            System.out.format("Station %3d %2d %2d %10.2f %9.8f %n", +s.getStation().getId(),
+            System.out.format("Station %3d %2d %2d %10.2f %9.8f %9.8f %n", +s.getStation().getId(),
                     s.getStation().availableBikes(),
                     s.getStation().getCapacity(),
                     s.getDistance(),
+                    s.getUtility(),
                     s.getProbability());
+        }
         }
     }
     private int lowprobs = 0;
@@ -136,7 +141,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtilityReturn(stations, destination, currentposition);
-            printResults(su, false);
+            if (printHints) printRecomendations(su, false);
             result = su.stream().map(sq -> {
                 Recommendation r=new Recommendation(sq.getStation(), null);
                 r.setProbability(sq.getProbability());
@@ -149,7 +154,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
             this.infrastructureManager.addExpectedBikechange(first.getStation().getId(),
                     (int) (dist / this.parameters.cyclingVelocity), false);
         } else {
-            System.out.println("no recommednation return at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
+            System.out.println("no recommendation for return at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
         }
         return result;
     }
@@ -170,7 +175,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
                     off = 0;
                 }
                 prob = infrastructureManager.getAvailableBikeProbability(s, off,
-                        parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised);
+                        takeintoaccountexpected, takeintoaccountcompromised);
             sd.setProbability(prob);
             sd.setDistance(dist);
             if (best == null || betterOrSameRent(sd, best)) {
@@ -198,7 +203,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystem 
                     off = 0;
                 }
                 prob = infrastructureManager.getAvailableSlotProbability(s, off,
-                        parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised);
+                        takeintoaccountexpected, takeintoaccountcompromised);
                 dist = s.getPosition().distanceTo(destination);
             sd.setProbability(prob);
             sd.setDistance(dist);

@@ -45,22 +45,6 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
         private double cyclingVelocity = 6.0/1.25D;
         private double requiredProbability=0.999;
         private double secondProbability=0.6;
-        private double[][] probabilityorder = 
- /*           {{100,0.99}, {100,0.9}, {100,0.8}, {100,0.7}, 
-             {250,0.99}, {250,0.9}, {250,0.8}, {100,0.6}, {100,0.5}, {250,0.7}, {500,0.99}, {500,0.9}, 
-             {500,0.8}, {250,0.6}, {250,0.5}, {500,0.7}, {500,0.6}, {750,0.99}, {750,0.9}, {500,0.5},
-             {750,0.8}, {750,0.7}, {750,0.6}, {1000,0.99}, {750,0.5},
-             {1000,0.9}, {1000,0.8}, {1000,0.7}, {1000,0.6}, {1000,0.5}            
-            };
- */ /*         {{100,0.9}, {100,0.7}, 
-             {250,0.99}, {250,0.9}, {250,0.8}, {100,0.6}, {250,0.7}, {500,0.99}, {500,0.9}, 
-             {500,0.8}, {250,0.6}, {500,0.7}, {500,0.6}, {750,0.99}, {750,0.9}, 
-             {750,0.8}, {750,0.7}, {750,0.6}, {1000,0.99}, 
-             {1000,0.9}, {1000,0.8}, {1000,0.7}, {1000,0.6}, {1000,0.5}, {10000,0.3}            
-            };
-*/          {{500,0.999}, {500,0.95},{500,0.9},{500,0.85},{500,0.8},{500,0.75},{500,0.7}, {500,0.65},{500,0.6},
-             {10000,0.6},{10000,0.3}            
-            };
         private double thirdProbability = 0.8;
         
         private double probabilityUsersObey = 1;
@@ -68,6 +52,7 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
         private boolean takeintoaccountexpected=true;
         private boolean takeintoaccountcompromised=false;
     }
+    boolean printHints=false;
 
     private RecommendationParameters parameters;
 
@@ -98,29 +83,7 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtilityRentBike(stations, currentposition);
             List<StationUtilityData> temp = su.stream().sorted(comp).collect(Collectors.toList());
-
-            probst += temp.get(0).getProbability();
-            callst++;
-            //      if (temp.get(0).getProbability() < parameters.requiredProbability) {
-            System.out.println();
-            System.out.println("Time:" + SimulationDateTime.getCurrentSimulationDateTime());
-            if (temp.get(0).getProbability() < parameters.requiredProbability) {
-                System.out.format("LOW PROB %6f (take) %n",  temp.get(0).getProbability() );
-                lowprobs++;
-            }
-            System.out.println("Expected successrate take:" + (probst / callst));
-            temp.forEach(s -> 
-{
-  //              StationUtilityData s=temp.get(0);
-                System.out.format("Station %3d (take) %2d %2d %10f %6f %2.10f %n", + s.getStation().getId() ,
-                         s.getStation().availableBikes() ,
-                         s.getStation().getCapacity(),
-                         s.getDistance() ,
-                         s.getProbability(),
-                         s.getUtility());
-            }
-);
-            //}
+            if (printHints) printRecomendations(temp, true);
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
             //add values to the expeted takes
             StationUtilityData first = temp.get(0);
@@ -129,7 +92,7 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
                     (int) (dist / this.parameters.walkingVelocity), true);
         } else {
             result = new ArrayList<>();
-            System.out.println("no recommednation take at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
+            System.out.println("no recommendation for take at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
 
         }
         return result;
@@ -151,32 +114,8 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtilityReturnBike(stations, destination, currentposition);
             List<StationUtilityData> temp = su.stream().sorted(comp).collect(Collectors.toList());
-            probsr += temp.get(0).getProbability();
-            callsr++;
-            //     if (temp.get(0).getProbability() < parameters.requiredProbability) {
-            System.out.println();
-            System.out.println("Time:" + SimulationDateTime.getCurrentSimulationDateTime());
-            if (temp.get(0).getProbability() < parameters.requiredProbability) {
-                System.out.format("LOW PROB %6f (take) %n",  temp.get(0).getProbability() );
-                lowprobs++;
-            }
-            lowprobs++;
-            System.out.println("Expected successrate return:" + (probsr / callsr));
-            temp.forEach(s -> 
-            {
-
-       //     StationUtilityData s=temp.get(0);
-                System.out.format("Station %3d (return) %2d %2d %10f %6f %2.10f %n", + s.getStation().getId() ,
-                         s.getStation().availableBikes() ,
-                         s.getStation().getCapacity(),
-                         s.getDistance() ,
-                         s.getProbability(),
-                         s.getUtility());
-            }
-            );
-      //            }
+            if (printHints) printRecomendations(temp, false);
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
-
             //add values to the expeted returns
             StationUtilityData first = temp.get(0);
             double dist = currentposition.distanceTo(first.getStation().getPosition());
@@ -188,7 +127,37 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
         }
         return result;
     }
-
+     private void printRecomendations(List<StationUtilityData> su, boolean take) {
+        if (printHints) {
+        int max = Math.min(5, su.size());
+        System.out.println();
+        if (take) {
+            System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime());
+            probst += su.get(0).getProbability();
+            callst++;
+            System.out.format("Expected successrate take: %9.8f %n", (probst / callst));
+        } else {
+            System.out.println("Time (return):" + SimulationDateTime.getCurrentSimulationDateTime());
+            probsr += su.get(0).getProbability();
+            callsr++;
+            System.out.format("Expected successrate return: %9.8f %n", (probsr / callsr));
+        }
+        if (su.get(0).getProbability() < 0.6) {
+            System.out.format("LOW PROB %9.8f %n", su.get(0).getProbability());
+            lowprobs++;
+        }
+        for (int i = 0; i < max; i++) {
+            StationUtilityData s = su.get(i);
+            System.out.format("Station %3d %2d %2d %10.2f %9.8f %9.8f %n", +s.getStation().getId(),
+                    s.getStation().availableBikes(),
+                    s.getStation().getCapacity(),
+                    s.getDistance(),
+                    s.getUtility(),
+                    s.getProbability());
+        }
+        }
+    }
+ 
     Comparator<StationUtilityData> special0bis = (sq1, sq2) -> {
         double p = this.parameters.requiredProbability;
         double p2 = this.parameters.secondProbability;

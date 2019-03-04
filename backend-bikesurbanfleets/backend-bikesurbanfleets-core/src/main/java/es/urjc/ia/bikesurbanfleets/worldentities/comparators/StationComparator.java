@@ -32,7 +32,7 @@ public class StationComparator {
 		return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point)/
                                                     (double) s1.availableSlots(),
                                                   s2.getPosition().distanceTo(point)/
-                                                    (double) s2.availableBikes());
+                                                    (double) s2.availableSlots());
 	}
 
 	public static Comparator<Station> byProportionBetweenDistanceAndBikeRatio(GeoPoint point) {

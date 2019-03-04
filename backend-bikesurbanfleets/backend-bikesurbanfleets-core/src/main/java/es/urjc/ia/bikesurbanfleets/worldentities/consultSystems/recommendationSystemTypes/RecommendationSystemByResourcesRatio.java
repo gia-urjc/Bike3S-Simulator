@@ -65,7 +65,6 @@ public class RecommendationSystemByResourcesRatio extends RecommendationSystem {
         if (!stations.isEmpty()) {
             Comparator<Station> byBikesRatio = StationComparator.byBikesCapacityRatio();
             temp = stations.stream().sorted(byBikesRatio).collect(Collectors.toList());
-    //        temp.forEach(s -> System.out.println("Station " + s.getId() + ": " + (double) s.availableBikes() / s.getCapacity()));
             result = temp.stream().map(station -> new Recommendation(station, null)).collect(Collectors.toList());
         }
         return result;
@@ -80,7 +79,6 @@ public class RecommendationSystemByResourcesRatio extends RecommendationSystem {
         if (!stations.isEmpty()) {
             Comparator<Station> bySlotsRatio = StationComparator.bySlotsCapacityRatio();
             temp = stations.stream().sorted(bySlotsRatio).collect(Collectors.toList());
-     //       temp.forEach(s -> System.out.println("Station " + s.getId() + ": " + s.availableBikes() / s.getCapacity()));
             result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
         } 
 

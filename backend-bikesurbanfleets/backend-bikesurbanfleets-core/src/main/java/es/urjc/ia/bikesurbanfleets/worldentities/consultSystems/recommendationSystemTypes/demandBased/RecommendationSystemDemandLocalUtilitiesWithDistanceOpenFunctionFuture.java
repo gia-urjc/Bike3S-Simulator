@@ -47,6 +47,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
     }
 
     private RecommendationParameters parameters;
+    boolean printHints=false;
 
     public RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFuture(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
@@ -73,18 +74,11 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
             List<StationUtilityData> su = getStationUtility(stations, point, true);
             Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp = su.stream().sorted(DescUtility).collect(Collectors.toList());
-            System.out.println();
-            temp.forEach(s -> System.out.println("Station (take)" + s.getStation().getId() + ": "
-                    + s.getStation().availableBikes() + " "
-                    + s.getStation().getCapacity() + " "
-                    + s.getMinoptimalocupation() + " "
-                    + s.getOptimalocupation() + " "
-                    + s.getMaxopimalocupation() + " "
-                    + s.getDistance() + " "
-                    + s.getUtility()));
+            if (printHints) printRecomendations(temp, true);
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } else {
             result = new ArrayList<>();
+            System.out.println("no recommendation for take at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
         }
         return result;
     }
@@ -98,18 +92,34 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
             List<StationUtilityData> su = getStationUtility(stations, destination, false);
             Comparator<StationUtilityData> byDescUtilityIncrement = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp = su.stream().sorted(byDescUtilityIncrement).collect(Collectors.toList());
-            System.out.println();
-            temp.forEach(s -> System.out.println("Station (return)" + s.getStation().getId() + ": "
-                    + s.getStation().availableBikes() + " "
-                    + s.getStation().getCapacity() + " "
-                    + s.getMinoptimalocupation() + " "
-                    + s.getOptimalocupation() + " "
-                    + s.getMaxopimalocupation() + " "
-                    + s.getDistance() + " "
-                    + s.getUtility()));
+            if (printHints) printRecomendations(temp, false);
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
+        } else {
+            System.out.println("no recommendation for return at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
         }
         return result;
+    }
+    private void printRecomendations(List<StationUtilityData> su, boolean take) {
+        if (printHints) {
+        int max = su.size();//Math.min(5, su.size());
+        System.out.println();
+        if (take) {
+            System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime());
+        } else {
+            System.out.println("Time (return):" + SimulationDateTime.getCurrentSimulationDateTime());
+        }
+        for (int i = 0; i < max; i++) {
+            StationUtilityData s = su.get(i);
+            System.out.format("Station %3d %2d %2d %10.2f %9.8f %6f %6f %6f %n", +s.getStation().getId(),
+                    s.getStation().availableBikes(),
+                    s.getStation().getCapacity(),
+                    s.getDistance(),
+                    s.getUtility(),
+                    s.getMinoptimalocupation() ,
+                    s.getOptimalocupation() ,
+                    s.getMaxopimalocupation());
+        }
+        }
     }
 
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint point, boolean rentbike) {
