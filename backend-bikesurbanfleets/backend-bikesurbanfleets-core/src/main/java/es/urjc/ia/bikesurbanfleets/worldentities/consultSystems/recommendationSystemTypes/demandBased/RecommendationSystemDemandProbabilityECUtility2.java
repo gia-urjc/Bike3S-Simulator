@@ -12,6 +12,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSy
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystemTypes.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystemTypes.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.SellamDistribution;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 
 import java.util.ArrayList;
@@ -28,8 +29,8 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_PROBABILITY_expected_compromised_UTILITY")
-public class RecommendationSystemDemandProbabilityECUtility extends RecommendationSystem {
+@RecommendationSystemType("DEMAND_PROBABILITY_expected_compromised_UTILITY2")
+public class RecommendationSystemDemandProbabilityECUtility2 extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -38,7 +39,7 @@ public class RecommendationSystemDemandProbabilityECUtility extends Recommendati
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
-        private int maxDistanceRecommendation = 600;
+        private int maxDistanceRecommendation = 1000;
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double walkingVelocity = 1.12 / 2D;//2.25D; //with 3 the time is quite worse
         private double cyclingVelocity = 6.0 / 2D;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
@@ -47,7 +48,7 @@ public class RecommendationSystemDemandProbabilityECUtility extends Recommendati
 
         private double probabilityUsersObey = 1;
         private double factorProb = 2000D;
-        private double factorImp = 1000D;
+        private double factorImp = 1000D*175;
     }
 
     boolean takeintoaccountexpected = true;
@@ -56,7 +57,7 @@ public class RecommendationSystemDemandProbabilityECUtility extends Recommendati
     boolean printHints = true;
     private RecommendationParameters parameters;
 
-    public RecommendationSystemDemandProbabilityECUtility(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandProbabilityECUtility2(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -182,7 +183,7 @@ public class RecommendationSystemDemandProbabilityECUtility extends Recommendati
                     takeintoaccountexpected, takeintoaccountcompromised);
             sd.setProbability(prob);
             sd.setDistance(dist);
-            double util = calculateStationUtility(s, true);
+            double util = getGlobalProbabilityImprovementIfTake(s, off,takeintoaccountexpected, takeintoaccountcompromised);
             sd.setUtility(util);
             addrent(sd, temp);
             //reduce computation time
@@ -210,7 +211,7 @@ public class RecommendationSystemDemandProbabilityECUtility extends Recommendati
             dist = s.getPosition().distanceTo(destination);
             sd.setProbability(prob);
             sd.setDistance(dist);
-            double util = calculateStationUtility(s, false);
+            double util = getGlobalProbabilityImprovementIfReturn(s, off,takeintoaccountexpected, takeintoaccountcompromised);
             sd.setUtility(util);
             addreturn(sd, temp);
 
@@ -226,46 +227,74 @@ public class RecommendationSystemDemandProbabilityECUtility extends Recommendati
         return temp;
     }
 
-    public double calculateStationUtility(Station s, boolean rentbike) {
-        InfrastructureManager.UsageData ud = infrastructureManager.getCurrentUsagedata();
+    public double getGlobalProbabilityImprovementIfTake(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
 
-        double idealbikes = infrastructureManager.getCurrentBikeDemand(s);
-        double maxidealbikes = s.getCapacity() - infrastructureManager.getCurrentSlotDemand(s);
-        double currentutility = getUtility(s, 0, idealbikes, maxidealbikes);
-        double newutility;
-        if (rentbike) {
-            newutility = getUtility(s, -1, idealbikes, maxidealbikes);
-        } else {//return bike 
-            newutility = getUtility(s, +1, idealbikes, maxidealbikes);
+        //first calculate the difference in the probabilities of gettinga a bike or slot if the bike is taken at the station
+        int estimatedbikes = s.availableBikes();
+        int estimatedslots = s.availableSlots();
+        if (takeintoaccountexpected) {
+            InfrastructureManager.ExpBikeChangeResult er = infrastructureManager.getExpectedBikechanges(s.getId(), timeoffset);
+            estimatedbikes += (int) Math.floor(er.changes * infrastructureManager.POBABILITY_USERSOBEY);
+            estimatedslots -= (int) Math.floor(er.changes * infrastructureManager.POBABILITY_USERSOBEY);
+            if (takeintoaccountcompromised) {
+                //            if ((estimatedbikes+minpostchanges)<=0){
+                estimatedbikes += (int) Math.floor(er.minpostchanges * infrastructureManager.POBABILITY_USERSOBEY);
+                estimatedslots -= (int) Math.floor(er.maxpostchanges * infrastructureManager.POBABILITY_USERSOBEY);
+                //            }
+            }
         }
-        double normedUtilityDiff = (newutility - currentutility)
-                * (idealbikes / ud.currentGlobalBikeDemand) * ud.numberStations;
+        double takedemandattimeoffset = (infrastructureManager.getCurrentBikeDemand(s) * timeoffset) / 3600D;
+        double retdemandatofsettime = (infrastructureManager.getCurrentSlotDemand(s) * timeoffset) / 3600D;
+        //probability that a bike exists 
+        int k = 1 - estimatedbikes;
+        double probbikediff = -SellamDistribution.calculateSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
+        k = 1 - estimatedslots - 1;
+        double probslotdiff = SellamDistribution.calculateSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
 
-        return normedUtilityDiff;
+        //now calculate the demands at the future point relative to the global demand
+        double futtakedemand = infrastructureManager.getFutureBikeDemand(s, (int) timeoffset);
+        double futreturndemand = infrastructureManager.getFutureSlotDemand(s, (int) timeoffset);
+        double futglobaltakedem = infrastructureManager.getFutureGlobalBikeDemand((int) timeoffset);
+        double futglobalretdem = infrastructureManager.getFutureGlobalSlotDemand((int) timeoffset);
+
+        double relativeimprovemente = (futtakedemand / futglobaltakedem) * probbikediff
+                + (futreturndemand / futglobalretdem) * probslotdiff;
+        return relativeimprovemente;
     }
 
-    private double getUtility(Station s, int bikeincrement, double idealbikes, double maxidealbikes) {
-        double cap = s.getCapacity();
-        double ocupation = s.availableBikes() + bikeincrement;
-        if (idealbikes <= maxidealbikes) {
-            if (ocupation <= idealbikes) {
-                return 1 - Math.pow(((ocupation - idealbikes) / idealbikes), 2);
-            } else if (ocupation >= maxidealbikes) {
-                return 1 - Math.pow(((ocupation - maxidealbikes) / (cap - maxidealbikes)), 2);
-            } else {//if ocupation is just between max and min
-                return 1;
-            }
-        } else { //idealbikes > max idealbikes
-            double bestocupation = (idealbikes + maxidealbikes) / 2D;
-            //          double bestocupation = (idealbikes * cap)/(cap - maxidealbikes  ) ;
-            if (ocupation <= bestocupation) {
-                return 1 - Math.pow(((ocupation - bestocupation) / bestocupation), 2);
-            } else {
-                double aux = cap - bestocupation;
-                return 1 - Math.pow(((ocupation - bestocupation) / aux), 2);
-            }
+    public double getGlobalProbabilityImprovementIfReturn(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
 
+        //first calculate the difference in the probabilities of getting a bike or slot if the bike is taken at the station
+        int estimatedbikes = s.availableBikes();
+        int estimatedslots = s.availableSlots();
+        if (takeintoaccountexpected) {
+            InfrastructureManager.ExpBikeChangeResult er = infrastructureManager.getExpectedBikechanges(s.getId(), timeoffset);
+            estimatedbikes += (int) Math.floor(er.changes * infrastructureManager.POBABILITY_USERSOBEY);
+            estimatedslots -= (int) Math.floor(er.changes * infrastructureManager.POBABILITY_USERSOBEY);
+            if (takeintoaccountcompromised) {
+                //            if ((estimatedbikes+minpostchanges)<=0){
+                estimatedbikes += (int) Math.floor(er.minpostchanges * infrastructureManager.POBABILITY_USERSOBEY);
+                estimatedslots -= (int) Math.floor(er.maxpostchanges * infrastructureManager.POBABILITY_USERSOBEY);
+                //            }
+            }
         }
+        double takedemandattimeoffset = (infrastructureManager.getCurrentBikeDemand(s) * timeoffset) / 3600D;
+        double retdemandatofsettime = (infrastructureManager.getCurrentSlotDemand(s) * timeoffset) / 3600D;
+        //probability that a bike exists 
+        int k = 1 - estimatedbikes - 1;
+        double probbikediff = SellamDistribution.calculateSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
+        k = 1 - estimatedslots;
+        double probslotdiff = -SellamDistribution.calculateSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
+
+        //now calculate the demands at the future point relative to the global demand
+        double futtakedemand = infrastructureManager.getFutureBikeDemand(s, (int) timeoffset);
+        double futreturndemand = infrastructureManager.getFutureSlotDemand(s, (int) timeoffset);
+        double futglobaltakedem = infrastructureManager.getFutureGlobalBikeDemand((int) timeoffset);
+        double futglobalretdem = infrastructureManager.getFutureGlobalSlotDemand((int) timeoffset);
+
+        double relativeimprovemente = (futtakedemand / futglobaltakedem) * probbikediff
+                + (futreturndemand / futglobalretdem) * probslotdiff;
+        return relativeimprovemente;
     }
 
 
@@ -303,7 +332,8 @@ public class RecommendationSystemDemandProbabilityECUtility extends Recommendati
         }
         return false;
     }
-/*
+
+    /*
     //for comparison and generating the outbut
     //take into account that distance newSD >= distance oldSD
     private boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
