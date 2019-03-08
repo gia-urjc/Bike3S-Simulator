@@ -23,7 +23,7 @@ public class SellamDistribution {
    // calculates prob of P(x=k) of my1 -my2
    public static double calculateSkellamProbability(double my1, double my2, int k){     
         if (my1==0){
-            return 1-calculatePoissonProbability( my2,  -k+1);
+            return calculatePoissonProbability( my2,  -k);
         } else if (my2==0){
             return calculatePoissonProbability( my1,  k);
         }  

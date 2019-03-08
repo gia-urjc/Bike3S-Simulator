@@ -39,7 +39,7 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
-        private int maxDistanceRecommendation = 1000;
+        private int maxDistanceRecommendation = 600;
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double walkingVelocity = 1.12 / 2D;//2.25D; //with 3 the time is quite worse
         private double cyclingVelocity = 6.0 / 2D;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
@@ -48,7 +48,7 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
 
         private double probabilityUsersObey = 1;
         private double factorProb = 2000D;
-        private double factorImp = 1000D*175;
+        private double factorImp = 1000D;
     }
 
     boolean takeintoaccountexpected = true;
@@ -250,17 +250,16 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
         double probbikediff = -SellamDistribution.calculateSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
         k = 1 - estimatedslots - 1;
         double probslotdiff = SellamDistribution.calculateSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
-
         //now calculate the demands at the future point relative to the global demand
         double futtakedemand = infrastructureManager.getFutureBikeDemand(s, (int) timeoffset);
         double futreturndemand = infrastructureManager.getFutureSlotDemand(s, (int) timeoffset);
         double futglobaltakedem = infrastructureManager.getFutureGlobalBikeDemand((int) timeoffset);
         double futglobalretdem = infrastructureManager.getFutureGlobalSlotDemand((int) timeoffset);
 
-        double relativeimprovemente = (futtakedemand / futglobaltakedem) * probbikediff
-                + (futreturndemand / futglobalretdem) * probslotdiff;
+        double relativeimprovemente = futtakedemand * probbikediff
+                + futreturndemand * probslotdiff;
         return relativeimprovemente;
-    }
+   }
 
     public double getGlobalProbabilityImprovementIfReturn(Station s, double timeoffset, boolean takeintoaccountexpected, boolean takeintoaccountcompromised) {
 
@@ -292,9 +291,10 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
         double futglobaltakedem = infrastructureManager.getFutureGlobalBikeDemand((int) timeoffset);
         double futglobalretdem = infrastructureManager.getFutureGlobalSlotDemand((int) timeoffset);
 
-        double relativeimprovemente = (futtakedemand / futglobaltakedem) * probbikediff
-                + (futreturndemand / futglobalretdem) * probslotdiff;
+        double relativeimprovemente = (futtakedemand ) * probbikediff
+                + (futreturndemand ) * probslotdiff;
         return relativeimprovemente;
+
     }
 
 
