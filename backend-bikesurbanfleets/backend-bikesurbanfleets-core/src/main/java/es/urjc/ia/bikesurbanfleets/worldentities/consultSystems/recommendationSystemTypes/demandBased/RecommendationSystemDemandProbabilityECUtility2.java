@@ -48,7 +48,7 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
 
         private double probabilityUsersObey = 1;
         private double factorProb = 2000D;
-        private double factorImp = 1000D;
+        private double factorImp = 500D;
     }
 
     boolean takeintoaccountexpected = true;
@@ -301,36 +301,54 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
     //take into account that distance newSD >= distance oldSD
     private boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
         if (oldSD.getDistance() <= this.parameters.maxDistanceRecommendation) {
-            // if here newSD.getProbability() > oldSD.getProbability()
             if (newSD.getDistance() <= this.parameters.maxDistanceRecommendation) {
-                double distdiff = (newSD.getDistance() - oldSD.getDistance());
-                double probdiff = (newSD.getProbability() - oldSD.getProbability()) * this.parameters.factorProb;
-                double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
-                if ((probdiff + utildiff) > (distdiff)) {
-                    return true;
+                if (oldSD.getProbability()>=this.parameters.upperProbabilityBound) {
+                    if (newSD.getProbability()>=this.parameters.upperProbabilityBound) {
+                        return decideByGlobalUtility(newSD, oldSD);
+                    } else return false; 
                 }
+                if (oldSD.getProbability()>=this.parameters.desireableProbability) {
+                    if (newSD.getProbability()>=this.parameters.desireableProbability) {
+                        return decideByGlobalUtility(newSD, oldSD);
+                    } else return false; 
+                }
+                if (newSD.getProbability()>oldSD.getProbability()) return true;
                 return false;
             }
             return false;
         }
-        double distdiff = (newSD.getDistance() - oldSD.getDistance());
-        double probdiff = (newSD.getProbability() - oldSD.getProbability()) * this.parameters.factorProb;
-        double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
-        if ((probdiff + utildiff) > (distdiff)) {
-            return true;
-        }
-        return false;
+        return decideByGlobalUtility(newSD, oldSD);
     }
-
+    private boolean decideByGlobalUtility(StationUtilityData newSD, StationUtilityData oldSD) {
+            double distdiff = (newSD.getDistance() - oldSD.getDistance());
+            double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
+            if ((utildiff) > (distdiff)) {
+                    return true;
+                }
+                return false;
+    }
+   
     //take into account that distance newSD >= distance oldSD
     private boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        double distdiff = (newSD.getDistance() - oldSD.getDistance());
+/*        double distdiff = (newSD.getDistance() - oldSD.getDistance());
         double probdiff = (newSD.getProbability() - oldSD.getProbability()) * this.parameters.factorProb;
         double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
         if ((probdiff + utildiff) > (distdiff)) {
             return true;
         }
         return false;
+ */               if (oldSD.getProbability()>=this.parameters.upperProbabilityBound) {
+                    if (newSD.getProbability()>=this.parameters.upperProbabilityBound) {
+                        return decideByGlobalUtility(newSD, oldSD);
+                    } else return false; 
+                }
+                if (oldSD.getProbability()>=this.parameters.desireableProbability) {
+                    if (newSD.getProbability()>=this.parameters.desireableProbability) {
+                        return decideByGlobalUtility(newSD, oldSD);
+                    } else return false; 
+                }
+                if (newSD.getProbability()>this.parameters.desireableProbability) return true;
+        return decideByGlobalUtility(newSD, oldSD);
     }
 
     /*
