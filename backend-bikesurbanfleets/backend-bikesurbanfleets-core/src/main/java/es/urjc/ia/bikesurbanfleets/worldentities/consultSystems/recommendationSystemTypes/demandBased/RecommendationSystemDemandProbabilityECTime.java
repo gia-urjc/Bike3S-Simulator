@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_PROBABILITY_expected_compromised")
-public class RecommendationSystemDemandProbabilityEC extends RecommendationSystem {
+@RecommendationSystemType("DEMAND_PROBABILITY_TIME_expected_compromised")
+public class RecommendationSystemDemandProbabilityECTime extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -41,13 +41,13 @@ public class RecommendationSystemDemandProbabilityEC extends RecommendationSyste
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double walkingVelocityExpected = 1.12 / 2D;//2.25D; //with 3 the time is quite worse
         private double cyclingVelocityExpected = 6.0 / 2D;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
-        private double walkingVelocity = 1.12/2;//2.25D; //with 3 the time is quite worse
-        private double cyclingVelocity = 6.0/2;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
+        private double walkingVelocity = 1.12;//2.25D; //with 3 the time is quite worse
+        private double cyclingVelocity = 6.0;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
         private double upperProbabilityBound = 0.999;
         private double desireableProbability = 0.6;
 
         private double probabilityUsersObey = 1;
-        private double factor = 1D / (double) (2000);
+        private double factor = 1D / (double) (500);
     }
 
     boolean takeintoaccountexpected = true;
@@ -56,7 +56,7 @@ public class RecommendationSystemDemandProbabilityEC extends RecommendationSyste
     boolean printHints = true;
     private RecommendationParameters parameters;
 
-    public RecommendationSystemDemandProbabilityEC(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandProbabilityECTime(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -210,7 +210,7 @@ public class RecommendationSystemDemandProbabilityEC extends RecommendationSyste
         // if here newSD.getProbability() > oldSD.getProbability()
         if (newSD.getDistance() <= this.parameters.maxDistanceRecommendation) {
             if (oldSD.getProbability() > this.parameters.desireableProbability) {
-                double timediff = (newSD.getDistance()- oldSD.getDistance()) * this.parameters.factor;
+                double timediff = (newSD.getTime() - oldSD.getTime()) * this.parameters.factor;
                 double probdiff = newSD.getProbability() - oldSD.getProbability();
                 if (probdiff > timediff) {
                     return true;
@@ -222,7 +222,7 @@ public class RecommendationSystemDemandProbabilityEC extends RecommendationSyste
         if (oldSD.getDistance() <= this.parameters.maxDistanceRecommendation) {
             return false;
         }
-        double timediff = (newSD.getDistance() - oldSD.getDistance()) * this.parameters.factor;
+        double timediff = (newSD.getTime() - oldSD.getTime()) * this.parameters.factor;
         double probdiff = newSD.getProbability() - oldSD.getProbability();
         if (probdiff > timediff) {
             return true;
@@ -240,7 +240,7 @@ public class RecommendationSystemDemandProbabilityEC extends RecommendationSyste
         }
         // if here  newSD.getProbability() > oldSD.getProbability()
         if (oldSD.getProbability() > this.parameters.desireableProbability) {
-            double timediff = (newSD.getDistance() - oldSD.getDistance()) * this.parameters.factor;
+            double timediff = (newSD.getTime() - oldSD.getTime()) * this.parameters.factor;
             double probdiff = newSD.getProbability() - oldSD.getProbability();
             if (probdiff > timediff) {
                 return true;
@@ -250,7 +250,7 @@ public class RecommendationSystemDemandProbabilityEC extends RecommendationSyste
         if (newSD.getProbability() >= this.parameters.desireableProbability) {
             return true;
         }
-        double timediff = (newSD.getDistance() - oldSD.getDistance()) * this.parameters.factor;
+        double timediff = (newSD.getTime() - oldSD.getTime()) * this.parameters.factor;
         double probdiff = newSD.getProbability() - oldSD.getProbability();
         if (probdiff > timediff) {
             return true;

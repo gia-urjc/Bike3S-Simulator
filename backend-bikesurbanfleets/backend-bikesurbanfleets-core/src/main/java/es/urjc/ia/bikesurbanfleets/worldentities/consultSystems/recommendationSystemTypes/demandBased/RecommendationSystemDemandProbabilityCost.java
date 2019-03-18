@@ -40,8 +40,8 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
          */
         private int maxDistanceRecommendation = 600;
         //this is meters per second corresponds aprox. to 4 and 20 km/h
-        private double walkingVelocity = 1.12;//2.25D; //with 3 the time is quite worse
-        private double cyclingVelocity = 6.0;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
+        private double walkingVelocity = 1.12/2;//2.25D; //with 3 the time is quite worse
+        private double cyclingVelocity = 6.0/2;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
         private double walkingVelocityExpected = 1.12 / 2D;//2.25D; //with 3 the time is quite worse
         private double cyclingVelocityExpected = 6.0 / 2D;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
         private double upperProbabilityBound = 0.99;
@@ -218,7 +218,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         double thisprob=margprob*sd.getProbability();
         if (missingprob<0) throw new RuntimeException("invalid program flow");
         if (missingprob<=thisprob) {
-            return acctime;//h(acccost+(missingprob*acctime));
+            return (acccost+(missingprob*acctime));
         } else{
             //change values and find closest station
             double newacccost=acccost + thisprob*acctime;
@@ -241,7 +241,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         double thisprob=margprob*sd.getProbability();
         if (missingprob<0) throw new RuntimeException("invalid program flow");
         if (missingprob<=thisprob) {
-            return accbiketime+walktime;//h(acccost+(missingprob*(accbiketime+walktime)));
+            return (acccost+(missingprob*(accbiketime+walktime)));
         } else{
             //change values and find closest station
             double newacccost=acccost + thisprob*(accbiketime+walktime);

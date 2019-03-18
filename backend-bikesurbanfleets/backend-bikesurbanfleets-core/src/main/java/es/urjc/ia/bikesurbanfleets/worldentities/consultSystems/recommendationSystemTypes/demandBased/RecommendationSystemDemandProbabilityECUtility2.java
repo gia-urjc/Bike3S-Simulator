@@ -104,7 +104,7 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
 
     private void printRecomendations(List<StationUtilityData> su, boolean take) {
         if (printHints) {
-            int max = su.size();//Math.min(5, su.size());
+            int max = Math.min(5, su.size());
             System.out.println();
             if (take) {
                 System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime());
@@ -337,7 +337,7 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
             return true;
         }
         return false;
- */               if (oldSD.getProbability()>=this.parameters.upperProbabilityBound) {
+ */             if (oldSD.getProbability()>=this.parameters.upperProbabilityBound) {
                     if (newSD.getProbability()>=this.parameters.upperProbabilityBound) {
                         return decideByGlobalUtility(newSD, oldSD);
                     } else return false; 
