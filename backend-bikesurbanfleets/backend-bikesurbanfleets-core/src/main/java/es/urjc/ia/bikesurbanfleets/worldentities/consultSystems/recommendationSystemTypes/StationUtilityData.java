@@ -16,6 +16,12 @@ public class StationUtilityData {
     private double ocupation;
     private double probability;
     private double distance;
+    public int closest;
+    public double closestbikedist;
+    public double closestprob;
+    public double bikedist;
+    public double walkdist;
+    public double closestwalkdist;
 
     public double getDistance() {
         return distance;

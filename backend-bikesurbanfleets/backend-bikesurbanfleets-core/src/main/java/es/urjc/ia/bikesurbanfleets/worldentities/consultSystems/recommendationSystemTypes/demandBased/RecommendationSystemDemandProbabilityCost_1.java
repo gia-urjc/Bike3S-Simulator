@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_cost")
-public class RecommendationSystemDemandProbabilityCost extends RecommendationSystem {
+@RecommendationSystemType("DEMAND_cost_1")
+public class RecommendationSystemDemandProbabilityCost_1 extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -45,15 +45,11 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         private double walkingVelocityExpected = 1.12 / 2D;//2.25D; //with 3 the time is quite worse
         private double cyclingVelocityExpected = 6.0 / 2D;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
         private double upperProbabilityBound = 0.999;
-        private double desireableProbability = 0.999;
+        private double desireableProbability = 0.6;
 
         private double probabilityUsersObey = 1;
         private double factor = 1D / (double) (1000);
-        private double penalisationfactor = 2;
-        private double bikefactor = 0.1D;
- 
-    }       
- 
+    }
 
     boolean takeintoaccountexpected = true;
     boolean takeintoaccountcompromised = true;
@@ -61,7 +57,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     boolean printHints = true;
     private RecommendationParameters parameters;
 
-    public RecommendationSystemDemandProbabilityCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandProbabilityCost_1(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -125,42 +121,18 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 System.out.format("LOW PROB %9.8f %n", su.get(0).getProbability());
                 lowprobs++;
             }
-            if (take) {
-                System.out.println("         id av ca   wdist  prob       cl   cwdist cprob        util");
-                for (int i = 0; i < max; i++) {
-                    StationUtilityData s = su.get(i);
-                    System.out.format("Station %3d %2d %2d %7.1f %9.8f %3d %7.1f %9.8f %9.2f %n",
-                            s.getStation().getId(),
-                            s.getStation().availableBikes(),
-                            s.getStation().getCapacity(),
-                            s.walkdist,
-                            s.getProbability(),
-                            s.closest,
-                            s.closestwalkdist,
-                            s.closestprob,
-                            s.getUtility());
-                }
-            } else {
-                System.out.println("         id av ca   wdist  bdist    prob      clo  cwdis  cbdis   cprob      util");
-                for (int i = 0; i < max; i++) {
-                    StationUtilityData s = su.get(i);
-                    System.out.format("Station %3d %2d %2d %7.1f %7.1f %9.8f %3d %7.1f %7.1f %9.8f %9.2f %n",
-                            s.getStation().getId(),
-                            s.getStation().availableBikes(),
-                            s.getStation().getCapacity(),
-                            s.walkdist,
-                            s.bikedist,
-                            s.getProbability(),
-                            s.closest,
-                            s.closestwalkdist,
-                            s.closestbikedist,
-                            s.closestprob,
-                            s.getUtility());
-                }
+            for (int i = 0; i < max; i++) {
+                StationUtilityData s = su.get(i);
+                System.out.format("Station %3d %2d %2d %10.2f %10.2f %9.8f %9.8f %n", +s.getStation().getId(),
+                        s.getStation().availableBikes(),
+                        s.getStation().getCapacity(),
+                        s.getDistance(),
+                        s.getTime(),
+                        s.getUtility(),
+                        s.getProbability());
             }
         }
     }
-
     private int lowprobs = 0;
     private double probsr = 0D;
     private int callsr = 0;
@@ -205,13 +177,12 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             double prob = infrastructureManager.getAvailableBikeProbability(s, offtime,
                     takeintoaccountexpected, takeintoaccountcompromised);
             sd.setProbability(prob).setTime(offtime).setDistance(dist);
-            sd.walkdist=dist;
             temp.add(sd);
         }
         //now calculate the costs
         for (StationUtilityData sd : temp) {
             List<StationUtilityData> lookedlist = new ArrayList<>();
-            double cost = calculateCostRent(sd, 1, sd.getDistance(), lookedlist, temp, true);
+            double cost = calculateCostRent(sd, temp);
             sd.setUtility(cost);
             addRent(sd, res);
         }
@@ -223,173 +194,73 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
             StationUtilityData sd = new StationUtilityData(s);
-            double dist = currentposition.distanceTo(s.getPosition());
+            double dist=currentposition.distanceTo(s.getPosition());
             int offtime = (int) (dist / this.parameters.cyclingVelocity);
             double prob = infrastructureManager.getAvailableSlotProbability(s, offtime,
                     takeintoaccountexpected, takeintoaccountcompromised);
-            int time = (int) ((dist / this.parameters.cyclingVelocity)
+            dist=(s.getPosition().distanceTo(destination));
+            int time = (int) ((currentposition.distanceTo(s.getPosition()) / this.parameters.cyclingVelocity)
                     + (s.getPosition().distanceTo(destination) / this.parameters.walkingVelocity));
-            sd.setProbability(prob).setDistance(dist).setTime(time);
-            sd.walkdist=s.getPosition().distanceTo(destination);
-            sd.bikedist=dist;
+            sd.setProbability(prob).setTime(time).setDistance(dist);
             temp.add(sd);
         }
         //now calculate the costs
         for (StationUtilityData sd : temp) {
-            List<StationUtilityData> lookedlist = new ArrayList<>();
-            double cost = calculateCostReturn(sd, 1, sd.getDistance(), destination, lookedlist, temp, true);
+            double cost = calculateCostReturn(sd, temp, destination,currentposition);
             sd.setUtility(cost);
             addReturn(sd, res);
         }
         return res;
     }
 
-    private double calculateCostRent(StationUtilityData sd,
-            double margprob, double currentdist,
-            List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
-        double accost = margprob * currentdist;
-        if (margprob <= (1-this.parameters.desireableProbability)) {
-            return accost;
-        }
-        lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourRent(sd, lookedlist, allstats);
-        double newdist = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition());
-        double newmargprob = margprob * (1 - sd.getProbability());
-        if (start) {
-            sd.closest = closestneighbour.getStation().getId();
-            sd.closestwalkdist = newdist;
-            sd.closestprob = closestneighbour.getProbability();
-        }
-        double margcost = 1-this.parameters.penalisationfactor * calculateCostRent(closestneighbour, newmargprob, newdist, lookedlist, allstats, false);
-        return margcost + accost;
+    private double calculateCostRent(StationUtilityData sd, List<StationUtilityData> stations) {
+        double p=sd.getProbability();
+        double d=sd.getDistance();
+        StationUtilityData closestneighbour = getClosestNeighbour(sd, stations);
+        double d2 = closestneighbour.getStation().getPosition().distanceTo(sd.getStation().getPosition());
+        double p2=closestneighbour.getProbability();
+        return p*d+(1-p)*2*(
+                    p2*(d+d2)+ (1-p2)*2*
+                            (d+d2+1000)
+                );
+    }
+    private double calculateCostReturn(StationUtilityData sd, List<StationUtilityData> stations, GeoPoint destination, GeoPoint current) {
+
+ /*       StationUtilityData closestneighbour = getClosestNeighbour(sd, stations);
+        double firstbiketime=sd.getDistance()/this.parameters.cyclingVelocity;
+        double firstwalktime=sd.getStation().getPosition().distanceTo(destination)/this.parameters.walkingVelocity;
+        double secondbiketime=sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition())/this.parameters.cyclingVelocity;
+        double secondwalktime=closestneighbour.getStation().getPosition().distanceTo(destination)/this.parameters.walkingVelocity;
+        return firstbiketime+
+                sd.getProbability()* firstwalktime+
+                (1 - sd.getProbability())*20000;//(secondbiketime+secondwalktime);
+*/
+        StationUtilityData closestneighbour = getClosestNeighbour(sd, stations);
+        double p=sd.getProbability();
+        double db=current.distanceTo(sd.getStation().getPosition())/10;
+        double dw=sd.getDistance();
+        double p2=closestneighbour.getProbability();
+        double db2 = closestneighbour.getStation().getPosition().distanceTo(sd.getStation().getPosition())/10;
+        double dw2 = closestneighbour.getStation().getPosition().distanceTo(destination);
+        return p*(db+dw)+(1-p)*2*(
+                p2*(db+db2+dw2)+(1-p2)*2*(db+db2+2000)
+                );
     }
 
-    private double calculateCostRent2(StationUtilityData sd,
-            double accprob, double margprob,
-            double acctime, double acccost,
-            List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats) {
-        double missingprob = this.parameters.upperProbabilityBound - accprob;
-        double thisprob = margprob * sd.getProbability();
-        if (missingprob < 0) {
-            throw new RuntimeException("invalid program flow");
-        }
-        if (missingprob <= thisprob) {
-            return (acccost + (missingprob * acctime));
-        } else {
-            //change values and find closest station
-            double newacccost = acccost + thisprob * acctime;
-            double newaccprob = accprob + thisprob;
-            double newmargprob = margprob * (1 - sd.getProbability());
-            lookedlist.add(sd);
-            StationUtilityData closestneighbour = getClosestNeighbour(sd, lookedlist, allstats);
-            double newacctime = acctime
-                    + (closestneighbour.getStation().getPosition().distanceTo(sd.getStation().getPosition()) / this.parameters.walkingVelocity);
-            return calculateCostRent2(closestneighbour, newaccprob, newmargprob,
-                    newacctime, newacccost, lookedlist, allstats);
-        }
-    }
-
-    private double calculateCostReturn(StationUtilityData sd,
-            double margprob, double currentdist, GeoPoint destination,
-            List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
-        double walkdist = sd.getStation().getPosition().distanceTo(destination);
-        double walkcost = margprob * walkdist;
-        double acbikecost = margprob * currentdist * this.parameters.bikefactor;
-        if (margprob <= (1-this.parameters.desireableProbability)) {
-            return acbikecost + walkcost;
-        }
-        walkcost = walkcost * sd.getProbability();
-        double acccost = acbikecost + walkcost;
-        lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourReturn(sd, lookedlist, allstats,destination);
-        double newdist = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition());
-        double newmargprob = margprob * (1 - sd.getProbability());
-        if (start) {
-            sd.closest = closestneighbour.getStation().getId();
-            sd.closestbikedist = newdist;
-            sd.closestprob = closestneighbour.getProbability();
-            sd.closestwalkdist = closestneighbour.getStation().getPosition().distanceTo(destination);
-        }
-        double margcost = this.parameters.penalisationfactor * calculateCostReturn(closestneighbour, newmargprob, newdist, destination, lookedlist, allstats, false);
-        return margcost + acccost;
-    }
-
-    private double calculateCostReturn2(StationUtilityData sd, GeoPoint destination,
-            double accprob, double margprob,
-            double accbiketime, double walktime, double acccost,
-            List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats) {
-        double missingprob = this.parameters.upperProbabilityBound - accprob;
-        double thisprob = margprob * sd.getProbability();
-        if (missingprob < 0) {
-            throw new RuntimeException("invalid program flow");
-        }
-        if (missingprob <= thisprob) {
-            return (acccost + (missingprob * (accbiketime + walktime)));
-        } else {
-            //change values and find closest station
-            double newacccost = acccost + thisprob * (accbiketime + walktime);
-            double newaccprob = accprob + thisprob;
-            double newmargprob = margprob * (1 - sd.getProbability());
-            lookedlist.add(sd);
-            StationUtilityData closestneighbour = getClosestNeighbour(sd, lookedlist, allstats);
-            double newaccbiketime = accbiketime
-                    + (closestneighbour.getStation().getPosition().distanceTo(sd.getStation().getPosition()) / this.parameters.cyclingVelocity);
-            double newwalktime = closestneighbour.getStation().getPosition().distanceTo(destination) / this.parameters.walkingVelocity;
-            return calculateCostReturn2(closestneighbour, destination, newaccprob, newmargprob,
-                    newaccbiketime, newwalktime, newacccost, lookedlist, allstats);
-        }
-    }
-
-    private StationUtilityData bestNeighbourRent(StationUtilityData sd, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats) {
-        StationUtilityData closest = null;
-        double clostesutil = Double.MAX_VALUE;
-        for (StationUtilityData nei : allstats) {
-            if (!lookedlist.contains(nei)&& nei.getProbability()>=0.6) {
-                double dist = nei.getStation().getPosition().distanceTo(sd.getStation().getPosition());
-                double util=dist*nei.getProbability()+2000*(1-nei.getProbability());
-                if (util < clostesutil) {
-                    clostesutil = util;
-                    closest = nei;
-                    
-                }
-            }
-        }
-        return closest;
-    }
-    private StationUtilityData bestNeighbourReturn(StationUtilityData sd, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats, GeoPoint destination) {
-        StationUtilityData closest = null;
-        double clostesutil = Double.MAX_VALUE;
-        for (StationUtilityData nei : allstats) {
-            if (!lookedlist.contains(nei)&& nei.getProbability()>=0.6) {
-                double bdist = nei.getStation().getPosition().distanceTo(sd.getStation().getPosition());
-                double wdist=nei.getStation().getPosition().distanceTo(destination);
-                double util=(bdist* this.parameters.bikefactor+wdist)
-                        *nei.getProbability()+1000*(1-nei.getProbability());
-                if (util < clostesutil) {
-                    clostesutil = util;
-                    closest = nei;
-                }
-            }
-        }
-        return closest;
-    }
-    private StationUtilityData getClosestNeighbour(StationUtilityData sd, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats) {
+    private StationUtilityData getClosestNeighbour(StationUtilityData sd, List<StationUtilityData> allstats) {
         StationUtilityData closest = null;
         double clostesdist = Double.MAX_VALUE;
         for (StationUtilityData nei : allstats) {
-            if (!lookedlist.contains(nei) && nei.getProbability()>=0.6
-                    ) {
-                double dist = nei.getStation().getPosition().distanceTo(sd.getStation().getPosition());
-                if (dist < clostesdist) {
-                    clostesdist = dist;
-                    closest = nei;
-                }
+            if (nei.equals(sd)) {
+                continue;
+            }
+            double dist = nei.getStation().getPosition().distanceTo(sd.getStation().getPosition());
+            if (dist < clostesdist) {
+                clostesdist = dist;
+                closest = nei;
             }
         }
+
         return closest;
     }
 
