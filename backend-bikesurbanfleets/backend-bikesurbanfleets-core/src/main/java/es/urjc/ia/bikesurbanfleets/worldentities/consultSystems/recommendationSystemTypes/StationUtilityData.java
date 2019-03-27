@@ -8,6 +8,7 @@ public class StationUtilityData {
 
     private Station station;
     private double Utility;
+   
     private double time;
     private double minoptimalocupation;
     private double maxopimalocupation;
@@ -22,6 +23,15 @@ public class StationUtilityData {
     public double bikedist;
     public double walkdist;
     public double closestwalkdist;
+    private double Cost;
+
+    public double getCost() {
+        return Cost;
+    }
+
+    public void setCost(double Cost) {
+        this.Cost = Cost;
+    }
 
     public double getDistance() {
         return distance;

@@ -46,7 +46,8 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
         private double desireableProbability = 0.6;
 
         private double probabilityUsersObey = 1;
-        private double factor = 1D / (double) (2000);
+        private double factorProb = 2000;
+        private double factorImp = 500D;
         private boolean takeintoaccountexpected = true;
         private boolean takeintoaccountcompromised = true;
     }
@@ -349,31 +350,28 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
                 + (futreturndemand / futglobalretdem) * probslotdiff;
         return relativeimprovemente;
     }
+    private boolean decideByGlobalUtility(StationUtilityData newSD, StationUtilityData oldSD) {
+            double timediff = (newSD.getDistance()- oldSD.getDistance());
+            double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
+            double probdiff = (newSD.getProbability() - oldSD.getProbability())* this.parameters.factorProb;
+            if ((utildiff+probdiff) > (timediff)) {
+                    return true;
+                }
+                return false;
+    }
 
     //take into account that distance newSD >= distance oldSD
     private boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
         // if here newSD.getProbability() > oldSD.getProbability()
         if (newSD.getDistance() <= this.parameters.maxDistanceRecommendation) {
             if (oldSD.getProbability() > this.parameters.upperProbabilityBound && newSD.getProbability() > this.parameters.upperProbabilityBound) {
-                double timediff = (newSD.getDistance() - oldSD.getDistance()) * this.parameters.factor;
-                double probdiff = newSD.getProbability() - oldSD.getProbability();
-                double impdiff = newSD.getUtility() - oldSD.getUtility();
-                if (probdiff + impdiff > timediff) {
-                    return true;
-                }
-                return false;
+                return decideByGlobalUtility(newSD, oldSD);
             }
             if (oldSD.getProbability() > this.parameters.upperProbabilityBound ) return false;
             if (newSD.getProbability() > this.parameters.upperProbabilityBound ) return true;
             
             if (oldSD.getProbability() > this.parameters.desireableProbability && newSD.getProbability() > this.parameters.desireableProbability) {
-                double timediff = (newSD.getDistance() - oldSD.getDistance()) * this.parameters.factor;
-                double probdiff = newSD.getProbability() - oldSD.getProbability();
-                double impdiff = newSD.getUtility() - oldSD.getUtility();
-                if (probdiff + impdiff > timediff) {
-                    return true;
-                }
-                return false;
+                return decideByGlobalUtility(newSD, oldSD);
             }
             if (oldSD.getProbability() > this.parameters.desireableProbability ) return false;
             if (newSD.getProbability() > this.parameters.desireableProbability ) return true;
@@ -384,24 +382,12 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
         if (oldSD.getDistance() <= this.parameters.maxDistanceRecommendation) {
             return false;
         }
-        double timediff = (newSD.getDistance() - oldSD.getDistance()) * this.parameters.factor;
-        double probdiff = newSD.getProbability() - oldSD.getProbability();
-        double impdiff = newSD.getUtility() - oldSD.getUtility();
-        if (probdiff + impdiff > timediff) {
-            return true;
-        }
-        return false;
+                return decideByGlobalUtility(newSD, oldSD);
     }
 
     //take into account that distance newSD >= distance oldSD
     private boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-            double timediff = (newSD.getDistance() - oldSD.getDistance()) * this.parameters.factor;
-            double probdiff = newSD.getProbability() - oldSD.getProbability();
-            double impdiff = newSD.getUtility() - oldSD.getUtility();
-            if (probdiff + impdiff > timediff) {
-                return true;
-            }
-            return false;
+                return decideByGlobalUtility(newSD, oldSD);
      }
 
     private void addrent(StationUtilityData d, List<StationUtilityData> temp) {

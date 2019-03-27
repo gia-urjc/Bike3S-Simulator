@@ -45,10 +45,11 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
         private double cyclingVelocity = 6.0 / 2D;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
         private double upperProbabilityBound = 0.999;
         private double desireableProbability = 0.6;
+        private double futurepredictionseconds=1800;
 
         private double probabilityUsersObey = 1;
-        private double factorProb = 2000D;
-        private double factorImp = 500D;
+        private double factorProb = 2500D;
+        private double factorImp = 400D;
     }
 
     boolean takeintoaccountexpected = true;
@@ -166,24 +167,16 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
     }
 
     public List<StationUtilityData> getStationRecomendationRent(List<Station> stations, GeoPoint destination, GeoPoint currentposition) {
-        InfrastructureManager.UsageData ud = infrastructureManager.getCurrentUsagedata();
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
-
             StationUtilityData sd = new StationUtilityData(s);
-
-            double prob = 0;
-            double dist = 0;
-            dist = currentposition.distanceTo(s.getPosition());
-            double off = dist / this.parameters.walkingVelocity;
-            if (off < 1) {
-                off = 0;
-            }
-            prob = infrastructureManager.getAvailableBikeProbability(s, off,
+            double dist=currentposition.distanceTo(s.getPosition());
+            int off = (int) (dist / this.parameters.walkingVelocity);
+            double prob = infrastructureManager.getAvailableBikeProbability(s, off,
                     takeintoaccountexpected, takeintoaccountcompromised);
-            sd.setProbability(prob);
-            sd.setDistance(dist);
-            double util = getGlobalProbabilityImprovementIfTake(s, off,takeintoaccountexpected, takeintoaccountcompromised);
+            sd.setProbability(prob).setDistance(dist).setTime(off);
+            double predictiontime=off;//this.parameters.futurepredictionseconds;//off;
+            double util = getGlobalProbabilityImprovementIfTake(s, predictiontime,takeintoaccountexpected, takeintoaccountcompromised);
             sd.setUtility(util);
             addrent(sd, temp);
             //reduce computation time
@@ -195,23 +188,20 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
     }
 
     public List<StationUtilityData> getStationRecomendationReturn(List<Station> stations, GeoPoint destination, GeoPoint currentposition) {
-        InfrastructureManager.UsageData ud = infrastructureManager.getCurrentUsagedata();
         List<StationUtilityData> temp = new ArrayList<>();
-        StationUtilityData best = null;
-
         for (Station s : stations) {
             StationUtilityData sd = new StationUtilityData(s);
             double dist = currentposition.distanceTo(s.getPosition());
-            double off = dist / this.parameters.cyclingVelocity;
-            if (off < 1) {
-                off = 0;
-            }
+            int off = (int)(dist / this.parameters.cyclingVelocity);
             double prob = infrastructureManager.getAvailableSlotProbability(s, off,
                     takeintoaccountexpected, takeintoaccountcompromised);
             dist = s.getPosition().distanceTo(destination);
-            sd.setProbability(prob);
-            sd.setDistance(dist);
-            double util = getGlobalProbabilityImprovementIfReturn(s, off,takeintoaccountexpected, takeintoaccountcompromised);
+            int time = (int) (off
+                    + s.getPosition().distanceTo(destination) / this.parameters.walkingVelocity);
+
+            sd.setProbability(prob).setDistance(dist).setTime(time);
+            double predictiontime=off;//this.parameters.futurepredictionseconds;//off;
+            double util = getGlobalProbabilityImprovementIfReturn(s, predictiontime,takeintoaccountexpected, takeintoaccountcompromised);
             sd.setUtility(util);
             addreturn(sd, temp);
 
@@ -307,22 +297,33 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
                         return decideByGlobalUtility(newSD, oldSD);
                     } else return false; 
                 }
+                if (newSD.getProbability()>=this.parameters.upperProbabilityBound) return true;
                 if (oldSD.getProbability()>=this.parameters.desireableProbability) {
                     if (newSD.getProbability()>=this.parameters.desireableProbability) {
                         return decideByGlobalUtility(newSD, oldSD);
                     } else return false; 
                 }
                 if (newSD.getProbability()>oldSD.getProbability()) return true;
-                return false;
+                return decideByGlobalUtility(newSD, oldSD);
             }
             return false;
         }
-        return decideByGlobalUtility(newSD, oldSD);
+        return decideByGlobalUtility2(newSD, oldSD);
+    }
+    private boolean decideByGlobalUtility2(StationUtilityData newSD, StationUtilityData oldSD) {
+            double timediff = (newSD.getTime()- oldSD.getTime());
+            double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
+            double probdiff = (newSD.getProbability() - oldSD.getProbability())* this.parameters.factorProb;
+            if ((utildiff+probdiff) > (2*timediff)) {
+                    return true;
+                }
+                return false;
     }
     private boolean decideByGlobalUtility(StationUtilityData newSD, StationUtilityData oldSD) {
-            double distdiff = (newSD.getDistance() - oldSD.getDistance());
-            double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
-            if ((utildiff) > (distdiff)) {
+            double timediff = (newSD.getTime()- oldSD.getTime());
+           double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
+            double probdiff = (newSD.getProbability() - oldSD.getProbability())* this.parameters.factorProb;
+            if ((utildiff+probdiff) > (2*timediff)) {
                     return true;
                 }
                 return false;
@@ -330,26 +331,20 @@ public class RecommendationSystemDemandProbabilityECUtility2 extends Recommendat
    
     //take into account that distance newSD >= distance oldSD
     private boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-/*        double distdiff = (newSD.getDistance() - oldSD.getDistance());
-        double probdiff = (newSD.getProbability() - oldSD.getProbability()) * this.parameters.factorProb;
-        double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
-        if ((probdiff + utildiff) > (distdiff)) {
-            return true;
-        }
-        return false;
- */             if (oldSD.getProbability()>=this.parameters.upperProbabilityBound) {
+ /*               if (oldSD.getProbability()>=this.parameters.upperProbabilityBound) {
                     if (newSD.getProbability()>=this.parameters.upperProbabilityBound) {
                         return decideByGlobalUtility(newSD, oldSD);
                     } else return false; 
                 }
-                if (oldSD.getProbability()>=this.parameters.desireableProbability) {
+              if (newSD.getProbability()>=this.parameters.upperProbabilityBound) return true;
+*/                if (oldSD.getProbability()>=this.parameters.desireableProbability) {
                     if (newSD.getProbability()>=this.parameters.desireableProbability) {
                         return decideByGlobalUtility(newSD, oldSD);
                     } else return false; 
                 }
-                if (newSD.getProbability()>this.parameters.desireableProbability) return true;
-        return decideByGlobalUtility(newSD, oldSD);
-    }
+                if (newSD.getProbability()>=this.parameters.desireableProbability) return true;
+                return decideByGlobalUtility2(newSD, oldSD);
+     }
 
     /*
     //for comparison and generating the outbut
