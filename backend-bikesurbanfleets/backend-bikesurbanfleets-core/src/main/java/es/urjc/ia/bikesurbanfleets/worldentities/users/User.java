@@ -157,7 +157,7 @@ public abstract class User implements Entity {
         }
 
         //optional parameters
-        this.walkingVelocity = 1.12;
+        this.walkingVelocity = 1.4;
         this.cyclingVelocity = 6.0;
         aux = userdef.get("walkingVelocity");
         if (aux != null) {

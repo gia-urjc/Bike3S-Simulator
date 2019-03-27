@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CompareTestApplication {
+public class CompareTestApplicationOscar {
 
     private class Tests {
 
@@ -32,25 +32,34 @@ public class CompareTestApplication {
     private static String schemaPath;
     private static String dataAnalyzerPath;
     private static String analysisScriptPath;
+    private static String[] entry_points;
+    private static String projectDir;
 
     public static void main(String[] args) throws Exception {
-        CompareTestApplication hs = new CompareTestApplication();
+        CompareTestApplicationOscar hs = new CompareTestApplicationOscar();
         //treat tests
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // the following parameters may have to be changes
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        String projectDir = "/Users/oscar/my_projects/Bike3S-Simulator";
+        projectDir = "/Users/oscar/my_projects/Bike3S-Simulator";
         // String projectDir = System.getProperty("user.dir") + File.separator + "Bike3S";
         testsDir = "/Users/oscar/my_projects/Bike3S-Simulator/tests_oscar";
+        entry_points = new String[]{
+                //testsDir + "/conf/entry_points/entry-points-configuration-informed-and-obedient.json",
+                //testsDir + "/conf/entry_points/entry-points-configuration-informed.json",
+                //testsDir + "/conf/entry_points/entry-points-configuration-informedR.json",
+                //testsDir + "/conf/entry_points/entry-points-configuration-obedient.json",
+                //testsDir + "/conf/entry_points/entry-points-configuration-obedientR.json",
+                //testsDir + "/conf/entry_points/entry-points-configuration-uninformed.json"
+                testsDir + "/conf/entry_points/4_entry_point.json"
+        };
 
         mapPath = projectDir + "/backend-configuration-files/maps/madrid.osm";
-        //
-        //
-        // demandDataPath = projectDir + "/../demandDataMadrid0817_0918.csv";
+        //demandDataPath = projectDir + "/../demandDataMadrid0817_0918.csv";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        System.out.println("baseDir " + testsDir);
+        //System.out.println("baseDir " + testsDir);
         String testFile = testsDir + "/tests.json";
         schemaPath = projectDir + "/build/schema";
         dataAnalyzerPath = projectDir + "/build/data-analyser";
@@ -72,7 +81,7 @@ public class CompareTestApplication {
         Tests tests = gson.fromJson(reader, Tests.class);
         //create new dir on basedir
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
-        
+
         Date date = new Date();
         baseTestsDir = testsDir + "/" + dateFormat.format(date);
         auxiliaryDir = new File(baseTestsDir);
@@ -98,28 +107,66 @@ public class CompareTestApplication {
         String globalConfig = testsDir + "/conf/global_configuration.json";
         String usersConfig = testsDir + "/conf/users_configuration.json";
         String stationsConfig = testsDir + "/conf/stations_configuration.json";
+        int[] numbersUsers = {125/*, 250, 375, 500, 625, 750, 875, 1000, 1125, 1250*/};
         ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
         GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
-        
-        //modify globalinfo with other parameters
-        globalInfo.setOtherGraphParameters(mapPath);
-        globalInfo.setOtherDemandDataFilePath(demandDataPath);
+        int time_simulation = globalInfo.getTotalSimulationTime();
+        for (String entry_point: entry_points) {
+            for (int number : numbersUsers) {
+                //falla algo, no se cogen bien los ficheros
+                //Runtime.getRuntime().exec("python /Users/oscar/my_projects/Bike3S-Simulator/generate_users_script.py "+entry_point+" "+number);
+                List<String> python_command = new ArrayList<>();
+                python_command.add("python3");
+                python_command.add(entry_point);
+                python_command.add(String.valueOf(number));
+                //ProcessBuilder pb_python = new ProcessBuilder(python_command);
+                //Process p_python = pb_python.start();
+                //p_python.waitFor(); // Wait for the process to finish.
+                System.out.println("python3 /Users/oscar/my_projects/Bike3S-Simulator/generate_users_script.py "+entry_point+" "+number);
+                System.out.println("Python script executed successfully");
 
-        //now loop through the tests
-        ArrayList<String> testnames = new ArrayList<String>();
-        for (JsonObject t : tests.tests) {
-            String usertype = t.getAsJsonObject("userType").get("typeName").getAsString();
-            String recomendertype = t.getAsJsonObject("recommendationSystemType").get("typeName").getAsString();
-            String testdir = usertype + "_" + recomendertype;
-            int i = 0;
-            while (exists(testdir + i, testnames)) {
-                i++;
+                //Runtime.getRuntime().exec("java -jar "+projectDir+"/build/bikesurbanfleets-config-usersgenerator-1.0.jar -entryPointsInput " +entry_point + " -globalInput " + globalConfig + " -output " +usersConfig+" -callFromFrontend");
+                System.out.println("java -jar "+projectDir+"/build/bikesurbanfleets-config-usersgenerator-1.0.jar -entryPointsInput " +entry_point + " -globalInput " + globalConfig + " -output " +testsDir + "/conf/users_configuration"+number+".json"+" -callFromFrontend");
+                List<String> users_command = new ArrayList<>();
+                users_command.add("java");
+                users_command.add("-jar");
+                users_command.add(projectDir+"/build/bikesurbanfleets-config-usersgenerator-1.0.jar");
+                users_command.add("-entryPointsInput");
+                users_command.add(entry_point);
+                users_command.add("-globalInput");
+                users_command.add(globalConfig);
+                users_command.add("-output");
+                users_command.add(testsDir + "/conf/users_configuration"+number+".json");
+                users_command.add("-callFromFrontend");
+                //ProcessBuilder pb_users = new ProcessBuilder(users_command);
+                //Process p_users = pb_users.start();
+                //p_users.waitFor(); // Wait for the process to finish.
+                //System.out.println("Generation users script executed successfully");
+                usersConfig = testsDir + "/conf/users_configuration"+number+".json";
+                jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
+                globalInfo = jsonReader.readGlobalConfiguration();
+
+                //modify globalinfo with other parameters
+                globalInfo.setOtherGraphParameters(mapPath);
+                globalInfo.setOtherDemandDataFilePath(demandDataPath);
+
+                //now loop through the tests
+                ArrayList<String> testnames = new ArrayList<String>();
+                for (JsonObject t : tests.tests) {
+                    String usertype = t.getAsJsonObject("userType").get("typeName").getAsString();
+                    String recomendertype = t.getAsJsonObject("recommendationSystemType").get("typeName").getAsString();
+                    String testdir = usertype + "_" + recomendertype;
+                    int i = 0;
+                    while (exists(testdir + i, testnames)) {
+                        i++;
+                    }
+                    testdir = testdir + i + number;
+                    testnames.add(testdir);
+
+                    runSimulationTest(globalInfo, jsonReader, testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
+                    runResultAanalisis(testdir);
+                }
             }
-            testdir = testdir + i;
-            testnames.add(testdir);
-
-            runSimulationTest(globalInfo, jsonReader, testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
-            runResultAanalisis(testdir);
         }
         new ResultsComparator(analisisDir, analisisDir + "compareResults.csv", globalInfo.getTotalSimulationTime()).compareTestResults();
         //script requires autorization    runscriptR();
