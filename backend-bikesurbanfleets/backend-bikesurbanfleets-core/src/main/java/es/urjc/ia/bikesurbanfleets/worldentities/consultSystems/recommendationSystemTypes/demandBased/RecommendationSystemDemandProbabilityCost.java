@@ -44,14 +44,18 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         private double cyclingVelocity = 6.0 / 2;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
         private double walkingVelocityExpected = 1.12 / 2D;//2.25D; //with 3 the time is quite worse
         private double cyclingVelocityExpected = 6.0 / 2D;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
+        
         private double minimumMarginProbability = 0.001;
-
+        private double minProbRecommendation=0.5;
         private double probabilityUsersObey = 1;
-        private double penalisationfactorrent = 1;
-        private double penalisationfactorreturn = 1;
+        private double penalisationfactorrent = 2;
+        private double penalisationfactorreturn = 2;
         private double bikefactor = 0.1D;
         private double minProbabilityTake=0.6D;
         private double MaxCostValue=Double.MAX_VALUE/2D;
+        private double maxStationsToReccomend=5;
+        private double unsucesscostRent=1000;
+        private double unsucesscostReturn=1000;
 
     }
 
@@ -209,12 +213,16 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             temp.add(sd);
         }
         //now calculate the costs
+        int i=0;
         for (StationUtilityData sd : temp) {
-            if (sd.getProbability()>0) {
+            if (i>=this.parameters.maxStationsToReccomend) break;
+            if (sd.getProbability()>this.parameters.minProbRecommendation) {
                 List<StationUtilityData> lookedlist = new ArrayList<>();
-                double cost = calculateCostRent(sd, 1, sd.getDistance(), lookedlist, temp, true);
+                double cost = calculateCostRent(sd, 1, sd.getDistance(), lookedlist, temp, true,
+                        this.parameters.MaxCostValue,0,1);
                 sd.setCost(cost);
                 addRent(sd, res);
+                i++;
             }
         }
         return res;
@@ -237,24 +245,30 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             temp.add(sd);
         }
         //now calculate the costs
+        int i=0;
         for (StationUtilityData sd : temp) {
-            if (sd.getProbability()>0) {
+            if (i>=this.parameters.maxStationsToReccomend) break;
+            if (sd.getProbability()>this.parameters.minProbRecommendation) {
                 List<StationUtilityData> lookedlist = new ArrayList<>();
-                double cost = calculateCostReturn(sd, 1, sd.bikedist, destination, lookedlist, temp, true);
+                double cost = calculateCostReturn(sd, 1, sd.bikedist, destination, lookedlist, temp, true,
+                        this.parameters.MaxCostValue,0,1);
                 sd.setCost(cost);
                 addReturn(sd, res);
+                i++;
             }
         }
+        if (res.size()==0) System.out.println("take: no recommendation found with minimal parameters");
         return res;
     }
 
     private double calculateCostRent(StationUtilityData sd,
             double margprob, double currentdist, 
             List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start, double bestValueFound, double accumulatedcost) {
+            List<StationUtilityData> allstats, boolean start,
+            double bestValueFound, double accumulatedcost, int deepness) {
         double thiscost = (margprob-this.parameters.minimumMarginProbability) * currentdist;
         double newmargprob = margprob * (1 - sd.getProbability());
-        accumulatedcost=accumulatedcost+thiscost;
+        accumulatedcost=accumulatedcost+Math.pow(this.parameters.penalisationfactorrent, deepness)*thiscost;
         if (newmargprob <= this.parameters.minimumMarginProbability) {
             return accumulatedcost;
         }
@@ -262,18 +276,17 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             return accumulatedcost + 
                     (newmargprob-this.parameters.minimumMarginProbability) * this.parameters.MaxCostValue;
         }
-//      List<StationUtilityData> newlookedlist=new ArrayList<>(lookedlist);
-        lookedlist.add(sd);
-        double minmargcost=Double.MAX_VALUE;
+        List<StationUtilityData> newlookedlist=new ArrayList<>(lookedlist);
+        newlookedlist.add(sd);
+        double newbestValueFound=accumulatedcost+(newmargprob-this.parameters.minimumMarginProbability) * this.parameters.MaxCostValue;
+        deepness++;
         StationUtilityData bestneighbour=null;
         for (StationUtilityData nei : allstats) {
-            if (!lookedlist.contains(nei) && nei.getProbability()>0) {
+            if (!newlookedlist.contains(nei) && nei.getProbability()>this.parameters.minProbRecommendation) {
                 double newdist = sd.getStation().getPosition().distanceTo(nei.getStation().getPosition());
-                double newbestValueFound=
-                        0;
-                double margcost = calculateCostRent(nei, newmargprob, newdist, lookedlist, allstats, false, newbestValueFound, accumulatedcost);
-                if (margcost < minmargcost) {
-                    minmargcost = margcost;
+                double newfound = calculateCostRent(nei, newmargprob, newdist, newlookedlist, allstats, false, newbestValueFound, accumulatedcost, deepness);
+                if (newfound < newbestValueFound) {
+                    newbestValueFound = newfound;
                     bestneighbour = nei;
                 }
             }
@@ -283,7 +296,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             sd.closestwalkdist = sd.getStation().getPosition().distanceTo(bestneighbour.getStation().getPosition());;
             sd.closestprob = bestneighbour.getProbability();
         }
-        return this.parameters.penalisationfactorrent*minmargcost + thiscost;
+        return newbestValueFound; 
     }
 
     private double calculateCostRent_best(StationUtilityData sd,
@@ -340,41 +353,51 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     private double calculateCostReturn(StationUtilityData sd,
             double margprob, double currentdist, GeoPoint destination,
             List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
-        if (margprob <= this.parameters.minimumMarginProbability) {
-            return 0;
-        }
+            List<StationUtilityData> allstats, boolean start,
+            double bestValueFound, double accumulatedcost, int deepness) {
         double thisbikecost = (margprob-this.parameters.minimumMarginProbability) * currentdist;
         double thiswalkcost=sd.getStation().getPosition().distanceTo(destination);
         double newmargprob = margprob * (1 - sd.getProbability());
 
-        if (newmargprob<=this.parameters.minimumMarginProbability){
-            return thisbikecost + ((margprob-this.parameters.minimumMarginProbability)*thiswalkcost);
+         if (newmargprob<=this.parameters.minimumMarginProbability){
+            accumulatedcost=accumulatedcost+Math.pow(this.parameters.penalisationfactorreturn, deepness)*(
+                thisbikecost + ((margprob-this.parameters.minimumMarginProbability)*thiswalkcost));
+            return accumulatedcost;
+        } else {
+            thiswalkcost=thiswalkcost*margprob*sd.getProbability();
+            accumulatedcost=accumulatedcost+Math.pow(this.parameters.penalisationfactorreturn, deepness)*(
+                thisbikecost+thiswalkcost);
         }
-        thiswalkcost=thiswalkcost*margprob*sd.getProbability();
-  //    List<StationUtilityData> newlookedlist=new ArrayList<>(lookedlist);
-        lookedlist.add(sd);
-        double minmargcost=Double.MAX_VALUE;
+        if (accumulatedcost >= bestValueFound) {
+            return accumulatedcost + 
+                    (newmargprob-this.parameters.minimumMarginProbability) * this.parameters.MaxCostValue;
+        }
+
+        List<StationUtilityData> newlookedlist=new ArrayList<>(lookedlist);
+        newlookedlist.add(sd);
+        double newbestValueFound=accumulatedcost+(newmargprob-this.parameters.minimumMarginProbability) * this.parameters.MaxCostValue;
+        deepness++;
         StationUtilityData bestneighbour=null;
         for (StationUtilityData nei : allstats) {
-            if (!lookedlist.contains(nei) && nei.getProbability()>0) {
+            if (!newlookedlist.contains(nei) && nei.getProbability()>this.parameters.minProbRecommendation) {
                 double newdist = sd.getStation().getPosition().distanceTo(nei.getStation().getPosition())*this.parameters.bikefactor;
-                double margcost = calculateCostReturn(nei, newmargprob, newdist, destination, lookedlist, allstats, false);
-                if (margcost < minmargcost) {
-                    minmargcost = margcost;
+                double newfound = calculateCostReturn(nei, newmargprob, newdist, destination, newlookedlist, allstats, false, newbestValueFound, accumulatedcost, deepness);
+                if (newfound < newbestValueFound) {
+                    newbestValueFound = newfound;
                     bestneighbour = nei;
                 }
             }
         }
-       if (start) {
+        if (start) {
             sd.closest = bestneighbour.getStation().getId();
             sd.closestbikedist = sd.getStation().getPosition().distanceTo(bestneighbour.getStation().getPosition())*this.parameters.bikefactor;
             sd.closestprob = bestneighbour.getProbability();
             sd.closestwalkdist = bestneighbour.getStation().getPosition().distanceTo(destination);
         }
-        return this.parameters.penalisationfactorreturn*minmargcost + thisbikecost + thiswalkcost;
+        return newbestValueFound; 
     }
 
+ 
     private StationUtilityData bestNeighbourRent(StationUtilityData sd, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats) {
         StationUtilityData closest = null;
         double clostesutil = Double.MAX_VALUE;
