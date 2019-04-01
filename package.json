@@ -95,7 +95,7 @@
     "@types/node": "^8.5.1",
     "@types/reflect-metadata": "0.0.5",
     "electron": "^3.0.13",
-    "electron-builder": "^20.17.1",
+    "electron-builder": "^20.39.0",
     "express": "^4.16.2",
     "fliplog": "^1.0.4",
     "fuse-box": "^3.6.0",
