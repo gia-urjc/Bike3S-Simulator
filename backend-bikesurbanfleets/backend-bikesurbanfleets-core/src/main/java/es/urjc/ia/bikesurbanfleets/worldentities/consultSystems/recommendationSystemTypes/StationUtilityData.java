@@ -16,6 +16,10 @@ public class StationUtilityData {
     private double capacity;
     private double ocupation;
     private double probability;
+    private double probabilityTake;
+    private double probabilityReturn;
+    private double probabilityTakeAfter;
+    private double probabilityReturnAfter;
     private double distance;
     public int closest;
     public double closestbikedist;
@@ -24,6 +28,42 @@ public class StationUtilityData {
     public double walkdist;
     public double closestwalkdist;
     private double Cost;
+
+    public double getProbabilityTake() {
+        return probabilityTake;
+    }
+
+    public StationUtilityData setProbabilityTake(double probabilityTake) {
+        this.probabilityTake = probabilityTake;
+        return this;           
+    }
+
+    public double getProbabilityReturn() {
+        return probabilityReturn;
+    }
+
+    public StationUtilityData setProbabilityReturn(double probabilityReturn) {
+        this.probabilityReturn = probabilityReturn;
+        return this;           
+    }
+
+    public double getProbabilityTakeAfter() {
+        return probabilityTakeAfter;
+    }
+
+    public StationUtilityData setProbabilityTakeAfter(double probabilityTakeAfter) {
+        this.probabilityTakeAfter = probabilityTakeAfter;
+        return this;           
+    }
+
+    public double getProbabilityReturnAfter() {
+        return probabilityReturnAfter;
+    }
+
+    public StationUtilityData setProbabilityReturnAfter(double probabilityReturnAfter) {
+        this.probabilityReturnAfter = probabilityReturnAfter;
+        return this;           
+    }
 
     public double getCost() {
         return Cost;

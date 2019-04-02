@@ -336,9 +336,9 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
         double retdemandatofsettime = (infrastructureManager.getCurrentSlotDemand(s) * timeoffset) / 3600D;
         //probability that a bike exists 
         int k = 1 - estimatedbikes - 1;
-        double probbikediff = -SellamDistribution.calculateSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
+        double probbikediff = SellamDistribution.calculateSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
         k = 1 - estimatedslots;
-        double probslotdiff = SellamDistribution.calculateSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
+        double probslotdiff = -SellamDistribution.calculateSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
 
         //now calculate the demands at the future point relative to the global demand
         double futtakedemand = infrastructureManager.getFutureBikeDemand(s, (int) timeoffset);
