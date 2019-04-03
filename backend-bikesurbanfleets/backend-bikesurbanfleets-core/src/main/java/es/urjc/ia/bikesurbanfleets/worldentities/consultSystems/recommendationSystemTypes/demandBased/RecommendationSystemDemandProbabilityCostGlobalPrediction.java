@@ -522,7 +522,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     //take into account that distance newSD >= distance oldSD
     private boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
         if (newSD.getDistance() <= this.parameters.maxDistanceRecommendation) {
-            if (newSD.getCost() < oldSD.getCost()) {
+            if (newSD.getTotalCost()< oldSD.getTotalCost()) {
                 return true;
             } else {
                 return false;
@@ -531,7 +531,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         if (oldSD.getDistance() <= this.parameters.maxDistanceRecommendation) {
             return false;
         }
-        if (newSD.getCost() < oldSD.getCost()) {
+        if (newSD.getTotalCost() < oldSD.getTotalCost()) {
             return true;
         } else {
             return false;
@@ -540,7 +540,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
 
     //take into account that distance newSD >= distance oldSD
     private boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (newSD.getCost() < oldSD.getCost()) {
+        if (newSD.getTotalCost() < oldSD.getTotalCost()) {
             return true;
         }
         return false;
