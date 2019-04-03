@@ -27,7 +27,37 @@ public class StationUtilityData {
     public double bikedist;
     public double walkdist;
     public double closestwalkdist;
+    private double totalCost;
     private double Cost;
+    private double takecostdiff;
+    private double returncostdiff;
+
+    public double getTotalCost() {
+        return totalCost;
+    }
+
+    public StationUtilityData setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
+        return this;           
+    }
+
+    public double getTakecostdiff() {
+        return takecostdiff;
+    }
+
+    public StationUtilityData setTakecostdiff(double takecostdiff) {
+        this.takecostdiff = takecostdiff;
+        return this;           
+    }
+
+    public double getReturncostdiff() {
+        return returncostdiff;
+    }
+
+    public StationUtilityData setReturncostdiff(double returncostdiff) {
+        this.returncostdiff = returncostdiff;
+        return this;           
+    }
 
     public double getProbabilityTake() {
         return probabilityTake;
@@ -69,8 +99,9 @@ public class StationUtilityData {
         return Cost;
     }
 
-    public void setCost(double Cost) {
+    public StationUtilityData setCost(double Cost) {
         this.Cost = Cost;
+        return this;           
     }
 
     public double getDistance() {

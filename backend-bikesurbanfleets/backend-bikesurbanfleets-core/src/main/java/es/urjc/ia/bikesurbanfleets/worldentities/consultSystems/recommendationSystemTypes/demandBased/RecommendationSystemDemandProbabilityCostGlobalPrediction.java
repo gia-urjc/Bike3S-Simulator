@@ -130,10 +130,10 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 lowprobs++;
             }
             if (take) {
-                System.out.println("         id av ca   wdist  prob       cl   cwdist cprob        util");
+                System.out.println("         id av ca   wdist  prob       cl   cwdist cprob        cost     indcost    tcostdif     rcostdif");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("Station %3d %2d %2d %7.1f %9.8f %3d %7.1f %9.8f %9.2f %n",
+                    System.out.format("Station %3d %2d %2d %7.1f %9.8f %3d %7.1f %9.8f %9.2f %9.2f %9.2f %9.2f%n",
                             s.getStation().getId(),
                             s.getStation().availableBikes(),
                             s.getStation().getCapacity(),
@@ -142,13 +142,16 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                             s.closest,
                             s.closestwalkdist,
                             s.closestprob,
-                            s.getCost());
+                            s.getTotalCost(),
+                            s.getCost(),
+                            s.getTakecostdiff(),
+                            s.getReturncostdiff());
                 }
             } else {
-                System.out.println("         id av ca   wdist  bdist    prob      clo  cwdis  cbdis   cprob      util");
+                System.out.println("         id av ca   wdist  bdist    prob      clo  cwdis  cbdis   cprob        cost     indcost    tcostdif     rcostdif");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("Station %3d %2d %2d %7.1f %7.1f %9.8f %3d %7.1f %7.1f %9.8f %9.2f %n",
+                    System.out.format("Station %3d %2d %2d %7.1f %7.1f %9.8f %3d %7.1f %7.1f %9.8f %9.2f %9.2f %9.2f %9.2f%n",
                             s.getStation().getId(),
                             s.getStation().availableBikes(),
                             s.getStation().getCapacity(),
@@ -159,7 +162,10 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                             s.closestwalkdist,
                             s.closestbikedist,
                             s.closestprob,
-                            s.getCost());
+                            s.getTotalCost(),
+                            s.getCost(),
+                            s.getTakecostdiff(),
+                            s.getReturncostdiff());
                 }
             }
         }
@@ -219,7 +225,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
             }
             if (sd.getProbability() > 0) {
                 double cost=calculateCostsRentAtStation(sd,temp);
-                sd.setCost(cost);
+                sd.setTotalCost(cost);
                 addRent(sd, res);
                 i++;
             }
@@ -253,7 +259,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
             }
             if (sd.getProbability() > 0) {
                 double cost=calculateCostsReturnAtStation(sd,destination,temp);
-                sd.setCost(cost);
+                sd.setTotalCost(cost);
                 addReturn(sd, res);
                 i++;
             }
@@ -355,13 +361,18 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         double costreturnafter=calculateCostReturnHeuristic(sd, sd.getProbabilityReturnAfter(), 1, 50, hipodestination, lookedlist, allstats, false);
         double difftakecost=costtakeafter-costtake;
         double diffretcost=costreturnafter-costreturn;
+        //normalize with demand
+        int timeoffset = (int) (sd.walkdist / this.parameters.walkingVelocity);
+        double futtakedemand = infrastructureManager.getFutureBikeDemand(sd.getStation(), timeoffset);
+        double futreturndemand = infrastructureManager.getFutureSlotDemand(sd.getStation(), timeoffset);
+        double futglobaltakedem = infrastructureManager.getFutureGlobalBikeDemand(timeoffset);
+        double futglobalretdem = infrastructureManager.getFutureGlobalSlotDemand(timeoffset);
+        difftakecost=(futtakedemand/futglobaltakedem)*difftakecost;
+        diffretcost=(futreturndemand/futglobalretdem)*diffretcost;
+
         double globalcost=costtake+difftakecost+diffretcost;
+        sd.setCost(costtake).setTakecostdiff(difftakecost).setReturncostdiff(diffretcost);
         return globalcost;
- /*               double futtakedemand = infrastructureManager.getFutureBikeDemand(s, (int) timeoffset);
-        double futreturndemand = infrastructureManager.getFutureSlotDemand(s, (int) timeoffset);
-        double futglobaltakedem = infrastructureManager.getFutureGlobalBikeDemand((int) timeoffset);
-        double futglobalretdem = infrastructureManager.getFutureGlobalSlotDemand((int) timeoffset);
-*/
     }
 
     private double calculateCostsReturnAtStation(StationUtilityData sd, GeoPoint destination,
@@ -387,7 +398,18 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         double costreturnafterhip=calculateCostReturnHeuristic(sd, sd.getProbabilityReturnAfter(), 1, 0, hipodestination, lookedlist, allstats, false);
         double difftakecost=costtakeafter-costtake;
         double diffretcost=costreturnafterhip-costreturnhip;
-        double globalcost=costreturn+difftakecost+diffretcost;
+        //noirmalize to demand
+        int timeoffset = (int) ((sd.bikedist / this.parameters.bikefactor)/this.parameters.cyclingVelocity);
+        double futtakedemand = infrastructureManager.getFutureBikeDemand(sd.getStation(), timeoffset);
+        double futreturndemand = infrastructureManager.getFutureSlotDemand(sd.getStation(), timeoffset);
+        double futglobaltakedem = infrastructureManager.getFutureGlobalBikeDemand(timeoffset);
+        double futglobalretdem = infrastructureManager.getFutureGlobalSlotDemand(timeoffset);
+        difftakecost=(futtakedemand/futglobaltakedem)*difftakecost;
+        diffretcost=(futreturndemand/futglobalretdem)*diffretcost;
+
+        double globalcost=costreturn+
+                difftakecost+diffretcost;
+        sd.setCost(costreturn).setTakecostdiff(difftakecost).setReturncostdiff(diffretcost);
         return globalcost;
     }
 
