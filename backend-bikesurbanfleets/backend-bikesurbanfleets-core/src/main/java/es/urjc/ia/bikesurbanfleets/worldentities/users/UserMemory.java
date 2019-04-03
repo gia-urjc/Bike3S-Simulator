@@ -61,10 +61,8 @@ public class UserMemory {
     private List<Station> stationsWithReservationRentalFailedAttempts;
     private List<Station> stationsWithReservationReturnFailedAttempts;
     private List<Reservation> reservations;
-    private List<GeoRoute> routesTraveledByBike;
-    private List<GeoRoute> walkedRoutes; 
     private double distanceTraveledByBike;
-    private double walkedDistance;
+    private double walkedtoTakeDistance;
   
     public UserMemory(User user) {
         this.bikeReservationAttemptsCounter = 0; 
@@ -77,10 +75,8 @@ public class UserMemory {
         this.stationsWithReservationRentalFailedAttempts = new ArrayList<>();
         this.stationsWithReservationReturnFailedAttempts = new ArrayList<>();
         this.reservations = new ArrayList<>();
-        this.routesTraveledByBike = new ArrayList<>();
-        this.walkedRoutes = new ArrayList<>();
         this.distanceTraveledByBike = 0;
-        this.walkedDistance = 0;
+        this.walkedtoTakeDistance = 0;
     }
     
     public List<Reservation> getReservations() {
@@ -112,36 +108,23 @@ public class UserMemory {
         return this.stationsWithReturnFailedAttempts;
     }
     
-    public List<GeoRoute> getRoutesTraveledByBike() {
-    	return routesTraveledByBike;
-    }
-    
-    public List<GeoRoute> getWalkedRoutes() {
-    	return walkedRoutes;
-    }
-    
     public double getDistanceTraveledByBike() {
     	return distanceTraveledByBike;
     }
     
-    public double getWalkedDistance() {
-    	return walkedDistance;
-    }
-    
-    public void addRouteTraveledByBike(GeoRoute route) {
-    	routesTraveledByBike.add(route);
-    }
-    
-    public void addWalkedRoute(GeoRoute route) {
-    	walkedRoutes.add(route);
+    public double getWalkedToTakeBikeDistance() {
+    	return walkedtoTakeDistance;
     }
     
     public void setDistanceTraveledByBike(double distance) {
     	distanceTraveledByBike = distance;
     }
     
-    public void setWalkedDistance(double distance) {
-    	walkedDistance = distance;
+    public void setWalkedToTakeBikeDistance(double distance) {
+    	walkedtoTakeDistance = distance;
+    }
+    public void addWalkedToTakeBikeDistance(double distance) {
+    	walkedtoTakeDistance += distance;
     }
     
     public void update(FactType fact, Station s) throws IllegalArgumentException {
@@ -199,7 +182,7 @@ public class UserMemory {
     }
     
     public double getTimeWalking() {
-    	return walkedDistance / user.getWalkingVelocity();
+    	return walkedtoTakeDistance / user.getWalkingVelocity();
     }
 
 	public List<Station> getStationsWithReservationRentalFailedAttempts() {

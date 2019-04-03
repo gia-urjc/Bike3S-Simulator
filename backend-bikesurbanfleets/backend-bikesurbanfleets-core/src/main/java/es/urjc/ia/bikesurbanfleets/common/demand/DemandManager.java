@@ -107,7 +107,7 @@ public class DemandManager {
     }
 
     public double getReturnDemandGlobal(LocalDateTime t) {
-        return getTakeDemandGlobal(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+        return getReturnDemandGlobal(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
     public double getTakeDemandStation(int stationID, Month month, Day day, int hour) {

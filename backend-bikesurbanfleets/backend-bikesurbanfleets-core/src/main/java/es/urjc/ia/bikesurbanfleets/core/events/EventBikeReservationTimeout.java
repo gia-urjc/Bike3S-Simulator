@@ -16,8 +16,9 @@ public class EventBikeReservationTimeout extends EventUser {
     private Reservation reservation;
     private GeoPoint positionTimeOut;
     private Station station;
+    private double distwalked;
 
-    public EventBikeReservationTimeout(int instant, User user, Reservation reservation, Station st, GeoPoint positionTimeOut) {
+    public EventBikeReservationTimeout(int instant, User user, Reservation reservation, Station st, GeoPoint positionTimeOut, double distwalkedtilTimeout) {
         super(instant, user);
         this.involvedEntities = new ArrayList<>(Arrays.asList(user,st, reservation, reservation.getBike()));
         this.newEntities = null;
@@ -25,10 +26,12 @@ public class EventBikeReservationTimeout extends EventUser {
         this.reservation = reservation;
         this.positionTimeOut = positionTimeOut;
         this.station = st;
+        this.distwalked=distwalkedtilTimeout;
     }
 
     @Override
     public Event execute() throws Exception {
+        user.getMemory().addWalkedToTakeBikeDistance(distwalked);
         user.setPosition(positionTimeOut);
         debugEventLog("At enter the event");
         station.cancelBikeReservationByTimeout(reservation, instant);

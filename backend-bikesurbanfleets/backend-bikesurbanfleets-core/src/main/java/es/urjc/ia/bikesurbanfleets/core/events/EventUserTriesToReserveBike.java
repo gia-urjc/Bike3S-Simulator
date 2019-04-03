@@ -67,7 +67,8 @@ public class EventUserTriesToReserveBike extends EventUser {
         debugEventLog("User has been able to reserve bike and walks to the station");
         if (Reservation.VALID_TIME < arrivalTime) {
             GeoPoint pointTimeOut = user.reachedPointUntilTimeOut();
-            return new EventBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, station, pointTimeOut);
+            double distwalkedtilTimeout=(user.getRoute().getTotalDistance()* arrivalTime)/Reservation.VALID_TIME;
+            return new EventBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, station, pointTimeOut, distwalkedtilTimeout);
         } else {
             return new EventUserArrivesAtStationToRentBike(this.getInstant() + arrivalTime, user, station, reservation);
         }

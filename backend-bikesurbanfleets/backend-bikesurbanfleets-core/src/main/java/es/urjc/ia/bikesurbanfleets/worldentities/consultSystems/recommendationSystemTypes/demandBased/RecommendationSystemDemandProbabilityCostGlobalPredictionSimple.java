@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_cost_prediction")
-public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends RecommendationSystem {
+@RecommendationSystemType("DEMAND_cost_prediction_simple")
+public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -49,14 +49,11 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         private double minimumMarginProbability = 0.001;
         private double minProbRecommendation = 0.5;
         private double probabilityUsersObey = 1;
-        private double penalisationfactorrent = 1;
-        private double penalisationfactorreturn = 1;
         private double bikefactor = 0.1D;
-        private double MaxCostValue = Double.MAX_VALUE / 2D;
+        private double MaxCostValueRent = 2000 ;
+        private double MaxCostValueReturn = 2000 ;
         private double maxStationsToReccomend = 30;
-        private double unsucesscostRent = 1000;//3000
-        private double unsucesscostReturn = 0;//2000
-        private double factordemand=10;
+        private double factordemand=30;
 
     }
 
@@ -66,7 +63,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     boolean printHints = true;
     private RecommendationParameters parameters;
 
-    public RecommendationSystemDemandProbabilityCostGlobalPrediction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandProbabilityCostGlobalPredictionSimple(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -113,7 +110,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
 
     private void printRecomendations(List<StationUtilityData> su, boolean take) {
         if (printHints) {
-            int max = Math.min(3, su.size());
+            int max = Math.min(10, su.size());
             System.out.println();
             if (take) {
                 System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime());
@@ -347,19 +344,19 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
             List<StationUtilityData> allstats) {
         //takecosts
         List<StationUtilityData> lookedlist = new ArrayList<>();
-        double costtake=calculateCostRentHeuristic(sd, sd.getProbabilityTake(), 1, sd.walkdist, lookedlist, allstats, true);
+        double costtake=calculateCostRentSimple(sd, sd.getProbabilityTake(), 1, sd.walkdist, lookedlist, allstats, true);
 
         //analyze global costs
         //takecost if bike is taken     
         lookedlist.clear();
-        double costtakeafter=calculateCostRentHeuristic(sd, sd.getProbabilityTakeAfter(), 1, sd.walkdist, lookedlist, allstats, false);
+        double costtakeafter=calculateCostRentSimple(sd, sd.getProbabilityTakeAfter(), 1, sd.walkdist, lookedlist, allstats, false);
         //return costs
         //take a close point to the station as hipotetical detsination
         GeoPoint hipodestination=sd.getStation().getPosition();
         lookedlist.clear();
-        double costreturn=calculateCostReturnHeuristic(sd, sd.getProbabilityReturn(), 1, 50, hipodestination, lookedlist, allstats, false);
+        double costreturn=calculateCostReturnSimple(sd, sd.getProbabilityReturn(), 1, 50, hipodestination, lookedlist, allstats, false);
         lookedlist.clear();
-        double costreturnafter=calculateCostReturnHeuristic(sd, sd.getProbabilityReturnAfter(), 1, 50, hipodestination, lookedlist, allstats, false);
+        double costreturnafter=calculateCostReturnSimple(sd, sd.getProbabilityReturnAfter(), 1, 50, hipodestination, lookedlist, allstats, false);
         double difftakecost=costtakeafter-costtake;
         double diffretcost=costreturnafter-costreturn;
         //normalize with demand
@@ -370,8 +367,8 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         double futglobalretdem = infrastructureManager.getFutureGlobalSlotDemand(timeoffset);
         difftakecost=(futtakedemand*difftakecost)/this.parameters.factordemand;
         diffretcost=(futreturndemand*diffretcost)/this.parameters.factordemand;
-
-        double globalcost=costtake+difftakecost+diffretcost;
+ 
+        double globalcost=costtake;//+difftakecost+diffretcost;
         sd.setCost(costtake).setTakecostdiff(difftakecost).setReturncostdiff(diffretcost);
         return globalcost;
     }
@@ -381,22 +378,22 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
        //return costs
         //take a close point to the station as hipotetical detsination
         List<StationUtilityData> lookedlist = new ArrayList<>();
-        double costreturn = calculateCostReturnHeuristic(sd, sd.getProbabilityReturn(), 1, sd.bikedist, destination, lookedlist, allstats, true);
+        double costreturn = calculateCostReturnSimple(sd, sd.getProbabilityReturn(), 1, sd.bikedist, destination, lookedlist, allstats, true);
 
         //analyze global costs
         //takecost if bike is taken   
         lookedlist.clear();
-        double costtake=calculateCostRentHeuristic(sd, sd.getProbabilityTake(), 1, 100, lookedlist, allstats, false);
+        double costtake=calculateCostRentSimple(sd, sd.getProbabilityTake(), 1, 100, lookedlist, allstats, false);
         lookedlist.clear();
-        double costtakeafter=calculateCostRentHeuristic(sd, sd.getProbabilityTakeAfter(), 1, 100, lookedlist, allstats, false);
+        double costtakeafter=calculateCostRentSimple(sd, sd.getProbabilityTakeAfter(), 1, 100, lookedlist, allstats, false);
 
         //return costs
         //take a close point to the station as hipotetical detsination
         GeoPoint hipodestination=sd.getStation().getPosition();
         lookedlist.clear();
-        double costreturnhip=calculateCostReturnHeuristic(sd, sd.getProbabilityReturn(), 1, 0, hipodestination, lookedlist, allstats, false);
+        double costreturnhip=calculateCostReturnSimple(sd, sd.getProbabilityReturn(), 1, 0, hipodestination, lookedlist, allstats, false);
         lookedlist.clear();
-        double costreturnafterhip=calculateCostReturnHeuristic(sd, sd.getProbabilityReturnAfter(), 1, 0, hipodestination, lookedlist, allstats, false);
+        double costreturnafterhip=calculateCostReturnSimple(sd, sd.getProbabilityReturnAfter(), 1, 0, hipodestination, lookedlist, allstats, false);
         double difftakecost=costtakeafter-costtake;
         double diffretcost=costreturnafterhip-costreturnhip;
         //noirmalize to demand
@@ -408,116 +405,38 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         difftakecost=(futtakedemand*difftakecost)/this.parameters.factordemand;
         diffretcost=(futreturndemand*diffretcost)/this.parameters.factordemand;
 
-        double globalcost=costreturn+ difftakecost+diffretcost;
+        double globalcost=costreturn;//+difftakecost+diffretcost;
         sd.setCost(costreturn).setTakecostdiff(difftakecost).setReturncostdiff(diffretcost);
         return globalcost;
     }
 
         //DO NOT CHANGE IT IS WORKING :)
-    private double calculateCostRentHeuristic(StationUtilityData sd, double sdprob,
+    private double calculateCostRentSimple(StationUtilityData sd, double sdprob,
             double margprob, double currentdist,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
-        double thiscost = (margprob - this.parameters.minimumMarginProbability) * currentdist;
-        double newmargprob = margprob * (1 - sdprob);
-        if (margprob <= this.parameters.minimumMarginProbability) {
-            throw new RuntimeException("error parameters");
+        if(sdprob>1-this.parameters.minimumMarginProbability){
+            return (1 - this.parameters.minimumMarginProbability) * currentdist;
+        } else {
+            return (sdprob*currentdist)+ (1-this.parameters.minimumMarginProbability-sdprob)* this.parameters.MaxCostValueRent;
         }
-        if (newmargprob <= this.parameters.minimumMarginProbability) {
-            return thiscost;
-        }
-        //find best neighbour
-        lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourRent(sd.getStation(), newmargprob, lookedlist, allstats);
-        double newdist = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition());
-        if (start) {
-            sd.closest = closestneighbour.getStation().getId();
-            sd.closestwalkdist = newdist;
-            sd.closestprob = closestneighbour.getProbabilityTake();
-        }
-        double margcost = newmargprob * this.parameters.unsucesscostRent + 
-                calculateCostRentHeuristic(closestneighbour, closestneighbour.getProbabilityTake(), newmargprob, newdist, lookedlist, allstats, false);
-        return thiscost + this.parameters.penalisationfactorrent * margcost;
     }
 
 
     //DO NOT CHANGE IT IS WORKING :)
-    private double calculateCostReturnHeuristic(StationUtilityData sd, double sdprob,
+    private double calculateCostReturnSimple(StationUtilityData sd, double sdprob,
             double margprob, double currentdist, GeoPoint destination,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
         double thisbikecost = (margprob - this.parameters.minimumMarginProbability) * currentdist;
         double thiswalkdist = sd.getStation().getPosition().distanceTo(destination);
-        double newmargprob = margprob * (1 - sdprob);
-        double thistotalcost = thisbikecost;
-        if (margprob <= this.parameters.minimumMarginProbability) {
-            throw new RuntimeException("error parameters");
-        }
-        if (newmargprob <= this.parameters.minimumMarginProbability) {
-            thistotalcost = thistotalcost + thiswalkdist * (margprob - this.parameters.minimumMarginProbability);
-            return thistotalcost;
+        if(sdprob>1-this.parameters.minimumMarginProbability){
+            return (1 - this.parameters.minimumMarginProbability) * (currentdist+thiswalkdist);
         } else {
-            thistotalcost = thistotalcost + thiswalkdist * margprob * sdprob;
+            return (sdprob * (currentdist+thiswalkdist))+ (1-this.parameters.minimumMarginProbability-sdprob)* this.parameters.MaxCostValueReturn;
         }
-        lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourReturn(sd.getStation(), newmargprob, lookedlist, allstats, destination);
-        double newdist = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition()) * this.parameters.bikefactor;
-        if (start) {
-            sd.closest = closestneighbour.getStation().getId();
-            sd.closestbikedist = newdist;
-            sd.closestprob = closestneighbour.getProbabilityReturn();
-            sd.closestwalkdist = closestneighbour.getStation().getPosition().distanceTo(destination);
-        }
-        double margvalue = newmargprob * this.parameters.unsucesscostReturn + 
-                calculateCostReturnHeuristic(closestneighbour, closestneighbour.getProbabilityReturn(), newmargprob, newdist, destination, lookedlist, allstats, false);
-        return thistotalcost + this.parameters.penalisationfactorreturn * margvalue;
     }
 
-    private StationUtilityData bestNeighbourRent(Station s, double newmargprob, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats) {
-        double newbestValueFound = (newmargprob - this.parameters.minimumMarginProbability) * this.parameters.MaxCostValue;
-        StationUtilityData bestneighbour = null;
-        for (StationUtilityData nei : allstats) {
-            if (!lookedlist.contains(nei) && nei.getProbabilityTake() > this.parameters.minProbRecommendation) {
-                double newdist = s.getPosition().distanceTo(nei.getStation().getPosition());
-                double altthiscost = (newmargprob - this.parameters.minimumMarginProbability) * newdist;
-                double altnewmargprob = newmargprob * (1 - nei.getProbabilityTake());
-                if (altnewmargprob <= this.parameters.minimumMarginProbability) {
-                    altthiscost = altthiscost;
-                } else {
-                    altthiscost = altthiscost + (altnewmargprob - this.parameters.minimumMarginProbability) * this.parameters.MaxCostValue;
-                }
-                if (altthiscost < newbestValueFound) {
-                    newbestValueFound = altthiscost;
-                    bestneighbour = nei;
-                }
-            }
-        }
-        return bestneighbour;
-    }
-
-    private StationUtilityData bestNeighbourReturn(Station s, double newmargprob, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats, GeoPoint destination) {
-        double newbestValueFound = (newmargprob - this.parameters.minimumMarginProbability) * this.parameters.MaxCostValue;
-        StationUtilityData bestneighbour = null;
-        for (StationUtilityData nei : allstats) {
-            if (!lookedlist.contains(nei) && nei.getProbabilityReturn() > this.parameters.minProbRecommendation) {
-                double altthisbikedist = s.getPosition().distanceTo(nei.getStation().getPosition()) * this.parameters.bikefactor;
-                double altthisbikecost = (newmargprob - this.parameters.minimumMarginProbability) * altthisbikedist;
-                double altthiswalkdist = nei.getStation().getPosition().distanceTo(destination);
-                double altnewmargprob = newmargprob * (1 - nei.getProbabilityReturn());
-                double alttotalcost = altthisbikecost;
-                if (altnewmargprob <= this.parameters.minimumMarginProbability) {
-                    alttotalcost = alttotalcost + altthiswalkdist * (newmargprob - this.parameters.minimumMarginProbability);
-                } else {
-                    alttotalcost = alttotalcost + altthiswalkdist * newmargprob * nei.getProbabilityReturn();
-                }
-                if (alttotalcost < newbestValueFound) {
-                    newbestValueFound = alttotalcost;
-                    bestneighbour = nei;
-                }
-            }
-        }
-        return bestneighbour;
-    }
 
     //take into account that distance newSD >= distance oldSD
     private boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {

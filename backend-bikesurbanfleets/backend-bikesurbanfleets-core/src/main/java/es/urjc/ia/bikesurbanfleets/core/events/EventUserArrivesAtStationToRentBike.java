@@ -48,6 +48,8 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
 
     @Override
     public Event execute() throws Exception {
+        double lastwalkeddist=user.getRoute().getTotalDistance(); 
+        user.getMemory().addWalkedToTakeBikeDistance(lastwalkeddist);
         user.setPosition(station.getPosition());
         debugEventLog("At enter the event");
         boolean bike = false;
