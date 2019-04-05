@@ -51,7 +51,7 @@ public class CompareTestApplicationOscar {
                 //testsDir + "/conf/entry_points/entry-points-configuration-obedient.json",
                 //testsDir + "/conf/entry_points/entry-points-configuration-obedientR.json",
                 //testsDir + "/conf/entry_points/entry-points-configuration-uninformed.json"
-                testsDir + "/conf/entry_points/4_entry_point.json"
+                testsDir + "/conf/entry_points/5_entry_point.json"
         };
 
         mapPath = projectDir + "/backend-configuration-files/maps/madrid.osm";
@@ -107,23 +107,32 @@ public class CompareTestApplicationOscar {
         String globalConfig = testsDir + "/conf/global_configuration.json";
         String usersConfig = testsDir + "/conf/users_configuration.json";
         String stationsConfig = testsDir + "/conf/stations_configuration.json";
-        int[] numbersUsers = {125/*, 250, 375, 500, 625, 750, 875, 1000, 1125, 1250*/};
+        int[] users = {10,20/*,30,40,50,60,70,80,120*/};
+        double[] lambda = {0.166667,0.333334/*,0.5,0.666667,0.833334,1,1.166667,1.333334,2*/};
         ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
         GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
         int time_simulation = globalInfo.getTotalSimulationTime();
+        int w = 0;
         for (String entry_point: entry_points) {
-            for (int number : numbersUsers) {
+            for (int number : users) {
+
+                System.out.println("python /Users/oscar/my_projects/Bike3S-Simulator/generate_users_script.py "+entry_point+" "+lambda[w]);
+
                 //falla algo, no se cogen bien los ficheros
-                //Runtime.getRuntime().exec("python /Users/oscar/my_projects/Bike3S-Simulator/generate_users_script.py "+entry_point+" "+number);
-                List<String> python_command = new ArrayList<>();
-                python_command.add("python3");
+                //Process p = Runtime.getRuntime().exec("python /Users/oscar/my_projects/Bike3S-Simulator/ejemplo.py "+lambda[w]);
+                Process p = Runtime.getRuntime().exec("python /Users/oscar/my_projects/Bike3S-Simulator/generate_users_script.py "+entry_point+" "+lambda[w]);
+                p.waitFor();
+                System.out.println("Python file Executed succesfully");
+                w++;
+                /*List<String> python_command = new ArrayList<>();
+                python_command.add("python");
                 python_command.add(entry_point);
-                python_command.add(String.valueOf(number));
-                //ProcessBuilder pb_python = new ProcessBuilder(python_command);
-                //Process p_python = pb_python.start();
-                //p_python.waitFor(); // Wait for the process to finish.
+                python_command.add(String.valueOf(lambda));
+                ProcessBuilder pb_python = new ProcessBuilder(python_command);
+                Process p_python = pb_python.start();
+                p_python.waitFor(); // Wait for the process to finish.
                 System.out.println("python3 /Users/oscar/my_projects/Bike3S-Simulator/generate_users_script.py "+entry_point+" "+number);
-                System.out.println("Python script executed successfully");
+                System.out.println("Python script executed successfully");*/
 
                 //Runtime.getRuntime().exec("java -jar "+projectDir+"/build/bikesurbanfleets-config-usersgenerator-1.0.jar -entryPointsInput " +entry_point + " -globalInput " + globalConfig + " -output " +usersConfig+" -callFromFrontend");
                 System.out.println("java -jar "+projectDir+"/build/bikesurbanfleets-config-usersgenerator-1.0.jar -entryPointsInput " +entry_point + " -globalInput " + globalConfig + " -output " +testsDir + "/conf/users_configuration"+number+".json"+" -callFromFrontend");
@@ -138,10 +147,10 @@ public class CompareTestApplicationOscar {
                 users_command.add("-output");
                 users_command.add(testsDir + "/conf/users_configuration"+number+".json");
                 users_command.add("-callFromFrontend");
-                //ProcessBuilder pb_users = new ProcessBuilder(users_command);
-                //Process p_users = pb_users.start();
-                //p_users.waitFor(); // Wait for the process to finish.
-                //System.out.println("Generation users script executed successfully");
+                ProcessBuilder pb_users = new ProcessBuilder(users_command);
+                Process p_users = pb_users.start();
+                p_users.waitFor(); // Wait for the process to finish.
+                System.out.println("Generation users script executed successfully");
                 usersConfig = testsDir + "/conf/users_configuration"+number+".json";
                 jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
                 globalInfo = jsonReader.readGlobalConfiguration();
@@ -203,10 +212,10 @@ public class CompareTestApplicationOscar {
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             //modify user type specification with the one from the test
             List<JsonObject> users = usersInfo.getUsers();
-            for (JsonObject user : users) {
+            /*for (JsonObject user : users) {
                 user.remove("userType");
                 user.add("userType", usertype);
-            }
+            }*/
 
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
 
