@@ -1,7 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.worldentities.comparators.StationComparator;
+import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.simpleRecommendationSystemTypes.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 

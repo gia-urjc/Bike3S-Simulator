@@ -31,6 +31,7 @@ public class SimulationServices {
     private RecommendationSystem recommendationSystem;
     private InformationSystem informationSystem;
     private GraphManager graphManager;
+    private DemandManager demandManager;
     
     private Gson gson = new Gson();
  
@@ -38,9 +39,9 @@ public class SimulationServices {
     
     public void initSimulationServices(GlobalInfo globalInfo, List<Station> stations) throws IOException{
         //setup the demandManager
-        DemandManager demandManager = initDemandManager(globalInfo.isLoadDemandData(), globalInfo.getDemandDataFilePath());
+        this.demandManager = initDemandManager(globalInfo.isLoadDemandData(), globalInfo.getDemandDataFilePath());
         //setup the infrastructureManager
-        this.infrastructureManager = new InfrastructureManager(stations, demandManager);
+        this.infrastructureManager = new InfrastructureManager(stations);
         //setup the information system
         this.informationSystem = new InformationSystem(this.infrastructureManager);
         
@@ -138,6 +139,10 @@ public class SimulationServices {
 
     public GraphManager getGraphManager() {
         return graphManager;
+    }
+
+    public DemandManager getDemandManager() {
+        return demandManager;
     }
 
     private void checkService() throws IllegalStateException {

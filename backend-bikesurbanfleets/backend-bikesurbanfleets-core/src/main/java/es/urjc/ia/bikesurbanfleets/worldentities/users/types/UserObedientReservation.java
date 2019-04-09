@@ -6,7 +6,7 @@
 package es.urjc.ia.bikesurbanfleets.worldentities.users.types;
 
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystemTypes.Recommendation;
+import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
