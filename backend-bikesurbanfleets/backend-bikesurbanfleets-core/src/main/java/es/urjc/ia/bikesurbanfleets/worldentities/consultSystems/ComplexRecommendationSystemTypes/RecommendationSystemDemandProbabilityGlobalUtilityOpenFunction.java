@@ -3,14 +3,21 @@ package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommen
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
+import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.simpleRecommendationSystemTypes.StationComparator;
+import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class is a system which recommends the user the stations to which he
@@ -21,8 +28,8 @@ import java.util.List;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_PROBABILITY_TIME_expected_compromised")
-public class RecommendationSystemDemandProbabilityTime extends RecommendationSystemDemandProbabilityBased {
+@RecommendationSystemType("DEMAND_PROBABILITY_expected_compromised_UTILITY")
+public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction extends RecommendationSystemDemandProbabilityBased {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -32,15 +39,16 @@ public class RecommendationSystemDemandProbabilityTime extends RecommendationSys
          * and the indicated geographical point.
          */
         private int maxDistanceRecommendation = 600;
-
         private double upperProbabilityBound = 0.999;
         private double desireableProbability = 0.6;
 
-        private double factor = 1D / (double) (2000);
+        private double probabilityUsersObey = 1;
+        private double factorProb = 2000D;
+        private double factorImp = 1000D;
     }
     private RecommendationParameters parameters;
 
-    public RecommendationSystemDemandProbabilityTime(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef, ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -53,11 +61,15 @@ public class RecommendationSystemDemandProbabilityTime extends RecommendationSys
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
     }
-
     @Override
     protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
+            double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, true);
+            double normedUtilityDiff = util
+                * (recutils.getCurrentBikeDemand(sd.getStation()));
+
+            sd.setUtility(normedUtilityDiff);
             addrent(sd, orderedlist);
         }
         return orderedlist;
@@ -67,68 +79,45 @@ public class RecommendationSystemDemandProbabilityTime extends RecommendationSys
     protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
+            double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, false);
+            double normedUtilityDiff = util
+                * (recutils.getCurrentSlotDemand(sd.getStation()));
+            sd.setUtility(normedUtilityDiff);
             addreturn(sd, orderedlist);
         }
         return orderedlist;
     }
-
+ 
     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (oldSD.getProbabilityTake() > this.parameters.upperProbabilityBound) {
-            return false;
-        }
-        if (newSD.getProbabilityTake() <= oldSD.getProbabilityTake()) {
-            return false;
-        }
-        // if here newSD.getProbability() > oldSD.getProbability()
-        if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
-            if (oldSD.getProbabilityTake() > this.parameters.desireableProbability) {
-                double timediff = (newSD.getWalkTime() - oldSD.getWalkTime()) * this.parameters.factor;
-                double probdiff = newSD.getProbabilityTake() - oldSD.getProbabilityTake();
-                if (probdiff > timediff) {
+        if (oldSD.getWalkdist()<= this.parameters.maxDistanceRecommendation) {
+            // if here newSD.getProbability() > oldSD.getProbability()
+            if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
+                double distdiff = (newSD.getWalkdist() - oldSD.getWalkdist());
+                double probdiff = (newSD.getProbabilityTake()- oldSD.getProbabilityTake()) * this.parameters.factorProb;
+                double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
+                if ((probdiff + utildiff) > (distdiff)) {
                     return true;
                 }
                 return false;
             }
-            return true;
-        }
-        if (oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
             return false;
         }
-        double timediff = (newSD.getWalkTime() - oldSD.getWalkTime()) * this.parameters.factor;
-        double probdiff = newSD.getProbabilityTake() - oldSD.getProbabilityTake();
-        if (probdiff > timediff) {
+        double distdiff = (newSD.getWalkdist() - oldSD.getWalkdist());
+        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * this.parameters.factorProb;
+        double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
+        if ((probdiff + utildiff) > (distdiff)) {
             return true;
         }
         return false;
     }
 
     //take into account that distance newSD >= distance oldSD
-     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (oldSD.getProbabilityReturn() > this.parameters.upperProbabilityBound) {
-            return false;
-        }
-        if (newSD.getProbabilityReturn() <= oldSD.getProbabilityReturn()) {
-            return false;
-        }
-        // if here  newSD.getProbability() > oldSD.getProbability()
-        if (oldSD.getProbabilityReturn() > this.parameters.desireableProbability) {
-
-            double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
-                    - (oldSD.getBiketime() + oldSD.getWalkTime())) * this.parameters.factor;
-            double probdiff = newSD.getProbabilityReturn() - oldSD.getProbabilityReturn();
-            if (probdiff > timediff) {
-                return true;
-            }
-            return false;
-        }
-        if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
-            return true;
-        }
-        double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
-                - (oldSD.getBiketime() + oldSD.getWalkTime())) * this.parameters.factor;
-        double probdiff = newSD.getProbabilityReturn() - oldSD.getProbabilityReturn();
-        if (probdiff > timediff) {
+    protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
+        double distdiff = (newSD.getWalkdist() - oldSD.getWalkdist());
+        double probdiff = (newSD.getProbabilityReturn()- oldSD.getProbabilityReturn()) * this.parameters.factorProb;
+        double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
+        if ((probdiff + utildiff) > (distdiff)) {
             return true;
         }
         return false;

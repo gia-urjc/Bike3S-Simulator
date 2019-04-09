@@ -118,48 +118,23 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
     }
 
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint point, boolean rentbike) {
-        double currentglobalbikedemand=recutils.getCurrentGlobalBikeDemand();
+        double currentglobalbikedemand = recutils.getCurrentGlobalBikeDemand();
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
-            
             StationUtilityData sd = new StationUtilityData(s);
 
-            double bikedemand=recutils.getCurrentBikeDemand(s);
-            double slotdem=recutils.getCurrentSlotDemand(s);
-            double idealAvailable = (bikedemand + s.getCapacity() - slotdem)/2D;
-                    
-            double utility = getUtility(s.availableBikes(), s.getCapacity(), idealAvailable);
-            double newutility;
-            if (rentbike) {
-                newutility = getUtility(s.availableBikes() - 1, s.getCapacity(), idealAvailable);
-            } else {//return bike 
-                newutility = getUtility(s.availableBikes() + 1, s.getCapacity(), idealAvailable);
-            }
+            double idealAvailable = (recutils.getCurrentSlotDemand(sd.getStation()) + s.getCapacity() - recutils.getCurrentBikeDemand(sd.getStation()))/2D;
+            double util = recutils.calculateClosedSquaredStationUtilityDifference(sd, rentbike);
             double dist = point.distanceTo(s.getPosition());
             double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
-                    + (1 - parameters.wheightDistanceStationUtility) * (newutility - utility);
+                    + (1 - parameters.wheightDistanceStationUtility) * util;
 
-            /*       double mincap=(double)infraestructureManager.getMinStationCapacity();
-            double maxinc=(4D*(mincap-1))/Math.pow(mincap,2);
-            double auxnormutil=((newutility-utility+maxinc)/(2*maxinc));
-            double globalutility= dist/auxnormutil; 
-             */ sd.setUtility(globalutility); 
-             sd.setOptimalocupation(idealAvailable);
+            sd.setUtility(globalutility);
+            sd.setOptimalocupation(idealAvailable);
             sd.setWalkdist(dist);
             temp.add(sd);
         }
         return temp;
     }
-
-    
-    private double getUtility(int ocupation, int capacity, double idealocupation) {
-        if (ocupation <= idealocupation) {
-            return 1 - Math.pow(((ocupation - idealocupation) / idealocupation), 2);
-        } else {
-            double aux = capacity - idealocupation;
-            return 1 - Math.pow(((ocupation - idealocupation) / aux), 2);
-        }
-    }
-
 }

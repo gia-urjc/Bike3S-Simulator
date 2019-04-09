@@ -42,21 +42,24 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         // Vel_straightline=(d/dr)*vel_real -> Vel_straightline=vel_real/f
         //assuming real velocities of 1.4 m/s and 6 m/s for walking and biking (aprox. to 5 and 20 km/h)
         //the adapted straight line velocities are: 1m/s and 4.286m/s
-        private double walkingVelocity = 1.4D;
-        private double cyclingVelocity = 6D;
-        private double probabilityUsersObey = 1D;
-        boolean takeintoaccountexpected = true;
-        boolean takeintoaccountcompromised = true;
+        public double walkingVelocity = 1.4D;
+        public double cyclingVelocity = 6D;
+        public double probabilityUsersObey = 1D;
+        public boolean takeintoaccountexpected = true;
+        public boolean takeintoaccountcompromised = true;
     }
 
     protected double straightLineWalkingVelocity = 1;//2.25D; //with 3 the time is quite worse
     protected double straightLineCyclingVelocity = 4.286;//2.25D; //reduciendo este factor mejora el tiempo, pero empeora los indicadores 
 
     boolean printHints = true;
-    private RecommendationParameters parameters;
-    private UtilitiesForRecommendationSystems recutils;
+    protected RecommendationParameters parameters;
+    protected UtilitiesForRecommendationSystems recutils;
     private PastRecommendations pastrecs;
     
+    public RecommendationParameters getRecommendationParameters(){
+        return parameters;
+    }
     public RecommendationSystemDemandProbabilityBased(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
@@ -284,4 +287,29 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
 
     abstract protected  List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition );
     abstract protected  List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination );   
+    
+    //methods for ordering the StationUtilityData should be true if the first data should be recomended befor the second
+    //take into account that distance newSD >= distance oldSD
+    abstract protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD);
+    abstract protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD);
+
+    protected void addrent(StationUtilityData d, List<StationUtilityData> temp) {
+        int i = 0;
+        for (; i < temp.size(); i++) {
+            if (betterOrSameRent(d, temp.get(i))) {
+                break;
+            }
+        }
+        temp.add(i, d);
+    }
+
+    protected void addreturn(StationUtilityData d, List<StationUtilityData> temp) {
+        int i = 0;
+        for (; i < temp.size(); i++) {
+            if (betterOrSameReturn(d, temp.get(i))) {
+                break;
+            }
+        }
+        temp.add(i, d);
+    }
 }

@@ -134,7 +134,7 @@ public class RecommendetionSystemDemandSurroundingDistanceOpenfunction extends R
                     s.getMinoptimalocupation() ,
                     s.getOptimalocupation() ,
                     s.getMaxopimalocupation(),
-                    s.getOcupation() ,
+                    s.getAvailableBikes(),
                     s.getCapacity() );
         }
         }

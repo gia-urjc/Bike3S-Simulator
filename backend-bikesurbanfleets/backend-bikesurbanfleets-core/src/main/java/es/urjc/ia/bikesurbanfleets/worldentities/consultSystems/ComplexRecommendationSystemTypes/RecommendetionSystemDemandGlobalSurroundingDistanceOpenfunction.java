@@ -134,7 +134,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
                     s.getMinoptimalocupation() ,
                     s.getOptimalocupation() ,
                     s.getMaxopimalocupation(),
-                    s.getOcupation() ,
+                    s.getAvailableBikes(),
                     s.getCapacity() );
         }
         }

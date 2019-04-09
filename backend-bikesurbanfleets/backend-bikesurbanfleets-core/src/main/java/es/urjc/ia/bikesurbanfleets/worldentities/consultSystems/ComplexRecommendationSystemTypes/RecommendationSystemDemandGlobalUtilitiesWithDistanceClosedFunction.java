@@ -43,7 +43,7 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
 
     private RecommendationParameters parameters;
     private UtilitiesForRecommendationSystems recutils;
-    boolean printHints=false;
+    boolean printHints = false;
 
     public RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
@@ -57,7 +57,7 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        recutils=new UtilitiesForRecommendationSystems(this);
+        recutils = new UtilitiesForRecommendationSystems(this);
     }
 
     @Override
@@ -70,7 +70,9 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
             List<StationUtilityData> su = getStationUtility(stations, point, true);
             Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp = su.stream().sorted(DescUtility).collect(Collectors.toList());
-            if (printHints) printRecomendations(temp, true);
+            if (printHints) {
+                printRecomendations(temp, true);
+            }
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } else {
             result = new ArrayList<>();
@@ -88,80 +90,66 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
             List<StationUtilityData> su = getStationUtility(stations, destination, false);
             Comparator<StationUtilityData> byDescUtilityIncrement = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp = su.stream().sorted(byDescUtilityIncrement).collect(Collectors.toList());
-            if (printHints) printRecomendations(temp, false);
+            if (printHints) {
+                printRecomendations(temp, false);
+            }
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } else {
             System.out.println("no recommendation for return at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
         }
         return result;
     }
-    
+
     private void printRecomendations(List<StationUtilityData> su, boolean take) {
         if (printHints) {
-        int max = su.size();//Math.min(5, su.size());
-        System.out.println();
-        if (take) {
-            System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime());
-        } else {
-            System.out.println("Time (return):" + SimulationDateTime.getCurrentSimulationDateTime());
-        }
-        for (int i = 0; i < max; i++) {
-            StationUtilityData s = su.get(i);
-            System.out.format("Station %3d %2d %2d %10.2f %9.8f %9.8f %n", +s.getStation().getId(),
-                    s.getStation().availableBikes(),
-                    s.getStation().getCapacity(),
-                    s.getWalkdist(),
-                    s.getUtility(),
-                    s.getOptimalocupation());
+            int max = su.size();//Math.min(5, su.size());
+            System.out.println();
+            if (take) {
+                System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime());
+            } else {
+                System.out.println("Time (return):" + SimulationDateTime.getCurrentSimulationDateTime());
+            }
+            for (int i = 0; i < max; i++) {
+                StationUtilityData s = su.get(i);
+                System.out.format("Station %3d %2d %2d %10.2f %9.8f %9.8f %n", +s.getStation().getId(),
+                        s.getStation().availableBikes(),
+                        s.getStation().getCapacity(),
+                        s.getWalkdist(),
+                        s.getUtility(),
+                        s.getOptimalocupation());
             }
         }
     }
 
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint point, boolean rentbike) {
-        double currentglobalbikedemand=recutils.getCurrentGlobalBikeDemand();
+        double currentglobalbikedemand = recutils.getCurrentGlobalBikeDemand();
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
-
             StationUtilityData sd = new StationUtilityData(s);
 
-            double idealbikes = recutils.getCurrentBikeDemand(s);
-            double maxidealbikes = s.getCapacity() - recutils.getCurrentSlotDemand(s);
-
-            double utility = getUtility(s, 0, idealbikes, maxidealbikes);
-            double newutility;
+            double idealAvailable = (recutils.getCurrentSlotDemand(sd.getStation()) + s.getCapacity() - recutils.getCurrentBikeDemand(sd.getStation()))/2D;
+            double util = recutils.calculateClosedSquaredStationUtilityDifference(sd, rentbike);
+            double normedUtilityDiff;
             if (rentbike) {
-                newutility = getUtility(s, -1, idealbikes, maxidealbikes);
-            } else {//return bike 
-                newutility = getUtility(s, +1, idealbikes, maxidealbikes);
+                normedUtilityDiff = util
+                        * (recutils.getCurrentBikeDemand(sd.getStation()) / recutils.getCurrentGlobalBikeDemand());
+                //* infrastructureManager.getNumberStations();
+            } else {
+                normedUtilityDiff = util
+                        * (recutils.getCurrentSlotDemand(sd.getStation()) / recutils.getCurrentGlobalSlotDemand());
+                //* infrastructureManager.getNumberStations();
+
             }
-            double normedUtilityDiff = (newutility - utility)
-                    * (idealbikes/ currentglobalbikedemand) * infrastructureManager.getNumberStations();
             double dist = point.distanceTo(s.getPosition());
             double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
                     + (1 - parameters.wheightDistanceStationUtility) * normedUtilityDiff;
 
-            /*       double mincap=(double)infraestructureManager.getMinStationCapacity();
-            double maxinc=(4D*(mincap-1))/Math.pow(mincap,2);
-            double auxnormutil=((newutility-utility+maxinc)/(2*maxinc));
-            double globalutility= dist/auxnormutil; 
-             */ sd.setUtility(globalutility);
-            sd.setOptimalocupation((idealbikes + maxidealbikes) / 2D);
+            sd.setUtility(globalutility);
+            sd.setOptimalocupation(idealAvailable);
             sd.setWalkdist(dist);
             temp.add(sd);
         }
         return temp;
-    }
-
-    private double getUtility(Station s, int bikeincrement, double idealbikes, double maxidealbikes) {
-        double cap = s.getCapacity();
-        double ocupation = s.availableBikes() + bikeincrement;
-        double bestocupation = (idealbikes + maxidealbikes) / 2D;
-        if (ocupation <= bestocupation) {
-            return 1 - Math.pow(((ocupation - bestocupation) / bestocupation), 2);
-        } else {
-            double aux = cap - bestocupation;
-            return 1 - Math.pow(((ocupation - bestocupation) / aux), 2);
-        }
     }
 }

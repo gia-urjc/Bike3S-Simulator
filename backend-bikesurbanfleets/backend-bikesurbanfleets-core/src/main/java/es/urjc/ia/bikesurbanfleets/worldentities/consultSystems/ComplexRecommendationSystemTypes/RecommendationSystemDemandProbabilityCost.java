@@ -329,28 +329,4 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         }
     }
 
-    private void addRent(StationUtilityData d, List<StationUtilityData> temp) {
-        int i = 0;
-        for (; i < temp.size(); i++) {
-            if (betterOrSameRent(d, temp.get(i))) {
-                break;
-            }
-        }
-        temp.add(i, d);
-    }
-
-    private void addReturn(StationUtilityData d, List<StationUtilityData> temp) {
-        int i = 0;
-        for (; i < temp.size(); i++) {
-            if (betterOrSameReturn(d, temp.get(i))) {
-                break;
-            }
-        }
-        temp.add(i, d);
-    }
-
-    private static Comparator<Station> byDistance(GeoPoint point) {
-        return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point), s2.getPosition().distanceTo(point));
-    }
-
 }
