@@ -10,7 +10,6 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.StationUtilityDa
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -35,12 +34,10 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         private int maxDistanceRecommendation = 600;
 
         private double minimumMarginProbability = 0.001;
-        private double minProbSecondRecommendation = 0.5;
-        private double minProbFirstRecommendation = 0;
+        private double minProbBestNeighbourRecommendation = 0.5;
+        private double minProbRecommendation = 0.5;
         private double penalisationfactorrent = 1;
         private double penalisationfactorreturn = 1;
-        private double bikefactor = 0.1D;
-        private double MaxCostValue = 100000;
         private double maxStationsToReccomend = 30;
         private double unsucesscostRent = 3000;
         private double unsucesscostReturn = 2000;
@@ -48,6 +45,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     }
 
     private RecommendationParameters parameters;
+    private ComplexCostCalculator ucc;
 
     public RecommendationSystemDemandProbabilityCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef,ss);
@@ -61,7 +59,10 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-    }
+        ucc=new ComplexCostCalculator(parameters.minimumMarginProbability, parameters.unsucesscostRent,
+                parameters.unsucesscostReturn,
+            parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation );
+      }
 
     @Override
     protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition) {
@@ -73,9 +74,9 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             }
             if (sd.getProbabilityTake()> 0) {
                 List<StationUtilityData> lookedlist = new ArrayList<>();
-                double cost = calculateCostRentHeuristic(sd, 1, sd.getWalkdist(), lookedlist, stationdata, true);
+                double cost = ucc.calculateCostRentHeuristic(sd, 1, sd.getWalkTime(), lookedlist, stationdata, true);
                 sd.setTotalCost(cost);
-                addRent(sd, orderedlist);
+                addrent(sd, orderedlist);
                 i++;
             }
         }
@@ -92,185 +93,33 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             }
             if (sd.getProbabilityReturn()> 0) {
                 List<StationUtilityData> lookedlist = new ArrayList<>();
-                double ajdist=sd.getBikedist()*this.parameters.bikefactor;
-                double cost = calculateCostReturnHeuristic(sd, 1, ajdist, userdestination, lookedlist, stationdata, true);
+                double biketime=sd.getBiketime();
+                double cost = ucc.calculateCostReturnHeuristic(sd, 1, biketime, userdestination, lookedlist, stationdata, true);
                 sd.setTotalCost(cost);
-                addRent(sd, orderedlist);
+                addreturn(sd, orderedlist);
                 i++;
             }
         }
         return orderedlist;
     }
 
-    //DO NOT CHANGE IT IS WORKING :)
-    private double calculateCostRent_best(StationUtilityData sd,
-            double margprob, double accdist,
-            List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
-        double prob = sd.getProbabilityTake();
-        double newmargprob = margprob * (1 - prob);
-        if (margprob <= this.parameters.minimumMarginProbability) {
-            throw new RuntimeException("error parameters");
-        }
-        if (newmargprob <= this.parameters.minimumMarginProbability) {
-            return (1 - this.parameters.minimumMarginProbability / margprob) * accdist;
-        }
-        //find best neighbour
-        lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourRent(sd.getStation(), newmargprob, lookedlist, allstats);
-        double newdist = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition());
-        double newaccdist = accdist + newdist;
-        if (start) {
-            sd.bestNeighbour=closestneighbour;
-        }
-        double margcost = calculateCostRent_best(closestneighbour, newmargprob, newaccdist, lookedlist, allstats, false);
-        return prob * accdist
-                + this.parameters.penalisationfactorrent * (1 - prob) * (margcost + this.parameters.unsucesscostRent);
-    }
-
-    //DO NOT CHANGE IT IS WORKING :)
-    private double calculateCostReturn_best(StationUtilityData sd,
-            double margprob, double accbikedist, GeoPoint destination,
-            List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
-        double prob = sd.getProbabilityReturn();
-        double newmargprob = margprob * (1 - prob);
-        double walkdist = sd.getStation().getPosition().distanceTo(destination);
-        if (margprob <= this.parameters.minimumMarginProbability) {
-            throw new RuntimeException("error parameters");
-        }
-        if (newmargprob <= this.parameters.minimumMarginProbability) {
-            return (1 - this.parameters.minimumMarginProbability / margprob) * accbikedist
-                    + walkdist * (margprob - this.parameters.minimumMarginProbability) / margprob;
-        }
-        //find best neighbour
-        lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourReturn(sd.getStation(), newmargprob, lookedlist, allstats, destination);
-        double newdist = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition()) * this.parameters.bikefactor;
-        if (start) {
-            sd.bestNeighbour = closestneighbour;
-        }
-        double newaccbikedist = accbikedist + newdist;
-        double margcost = calculateCostReturn_best(closestneighbour, newmargprob, newaccbikedist, destination, lookedlist, allstats, false);
-        return prob * (accbikedist + walkdist)
-                + this.parameters.penalisationfactorreturn * (1 - prob) * (margcost + this.parameters.unsucesscostReturn);
-    }
-
-    //DO NOT CHANGE IT IS WORKING :)
-    private double calculateCostRentHeuristic(StationUtilityData sd,
-            double margprob, double currentdist,
-            List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
-        double thiscost = (margprob - this.parameters.minimumMarginProbability) * currentdist;
-        double newmargprob = margprob * (1 - sd.getProbabilityTake());
-        if (margprob <= this.parameters.minimumMarginProbability) {
-            throw new RuntimeException("error parameters");
-        }
-        if (newmargprob <= this.parameters.minimumMarginProbability) {
-            return thiscost;
-        }
-        //find best neighbour
-        lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourRent(sd.getStation(), newmargprob, lookedlist, allstats);
-        double newdist = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition());
-        if (start) {
-            sd.bestNeighbour = closestneighbour;
-        }
-        double margcost = newmargprob * this.parameters.unsucesscostRent + calculateCostRentHeuristic(closestneighbour, newmargprob, newdist, lookedlist, allstats, false);
-        return thiscost + this.parameters.penalisationfactorrent * margcost;
-    }
-
-    //DO NOT CHANGE IT IS WORKING :)
-    private double calculateCostReturnHeuristic(StationUtilityData sd,
-            double margprob, double currentdist, GeoPoint destination,
-            List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
-        double thisbikecost = (margprob - this.parameters.minimumMarginProbability) * currentdist;
-        double thiswalkdist = sd.getStation().getPosition().distanceTo(destination);
-        double newmargprob = margprob * (1 - sd.getProbabilityReturn());
-        double thistotalcost = thisbikecost;
-        if (margprob <= this.parameters.minimumMarginProbability) {
-            throw new RuntimeException("error parameters");
-        }
-        if (newmargprob <= this.parameters.minimumMarginProbability) {
-            thistotalcost = thistotalcost + thiswalkdist * (margprob - this.parameters.minimumMarginProbability);
-            return thistotalcost;
-        } else {
-            thistotalcost = thistotalcost + thiswalkdist * margprob * sd.getProbabilityReturn();
-        }
-        lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourReturn(sd.getStation(), newmargprob, lookedlist, allstats, destination);
-        double newdist = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition()) * this.parameters.bikefactor;
-        if (start) {
-            sd.bestNeighbour=closestneighbour;
-        }
-        double margvalue = newmargprob * this.parameters.unsucesscostReturn + calculateCostReturnHeuristic(closestneighbour, newmargprob, newdist, destination, lookedlist, allstats, false);
-        return thistotalcost + this.parameters.penalisationfactorreturn * margvalue;
-    }
-
-    private StationUtilityData bestNeighbourRent(Station s, double newmargprob, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats) {
-        double newbestValueFound = Double.MAX_VALUE;
-        StationUtilityData bestneighbour = null;
-        for (StationUtilityData nei : allstats) {
-            if (!lookedlist.contains(nei) && nei.getProbabilityTake()> this.parameters.minProbSecondRecommendation) {
-                double newdist = s.getPosition().distanceTo(nei.getStation().getPosition());
-                double altthiscost = (newmargprob - this.parameters.minimumMarginProbability) * newdist;
-                double altnewmargprob = newmargprob * (1 - nei.getProbabilityTake());
-                if (altnewmargprob <= this.parameters.minimumMarginProbability) {
-                    altthiscost = altthiscost;
-                } else {
-                    altthiscost = altthiscost + (altnewmargprob - this.parameters.minimumMarginProbability) * this.parameters.MaxCostValue;
-                }
-                if (altthiscost < newbestValueFound) {
-                    newbestValueFound = altthiscost;
-                    bestneighbour = nei;
-                }
-            }
-        }
-        return bestneighbour;
-    }
-
-    private StationUtilityData bestNeighbourReturn(Station s, double newmargprob, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats, GeoPoint destination) {
-        double newbestValueFound = Double.MAX_VALUE;
-        StationUtilityData bestneighbour = null;
-        for (StationUtilityData nei : allstats) {
-            if (!lookedlist.contains(nei) && nei.getProbabilityReturn() > this.parameters.minProbSecondRecommendation) {
-                double altthisbikedist = s.getPosition().distanceTo(nei.getStation().getPosition()) * this.parameters.bikefactor;
-                double altthisbikecost = (newmargprob - this.parameters.minimumMarginProbability) * altthisbikedist;
-                double altthiswalkdist = nei.getStation().getPosition().distanceTo(destination);
-                double altnewmargprob = newmargprob * (1 - nei.getProbabilityReturn());
-                double alttotalcost = altthisbikecost;
-                if (altnewmargprob <= this.parameters.minimumMarginProbability) {
-                    alttotalcost = alttotalcost + altthiswalkdist * (newmargprob - this.parameters.minimumMarginProbability);
-                } else {
-                    alttotalcost = alttotalcost + altthiswalkdist * newmargprob * nei.getProbabilityReturn()
-                            + (altnewmargprob - this.parameters.minimumMarginProbability) * this.parameters.MaxCostValue;
-                }
-                if (alttotalcost < newbestValueFound) {
-                    newbestValueFound = alttotalcost;
-                    bestneighbour = nei;
-                }
-            }
-        }
-        return bestneighbour;
-    }
 
     //take into account that distance newSD >= distance oldSD
-    private boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
+    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
         if (newSD.getWalkdist()<= this.parameters.maxDistanceRecommendation
                 && oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
-            if (newSD.getProbabilityTake()>= this.parameters.minProbFirstRecommendation
-                    && oldSD.getProbabilityTake() >= this.parameters.minProbFirstRecommendation) {
+            if (newSD.getProbabilityTake()>= this.parameters.minProbRecommendation
+                    && oldSD.getProbabilityTake() >= this.parameters.minProbRecommendation) {
                 if (newSD.getTotalCost() < oldSD.getTotalCost()) {
                     return true;
                 } else {
                     return false;
                 }
             }
-            if (newSD.getProbabilityTake() >= this.parameters.minProbFirstRecommendation) {
+            if (newSD.getProbabilityTake() >= this.parameters.minProbRecommendation) {
                 return true;
             }
-            if (oldSD.getProbabilityTake() >= this.parameters.minProbFirstRecommendation) {
+            if (oldSD.getProbabilityTake() >= this.parameters.minProbRecommendation) {
                 return false;
             }
             if (newSD.getTotalCost() < oldSD.getTotalCost()) {
@@ -279,10 +128,10 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 return false;
             }
         }
-        if (oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
+        if (oldSD.getWalkdist() <= this.parameters.minProbRecommendation) {
             return false;
         }
-        if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
+        if (newSD.getWalkdist() <= this.parameters.minProbRecommendation) {
             return true;
         }
         if (newSD.getTotalCost()< oldSD.getTotalCost()) {
@@ -293,21 +142,21 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     }
 
     //take into account that distance newSD >= distance oldSD
-    private boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
+    protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
         if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation
                 && oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
-            if (newSD.getProbabilityReturn()>= this.parameters.minProbFirstRecommendation
-                    && oldSD.getProbabilityReturn() >= this.parameters.minProbFirstRecommendation) {
+            if (newSD.getProbabilityReturn()>= this.parameters.minProbRecommendation
+                    && oldSD.getProbabilityReturn() >= this.parameters.minProbRecommendation) {
                 if (newSD.getTotalCost() < oldSD.getTotalCost()) {
                     return true;
                 } else {
                     return false;
                 }
             }
-            if (newSD.getProbabilityReturn() >= this.parameters.minProbFirstRecommendation) {
+            if (newSD.getProbabilityReturn() >= this.parameters.minProbRecommendation) {
                 return true;
             }
-            if (oldSD.getProbabilityReturn() >= this.parameters.minProbFirstRecommendation) {
+            if (oldSD.getProbabilityReturn() >= this.parameters.minProbRecommendation) {
                 return false;
             }
             if (newSD.getTotalCost() < oldSD.getTotalCost()) {
@@ -328,5 +177,4 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             return false;
         }
     }
-
 }

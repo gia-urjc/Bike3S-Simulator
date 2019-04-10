@@ -3,21 +3,14 @@ package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommen
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
-import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
-import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.simpleRecommendationSystemTypes.StationComparator;
-import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.StationUtilityData;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This class is a system which recommends the user the stations to which he

@@ -21,7 +21,7 @@ import java.util.List;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_PROBABILITY_expected_compromised")
+@RecommendationSystemType("DEMAND_PROBABILITY")
 public class RecommendationSystemDemandProbability extends RecommendationSystemDemandProbabilityBased {
 
     @RecommendationSystemParameters

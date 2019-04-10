@@ -31,25 +31,29 @@ public class UserUninformed extends User {
     @Override
     public UserDecision decideAfterAppearning() {
         Station s = determineStationToRentBike();
+        
         if (s != null) { //user has found a station
-            return new UserDecisionStation(s, false);
-        } else {
-            return new UserDecisionLeaveSystem();
-        }
+            double dist=s.getPosition().distanceTo(this.getPosition());
+            if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
+                return new UserDecisionStation(s, false);
+            }
+        } //if not he would leave
+        return new UserDecisionLeaveSystem();
     }
 
     @Override
     public UserDecision decideAfterFailedRental() {
-        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) {
-            return new UserDecisionLeaveSystem();
-        } else {
+//        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) {
+//            return new UserDecisionLeaveSystem();
+//        } else {
             Station s = determineStationToRentBike();
-            if (s != null) { //user has found a station
+        if (s != null) { //user has found a station
+            double dist=s.getPosition().distanceTo(this.getPosition());
+            if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
                 return new UserDecisionStation(s, false);
-            } else {
-                return new UserDecisionLeaveSystem();
             }
-        }
+        } //if not he would leave
+        return new UserDecisionLeaveSystem();
     }
 
     //no reservations will take place

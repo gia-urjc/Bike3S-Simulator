@@ -10,7 +10,6 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToPointInCity;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionLeaveSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
