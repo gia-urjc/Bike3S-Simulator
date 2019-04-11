@@ -37,6 +37,7 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
          * and the indicated geographical point.
          */
         private int maxDistanceRecommendation = 600;
+        private int MaxDistanceNormalizer=600;
         private double wheightDistanceStationUtility = 0.3;
 
     }
@@ -60,7 +61,9 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
         recutils = new UtilitiesForRecommendationSystems(this);
     }
 
-    @Override
+   Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
+ 
+   @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
         List<Recommendation> result;
         List<Station> stations = validStationsToRentBike(infrastructureManager.consultStations()).stream()
@@ -68,7 +71,6 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, point, true);
-            Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
             List<StationUtilityData> temp = su.stream().sorted(DescUtility).collect(Collectors.toList());
             if (printHints) {
                 printRecomendations(temp, true);
@@ -83,13 +85,11 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().
-                filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, destination, false);
-            Comparator<StationUtilityData> byDescUtilityIncrement = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
-            List<StationUtilityData> temp = su.stream().sorted(byDescUtilityIncrement).collect(Collectors.toList());
+            List<StationUtilityData> temp = su.stream().sorted(DescUtility).collect(Collectors.toList());
             if (printHints) {
                 printRecomendations(temp, false);
             }
@@ -126,7 +126,6 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
             StationUtilityData sd = new StationUtilityData(s);
-
             double idealAvailable = (recutils.getCurrentSlotDemand(sd.getStation()) + s.getCapacity() - recutils.getCurrentBikeDemand(sd.getStation()))/2D;
             double util = recutils.calculateClosedSquaredStationUtilityDifferencewithDemand(s, rentbike);
             double normedUtilityDiff;
@@ -141,7 +140,7 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
 
             }
             double dist = point.distanceTo(s.getPosition());
-            double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
+            double norm_distance=1-(dist / parameters.MaxDistanceNormalizer);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
                     + (1 - parameters.wheightDistanceStationUtility) * normedUtilityDiff;
 

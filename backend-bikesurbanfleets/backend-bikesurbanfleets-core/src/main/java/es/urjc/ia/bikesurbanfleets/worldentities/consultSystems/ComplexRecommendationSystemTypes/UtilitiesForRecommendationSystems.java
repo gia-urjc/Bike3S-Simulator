@@ -43,7 +43,7 @@ public class UtilitiesForRecommendationSystems {
     //station utility here is defined as a open function which is 1 is the av bikes is between the 
     //the demand of bikes for the following hour and below the demand of slots for the following hour
     //closed to the boundaries the utility changes squared
-    static private double getOpenSquaredUtility(int capacity, int avbikes, double minidealbikes, double maxidealbikes) {
+    static protected double getOpenSquaredUtility(double capacity, double avbikes, double minidealbikes, double maxidealbikes) {
         if (minidealbikes <= maxidealbikes) {
             if (avbikes <= minidealbikes) {
                 return 1 - Math.pow(((avbikes - minidealbikes) / minidealbikes), 2);
