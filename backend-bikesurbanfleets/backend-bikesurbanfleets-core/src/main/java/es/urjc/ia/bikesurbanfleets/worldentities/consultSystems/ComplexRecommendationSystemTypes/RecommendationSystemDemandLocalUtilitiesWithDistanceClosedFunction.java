@@ -124,7 +124,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
             StationUtilityData sd = new StationUtilityData(s);
 
             double idealAvailable = (recutils.getCurrentSlotDemand(sd.getStation()) + s.getCapacity() - recutils.getCurrentBikeDemand(sd.getStation()))/2D;
-            double util = recutils.calculateClosedSquaredStationUtilityDifference(sd, rentbike);
+            double util = recutils.calculateClosedSquaredStationUtilityDifferencewithDemand(s, rentbike);
             double dist = point.distanceTo(s.getPosition());
             double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance

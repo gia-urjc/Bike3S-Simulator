@@ -35,7 +35,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
 
         private double minimumMarginProbability = 0.001;
         private double minProbBestNeighbourRecommendation = 0.5;
-        private double minProbRecommendation = 0.5;
+        private double minProbRecommendation = 0;
         private double penalisationfactorrent = 1;
         private double penalisationfactorreturn = 1;
         private double maxStationsToReccomend = 30;
@@ -128,10 +128,10 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 return false;
             }
         }
-        if (oldSD.getWalkdist() <= this.parameters.minProbRecommendation) {
+        if (oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
             return false;
         }
-        if (newSD.getWalkdist() <= this.parameters.minProbRecommendation) {
+        if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
             return true;
         }
         if (newSD.getTotalCost()< oldSD.getTotalCost()) {
@@ -143,7 +143,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
 
     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation
+/*        if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation
                 && oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
             if (newSD.getProbabilityReturn()>= this.parameters.minProbRecommendation
                     && oldSD.getProbabilityReturn() >= this.parameters.minProbRecommendation) {
@@ -171,7 +171,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
             return true;
         }
-        if (newSD.getTotalCost() < oldSD.getTotalCost()) {
+ */       if (newSD.getTotalCost() < oldSD.getTotalCost()) {
             return true;
         } else {
             return false;

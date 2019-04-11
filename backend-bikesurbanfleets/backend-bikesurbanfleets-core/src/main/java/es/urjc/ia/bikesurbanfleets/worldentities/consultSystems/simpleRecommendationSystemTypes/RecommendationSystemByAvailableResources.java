@@ -53,7 +53,7 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-   }
+    }
 
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
@@ -63,7 +63,7 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
-            Comparator<Station> byBikes = StationComparator.byAvailableBikes();
+            Comparator<Station> byBikes = byAvailableBikes(point);
             temp = stations.stream().sorted(byBikes).collect(Collectors.toList());
             result = temp.stream().map(station -> new Recommendation(station, null)).collect(Collectors.toList());
         }
@@ -73,14 +73,41 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Station> temp;
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
- 
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().
+                filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+
         if (!stations.isEmpty()) {
-            Comparator<Station> bySlots = StationComparator.byAvailableSlots();
+            Comparator<Station> bySlots = byAvailableSlots(destination);
             temp = stations.stream().sorted(bySlots).collect(Collectors.toList());
             result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
-        } 
+        }
         return result;
+    }
+
+    public static Comparator<Station> byAvailableBikes(GeoPoint pos) {
+        return (s1, s2) -> {
+            int i = Integer.compare(s1.availableBikes(), s2.availableBikes());
+            if (i < 0) {
+                return +1;
+            }
+            if (i > 0) {
+                return -1;
+            }
+            return Double.compare(s1.getPosition().distanceTo(pos), s2.getPosition().distanceTo(pos));
+        };
+    }
+
+    public static Comparator<Station> byAvailableSlots(GeoPoint pos) {
+        return (s1, s2) -> {
+            int i = Integer.compare(s1.availableSlots(), s2.availableSlots());
+            if (i < 0) {
+                return +1;
+            }
+            if (i > 0) {
+                return -1;
+            }
+            return Double.compare(s1.getPosition().distanceTo(pos), s2.getPosition().distanceTo(pos));
+        };
     }
 
 }

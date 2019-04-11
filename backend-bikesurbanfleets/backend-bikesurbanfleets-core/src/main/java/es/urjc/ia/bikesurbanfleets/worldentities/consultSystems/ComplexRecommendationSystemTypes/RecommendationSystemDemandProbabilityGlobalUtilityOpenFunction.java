@@ -21,7 +21,7 @@ import java.util.List;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_PROBABILITY_expected_compromised_UTILITY")
+@RecommendationSystemType("DEMAND_PROBABILITY_GLOBAL_UTILITY")
 public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction extends RecommendationSystemDemandProbabilityBased {
 
     @RecommendationSystemParameters
@@ -35,7 +35,6 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         private double upperProbabilityBound = 0.999;
         private double desireableProbability = 0.6;
 
-        private double probabilityUsersObey = 1;
         private double factorProb = 2000D;
         private double factorImp = 1000D;
     }

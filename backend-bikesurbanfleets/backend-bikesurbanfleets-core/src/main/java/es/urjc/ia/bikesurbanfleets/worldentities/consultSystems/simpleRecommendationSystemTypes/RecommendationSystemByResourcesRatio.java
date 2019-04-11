@@ -63,7 +63,7 @@ public class RecommendationSystemByResourcesRatio extends RecommendationSystem {
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
-            Comparator<Station> byBikesRatio = StationComparator.byBikesCapacityRatio();
+            Comparator<Station> byBikesRatio = byBikesCapacityRatio(point);
             temp = stations.stream().sorted(byBikesRatio).collect(Collectors.toList());
             result = temp.stream().map(station -> new Recommendation(station, null)).collect(Collectors.toList());
         }
@@ -77,12 +77,39 @@ public class RecommendationSystemByResourcesRatio extends RecommendationSystem {
                 filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
-            Comparator<Station> bySlotsRatio = StationComparator.bySlotsCapacityRatio();
+            Comparator<Station> bySlotsRatio = bySlotsCapacityRatio(destination);
             temp = stations.stream().sorted(bySlotsRatio).collect(Collectors.toList());
             result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
         } 
 
         return result;
+    }
+    public static Comparator<Station> byBikesCapacityRatio(GeoPoint pos) {
+        return (s1, s2) -> {
+            int i = Double.compare((double)s1.availableBikes()/(double)s1
+				.getCapacity(), (double)s2.availableBikes()/(double)s2.getCapacity());
+            if (i < 0) {
+                return +1;
+            }
+            if (i > 0) {
+                return -1;
+            }
+            return Double.compare(s1.getPosition().distanceTo(pos), s2.getPosition().distanceTo(pos));
+        };
+    }
+
+    public static Comparator<Station> bySlotsCapacityRatio(GeoPoint pos) {
+        return (s1, s2) -> {
+            int i = Double.compare((double)s1.availableSlots()/(double)s1
+				.getCapacity(), (double)s2.availableSlots()/(double)s2.getCapacity());
+            if (i < 0) {
+                return +1;
+            }
+            if (i > 0) {
+                return -1;
+            }
+            return Double.compare(s1.getPosition().distanceTo(pos), s2.getPosition().distanceTo(pos));
+        };
     }
 
 }

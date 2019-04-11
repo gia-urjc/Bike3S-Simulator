@@ -43,7 +43,7 @@ public class UtilitiesForRecommendationSystems {
     //station utility here is defined as a open function which is 1 is the av bikes is between the 
     //the demand of bikes for the following hour and below the demand of slots for the following hour
     //closed to the boundaries the utility changes squared
-    private double getOpenSquaredUtility(int capacity, int avbikes, double minidealbikes, double maxidealbikes) {
+    static private double getOpenSquaredUtility(int capacity, int avbikes, double minidealbikes, double maxidealbikes) {
         if (minidealbikes <= maxidealbikes) {
             if (avbikes <= minidealbikes) {
                 return 1 - Math.pow(((avbikes - minidealbikes) / minidealbikes), 2);
@@ -65,16 +65,27 @@ public class UtilitiesForRecommendationSystems {
     }
 
     // the method returns the difference of the ClosedSquaredUtility after taking or returning a bike wrt the situation before
-    public double calculateClosedSquaredStationUtilityDifference(StationUtilityData sd, boolean rentbike) {
-        Station s =sd.getStation();
-        double idealbikes = getCurrentBikeDemand(s);
-        double maxidealbikes = sd.getCapacity() - getCurrentSlotDemand(s);
-        double currentutility = getClosedSquaredUtility(s.getCapacity(), s.availableBikes(), idealbikes, maxidealbikes);
+    public double calculateClosedSquaredStationUtilityDifferencewithDemand(Station s, boolean rentbike) {
+        double bestocupation = (getCurrentBikeDemand(s) + s.getCapacity() - getCurrentSlotDemand(s)) / 2D;
+        double currentutility = getClosedSquaredUtility(s.getCapacity(), s.availableBikes(), bestocupation);
         double newutility;
         if (rentbike) {
-            newutility = getClosedSquaredUtility(s.getCapacity(), s.availableBikes()-1, idealbikes, maxidealbikes);
+            newutility = getClosedSquaredUtility(s.getCapacity(), s.availableBikes()-1, bestocupation);
         } else {//return bike 
-            newutility = getClosedSquaredUtility(s.getCapacity(), s.availableBikes()+1, idealbikes, maxidealbikes);
+            newutility = getClosedSquaredUtility(s.getCapacity(), s.availableBikes()+1, bestocupation);
+        }
+        return (newutility - currentutility);
+    }
+
+    // the method returns the difference of the ClosedSquaredUtility after taking or returning a bike wrt the situation before
+    static public double calculateClosedSquaredStationUtilityDifferencewithoutDemand(Station s, boolean rentbike) {
+        double bestocupation = (s.getCapacity()) / 2D;
+        double currentutility = getClosedSquaredUtility(s.getCapacity(), s.availableBikes(), bestocupation);
+        double newutility;
+        if (rentbike) {
+            newutility = getClosedSquaredUtility(s.getCapacity(), s.availableBikes()-1, bestocupation);
+        } else {//return bike 
+            newutility = getClosedSquaredUtility(s.getCapacity(), s.availableBikes()+1, bestocupation);
         }
         return (newutility - currentutility);
     }
@@ -82,10 +93,9 @@ public class UtilitiesForRecommendationSystems {
     //calculates the closed utility
     //station utility here is defined as a closed function which is 1 just in the middle between the slot demand and the bike demand
     //closed to the boundaries the utility changes squared
-    private double getClosedSquaredUtility(int capacity, int avbikes, double minidealbikes, double maxidealbikes) {
-        double bestocupation = (minidealbikes + maxidealbikes) / 2D;
+    static private double getClosedSquaredUtility(int capacity, int avbikes, double bestocupation) {
         if (avbikes <= bestocupation) {
-            return 1 - Math.pow(((avbikes - bestocupation) / bestocupation), 2);
+            return 1 - Math.pow(((avbikes / bestocupation) / bestocupation), 2);
         } else {
             double aux = capacity - bestocupation;
             return 1 - Math.pow(((avbikes - bestocupation) / aux), 2);

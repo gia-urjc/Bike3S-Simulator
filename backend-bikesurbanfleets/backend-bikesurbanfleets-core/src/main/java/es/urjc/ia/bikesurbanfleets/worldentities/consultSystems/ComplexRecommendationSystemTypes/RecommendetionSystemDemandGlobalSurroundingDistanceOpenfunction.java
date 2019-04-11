@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  *
  * @author holger
  */
-@RecommendationSystemType("SURROUNDING_GLOBAL_UTILITY_W_DISTANCE_DEMAND_OPENFUNCTION_FUTURE")
+@RecommendationSystemType("SURROUNDING_GLOBAL_UTILITY_W_DISTANCE_DEMAND_OPENFUNCTION")
 public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction extends RecommendationSystem {
 
     @RecommendationSystemParameters
@@ -168,7 +168,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
             double dist = point.distanceTo(s.getPosition());
             double norm_distance = 1 - normatizeTo01(dist, 0, parameters.maxDistanceRecommendation);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
-                    + (1 - parameters.wheightDistanceStationUtility) * (newutility - utility);
+                    + (1 - parameters.wheightDistanceStationUtility) * (normedUtilityDiff);
 
             /*       double mincap=(double)infraestructureManager.getMinStationCapacity();
             double maxinc=(4D*(mincap-1))/Math.pow(mincap,2);

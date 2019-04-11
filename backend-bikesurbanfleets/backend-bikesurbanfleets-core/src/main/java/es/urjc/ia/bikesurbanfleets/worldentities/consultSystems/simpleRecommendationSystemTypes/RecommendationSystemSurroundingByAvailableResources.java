@@ -40,7 +40,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
          * It is the maximum distance in meters between a station and the
          * stations we take into account for checking the area
          */
-        private double MaxDistanceSurroundingStations = 600;
+        private double MaxDistanceSurroundingStations = 400;
 
     }
 
@@ -70,6 +70,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
         getParameters(recomenderdef, this.parameters);
     }
 
+
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
         List<Recommendation> result = new ArrayList<>();
@@ -78,8 +79,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
 
         if (!stations.isEmpty()) {
             List<StationSurroundingData> stationdata = getStationQualityRenting(stations);
-            Comparator<StationSurroundingData> byQuality = (sq1, sq2) -> Double.compare(sq2.quality, sq1.quality);
-            List<StationSurroundingData> temp = stationdata.stream().sorted(byQuality).collect(Collectors.toList());
+            List<StationSurroundingData> temp = stationdata.stream().sorted(byQuality(point)).collect(Collectors.toList());
             result = temp.stream().map(StationSurroundingData -> new Recommendation(StationSurroundingData.station, null)).collect(Collectors.toList());
         }
         return result;
@@ -92,8 +92,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
 
         if (!stations.isEmpty()) {
             List<StationSurroundingData> stationdata = getStationQualityReturning(stations);
-            Comparator<StationSurroundingData> byQuality = (sq1, sq2) -> Double.compare(sq2.quality, sq1.quality);
-            List<StationSurroundingData> temp = stationdata.stream().sorted(byQuality).collect(Collectors.toList());
+            List<StationSurroundingData> temp = stationdata.stream().sorted(byQuality(destination)).collect(Collectors.toList());
             result = temp.stream().map(StationSurroundingData -> new Recommendation(StationSurroundingData.station, null)).collect(Collectors.toList());
         } 
 
@@ -135,4 +134,18 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
         }
         return stationdat;
     }
-}
+ 
+    public static Comparator<StationSurroundingData> byQuality(GeoPoint pos) {
+        return (s1, s2) -> {
+            int i = Double.compare(s1.quality, s2.quality);
+            if (i < 0) {
+                return +1;
+            }
+            if (i > 0) {
+                return -1;
+            }
+            return Double.compare(s1.station.getPosition().distanceTo(pos), s2.station.getPosition().distanceTo(pos));
+        };
+    }
+
+ }

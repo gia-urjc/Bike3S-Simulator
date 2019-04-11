@@ -62,8 +62,7 @@ public class RecommendationSystemByDistanceAvailableResources extends Recommenda
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
-            Comparator<Station> byDistanceBikesRatio = StationComparator.byProportionBetweenDistanceAndBikes(point);
-            temp = stations.stream().sorted(byDistanceBikesRatio).collect(Collectors.toList());
+            temp = stations.stream().sorted(byProportionBetweenDistanceAndBikes(point)).collect(Collectors.toList());
             result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
         }
         return result;
@@ -73,13 +72,27 @@ public class RecommendationSystemByDistanceAvailableResources extends Recommenda
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Station> temp;
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+        
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().collect(Collectors.toList());
         if (!stations.isEmpty()) {
-            Comparator<Station> byDistanceSlotsRatio = StationComparator.byProportionBetweenDistanceAndSlots(destination);
-            temp = stations.stream().sorted(byDistanceSlotsRatio).collect(Collectors.toList());
+            temp = stations.stream().sorted(byProportionBetweenDistanceAndSlots(destination)).collect(Collectors.toList());
             result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
         } 
         return result;
     }
- 
+
+    	public static Comparator<Station> byProportionBetweenDistanceAndBikes(GeoPoint point) {
+		return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point)/
+                                                    (double) s1.availableBikes(),
+                                                  s2.getPosition().distanceTo(point)/
+                                                    (double) s2.availableBikes());
+	}
+
+	public static Comparator<Station> byProportionBetweenDistanceAndSlots(GeoPoint point) {
+		return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point)/
+                                                    (double) s1.availableSlots(),
+                                                  s2.getPosition().distanceTo(point)/
+                                                    (double) s2.availableSlots());
+	}
+
 }

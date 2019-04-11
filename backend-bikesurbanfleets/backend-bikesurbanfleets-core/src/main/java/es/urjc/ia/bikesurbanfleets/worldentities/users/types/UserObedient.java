@@ -36,16 +36,17 @@ public class UserObedient extends UserUninformed {
         if (printHints) {
             System.out.format("Failed take. last probability was:  %9.8f %n" , lastexpetedProbability);
          }
-        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) {
-            return new UserDecisionLeaveSystem();
-        } else {
-            Station s = determineStationToRentBike();
-            if (s != null) { //user has found a station
+//        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) {
+//            return new UserDecisionLeaveSystem();
+//        } else {
+        Station s = determineStationToRentBike();
+        if (s != null) { //user has found a station
+            double dist=s.getPosition().distanceTo(this.getPosition());
+            if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
                 return new UserDecisionStation(s, false);
-            } else {
-                return new UserDecisionLeaveSystem();
             }
-        }
+        } //if not he would leave
+        return new UserDecisionLeaveSystem();
     }
 
     @Override

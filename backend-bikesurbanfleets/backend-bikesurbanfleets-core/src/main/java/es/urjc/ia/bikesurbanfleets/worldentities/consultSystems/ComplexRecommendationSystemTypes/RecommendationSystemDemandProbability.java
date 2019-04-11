@@ -36,7 +36,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
         private double upperProbabilityBound = 0.999;
         private double desireableProbability = 0.6;
 
-        private double factor = 1D / (double) (2000);
+        private double probfactor= 5000D;
     }
     private RecommendationParameters parameters;
 
@@ -83,8 +83,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
         // if here newSD.getProbability() > oldSD.getProbability()
         if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
             if (oldSD.getProbabilityTake() > this.parameters.desireableProbability) {
-                double timediff = (newSD.getWalkdist() - oldSD.getWalkdist()) * this.parameters.factor;
-                double probdiff = newSD.getProbabilityTake() - oldSD.getProbabilityTake();
+                double timediff = (newSD.getWalkdist() - oldSD.getWalkdist());
+                double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * this.parameters.probfactor;
                 if (probdiff > timediff) {
                     return true;
                 }
@@ -95,8 +95,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
         if (oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
             return false;
         }
-        double timediff = (newSD.getWalkdist() - oldSD.getWalkdist()) * this.parameters.factor;
-        double probdiff = newSD.getProbabilityTake() - oldSD.getProbabilityTake();
+        double timediff = (newSD.getWalkdist() - oldSD.getWalkdist());
+        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * this.parameters.probfactor;
         if (probdiff > timediff) {
             return true;
         }
@@ -114,8 +114,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
         }
         // if here  newSD.getProbability() > oldSD.getProbability()
         if (oldSD.getProbabilityReturn() > this.parameters.desireableProbability) {
-            double timediff = (newSD.getWalkdist()- oldSD.getWalkdist()) * this.parameters.factor;
-            double probdiff = newSD.getProbabilityReturn() - oldSD.getProbabilityReturn();
+            double timediff = (newSD.getWalkdist()- oldSD.getWalkdist()) ;
+            double probdiff = (newSD.getProbabilityReturn() - oldSD.getProbabilityReturn()) * this.parameters.probfactor;
             if (probdiff > timediff) {
                 return true;
             }
@@ -124,8 +124,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
         if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
             return true;
         }
-        double timediff = (newSD.getWalkdist() - oldSD.getWalkdist()) * this.parameters.factor;
-        double probdiff = newSD.getProbabilityReturn() - oldSD.getProbabilityReturn();
+        double timediff = (newSD.getWalkdist() - oldSD.getWalkdist()) ;
+        double probdiff = (newSD.getProbabilityReturn() - oldSD.getProbabilityReturn()) * this.parameters.probfactor;
         if (probdiff > timediff) {
             return true;
         }

@@ -207,7 +207,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                 System.out.format("Expected successrate return: %9.8f %n", (probsr / callsr));
 
                 if (su.get(0).getProbabilityReturn() < 0.6) {
-                    System.out.format("LOW PROB Take %9.8f %n", su.get(0).getProbabilityTake());
+                    System.out.format("LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());
                     lowprobs++;
                 }
                 System.out.println("         id av ca   wdist   wtime   bdist   btime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");

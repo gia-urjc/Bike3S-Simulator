@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
  *
  * @author holger
  */
-@RecommendationSystemType("SURROUNDING_LOCAL_UTILITY_W_DISTANCE_DEMAND_OPENFUNCTION_FUTURE")
-public class RecommendetionSystemDemandSurroundingDistanceOpenfunction extends RecommendationSystem {
+@RecommendationSystemType("SURROUNDING_LOCAL_UTILITY_W_DISTANCE_DEMAND_OPENFUNCTION")
+public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction extends RecommendationSystem {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -65,7 +65,7 @@ public class RecommendetionSystemDemandSurroundingDistanceOpenfunction extends R
     boolean printHints=false;
     private UtilitiesForRecommendationSystems recutils;
 
-    public RecommendetionSystemDemandSurroundingDistanceOpenfunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
@@ -228,7 +228,6 @@ public class RecommendetionSystemDemandSurroundingDistanceOpenfunction extends R
         }
         return accocc;
     }
-
 
     private double getUtility(int bikeincrement, double idealbikes, double maxidealbikes, double capacity, double avbikes ) {
         double ocupation = avbikes + bikeincrement;

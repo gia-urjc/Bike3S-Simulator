@@ -13,7 +13,6 @@ import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,7 +39,7 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
          * It is the maximum distance in meters between a station and the
          * stations we take into account for checking the area
          */
-        private double MaxDistanceSurroundingStations = 600;
+        private double MaxDistanceSurroundingStations = 400;
 
     }
 
@@ -56,8 +55,6 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
         double distance = 0.0D;
     }
 
-    Comparator<StationSurroundingData> byProportionBetweenDistanceAndQuality = (sq1, sq2) ->  Double.compare(sq1.distance/ sq1.quality, sq2.distance/ sq2.quality);
-    
     private RecommendationParameters parameters;
 
     public RecommendetionSystemSurroundingByDistanceAvailableResources(JsonObject recomenderdef, SimulationServices ss) throws Exception {
@@ -90,8 +87,7 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationSurroundingData> stationdata = getStationQualityandDistanceReturning(stations, destination);
@@ -103,7 +99,6 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
 
     private List<StationSurroundingData> getStationQualityandDistanceRenting(List<Station> stations, GeoPoint userpoint) {
         List<StationSurroundingData> stationdat = new ArrayList<StationSurroundingData>();
-
         for (Station candidatestation : stations) {
             double summation = 0;
             List<Station> otherstations = infrastructureManager.consultStations().stream()
@@ -138,4 +133,7 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
         }
         return stationdat;
     }
+    
+    Comparator<StationSurroundingData> byProportionBetweenDistanceAndQuality = (sq1, sq2) ->  Double.compare(sq1.distance/ sq1.quality, sq2.distance/ sq2.quality);
+
 }
