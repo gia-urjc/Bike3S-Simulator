@@ -25,9 +25,9 @@ If you are a developer or researcher and wants to create new things for the simu
 And more... Feel free to see how to make all this fun stuff reading the developers Guide:
 
 [link](#developers-guide)
-# Users Guide <a id="user-guide"></a>
+# <a id="user-guide"></a>Users Guide 
 TO DO
-# Developers Guide <a id="developers-guide"></a>
+# <a id="developers-guide"></a>Developers Guide 
 
 ## Prerequisites
 
