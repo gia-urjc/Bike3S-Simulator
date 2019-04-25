@@ -10,7 +10,7 @@ Here you'll find all the necessary documentation to use and develop new features
 ## For Users 
 
 If you just want to run the simulator with preconfigured user behaviors in different cities around the world, just follow the next guide:
-[User Guide] (#user-guide)
+[link] (#user-guide)
 
 ## For Developers
 
@@ -22,11 +22,12 @@ If you are a developer or researcher and wants to create new things for the simu
 - Implement different users behaviors.
 - Implement your own recommendation system.
 
-And more... Feel free to see how to make all this fun stuff reading the developers Guide: 
-[Developers Guide] (#developers-guide)
-# Users Guide <a name="user-guide"></a>
+And more... Feel free to see how to make all this fun stuff reading the developers Guide:
+
+[link] (#developers-guide)
+# Users Guide <a id="user-guide"></a>
 TO DO
-# Developers Guide <a name="developers-guide"></a>
+# Developers Guide <a id="developers-guide"></a>
 
 ## Prerequisites
 
