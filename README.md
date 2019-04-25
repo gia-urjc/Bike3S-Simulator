@@ -1,20 +1,32 @@
 [![Build Status](https://travis-ci.org/stimonm/Bike3S.svg?branch=master)](https://travis-ci.org/stimonm/Bike3S)
+# Bike3S-Simulator - Introduction
 
-# Bike3S - A Bike Sharing System Simulator
+Bike3S is a simulator created for the purpose of testing different behaviors in real bike sharing systems. Bike sharing systems allow citizens to move between different places in an simple and economical way. Bike3S offers us the possibility to execute situations using different infrastructure configurations, user models and balancing algorithms.
 
-Bike3S is a simulator created for the purpose of testing different behaviors in real bike sharing systems. 
-Bike sharing systems allow citizens to move between different places in an simple and economical way. Bike3S offers us the possibility to
-execute situations using different infrastructure configurations, user models and balancing algorithms.
+The motivation of this project is to search strategies to balance the system resources using systems, typically, based on incentives, which recommend the users to rent or return a bike in a certain station to contribute to the system balancing
 
-The motivation of this project is to search strategies to balance the system resources using systems, typically, based on incentives, which recommend the users to rent or return a bike in a certain station to contribute to the system balancing. 
+Here you'll find all the necessary documentation to use and develop new features in Bike3S.
 
-All the documentation is available here
+## For Users 
 
-https://cruizba.github.io/Bike3S-documentation/
+If you just want to run the simulator with preconfigured user behaviors in different cities around the world, just follow the next guide:
+[User Guide] (#user-guide)
 
-# Quick Start Guide
+## For Developers
 
-It's recommended to follow the documentation. But if you only want to test the simulator, build, compile and use it, here you have a Quick Start guide with the most important commands and configurations.
+If you are a developer or researcher and wants to create new things for the simulator, you should start here. With this guide you will learn to: 
+
+- Configure and prepare your system for development.
+- Configure you're favorite IDE.
+- Learn the architecture and fundamentals of the simulator to implement new things.
+- Implement different users behaviors.
+- Implement your own recommendation system.
+
+And more... Feel free to see how to make all this fun stuff reading the developers Guide: 
+[Developers Guide] (#developers-guide)
+# Users Guide <a name="user-guide"></a>
+TO DO
+# Developers Guide <a name="developers-guide"></a>
 
 ## Prerequisites
 
@@ -27,7 +39,17 @@ Please make sure that all the binaries are registered in your PATH.
 
 The package manager NPM is also required but is usually bundled with the Node.js installer.
 
-## Setup
+## Getting Started for Development
+
+This project is development environment agnostic. You can use a IDE or just the command line
+
+### General overview of the spftware architecture 
+
+The project is separated in two mains parts **backend** and a **frontend**.
+
+![Image of the arquitecture of the system](/assets/Arquitecture_10.png)
+
+### Setup
 
 Clone the git repository and install all dependencies:
 
