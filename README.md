@@ -128,7 +128,7 @@ node fuse simulate:dev
 
 The configuration files of the simulation run via `node fuse gen-users:dev` and `node fuse simulate:dev`, are in the project directory in the folder `/backend-configuration-files`. To test quickly simulations without the GUI, you can edit these configuration files and run these commands. The history will be stored in `/build/history`. 
 
-# <a id="user-guide"></a>F.A.Q 
+# <a id="faq-link"></a>F.A.Q 
 
 > What IDEs or Text Editors should I use
 
