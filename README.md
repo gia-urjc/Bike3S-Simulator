@@ -25,6 +25,9 @@ If you are a developer or researcher and wants to create new things for the simu
 And more... Feel free to see how to make all this fun stuff reading the developers Guide:
 
 [Developer Guide](#developers-guide)
+## F.A.Q.
+[F.A.Q. link](#faq-link)
+
 # <a id="user-guide"></a>Users Guide 
 TO DO
 # <a id="developers-guide"></a>Developers Guide 
@@ -125,7 +128,7 @@ node fuse simulate:dev
 
 The configuration files of the simulation run via `node fuse gen-users:dev` and `node fuse simulate:dev`, are in the project directory in the folder `/backend-configuration-files`. To test quickly simulations without the GUI, you can edit these configuration files and run these commands. The history will be stored in `/build/history`. 
 
-## F.A.Q
+# <a id="user-guide"></a>F.A.Q 
 
 > What IDEs or Text Editors should I use
 
