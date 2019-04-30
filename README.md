@@ -100,7 +100,7 @@ To build all project:
 To distribute and executable or installer for your OS, just run 
 `npm run distribute`
 
-Executables are generated in `build/dist/``
+Executables are generated in `build/dist/`
 
 ## Fundamentals
 
