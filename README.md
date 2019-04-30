@@ -10,7 +10,7 @@ Here you'll find all the necessary documentation to use and develop new features
 ## For Users 
 
 If you just want to run the simulator with preconfigured user behaviors in different cities around the world, just follow the next guide:
-[link](#user-guide)
+[User Guide](#user-guide)
 
 ## For Developers
 
@@ -24,7 +24,7 @@ If you are a developer or researcher and wants to create new things for the simu
 
 And more... Feel free to see how to make all this fun stuff reading the developers Guide:
 
-[link](#developers-guide)
+[Developer Guide](#developers-guide)
 # <a id="user-guide"></a>Users Guide 
 TO DO
 # <a id="developers-guide"></a>Developers Guide 
@@ -48,11 +48,16 @@ This project is development environment agnostic. You can use a IDE or just the 
 
 The project is separated in two mains parts **backend** and a **frontend**.
 
-![Image of the arquitecture of the system](/assets/Arquitecture_10.png)
+![Arquitecture´s image of the system](/assets/Arquitecture_10.png)
+
+The **backend** is related to all the simulation logic and is implemented in Java. The folder `/backend-bikesurbanfleets` contains this part of the project.
+
+The **frontend** is related to all the GUI and data analysis of the simulations. It is implemented in *TypeScript*, using *Angular* and *Electron*. The folder `/frontend-bikesurbanfleets` contains this part of the project.
 
 ### Setup
 
-Clone the git repository and install all dependencies:
+1. Firstly of all, check that all prerequisites are installed.
+2. Execute this commands in the project directory.
 
 ```
     git clone https://github.com/gia-urjc/Bike3S-Simulator.git
@@ -61,48 +66,46 @@ Clone the git repository and install all dependencies:
     node fuse configure:dev
 ```
 
+
 If no errors appeared you have now all prepared for all you want. Run the program, compile simulator, etc... Next sections are just commands to compile and run the system.
 
-## Run the Simulator
+### Execute Frontend
 
-Releases are available here: [Releases](https://github.com/gia-urjc/Bike3S-Simulator/releases). This releases are not stable yet, so the best way to run the program is execute this command after do the setup
-
+You can now execute your program and try it just by running:
 ```
-node fuse build:frontend
-```
-
----
-
-## Basic commands for developers
-
-A full guide for developers is available here
-https://cruizba.github.io/Bike3S-documentation/developers_guide/
-
-Here you have a collection of the most commons commands when developing the simulator. 
-
-### Build Backend
-
-```
-node fuse build:backend
+    node fuse build:frontend
 ```
 
-### Build Frontend
+### Execute Backend
 
+TODO - Execute Backend users generator and Backend Users Core example
+
+### Build From Command Line 
+
+To build the backend, execute this command:
 ```
-node fuse build:frontend
+    node fuse build:dev-backend
+```
+To build the frontend and execute the GUI:
+```
+    node fuse build:frontend
+```
+To build all project:
+```
+    node fuse build:dist
 ```
 
-### Build All
+## Distrubute 
 
-```
-node fuse build:dist
-```
+To distribute and executable or installer for your OS, just run 
+`npm run distribute`
 
-### Create Installer And Portable for your OS
+Executables are generated in `build/dist/``
 
-```
-npm run distribute
-```
+## Fundamentals
+
+TODO - Link to pdf developer manual
+
 
 ### Simulate from the command line
 
