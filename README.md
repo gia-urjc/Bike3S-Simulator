@@ -149,6 +149,9 @@ This project is prepared for any IDE or Text editor you want. Some editors/IDEs 
 
 # Publications 
 
-1. Fernández A., Timón S., Ruiz C., Cumplido T., Billhardt H., Dunkel J. (2018) A Bike Sharing System Simulator. In: Bajo J. et al. (eds) Highlights of Practical Applications of Agents, Multi-Agent Systems, and Complexity: The PAAMS Collection. PAAMS 2018. Communications in Computer and Information Science, vol 887. Springer, Cham
+1. Fernández A., Timón S., Ruiz C., Cumplido T., Billhardt H., Dunkel J. (2018) A Bike Sharing System Simulator. In: Bajo J. et al. (eds) Highlights of Practical Applications of Agents, Multi-Agent Systems, and Complexity: The PAAMS Collection. PAAMS 2018. Communications in Computer and Information Science, vol 887. pp 428-440. Springer, Cham
     - link [https://doi.org/10.1007/978-3-319-94779-2_37](https://doi.org/10.1007/978-3-319-94779-2_37)
     - Presentation: [BikeSharingSimulator-PAAMS-2018](https://cruizba.github.io/Bike3S-documentation/pdf/Bike3S-SCIA-PAAMS2018.pdf)
+
+2. Fernández A., Billhardt H., Timón S., Ruiz C., Sánchez Ó., Bernabé I. (2019) Balancing Strategies for Bike Sharing Systems. In: Lujak M. (eds) Agreement Technologies. AT 2018. Lecture Notes in Computer Science, vol 11327. pp 208-222. Springer, Cham
+ - link [https://doi.org/10.1007/978-3-030-17294-7_16](https://doi.org/10.1007/978-3-030-17294-7_16)
