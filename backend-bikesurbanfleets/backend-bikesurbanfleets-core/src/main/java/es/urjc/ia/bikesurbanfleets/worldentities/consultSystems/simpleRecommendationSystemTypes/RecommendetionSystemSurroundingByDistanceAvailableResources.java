@@ -39,7 +39,7 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
          * It is the maximum distance in meters between a station and the
          * stations we take into account for checking the area
          */
-        private double MaxDistanceSurroundingStations = 400;
+        private double MaxDistanceSurroundingStations = 300;
 
     }
 

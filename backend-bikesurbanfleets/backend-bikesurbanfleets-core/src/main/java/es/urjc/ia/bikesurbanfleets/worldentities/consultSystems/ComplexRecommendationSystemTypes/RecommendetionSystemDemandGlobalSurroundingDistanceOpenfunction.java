@@ -43,9 +43,9 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
          * It is the maximum distance in meters between a station and the
          * stations we take into account for checking the area
          */
-        private double MaxDistanceSurroundingStations = 400;
+        private double MaxDistanceSurroundingStations = 500;
         private int MaxDistanceNormalizer=600;
-        private double wheightDistanceStationUtility = 0.3;
+        private double wheightDistanceStationUtility = 0.35;
 
     }
 
@@ -63,7 +63,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
     }
 
     private RecommendationParameters parameters;
-    boolean printHints=false;
+    boolean printHints=true;
     private UtilitiesForRecommendationSystems recutils;
 
     public RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
@@ -148,20 +148,21 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
             List<Station> otherstations = infrastructureManager.consultStations().stream()
                 .filter(other -> s.getPosition().distanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
 
-            double suridealbikes = getSurroundingIdealBikes(s,otherstations);
+            double surbikedemand = getSurroundingBikeDemand(s,otherstations);
             double surcapacity=getSurroundingCapacity(s,otherstations);
-            double surmaxidealbikes = surcapacity - getSurroundingIdealSlots(s,otherstations);
+            double surslotdemand = getSurroundingSlotDemand(s,otherstations);
             double surocupation = getSurroundingOcupation(s,otherstations);
 
-            double utility = getOpenSquaredUtility(surcapacity, surocupation, suridealbikes, surmaxidealbikes);
+            double utility = getOpenSquaredUtility(surcapacity, surocupation, surbikedemand, surslotdemand);
             double newutility;
             if (rentbike) {
-                newutility = getOpenSquaredUtility(surcapacity, surocupation-1, suridealbikes, surmaxidealbikes);
+                newutility = getOpenSquaredUtility(surcapacity, surocupation-1, surbikedemand, surslotdemand);
             } else {//return bike 
-                newutility = getOpenSquaredUtility(surcapacity, surocupation+1, suridealbikes, surmaxidealbikes);
+                newutility = getOpenSquaredUtility(surcapacity, surocupation+1, surbikedemand, surslotdemand);
             }
+
             double normedUtilityDiff = (newutility - utility)
-                   * (suridealbikes/ currentglobalbikedemand) * infrastructureManager.getNumberStations();
+                   * (surbikedemand/ currentglobalbikedemand) * infrastructureManager.getNumberStations();
 //                    * (idealbikes/ ud.maxdemand) ;
 
             double dist = point.distanceTo(s.getPosition());
@@ -169,12 +170,12 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
                     + (1 - parameters.wheightDistanceStationUtility) * (normedUtilityDiff);
             sd.setUtility(globalutility);
-            sd.setMaxopimalocupation(surmaxidealbikes);
-            sd.setMinoptimalocupation(suridealbikes);
+            sd.setMaxopimalocupation(surcapacity-surslotdemand);
+            sd.setMinoptimalocupation(surbikedemand);
             sd.setCapacity(surcapacity);
             sd.setAvailableBikes(surocupation);
-            if (suridealbikes > surmaxidealbikes) {
-                sd.setOptimalocupation((suridealbikes + surmaxidealbikes) / 2D);
+            if (surbikedemand > (surcapacity-surslotdemand)) {
+                sd.setOptimalocupation((surbikedemand + (surcapacity-surslotdemand)) / 2D);
             } else {
                 sd.setOptimalocupation(Double.NaN);
             }
@@ -184,7 +185,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
         return temp;
     }
 
-    private double getSurroundingIdealBikes(Station candidatestation,List<Station> otherstations) {
+    private double getSurroundingBikeDemand(Station candidatestation,List<Station> otherstations) {
         double accideal = 0;
         double factor, multiplication;
         for (Station other : otherstations) {
@@ -195,7 +196,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
         return accideal;
     }
 
-    private double getSurroundingIdealSlots(Station candidatestation,List<Station> otherstations) {
+    private double getSurroundingSlotDemand(Station candidatestation,List<Station> otherstations) {
         double accideal = 0;
         double factor, multiplication;
         for (Station other : otherstations) {

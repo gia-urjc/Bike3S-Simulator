@@ -39,12 +39,12 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
          */
         private int maxDistanceRecommendation = 600;
         private int MaxDistanceNormalizer=600;
-        private double wheightDistanceStationUtility = 0.3;
+        private double wheightDistanceStationUtility = 0.35;
 
     }
 
     private RecommendationParameters parameters;
-    boolean printHints=false;
+    boolean printHints=true;
     private UtilitiesForRecommendationSystems recutils;
 
     public RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFuture(JsonObject recomenderdef, SimulationServices ss) throws Exception {
@@ -123,25 +123,25 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
         for (Station s : stations) {
 
             StationUtilityData sd = new StationUtilityData(s);
-            double idealbikes = recutils.getCurrentFutueScaledBikeDemandNextHour(s);
-            double maxidealbikes = s.getCapacity() - recutils.getCurrentFutueScaledSlotDemandNextHour(s);
+            double bikedemand = recutils.getCurrentFutueScaledBikeDemandNextHour(s);
+            double slotdemand = recutils.getCurrentFutueScaledSlotDemandNextHour(s);
 
-            double utility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes(), idealbikes, maxidealbikes);
+            double utility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes(), bikedemand, slotdemand);
             double newutility;
             if (rentbike) {
-                newutility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes()-1, idealbikes, maxidealbikes);
+                newutility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes()-1, bikedemand, slotdemand);
              } else {//return bike 
-                newutility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes()+1, idealbikes, maxidealbikes);
+                newutility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes()+1, bikedemand, slotdemand);
             }
             double dist = point.distanceTo(s.getPosition());
             double norm_distance=1-(dist / parameters.MaxDistanceNormalizer);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
                     + (1 - parameters.wheightDistanceStationUtility) * (newutility - utility);
             sd.setUtility(globalutility);
-            sd.setMaxopimalocupation(maxidealbikes);
-            sd.setMinoptimalocupation(idealbikes);
-            if (idealbikes > maxidealbikes) {
-                sd.setOptimalocupation((idealbikes + maxidealbikes) / 2D);
+            sd.setMaxopimalocupation(s.getCapacity() - slotdemand);
+            sd.setMinoptimalocupation(bikedemand);
+            if (bikedemand > (s.getCapacity() - slotdemand)) {
+                sd.setOptimalocupation((bikedemand + (s.getCapacity() - slotdemand)) / 2D);
             } else {
                 sd.setOptimalocupation(Double.NaN);
             }

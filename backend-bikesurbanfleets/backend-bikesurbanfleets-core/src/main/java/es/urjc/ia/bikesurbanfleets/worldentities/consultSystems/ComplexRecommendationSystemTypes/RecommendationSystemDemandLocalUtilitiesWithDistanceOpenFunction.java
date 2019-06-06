@@ -38,12 +38,12 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
          */
         private int maxDistanceRecommendation = 600;
         private int MaxDistanceNormalizer=600;
-        private double wheightDistanceStationUtility = 0.3;
+        private double wheightDistanceStationUtility = 0.35;
 
     }
 
     private RecommendationParameters parameters;
-    boolean printHints=false;
+    boolean printHints=true;
     private UtilitiesForRecommendationSystems recutils;
 
     public RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {

@@ -38,16 +38,15 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
          */
         private int maxDistanceRecommendation = 600;
         private int MaxDistanceNormalizer=600;
-        private double wheightDistanceStationUtility = 0.3;
+        private double wheightDistanceStationUtility = 0.35;
 
     }
 
     private RecommendationParameters parameters;
     private UtilitiesForRecommendationSystems recutils;
-    boolean printHints = false;
+    boolean printHints = true;
 
-    Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
-
+ 
     public RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
         //***********Parameter treatment*****************************
@@ -140,4 +139,12 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
         }
         return temp;
     }
+        Comparator<StationUtilityData> DescUtility1 = (sq1, sq2) -> {
+		return  Double.compare(sq1.getWalkdist()/
+                                                     sq1.getUtility(),
+                                                  sq2.getWalkdist()/sq2.getUtility());
+    };
+
+        Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
+
 }

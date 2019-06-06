@@ -41,7 +41,8 @@ public class CompareTestApplication {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
         // String projectDir = System.getProperty("user.dir") + File.separator + "Bike3S";
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/Testcompnew/utilities";
+ //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurr";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurroundWithDemand";
         //testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/changedtests";
 
         mapPath = projectDir + "/../madrid.osm";

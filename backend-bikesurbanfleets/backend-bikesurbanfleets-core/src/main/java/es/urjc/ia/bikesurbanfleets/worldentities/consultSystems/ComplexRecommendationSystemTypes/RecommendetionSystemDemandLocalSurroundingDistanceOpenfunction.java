@@ -43,10 +43,10 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
          * It is the maximum distance in meters between a station and the
          * stations we take into account for checking the area
          */
-        private double MaxDistanceSurroundingStations = 400;
+        private double MaxDistanceSurroundingStations = 500;
         private int MaxDistanceNormalizer=600;
 
-        private double wheightDistanceStationUtility = 0.3;
+        private double wheightDistanceStationUtility = 0.35;
 
     }
 
@@ -64,7 +64,7 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
     }
 
     private RecommendationParameters parameters;
-    boolean printHints=false;
+    boolean printHints=true;
     private UtilitiesForRecommendationSystems recutils;
 
     Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
@@ -149,29 +149,29 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
             List<Station> otherstations = infrastructureManager.consultStations().stream()
                 .filter(other -> s.getPosition().distanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
 
-            double suridealbikes = getSurroundingIdealBikes(s,otherstations);
+            double surbikedemand = getSurroundingBikeDemand(s,otherstations);
             double surcapacity=getSurroundingCapacity(s,otherstations);
-            double surmaxidealbikes = surcapacity - getSurroundingIdealSlots(s,otherstations);
+            double surslotdemand = getSurroundingSlotDemand(s,otherstations);
             double surocupation = getSurroundingOcupation(s,otherstations);
 
-            double utility = getOpenSquaredUtility(surcapacity, surocupation, suridealbikes, surmaxidealbikes);
+            double utility = getOpenSquaredUtility(surcapacity, surocupation, surbikedemand, surslotdemand);
             double newutility;
             if (rentbike) {
-                newutility = getOpenSquaredUtility(surcapacity, surocupation-1, suridealbikes, surmaxidealbikes);
+                newutility = getOpenSquaredUtility(surcapacity, surocupation-1, surbikedemand, surslotdemand);
             } else {//return bike 
-                newutility = getOpenSquaredUtility(surcapacity, surocupation+1, suridealbikes, surmaxidealbikes);
+                newutility = getOpenSquaredUtility(surcapacity, surocupation+1, surbikedemand, surslotdemand);
             }
             double dist = point.distanceTo(s.getPosition());
             double norm_distance=1-(dist / parameters.MaxDistanceNormalizer);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
                     + (1 - parameters.wheightDistanceStationUtility) * (newutility - utility);
             sd.setUtility(globalutility);
-            sd.setMaxopimalocupation(surmaxidealbikes);
-            sd.setMinoptimalocupation(suridealbikes);
+            sd.setMaxopimalocupation(surcapacity-surslotdemand);
+            sd.setMinoptimalocupation(surbikedemand);
             sd.setCapacity(surcapacity);
             sd.setAvailableBikes(surocupation);
-            if (suridealbikes > surmaxidealbikes) {
-                sd.setOptimalocupation((suridealbikes + surmaxidealbikes) / 2D);
+            if (surbikedemand > (surcapacity-surslotdemand)) {
+                sd.setOptimalocupation((surbikedemand + (surcapacity-surslotdemand)) / 2D);
             } else {
                 sd.setOptimalocupation(Double.NaN);
             }
@@ -181,7 +181,7 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
         return temp;
     }
 
-    private double getSurroundingIdealBikes(Station candidatestation,List<Station> otherstations) {
+    private double getSurroundingBikeDemand(Station candidatestation,List<Station> otherstations) {
         double accideal = 0;
         double factor, multiplication;
         for (Station other : otherstations) {
@@ -192,7 +192,7 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
         return accideal;
     }
 
-    private double getSurroundingIdealSlots(Station candidatestation,List<Station> otherstations) {
+    private double getSurroundingSlotDemand(Station candidatestation,List<Station> otherstations) {
         double accideal = 0;
         double factor, multiplication;
         for (Station other : otherstations) {
