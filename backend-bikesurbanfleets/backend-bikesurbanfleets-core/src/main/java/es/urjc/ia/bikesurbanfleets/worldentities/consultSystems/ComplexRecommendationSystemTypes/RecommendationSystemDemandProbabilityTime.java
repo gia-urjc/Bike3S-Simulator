@@ -99,7 +99,7 @@ public class RecommendationSystemDemandProbabilityTime extends RecommendationSys
             if (oldSD.getProbabilityTakeAfterTake() >= this.parameters.desireableProbability) {
                 return false;
             }
-            if (oldSD.getProbabilityTakeAfterTake() >= newSD.getProbabilityTake()) {
+            if (oldSD.getProbabilityTakeAfterTake() >= newSD.getProbabilityTakeAfterTake()) {
                 return false;
             }
             return true;

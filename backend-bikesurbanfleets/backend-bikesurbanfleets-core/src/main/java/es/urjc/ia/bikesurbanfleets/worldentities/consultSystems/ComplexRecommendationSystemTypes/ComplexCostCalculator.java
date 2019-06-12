@@ -43,13 +43,13 @@ public class ComplexCostCalculator {
     final double maxCostValue=50000;
 
     
-    public double calculateWayCostRentHeuristic(List<StationUtilityData> way, StationUtilityData sd, double intprob,
-            double margprob, double currenttime,
+    public double calculateWayCostRentHeuristic(List<StationUtilityData> way, StationUtilityData sd, double takeprob,
+            double margprob, double walktime,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
         way.add(sd);
-        double thiscost = (margprob - minimumMarginProbability) * currenttime;
-        double newmargprob = margprob * (1 - intprob);
+        double thiscost = (margprob - minimumMarginProbability) * walktime;
+        double newmargprob = margprob * (1 - takeprob);
         if (margprob <= minimumMarginProbability) {
             throw new RuntimeException("error parameters");
         }
@@ -69,83 +69,83 @@ public class ComplexCostCalculator {
     }
 
     public double calculateWayCostRentHeuristic(List<StationUtilityData> way, StationUtilityData sd,
-            double margprob, double currenttime,
+            double margprob, double walktime,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
         return calculateWayCostRentHeuristic(way, sd, sd.getProbabilityTake(),
-            margprob, currenttime, lookedlist, allstats, start);
+            margprob, walktime, lookedlist, allstats, start);
     }
     
     public double calculateCostRentHeuristic(StationUtilityData sd,
-            double margprob, double currenttime,
+            double margprob, double walktime,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
         return calculateWayCostRentHeuristic(new ArrayList<>(), sd, sd.getProbabilityTake(),
-            margprob, currenttime, lookedlist, allstats, start);
+            margprob, walktime, lookedlist, allstats, start);
     }
     
  
-    public double calculateCostRentHeuristic(StationUtilityData sd, double intprob,
+    public double calculateCostRentHeuristic(StationUtilityData sd, double takeprob,
             double margprob, double currenttime,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
-        return calculateWayCostRentHeuristic(new ArrayList<>(), sd, intprob,
+        return calculateWayCostRentHeuristic(new ArrayList<>(), sd, takeprob,
             margprob, currenttime, lookedlist, allstats, start);
     }
 
     //DO NOT CHANGE IT IS WORKING :)
-    public double calculateWayCostReturnHeuristic(List<StationUtilityData> way, StationUtilityData sd, double intprob,
-            double margprob, double currenttime, GeoPoint destination,
+    public double calculateWayCostReturnHeuristic(List<StationUtilityData> way, StationUtilityData sd, double returnprob,
+            double margprob, double biketime, GeoPoint destination,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
         way.add(sd);
-        double thisbikecost = (margprob - minimumMarginProbability) * currenttime;
+        double thisbikecost = (margprob - minimumMarginProbability) * biketime;
         double thiswalktime = sd.getStation().getPosition().distanceTo(destination)/ walkingVelocity;
-        double newmargprob = margprob * (1 - intprob);
-        double thistotalcost = thisbikecost;
+        double newmargprob = margprob * (1 - returnprob);
+        double thistotalcost; 
         if (margprob <= minimumMarginProbability) {
             throw new RuntimeException("error parameters");
         }
         if (newmargprob <= minimumMarginProbability) {
-            thistotalcost = thistotalcost + thiswalktime * (margprob - minimumMarginProbability);
+            thistotalcost = thisbikecost + thiswalktime * (margprob - minimumMarginProbability);
             return thistotalcost;
         } else {
-            thistotalcost = thistotalcost + thiswalktime * margprob * intprob;
+            thistotalcost = thisbikecost + thiswalktime * margprob * returnprob;
         }
         lookedlist.add(sd);
         StationUtilityData closestneighbour = bestNeighbourReturn(sd.getStation(), newmargprob, lookedlist, allstats, destination);
-        double newtime = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition()) / cyclingVelocity;
+        double newbiketime = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition()) / cyclingVelocity;
         if (start) {
             sd.bestNeighbour = closestneighbour;
         }
         double margvalue = newmargprob * unsuccessCostReturn
-                + calculateWayCostReturnHeuristic(way, closestneighbour, closestneighbour.getProbabilityReturn(), newmargprob, newtime, destination, lookedlist, allstats, false);
+                + calculateWayCostReturnHeuristic(way, closestneighbour, closestneighbour.getProbabilityReturn(), newmargprob, newbiketime, destination, lookedlist, allstats, false);
         return thistotalcost + penalisationfactorreturn * margvalue;
     }
  
     public double calculateWayCostReturnHeuristic(List<StationUtilityData> way, StationUtilityData sd,
-            double margprob, double currenttime, GeoPoint destination,
+            double margprob, double biketime, GeoPoint destination,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
     return calculateWayCostReturnHeuristic(way, sd, sd.getProbabilityReturn(),
-            margprob, currenttime, destination,lookedlist,allstats,  start);
+            margprob, biketime, destination,lookedlist,allstats,  start);
     }
 
        //DO NOT CHANGE IT IS WORKING :)
     public double calculateCostReturnHeuristic(StationUtilityData sd,
-            double margprob, double currenttime, GeoPoint destination,
+            double margprob, double biketime, GeoPoint destination,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
     return calculateWayCostReturnHeuristic(new ArrayList<>(), sd, sd.getProbabilityReturn(),
-            margprob, currenttime, destination,lookedlist,allstats,  start);
+            margprob, biketime, destination,lookedlist,allstats,  start);
     }
     
-    public double calculateCostReturnHeuristic(StationUtilityData sd, double intprob,
-            double margprob, double currenttime, GeoPoint destination,
+    public double calculateCostReturnHeuristic(StationUtilityData sd, double returnprob,
+            double margprob, double biketime, GeoPoint destination,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
-    return calculateWayCostReturnHeuristic(new ArrayList<>(), sd, intprob,
-            margprob, currenttime, destination,lookedlist,allstats,  start);
+    return calculateWayCostReturnHeuristic(new ArrayList<>(), sd, returnprob,
+            margprob, biketime, destination,lookedlist,allstats,  start);
     }
    
 //alternative ways for calculation but with distance not with time
@@ -234,11 +234,11 @@ public class ComplexCostCalculator {
                 double altthisbikecost = (newmargprob - minimumMarginProbability) * altthisbiketime;
                 double altthiswalktime = nei.getStation().getPosition().distanceTo(destination) / walkingVelocity;
                 double altnewmargprob = newmargprob * (1 - nei.getProbabilityReturn());
-                double alttotalcost = altthisbikecost;
+                double alttotalcost;
                 if (altnewmargprob <= minimumMarginProbability) {
-                    alttotalcost = alttotalcost + altthiswalktime * (newmargprob - minimumMarginProbability);
+                    alttotalcost = altthisbikecost + altthiswalktime * (newmargprob - minimumMarginProbability);
                 } else {
-                    alttotalcost = alttotalcost + altthiswalktime * newmargprob * nei.getProbabilityReturn()
+                    alttotalcost = altthisbikecost + altthiswalktime * newmargprob * nei.getProbabilityReturn()
                             + (altnewmargprob - minimumMarginProbability) * maxCostValue;
                 }
                 if (alttotalcost < newbestValueFound) {
