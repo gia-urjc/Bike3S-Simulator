@@ -44,6 +44,14 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
 
         private double factorProb = 2000;
         private double factorImp = 500D;
+
+        @Override
+        public String toString() {
+            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", upperProbabilityBound=" + upperProbabilityBound + ", desireableProbability=" + desireableProbability + ", maxStationsToReccomend=" + maxStationsToReccomend + ", factorProb=" + factorProb + ", factorImp=" + factorImp ;
+        }
+    }
+    public String getParameterString(){
+        return "RecommendationSystemDemandProbabilityGlobalPrediction Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
     }
 
     private RecommendationParameters parameters;

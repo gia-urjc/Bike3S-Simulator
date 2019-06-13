@@ -37,7 +37,16 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
         private double desireableProbability = 0.6;
 
         private double probfactor = 4000D;
+
+        @Override
+        public String toString() {
+            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", upperProbabilityBound=" + upperProbabilityBound + ", desireableProbability=" + desireableProbability + ", probfactor=" + probfactor ;
+        }
     }
+    public String getParameterString(){
+        return "RecommendationSystemDemandProbability Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
+    }
+
     private RecommendationParameters parameters;
 
     public RecommendationSystemDemandProbability(JsonObject recomenderdef, SimulationServices ss) throws Exception {

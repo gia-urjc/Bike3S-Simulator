@@ -28,6 +28,7 @@ import org.reflections.Reflections;
 public class History {
 
     private final static String FINAL_GLOBAL_VALUES_FILENAME = "final-global-values.json";
+    private final static String SIMULATION_PARAMETERS_FILENAME = "simulation_parameters.json";
 
     private static int TIMEENTRIES_PER_FILE;
     private static Gson gson = new GsonBuilder()
@@ -83,7 +84,7 @@ public class History {
      */
     public static void init(String historyOutputPath, 
             int TIMEENTRIES_PER_HISTORYFILE, BoundingBox boundingBox, int totalSimulationTime,
-            List<Entity> initialEntities) throws IOException {
+            List<Entity> initialEntities, String recomenderParametersString) throws IOException {
         //initialize values
         activeEntities = new HistoricEntityCollection();
         serializedEvents = new TreeMap<Integer, List<EventEntry>>();
@@ -96,7 +97,8 @@ public class History {
         //write the global information in a file
         FinalGlobalValues finalGlobalValues = new FinalGlobalValues(boundingBox,totalSimulationTime);
         writeJson(FINAL_GLOBAL_VALUES_FILENAME, finalGlobalValues, gsonAll);
-
+        writeSimulationParameters(SIMULATION_PARAMETERS_FILENAME, recomenderParametersString, gsonAll); 
+        
         //add the initialentities to the active entities 
         for (Entity entity : FilterEntitiesForHistory(initialEntities)) {
             if (activeEntities.addToMapFor(instantiateHistoric(entity)) != null) { //there was already an entity
@@ -112,6 +114,22 @@ public class History {
             EntitiesJson entjason = new EntitiesJson(histent, activeEntities.getCollectionFor(histent));
             writeJson("entities/" + jsonIdentifier + ".json", entjason, gson);
         }
+    }
+    /**
+     * It creates a file and writes the specified information inside it.
+     *
+     * @param name It is the name of the file which is created.
+     * @param content It is the information which is written in the file.
+     */
+    private static void writeSimulationParameters(String name, String content, Gson gs) throws IOException {
+        // it creates a file with the specified name in the history directory
+        File json = outputPath.resolve(name).toFile();
+        json.getParentFile().mkdirs();
+
+        // it writes the specified content in the created file
+        FileWriter writer = new FileWriter(json);
+        writer.write(content);
+        writer.close();
     }
 
     /**

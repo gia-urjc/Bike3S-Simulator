@@ -37,6 +37,14 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
 
         private double factorProb = 2000D;
         private double factorImp = 1000D;
+
+        @Override
+        public String toString() {
+            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", upperProbabilityBound=" + upperProbabilityBound + ", desireableProbability=" + desireableProbability + ", factorProb=" + factorProb + ", factorImp=" + factorImp ;
+        }
+    }
+    public String getParameterString(){
+        return "RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
     }
     private RecommendationParameters parameters;
 

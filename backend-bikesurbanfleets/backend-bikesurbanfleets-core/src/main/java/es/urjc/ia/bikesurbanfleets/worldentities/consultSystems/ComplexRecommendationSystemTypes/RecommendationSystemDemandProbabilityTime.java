@@ -37,6 +37,14 @@ public class RecommendationSystemDemandProbabilityTime extends RecommendationSys
         private double desireableProbability = 0.6;
 
         private double probfactor = 8000D;
+
+        @Override
+        public String toString() {
+            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", upperProbabilityBound=" + upperProbabilityBound + ", desireableProbability=" + desireableProbability + ", probfactor=" + probfactor ;
+        }
+    }
+    public String getParameterString(){
+        return "RecommendationSystemDemandProbabilityTime Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
     }
     private RecommendationParameters parameters;
 

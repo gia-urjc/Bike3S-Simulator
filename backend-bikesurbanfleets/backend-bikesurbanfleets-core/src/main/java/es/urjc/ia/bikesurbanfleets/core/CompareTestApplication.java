@@ -120,7 +120,7 @@ public class CompareTestApplication {
             runSimulationTest(globalInfo, jsonReader, testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
             runResultAanalisis(testdir);
         }
-        new ResultsComparator(analisisDir, analisisDir + "compareResults.csv", globalInfo.getTotalSimulationTime()).compareTestResults();
+        new ResultsComparator(analisisDir, historyDir, analisisDir + "compareResults.csv", globalInfo.getTotalSimulationTime()).compareTestResults();
         //script requires autorization    runscriptR();
     }
 

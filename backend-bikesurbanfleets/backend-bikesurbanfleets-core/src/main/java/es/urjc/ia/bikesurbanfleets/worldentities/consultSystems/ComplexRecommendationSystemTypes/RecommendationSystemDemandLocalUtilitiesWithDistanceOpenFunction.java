@@ -40,6 +40,14 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction ex
         private int MaxDistanceNormalizer=600;
         private double wheightDistanceStationUtility = 0.35;
 
+        @Override
+        public String toString() {
+            return  "maxDistanceRecommendation=" + maxDistanceRecommendation + ", MaxDistanceNormalizer=" + MaxDistanceNormalizer + ", wheightDistanceStationUtility=" + wheightDistanceStationUtility ;
+        }
+
+    }
+   public String getParameterString(){
+        return "RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunction Parameters{"+ this.parameters.toString() + "}";
     }
 
     private RecommendationParameters parameters;

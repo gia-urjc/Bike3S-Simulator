@@ -46,6 +46,14 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         private double maxStationsToReccomend = 30;
         private double factorDemandData=30;
 
+        @Override
+        public String toString() {
+            return  "maxDistanceRecommendation=" + maxDistanceRecommendation + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", MaxCostValueRent=" + MaxCostValueRent + ", MaxCostValueReturn=" + MaxCostValueReturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", factorDemandData=" + factorDemandData ;
+        }
+
+    }
+    public String getParameterString(){
+        return "RecommendationSystemDemandProbabilityCostGlobalPredictionSimple Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
     }
     private RecommendationParameters parameters;
     private SimpleCostCalculator scc;

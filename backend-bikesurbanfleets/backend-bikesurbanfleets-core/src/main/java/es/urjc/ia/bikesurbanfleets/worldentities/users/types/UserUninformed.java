@@ -119,14 +119,6 @@ public class UserUninformed extends User {
         int maxDistanceToRentBike = 600;
 
         GeoPoint intermediatePosition = null;
-
-        @Override
-        public String toString() {
-            return "Parameters{"
-                    + "minRentalAttempts=" + minRentalAttempts
-                    + '}';
-        }
-
     }
 
     Parameters parameters;

@@ -42,6 +42,14 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         private double unsucesscostRent = 3000;
         private double unsucesscostReturn = 2000;
 
+        @Override
+        public String toString() {
+            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", minProbRecommendation=" + minProbRecommendation + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent + ", unsucesscostReturn=" + unsucesscostReturn ;
+        }
+
+    }
+    public String getParameterString(){
+        return "RecommendationSystemDemandProbabilityCost Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
     }
 
     private RecommendationParameters parameters;

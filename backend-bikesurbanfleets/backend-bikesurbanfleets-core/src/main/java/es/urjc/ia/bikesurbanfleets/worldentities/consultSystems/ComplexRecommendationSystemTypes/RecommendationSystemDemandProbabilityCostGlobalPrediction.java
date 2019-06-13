@@ -44,6 +44,14 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         private double unsucesscostReturn = 2000;
         private double factorDemandData = 0.01; 
 
+        @Override
+        public String toString() {
+            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", minProbRecommendation=" + minProbRecommendation + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent + ", unsucesscostReturn=" + unsucesscostReturn + ", factorDemandData=" + factorDemandData ;
+        }
+
+    }
+    public String getParameterString(){
+        return "RecommendationSystemDemandProbabilityCostGlobalPrediction Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
     }
 
     private RecommendationParameters parameters;

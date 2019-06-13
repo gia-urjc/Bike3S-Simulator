@@ -77,7 +77,8 @@ public final class SimulationEngine {
         initialentities.addAll(services.getInfrastructureManager().consultBikes());
         initialentities.addAll(services.getInfrastructureManager().consultStations());
         History.init(globalInfo.getHistoryOutputPath(), GlobalInfo.TIMEENTRIES_PER_HISTORYFILE,
-                globalInfo.getBoundingBox(), globalInfo.getTotalSimulationTime(), initialentities);
+                globalInfo.getBoundingBox(), globalInfo.getTotalSimulationTime(), initialentities, 
+                services.getRecommendationSystem().getParameterString());
 
         //6.   generate the initial events (userappears)
         List<EventUserAppears> userevents=getUserAppearanceEvents(usersInfo, services, globalInfo.getRandomSeed());

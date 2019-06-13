@@ -55,6 +55,8 @@ public abstract class RecommendationSystem {
 
     protected abstract List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination);
 
+    public abstract String getParameterString();
+   
     public List<Recommendation> getRecomendedStationToRentBike(GeoPoint currentposition) {
         List<Recommendation> rec = recommendStationToRentBike(currentposition);
         if (rec.size() < minNumberRecommendations) {

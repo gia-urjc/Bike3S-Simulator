@@ -36,7 +36,13 @@ public class RecommendationSystemByResourcesRatio extends RecommendationSystem {
          * and the indicated geographical point.
          */
         private int maxDistanceRecommendation = 600;
-
+        @Override
+        public String toString() {
+            return "maxDistanceRecommendation=" + maxDistanceRecommendation ;
+        }
+    }
+    public String getParameterString(){
+        return "RecommendationSystemByResourcesRatio Parameters{"+ this.parameters.toString() + "}";
     }
 
     private RecommendationParameters parameters;

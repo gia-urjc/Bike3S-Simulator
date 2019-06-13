@@ -48,6 +48,14 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
 
         private double wheightDistanceStationUtility = 0.35;
 
+        @Override
+        public String toString() {
+            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", MaxDistanceSurroundingStations=" + MaxDistanceSurroundingStations + ", MaxDistanceNormalizer=" + MaxDistanceNormalizer + ", wheightDistanceStationUtility=" + wheightDistanceStationUtility ;
+        }
+
+    }
+    public String getParameterString(){
+        return "SURROUNDING_LOCAL_UTILITY_W_DISTANCE_DEMAND_OPENFUNCTION Parameters{"+ this.parameters.toString() + "}";
     }
 
     private class StationSurroundingData {

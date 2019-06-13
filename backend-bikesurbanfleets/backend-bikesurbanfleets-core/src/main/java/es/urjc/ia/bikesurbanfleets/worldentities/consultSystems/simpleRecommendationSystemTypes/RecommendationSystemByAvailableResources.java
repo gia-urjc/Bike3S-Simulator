@@ -37,6 +37,14 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
          */
         private int maxDistanceRecommendation = 600;
 
+        @Override
+        public String toString() {
+            return "maxDistanceRecommendation=" + maxDistanceRecommendation ;
+        }
+
+    }
+    public String getParameterString(){
+        return "RecommendationSystemByAvailableResources Parameters{"+ this.parameters.toString() + "}";
     }
 
     private RecommendationParameters parameters;

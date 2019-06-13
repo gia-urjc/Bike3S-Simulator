@@ -41,8 +41,15 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
          */
         private double MaxDistanceSurroundingStations = 300;
 
-    }
+        @Override
+        public String toString() {
+            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", MaxDistanceSurroundingStations=" + MaxDistanceSurroundingStations ;
+        }
 
+    }
+    public String getParameterString(){
+        return "RecommendetionSystemSurroundingByDistanceAvailableResources Parameters{"+ this.parameters.toString() + "}";
+    }
     private class StationSurroundingData {
         StationSurroundingData(Station s, double q, double d){
             station=s;

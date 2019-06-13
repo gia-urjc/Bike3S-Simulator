@@ -47,6 +47,13 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         public double probabilityUsersObey = 1D;
         public boolean takeintoaccountexpected = true;
         public boolean takeintoaccountcompromised = true;
+         @Override
+        public String toString() {
+            return "walkingVelocity=" + walkingVelocity + ", cyclingVelocity=" + cyclingVelocity + ", probabilityUsersObey=" + probabilityUsersObey + ", takeintoaccountexpected=" + takeintoaccountexpected + ", takeintoaccountcompromised=" + takeintoaccountcompromised ;
+        }
+    }
+    public String getParameterString(){
+        return this.baseparameters.toString();
     }
 
     protected double straightLineWalkingVelocity ;
@@ -85,6 +92,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         pastrecs=new PastRecommendations();
     }
     
+
     private static Comparator<Station> byDistance(GeoPoint point) {
         return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point), s2.getPosition().distanceTo(point));
     }
