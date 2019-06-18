@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class UserObedient extends UserUninformed {
 
     private double lastexpetedProbability;
-    private final boolean printHints = false;
+    private final boolean printHints = true;
 
     public UserObedient(JsonObject userdef, SimulationServices services, long seed) throws Exception {
         super(userdef, services, seed);
@@ -34,7 +34,7 @@ public class UserObedient extends UserUninformed {
     @Override
     public UserDecision decideAfterFailedRental() {
         if (printHints) {
-            System.out.format("Failed take. last probability was:  %9.8f %n" , lastexpetedProbability);
+            System.out.format("[Info] User: %3d Failed take. last probability was:  %9.8f %n" , this.getId(),lastexpetedProbability);
          }
 //        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) {
 //            return new UserDecisionLeaveSystem();
@@ -52,7 +52,7 @@ public class UserObedient extends UserUninformed {
     @Override
     public UserDecisionStation decideAfterFailedReturn() {
         if (printHints) {
-             System.out.format("Failed return. last probability was:  %9.8f %n" , lastexpetedProbability);
+             System.out.format("[Info] User: %3d Failed return. last probability was:  %9.8f %n" , this.getId(),lastexpetedProbability);
         }
         Station s = determineStationToReturnBike();
         return new UserDecisionStation(s, false);
@@ -62,9 +62,13 @@ public class UserObedient extends UserUninformed {
     protected Station determineStationToRentBike() {
 
         Station destination = null;
-        List<Recommendation> originRecommendedStations = recommendationSystem.getRecomendedStationToRentBike(this.getPosition());
+        if (printHints) {
+             System.out.println("User: "+ this.getId() + " asks for renting recommendation%n");
+        }
+        List<Recommendation> originRecommendedStations = recommendationSystem.getRecomendedStationsToRentBike(this.getPosition());
         List<Recommendation> recommendedStations = originRecommendedStations.stream()
                 .filter(recomendation -> recomendation.getStation().getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
+        boolean noStationAtdist=recommendedStations.isEmpty();
 
         List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts();
         removeTriedStations(recommendedStations, triedStations);
@@ -74,11 +78,13 @@ public class UserObedient extends UserUninformed {
             lastexpetedProbability = recommendedStations.get(0).getProbability();
         } else {
             if (printHints) {
-                if (!originRecommendedStations.isEmpty()) {
-                    System.out.println("not accepted recommended station when taking because of distance: " + originRecommendedStations.get(0).getStation().getPosition().distanceTo(this.getPosition()));
+                if (!originRecommendedStations.isEmpty() && noStationAtdist) {
+                    System.out.println("[Warn] User " + this.getId() + " not accepted recommended station when taking because of distance: " + originRecommendedStations.get(0).getStation().getPosition().distanceTo(this.getPosition()));
+                } else if (!originRecommendedStations.isEmpty() && !noStationAtdist) {
+                    System.out.println("[Warn] User " + this.getId() + " no station used (all recommendation tried already) ");
                 } else {
-                    System.out.println("not recommended station whent taking ");
-                }
+                    System.out.println("[Warn] User " + this.getId() + " no recommendation obtained ");
+                 }
             }
         }
         return destination;
@@ -98,15 +104,24 @@ public class UserObedient extends UserUninformed {
     @Override
     protected Station determineStationToReturnBike() {
         Station destination = null;
-
-        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationToReturnBike(this.getPosition(), destinationPlace);
+        if (printHints) {
+             System.out.println("User: "+ this.getId() + " asks for return recommendation%n");
+        }
+        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationsToReturnBike(this.getPosition(), destinationPlace);
         List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
         removeTriedStations(recommendedStations, triedStations);
         if (!recommendedStations.isEmpty()) {
             destination = recommendedStations.get(0).getStation();
             lastexpetedProbability = recommendedStations.get(0).getProbability();
-        } else {
-            throw new RuntimeException("user cant return a bike, recomender did not tell return station");
+        } else {   
+            System.out.println("[Warn] User " + this.getId() + " no (new) return station recommended, will try return at closest station with slot");
+            List<Station> finalStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.destinationPlace);
+            if (!finalStations.isEmpty()) {
+                destination = finalStations.get(0);
+            } else {
+                throw new RuntimeException("[Error] User " + this.getId() + " cant return a bike, no slots");
+            }
+            return destination;
         }
         return destination;
     }

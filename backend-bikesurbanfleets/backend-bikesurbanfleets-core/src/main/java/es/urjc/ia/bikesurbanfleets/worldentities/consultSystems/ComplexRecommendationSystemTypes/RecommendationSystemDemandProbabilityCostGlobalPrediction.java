@@ -83,7 +83,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 break;
             }
             if (sd.getProbabilityTake()> 0) {
-                double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.factorDemandData, this.recutils);
+                double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.factorDemandData, this.recutils, this.parameters.maxDistanceRecommendation);
                 sd.setTotalCost(cost);
                 addrent(sd, orderedlist);
                 i++;
@@ -101,7 +101,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 break;
             }
             if (sd.getProbabilityReturn()> 0) {
-                double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata,  this.parameters.factorDemandData, this.recutils);
+                double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata,  this.parameters.factorDemandData, this.recutils, this.parameters.maxDistanceRecommendation);
                 sd.setTotalCost(cost);
                 addreturn(sd, orderedlist);
                 i++;

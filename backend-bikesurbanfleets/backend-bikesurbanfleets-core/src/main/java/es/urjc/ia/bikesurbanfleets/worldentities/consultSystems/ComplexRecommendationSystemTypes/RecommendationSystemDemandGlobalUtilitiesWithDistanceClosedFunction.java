@@ -51,7 +51,6 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
 
     private RecommendationParameters parameters;
     private UtilitiesForRecommendationSystems recutils;
-    boolean printHints = true;
 
     public RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);

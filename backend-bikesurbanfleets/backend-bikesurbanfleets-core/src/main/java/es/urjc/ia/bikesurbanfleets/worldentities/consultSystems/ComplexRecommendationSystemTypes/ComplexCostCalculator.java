@@ -46,10 +46,11 @@ public class ComplexCostCalculator {
     public double calculateWayCostRentHeuristic(List<StationUtilityData> way, StationUtilityData sd, double takeprob,
             double margprob, double walktime,
             List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
+            List<StationUtilityData> allstats, boolean start,double maxstraightlinedistanceRent) {
         way.add(sd);
         double thiscost = (margprob - minimumMarginProbability) * walktime;
         double newmargprob = margprob * (1 - takeprob);
+        double remainingdistance=maxstraightlinedistanceRent-(walktime*walkingVelocity);
         if (margprob <= minimumMarginProbability) {
             throw new RuntimeException("error parameters");
         }
@@ -58,39 +59,44 @@ public class ComplexCostCalculator {
         }
         //find best neighbour
         lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourRent(sd.getStation(), newmargprob, lookedlist, allstats);
-        double newtime = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition())/ walkingVelocity;
-        if (start) {
-            sd.bestNeighbour = closestneighbour;
+        StationUtilityData closestneighbour = bestNeighbourRent(sd.getStation(), newmargprob, lookedlist, allstats,remainingdistance);
+        double margcost;
+        if (closestneighbour!=null) {
+            double newtime = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition())/ walkingVelocity;
+            if (start) {
+                sd.bestNeighbour = closestneighbour;
+            }
+            margcost = newmargprob * unsuccessCostRent
+                + calculateWayCostRentHeuristic(way, closestneighbour, closestneighbour.getProbabilityTake(), newmargprob, newtime, lookedlist, allstats, false,remainingdistance);
+        } else {
+            margcost = newmargprob * unsuccessCostRent+(newmargprob - minimumMarginProbability) * maxCostValue;
         }
-        double margcost = newmargprob * unsuccessCostRent
-                + calculateWayCostRentHeuristic(way, closestneighbour, closestneighbour.getProbabilityTake(), newmargprob, newtime, lookedlist, allstats, false);
         return thiscost + penalisationfactorrent * margcost;
     }
 
     public double calculateWayCostRentHeuristic(List<StationUtilityData> way, StationUtilityData sd,
             double margprob, double walktime,
             List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
+            List<StationUtilityData> allstats, boolean start,double maxstraightlinedistanceRent) {
         return calculateWayCostRentHeuristic(way, sd, sd.getProbabilityTake(),
-            margprob, walktime, lookedlist, allstats, start);
+            margprob, walktime, lookedlist, allstats, start,maxstraightlinedistanceRent);
     }
     
     public double calculateCostRentHeuristic(StationUtilityData sd,
             double margprob, double walktime,
             List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
+            List<StationUtilityData> allstats, boolean start, double maxstraightlinedistanceRent) {
         return calculateWayCostRentHeuristic(new ArrayList<>(), sd, sd.getProbabilityTake(),
-            margprob, walktime, lookedlist, allstats, start);
+            margprob, walktime, lookedlist, allstats, start,maxstraightlinedistanceRent);
     }
     
  
     public double calculateCostRentHeuristic(StationUtilityData sd, double takeprob,
             double margprob, double currenttime,
             List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
+            List<StationUtilityData> allstats, boolean start, double maxstraightlinedistanceRent) {
         return calculateWayCostRentHeuristic(new ArrayList<>(), sd, takeprob,
-            margprob, currenttime, lookedlist, allstats, start);
+            margprob, currenttime, lookedlist, allstats, start, maxstraightlinedistanceRent);
     }
 
     //DO NOT CHANGE IT IS WORKING :)
@@ -203,22 +209,26 @@ public class ComplexCostCalculator {
                 + this.parameters.penalisationfactorreturn * (1 - prob) * (margcost + this.parameters.unsucesscostReturn);
     }
 */
-    private StationUtilityData bestNeighbourRent(Station s, double newmargprob, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats) {
+    private StationUtilityData bestNeighbourRent(Station s, double newmargprob, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats,
+            double remainingdistance) {
         double newbestValueFound = Double.MAX_VALUE;
         StationUtilityData bestneighbour = null;
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei) && nei.getProbabilityTake() > minProbSecondaryRecommendation) {
-                double newtime = s.getPosition().distanceTo(nei.getStation().getPosition()) / walkingVelocity;
-                double altthiscost = (newmargprob - minimumMarginProbability) * newtime;
-                double altnewmargprob = newmargprob * (1 - nei.getProbabilityTake());
-                if (altnewmargprob <= minimumMarginProbability) {
-                    altthiscost = altthiscost;
-                } else {
-                    altthiscost = altthiscost + (altnewmargprob - minimumMarginProbability) * maxCostValue;
-                }
-                if (altthiscost < newbestValueFound) {
-                    newbestValueFound = altthiscost;
-                    bestneighbour = nei;
+                double newdist=s.getPosition().distanceTo(nei.getStation().getPosition()) ;
+                if (newdist<remainingdistance) {
+                    double newtime = s.getPosition().distanceTo(nei.getStation().getPosition()) / walkingVelocity;
+                    double altthiscost = (newmargprob - minimumMarginProbability) * newtime;
+                    double altnewmargprob = newmargprob * (1 - nei.getProbabilityTake());
+                    if (altnewmargprob <= minimumMarginProbability) {
+                        altthiscost = altthiscost;
+                    } else {
+                        altthiscost = altthiscost + (altnewmargprob - minimumMarginProbability) * maxCostValue;
+                    }
+                    if (altthiscost < newbestValueFound) {
+                        newbestValueFound = altthiscost;
+                        bestneighbour = nei;
+                    }
                 }
             }
         }
@@ -253,11 +263,13 @@ public class ComplexCostCalculator {
     //global cost calculation. calculates the cost of taking/returning and also the cost differences
     // returns the global costs
     public double calculateCostsRentAtStation(StationUtilityData sd,
-            List<StationUtilityData> allstats, double demandfactor, UtilitiesForRecommendationSystems urs) {
+            List<StationUtilityData> allstats, 
+            double demandfactor, UtilitiesForRecommendationSystems urs,
+            double maxstraightlinedistanceRent) {
         //takecosts
         List<StationUtilityData> lookedlist = new ArrayList<>();
         List<StationUtilityData> way = new LinkedList<StationUtilityData>();
-        double usercosttake = calculateWayCostRentHeuristic(way, sd , 1, sd.getWalkTime(), lookedlist, allstats, true);
+        double usercosttake = calculateWayCostRentHeuristic(way, sd , 1, sd.getWalkTime(), lookedlist, allstats, true, maxstraightlinedistanceRent);
 
         //analyze global costs
         double margprob = 1;
@@ -269,9 +281,9 @@ public class ComplexCostCalculator {
         for (StationUtilityData wp : way) {
             //calculate takecost difference
             newlookedlist=new ArrayList<>(lookedlist);
-            double costtake = calculateCostRentHeuristic(wp, 1, 0, newlookedlist, allstats, false);
+            double costtake = calculateCostRentHeuristic(wp, 1, 0, newlookedlist, allstats, false, maxstraightlinedistanceRent);
             newlookedlist=new ArrayList<>(lookedlist);
-            double costtakeafter = calculateCostRentHeuristic(wp, wp.getProbabilityTakeAfterTake(), 1, 0, newlookedlist, allstats, false);
+            double costtakeafter = calculateCostRentHeuristic(wp, wp.getProbabilityTakeAfterTake(), 1, 0, newlookedlist, allstats, false, maxstraightlinedistanceRent);
             double difcosttake=(costtakeafter - costtake) ;
             //calculate return cost difference
             GeoPoint hipodestination = wp.getStation().getPosition();
@@ -316,7 +328,7 @@ public class ComplexCostCalculator {
     }
 
     public double calculateCostsReturnAtStation(StationUtilityData sd, GeoPoint destination,
-            List<StationUtilityData> allstats, double demandfactor, UtilitiesForRecommendationSystems urs) {
+            List<StationUtilityData> allstats, double demandfactor, UtilitiesForRecommendationSystems urs, double maxstraightlinedistanceRent) {
         //return costs
         //take a close point to the station as hipotetical detsination
         List<StationUtilityData> lookedlist = new ArrayList<>();
@@ -333,9 +345,9 @@ public class ComplexCostCalculator {
         for (StationUtilityData wp : way) {
             //calculate takecost difference
             newlookedlist=new ArrayList<>(lookedlist);
-            double costtake = calculateCostRentHeuristic(wp, 1, 0, newlookedlist, allstats, false);
+            double costtake = calculateCostRentHeuristic(wp, 1, 0, newlookedlist, allstats, false, maxstraightlinedistanceRent);
             newlookedlist=new ArrayList<>(lookedlist);
-            double costtakeafter = calculateCostRentHeuristic( wp, wp.getProbabilityTakeAfterRerturn(), 1, 0, newlookedlist, allstats, false);
+            double costtakeafter = calculateCostRentHeuristic( wp, wp.getProbabilityTakeAfterRerturn(), 1, 0, newlookedlist, allstats, false, maxstraightlinedistanceRent);
             double difcosttake=(costtakeafter - costtake) ;
             //calculate return cost difference
             GeoPoint hipodestination = wp.getStation().getPosition();

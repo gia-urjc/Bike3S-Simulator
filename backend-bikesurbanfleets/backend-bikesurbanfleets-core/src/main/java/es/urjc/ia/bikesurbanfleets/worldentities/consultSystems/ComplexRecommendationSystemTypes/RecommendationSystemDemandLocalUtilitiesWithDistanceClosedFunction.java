@@ -52,7 +52,6 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
 
     private RecommendationParameters parameters;
     private UtilitiesForRecommendationSystems recutils;
-    boolean printHints = true;
 
  
     public RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {

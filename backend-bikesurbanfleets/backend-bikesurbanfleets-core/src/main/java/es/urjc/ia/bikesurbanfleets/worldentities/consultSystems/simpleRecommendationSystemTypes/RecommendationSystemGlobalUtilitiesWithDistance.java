@@ -53,7 +53,6 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
     }
 
     private RecommendationParameters parameters;
-    boolean printHints = true;
 
     public RecommendationSystemGlobalUtilitiesWithDistance(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);

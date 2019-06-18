@@ -9,12 +9,16 @@ import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.simpleRecommendationSystemTypes.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public abstract class RecommendationSystem {
 
     private int minNumberRecommendations=10;
+
+    //variable to print debug output for analysis
+    protected final boolean printHints = true;
 
     /**
      * It provides information about the infraestructure state.
@@ -57,7 +61,7 @@ public abstract class RecommendationSystem {
 
     public abstract String getParameterString();
    
-    public List<Recommendation> getRecomendedStationToRentBike(GeoPoint currentposition) {
+    public List<Recommendation> getRecomendedStationsToRentBike(GeoPoint currentposition) {
         List<Recommendation> rec = recommendStationToRentBike(currentposition);
         if (rec.size() < minNumberRecommendations) {
             addAlternativeRecomendations(currentposition, rec, true);
@@ -65,14 +69,13 @@ public abstract class RecommendationSystem {
         return rec;
     }
 
-    public List<Recommendation> getRecomendedStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
+    public List<Recommendation> getRecomendedStationsToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> rec = recommendStationToReturnBike(currentposition, destination);
         if (rec.size() < minNumberRecommendations) {
             addAlternativeRecomendations(destination, rec, false);
         }
         return rec;
     }
-
     private boolean containsStation(List<Recommendation> recs, Station s) {
         if (recs.stream().anyMatch((r) -> (r.getStation() == s))) {
             return true;

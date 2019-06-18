@@ -2,6 +2,7 @@ package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommen
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import static es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint.STRAIGT_LINE_FACTOR;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
@@ -59,7 +60,6 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     protected double straightLineWalkingVelocity ;
     protected double straightLineCyclingVelocity ;
 
-    boolean printHints = true;
     protected RecommendationParameters baseparameters;
     protected UtilitiesForRecommendationSystems recutils;
     private PastRecommendations pastrecs;
@@ -85,8 +85,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         // Vel_straightline=(d/dr)*vel_real -> Vel_straightline=vel_real/f
         //assuming real velocities of 1.4 m/s and 6 m/s for walking and biking (aprox. to 5 and 20 km/h)
         //the adapted straight line velocities are: 1m/s and 4.286m/s
-        straightLineWalkingVelocity = this.baseparameters.walkingVelocity/1.4;
-        straightLineCyclingVelocity = this.baseparameters.cyclingVelocity/1.4;
+        straightLineWalkingVelocity = this.baseparameters.walkingVelocity/STRAIGT_LINE_FACTOR;
+        straightLineCyclingVelocity = this.baseparameters.cyclingVelocity/STRAIGT_LINE_FACTOR;
         
         recutils=new UtilitiesForRecommendationSystems(this);
         pastrecs=new PastRecommendations();
@@ -125,7 +125,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     (int) (dist / straightLineWalkingVelocity), true);
         } else {
             result = new ArrayList<>();
-            System.out.println("no recommendation for take at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
+            System.out.println("[Warn] no recommendation for take at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
         }
         return result;
     }
@@ -138,7 +138,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getOrderedStationsReturn(stations, destination, currentposition);
             if (su.size() == 0) {
-                System.out.println("ERROR return: no recommendation found with minimal parameters at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
+                System.out.println("[ERROR] return: no recommendation found with minimal parameters at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
             }
             if (printHints) {
                 printRecomendations(su, false);
@@ -155,7 +155,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             pastrecs.addExpectedBikechange(first.getStation().getId(),
                     (int) (dist / straightLineCyclingVelocity), false);
         } else {
-            System.out.println("no recommendation for return at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
+            System.out.println("[Warn] no recommendation for return at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
         }
         return result;
     }
@@ -168,7 +168,9 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     private void printRecomendations(List<StationUtilityData> su, boolean take) {
         if (printHints) {
             int max = Math.min(10, su.size());
-            System.out.println();
+       //     if (su.get(0).getStation().getId()==8) max=173;
+       //     else return;
+
             if (take) {
                 System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
                 probst += su.get(0).getProbabilityTake();
@@ -176,7 +178,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                 System.out.format("Expected successrate take: %9.8f %n", (probst / callst));
 
                 if (su.get(0).getProbabilityTake() < 0.6) {
-                    System.out.format("LOW PROB Take %9.8f %n", su.get(0).getProbabilityTake());
+                    System.out.format("[Info] LOW PROB Take %9.8f %n", su.get(0).getProbabilityTake());
                     lowprobs++;
                 }
                 System.out.println("         id av ca   wdist   wtime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");
@@ -215,7 +217,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                 System.out.format("Expected successrate return: %9.8f %n", (probsr / callsr));
 
                 if (su.get(0).getProbabilityReturn() < 0.6) {
-                    System.out.format("LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());
+                    System.out.format("[Info] LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());
                     lowprobs++;
                 }
                 System.out.println("         id av ca   wdist   wtime   bdist   btime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");
@@ -250,6 +252,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     }
                 }
             }
+        System.out.println();
         }
     }
     

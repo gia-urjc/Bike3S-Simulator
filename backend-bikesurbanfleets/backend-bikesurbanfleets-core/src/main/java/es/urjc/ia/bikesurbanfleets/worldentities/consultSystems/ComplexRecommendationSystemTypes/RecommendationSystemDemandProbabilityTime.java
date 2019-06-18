@@ -81,7 +81,7 @@ public class RecommendationSystemDemandProbabilityTime extends RecommendationSys
     }
     protected boolean betterOrSameRentDecideSimilar(StationUtilityData newSD, StationUtilityData oldSD){
                double timediff = (newSD.getWalkTime()- oldSD.getWalkTime());
-                double probdiff = (newSD.getProbabilityTakeAfterTake()- oldSD.getProbabilityTakeAfterTake()) * this.parameters.probfactor;
+                double probdiff = (newSD.getProbabilityTake()- oldSD.getProbabilityTake()) * this.parameters.probfactor;
                 if (probdiff > timediff) {
                     return true;
                 }
@@ -97,17 +97,17 @@ public class RecommendationSystemDemandProbabilityTime extends RecommendationSys
     protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
         if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation
                 && oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
-            if (oldSD.getProbabilityTakeAfterTake() >= this.parameters.desireableProbability
-                    && newSD.getProbabilityTakeAfterTake() >= this.parameters.desireableProbability) {
+            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability
+                    && newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
                 return betterOrSameRentDecideSimilar(newSD, oldSD);
             }
-            if (newSD.getProbabilityTakeAfterTake() >= this.parameters.desireableProbability) {
+            if (newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
                 return true;
             }
-            if (oldSD.getProbabilityTakeAfterTake() >= this.parameters.desireableProbability) {
+            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
                 return false;
             }
-            if (oldSD.getProbabilityTakeAfterTake() >= newSD.getProbabilityTakeAfterTake()) {
+            if (oldSD.getProbabilityTake() >= newSD.getProbabilityTake()) {
                 return false;
             }
             return true;
@@ -125,7 +125,7 @@ public class RecommendationSystemDemandProbabilityTime extends RecommendationSys
    
         double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
                     - (oldSD.getBiketime() + oldSD.getWalkTime()));
-        double probdiff = (newSD.getProbabilityReturnAfterReturn()- oldSD.getProbabilityReturnAfterReturn()) * this.parameters.probfactor;
+        double probdiff = (newSD.getProbabilityReturn()- oldSD.getProbabilityReturn()) * this.parameters.probfactor;
             if (probdiff > timediff) {
                 return true;
             }
@@ -145,14 +145,14 @@ public class RecommendationSystemDemandProbabilityTime extends RecommendationSys
             return false;
         }
         // if here  newSD.getProbability() > oldSD.getProbability()
-         */ if (oldSD.getProbabilityReturnAfterReturn() >= this.parameters.desireableProbability
-                && newSD.getProbabilityReturnAfterReturn() >= this.parameters.desireableProbability) {
+         */ if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability
+                && newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
                return betterOrSameReturnDecideSimilar(newSD, oldSD);
          }
-        if (newSD.getProbabilityReturnAfterReturn() >= this.parameters.desireableProbability) {
+        if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
             return true;
         }
-        if (oldSD.getProbabilityReturnAfterReturn() >= this.parameters.desireableProbability) {
+        if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
             return false;
         }
                return betterOrSameReturnDecideSimilar(newSD, oldSD);

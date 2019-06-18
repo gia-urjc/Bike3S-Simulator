@@ -69,7 +69,6 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
     }
 
     private RecommendationParameters parameters;
-    boolean printHints = true;
 
     public RecommendationSystemSurroundingByAvailableResources(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);

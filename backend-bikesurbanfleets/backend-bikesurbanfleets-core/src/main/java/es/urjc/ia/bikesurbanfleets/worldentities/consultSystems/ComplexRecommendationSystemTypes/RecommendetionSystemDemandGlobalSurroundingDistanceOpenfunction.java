@@ -71,7 +71,6 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
     }
 
     private RecommendationParameters parameters;
-    boolean printHints=true;
     private UtilitiesForRecommendationSystems recutils;
 
     public RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {

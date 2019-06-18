@@ -30,8 +30,7 @@ public class UserUninformed extends User {
 
     @Override
     public UserDecision decideAfterAppearning() {
-        Station s = determineStationToRentBike();
-        
+        Station s = determineStationToRentBike();        
         if (s != null) { //user has found a station
             double dist=s.getPosition().distanceTo(this.getPosition());
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
@@ -46,7 +45,7 @@ public class UserUninformed extends User {
 //        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) {
 //            return new UserDecisionLeaveSystem();
 //        } else {
-            Station s = determineStationToRentBike();
+        Station s = determineStationToRentBike();
         if (s != null) { //user has found a station
             double dist=s.getPosition().distanceTo(this.getPosition());
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
@@ -73,11 +72,7 @@ public class UserUninformed extends User {
             return new UserDecisionGoToPointInCity(parameters.intermediatePosition);
         } else {
             Station s = determineStationToReturnBike();
-            if (s != null) { //user has found a station
-                return new UserDecisionStation(s, false);
-            } else {
-                throw new RuntimeException("user cant return a bike, no slots");
-            }
+            return new UserDecisionStation(s, false);
         }
     }
 
@@ -114,7 +109,7 @@ public class UserUninformed extends User {
          * It is the number of times that the user will try to rent a bike
          * (without a bike reservation) before deciding to leave the system.
          */
-        int minRentalAttempts = 3;
+  //      int minRentalAttempts = 3;
 
         int maxDistanceToRentBike = 600;
 
@@ -162,7 +157,7 @@ public class UserUninformed extends User {
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);
         } else {
-            throw new RuntimeException("user cant return a bike, no slots");
+            throw new RuntimeException("[Error] User " + this.getId() + " cant return a bike, no slots");
         }
         return destination;
     }

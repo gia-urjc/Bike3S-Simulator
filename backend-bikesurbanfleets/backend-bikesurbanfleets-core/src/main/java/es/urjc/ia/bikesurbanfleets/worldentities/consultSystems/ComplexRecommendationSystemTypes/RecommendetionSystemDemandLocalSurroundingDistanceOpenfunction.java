@@ -72,7 +72,6 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
     }
 
     private RecommendationParameters parameters;
-    boolean printHints=true;
     private UtilitiesForRecommendationSystems recutils;
 
     Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());

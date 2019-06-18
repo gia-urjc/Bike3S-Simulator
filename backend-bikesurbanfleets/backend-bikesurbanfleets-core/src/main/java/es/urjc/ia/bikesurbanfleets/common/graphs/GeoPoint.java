@@ -9,6 +9,8 @@ import com.google.gson.annotations.Expose;
  */
 public class GeoPoint {
 
+    //The factor used to conevrt straight line distances or times or velocity to approximate rela times, distance, velocitioes
+    public final static double STRAIGT_LINE_FACTOR=1.4;
     /**
      * It is the earth radius in meters.
      */

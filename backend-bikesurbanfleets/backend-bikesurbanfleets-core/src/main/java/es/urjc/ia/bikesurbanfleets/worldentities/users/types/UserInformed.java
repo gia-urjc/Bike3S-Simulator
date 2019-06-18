@@ -40,11 +40,11 @@ public class UserInformed extends UserUninformed {
     @Override
     protected Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> recommendedStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.destinationPlace);
-        if (!recommendedStations.isEmpty()) {
-            destination = recommendedStations.get(0);
+        List<Station> finalStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.destinationPlace);
+        if (!finalStations.isEmpty()) {
+            destination = finalStations.get(0);
         } else {
-            throw new RuntimeException("user cant return a bike, no slots");
+            throw new RuntimeException("[Error] User " + this.getId() + " cant return a bike, no slots");
         }
         return destination;
     }
