@@ -1,4 +1,15 @@
 /*
+Description: The idea of cost calulation is the following (explained in renting):
+cost=prob1*dist to station 1 + (1-Prob1)*prob2*dist to station 2 + ... where prob 1 and prob 2 are the probabilities to get a bike at those stations. 
+The sum is completed up to a total probability of 1 - minimumMarginProbability.
+When selecting the next station in the list a heuristic is used.
+
+In this class, the special fact is that when renting, instead of distance, we use squared distance/maxdistance_recomendation. 
+Thus, higher distances have higher cost. and lower have lower costs. by normalizing to maxdistance_recomendation
+the cost is igual to the distance at maxdistance_recomendation. It increases higher above and is lower below.
+
+
+a in renting instead of determining cost by prob*distance
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -16,10 +27,10 @@ import java.util.List;
  *
  * @author holger
  */
-public class ComplexCostCalculator {
+public class ComplexCostCalculator2 {
 
     //methods for cost calculations
-    public ComplexCostCalculator(double marginprob, double unsuccostrent, double unsuccostret,
+    public ComplexCostCalculator2(double marginprob, double unsuccostrent, double unsuccostret,
             double penalfactorrent, double penalfactorret, double walkvel, double cycvel, double minsecondaryprob,
             double maxDistanceRecomendation) {
         minimumMarginProbability = marginprob;
@@ -32,6 +43,7 @@ public class ComplexCostCalculator {
         minProbSecondaryRecommendation=minsecondaryprob;
         this.maxDistanceRecomendation=maxDistanceRecomendation;
         maxWalktime=this.maxDistanceRecomendation/walkingVelocity;
+
     }
 
     final double minimumMarginProbability;
@@ -42,22 +54,22 @@ public class ComplexCostCalculator {
     final double walkingVelocity;
     final double cyclingVelocity;
     final double minProbSecondaryRecommendation;
-    final double maxCostValue=10000;
+    final double maxCostValue=5000;
     final double maxDistanceRecomendation;
     final double maxWalktime;
 
-    
+    private double getSqarewalktime(double walktime, double accwalktime) {
+        double aux=(walktime+accwalktime);
+        double aux2=aux*aux;
+        return (aux2-(accwalktime*accwalktime))/maxWalktime;      
+    }
     private double calculateWayCostRentHeuristic(List<StationUtilityData> way, StationUtilityData sd, double takeprob,
             double margprob, double walktime,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start,double accwalktime) {
         way.add(sd);
-        double thiscost;
-        if (walktime+accwalktime>maxWalktime){
-            thiscost= (margprob - minimumMarginProbability) * (walktime+maxCostValue);
-        } else {
-            thiscost= (margprob - minimumMarginProbability) * walktime;
-        }
+        double sqwalktime=getSqarewalktime(walktime,accwalktime);
+        double thiscost= (margprob - minimumMarginProbability) * sqwalktime;
         double newmargprob = margprob * (1 - takeprob);
         double newaccwalktime=accwalktime+walktime;
         if (margprob <= minimumMarginProbability) {
@@ -75,10 +87,10 @@ public class ComplexCostCalculator {
             if (start) {
                 sd.bestNeighbour = closestneighbour;
             }
-            margcost = newmargprob * unsuccessCostRent
+            margcost = (newmargprob - minimumMarginProbability) * unsuccessCostRent
                 + calculateWayCostRentHeuristic(way, closestneighbour, closestneighbour.getProbabilityTake(), newmargprob, newtime, lookedlist, allstats, false,newaccwalktime);
         } else {
-            margcost = newmargprob * unsuccessCostRent+(newmargprob - minimumMarginProbability) * maxCostValue;
+            margcost = newmargprob * unsuccessCostRent+(newmargprob - minimumMarginProbability) * getSqarewalktime(newaccwalktime,maxCostValue);
         }
         return thiscost + penalisationfactorrent * margcost;
     }
@@ -105,7 +117,7 @@ public class ComplexCostCalculator {
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
         return calculateWayCostRentHeuristic(new ArrayList<>(), sd, takeprob,
-            margprob, currenttime, lookedlist, allstats, start,0);
+            margprob, currenttime, lookedlist, allstats, start, 0);
     }
 
     //DO NOT CHANGE IT IS WORKING :)
@@ -225,15 +237,13 @@ public class ComplexCostCalculator {
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei) && nei.getProbabilityTake() > minProbSecondaryRecommendation) {
                 double newtime=s.getPosition().distanceTo(nei.getStation().getPosition())/ walkingVelocity ;
-                if (newtime+accwalktime>maxWalktime){
-                    newtime+=maxCostValue;
-                }
-                double altthiscost = (newmargprob - minimumMarginProbability) * newtime;
+                double sqwalktime=getSqarewalktime(newtime,accwalktime);
+                double altthiscost = (newmargprob - minimumMarginProbability) * sqwalktime;
                 double altnewmargprob = newmargprob * (1 - nei.getProbabilityTake());
                 if (altnewmargprob <= minimumMarginProbability) {
                     altthiscost = altthiscost;
                 } else {
-                    altthiscost = altthiscost + (altnewmargprob - minimumMarginProbability) * maxCostValue;
+                    altthiscost = altthiscost + (altnewmargprob - minimumMarginProbability) * getSqarewalktime(accwalktime+newtime,maxCostValue);
                 }
                 if (altthiscost < newbestValueFound) {
                     newbestValueFound = altthiscost;
@@ -243,7 +253,7 @@ public class ComplexCostCalculator {
         }
         return bestneighbour;
     }
- 
+
     private StationUtilityData bestNeighbourReturn(Station s, double newmargprob, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats, GeoPoint destination) {
         double newbestValueFound = Double.MAX_VALUE;
         StationUtilityData bestneighbour = null;

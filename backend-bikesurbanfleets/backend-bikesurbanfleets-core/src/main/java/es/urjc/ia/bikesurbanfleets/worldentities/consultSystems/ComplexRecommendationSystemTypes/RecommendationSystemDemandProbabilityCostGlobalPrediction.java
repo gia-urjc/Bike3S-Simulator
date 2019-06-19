@@ -71,7 +71,9 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         getParameters(recomenderdef, this.parameters);
         ucc=new ComplexCostCalculator(parameters.minimumMarginProbability, parameters.unsucesscostRent,
                 parameters.unsucesscostReturn,
-            parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation );
+            parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
+                straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
+        parameters.maxDistanceRecommendation);
     }
 
     @Override
@@ -83,7 +85,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 break;
             }
             if (sd.getProbabilityTake()> 0) {
-                double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.factorDemandData, this.recutils, this.parameters.maxDistanceRecommendation);
+                double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.factorDemandData, this.recutils);
                 sd.setTotalCost(cost);
                 addrent(sd, orderedlist);
                 i++;
@@ -101,7 +103,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 break;
             }
             if (sd.getProbabilityReturn()> 0) {
-                double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata,  this.parameters.factorDemandData, this.recutils, this.parameters.maxDistanceRecommendation);
+                double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata,  this.parameters.factorDemandData, this.recutils);
                 sd.setTotalCost(cost);
                 addreturn(sd, orderedlist);
                 i++;

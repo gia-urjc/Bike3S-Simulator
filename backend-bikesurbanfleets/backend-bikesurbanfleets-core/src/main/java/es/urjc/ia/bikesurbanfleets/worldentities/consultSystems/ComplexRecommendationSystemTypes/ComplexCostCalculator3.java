@@ -16,10 +16,10 @@ import java.util.List;
  *
  * @author holger
  */
-public class ComplexCostCalculator {
+public class ComplexCostCalculator3 {
 
     //methods for cost calculations
-    public ComplexCostCalculator(double marginprob, double unsuccostrent, double unsuccostret,
+    public ComplexCostCalculator3(double marginprob, double unsuccostrent, double unsuccostret,
             double penalfactorrent, double penalfactorret, double walkvel, double cycvel, double minsecondaryprob,
             double maxDistanceRecomendation) {
         minimumMarginProbability = marginprob;
@@ -32,6 +32,7 @@ public class ComplexCostCalculator {
         minProbSecondaryRecommendation=minsecondaryprob;
         this.maxDistanceRecomendation=maxDistanceRecomendation;
         maxWalktime=this.maxDistanceRecomendation/walkingVelocity;
+
     }
 
     final double minimumMarginProbability;
@@ -42,43 +43,44 @@ public class ComplexCostCalculator {
     final double walkingVelocity;
     final double cyclingVelocity;
     final double minProbSecondaryRecommendation;
-    final double maxCostValue=10000;
+    final double maxCostValue=5000;
     final double maxDistanceRecomendation;
     final double maxWalktime;
 
-    
+    private double getSqarewalktime(double accwalktime) {
+        return accwalktime*accwalktime/maxWalktime;
+    }
     private double calculateWayCostRentHeuristic(List<StationUtilityData> way, StationUtilityData sd, double takeprob,
             double margprob, double walktime,
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start,double accwalktime) {
-        way.add(sd);
-        double thiscost;
-        if (walktime+accwalktime>maxWalktime){
-            thiscost= (margprob - minimumMarginProbability) * (walktime+maxCostValue);
-        } else {
-            thiscost= (margprob - minimumMarginProbability) * walktime;
-        }
-        double newmargprob = margprob * (1 - takeprob);
-        double newaccwalktime=accwalktime+walktime;
         if (margprob <= minimumMarginProbability) {
             throw new RuntimeException("error parameters");
         }
+        way.add(sd);
+        double newaccwalktime=accwalktime+walktime;
+        double sqwalktime=getSqarewalktime(newaccwalktime);
+        double thisprob=margprob * takeprob;
+        double newmargprob = margprob -thisprob;
         if (newmargprob <= minimumMarginProbability) {
-            return thiscost;
+            return (margprob-minimumMarginProbability)*sqwalktime;
         }
+        double thiscost= thisprob * sqwalktime;
         //find best neighbour
         lookedlist.add(sd);
         StationUtilityData closestneighbour = bestNeighbourRent(sd.getStation(), newmargprob, lookedlist, allstats,newaccwalktime);
         double margcost;
+        double extrastationpenalizationcost=(newmargprob-minimumMarginProbability) * unsuccessCostRent;
         if (closestneighbour!=null) {
             double newtime = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition())/ walkingVelocity;
             if (start) {
                 sd.bestNeighbour = closestneighbour;
             }
-            margcost = newmargprob * unsuccessCostRent
-                + calculateWayCostRentHeuristic(way, closestneighbour, closestneighbour.getProbabilityTake(), newmargprob, newtime, lookedlist, allstats, false,newaccwalktime);
-        } else {
-            margcost = newmargprob * unsuccessCostRent+(newmargprob - minimumMarginProbability) * maxCostValue;
+            margcost = extrastationpenalizationcost +
+                calculateWayCostRentHeuristic(way, closestneighbour, closestneighbour.getProbabilityTake(), newmargprob, newtime, lookedlist, allstats, false,newaccwalktime);
+        } else { //if no best neigbour found we assume a best neigbour with probability 1 at maxCostValue seconds
+            margcost = extrastationpenalizationcost +
+                    (newmargprob - minimumMarginProbability) * getSqarewalktime(newaccwalktime+maxCostValue);
         }
         return thiscost + penalisationfactorrent * margcost;
     }
@@ -105,7 +107,7 @@ public class ComplexCostCalculator {
             List<StationUtilityData> lookedlist,
             List<StationUtilityData> allstats, boolean start) {
         return calculateWayCostRentHeuristic(new ArrayList<>(), sd, takeprob,
-            margprob, currenttime, lookedlist, allstats, start,0);
+            margprob, currenttime, lookedlist, allstats, start, 0);
     }
 
     //DO NOT CHANGE IT IS WORKING :)
@@ -224,16 +226,16 @@ public class ComplexCostCalculator {
         StationUtilityData bestneighbour = null;
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei) && nei.getProbabilityTake() > minProbSecondaryRecommendation) {
-                double newtime=s.getPosition().distanceTo(nei.getStation().getPosition())/ walkingVelocity ;
-                if (newtime+accwalktime>maxWalktime){
-                    newtime+=maxCostValue;
-                }
-                double altthiscost = (newmargprob - minimumMarginProbability) * newtime;
-                double altnewmargprob = newmargprob * (1 - nei.getProbabilityTake());
+                double newacctime=accwalktime+s.getPosition().distanceTo(nei.getStation().getPosition())/ walkingVelocity ;
+                double sqwalktime=getSqarewalktime(newacctime);
+                double thisprob=newmargprob * nei.getProbabilityTake();
+                double altnewmargprob = newmargprob -thisprob;
+                //calculate the cost of this potential neighbour
+                double altthiscost;
                 if (altnewmargprob <= minimumMarginProbability) {
-                    altthiscost = altthiscost;
+                    altthiscost = (newmargprob - minimumMarginProbability) * sqwalktime;
                 } else {
-                    altthiscost = altthiscost + (altnewmargprob - minimumMarginProbability) * maxCostValue;
+                    altthiscost = thisprob * sqwalktime + (altnewmargprob - minimumMarginProbability) * getSqarewalktime(newacctime+maxCostValue);
                 }
                 if (altthiscost < newbestValueFound) {
                     newbestValueFound = altthiscost;
@@ -243,7 +245,7 @@ public class ComplexCostCalculator {
         }
         return bestneighbour;
     }
- 
+
     private StationUtilityData bestNeighbourReturn(Station s, double newmargprob, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats, GeoPoint destination) {
         double newbestValueFound = Double.MAX_VALUE;
         StationUtilityData bestneighbour = null;

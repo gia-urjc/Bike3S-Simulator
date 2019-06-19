@@ -54,7 +54,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     }
 
     private RecommendationParameters parameters;
-    private ComplexCostCalculator ucc;
+    private ComplexCostCalculator2 ucc;
 
     public RecommendationSystemDemandProbabilityCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef, ss);
@@ -68,9 +68,11 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc = new ComplexCostCalculator(parameters.minimumMarginProbability, parameters.unsucesscostRent,
+        ucc = new ComplexCostCalculator2(parameters.minimumMarginProbability, parameters.unsucesscostRent,
                 parameters.unsucesscostReturn,
-                parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation);
+                parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
+                straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
+                parameters.maxDistanceRecommendation);
     }
 
     @Override
@@ -87,7 +89,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                     goodfound = true;
                 }
                 List<StationUtilityData> lookedlist = new ArrayList<>();
-                double cost = ucc.calculateCostRentHeuristic(sd, 1, sd.getWalkTime(), lookedlist, stationdata, true, this.parameters.maxDistanceRecommendation);
+                double cost = ucc.calculateCostRentHeuristic(sd, 1, sd.getWalkTime(), lookedlist, stationdata, true);
                 sd.setTotalCost(cost);
                 addrent(sd, orderedlist);
                 if (goodfound) {
@@ -126,7 +128,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
 
     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation
+/*        if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation
                 && oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
             if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability
                     && newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
@@ -149,7 +151,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
             return true;
         }
-        return betterOrSameDecideSimilar(newSD, oldSD);
+*/        return betterOrSameDecideSimilar(newSD, oldSD);
     }
 
     protected boolean betterOrSameDecideSimilar(StationUtilityData newSD, StationUtilityData oldSD) {
@@ -162,7 +164,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
 
     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability
+/*        if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability
                 && newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
             return betterOrSameDecideSimilar(newSD, oldSD);
         }
@@ -172,7 +174,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
             return false;
         }
-        return betterOrSameDecideSimilar(newSD, oldSD);
+*/        return betterOrSameDecideSimilar(newSD, oldSD);
     }
 
 }
