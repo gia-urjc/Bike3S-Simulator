@@ -82,15 +82,17 @@ public class ComplexCostCalculator2 {
         lookedlist.add(sd);
         StationUtilityData closestneighbour = bestNeighbourRent(sd.getStation(), newmargprob, lookedlist, allstats,newaccwalktime);
         double margcost;
+        double extrastationpenalizationcost=(newmargprob-minimumMarginProbability) * unsuccessCostRent;
         if (closestneighbour!=null) {
             double newtime = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition())/ walkingVelocity;
             if (start) {
                 sd.bestNeighbour = closestneighbour;
             }
-            margcost = (newmargprob - minimumMarginProbability) * unsuccessCostRent
+            margcost = extrastationpenalizationcost
                 + calculateWayCostRentHeuristic(way, closestneighbour, closestneighbour.getProbabilityTake(), newmargprob, newtime, lookedlist, allstats, false,newaccwalktime);
         } else {
-            margcost = newmargprob * unsuccessCostRent+(newmargprob - minimumMarginProbability) * getSqarewalktime(newaccwalktime,maxCostValue);
+            margcost = extrastationpenalizationcost+
+                    (newmargprob - minimumMarginProbability) * getSqarewalktime(newaccwalktime,maxCostValue);
         }
         return thiscost + penalisationfactorrent * margcost;
     }

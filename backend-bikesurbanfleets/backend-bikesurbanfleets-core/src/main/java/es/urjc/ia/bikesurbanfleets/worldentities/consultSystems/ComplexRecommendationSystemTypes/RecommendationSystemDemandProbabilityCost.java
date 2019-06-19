@@ -54,7 +54,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     }
 
     private RecommendationParameters parameters;
-    private ComplexCostCalculator2 ucc;
+    private ComplexCostCalculator3 ucc;
 
     public RecommendationSystemDemandProbabilityCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef, ss);
@@ -68,7 +68,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc = new ComplexCostCalculator2(parameters.minimumMarginProbability, parameters.unsucesscostRent,
+        ucc = new ComplexCostCalculator3(parameters.minimumMarginProbability, parameters.unsucesscostRent,
                 parameters.unsucesscostReturn,
                 parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
