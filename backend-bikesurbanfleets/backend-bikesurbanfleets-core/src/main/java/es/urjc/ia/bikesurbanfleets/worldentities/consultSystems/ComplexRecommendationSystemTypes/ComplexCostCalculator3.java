@@ -296,7 +296,6 @@ public class ComplexCostCalculator3 {
         List<StationUtilityData> lookedlist = new ArrayList<>();
         List<StationUtilityData> way = new LinkedList<StationUtilityData>();
         double usercosttake = calculateWayCostRentHeuristic(way, sd , 1, sd.getWalkTime(), lookedlist, allstats, true);
-                double cost = ucc.calculateCostRentHeuristic(sd, 1, sd.getWalkTime(), lookedlist, stationdata, true);
 
         //analyze global costs
         double margprob = 1;

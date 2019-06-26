@@ -184,7 +184,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                 System.out.println("         id av ca   wdist   wtime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
+                            i+1,
                             s.getStation().getId(),
                             s.getStation().availableBikes(),
                             s.getStation().getCapacity(),
@@ -223,7 +224,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                 System.out.println("         id av ca   wdist   wtime   bdist   btime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("Station %3d %2d %2d %7.1f %7.1f %7.1f %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %7.1f %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
+                            i+1,
                             s.getStation().getId(),
                             s.getStation().availableBikes(),
                             s.getStation().getCapacity(),

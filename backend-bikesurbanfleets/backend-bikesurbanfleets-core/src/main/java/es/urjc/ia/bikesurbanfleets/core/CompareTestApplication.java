@@ -44,7 +44,7 @@ public class CompareTestApplication {
  //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurr";
         //testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurroundWithDemand";
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/version_usersmax600/cost_prediction";
-         mapPath = projectDir + "/../madrid.osm";
+        mapPath = projectDir + "/../madrid.osm";
         demandDataPath = projectDir + "/../demandDataMadrid0817_0918.csv";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
