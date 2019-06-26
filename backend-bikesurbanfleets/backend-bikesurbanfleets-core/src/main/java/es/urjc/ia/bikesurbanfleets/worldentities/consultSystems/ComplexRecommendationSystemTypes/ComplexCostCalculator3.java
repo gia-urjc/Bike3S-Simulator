@@ -112,8 +112,8 @@ public class ComplexCostCalculator3 {
     }
 
     private double getSqareReturnDistanceCost(double accbiketime, double walktime) {
- //       return (((accbiketime)) + ((walktime*walktime)/maxWalktime));
-        return ((accbiketime+walktime));
+        return (((accbiketime)) + ((walktime*walktime)/maxWalktime));
+ //       return ((accbiketime+walktime));
     }
     //DO NOT CHANGE IT IS WORKING :)
     public double calculateWayCostReturnHeuristic(List<StationUtilityData> way, StationUtilityData sd, double returnprob,
@@ -296,6 +296,7 @@ public class ComplexCostCalculator3 {
         List<StationUtilityData> lookedlist = new ArrayList<>();
         List<StationUtilityData> way = new LinkedList<StationUtilityData>();
         double usercosttake = calculateWayCostRentHeuristic(way, sd , 1, sd.getWalkTime(), lookedlist, allstats, true);
+                double cost = ucc.calculateCostRentHeuristic(sd, 1, sd.getWalkTime(), lookedlist, stationdata, true);
 
         //analyze global costs
         double margprob = 1;
