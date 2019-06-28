@@ -74,7 +74,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 parameters.unsucesscostReturn,
             parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-        parameters.maxDistanceRecommendation);
+        parameters.maxDistanceRecommendation, recutils);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
                     goodfound = true;
                 }
-                double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.factorDemandData, this.recutils);
+                double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.factorDemandData);
                 sd.setTotalCost(cost);
                 addrent(sd, orderedlist);
                 if (goodfound) {
@@ -114,7 +114,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 if (sd.getProbabilityReturn() > this.parameters.desireableProbability) {
                     goodfound = true;
                 }
-                double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata,  this.parameters.factorDemandData, this.recutils);
+                double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata,  this.parameters.factorDemandData);
                 sd.setTotalCost(cost);
                 addreturn(sd, orderedlist);
                 i++;

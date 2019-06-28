@@ -181,7 +181,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     System.out.format("[Info] LOW PROB Take %9.8f %n", su.get(0).getProbabilityTake());
                     lowprobs++;
                 }
-                System.out.println("         id av ca   wdist   wtime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");
+                System.out.println("             id av ca   wdist   wtime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
                     System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
@@ -221,7 +221,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     System.out.format("[Info] LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());
                     lowprobs++;
                 }
-                System.out.println("         id av ca   wdist   wtime   bdist   btime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");
+                System.out.println("             id av ca   wdist   wtime   bdist   btime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
                     System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %7.1f %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",

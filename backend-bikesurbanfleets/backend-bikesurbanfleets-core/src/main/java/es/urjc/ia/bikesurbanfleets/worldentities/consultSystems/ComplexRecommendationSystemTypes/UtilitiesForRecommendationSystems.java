@@ -151,7 +151,19 @@ public class UtilitiesForRecommendationSystems {
                 .setProbabilityReturnAfterTake(probslotaftertake)
                 .setProbabilityReturnAfterReturn(probslotafterreturn);
     }
+    //methods for calculation probabilities    
+    public double calculateProbabilityAtLeast1UserArrivingForTake(Station s, double timeoffset) {
+        double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
+        double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
+        return SellamDistribution.calculateCDFSkellamProbability(takedemandattimeoffset, retdemandatofsettime, 1);
+    }
+    public double calculateProbabilityAtLeast1UserArrivingForReturn(Station s, double timeoffset) {
+        double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
+        double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
+        return SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, 1);
+    }
 
+    
     public double getGlobalProbabilityImprovementIfTake(StationUtilityData sd ) {
         int timeoffset=(int)sd.getWalkTime();
         double futtakedemand = getFutureBikeDemand(sd.getStation(),  timeoffset);
