@@ -53,7 +53,7 @@ public class ComplexCostCalculator3 {
 
 
     private double getSqarewalkTimeRent(double accwalktime) {
-        return accwalktime*accwalktime/maxWalktime;
+        return (accwalktime*accwalktime)/maxWalktime;
     //    return accwalktime;//*accwalktime/maxWalktime;
     }
     private double getSqareReturnDistanceCost(double accbiketime, double walktime) {
@@ -74,46 +74,25 @@ public class ComplexCostCalculator3 {
         double newmargprob = margprob -thisprob;
         double newaccwalktime=accwalktime+walktime;
         double sqwalktime=getSqarewalkTimeRent(newaccwalktime);
-                if (SimulationDateTime.getCurrentSimulationInstant()>=32268 ){
-            System.out.println("in search station: " + sd.getStation().getId());
-            System.out.println("thisprob: " + thisprob);
-            System.out.println("newmargprob: " + newmargprob);
-        }
-
         if (newmargprob <= minimumMarginProbability) {
-                if (SimulationDateTime.getCurrentSimulationInstant()>=32268 ){
-            System.out.println("return cost: " + (margprob-minimumMarginProbability)*sqwalktime);
-        }
             return (margprob-minimumMarginProbability)*sqwalktime;
         }
+        double extrastationpenalizationcost=(newmargprob-minimumMarginProbability) * unsuccessCostRent;
         double thiscost= thisprob * sqwalktime;
-        //find best neighbour
+       //find best neighbour
         lookedlist.add(sd);
         StationUtilityData closestneighbour = bestNeighbourRent(sd.getStation(), newmargprob, lookedlist, allstats,newaccwalktime);
         double margcost;
-        double extrastationpenalizationcost=(newmargprob-minimumMarginProbability) * unsuccessCostRent;
-                if (SimulationDateTime.getCurrentSimulationInstant()>=32268 ){
-            System.out.println("thiscost: " + thiscost);
-            System.out.println("extrastationpenalizationcost: " + extrastationpenalizationcost);
-        }
         if (closestneighbour!=null) {
-                if (SimulationDateTime.getCurrentSimulationInstant()>=32268 ){
-            System.out.println("closestneighbour: " + closestneighbour.getStation().getId());
-        }
             double newtime = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition())/ walkingVelocity;
             if (start) {
                 sd.bestNeighbour = closestneighbour;
             }
-            margcost = extrastationpenalizationcost +
-                calculateWayCostRentHeuristic(way, closestneighbour, closestneighbour.getProbabilityTake(), newmargprob, newtime, lookedlist, allstats, false,newaccwalktime);
+            margcost = calculateWayCostRentHeuristic(way, closestneighbour, closestneighbour.getProbabilityTake(), newmargprob, newtime, lookedlist, allstats, false,newaccwalktime);
         } else { //if no best neigbour found we assume a best neigbour with probability 1 at maxCostValue seconds
-                if (SimulationDateTime.getCurrentSimulationInstant()>=32268 ){
-            System.out.println("closestneighbour: none");
+            margcost = (newmargprob - minimumMarginProbability) * getSqarewalkTimeRent(newaccwalktime+maxCostValue);
         }
-            margcost = extrastationpenalizationcost +
-                    (newmargprob - minimumMarginProbability) * getSqarewalkTimeRent(newaccwalktime+maxCostValue);
-        }
-        return thiscost + penalisationfactorrent * margcost;
+        return thiscost + extrastationpenalizationcost + penalisationfactorrent * margcost;
     }
 
     public double calculateWayCostRentHeuristic(List<StationUtilityData> way, StationUtilityData sd,
@@ -159,22 +138,21 @@ public class ComplexCostCalculator3 {
             return (margprob-minimumMarginProbability)*(timecost);
         }
         double thiscost= thisprob * (timecost);
+        double extrastationpenalizationcost=(newmargprob-minimumMarginProbability) * unsuccessCostReturn;
+        // find best neigbour
         lookedlist.add(sd);
         StationUtilityData closestneighbour = bestNeighbourReturn(sd.getStation(), newmargprob, lookedlist, allstats, destination, newaccbiketime);
         double margcost;
-        double extrastationpenalizationcost=(newmargprob-minimumMarginProbability) * unsuccessCostReturn;
         if (closestneighbour!=null) {
             double newbiketime = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition()) / cyclingVelocity;
             if (start) {
                 sd.bestNeighbour = closestneighbour;
             }
-            margcost = extrastationpenalizationcost +
-                calculateWayCostReturnHeuristic(way, closestneighbour, closestneighbour.getProbabilityReturn(), newmargprob, newbiketime, destination, lookedlist, allstats, false, newaccbiketime);
+            margcost = calculateWayCostReturnHeuristic(way, closestneighbour, closestneighbour.getProbabilityReturn(), newmargprob, newbiketime, destination, lookedlist, allstats, false, newaccbiketime);
         } else { //if no best neigbour found we assume a best neigbour with probability 1 at maxCostValue seconds
-            margcost = extrastationpenalizationcost +
-                    (newmargprob - minimumMarginProbability) * getSqareReturnDistanceCost(newaccbiketime,maxCostValue);
+            margcost = (newmargprob - minimumMarginProbability) * getSqareReturnDistanceCost(newaccbiketime,maxCostValue);
         }
-        return thiscost + penalisationfactorreturn * margcost;
+        return thiscost + extrastationpenalizationcost + penalisationfactorreturn * margcost;
     }
  
     public double calculateWayCostReturnHeuristic(List<StationUtilityData> way, StationUtilityData sd,
@@ -201,62 +179,7 @@ public class ComplexCostCalculator3 {
     return calculateWayCostReturnHeuristic(new ArrayList<>(), sd, returnprob,
             margprob, biketime, destination,lookedlist,allstats,  start,0);
     }
-   
-//alternative ways for calculation but with distance not with time
-/*        //DO NOT CHANGE IT IS WORKING :)
-    private double calculateCostRent_best(StationUtilityData sd,
-            double margprob, double accdist,
-            List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
-        double prob = sd.getProbabilityTake();
-        double newmargprob = margprob * (1 - prob);
-        if (margprob <= minimumMarginProbability) {
-            throw new RuntimeException("error parameters");
-        }
-        if (newmargprob <= minimumMarginProbability) {
-            return (1 - minimumMarginProbability / margprob) * accdist;
-        }
-        //find best neighbour
-        lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourRent(sd.getStation(), newmargprob, lookedlist, allstats);
-        double newdist = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition());
-        double newaccdist = accdist + newdist;
-        if (start) {
-            sd.bestNeighbour=closestneighbour;
-        }
-        double margcost = calculateCostRent_best(closestneighbour, newmargprob, newaccdist, lookedlist, allstats, false);
-        return prob * accdist
-                + this.parameters.penalisationfactorrent * (1 - prob) * (margcost + this.parameters.unsucesscostRent);
-    }
 
-    //DO NOT CHANGE IT IS WORKING :)
-    private double calculateCostReturn_best(StationUtilityData sd,
-            double margprob, double accbikedist, GeoPoint destination,
-            List<StationUtilityData> lookedlist,
-            List<StationUtilityData> allstats, boolean start) {
-        double prob = sd.getProbabilityReturn();
-        double newmargprob = margprob * (1 - prob);
-        double walkdist = sd.getStation().getPosition().distanceTo(destination);
-        if (margprob <= minimumMarginProbability) {
-            throw new RuntimeException("error parameters");
-        }
-        if (newmargprob <= minimumMarginProbability) {
-            return (1 - minimumMarginProbability / margprob) * accbikedist
-                    + walkdist * (margprob - minimumMarginProbability) / margprob;
-        }
-        //find best neighbour
-        lookedlist.add(sd);
-        StationUtilityData closestneighbour = bestNeighbourReturn(sd.getStation(), newmargprob, lookedlist, allstats, destination);
-        double newdist = sd.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition()) * this.parameters.bikefactor;
-        if (start) {
-            sd.bestNeighbour = closestneighbour;
-        }
-        double newaccbikedist = accbikedist + newdist;
-        double margcost = calculateCostReturn_best(closestneighbour, newmargprob, newaccbikedist, destination, lookedlist, allstats, false);
-        return prob * (accbikedist + walkdist)
-                + this.parameters.penalisationfactorreturn * (1 - prob) * (margcost + this.parameters.unsucesscostReturn);
-    }
-*/
     private StationUtilityData bestNeighbourRent(Station s, double newmargprob, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats,
             double accwalktime) {
         double newbestValueFound = Double.MAX_VALUE;
@@ -268,12 +191,7 @@ public class ComplexCostCalculator3 {
                 double thisprob=newmargprob * nei.getProbabilityTake();
                 double altnewmargprob = newmargprob -thisprob;
                 //calculate the cost of this potential neighbour
-                double altthiscost;
-                if (altnewmargprob <= minimumMarginProbability) {
-                    altthiscost = (newmargprob - minimumMarginProbability) * timecost;
-                } else {
-                    altthiscost = thisprob * timecost + (altnewmargprob - minimumMarginProbability) * getSqarewalkTimeRent(newacctime+maxCostValue);
-                }
+                double altthiscost = thisprob * timecost + altnewmargprob  * getSqarewalkTimeRent(newacctime+maxCostValue);
                 if (altthiscost < newbestValueFound) {
                     newbestValueFound = altthiscost;
                     bestneighbour = nei;
@@ -295,15 +213,8 @@ public class ComplexCostCalculator3 {
                 double thisprob=newmargprob * nei.getProbabilityReturn();
                 double altnewmargprob = newmargprob -thisprob;
                 //calculate the cost of this potential neighbour
- 
-                double altthisbikecost = (newmargprob - minimumMarginProbability) * altthisbiketime;
-                double altthiscost;
-                if (altnewmargprob <= minimumMarginProbability) {
-                    altthiscost = (newmargprob - minimumMarginProbability) * timecost;
-                } else {
-                    altthiscost = thisprob * timecost +
-                            + (altnewmargprob - minimumMarginProbability) * getSqareReturnDistanceCost(altthisbiketime,maxCostValue);
-                }
+                double  altthiscost = thisprob * timecost +
+                            + altnewmargprob * getSqareReturnDistanceCost(altthisbiketime,maxCostValue);
                 if (altthiscost < newbestValueFound) {
                     newbestValueFound = altthiscost;
                     bestneighbour = nei;
@@ -312,6 +223,7 @@ public class ComplexCostCalculator3 {
         }
         return bestneighbour;
     }
+    
     
     //global cost calculation. calculates the cost of taking/returning and also the cost differences
     // returns the global costs
@@ -330,9 +242,6 @@ public class ComplexCostCalculator3 {
         int timeoffset = (int)sd.getWalkTime();
         lookedlist.clear();
         List<StationUtilityData> newlookedlist = new ArrayList<>();
-        if (SimulationDateTime.getCurrentSimulationInstant()>=32268 && sd.getStation().getId()==134){
-            System.out.println("usercost: " + usercosttake);
-        }
         for (StationUtilityData wp : way) {
             if (margprob <= minimumMarginProbability) {
                 throw new RuntimeException("error parameters");
@@ -343,13 +252,6 @@ public class ComplexCostCalculator3 {
             newlookedlist=new ArrayList<>(lookedlist);
             double costtakeafter = calculateCostRentHeuristic(wp, wp.getProbabilityTakeAfterTake(), 1, 0, newlookedlist, allstats, false);
             double extracosttake=(costtakeafter - costtake) ;
-        if (SimulationDateTime.getCurrentSimulationInstant()>=32268 && sd.getStation().getId()==134){
-            System.out.println("wp station: " + wp.getStation().getId());
-            System.out.println("takeprob: " + wp.getProbabilityTake());
-            System.out.println("takeaftertakeprob: " + wp.getProbabilityTakeAfterTake());
-            System.out.println("costtake: " + costtake);
-            System.out.println("costtakeafter: " + costtakeafter);
-        }
 
             //calculate return cost difference
             GeoPoint hipodestination = wp.getStation().getPosition();

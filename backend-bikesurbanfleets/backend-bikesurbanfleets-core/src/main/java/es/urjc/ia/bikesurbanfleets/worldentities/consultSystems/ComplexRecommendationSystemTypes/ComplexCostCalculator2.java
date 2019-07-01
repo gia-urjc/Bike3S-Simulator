@@ -240,13 +240,9 @@ public class ComplexCostCalculator2 {
             if (!lookedlist.contains(nei) && nei.getProbabilityTake() > minProbSecondaryRecommendation) {
                 double newtime=s.getPosition().distanceTo(nei.getStation().getPosition())/ walkingVelocity ;
                 double sqwalktime=getSqarewalktime(newtime,accwalktime);
-                double altthiscost = (newmargprob - minimumMarginProbability) * sqwalktime;
+                double altthiscost = newmargprob * sqwalktime;
                 double altnewmargprob = newmargprob * (1 - nei.getProbabilityTake());
-                if (altnewmargprob <= minimumMarginProbability) {
-                    altthiscost = altthiscost;
-                } else {
-                    altthiscost = altthiscost + (altnewmargprob - minimumMarginProbability) * getSqarewalktime(accwalktime+newtime,maxCostValue);
-                }
+                altthiscost = altthiscost + altnewmargprob * getSqarewalktime(accwalktime+newtime,maxCostValue);
                 if (altthiscost < newbestValueFound) {
                     newbestValueFound = altthiscost;
                     bestneighbour = nei;
@@ -262,16 +258,11 @@ public class ComplexCostCalculator2 {
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei) && nei.getProbabilityReturn() > minProbSecondaryRecommendation) {
                 double altthisbiketime = s.getPosition().distanceTo(nei.getStation().getPosition()) / cyclingVelocity;
-                double altthisbikecost = (newmargprob - minimumMarginProbability) * altthisbiketime;
+                double altthisbikecost = newmargprob * altthisbiketime;
                 double altthiswalktime = nei.getStation().getPosition().distanceTo(destination) / walkingVelocity;
                 double altnewmargprob = newmargprob * (1 - nei.getProbabilityReturn());
-                double alttotalcost;
-                if (altnewmargprob <= minimumMarginProbability) {
-                    alttotalcost = altthisbikecost + altthiswalktime * (newmargprob - minimumMarginProbability);
-                } else {
-                    alttotalcost = altthisbikecost + altthiswalktime * newmargprob * nei.getProbabilityReturn()
-                            + (altnewmargprob - minimumMarginProbability) * maxCostValue;
-                }
+                double alttotalcost = altthisbikecost + altthiswalktime * newmargprob * nei.getProbabilityReturn()
+                            + altnewmargprob * maxCostValue;
                 if (alttotalcost < newbestValueFound) {
                     newbestValueFound = alttotalcost;
                     bestneighbour = nei;
