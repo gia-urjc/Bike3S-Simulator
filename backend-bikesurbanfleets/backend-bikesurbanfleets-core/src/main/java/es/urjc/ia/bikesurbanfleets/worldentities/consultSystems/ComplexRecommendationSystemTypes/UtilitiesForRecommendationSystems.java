@@ -163,7 +163,16 @@ public class UtilitiesForRecommendationSystems {
         return SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, 1);
     }
 
-    
+    //methods for calculation probabilities    
+    public double calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(Station s, double timeoffset) {
+        double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
+        return SellamDistribution.calculateCDFPoissonProbability(takedemandattimeoffset, 1);
+    }
+    public double calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(Station s, double timeoffset) {
+        double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
+        return SellamDistribution.calculateCDFPoissonProbability(retdemandatofsettime, 1);
+    }
+   
     public double getGlobalProbabilityImprovementIfTake(StationUtilityData sd ) {
         int timeoffset=(int)sd.getWalkTime();
         double futtakedemand = getFutureBikeDemand(sd.getStation(),  timeoffset);

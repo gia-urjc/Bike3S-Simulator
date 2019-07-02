@@ -1,5 +1,9 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommendationSystemTypes;
-
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
@@ -7,27 +11,18 @@ import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.StationUtilityData;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * This class is a system which recommends the user the stations to which he
- * should go to contribute with system rebalancing. Then, this recommendation
- * system gives the user a list of stations ordered descending by the
- * "resources/capacityº" ratio.
  *
- * @author IAgroup
- *
+ * @author holger
  */
-@RecommendationSystemType("DEMAND_cost_prediction_simple")
-public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple extends RecommendationSystemDemandProbabilityBased {
+@RecommendationSystemType("DEMAND_cost_simple")
+public class RecommendationSystemDemandProbabilityCostSimple extends RecommendationSystemDemandProbabilityBased {
 
     @RecommendationSystemParameters
     public class RecommendationParameters {
@@ -45,21 +40,22 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         private double MaxCostValue = 5000 ;
         private double maxStationsToReccomend = 30;
         private boolean squaredTimes=true;
-        private int PredictionNorm=0;
 
         @Override
         public String toString() {
-            return  "PredictionNorm="+ PredictionNorm + ", squaredTimes=" + squaredTimes + ", maxDistanceRecommendation=" + maxDistanceRecommendation + ", desireableProbability"+ desireableProbability+"minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", MaxCostValue=" + MaxCostValue  + ", maxStationsToReccomend=" + maxStationsToReccomend  ;
+            return  "squaredTimes=" + squaredTimes + ", maxDistanceRecommendation=" + maxDistanceRecommendation + ", desireableProbability"+ desireableProbability+"minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", MaxCostValue=" + MaxCostValue  + ", maxStationsToReccomend=" + maxStationsToReccomend  ;
         }
+     }
+
+    public String getParameterString() {
+        return "RecommendationSystemDemandProbabilityCost Parameters{" + super.getParameterString() + this.parameters.toString() + "}";
     }
-    public String getParameterString(){
-        return "RecommendationSystemDemandProbabilityCostGlobalPredictionSimple Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
-    }
+
     private RecommendationParameters parameters;
     private CostCalculatorSimple scc;
 
-    public RecommendationSystemDemandProbabilityCostGlobalPredictionSimple(JsonObject recomenderdef, SimulationServices ss) throws Exception {
-        super(recomenderdef,ss);
+    public RecommendationSystemDemandProbabilityCostSimple(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+        super(recomenderdef, ss);
         //***********Parameter treatment*****************************
         //if this recomender has parameters this is the right declaration
         //if no parameters are used this code just has to be commented
@@ -71,27 +67,27 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
         scc=new CostCalculatorSimple(parameters.minimumMarginProbability, 
-                parameters.MaxCostValue,
+                parameters.MaxCostValue, 
                 straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, 
-                parameters.maxDistanceRecommendation, recutils, parameters.squaredTimes, parameters.PredictionNorm);
+                parameters.maxDistanceRecommendation, recutils, parameters.squaredTimes, 0);
     }
-
 
     @Override
     protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
-        int i=0;
+        int i = 0;
         boolean goodfound = false;
         for (StationUtilityData sd : stationdata) {
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
-            if (sd.getProbabilityTake()> 0) {
+            if (sd.getProbabilityTake() > 0) {
                 if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
                     goodfound = true;
                 }
-                double cost = scc.calculateCostsRentAtStation(sd);
+                List<StationUtilityData> lookedlist = new ArrayList<>();
+                double cost = scc.calculateCostRentSimple(sd, sd.getProbabilityTake(), sd.getWalkTime());
                 sd.setTotalCost(cost);
                 addrent(sd, orderedlist);
                 if (goodfound) {
@@ -102,20 +98,21 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         return orderedlist;
     }
 
-        @Override
+    @Override
     protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
-        int i=0;
+        int i = 0;
         boolean goodfound = false;
         for (StationUtilityData sd : stationdata) {
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
-            if (sd.getProbabilityReturn()> 0) {
+            if (sd.getProbabilityReturn() > 0) {
                 if (sd.getProbabilityReturn() > this.parameters.desireableProbability) {
                     goodfound = true;
                 }
-                double cost = scc.calculateCostsReturnAtStation(sd);
+                List<StationUtilityData> lookedlist = new ArrayList<>();
+                double cost = scc.calculateCostReturnSimple(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
                 sd.setTotalCost(cost);
                 addreturn(sd, orderedlist);
                 if (goodfound) {
@@ -125,7 +122,6 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         }
         return orderedlist;
     }
-
 
     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
@@ -148,7 +144,9 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
         if (newSD.getTotalCost() < oldSD.getTotalCost()) {
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
- }
+
+}

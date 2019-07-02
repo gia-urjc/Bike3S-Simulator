@@ -21,9 +21,10 @@ import java.util.List;
 public class ComplexCostCalculator3 {
 
     //methods for cost calculations
-    public ComplexCostCalculator3(double marginprob, double unsuccostrent, double unsuccostret,
+    public ComplexCostCalculator3(double marginprob, double maxcost, double unsuccostrent, double unsuccostret,
             double penalfactorrent, double penalfactorret, double walkvel, double cycvel, double minsecondaryprob,
-            double maxDistanceRecomendation, UtilitiesForRecommendationSystems recutils) {
+            double maxDistanceRecomendation, UtilitiesForRecommendationSystems recutils,
+            boolean squaredTimes, int PredictionNorm) {
         minimumMarginProbability = marginprob;
         unsuccessCostRent = unsuccostrent;
         penalisationfactorrent = penalfactorrent;
@@ -35,9 +36,13 @@ public class ComplexCostCalculator3 {
         this.maxDistanceRecomendation=maxDistanceRecomendation;
         maxWalktime=this.maxDistanceRecomendation/walkingVelocity;
         this.recutils=recutils;
-
+        maxCostValue=maxcost;
+        useSuaredTimes=squaredTimes;
+        predictionNormalisation=PredictionNorm;
     }
 
+    final boolean useSuaredTimes;
+    final int predictionNormalisation;
     final double minimumMarginProbability;
     final double unsuccessCostRent;
     final double penalisationfactorrent;
@@ -46,20 +51,21 @@ public class ComplexCostCalculator3 {
     final double walkingVelocity;
     final double cyclingVelocity;
     final double minProbSecondaryRecommendation;
-    final double maxCostValue=5000;
+    final double maxCostValue;
     final double maxDistanceRecomendation;
     final double maxWalktime;
     UtilitiesForRecommendationSystems recutils;
 
 
     private double getSqarewalkTimeRent(double accwalktime) {
+        if (useSuaredTimes)
         return (accwalktime*accwalktime)/maxWalktime;
-    //    return accwalktime;//*accwalktime/maxWalktime;
+        else return accwalktime;
     }
     private double getSqareReturnDistanceCost(double accbiketime, double walktime) {
-      return (accbiketime + walktime*walktime)/maxWalktime;
-    //    return (((accbiketime)) + ((walktime)));//*walktime)/maxWalktime));
- //       return ((accbiketime+walktime));
+        if (useSuaredTimes)
+            return (accbiketime + walktime*walktime)/maxWalktime;
+        else return accbiketime+walktime;
     }
 
     private double calculateWayCostRentHeuristic(List<StationUtilityData> way, StationUtilityData sd, double takeprob,
@@ -228,8 +234,7 @@ public class ComplexCostCalculator3 {
     //global cost calculation. calculates the cost of taking/returning and also the cost differences
     // returns the global costs
     public double calculateCostsRentAtStation(StationUtilityData sd,
-            List<StationUtilityData> allstats, 
-            double demandfactor) {
+            List<StationUtilityData> allstats) {
         //takecosts
         List<StationUtilityData> lookedlist = new ArrayList<>();
         List<StationUtilityData> way = new LinkedList<StationUtilityData>();
@@ -264,11 +269,9 @@ public class ComplexCostCalculator3 {
             if (extracostreturn>0 || extracosttake<0){
                     System.out.println("EEEEERRRRROOOOORRRR: invalid cost station " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
             }
-            //multiply extracosts by probability of users that will come
-            extracosttake = extracosttake ;//* 
-                  //  recutils.calculateProbabilityAtLeast1UserArrivingForTake(wp.getStation(),timeoffset); //*  probability that the extra cost would be needed (e.g. a user wants to take)futtakedemand * demandfactor;
-            extracostreturn = extracostreturn;// *
-                //    recutils.calculateProbabilityAtLeast1UserArrivingForReturn(wp.getStation(),timeoffset);//* probability that the extra cost would be needed (e.g. a user wants to return)futreturndemand * demandfactor;
+            //normalize the extracost
+            extracosttake = extracosttake * getTakeFactor(wp.getStation(), timeoffset);
+            extracostreturn = extracostreturn* getReturnFactor(wp.getStation(), timeoffset);;
 
             double takeprob=margprob*wp.getProbabilityTake(); //prob with witch the user would take a bike at the station
             double newmargprob = margprob * (1 - wp.getProbabilityTake());
@@ -292,7 +295,7 @@ public class ComplexCostCalculator3 {
     }
 
     public double calculateCostsReturnAtStation(StationUtilityData sd, GeoPoint destination,
-            List<StationUtilityData> allstats, double demandfactor) {
+            List<StationUtilityData> allstats) {
         //return costs
         //take a close point to the station as hipotetical detsination
         List<StationUtilityData> lookedlist = new ArrayList<>();
@@ -327,12 +330,9 @@ public class ComplexCostCalculator3 {
             if (extracostreturn<0 || extracosttake>0){
                     System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
             }
-
-            //multiply extracosts by probability of users that will come
-            extracosttake = extracosttake ; //* 
-                  //  recutils.calculateProbabilityAtLeast1UserArrivingForTake(wp.getStation(),timeoffset); //*  probability that the extra cost would be needed (e.g. a user wants to take)futtakedemand * demandfactor;
-            extracostreturn = extracostreturn ; //*
-                  //  recutils.calculateProbabilityAtLeast1UserArrivingForReturn(wp.getStation(),timeoffset);//* probability that the extra cost would be needed (e.g. a user wants to return)futreturndemand * demandfactor;
+            //normalize the extracost
+            extracosttake = extracosttake * getTakeFactor(wp.getStation(), timeoffset);
+            extracostreturn = extracostreturn* getReturnFactor(wp.getStation(), timeoffset);;
 
             double retprob=margprob*wp.getProbabilityReturn(); //prob with witch the user would take a bike at the station
             double newmargprob = margprob * (1 - wp.getProbabilityReturn());
@@ -352,6 +352,32 @@ public class ComplexCostCalculator3 {
         double globalcost = usercostreturn + acctakecost + accreturncost;
         sd.setIndividualCost(usercostreturn).setTakecostdiff(acctakecost).setReturncostdiff(accreturncost);
         return globalcost;
+    }
+    private double getTakeFactor(Station s, double timeoffset){
+         switch(predictionNormalisation){
+            case (0) :
+                return 1;
+            case (1) :
+                return recutils.getCurrentBikeDemand(s) * timeoffset / 3600D;
+            case (2) :
+                return recutils.calculateProbabilityAtLeast1UserArrivingForTake(s,timeoffset);
+            case (3) :
+                return recutils.calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(s,timeoffset);
+        }
+         return 1;
+    }
+     private double getReturnFactor(Station s, double timeoffset){
+        switch(predictionNormalisation){
+            case (0) :
+                 return 1;
+            case (1) :
+                return recutils.getCurrentSlotDemand(s) * timeoffset / 3600D;
+            case (2) :
+                return recutils.calculateProbabilityAtLeast1UserArrivingForReturn(s,timeoffset);
+            case (3) :
+                return recutils.calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(s,timeoffset);
+        }
+         return 1;
     }
 
 }

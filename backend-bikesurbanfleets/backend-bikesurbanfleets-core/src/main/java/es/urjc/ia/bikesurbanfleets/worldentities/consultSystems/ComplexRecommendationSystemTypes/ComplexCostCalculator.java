@@ -264,7 +264,7 @@ public class ComplexCostCalculator {
     // returns the global costs
     public double calculateCostsRentAtStation(StationUtilityData sd,
             List<StationUtilityData> allstats, 
-            double demandfactor, UtilitiesForRecommendationSystems urs) {
+            UtilitiesForRecommendationSystems urs) {
         //takecosts
         List<StationUtilityData> lookedlist = new ArrayList<>();
         List<StationUtilityData> way = new LinkedList<StationUtilityData>();
@@ -300,8 +300,8 @@ public class ComplexCostCalculator {
             double futreturndemand = urs.getFutureSlotDemand(wp.getStation(), timeoffset);
             double futglobaltakedem = urs.getFutureGlobalBikeDemand(timeoffset);
             double futglobalretdem = urs.getFutureGlobalSlotDemand(timeoffset);
-            difcosttake = difcosttake *  futtakedemand * demandfactor;
-            difcostreturn = difcostreturn* futreturndemand * demandfactor;
+            difcosttake = difcosttake *  futtakedemand ;
+            difcostreturn = difcostreturn* futreturndemand ;
 
             //accumulate the costs based on the probability of returning/taking at station wp
             double newmargprob = margprob * (1 - wp.getProbabilityTake());
@@ -327,7 +327,7 @@ public class ComplexCostCalculator {
     }
 
     public double calculateCostsReturnAtStation(StationUtilityData sd, GeoPoint destination,
-            List<StationUtilityData> allstats, double demandfactor, UtilitiesForRecommendationSystems urs) {
+            List<StationUtilityData> allstats, UtilitiesForRecommendationSystems urs) {
         //return costs
         //take a close point to the station as hipotetical detsination
         List<StationUtilityData> lookedlist = new ArrayList<>();
@@ -365,8 +365,8 @@ public class ComplexCostCalculator {
             double futreturndemand = urs.getFutureSlotDemand(wp.getStation(), timeoffset);
             double futglobaltakedem = urs.getFutureGlobalBikeDemand(timeoffset);
             double futglobalretdem = urs.getFutureGlobalSlotDemand(timeoffset);
-            difcosttake = difcosttake* futtakedemand * demandfactor;
-            difcostreturn = difcostreturn* futreturndemand * demandfactor;
+            difcosttake = difcosttake* futtakedemand ;
+            difcostreturn = difcostreturn* futreturndemand ;
 
             //accumulate the costs based on the probability of returning/taking at station wp
             double newmargprob = margprob * (1 - wp.getProbabilityReturn());

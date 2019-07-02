@@ -42,13 +42,14 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         private double maxStationsToReccomend = 30;
         private double unsucesscostRent = 3000;
         private double unsucesscostReturn = 2000;
-        private double factorDemandData=1;
+        private double MaxCostValue = 5000 ;
+        private boolean squaredTimes=true;
+        private int PredictionNorm=0;
 
         @Override
         public String toString() {
-            return  "maxDistanceRecommendation=" + maxDistanceRecommendation + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent + ", unsucesscostReturn=" + unsucesscostReturn ;
+            return  "PredictionNorm="+ PredictionNorm + ", squaredTimes=" + squaredTimes + ", maxDistanceRecommendation=" + maxDistanceRecommendation +  ", MaxCostValue=" + MaxCostValue + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent + ", unsucesscostReturn=" + unsucesscostReturn ;
         }
-
 
     }
     public String getParameterString(){
@@ -70,11 +71,11 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc=new ComplexCostCalculator3(parameters.minimumMarginProbability, parameters.unsucesscostRent,
+        ucc=new ComplexCostCalculator3(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
                 parameters.unsucesscostReturn,
             parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-        parameters.maxDistanceRecommendation, recutils);
+        parameters.maxDistanceRecommendation, recutils, parameters.squaredTimes, parameters.PredictionNorm);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
                     goodfound = true;
                 }
-                double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.factorDemandData);
+                double cost = ucc.calculateCostsRentAtStation(sd, stationdata);
                 sd.setTotalCost(cost);
                 addrent(sd, orderedlist);
                 if (goodfound) {
@@ -114,10 +115,12 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 if (sd.getProbabilityReturn() > this.parameters.desireableProbability) {
                     goodfound = true;
                 }
-                double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata,  this.parameters.factorDemandData);
+                double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata);
                 sd.setTotalCost(cost);
                 addreturn(sd, orderedlist);
-                i++;
+                if (goodfound) {
+                    i++;
+                }
             }
         }
         return orderedlist;
@@ -125,10 +128,18 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
 
     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (newSD.getTotalCost() < oldSD.getTotalCost()) {
+        if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation
+                && oldSD.getWalkdist() > this.parameters.maxDistanceRecommendation) {
             return true;
-        } else {
+        }else if (newSD.getWalkdist() > this.parameters.maxDistanceRecommendation
+                && oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
             return false;
+        } else {
+            if (newSD.getTotalCost() < oldSD.getTotalCost()) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
