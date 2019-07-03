@@ -11,6 +11,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSy
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -128,11 +129,12 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
     }
 
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint point, boolean rentbike) {
-        double currentglobalbikedemand = recutils.getCurrentGlobalBikeDemand();
+        LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
             StationUtilityData sd = new StationUtilityData(s);
-            double idealAvailable = (recutils.getCurrentSlotDemand(sd.getStation()) + s.getCapacity() - recutils.getCurrentBikeDemand(sd.getStation())) / 2D;
+            double idealAvailable = (recutils.dm.getStationTakeRatePerHour(sd.getStation().getId(), current) + 
+                    (s.getCapacity() - recutils.dm.getStationReturnRatePerHour(sd.getStation().getId(),current))) / 2D;
             double utildif = recutils.calculateClosedSquaredStationUtilityDifferencewithDemand(s, rentbike);
             double dist = point.distanceTo(s.getPosition());
             double norm_distance = 1-(dist / parameters.MaxDistanceNormalizer);

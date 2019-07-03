@@ -11,6 +11,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSy
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -125,22 +126,25 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction e
         }
     }
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint point, boolean rentbike) {
-        double currentglobalbikedemand=recutils.getCurrentGlobalBikeDemand();
         List<StationUtilityData> temp = new ArrayList<>();
+        LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
+        double currentglobalbikedemand=recutils.dm.getGlobalTakeRatePerHour(current);
+        double currentglobalslotdemand=recutils.dm.getGlobalReturnRatePerHour(current);
         for (Station s : stations) {
             StationUtilityData sd = new StationUtilityData(s);
- 
-            double maxidealbikes=s.getCapacity()-recutils.getCurrentSlotDemand(sd.getStation());
-            double minidealbikes=recutils.getCurrentBikeDemand(sd.getStation());
+            double currentbikedemand=recutils.dm.getStationTakeRatePerHour(s.getId(),current);
+            double currentslotdemand=recutils.dm.getStationReturnRatePerHour(s.getId(),current);
+            double maxidealbikes=s.getCapacity()-currentslotdemand;
+            double minidealbikes=currentbikedemand;
             double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, rentbike);
             double normedUtilityDiff;
             if (rentbike){
              normedUtilityDiff = util
-                * (recutils.getCurrentBikeDemand(sd.getStation())/recutils.getCurrentGlobalBikeDemand());
+                * (currentbikedemand/currentglobalbikedemand);
             //* infrastructureManager.getNumberStations();
             } else {
              normedUtilityDiff = util
-                * (recutils.getCurrentSlotDemand(sd.getStation())/recutils.getCurrentGlobalSlotDemand());
+                * (currentslotdemand/currentglobalslotdemand);
             //* infrastructureManager.getNumberStations();
                 
             }

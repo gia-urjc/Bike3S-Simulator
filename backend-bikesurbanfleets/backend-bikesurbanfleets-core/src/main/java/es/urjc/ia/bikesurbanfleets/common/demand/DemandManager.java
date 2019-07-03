@@ -10,6 +10,7 @@ import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
+import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import java.io.FileReader;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -94,23 +95,68 @@ public class DemandManager {
     }
     Demand dem = new Demand();
 
-    public double getTakeDemandStation(int stationID, LocalDateTime t) {
-        return getTakeDemandStation(stationID, Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+    public double getStationTakeRateIntervall(int stationID, LocalDateTime start, double endtimeoffset) {
+        return getRateIntervall(stationID, true, start, endtimeoffset);
+    }
+    public double getStationReturnRateIntervall(int stationID, LocalDateTime start, double endtimeoffset) {
+        return getRateIntervall(stationID, false, start, endtimeoffset);
+    }
+    public double getGlobalTakeRateIntervall(LocalDateTime start, double endtimeoffset) {
+        return getRateIntervall(-1000, true, start, endtimeoffset);
+    }
+    public double getGlobalReturnRateIntervall(LocalDateTime start, double endtimeoffset) {
+        return getRateIntervall(-1000, false, start, endtimeoffset);
+    }
+     private double getRateIntervall(int stationID, boolean take, LocalDateTime start, double endtimeoffset) {
+        if (endtimeoffset<0)
+            throw new RuntimeException("Invalid enttimeparameter");
+        double retdemand=0;
+        long restsecs=(long)endtimeoffset;
+        LocalDateTime tempdateTime=start;
+        while (restsecs>0) {
+            //get the proportion of the demand in each hour
+            double hourdemand;
+            if(stationID==-1000) {
+                if (take) hourdemand=getGlobalTakeRatePerHour(tempdateTime);
+                else hourdemand=getGlobalReturnRatePerHour(tempdateTime);
+            } else {
+                if (take) hourdemand=getStationTakeRatePerHour(stationID,tempdateTime);
+                else hourdemand=getStationReturnRatePerHour(stationID,tempdateTime);
+            }
+            long secsleftincurrenthour=(60-tempdateTime.getSecond()) + 
+                    ((60-start.getMinute()-1)*60);
+            double adddemand=0;
+            if (secsleftincurrenthour < restsecs) {
+                adddemand=hourdemand*(secsleftincurrenthour/3600);
+                //setrestsecs and next hour
+                restsecs-=secsleftincurrenthour;
+                tempdateTime=tempdateTime.plusSeconds(secsleftincurrenthour);
+            } else {
+                adddemand=hourdemand*(restsecs/3600);
+                restsecs=0;
+            }
+            retdemand=retdemand+adddemand;
+        }
+        return retdemand;
     }
 
-    public double getReturnDemandStation(int stationID, LocalDateTime t) {
-        return getReturnDemandStation(stationID, Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+    public double getStationTakeRatePerHour(int stationID, LocalDateTime t) {
+        return getStationTakeRatePerHour(stationID, Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
-    public double getTakeDemandGlobal(LocalDateTime t) {
-        return getTakeDemandGlobal(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+    public double getStationReturnRatePerHour(int stationID, LocalDateTime t) {
+        return getStationReturnRatePerHour(stationID, Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
-    public double getReturnDemandGlobal(LocalDateTime t) {
-        return getReturnDemandGlobal(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+    public double getGlobalTakeRatePerHour(LocalDateTime t) {
+        return getGlobalTakeRatePerHour(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
-    public double getTakeDemandStation(int stationID, Month month, Day day, int hour) {
+    public double getGlobalReturnRatePerHour(LocalDateTime t) {
+        return getGlobalReturnRatePerHour(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+    }
+
+    public double getStationTakeRatePerHour(int stationID, Month month, Day day, int hour) {
         DemandResult r = dem.getDemandStation(stationID, month, day, hour, true);
         double result;
         if (!r.hasdemand) {
@@ -124,7 +170,7 @@ public class DemandManager {
         return result;
     }
 
-    public double getReturnDemandStation(int stationID, Month month, Day day, int hour) {
+    public double getStationReturnRatePerHour(int stationID, Month month, Day day, int hour) {
         DemandResult r = dem.getDemandStation(stationID, month, day, hour, false);
         double result;
         if (!r.hasdemand) {
@@ -138,7 +184,7 @@ public class DemandManager {
         return result;
     }
 
-    public double getTakeDemandGlobal(Month month, Day day, int hour) {
+    public double getGlobalTakeRatePerHour(Month month, Day day, int hour) {
         double result = dem.getDemandGlobal(month, day, hour, true);
         if (result < MIN_DEMAND) {
             return MIN_DEMAND;
@@ -146,7 +192,7 @@ public class DemandManager {
         return result;
     }
 
-    public double getReturnDemandGlobal(Month month, Day day, int hour) {
+    public double getGlobalReturnRatePerHour(Month month, Day day, int hour) {
         double result = dem.getDemandGlobal(month, day, hour, false);
         if (result < MIN_DEMAND) {
             return MIN_DEMAND;
@@ -492,8 +538,8 @@ public class DemandManager {
         Day dd = Day.Thu;
         for (int i = 0; i < 24; i++) {
             for (Integer si : demandManager.dem.stationMap.keySet()) {
-                double take = demandManager.getTakeDemandStation(si, mm, dd, i);
-                double ret = demandManager.getReturnDemandStation(si, mm, dd, i);
+                double take = demandManager.getStationTakeRatePerHour(si, mm, dd, i);
+                double ret = demandManager.getStationReturnRatePerHour(si, mm, dd, i);
                 System.out.println(
                         "Station : " + si + " : demand Month: " + mm + " : day: " + dd + " : hour: " + i
                         + " : take: " + take

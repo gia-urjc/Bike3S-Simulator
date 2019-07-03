@@ -1,6 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommendationSystemTypes;
 
 import com.google.gson.JsonObject;
+import es.urjc.ia.bikesurbanfleets.common.demand.DemandManager;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
@@ -127,28 +128,29 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceOpenFunctionFut
 
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint point, boolean rentbike) {
         List<StationUtilityData> temp = new ArrayList<>();
+        DemandManager dm=getDemandManager();
         for (Station s : stations) {
 
             StationUtilityData sd = new StationUtilityData(s);
-            double bikedemand = recutils.getCurrentFutueScaledBikeDemandNextHour(s);
-            double slotdemand = recutils.getCurrentFutueScaledSlotDemandNextHour(s);
+            double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), 3600);
+            double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), 3600);
 
-            double utility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes(), bikedemand, slotdemand);
+            double utility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes(), takedemandrate, returndemandrate);
             double newutility;
             if (rentbike) {
-                newutility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes()-1, bikedemand, slotdemand);
+                newutility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes()-1, takedemandrate, returndemandrate);
              } else {//return bike 
-                newutility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes()+1, bikedemand, slotdemand);
+                newutility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes()+1, takedemandrate, returndemandrate);
             }
             double dist = point.distanceTo(s.getPosition());
             double norm_distance=1-(dist / parameters.MaxDistanceNormalizer);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
                     + (1 - parameters.wheightDistanceStationUtility) * (newutility - utility);
             sd.setUtility(globalutility);
-            sd.setMaxopimalocupation(s.getCapacity() - slotdemand);
-            sd.setMinoptimalocupation(bikedemand);
-            if (bikedemand > (s.getCapacity() - slotdemand)) {
-                sd.setOptimalocupation((bikedemand + (s.getCapacity() - slotdemand)) / 2D);
+            sd.setMaxopimalocupation(s.getCapacity() - returndemandrate);
+            sd.setMinoptimalocupation(takedemandrate);
+            if (takedemandrate > (s.getCapacity() - returndemandrate)) {
+                sd.setOptimalocupation((takedemandrate + (s.getCapacity() - returndemandrate)) / 2D);
             } else {
                 sd.setOptimalocupation(Double.NaN);
             }

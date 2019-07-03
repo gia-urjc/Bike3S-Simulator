@@ -28,8 +28,8 @@ public class UtilitiesForRecommendationSystems {
     // the method returns the difference of the OpenSquaredUtility after taking or returning a bike wrt the situation before
     public double calculateOpenSquaredStationUtilityDifference(StationUtilityData sd, boolean rentbike) {
         Station s =sd.getStation();
-        double bikedemand = getCurrentBikeDemand(s);
-        double slotdemand = getCurrentSlotDemand(s);
+        double bikedemand = dm.getStationTakeRatePerHour(s.getId(),SimulationDateTime.getCurrentSimulationDateTime() );
+        double slotdemand = dm.getStationReturnRatePerHour(s.getId(),SimulationDateTime.getCurrentSimulationDateTime());
         double currentutility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes(), bikedemand, slotdemand);
         double newutility;
         if (rentbike) {
@@ -70,7 +70,9 @@ public class UtilitiesForRecommendationSystems {
 
     // the method returns the difference of the ClosedSquaredUtility after taking or returning a bike wrt the situation before
     public double calculateClosedSquaredStationUtilityDifferencewithDemand(Station s, boolean rentbike) {
-        double bestocupation = (getCurrentBikeDemand(s) + s.getCapacity() - getCurrentSlotDemand(s)) / 2D;
+        double bikedemand = dm.getStationTakeRatePerHour(s.getId(),SimulationDateTime.getCurrentSimulationDateTime() );
+        double slotdemand = dm.getStationReturnRatePerHour(s.getId(),SimulationDateTime.getCurrentSimulationDateTime());
+        double bestocupation = (bikedemand + s.getCapacity() -slotdemand) / 2D;
         if (bestocupation<1) bestocupation=1;
         if (bestocupation>s.getCapacity()-1) bestocupation=s.getCapacity()-1;
         double currentutility = getClosedSquaredUtility(s.getCapacity(), s.availableBikes(), bestocupation);
@@ -127,22 +129,22 @@ public class UtilitiesForRecommendationSystems {
                 //            }
             }
         }
-        double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
-        double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a bike exists and that is exists after taking one 
         int k = 1 - estimatedbikes;
-        double probbike = SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
-        double probbikeaftertake = probbike - SellamDistribution.calculateSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
+        double probbike = SellamDistribution.calculateCDFSkellamProbability(returndemandrate, takedemandrate, k);
+        double probbikeaftertake = probbike - SellamDistribution.calculateSkellamProbability(returndemandrate, takedemandrate, k);
         k = k - 1;
-        double probbikeafterreturn = probbike + SellamDistribution.calculateSkellamProbability(retdemandatofsettime, takedemandattimeoffset, k);
+        double probbikeafterreturn = probbike + SellamDistribution.calculateSkellamProbability(returndemandrate, takedemandrate, k);
 
         //probability that a slot exists and that is exists after taking one 
         k = 1 - estimatedslots;
-        double probslot = SellamDistribution.calculateCDFSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
-        double probslotafterreturn = probslot - SellamDistribution.calculateSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
+        double probslot = SellamDistribution.calculateCDFSkellamProbability(takedemandrate, returndemandrate, k);
+        double probslotafterreturn = probslot - SellamDistribution.calculateSkellamProbability(takedemandrate, returndemandrate, k);
         k = k - 1;
-        double probslotaftertake = probslot + SellamDistribution.calculateSkellamProbability(takedemandattimeoffset, retdemandatofsettime, k);
+        double probslotaftertake = probslot + SellamDistribution.calculateSkellamProbability(takedemandrate, returndemandrate, k);
 
         sd.setProbabilityTake(probbike)
                 .setProbabilityTakeAfterTake(probbikeaftertake)
@@ -151,34 +153,35 @@ public class UtilitiesForRecommendationSystems {
                 .setProbabilityReturnAfterTake(probslotaftertake)
                 .setProbabilityReturnAfterReturn(probslotafterreturn);
     }
+    
     //methods for calculation probabilities    
     public double calculateProbabilityAtLeast1UserArrivingForTake(Station s, double timeoffset) {
-        double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
-        double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
-        return SellamDistribution.calculateCDFSkellamProbability(takedemandattimeoffset, retdemandatofsettime, 1);
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        return SellamDistribution.calculateCDFSkellamProbability(takedemandrate, returndemandrate, 1);
     }
     public double calculateProbabilityAtLeast1UserArrivingForReturn(Station s, double timeoffset) {
-        double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
-        double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
-        return SellamDistribution.calculateCDFSkellamProbability(retdemandatofsettime, takedemandattimeoffset, 1);
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        return SellamDistribution.calculateCDFSkellamProbability(returndemandrate, takedemandrate, 1);
     }
 
     //methods for calculation probabilities    
     public double calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(Station s, double timeoffset) {
-        double takedemandattimeoffset = (getCurrentBikeDemand(s) * timeoffset) / 3600D;
-        return SellamDistribution.calculateCDFPoissonProbability(takedemandattimeoffset, 1);
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        return SellamDistribution.calculateCDFPoissonProbability(takedemandrate, 1);
     }
     public double calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(Station s, double timeoffset) {
-        double retdemandatofsettime = (getCurrentSlotDemand(s) * timeoffset) / 3600D;
-        return SellamDistribution.calculateCDFPoissonProbability(retdemandatofsettime, 1);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        return SellamDistribution.calculateCDFPoissonProbability(returndemandrate, 1);
     }
    
     public double getGlobalProbabilityImprovementIfTake(StationUtilityData sd ) {
         int timeoffset=(int)sd.getWalkTime();
-        double futtakedemand = getFutureBikeDemand(sd.getStation(),  timeoffset);
-        double futreturndemand = getFutureSlotDemand(sd.getStation(),  timeoffset);
-        double futglobaltakedem = getFutureGlobalBikeDemand( timeoffset);
-        double futglobalretdem = getFutureGlobalSlotDemand( timeoffset);
+        double futtakedemand = dm.getStationTakeRateIntervall(sd.getStation().getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
+        double futreturndemand = dm.getStationReturnRateIntervall(sd.getStation().getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
+        double futglobaltakedem = dm.getGlobalTakeRateIntervall(SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
+        double futglobalretdem = dm.getGlobalReturnRateIntervall(SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
 
         double relativeimprovemente = (futtakedemand / futglobaltakedem) * 
                 (sd.getProbabilityTakeAfterTake()-sd.getProbabilityTake())
@@ -189,74 +192,15 @@ public class UtilitiesForRecommendationSystems {
 
     public double getGlobalProbabilityImprovementIfReturn(StationUtilityData sd) {
         int timeoffset =(int) sd.getBiketime();
-        double futtakedemand = getFutureBikeDemand(sd.getStation(), timeoffset);
-        double futreturndemand = getFutureSlotDemand(sd.getStation(),  timeoffset);
-        double futglobaltakedem = getFutureGlobalBikeDemand( timeoffset);
-        double futglobalretdem = getFutureGlobalSlotDemand( timeoffset);
+        double futtakedemand = dm.getStationTakeRateIntervall(sd.getStation().getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
+        double futreturndemand = dm.getStationReturnRateIntervall(sd.getStation().getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
+        double futglobaltakedem = dm.getGlobalTakeRateIntervall(SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
+        double futglobalretdem = dm.getGlobalReturnRateIntervall(SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
 
         double relativeimprovemente = (futtakedemand / futglobaltakedem) * 
                 (sd.getProbabilityTakeAfterRerturn()-sd.getProbabilityTake())
                 + (futreturndemand / futglobalretdem) * 
                 (sd.getProbabilityReturnAfterReturn()-sd.getProbabilityReturn());
         return relativeimprovemente;
-    }
- 
-    //methods for acessing demand data
-    public double getCurrentSlotDemand(Station s) {
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        return dm.getReturnDemandStation(s.getId(), current);
-    }
-
-    public double getCurrentBikeDemand(Station s) {
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        return dm.getTakeDemandStation(s.getId(), current);
-    }
-
-    public double getCurrentGlobalSlotDemand() {
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        return dm.getReturnDemandGlobal(current);
-    }
-
-    public double getCurrentGlobalBikeDemand() {
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        return dm.getTakeDemandGlobal(current);
-    }
-
-    public double getFutureSlotDemand(Station s, int secondsoffset) {
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(secondsoffset);
-        return dm.getReturnDemandStation(s.getId(), current);
-    }
-
-    public double getFutureBikeDemand(Station s, int secondsoffset) {
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(secondsoffset);
-        return dm.getTakeDemandStation(s.getId(), current);
-    }
-
-    public double getFutureGlobalSlotDemand(int secondsoffset) {
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(secondsoffset);
-        return dm.getReturnDemandGlobal(current);
-    }
-
-    public double getFutureGlobalBikeDemand(int secondsoffset) {
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(secondsoffset);
-        return dm.getTakeDemandGlobal(current);
-    }
-
-    public double getCurrentFutueScaledSlotDemandNextHour(Station s) {
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        LocalDateTime futuredate = current.plusHours(1);
-        double currendem = dm.getReturnDemandStation(s.getId(), current);
-        double futuredem = dm.getReturnDemandStation(s.getId(), futuredate);
-        double futureprop = ((double) current.getMinute()) / 59D;
-        return futuredem * futureprop + (1 - futureprop) * currendem;
-    }
-
-    public double getCurrentFutueScaledBikeDemandNextHour(Station s) {
-        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
-        LocalDateTime futuredate = current.plusHours(1);
-        double currendem = dm.getTakeDemandStation(s.getId(), current);
-        double futuredem = dm.getTakeDemandStation(s.getId(), futuredate);
-        double futureprop = ((double) current.getMinute()) / 59D;
-        return futuredem * futureprop + (1 - futureprop) * currendem;
     }
 }

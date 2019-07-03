@@ -20,7 +20,7 @@ public class SimulationDateTime {
     // startdatetime should be a string in the form: 2007-12-03T10:15:30
     static public void intSimulationDateTime(String startdatetime){
         if (startdatetime==null){
-            System.out.println("Datenad Time of the simulation: not set");
+            System.out.println("Date and Time of the simulation: not set");
             dateTimeSet=false;
             currentSimulationDateTime=null;
             initialSimulationDateTime=null;

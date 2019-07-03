@@ -3,11 +3,13 @@ package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommen
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,11 +66,11 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
     @Override
     protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
+        LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (StationUtilityData sd : stationdata) {
             double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, true);
             double normedUtilityDiff = util
-                * (recutils.getCurrentBikeDemand(sd.getStation()));
-
+                * recutils.dm.getStationTakeRatePerHour(sd.getStation().getId(),current);
             sd.setUtility(normedUtilityDiff);
             addrent(sd, orderedlist);
         }
@@ -78,10 +80,11 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
     @Override
     protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
+        LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (StationUtilityData sd : stationdata) {
             double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, false);
             double normedUtilityDiff = util
-                * (recutils.getCurrentSlotDemand(sd.getStation()));
+                * recutils.dm.getStationReturnRatePerHour(sd.getStation().getId(),current);
             sd.setUtility(normedUtilityDiff);
             addreturn(sd, orderedlist);
         }

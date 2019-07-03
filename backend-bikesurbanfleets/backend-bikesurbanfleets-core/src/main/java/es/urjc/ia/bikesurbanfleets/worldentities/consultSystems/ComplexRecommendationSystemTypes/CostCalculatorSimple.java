@@ -5,6 +5,7 @@
  */
 package es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommendationSystemTypes;
 
+import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import java.util.ArrayList;
@@ -145,7 +146,7 @@ public class CostCalculatorSimple {
             case (0) :
                 return 1;
             case (1) :
-                return recutils.getCurrentBikeDemand(s) * timeoffset / 3600D;
+                return recutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
             case (2) :
                 return recutils.calculateProbabilityAtLeast1UserArrivingForTake(s,timeoffset);
             case (3) :
@@ -158,7 +159,7 @@ public class CostCalculatorSimple {
             case (0) :
                  return 1;
             case (1) :
-                return recutils.getCurrentSlotDemand(s) * timeoffset / 3600D;
+                return recutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
             case (2) :
                 return recutils.calculateProbabilityAtLeast1UserArrivingForReturn(s,timeoffset);
             case (3) :

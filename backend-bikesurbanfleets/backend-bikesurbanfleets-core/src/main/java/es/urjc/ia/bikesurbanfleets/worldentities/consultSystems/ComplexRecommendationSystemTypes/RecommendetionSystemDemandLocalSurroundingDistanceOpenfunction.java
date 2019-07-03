@@ -18,6 +18,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.StationUtilityData;
 
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -191,9 +192,10 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
     private double getSurroundingBikeDemand(Station candidatestation,List<Station> otherstations) {
         double accideal = 0;
         double factor, multiplication;
+        LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (Station other : otherstations) {
             factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
-            multiplication = recutils.getCurrentBikeDemand(other) * factor;
+            multiplication = recutils.dm.getStationTakeRatePerHour(other.getId(),current) * factor;
             accideal += multiplication;
         }
         return accideal;
@@ -202,9 +204,10 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
     private double getSurroundingSlotDemand(Station candidatestation,List<Station> otherstations) {
         double accideal = 0;
         double factor, multiplication;
+        LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (Station other : otherstations) {
             factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
-            multiplication = recutils.getCurrentSlotDemand(other) * factor;
+            multiplication = recutils.dm.getStationReturnRatePerHour(other.getId(),current) * factor;
             accideal += multiplication;
         }
         return accideal;
