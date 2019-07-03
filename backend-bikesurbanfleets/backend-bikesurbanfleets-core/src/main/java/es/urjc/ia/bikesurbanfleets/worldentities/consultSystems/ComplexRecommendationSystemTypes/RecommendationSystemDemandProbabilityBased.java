@@ -264,7 +264,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         for (Station s : stations) {
             StationUtilityData sd = new StationUtilityData(s);
             double dist = currentposition.distanceTo(s.getPosition());
-            int offtime = (int) (dist / straightLineWalkingVelocity);
+            double offtime = (dist / straightLineWalkingVelocity);
             sd.setWalkTime(offtime).setWalkdist(dist).setCapacity(s.getCapacity());
             recutils.calculateProbabilities(sd, offtime, baseparameters.takeintoaccountexpected, 
                     baseparameters.takeintoaccountcompromised,pastrecs, baseparameters.probabilityUsersObey);
@@ -280,9 +280,9 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         for (Station s : stations) {
             StationUtilityData sd = new StationUtilityData(s);
             double bikedist=currentposition.distanceTo(s.getPosition());
-            int biketime = (int) (bikedist / straightLineCyclingVelocity);
+            double biketime = bikedist / straightLineCyclingVelocity;
             double walkdist=s.getPosition().distanceTo(destination);
-            int walktime = (int) (walkdist / straightLineWalkingVelocity);
+            double walktime =  walkdist / straightLineWalkingVelocity;
             sd.setWalkTime(walktime).setWalkdist(walkdist)
                     .setCapacity(s.getCapacity())
                     .setBikedist(bikedist).setBiketime(biketime);

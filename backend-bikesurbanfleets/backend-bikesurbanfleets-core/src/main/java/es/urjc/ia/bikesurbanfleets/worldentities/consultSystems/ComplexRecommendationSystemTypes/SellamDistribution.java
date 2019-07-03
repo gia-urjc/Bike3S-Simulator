@@ -22,14 +22,13 @@ public class SellamDistribution {
 
    // calculates prob of P(x=k) of my1 -my2
    public static double calculateSkellamProbability(double my1, double my2, int k){     
+        if (my1<=0.0000000000001D) my1=0;
+        if (my2<=0.0000000000001D) my2=0;
         if (my1==0){
             return calculatePoissonProbability( my2,  -k);
         } else if (my2==0){
             return calculatePoissonProbability( my1,  k);
         }  
-        if (my1<=0.0000000000001D  ||my2<=0.0000000000001D) {
-            throw new RuntimeException(" my values to small for good results of distribution");
-        }
         if (my1<=0.0000000000001D  ||my2<=0.0000000000001D) {
             throw new RuntimeException(" my values to small for good results of distribution");
         }
@@ -49,6 +48,8 @@ public class SellamDistribution {
    // calculates accumulated prob P(X>=k) of my1 -my2
    public static double calculateCDFSkellamProbability(double my1, double my2, int k){
       
+        if (my1<=0.0000000000001D) my1=0;
+        if (my2<=0.0000000000001D) my2=0;
         if (my1==0){
             return 1-calculateCDFPoissonProbability( my2,  -k+1);
         } else if (my2==0){

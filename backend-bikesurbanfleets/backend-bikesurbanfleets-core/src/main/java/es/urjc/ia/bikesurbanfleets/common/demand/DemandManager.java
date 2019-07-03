@@ -111,7 +111,7 @@ public class DemandManager {
         if (endtimeoffset<0)
             throw new RuntimeException("Invalid enttimeparameter");
         double retdemand=0;
-        long restsecs=(long)endtimeoffset;
+        double restsecs=endtimeoffset;
         LocalDateTime tempdateTime=start;
         while (restsecs>0) {
             //get the proportion of the demand in each hour
@@ -124,15 +124,15 @@ public class DemandManager {
                 else hourdemand=getStationReturnRatePerHour(stationID,tempdateTime);
             }
             long secsleftincurrenthour=(60-tempdateTime.getSecond()) + 
-                    ((60-start.getMinute()-1)*60);
+                    ((60-tempdateTime.getMinute()-1)*60);
             double adddemand=0;
             if (secsleftincurrenthour < restsecs) {
-                adddemand=hourdemand*(secsleftincurrenthour/3600);
+                adddemand=hourdemand*((double)secsleftincurrenthour/3600D);
                 //setrestsecs and next hour
                 restsecs-=secsleftincurrenthour;
                 tempdateTime=tempdateTime.plusSeconds(secsleftincurrenthour);
             } else {
-                adddemand=hourdemand*(restsecs/3600);
+                adddemand=hourdemand*(restsecs/3600D);
                 restsecs=0;
             }
             retdemand=retdemand+adddemand;
@@ -530,10 +530,33 @@ public class DemandManager {
         String demandDataPath = projectDir + "/../demandDataMadrid0817_0918.csv";
         DemandManager demandManager = new DemandManager();
         demandManager.ReadData(demandDataPath);
+
+        String startdatetime="2017-10-05T09:00:00";
+        LocalDateTime currentSimulationDateTime=LocalDateTime.parse(startdatetime);
+        double x=demandManager.getStationReturnRateIntervall(62, currentSimulationDateTime, 3600);
+        x=demandManager.getStationTakeRateIntervall(62, currentSimulationDateTime, 3600);
+        x=demandManager.getGlobalTakeRateIntervall(currentSimulationDateTime, 3600);
+        x=demandManager.getGlobalReturnRateIntervall(currentSimulationDateTime, 3600);
+         
+        startdatetime="2017-10-05T09:30:00";
+        currentSimulationDateTime=LocalDateTime.parse(startdatetime);
+        x=demandManager.getStationReturnRateIntervall(62, currentSimulationDateTime, 1800);
+        x=demandManager.getStationTakeRateIntervall(62, currentSimulationDateTime, 1800);
+        x=demandManager.getGlobalTakeRateIntervall(currentSimulationDateTime, 1800);
+        x=demandManager.getGlobalReturnRateIntervall(currentSimulationDateTime, 1800);
+
+        startdatetime="2017-10-05T09:50:10";
+        currentSimulationDateTime=LocalDateTime.parse(startdatetime);
+        x=demandManager.getStationReturnRateIntervall(62, currentSimulationDateTime, 3600);
+        x=demandManager.getStationTakeRateIntervall(62, currentSimulationDateTime, 3600);
+        x=demandManager.getGlobalTakeRateIntervall(currentSimulationDateTime, 3600);
+        x=demandManager.getGlobalReturnRateIntervall(currentSimulationDateTime, 3600);
+       
         Month[] m = Month.values();
         Day[] d = Day.values();
         System.out.println("!!!!!Station demand:");
 
+        
         Month mm = Month.Oct;
         Day dd = Day.Thu;
         for (int i = 0; i < 24; i++) {
