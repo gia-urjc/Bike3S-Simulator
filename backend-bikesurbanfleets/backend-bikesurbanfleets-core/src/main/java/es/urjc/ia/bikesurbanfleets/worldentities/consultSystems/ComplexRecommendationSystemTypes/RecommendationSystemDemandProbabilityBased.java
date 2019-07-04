@@ -61,7 +61,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     protected double straightLineCyclingVelocity ;
 
     protected RecommendationParameters baseparameters;
-    protected UtilitiesForRecommendationSystems recutils;
+    protected UtilitiesProbabilityCalculation probutils;
     private PastRecommendations pastrecs;
     
     public RecommendationSystemDemandProbabilityBased(JsonObject recomenderdef, SimulationServices ss) throws Exception {
@@ -88,15 +88,14 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         straightLineWalkingVelocity = this.baseparameters.walkingVelocity/STRAIGT_LINE_FACTOR;
         straightLineCyclingVelocity = this.baseparameters.cyclingVelocity/STRAIGT_LINE_FACTOR;
         
-        recutils=new UtilitiesForRecommendationSystems(this);
         pastrecs=new PastRecommendations();
+        probutils=new UtilitiesProbabilityCalculation(getDemandManager(), pastrecs, baseparameters.probabilityUsersObey,
+                 baseparameters.takeintoaccountexpected, baseparameters.takeintoaccountcompromised);
     }
-    
 
     private static Comparator<Station> byDistance(GeoPoint point) {
         return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point), s2.getPosition().distanceTo(point));
     }
-
 
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint currentposition) {
@@ -266,8 +265,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             double dist = currentposition.distanceTo(s.getPosition());
             double offtime = (dist / straightLineWalkingVelocity);
             sd.setWalkTime(offtime).setWalkdist(dist).setCapacity(s.getCapacity());
-            recutils.calculateProbabilities(sd, offtime, baseparameters.takeintoaccountexpected, 
-                    baseparameters.takeintoaccountcompromised,pastrecs, baseparameters.probabilityUsersObey);
+            probutils.calculateAllProbabilities(sd, offtime);
             temp.add(sd);
         }
         List<StationUtilityData> ret=specificOrderStationsRent(temp,stations, currentposition);
@@ -286,8 +284,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             sd.setWalkTime(walktime).setWalkdist(walkdist)
                     .setCapacity(s.getCapacity())
                     .setBikedist(bikedist).setBiketime(biketime);
-            recutils.calculateProbabilities(sd, biketime, baseparameters.takeintoaccountexpected, 
-                    baseparameters.takeintoaccountcompromised,pastrecs, baseparameters.probabilityUsersObey);
+            probutils.calculateAllProbabilities(sd, biketime);
             temp.add(sd);
         }
         List<StationUtilityData> ret=specificOrderStationsReturn(temp,stations, currentposition, destination);

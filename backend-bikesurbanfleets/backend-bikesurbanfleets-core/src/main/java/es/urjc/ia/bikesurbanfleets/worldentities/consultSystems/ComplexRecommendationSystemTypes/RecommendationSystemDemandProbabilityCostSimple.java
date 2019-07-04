@@ -70,7 +70,7 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
                 parameters.MaxCostValue, 
                 straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, 
-                parameters.maxDistanceRecommendation, recutils, parameters.squaredTimes, 0);
+                parameters.maxDistanceRecommendation, probutils, parameters.squaredTimes, 0);
     }
 
     @Override

@@ -79,7 +79,7 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
                 break;
             }
             if (sd.getProbabilityTake()> 0) {
-                double util=recutils.getGlobalProbabilityImprovementIfTake(sd);
+                double util=probutils.getGlobalProbabilityImprovementIfTake(sd);
                 sd.setUtility(util);
                 addrent(sd, orderedlist);
                 i++;
@@ -97,7 +97,7 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
                 break;
             }
             if (sd.getProbabilityReturn()> 0) {
-                double util=recutils.getGlobalProbabilityImprovementIfReturn(sd);
+                double util=probutils.getGlobalProbabilityImprovementIfReturn(sd);
                 sd.setUtility(util);
                 addreturn(sd, orderedlist);
                 i++;

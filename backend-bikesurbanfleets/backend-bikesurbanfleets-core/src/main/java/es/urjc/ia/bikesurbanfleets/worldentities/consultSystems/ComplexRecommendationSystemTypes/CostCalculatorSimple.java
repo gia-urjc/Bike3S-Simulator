@@ -20,14 +20,14 @@ public class CostCalculatorSimple {
     //methods for cost calculations
     public CostCalculatorSimple(double marginprob, double maxcost,
             double walkvel, double cycvel, 
-            double maxDistanceRecomendation, UtilitiesForRecommendationSystems recutils,
+            double maxDistanceRecomendation, UtilitiesProbabilityCalculation recutils,
             boolean squaredTimes, int PredictionNorm) {
         minimumMarginProbability = marginprob;
         walkingVelocity=walkvel;
         cyclingVelocity=cycvel;
         this.maxDistanceRecomendation=maxDistanceRecomendation;
         maxWalktime=this.maxDistanceRecomendation/walkingVelocity;
-        this.recutils=recutils;
+        this.probutils=recutils;
         maxCostValue=maxcost;
         useSuaredTimes=squaredTimes;
         predictionNormalisation=PredictionNorm;
@@ -40,7 +40,7 @@ public class CostCalculatorSimple {
     final double walkingVelocity;
     final double cyclingVelocity;
     final double maxDistanceRecomendation;
-    UtilitiesForRecommendationSystems recutils;
+    UtilitiesProbabilityCalculation probutils;
     final double maxWalktime;
 
 
@@ -146,11 +146,11 @@ public class CostCalculatorSimple {
             case (0) :
                 return 1;
             case (1) :
-                return recutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+                return probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
             case (2) :
-                return recutils.calculateProbabilityAtLeast1UserArrivingForTake(s,timeoffset);
+                return probutils.calculateProbabilityAtLeast1UserArrivingForTake(s,timeoffset);
             case (3) :
-                return recutils.calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(s,timeoffset);
+                return probutils.calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(s,timeoffset);
         }
          return 1;
     }
@@ -159,11 +159,11 @@ public class CostCalculatorSimple {
             case (0) :
                  return 1;
             case (1) :
-                return recutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+                return probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
             case (2) :
-                return recutils.calculateProbabilityAtLeast1UserArrivingForReturn(s,timeoffset);
+                return probutils.calculateProbabilityAtLeast1UserArrivingForReturn(s,timeoffset);
             case (3) :
-                return recutils.calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(s,timeoffset);
+                return probutils.calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(s,timeoffset);
         }
          return 1;
     }

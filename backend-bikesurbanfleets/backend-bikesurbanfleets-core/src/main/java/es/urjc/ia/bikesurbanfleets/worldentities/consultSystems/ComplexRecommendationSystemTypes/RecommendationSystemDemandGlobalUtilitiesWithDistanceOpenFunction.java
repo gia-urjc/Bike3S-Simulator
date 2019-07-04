@@ -52,7 +52,7 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction e
     }
 
     private RecommendationParameters parameters;
-    private UtilitiesForRecommendationSystems recutils;
+    private UtilitiesGlobalLocalUtilityMethods recutils;
 
     public RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(ss);
@@ -66,7 +66,7 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceOpenFunction e
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        recutils=new UtilitiesForRecommendationSystems(this);
+        recutils = new UtilitiesGlobalLocalUtilityMethods(getDemandManager());
     }
    Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
 

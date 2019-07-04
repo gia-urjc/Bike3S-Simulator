@@ -74,7 +74,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
                 parameters.MaxCostValue,
                 straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, 
-                parameters.maxDistanceRecommendation, recutils, parameters.squaredTimes, parameters.PredictionNorm);
+                parameters.maxDistanceRecommendation, probutils, parameters.squaredTimes, parameters.PredictionNorm);
     }
 
 

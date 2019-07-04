@@ -49,6 +49,7 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         return "RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
     }
     private RecommendationParameters parameters;
+    private UtilitiesGlobalLocalUtilityMethods recutils;
 
     public RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef, ss);
@@ -62,6 +63,7 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
+        recutils = new UtilitiesGlobalLocalUtilityMethods(getDemandManager());
     }
     @Override
     protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition) {

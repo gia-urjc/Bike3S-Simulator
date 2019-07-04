@@ -75,7 +75,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 parameters.unsucesscostReturn,
             parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-        parameters.maxDistanceRecommendation, recutils, parameters.squaredTimes, parameters.PredictionNorm);
+        parameters.maxDistanceRecommendation, probutils, parameters.squaredTimes, parameters.PredictionNorm);
     }
 
     @Override

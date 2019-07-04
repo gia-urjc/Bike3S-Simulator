@@ -71,9 +71,9 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         getParameters(recomenderdef, this.parameters);
         ucc=new ComplexCostCalculator(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
                 parameters.unsucesscostReturn,
-            parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
+                parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-        parameters.maxDistanceRecommendation, recutils, parameters.squaredTimes, 0);
+                parameters.maxDistanceRecommendation, probutils, parameters.squaredTimes, 0);
     }
 
     @Override

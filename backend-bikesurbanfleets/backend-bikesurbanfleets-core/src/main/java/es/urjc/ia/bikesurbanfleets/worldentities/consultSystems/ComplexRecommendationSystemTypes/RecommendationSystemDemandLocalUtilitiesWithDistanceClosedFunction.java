@@ -52,7 +52,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
     }
 
     private RecommendationParameters parameters;
-    private UtilitiesForRecommendationSystems recutils;
+    private UtilitiesGlobalLocalUtilityMethods recutils;
 
  
     public RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
@@ -67,7 +67,7 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        recutils = new UtilitiesForRecommendationSystems(this);
+        recutils = new UtilitiesGlobalLocalUtilityMethods(getDemandManager());
     }
 
     @Override

@@ -10,7 +10,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
-import static es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommendationSystemTypes.UtilitiesForRecommendationSystems.getOpenSquaredUtility;
+import static es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommendationSystemTypes.UtilitiesGlobalLocalUtilityMethods.getOpenSquaredUtility;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
@@ -73,7 +73,7 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
     }
 
     private RecommendationParameters parameters;
-    private UtilitiesForRecommendationSystems recutils;
+    private UtilitiesGlobalLocalUtilityMethods recutils;
 
     Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
 
@@ -89,7 +89,7 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        recutils=new UtilitiesForRecommendationSystems(this);
+        recutils=new UtilitiesGlobalLocalUtilityMethods(getDemandManager());
     }
 
     @Override

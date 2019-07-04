@@ -7,7 +7,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
-import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommendationSystemTypes.UtilitiesForRecommendationSystems;
+import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.ComplexRecommendationSystemTypes.UtilitiesGlobalLocalUtilityMethods;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
@@ -129,7 +129,7 @@ public class RecommendationSystemLocalUtilitiesWithDistance extends Recommendati
     public List<StationUtilityData> getStationUtility(List<Station> stations,GeoPoint point, boolean rentbike) {
         List<StationUtilityData> temp=new ArrayList<>();
         for (Station s:stations){
-            double utildif = UtilitiesForRecommendationSystems.calculateClosedSquaredStationUtilityDifferencewithoutDemand(s, rentbike);
+            double utildif = UtilitiesGlobalLocalUtilityMethods.calculateClosedSquaredStationUtilityDifferencewithoutDemand(s, rentbike);
             double idealAvailable=s.getCapacity()/2D;
             double utilitymax=(2*idealAvailable-1)/(idealAvailable*idealAvailable);
             double utilitynorm=(utildif+utilitymax)/(2*utilitymax);
