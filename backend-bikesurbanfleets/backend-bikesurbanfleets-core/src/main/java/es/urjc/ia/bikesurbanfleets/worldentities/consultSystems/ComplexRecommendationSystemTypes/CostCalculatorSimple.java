@@ -73,24 +73,21 @@ public class CostCalculatorSimple {
         }
     }
 
-    public double calculateCostsRentAtStation(StationUtilityData sd) {
+    public double calculateCostsRentAtStation(StationUtilityData sd, double timeintervallforPrediction) {
         //takecosts
-        List<StationUtilityData> lookedlist = new ArrayList<>();
         double usercosttake = calculateCostRentSimple(sd, sd.getProbabilityTake(), sd.getWalkTime());
-        int timeoffset = (int)sd.getWalkTime();
+        
+        double timeoffset=Math.max(timeintervallforPrediction, sd.getWalkTime());
+        UtilitiesProbabilityCalculation.ProbabilityData pd=probutils.calculateAllTakeProbabilities(sd, timeoffset);
 
         //analyze global costs
         //takecost if bike is taken     
-        lookedlist.clear();
-        double costtake = calculateCostRentSimple(sd, sd.getProbabilityTake(), 0);
-        lookedlist.clear();
-        double costtakeafter = calculateCostRentSimple(sd, sd.getProbabilityTakeAfterTake(),0);
+        double costtake = calculateCostRentSimple(sd, pd.probabilityTake, 0);
+        double costtakeafter = calculateCostRentSimple(sd, pd.probabilityTakeAfterTake,0);
         //return costs
         //take a close point to the station as hipotetical detsination
-        lookedlist.clear();
-        double costreturn = calculateCostReturnSimple(sd, sd.getProbabilityReturn(), 0, 0);
-        lookedlist.clear();
-        double costreturnafter = calculateCostReturnSimple(sd, sd.getProbabilityReturnAfterTake(), 0, 0);
+        double costreturn = calculateCostReturnSimple(sd, pd.probabilityReturn, 0, 0);
+        double costreturnafter = calculateCostReturnSimple(sd, pd.probabilityReturnAfterTake, 0, 0);
 
         double extracosttake = costtakeafter - costtake;
         double extracostreturn = costreturnafter - costreturn;
@@ -98,42 +95,38 @@ public class CostCalculatorSimple {
                 System.out.println("EEEEERRRRROOOOORRRR: invalid cost station " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
         }
         //normalize the extracost
-        extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset);
-        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset);;
+        extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset) * sd.getProbabilityTake();
+        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset) * sd.getProbabilityTake();
         
         double globalcost = usercosttake + extracosttake + extracostreturn;
         sd.setIndividualCost(usercosttake).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
                 .setTotalCost(globalcost);
         return globalcost;
     }
-    public double calculateCostsReturnAtStation(StationUtilityData sd) {
+    public double calculateCostsReturnAtStation(StationUtilityData sd, double timeintervallforPrediction) {
         //return costs
         //take a close point to the station as hipotetical detsination
-        int timeoffset = (int) (sd.getBiketime());
-        List<StationUtilityData> lookedlist = new ArrayList<>();
+        double timeoffset=Math.max(timeintervallforPrediction, sd.getBiketime());
         double usercostreturn = calculateCostReturnSimple(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
 
+        UtilitiesProbabilityCalculation.ProbabilityData pd=probutils.calculateAllReturnProbabilities(sd, timeoffset);
         //analyze global costs
         //takecost if bike is taken   
-        lookedlist.clear();
-        double costtake = calculateCostRentSimple(sd, sd.getProbabilityTake(), 0);
-        lookedlist.clear();
-        double costtakeafter = calculateCostRentSimple(sd, sd.getProbabilityTakeAfterRerturn(), 0);
+        double costtake = calculateCostRentSimple(sd, pd.probabilityTake, 0);
+        double costtakeafter = calculateCostRentSimple(sd, pd.probabilityTakeAfterRerturn, 0);
 
         //return costs
         //take a close point to the station as hipotetical detsination
-        lookedlist.clear();
-        double costreturnhip = calculateCostReturnSimple(sd, sd.getProbabilityReturn(), 0, 0);
-        lookedlist.clear();
-        double costreturnafterhip = calculateCostReturnSimple(sd, sd.getProbabilityReturnAfterReturn(),0, 0);
+        double costreturnhip = calculateCostReturnSimple(sd, pd.probabilityReturn, 0, 0);
+        double costreturnafterhip = calculateCostReturnSimple(sd, pd.probabilityReturnAfterReturn,0, 0);
         double extracosttake = costtakeafter - costtake;
         double extracostreturn = costreturnafterhip - costreturnhip;
         if (extracostreturn<0 || extracosttake>0){
                 System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
         }
         //normalize the extracost
-        extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset);
-        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset);;
+        extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset) * sd.getProbabilityReturn();
+        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset)* sd.getProbabilityReturn();
 
         double globalcost = usercostreturn+extracosttake+extracostreturn;
         sd.setIndividualCost(usercostreturn).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
@@ -150,6 +143,9 @@ public class CostCalculatorSimple {
             case (2) :
                 return probutils.calculateProbabilityAtLeast1UserArrivingForTake(s,timeoffset);
             case (3) :
+                return Math.max(0,probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)-
+                       probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset));
+            case (4) :
                 return probutils.calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(s,timeoffset);
         }
          return 1;
@@ -163,6 +159,9 @@ public class CostCalculatorSimple {
             case (2) :
                 return probutils.calculateProbabilityAtLeast1UserArrivingForReturn(s,timeoffset);
             case (3) :
+                return Math.max(0,probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)-
+                       probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset));
+            case (4) :
                 return probutils.calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(s,timeoffset);
         }
          return 1;

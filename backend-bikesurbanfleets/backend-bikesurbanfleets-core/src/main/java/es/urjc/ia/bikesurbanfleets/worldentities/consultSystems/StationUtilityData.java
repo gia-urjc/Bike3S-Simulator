@@ -33,13 +33,13 @@ public class StationUtilityData {
     private double returncostdiff;
     
     //probabilities
-    private double probabilityTake;
-    private double probabilityReturn;
-    private double probabilityTakeAfterTake;
-    private double probabilityReturnAfterTake;
-    private double probabilityTakeAfterRerturn;
-    private double probabilityReturnAfterReturn;
-
+        private double probabilityTake;
+        private double probabilityReturn;
+        private double probabilityTakeAfterTake;
+        private double probabilityReturnAfterTake;
+        private double probabilityTakeAfterRerturn;
+        private double probabilityReturnAfterReturn;
+        
     public double getProbabilityTakeAfterTake() {
         return probabilityTakeAfterTake;
     }

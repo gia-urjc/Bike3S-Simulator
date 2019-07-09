@@ -46,10 +46,11 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         private double maxStationsToReccomend = 30;
         private boolean squaredTimes=true;
         private int PredictionNorm=0;
+        private int predictionWindow=1800;
 
         @Override
         public String toString() {
-            return  "PredictionNorm="+ PredictionNorm + ", squaredTimes=" + squaredTimes + ", maxDistanceRecommendation=" + maxDistanceRecommendation + ", desireableProbability"+ desireableProbability+"minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", MaxCostValue=" + MaxCostValue  + ", maxStationsToReccomend=" + maxStationsToReccomend  ;
+            return  "predictionWindow="+ predictionWindow + ", PredictionNorm="+ PredictionNorm + ", squaredTimes=" + squaredTimes + ", maxDistanceRecommendation=" + maxDistanceRecommendation + ", desireableProbability"+ desireableProbability+"minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", MaxCostValue=" + MaxCostValue  + ", maxStationsToReccomend=" + maxStationsToReccomend  ;
         }
     }
     public String getParameterString(){
@@ -87,11 +88,12 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
+            sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
             if (sd.getProbabilityTake()> 0) {
                 if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
                     goodfound = true;
                 }
-                double cost = scc.calculateCostsRentAtStation(sd);
+                double cost = scc.calculateCostsRentAtStation(sd, this.parameters.predictionWindow);
                 sd.setTotalCost(cost);
                 addrent(sd, orderedlist);
                 if (goodfound) {
@@ -111,11 +113,12 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
+            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
             if (sd.getProbabilityReturn()> 0) {
                 if (sd.getProbabilityReturn() > this.parameters.desireableProbability) {
                     goodfound = true;
                 }
-                double cost = scc.calculateCostsReturnAtStation(sd);
+                double cost = scc.calculateCostsReturnAtStation(sd, this.parameters.predictionWindow);
                 sd.setTotalCost(cost);
                 addreturn(sd, orderedlist);
                 if (goodfound) {

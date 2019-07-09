@@ -55,7 +55,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     }
 
     private RecommendationParameters parameters;
-    private ComplexCostCalculator ucc;
+    private ComplexCostCalculator2 ucc;
 
     public RecommendationSystemDemandProbabilityCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef, ss);
@@ -69,7 +69,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc=new ComplexCostCalculator(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
+        ucc=new ComplexCostCalculator2(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
                 parameters.unsucesscostReturn,
                 parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
@@ -85,12 +85,12 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
+            sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
             if (sd.getProbabilityTake() > 0) {
                 if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
                     goodfound = true;
                 }
-                List<StationUtilityData> lookedlist = new ArrayList<>();
-                double cost = ucc.calculateCostRentHeuristic(sd, 1, sd.getWalkTime(), lookedlist, stationdata, true);
+                double cost = ucc.calculateCostRentHeuristicNow(sd, stationdata);
                 sd.setTotalCost(cost);
                 addrent(sd, orderedlist);
                 if (goodfound) {
@@ -110,13 +110,12 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
+            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
             if (sd.getProbabilityReturn() > 0) {
                 if (sd.getProbabilityReturn() > this.parameters.desireableProbability) {
                     goodfound = true;
                 }
-                List<StationUtilityData> lookedlist = new ArrayList<>();
-                double biketime = sd.getBiketime();
-                double cost = ucc.calculateCostReturnHeuristic(sd, 1, biketime, userdestination, lookedlist, stationdata, true);
+                double cost = ucc.calculateCostReturnHeuristicNow(sd, userdestination, stationdata);
                 sd.setTotalCost(cost);
                 addreturn(sd, orderedlist);
                 if (goodfound) {

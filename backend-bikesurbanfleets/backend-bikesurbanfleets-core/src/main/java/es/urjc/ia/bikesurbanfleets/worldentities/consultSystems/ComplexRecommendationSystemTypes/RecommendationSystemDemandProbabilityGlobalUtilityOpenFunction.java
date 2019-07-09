@@ -70,6 +70,7 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         List<StationUtilityData> orderedlist = new ArrayList<>();
         LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (StationUtilityData sd : stationdata) {
+            sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
             double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, true);
             double normedUtilityDiff = util
                 * recutils.dm.getStationTakeRatePerHour(sd.getStation().getId(),current);
@@ -84,6 +85,7 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         List<StationUtilityData> orderedlist = new ArrayList<>();
         LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (StationUtilityData sd : stationdata) {
+            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
             double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, false);
             double normedUtilityDiff = util
                 * recutils.dm.getStationReturnRatePerHour(sd.getStation().getId(),current);

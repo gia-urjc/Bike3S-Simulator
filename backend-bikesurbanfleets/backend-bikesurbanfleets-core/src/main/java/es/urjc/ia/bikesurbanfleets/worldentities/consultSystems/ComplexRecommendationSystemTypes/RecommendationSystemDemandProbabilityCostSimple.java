@@ -82,6 +82,7 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
+            sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
             if (sd.getProbabilityTake() > 0) {
                 if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
                     goodfound = true;
@@ -107,6 +108,7 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
+            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
             if (sd.getProbabilityReturn() > 0) {
                 if (sd.getProbabilityReturn() > this.parameters.desireableProbability) {
                     goodfound = true;

@@ -78,6 +78,7 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
+            sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
             if (sd.getProbabilityTake()> 0) {
                 double util=probutils.getGlobalProbabilityImprovementIfTake(sd);
                 sd.setUtility(util);
@@ -96,6 +97,7 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
+            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
             if (sd.getProbabilityReturn()> 0) {
                 double util=probutils.getGlobalProbabilityImprovementIfReturn(sd);
                 sd.setUtility(util);

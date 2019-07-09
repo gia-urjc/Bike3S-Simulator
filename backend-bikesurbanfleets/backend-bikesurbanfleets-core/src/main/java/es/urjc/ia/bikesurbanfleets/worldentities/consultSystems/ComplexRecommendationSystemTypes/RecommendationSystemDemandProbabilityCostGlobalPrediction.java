@@ -45,10 +45,11 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         private double MaxCostValue = 5000 ;
         private boolean squaredTimes=true;
         private int PredictionNorm=0;
+        private int predictionWindow=1800;
 
         @Override
         public String toString() {
-            return  "PredictionNorm="+ PredictionNorm + ", squaredTimes=" + squaredTimes + ", maxDistanceRecommendation=" + maxDistanceRecommendation +  ", MaxCostValue=" + MaxCostValue + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent + ", unsucesscostReturn=" + unsucesscostReturn ;
+            return  "predictionWindow="+ predictionWindow + ", PredictionNorm="+ PredictionNorm + ", squaredTimes=" + squaredTimes + ", maxDistanceRecommendation=" + maxDistanceRecommendation +  ", MaxCostValue=" + MaxCostValue + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent + ", unsucesscostReturn=" + unsucesscostReturn ;
         }
 
     }
@@ -57,7 +58,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     }
 
     private RecommendationParameters parameters;
-    private ComplexCostCalculator ucc;
+    private ComplexCostCalculator2 ucc;
 
     public RecommendationSystemDemandProbabilityCostGlobalPrediction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef,ss);
@@ -71,7 +72,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc=new ComplexCostCalculator(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
+        ucc=new ComplexCostCalculator2(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
                 parameters.unsucesscostReturn,
             parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
@@ -87,11 +88,12 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
+            sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
             if (sd.getProbabilityTake() > 0) {
                 if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
                     goodfound = true;
                 }
-                double cost = ucc.calculateCostsRentAtStation(sd, stationdata);
+                double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.predictionWindow);
                 sd.setTotalCost(cost);
                 addrent(sd, orderedlist);
                 if (goodfound) {
@@ -111,11 +113,12 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
+            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
             if (sd.getProbabilityReturn() > 0) {
                 if (sd.getProbabilityReturn() > this.parameters.desireableProbability) {
                     goodfound = true;
                 }
-                double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata);
+                double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata, this.parameters.predictionWindow);
                 sd.setTotalCost(cost);
                 addreturn(sd, orderedlist);
                 if (goodfound) {

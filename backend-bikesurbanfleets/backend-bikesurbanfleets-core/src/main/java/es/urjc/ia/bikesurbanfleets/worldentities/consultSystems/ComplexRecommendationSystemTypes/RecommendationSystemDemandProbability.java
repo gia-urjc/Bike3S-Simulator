@@ -36,7 +36,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
         private double upperProbabilityBound = 0.999;
         private double desireableProbability = 0.6;
 
-        private double probfactor = 4000D;
+        private double probfactor = 8000D;
 
         @Override
         public String toString() {
@@ -44,9 +44,8 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
         }
     }
     public String getParameterString(){
-        return "RecommendationSystemDemandProbability Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
+        return "RecommendationSystemDemandProbabilityTime Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
     }
-
     private RecommendationParameters parameters;
 
     public RecommendationSystemDemandProbability(JsonObject recomenderdef, SimulationServices ss) throws Exception {
@@ -67,6 +66,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
     protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
+            sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
             addrent(sd, orderedlist);
         }
         return orderedlist;
@@ -76,13 +76,13 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
     protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
+            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
             addreturn(sd, orderedlist);
         }
         return orderedlist;
     }
-
     protected boolean betterOrSameRentDecideSimilar(StationUtilityData newSD, StationUtilityData oldSD){
-               double timediff = (newSD.getWalkdist() - oldSD.getWalkdist());
+               double timediff = (newSD.getWalkTime()- oldSD.getWalkTime());
                 double probdiff = (newSD.getProbabilityTake()- oldSD.getProbabilityTake()) * this.parameters.probfactor;
                 if (probdiff > timediff) {
                     return true;
@@ -125,8 +125,9 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
 
     protected boolean betterOrSameReturnDecideSimilar(StationUtilityData newSD, StationUtilityData oldSD){
    
-            double timediff = (newSD.getWalkdist() - oldSD.getWalkdist());
-            double probdiff = (newSD.getProbabilityReturn()- oldSD.getProbabilityReturn()) * this.parameters.probfactor;
+        double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
+                    - (oldSD.getBiketime() + oldSD.getWalkTime()));
+        double probdiff = (newSD.getProbabilityReturn()- oldSD.getProbabilityReturn()) * this.parameters.probfactor;
             if (probdiff > timediff) {
                 return true;
             }
