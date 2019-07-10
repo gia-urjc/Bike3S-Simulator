@@ -1,8 +1,8 @@
 package es.urjc.ia.bikesurbanfleets.history.entities;
 
 import com.google.gson.annotations.Expose;
+import es.urjc.ia.bikesurbanfleets.history.HistoryJsonClasses.IdReference;
 
-import es.urjc.ia.bikesurbanfleets.history.History.IdReference;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation.ReservationState;

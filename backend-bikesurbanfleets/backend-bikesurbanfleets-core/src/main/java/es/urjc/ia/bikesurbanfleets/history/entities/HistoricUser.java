@@ -3,7 +3,6 @@ package es.urjc.ia.bikesurbanfleets.history.entities;
 import com.google.gson.annotations.Expose;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.history.History.IdReference;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
@@ -45,6 +44,9 @@ public class HistoricUser implements HistoricEntity {
     @Expose
     private GeoPoint position;
     @Expose
+    private GeoPoint destinationLocation;
+
+    @Expose
     private GeoRoute route;
 //    @Expose
 //    private IdReference bike;
@@ -71,6 +73,7 @@ public class HistoricUser implements HistoricEntity {
         this.type = user.getClass().getAnnotation(UserType.class).value();
   //      this.reservation = res == null ? null : new IdReference(HistoricReservation.class, res.getId());
         this.hasreservation= res == null ? false : true;
+        this.destinationLocation=user.getDestinationPlace();
     }
 
     @Override

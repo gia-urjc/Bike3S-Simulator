@@ -63,7 +63,7 @@ public class History {
      * events in serialized form for writing this information to the history
      * from time to time
      */
-    private static TreeMap<Integer, List<EventEntry>> serializedEvents = new TreeMap<>();
+    private static TreeMap<Integer, List<HistoryJsonClasses.EventEntry>> serializedEvents = new TreeMap<>();
     /**
      * This is the path where historic files will be saved.
      */
@@ -87,7 +87,7 @@ public class History {
             List<Entity> initialEntities, String recomenderParametersString) throws IOException {
         //initialize values
         activeEntities = new HistoricEntityCollection();
-        serializedEvents = new TreeMap<Integer, List<EventEntry>>();
+        serializedEvents = new TreeMap<Integer, List<HistoryJsonClasses.EventEntry>>();
         outputPath = Paths.get(historyOutputPath);
         File outputDirectory = new File(outputPath.toString());
         if (outputDirectory.exists() && outputDirectory.isDirectory()) {
@@ -110,7 +110,7 @@ public class History {
         //to do maybe not working
         Set<Class<? extends HistoricEntity>> historicEntitiesClasses = new Reflections().getSubTypesOf(HistoricEntity.class);
         for (Class<? extends HistoricEntity> histent : historicEntitiesClasses) {
-            String jsonIdentifier = getJsonIdentifier(histent);
+            String jsonIdentifier = HistoryJsonClasses.getJsonIdentifier(histent);
             EntitiesJson entjason = new EntitiesJson(histent, activeEntities.getCollectionFor(histent));
             writeJson("entities/" + jsonIdentifier + ".json", entjason, gson);
         }
@@ -170,7 +170,7 @@ public class History {
     public static void registerEvent(Event event, int instant, int order) throws Exception {
 
          //get the referneces of the involved entities
-        List<IdReference> involved = getReferencesInvolvedEntities(FilterEntitiesForHistory(event.getInvolvedEntities()));
+        List<HistoryJsonClasses.IdReference> involved = getReferencesInvolvedEntities(FilterEntitiesForHistory(event.getInvolvedEntities()));
 
         // Get the new entities and add them to the active entities.
         Map<String, List<JsonObject>> serializedNewEntities = treatNewEntities(FilterEntitiesForHistory(event.getNewEntities()));
@@ -195,19 +195,19 @@ public class History {
         // It adds the event to the current time instant
  
         serializedEvents.get(instant).add(
-                new EventEntry(event.getClass().getSimpleName(), order, event.getResult(),involved,changes, serializedNewEntities, serializedOldEntities));
+                new HistoryJsonClasses.EventEntry(event.getClass().getSimpleName(), order, event.getResult(),involved,changes, serializedNewEntities, serializedOldEntities));
     }
 
-    private static List<IdReference> getReferencesInvolvedEntities(List<Entity> invEntities) {
+    private static List<HistoryJsonClasses.IdReference> getReferencesInvolvedEntities(List<Entity> invEntities) {
         /* Get the new entities and add them to the active entities.
          */
         if (invEntities == null || invEntities.isEmpty()) {
             return null;
         }
-        ArrayList<IdReference> result = new ArrayList<>();
+        ArrayList<HistoryJsonClasses.IdReference> result = new ArrayList<>();
         for (Entity entity : invEntities) {
             Class<? extends HistoricEntity> historicClass = EntityHistoricEntityMapping.getHistoricEntityClass(entity);
-            result.add(new IdReference(historicClass, entity.getId()));
+            result.add(new HistoryJsonClasses.IdReference(historicClass, entity.getId()));
         }
         if (result.isEmpty()) return null;
         else return result;
@@ -231,7 +231,7 @@ public class History {
             //serialize the historic entity and put into map
             //put in the serialized map
             Class<? extends HistoricEntity> historicClass = historicentity.getClass();
-            String jsonIdentifier = getJsonIdentifier(historicClass);
+            String jsonIdentifier = HistoryJsonClasses.getJsonIdentifier(historicClass);
             if (!result.containsKey(jsonIdentifier)) {
                 result.put(jsonIdentifier, new ArrayList<>());
             }
@@ -263,7 +263,7 @@ public class History {
             } //otherwise everything is fine
 
             //look for at all possible changes
-            String jsonIdentifier = getJsonIdentifier(newentity.getClass());
+            String jsonIdentifier = HistoryJsonClasses.getJsonIdentifier(newentity.getClass());
             JsonObject jsonEntity = new JsonObject();
             // The field type represents an attribute  
             for (Field field : newentity.getClass().getDeclaredFields()) {
@@ -316,7 +316,7 @@ public class History {
             //serialize the historic entity and put into map
             //put in the serialized map
             Class<? extends HistoricEntity> historicClass = historicentity.getClass();
-            String jsonIdentifier = getJsonIdentifier(historicClass);
+            String jsonIdentifier = HistoryJsonClasses.getJsonIdentifier(historicClass);
             if (!result.containsKey(jsonIdentifier)) {
                 result.put(jsonIdentifier, new ArrayList<>());
             }
@@ -352,10 +352,10 @@ public class History {
      * concrete pattern.
      */
     private static void writeTimeEntries() throws IOException {
-        List<TimeEntry> timeEntries = new ArrayList<>();
+        List<HistoryJsonClasses.TimeEntry> timeEntries = new ArrayList<>();
 
         serializedEvents.forEach((time, eventEntries) -> {
-            timeEntries.add(new TimeEntry(time, eventEntries));
+            timeEntries.add(new HistoryJsonClasses.TimeEntry(time, eventEntries));
         });
         /*
          * The file name is created with the following format:
@@ -369,28 +369,6 @@ public class History {
 
         writeJson(fileName, timeEntries, gson);
         serializedEvents.clear();
-    }
-
-    /**
-     * It obtains the Json identifier string of a specific historical class.
-     *
-     * @param historicClass It is the history class whose identifier wants to be
-     * found out.
-     * @return the string of a Json identifier corresponding to the specified
-     * histry class.
-     */
-    private static String getJsonIdentifier(Class<? extends HistoricEntity> historicClass) {
-        JsonIdentifier[] jsonIdentifiers = historicClass.getAnnotationsByType(JsonIdentifier.class);
-
-        if (jsonIdentifiers.length == 0) {
-            throw new IllegalStateException("No annotation @JsonIdentifier found for " + historicClass);
-        }
-
-        if (jsonIdentifiers.length > 1) {
-            throw new IllegalStateException("Found more than one @JsonIdentifier annotation in inheritance chain for " + historicClass);
-        }
-
-        return jsonIdentifiers[0].value();
     }
 
     /**
@@ -516,119 +494,6 @@ public class History {
         }
     }
 
-    /**
-     * This class represents an event and contains the changes which have
-     * occurred with respect to the previus event.
-     *
-     * @author IAgroup
-     */
-    private static class EventEntry {
-
-        /**
-         * It is the name of the event.
-         */
-        @Expose
-        private String name;
-
-        /**
-         * It is the order of the event at the specified time (necessary if
-         * there are more than one events at the same time).
-         */
-        @Expose
-        private int order;
-        
-        @Expose
-        private Event.EventResult result;
-        
-        @Expose
-        private Collection<IdReference> involvedEntities;
-
-        @Expose
-        private Map<String, List<JsonObject>> changes;
-        @Expose
-        private Map<String, List<JsonObject>> newEntities;
-        @Expose
-        private Map<String, List<JsonObject>> oldEntities;
-
-        EventEntry(String name, int order, Event.EventResult res, Collection<IdReference> involved, Map<String, List<JsonObject>> changes, 
-                Map<String, List<JsonObject>> newEntities, Map<String, List<JsonObject>> oldEntities) {
-            this.name = name;
-            this.order = order;
-            this.changes = changes;
-            this.newEntities = newEntities;
-            this.oldEntities = oldEntities;
-            this.result=res;
-            this.involvedEntities=involved;
-        }
-    }
-
-    /**
-     * This class rpresents a time instant of the simulation and contains all
-     * the events which happen at this moment.
-     *
-     * @author IAgroup
-     *
-     */
-    private static class TimeEntry {
-
-        /**
-         * It is the moment when the events happen.
-         */
-        @Expose
-        private int time;
-
-        /**
-         * They are the vents which happen at the specific moment. if the time
-         * is the same the orden of the events is by increasing order
-         */
-        @Expose
-        private List<EventEntry> events;
-
-        TimeEntry(int time, List<EventEntry> events) {
-            this.time = time;
-            this.events = events;
-        }
-    }
-
-    public static class IdReference {
-
-        @Expose
-        private String type;
-
-        @Expose
-        private Object id;
-
-        private IdReference(Class<? extends HistoricEntity> type, Object id) {
-            this.type = getJsonIdentifier(type);
-            this.id = id;
-        }
-
-        public IdReference(Class<? extends HistoricEntity> type, Integer id) {
-            this(type, (Object) id);
-        }
-
-        public IdReference(Class<? extends HistoricEntity> type, List<Integer> idList) {
-            this(type, (Object) idList);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            IdReference that = (IdReference) o;
-            return Objects.equals(type, that.type)
-                    && Objects.equals(id, that.id);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(type, id);
-        }
-    }
 
     /**
      * This class represents all the final global values that has to be stored

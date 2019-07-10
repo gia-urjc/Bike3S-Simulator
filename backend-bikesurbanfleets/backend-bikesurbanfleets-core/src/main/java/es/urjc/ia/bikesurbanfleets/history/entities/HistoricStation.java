@@ -2,7 +2,7 @@ package es.urjc.ia.bikesurbanfleets.history.entities;
 
 import com.google.gson.annotations.Expose;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.history.History.IdReference;
+
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.history.JsonIdentifier;
