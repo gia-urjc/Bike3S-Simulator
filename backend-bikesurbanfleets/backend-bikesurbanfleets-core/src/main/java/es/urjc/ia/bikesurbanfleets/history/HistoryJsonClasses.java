@@ -8,6 +8,7 @@ package es.urjc.ia.bikesurbanfleets.history;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricEntity;
 import java.util.Collection;
 import java.util.List;
@@ -65,7 +66,7 @@ public class HistoryJsonClasses {
         private int order;
         
         @Expose
-        private Event.EventResult result;
+        private Event.RESULT_TYPE result;
         
         @Expose
         private Collection<IdReference> involvedEntities;
@@ -77,7 +78,7 @@ public class HistoryJsonClasses {
         @Expose
         private Map<String, List<JsonObject>> oldEntities;
 
-        EventEntry(String name, int order, Event.EventResult res, Collection<IdReference> involved, Map<String, List<JsonObject>> changes, 
+        EventEntry(String name, int order, Event.RESULT_TYPE res, Collection<IdReference> involved, Map<String, List<JsonObject>> changes, 
                 Map<String, List<JsonObject>> newEntities, Map<String, List<JsonObject>> oldEntities) {
             this.name = name;
             this.order = order;
@@ -92,7 +93,7 @@ public class HistoryJsonClasses {
             return name;
         }
 
-        public Event.EventResult getResult() {
+        public Event.RESULT_TYPE getResult() {
             return result;
         }
 
@@ -103,7 +104,10 @@ public class HistoryJsonClasses {
         public Map<String, List<JsonObject>> getNewEntities() {
             return newEntities;
         }
-        
+        public Map<String, List<JsonObject>> getChanges() {
+            return changes;
+        }
+      
     }
 
     /**
@@ -149,19 +153,11 @@ public class HistoryJsonClasses {
         private String type;
 
         @Expose
-        private Object id;
+        private int id;
 
-        private IdReference(Class<? extends HistoricEntity> type, Object id) {
+        public IdReference(Class<? extends HistoricEntity> type, int id) {
             this.type = getJsonIdentifier(type);
             this.id = id;
-        }
-
-        public IdReference(Class<? extends HistoricEntity> type, Integer id) {
-            this(type, (Object) id);
-        }
-
-        public IdReference(Class<? extends HistoricEntity> type, List<Integer> idList) {
-            this(type, (Object) idList);
         }
 
         @Override
@@ -181,7 +177,7 @@ public class HistoryJsonClasses {
             return type;
         }
 
-        public Object getId() {
+        public int getId() {
             return id;
         }
 
@@ -191,5 +187,27 @@ public class HistoryJsonClasses {
         }
     }
 
+    public static class FinalGlobalValues {
+
+        /**
+         * Total simulation time
+         */
+        private int totalTimeSimulation;
+
+        /**
+         * Bounding Box where the simulation has been reproduced
+         */
+        private BoundingBox boundingBox;
+
+        public FinalGlobalValues(BoundingBox boundingBox, int totalTimeSimulation) {
+            this.totalTimeSimulation = totalTimeSimulation;
+            this.boundingBox = boundingBox;
+        }
+
+        public int getTotalTimeSimulation() {
+            return totalTimeSimulation;
+        }
+        
+    }
 
 }

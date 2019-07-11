@@ -71,6 +71,14 @@ public class HistoricStation implements HistoricEntity {
         );*/
     }
 
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getAvailablebikes() {
+        return availablebikes;
+    }
+
     @Override
     public int getId() {
         return id;

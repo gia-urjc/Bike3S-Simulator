@@ -95,7 +95,7 @@ public class History {
         }
         TIMEENTRIES_PER_FILE = TIMEENTRIES_PER_HISTORYFILE;
         //write the global information in a file
-        FinalGlobalValues finalGlobalValues = new FinalGlobalValues(boundingBox,totalSimulationTime);
+        HistoryJsonClasses.FinalGlobalValues finalGlobalValues = new HistoryJsonClasses.FinalGlobalValues(boundingBox,totalSimulationTime);
         writeJson(FINAL_GLOBAL_VALUES_FILENAME, finalGlobalValues, gsonAll);
         writeSimulationParameters(SIMULATION_PARAMETERS_FILENAME, recomenderParametersString, gsonAll); 
         
@@ -494,26 +494,4 @@ public class History {
         }
     }
 
-
-    /**
-     * This class represents all the final global values that has to be stored
-     * in the history
-     */
-    private static class FinalGlobalValues {
-
-        /**
-         * Total simulation time
-         */
-        private int totalTimeSimulation;
-
-        /**
-         * Bounding Box where the simulation has been reproduced
-         */
-        private BoundingBox boundingBox;
-
-        public FinalGlobalValues(BoundingBox boundingBox, int totalTimeSimulation) {
-            this.totalTimeSimulation = totalTimeSimulation;
-            this.boundingBox = boundingBox;
-        }
-    }
 }

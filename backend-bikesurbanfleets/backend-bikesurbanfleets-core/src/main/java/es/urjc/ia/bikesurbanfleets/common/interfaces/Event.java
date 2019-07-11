@@ -9,14 +9,14 @@ import java.util.List;
  */
 public interface Event {
     
-    interface EventResult {
-    }
-    public enum RESULT_TYPE implements EventResult{
+    public enum RESULT_TYPE {
         FAILED_BIKE_RENTAL, SUCCESSFUL_BIKE_RENTAL, FAILED_BIKE_RETURN, SUCCESSFUL_BIKE_RETURN, FAILED_BIKE_RESERVATION, SUCCESSFUL_BIKE_RESERVATION,
-        FAILED_SLOT_RESERVATION, SUCCESSFUL_SLOT_RESERVATION, SUCCESS, FAIL
+        FAILED_SLOT_RESERVATION, SUCCESSFUL_SLOT_RESERVATION, SUCCESS, FAIL,
+        EXIT_AFTER_APPEARING, EXIT_AFTER_FAILED_BIKE_RESERVATION, EXIT_AFTER_FAILED_BIKE_RENTAL, EXIT_AFTER_RESERVATION_TIMEOUT,
+        EXIT_AFTER_REACHING_DESTINATION
     }
     
-    public enum EXIT_REASON implements EventResult{
+    public enum EXIT_REASON {
         EXIT_AFTER_APPEARING, EXIT_AFTER_FAILED_BIKE_RESERVATION, EXIT_AFTER_FAILED_BIKE_RENTAL, EXIT_AFTER_RESERVATION_TIMEOUT,
         EXIT_AFTER_REACHING_DESTINATION
     }
@@ -39,8 +39,8 @@ public interface Event {
     List<Entity> getInvolvedEntities();
     List<Entity> getOldEntities();
     List<Entity> getNewEntities();
-    EventResult getResult();
-    void setResult(EventResult result);
+    RESULT_TYPE getResult();
+    void setResult(RESULT_TYPE result);
     
     /**
      * @return a string with the event information.

@@ -27,7 +27,7 @@ public class EventUserLeavesSystem extends EventUser {
        
         //set the result of the event
         //the result of EventUserLeavesSystem is any of the possible exit rerasons
-        setResult(this.reason);
+        setResult(Event.RESULT_TYPE.valueOf(this.reason.name()));
 
         return null;
     }

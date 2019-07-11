@@ -28,7 +28,7 @@ public abstract class EventUser implements Event {
     protected List<Entity> newEntities;
     protected List<Entity> oldEntities;
     protected List<Entity> involvedEntities;
-    protected EventResult result;
+    private RESULT_TYPE result;
 
     /**
      * It is the user who is involved in the event.
@@ -64,10 +64,10 @@ public abstract class EventUser implements Event {
         return involvedEntities;
     }
     
-    public EventResult getResult() {
+    public RESULT_TYPE getResult() {
         return result;
     };
-    public void setResult(EventResult result){
+    public void setResult(RESULT_TYPE result){
         this.result=result;
     };
 
