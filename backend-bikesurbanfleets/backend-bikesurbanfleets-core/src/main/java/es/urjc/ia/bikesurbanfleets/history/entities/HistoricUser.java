@@ -76,6 +76,22 @@ public class HistoricUser implements HistoricEntity {
         this.destinationLocation=user.getDestinationPlace();
     }
 
+    public double getWalkingVelocity() {
+        return walkingVelocity;
+    }
+
+    public double getCyclingVelocity() {
+        return cyclingVelocity;
+    }
+
+    public GeoPoint getPosition() {
+        return position;
+    }
+
+    public GeoPoint getDestinationLocation() {
+        return destinationLocation;
+    }
+
     @Override
     public int getId() {
         return id;

@@ -79,6 +79,10 @@ public class HistoricStation implements HistoricEntity {
         return availablebikes;
     }
 
+    public GeoPoint getPosition() {
+        return position;
+    }
+
     @Override
     public int getId() {
         return id;

@@ -37,13 +37,16 @@ public class GraphHopperIntegration implements GraphManager {
     private GeoPoint endPosition;
 
     public GraphHopperIntegration(GraphProperties properties, String temp_dir) throws IOException {
+        this(properties.mapDir, temp_dir);
+    }
+    public GraphHopperIntegration(String mapDir, String temp_dir) throws IOException {
     
         String GRAPHHOPPER_DIR = temp_dir + "/graphhopper_files";
        //Check the last map loaded
         boolean sameMap;
         try {
             CheckSum csum = new CheckSum(temp_dir);
-            sameMap = csum.md5CheckSum(temp_dir, new File(properties.mapDir));
+            sameMap = csum.md5CheckSum(temp_dir, new File(mapDir));
         }
         catch (Exception e) {
             sameMap = false;
@@ -54,7 +57,7 @@ public class GraphHopperIntegration implements GraphManager {
             FileUtils.deleteDirectory(new File(GRAPHHOPPER_DIR));
         }
         this.hopper = new GraphHopperOSM().forServer();
-        hopper.setDataReaderFile(properties.mapDir);
+        hopper.setDataReaderFile(mapDir);
         hopper.setGraphHopperLocation(GRAPHHOPPER_DIR);
         hopper.setEncodingManager(new EncodingManager("foot, bike"));
         hopper.importOrLoad();
