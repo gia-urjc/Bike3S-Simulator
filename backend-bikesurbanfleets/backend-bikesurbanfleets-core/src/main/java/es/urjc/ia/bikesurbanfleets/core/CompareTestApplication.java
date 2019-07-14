@@ -2,10 +2,13 @@ package es.urjc.ia.bikesurbanfleets.core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
+import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
+import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -44,7 +47,7 @@ public class CompareTestApplication {
  //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurr";
         //testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurroundWithDemand";
  //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/version_usersmax600/cost_complex_prediction";
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests600max/cost_complex_prediction";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests600max/simple";
         mapPath = projectDir + "/../madrid.osm";
         demandDataPath = projectDir + "/../demandDataMadrid0817_0918.csv";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -60,7 +63,7 @@ public class CompareTestApplication {
         System.gc();
     }
 
-    private void executeTests(String testFile) throws FileNotFoundException, IOException, InterruptedException {
+    private void executeTests(String testFile) throws FileNotFoundException, IOException, InterruptedException, GraphHopperIntegrationException, GeoRouteCreationException {
         //Create auxiliary folders
         File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
         if (!auxiliaryDir.exists()) {
@@ -176,31 +179,10 @@ public class CompareTestApplication {
         }
     }
 
-    private void runResultAanalisis(String testdir) throws IOException, InterruptedException {
-        File auxiliaryDir = new File(analisisDir + testdir);
-        if (!auxiliaryDir.exists()) {
-            auxiliaryDir.mkdirs();
-        }
-
-        List<String> command = new ArrayList<String>();
-        command.add("node");
-        command.add(dataAnalyzerPath + "/data-analyser.js");
-        command.add("analyse");
-        command.add("-h");
-        command.add(historyDir + testdir);
-        command.add("-s");
-        command.add(schemaPath);
-        command.add("-c");
-        command.add(analisisDir + testdir);
-
-        System.out.println("executing: node " + dataAnalyzerPath + "/data-analyser.js analyse -h " + historyDir + testdir
-                + " -s " + schemaPath + " -c " + analisisDir + testdir);
-        ProcessBuilder pb = new ProcessBuilder(command);
-
-        Process p = pb.start(); // Start the process.
-        p.waitFor(); // Wait for the process to finish.
-        System.out.println("Script executed successfully");
-    }
+    private void runResultAanalisis(String testdir) throws IOException, InterruptedException, GraphHopperIntegrationException, GeoRouteCreationException {
+        SimulationResultAnalyser sra=new SimulationResultAnalyser(analisisDir+testdir, historyDir+testdir);
+        sra.analyzeSimulation();
+   }
 
     private void runscriptR() throws IOException, InterruptedException {
 

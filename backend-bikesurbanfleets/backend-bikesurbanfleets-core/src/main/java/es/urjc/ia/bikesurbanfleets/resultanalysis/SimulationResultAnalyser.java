@@ -120,8 +120,10 @@ public class SimulationResultAnalyser {
     double users_HE=0;
     double users_RE=0;
     int users_numabandon=0;
-    int users_totalrentalfails=0;
-    int users_totalreturnfails=0;
+    TreeMap<Integer, Integer> users_takefails = new TreeMap<>();
+    TreeMap<Integer, Integer> users_returnfails = new TreeMap<>();
+    int users_totalrentalfail=0;
+    int users_totalreturnfail=0;
     double users_av_additionaltimeloss=0D;
     GraphManager routeService;
     
@@ -130,6 +132,12 @@ public class SimulationResultAnalyser {
         this.historypath=Paths.get(historydir);
         stations=new ArrayList<HistoricStation>();
         this.routeService=routeService;
+    }
+    public SimulationResultAnalyser(String analysisdir, String historydir) throws IOException {
+        this.analysispath = Paths.get(analysisdir);
+        this.historypath=Paths.get(historydir);
+        stations=new ArrayList<HistoricStation>();
+        this.routeService=null;
     }
 
     public void analyzeSimulation() throws IOException, GraphHopperIntegrationException, GeoRouteCreationException {
@@ -325,15 +333,15 @@ public class SimulationResultAnalyser {
         stations_av_emptytime_stations=stations_av_emptytime_stations/(60D*(double)stations_num);
         stations_av_equilibrium=stations_av_equilibrium /(double)stations_num;
         
-        System.out.println("in postprocess");
+  //      System.out.println("in postprocess");
         //globval values for users
         users_num=usermetrics.size();
         users_finishedInSimTime=0;
         users_av_tostationtime=0;
         users_av_biketime=0;
         users_av_todesttime=0;
-        users_totalrentalfails=0;
-        users_totalreturnfails=0;
+        users_takefails = new TreeMap<>();
+        users_returnfails = new TreeMap<>();
         users_av_additionaltimeloss=0;
         int succusers=0;
         int i=0; int printi=0;
@@ -345,16 +353,28 @@ public class SimulationResultAnalyser {
                     users_av_tostationtime+=um.timegetbike-um.timeapp;
                     users_av_biketime+=um.timeretbike-um.timegetbike;
                     users_av_todesttime+=um.timeleafe-um.timeretbike;
-                    users_totalrentalfails+=um.failedbikerentals;
-                    users_totalreturnfails+=um.failedbaikereturns;
+                    users_totalrentalfail+=um.failedbikerentals;
+                    users_totalreturnfail+=um.failedbaikereturns;
+                    Integer old=users_takefails.get(um.failedbikerentals);
+                    if (old==null){
+                        users_takefails.put(um.failedbikerentals,1);
+                    } else{
+                        users_takefails.put(um.failedbikerentals,old+1);
+                    } 
+                    old=users_returnfails.get(um.failedbaikereturns);
+                    if (old==null){
+                        users_returnfails.put(um.failedbaikereturns,1);
+                    } else{
+                        users_returnfails.put(um.failedbaikereturns,old+1);
+                    } 
                     addTimeComparison(um);
 
-                    if (i==printi) {
+          /*          if (i==printi) {
                         System.out.println("in postprocess: " + printi + " users");
                         printi+=1000;
                     }
                     i++;
-
+*/
                     um.additionaltimeloss=(um.timeleafe-um.timeapp) - um.bestaproxtime;
                     users_av_additionaltimeloss+=um.additionaltimeloss;
                 }
@@ -371,8 +391,8 @@ public class SimulationResultAnalyser {
         users_av_biketime=users_av_biketime /((double)succusers*60D);
         users_av_todesttime=users_av_todesttime /((double)succusers*60D);
         users_DS=(double)succusers/(double)users_finishedInSimTime;
-        users_HE=(double)succusers/((double)users_totalrentalfails+succusers);
-        users_RE=(double)succusers/((double)users_totalreturnfails+succusers);
+        users_HE=(double)succusers/((double)users_totalrentalfail+succusers);
+        users_RE=(double)succusers/((double)users_totalreturnfail+succusers);
     }
     
     private void preprocess() throws IOException {
@@ -438,53 +458,89 @@ public class SimulationResultAnalyser {
                 CSVWriter.NO_QUOTE_CHARACTER,
                 CSVWriter.DEFAULT_ESCAPE_CHARACTER,
                 CSVWriter.DEFAULT_LINE_END);
-        // Write empty line
-        //Now set the String array for writing
-        String[] record = new String[19];
-        
-        //write header
-        record[0] = "specified simulation time (min)";
-        record[1] = "results are all calculated up to this time (users not finishing up to this time are ignored)";
-        record[2] = "#users total";
-        record[3] = "#users finished in simulationtime";
-        record[4] = "#abandoned";
-        record[5] = "DS";
-        record[6] = "HE";
-        record[7] = "RE";
-        record[8] = "Av. time to station (min)(only succesfull users)";
-        record[9] = "Av. time from orig to dest station (min)(only succesfull users)";
-        record[10] = "Av. time to final destination (min)(only succesfull users)";
-        record[11] = "Av. total time (min)";
-        record[12] = "Av. timeloss (min)";
-        record[13] = "#failed rentals (only succesfull users)";
-        record[14] = "#failed returns (only succesfull users)";
-        record[15] = "#stations";
-        record[16] = "#stations with empty times";
-        record[17] = "Av. empty times (min)";
-        record[18] = "Av. equilibrium desviation (over stations and simulationtime)";
+
+        //write empty line
+        csvWriter.writeNext(new String[]{""});
+
+        //first line statation data
+        int maxrentfails = users_takefails.lastKey();
+        int maxreturnfails=users_returnfails.lastKey();
+
+        String[] record = new String[3];
+        record[0] = "simulatiuon time (min)";
+        record[1] = Double.toString((double)totalsimtimespecified/60D);
+        record[2] = "all results are calculated up to this time (users not finishing up to this time are ignored)";
         csvWriter.writeNext(record);
 
-        record[0] = Double.toString((double)totalsimtimespecified/60D);
-        record[1] = "";
-        record[2] = Integer.toString(users_num);
-        record[3] = Integer.toString(users_finishedInSimTime);
-        record[4] = Integer.toString(users_numabandon);
-        record[5] = Double.toString(users_DS);
-        record[6] = Double.toString(users_HE);
-        record[7] = Double.toString(users_RE);
-        record[8] = Double.toString(users_av_tostationtime);
-        record[9] = Double.toString(users_av_biketime);
-        record[10] = Double.toString(users_av_todesttime);
-        record[11] = Double.toString(users_av_tostationtime+users_av_biketime+users_av_todesttime);
-        record[12] = Double.toString(users_av_additionaltimeloss);
+         //write empty line
+        csvWriter.writeNext(new String[]{""});
+
+        //Now set the String array for writing
+        record = new String[13+maxrentfails+maxreturnfails+2];
         
-        record[13] = Integer.toString(users_totalrentalfails);
-        record[14] = Integer.toString(users_totalreturnfails);
+        //write header for user data
+        record[0] = "#users total";
+        record[1] = "#users finished in simulationtime";
+        record[2] = "#abandoned";
+        record[3] = "DS";
+        record[4] = "HE";
+        record[5] = "RE";
+        record[6] = "Av. time to station (min)(only succesfull users)";
+        record[7] = "Av. time from orig to dest station (min)(only succesfull users)";
+        record[8] = "Av. time to final destination (min)(only succesfull users)";
+        record[9] = "Av. total time (min)";
+        record[10] = "Av. timeloss (min)";
+        record[11] = "#failed rentals (only succesfull users)";
+        record[12] = "#failed returns (only succesfull users)";
+        int i = 0;
+        while (i <= maxrentfails) {
+            record[13 + i] = "# with " + i + " rental fails";
+            i++;
+        }
+        int j = 0;
+        while (j <= maxreturnfails) {
+            record[13 + i + j] = "# with " + j + " return fails";
+            j++;
+        }
+        csvWriter.writeNext(record);
         
-        record[15] = Integer.toString(stations_num);
-        record[16] = Integer.toString(stations_numerwithEmptytimes);
-        record[17] = Double.toString(stations_av_emptytime_stations);
-        record[18] = Double.toString(stations_av_equilibrium);
+        //write global user data
+        record[0] = Integer.toString(users_num);
+        record[1] = Integer.toString(users_finishedInSimTime);
+        record[2] = Integer.toString(users_numabandon);
+        record[3] = Double.toString(users_DS);
+        record[4] = Double.toString(users_HE);
+        record[5] = Double.toString(users_RE);
+        record[6] = Double.toString(users_av_tostationtime);
+        record[7] = Double.toString(users_av_biketime);
+        record[8] = Double.toString(users_av_todesttime);
+        record[9] = Double.toString(users_av_tostationtime+users_av_biketime+users_av_todesttime);
+        record[10] = Double.toString(users_av_additionaltimeloss);  
+        record[11] = Integer.toString(users_totalrentalfail);
+        record[12] = Integer.toString(users_totalreturnfail);
+        for (Integer key : users_takefails.keySet()) {
+                record[13 + key] = Integer.toString(users_takefails.get(key));
+        }
+        for (Integer key : users_returnfails.keySet()) {
+                record[13 + maxrentfails + 1 + key] = Integer.toString(users_returnfails.get(key)); 
+        }
+        csvWriter.writeNext(record);
+
+        //write empty line
+        csvWriter.writeNext(new String[]{""});
+
+        //now write sation summary
+        record = new String[3];
+        record[0] = "#stations";
+        record[1] = "#stations with empty times";
+        record[2] = "Av. empty times (min)";
+        record[3] = "Av. equilibrium desviation (over stations and simulationtime)";
+        csvWriter.writeNext(record);
+
+        record[0] = Integer.toString(stations_num);
+        record[1] = Integer.toString(stations_numerwithEmptytimes);
+        record[2] = Double.toString(stations_av_emptytime_stations);
+        record[3] = Double.toString(stations_av_equilibrium);
         csvWriter.writeNext(record);
         writer.close();
     }
@@ -628,12 +684,19 @@ public class SimulationResultAnalyser {
         }
         //Now get the routes
         int shortesttime=0;
-        GeoRoute gr=routeService.obtainShortestRouteBetween(um.origin, bestStartStation.getPosition(), "foot");
-        shortesttime+=(int)(gr.getTotalDistance()/um.walkvelocity);
-        gr=routeService.obtainShortestRouteBetween(bestStartStation.getPosition(), bestEndStation.getPosition(), "bike");
-        shortesttime+=(int)(gr.getTotalDistance()/um.cyclevelocity);
-        gr=routeService.obtainShortestRouteBetween(bestEndStation.getPosition(), um.destination, "foot");
-        shortesttime+=(int)(gr.getTotalDistance()/um.walkvelocity);
+        if (routeService!=null) {
+            GeoRoute gr=routeService.obtainShortestRouteBetween(um.origin, bestStartStation.getPosition(), "foot");
+            shortesttime+=(int)(gr.getTotalDistance()/um.walkvelocity);
+            gr=routeService.obtainShortestRouteBetween(bestStartStation.getPosition(), bestEndStation.getPosition(), "bike");
+            shortesttime+=(int)(gr.getTotalDistance()/um.cyclevelocity);
+            gr=routeService.obtainShortestRouteBetween(bestEndStation.getPosition(), um.destination, "foot");
+            shortesttime+=(int)(gr.getTotalDistance()/um.walkvelocity);
+        } else {
+
+            shortesttime=(int)((um.origin.distanceTo(bestStartStation.getPosition())/this.standardstraightLineWalkingVelocity)+
+                (bestStartStation.getPosition().distanceTo(bestEndStation.getPosition())/this.standardstraightLineCyclingVelocity)+
+                (bestEndStation.getPosition().distanceTo(um.destination)/this.standardstraightLineWalkingVelocity));
+        }
         um.bestaproxtime=shortesttime;
         
     }

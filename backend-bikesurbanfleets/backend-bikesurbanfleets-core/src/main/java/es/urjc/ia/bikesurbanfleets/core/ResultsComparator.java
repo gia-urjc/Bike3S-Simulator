@@ -60,8 +60,7 @@ public class ResultsComparator {
             testresults.put(test, res);
             readRecommenderParameters(test, res);
             analyzeUsers(test, res.userdata);
-            analyzeEmptyStations(test, res.stationdata);
-            analyzeStationBalancing(test, res.stationdata);
+            analyzeStations(test, res.stationdata);
         }
         writeCVS(testresults, outputFile);
     }
@@ -75,22 +74,23 @@ public class ResultsComparator {
                 CSVWriter.NO_QUOTE_CHARACTER,
                 CSVWriter.DEFAULT_ESCAPE_CHARACTER,
                 CSVWriter.DEFAULT_LINE_END);
-
-        WiteUserdata(testresults, csvWriter);
-        WiteStationdata(testresults, csvWriter);
+        WriteGeneraldata(csvWriter);
+        WriteUserdata(testresults, csvWriter);
+        WriteStationdata(testresults, csvWriter);
         writer.close();
     }
-
-    private void WitGeneraldata(CSVWriter csvWriter) throws IOException {
-        // Write empty line
+    private void WriteGeneraldata(CSVWriter csvWriter){
+            //write empty line
         csvWriter.writeNext(new String[]{""});
-        //Now set the String array for writing
-        String[] record = {"total simulation time (min)", Double.toString((double) totalsimtime / 60D)};
-        //write header
+
+        String[] record = new String[3];
+        record[0] = "simulatiuon time (min)";
+        record[1] = Double.toString((double)totalsimtime/60D);
+        record[2] = "all results are calculated up to this time (users not finishing up to this time are ignored)";
         csvWriter.writeNext(record);
     }
-
-    private void WiteUserdata(TreeMap<String, TestResult> testresults, CSVWriter csvWriter) throws IOException {
+    
+    private void WriteUserdata(TreeMap<String, TestResult> testresults, CSVWriter csvWriter) throws IOException {
         // Write empty line
         csvWriter.writeNext(new String[]{""});
         //get max value of fails
@@ -106,28 +106,32 @@ public class ResultsComparator {
         }
 
         //Now set the String array for writing
-        String[] record = new String[11 + maxrentfails + maxreturnfails + 2];
+        String[] record = new String[15 + maxrentfails + maxreturnfails + 2];
 
         //setup header
         record[0] = "Testname";
         record[1] = "recommerderParameters";
-        record[2] = "#users";
-        record[3] = "DS";
-        record[4] = "HE";
-        record[5] = "RE";
-        record[6] = "Av. time to station (min)";
-        record[7] = "Av. time from orig to dest station (min)";
-        record[8] = "Av. time to final destination (min)";
-        record[9] = "Av. total time (min)";
-        record[10] = "# abandoned";
+        record[2] = "#users total";
+        record[3] = "#users finished in simulationtime";
+        record[4] = "#abandoned";
+        record[5] = "DS";
+        record[6] = "HE";
+        record[7] = "RE";
+        record[8] = "Av. time to station (min)(only succesfull users)";
+        record[9] = "Av. time from orig to dest station (min)(only succesfull users)";
+        record[10] = "Av. time to final destination (min)(only succesfull users)";
+        record[11] = "Av. total time (min)";
+        record[12] = "Av. timeloss (min)";
+        record[13] = "#failed rentals (only succesfull users)";
+        record[14] = "#failed returns (only succesfull users)";
         int i = 0;
         while (i <= maxrentfails) {
-            record[11 + i] = "# with " + i + " rental fails";
+            record[15 + i] = "# with " + i + " rental fails";
             i++;
         }
         int j = 0;
         while (j <= maxreturnfails) {
-            record[11 + i + j] = "# with " + j + " return fails";
+            record[15 + i + j] = "# with " + j + " return fails";
             j++;
         }
         //write header
@@ -136,37 +140,41 @@ public class ResultsComparator {
         //now write the test results
         for (String t : testresults.keySet()) {
             TestResult res = testresults.get(t);
-            for (int k = 0; k < 11 + maxrentfails + maxreturnfails + 2; k++) {
+            for (int k = 0; k < 15 + maxrentfails + maxreturnfails + 2; k++) {
                 record[k] = "";
             }
             record[0] = t;
             record[1] = res.recommenderParameters;
-            record[2] = Integer.toString(res.userdata.totalusersr);
-            record[3] = Double.toString(res.userdata.DS);
-            record[4] = Double.toString(res.userdata.HE);
-            record[5] = Double.toString(res.userdata.RE);
-            record[6] = Double.toString(res.userdata.avtostationtime / 60D);
-            record[7] = Double.toString(res.userdata.avbetweenstationtime / 60D);
-            record[8] = Double.toString(res.userdata.avfromstationtime / 60D);
-            record[9] = Double.toString((res.userdata.avfromstationtime + res.userdata.avbetweenstationtime + res.userdata.avtostationtime) / 60D);
-            record[10] = Integer.toString(res.userdata.avabandonos);
+            record[2] = Integer.toString(res.userdata.totalusers);
+            record[3] = Integer.toString(res.userdata.finishedusers);
+            record[4] = Integer.toString(res.userdata.avabandonos);
+            record[5] = Double.toString(res.userdata.DS);
+            record[6] = Double.toString(res.userdata.HE);
+            record[7] = Double.toString(res.userdata.RE);
+            record[8] = Double.toString(res.userdata.avtostationtime / 60D);
+            record[9] = Double.toString(res.userdata.avbetweenstationtime / 60D);
+            record[10] = Double.toString(res.userdata.avfromstationtime / 60D);
+            record[11] = Double.toString((res.userdata.avfromstationtime + res.userdata.avbetweenstationtime + res.userdata.avtostationtime) / 60D);
+            record[12] = Integer.toString(res.userdata.avtimeloss);
+            record[13] = Integer.toString(res.userdata.avtotalfailedrentals);
+            record[14] = Integer.toString(res.userdata.avtotalfailedreturns);
             for (Integer key : res.userdata.usertakefails.keySet()) {
-                record[11 + key] = Integer.toString(res.userdata.usertakefails.get(key));
+                record[15 + key] = Integer.toString(res.userdata.usertakefails.get(key));
             }
             for (Integer key : res.userdata.userreturnfails.keySet()) {
-                record[11 + maxrentfails + 1 + key] = Integer.toString(res.userdata.userreturnfails.get(key));
+                record[15 + maxrentfails + 1 + key] = Integer.toString(res.userdata.userreturnfails.get(key));
             }
             //write line
             csvWriter.writeNext(record);
         }
     }
 
-    private void WiteStationdata(TreeMap<String, TestResult> testresults, CSVWriter csvWriter) throws IOException {
+    private void WriteStationdata(TreeMap<String, TestResult> testresults, CSVWriter csvWriter) throws IOException {
 
         // Write empty line
         csvWriter.writeNext(new String[]{""});
         //write header
-        String[] record = {"Testname", "recommerderParameters", "#stations", "#stations with empty times", "sum emptytimes all stations(min)", "average equilibrium dev. over all stations and total time (bikes)", "avg empty time"};
+        String[] record = {"Testname", "recommerderParameters", "#stations", "#stations with empty times", "Av. empty times (min)", "Av. equilibrium desviation (over stations and simulationtime)"};
         csvWriter.writeNext(record);
 
         int numstationwithemtytimes = 0;
@@ -184,10 +192,9 @@ public class ResultsComparator {
             record[1] = res.recommenderParameters;
             record[2] = Integer.toString(res.stationdata.totalstations);
             record[3] = Integer.toString(res.stationdata.numstationwithemtytimes);
-            record[4] = Double.toString(res.stationdata.totalemptytimes / 60D);
+            record[4] = Double.toString((res.stationdata.totalemptytimes / 60D)/(res.stationdata.totalstations));
             record[5] = Double.toString((res.stationdata.totaldeviationfromequilibrium)
                     / ((double) res.stationdata.totalstations));
-            record[6] = Double.toString((res.stationdata.totalemptytimes / 60D)/(res.stationdata.totalstations));
             //write line
             csvWriter.writeNext(record);
         }
@@ -211,7 +218,8 @@ public class ResultsComparator {
     private class UserData {
 
         double avtostationtime = 0;
-        int totalusersr = 0;
+        int totalusers = 0;
+        int finishedusers=0;
         double avbetweenstationtime = 0;
         double avfromstationtime = 0;
         int avabandonos = 0;
@@ -237,6 +245,7 @@ public class ResultsComparator {
         int fromstationcounter = 0;
         int totalabandonos = 0;
         int totalusers=0;
+        int usersfinishedintime=0;
         int failedRentalsUsersWithBike=0;
         int failedResturnsUsersWithBike=0;
         TreeMap<Integer, Integer> usertakefails = new TreeMap<>();
@@ -282,7 +291,7 @@ public class ResultsComparator {
                      throw new RuntimeException("error in results");           
         }
         dat.avtostationtime = totaltostationtime / ((double) tostationcounter);
-        dat.totalusersr = totalusers ;
+        dat.totalusers = totalusers ;
         dat.avbetweenstationtime = totalbetweenstationtime / ((double) betweenstationcounter);
         dat.avfromstationtime = totalfromstationtime / ((double) fromstationcounter);
         dat.avabandonos = totalabandonos;
@@ -293,28 +302,17 @@ public class ResultsComparator {
         dat.RE=((double) (tostationcounter))/((double)(tostationcounter+failedResturnsUsersWithBike));
    }
 
-    private void analyzeEmptyStations(String test, StationData dat) throws IOException {
-        List<String[]> data = readAllDataAtOnce(analysisdir + test + "/empty_stations.csv");
+    private void analyzeStations(String test, StationData dat) throws IOException {
+        List<String[]> data = readAllDataAtOnce(analysisdir + test + "/stations.csv");
         for (String[] line : data) {
             dat.totalstations++;
-            if (!(line[2].equals("0"))) {
-                dat.numstationwithemtytimes++;
-                dat.totalemptytimes += Integer.parseInt(line[2]);
-            }
+            double empty=Double.valueOf(line[1]);
+            if (empty>0) dat.numstationwithemtytimes++;
+            dat.totalemptytimes += empty;
+            dat.totaldeviationfromequilibrium += Double.valueOf(line[2]);
         }
     }
 
-    private void analyzeStationBalancing(String test, StationData dat) throws IOException {
-        List<String[]> data = readAllDataAtOnce(analysisdir + test + "/stationBalanceQuality.csv");
-        int totalstations = 0;
-        for (String[] line : data) {
-            totalstations++;
-            dat.totaldeviationfromequilibrium += Double.valueOf(line[1]);
-        }
-        if (totalstations != dat.totalstations) {
-            throw new RuntimeException("error in results");
-        }
-    }
 
     public static List<String[]> readAllDataAtOnce(String file) throws FileNotFoundException, IOException {
         // Create an object of file reader 
