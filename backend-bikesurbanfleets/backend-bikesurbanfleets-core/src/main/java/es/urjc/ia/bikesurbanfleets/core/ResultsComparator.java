@@ -155,9 +155,9 @@ public class ResultsComparator {
             record[9] = Double.toString(res.userdata.avbetweenstationtime / 60D);
             record[10] = Double.toString(res.userdata.avfromstationtime / 60D);
             record[11] = Double.toString((res.userdata.avfromstationtime + res.userdata.avbetweenstationtime + res.userdata.avtostationtime) / 60D);
-            record[12] = Integer.toString(res.userdata.avtimeloss);
-            record[13] = Integer.toString(res.userdata.avtotalfailedrentals);
-            record[14] = Integer.toString(res.userdata.avtotalfailedreturns);
+            record[12] = Double.toString(res.userdata.avtimeloss);
+            record[13] = Integer.toString(res.userdata.totalfailedrentals);
+            record[14] = Integer.toString(res.userdata.totalfailedreturns);
             for (Integer key : res.userdata.usertakefails.keySet()) {
                 record[15 + key] = Integer.toString(res.userdata.usertakefails.get(key));
             }
@@ -192,7 +192,7 @@ public class ResultsComparator {
             record[1] = res.recommenderParameters;
             record[2] = Integer.toString(res.stationdata.totalstations);
             record[3] = Integer.toString(res.stationdata.numstationwithemtytimes);
-            record[4] = Double.toString((res.stationdata.totalemptytimes / 60D)/(res.stationdata.totalstations));
+            record[4] = Double.toString((res.stationdata.totalemptytimes)/(res.stationdata.totalstations));
             record[5] = Double.toString((res.stationdata.totaldeviationfromequilibrium)
                     / ((double) res.stationdata.totalstations));
             //write line
@@ -228,6 +228,9 @@ public class ResultsComparator {
         double RE=0.0D;
         TreeMap<Integer, Integer> usertakefails = new TreeMap<>();
         TreeMap<Integer, Integer> userreturnfails = new TreeMap<>();
+        double avtimeloss=0;
+        int totalfailedrentals=0;
+        int totalfailedreturns=0;
     }
     
     private void readRecommenderParameters(String test, TestResult res) throws FileNotFoundException, IOException {
@@ -238,68 +241,66 @@ public class ResultsComparator {
     private void analyzeUsers(String test, UserData dat) throws IOException {
         List<String[]> data = readAllDataAtOnce(analysisdir + test + "/users.csv");
         double totaltostationtime = 0;
-        int tostationcounter = 0;
         double totalbetweenstationtime = 0;
-        int betweenstationcounter = 0;
         double totalfromstationtime = 0;
-        int fromstationcounter = 0;
         int totalabandonos = 0;
         int totalusers=0;
         int usersfinishedintime=0;
+        double totaltimeloss=0;
         int failedRentalsUsersWithBike=0;
         int failedResturnsUsersWithBike=0;
+        int usersreacheddestination=0;
         TreeMap<Integer, Integer> usertakefails = new TreeMap<>();
         TreeMap<Integer, Integer> userreturnfails = new TreeMap<>();
         for (String[] line : data) {
             totalusers++;
-            if (line[4].equals("EXIT_AFTER_REACHING_DESTINATION")) {
-                if (!(line[9].equals("1")) || !(line[11].equals("1"))) {
-                    throw new RuntimeException("error in results");
+            if (line[1].equals("yes")){
+                usersfinishedintime++;
+                if (line[8].equals("EXIT_AFTER_REACHING_DESTINATION")) {
+                    usersreacheddestination++;
+                    if (!(line[13].equals("1")) || !(line[15].equals("1"))) {
+                        throw new RuntimeException("error in results");
+                    }
+                    totaltostationtime += Integer.parseInt(line[3])-Integer.parseInt(line[2]);
+                    totalbetweenstationtime += Integer.parseInt(line[4])-Integer.parseInt(line[3]);
+                    totalfromstationtime += Integer.parseInt(line[5])-Integer.parseInt(line[4]);
+                    failedRentalsUsersWithBike+=Integer.parseInt(line[14]);
+                    Integer current = usertakefails.get(Integer.parseInt(line[14]));
+                    if (current == null) {
+                        usertakefails.put(Integer.parseInt(line[14]), 1);
+                    } else {
+                        usertakefails.put(Integer.parseInt(line[14]), current + 1);
+                    }
+                    failedResturnsUsersWithBike+=Integer.parseInt(line[16]);
+                    current = userreturnfails.get(Integer.parseInt(line[16]));
+                    if (current == null) {
+                        userreturnfails.put(Integer.parseInt(line[16]), 1);
+                    } else {
+                        userreturnfails.put(Integer.parseInt(line[16]), current + 1);
+                    }
+                    totaltimeloss+=Double.parseDouble(line[7]);
+                } else { //abandonados
+                    if (!(line[13].equals("0")) || !(line[15].equals("0"))) {
+                        throw new RuntimeException("error in results");
+                    }
+                    totalabandonos++;
                 }
-                tostationcounter++;
-                totaltostationtime += Integer.parseInt(line[1]);
-                if (!(line[2].equals(""))) {
-                    betweenstationcounter++;
-                    totalbetweenstationtime += Integer.parseInt(line[2]);
-                }
-                if (!(line[3].equals(""))) {
-                    fromstationcounter++;
-                    totalfromstationtime += Integer.parseInt(line[3]);
-                }
-                failedRentalsUsersWithBike+=Integer.parseInt(line[10]);
-                Integer current = usertakefails.get(Integer.parseInt(line[10]));
-                if (current == null) {
-                    usertakefails.put(Integer.parseInt(line[10]), 1);
-                } else {
-                    usertakefails.put(Integer.parseInt(line[10]), current + 1);
-                }
-                failedResturnsUsersWithBike+=Integer.parseInt(line[12]);
-                current = userreturnfails.get(Integer.parseInt(line[12]));
-                if (current == null) {
-                    userreturnfails.put(Integer.parseInt(line[12]), 1);
-                } else {
-                    userreturnfails.put(Integer.parseInt(line[12]), current + 1);
-                }
-            } else { //abandonados
-                if (!(line[9].equals("0")) || !(line[11].equals("0"))) {
-                    throw new RuntimeException("error in results");
-                }
-                totalabandonos++;
             }
         }
-        if (tostationcounter!=betweenstationcounter || tostationcounter!=fromstationcounter ){
-                     throw new RuntimeException("error in results");           
-        }
-        dat.avtostationtime = totaltostationtime / ((double) tostationcounter);
         dat.totalusers = totalusers ;
-        dat.avbetweenstationtime = totalbetweenstationtime / ((double) betweenstationcounter);
-        dat.avfromstationtime = totalfromstationtime / ((double) fromstationcounter);
+        dat.finishedusers=usersfinishedintime;
+        dat.avtostationtime = totaltostationtime / ((double) usersreacheddestination);
+        dat.avbetweenstationtime = totalbetweenstationtime / ((double) usersreacheddestination);
+        dat.avfromstationtime = totalfromstationtime / ((double) usersreacheddestination);
+        dat.totalfailedrentals=failedRentalsUsersWithBike;
+        dat.totalfailedreturns=failedResturnsUsersWithBike;
         dat.avabandonos = totalabandonos;
         dat.usertakefails = usertakefails;
         dat.userreturnfails = userreturnfails;
-        dat.DS=((double) (tostationcounter))/((double)totalusers);
-        dat.HE=((double) (tostationcounter))/((double)(tostationcounter+failedRentalsUsersWithBike));
-        dat.RE=((double) (tostationcounter))/((double)(tostationcounter+failedResturnsUsersWithBike));
+        dat.DS=((double) (usersreacheddestination))/((double)usersfinishedintime);
+        dat.HE=((double) (usersreacheddestination))/((double)(usersreacheddestination+failedRentalsUsersWithBike));
+        dat.RE=((double) (usersreacheddestination))/((double)(usersreacheddestination+failedResturnsUsersWithBike));
+        dat.avtimeloss=totaltimeloss/((double) usersreacheddestination);
    }
 
     private void analyzeStations(String test, StationData dat) throws IOException {

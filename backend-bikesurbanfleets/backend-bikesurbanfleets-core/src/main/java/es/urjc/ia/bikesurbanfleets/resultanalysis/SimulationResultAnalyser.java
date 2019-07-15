@@ -43,17 +43,18 @@ import java.util.TreeMap;
  * @author holger
  */
 public class SimulationResultAnalyser {
-    double standardstraightLineWalkingVelocity = 1.4/GeoPoint.STRAIGT_LINE_FACTOR;
-    double standardstraightLineCyclingVelocity = 6/GeoPoint.STRAIGT_LINE_FACTOR;
-    
-    public static void main(String[] args) throws Exception {
-        String historydir= "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests600max/fasttest/1/history/2/";
-        String analysisdir="/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests600max/fasttest/1/analysis/2/";
-        String tempdir=System.getProperty("user.home")+"/.Bike3S";
-        String mapdir="/Users/holger/workspace/BikeProjects/Bike3S/madrid.osm";
 
-        GraphManager gm= new GraphHopperIntegration(mapdir,tempdir) ;
-        SimulationResultAnalyser sa=new SimulationResultAnalyser(analysisdir, historydir, gm);
+    double standardstraightLineWalkingVelocity = 1.4 / GeoPoint.STRAIGT_LINE_FACTOR;
+    double standardstraightLineCyclingVelocity = 6 / GeoPoint.STRAIGT_LINE_FACTOR;
+
+    public static void main(String[] args) throws Exception {
+        String historydir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests600max/fasttest/1/history/2/";
+        String analysisdir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests600max/fasttest/1/analysis/2/";
+        String tempdir = System.getProperty("user.home") + "/.Bike3S";
+        String mapdir = "/Users/holger/workspace/BikeProjects/Bike3S/madrid.osm";
+
+        GraphManager gm = new GraphHopperIntegration(mapdir, tempdir);
+        SimulationResultAnalyser sa = new SimulationResultAnalyser(analysisdir, historydir, gm);
         sa.analyzeSimulation();
     }
     private static Gson gson = new GsonBuilder()
@@ -62,99 +63,102 @@ public class SimulationResultAnalyser {
             .setPrettyPrinting()
             .create();
 
-    class UserMetric{
-        int timeapp=-1;
-        int timegetbike=-1;
-        int timeretbike=-1;
-        int timeleafe=-1;
+    class UserMetric {
+
+        int timeapp = -1;
+        int timegetbike = -1;
+        int timeretbike = -1;
+        int timeleafe = -1;
         Event.RESULT_TYPE leafreason;
-        int succbikereservations=0;
-        int failedbikereservations=0;
-        int succslotreservations=0;
-        int failesslotreservations=0;
-        int succbikerentals=0;
-        int failedbikerentals=0;
-        int succbikereturns=0;
-        int failedbaikereturns=0;
-        boolean finishedinsimtime=false;
+        int succbikereservations = 0;
+        int failedbikereservations = 0;
+        int succslotreservations = 0;
+        int failesslotreservations = 0;
+        int succbikerentals = 0;
+        int failedbikerentals = 0;
+        int succbikereturns = 0;
+        int failedbaikereturns = 0;
+        boolean finishedinsimtime = false;
         GeoPoint origin;
         GeoPoint destination;
         double walkvelocity;
         double cyclevelocity;
-        int bestaproxtime=0;
-        double additionaltimeloss=0;
+        double additionaltimeloss = 0;
+        double artificialtime = 0;
+        GeoPoint lastposition;
     }
-    class StationMetric{
-        int succbikereservations=0;
-        int failedbikereservations=0;
-        int succslotreservations=0;
-        int failesslotreservations=0;
-        int succbikerentals=0;
-        int failedbikerentals=0;
-        int succbikereturns=0;
-        int failedbaikereturns=0;
-        double balancingquality=0D;
-        long emtytime=0;
-        int timelastchange=0;
-        int currentavbikes=0;
+
+    class StationMetric {
+
+        GeoPoint position;
+        int id;
+        int succbikereservations = 0;
+        int failedbikereservations = 0;
+        int succslotreservations = 0;
+        int failesslotreservations = 0;
+        int succbikerentals = 0;
+        int failedbikerentals = 0;
+        int succbikereturns = 0;
+        int failedbaikereturns = 0;
+        double balancingquality = 0D;
+        long emtytime = 0;
+        int timelastchange = 0;
+        int currentavbikes = 0;
         int capacity;
     }
-    TreeMap<Integer, StationMetric> stationmetrics=new TreeMap<Integer, StationMetric>();
-    TreeMap<Integer, UserMetric> usermetrics=new TreeMap<Integer, UserMetric>();
-    List<HistoricStation> stations;        
-    
+    TreeMap<Integer, StationMetric> stationmetrics = new TreeMap<Integer, StationMetric>();
+    TreeMap<Integer, UserMetric> usermetrics = new TreeMap<Integer, UserMetric>();
+
     private Path analysispath;
     private Path historypath;
-    private int totalsimtimespecified=0;
-    private int currentsimtime=0;
+    private int totalsimtimespecified = 0;
     int stations_num;
-    int stations_numerwithEmptytimes=0;
-    double stations_av_emptytime_stations=0;
-    double stations_av_equilibrium=0;
+    int stations_numerwithEmptytimes = 0;
+    double stations_av_emptytime_stations = 0;
+    double stations_av_equilibrium = 0;
     int users_num;
-    int users_finishedInSimTime=0;
-    double users_av_tostationtime=0;
-    double users_av_biketime=0;
-    double users_av_todesttime=0;
-    double users_DS=0;
-    double users_HE=0;
-    double users_RE=0;
-    int users_numabandon=0;
+    int users_finishedInSimTime = 0;
+    double users_av_tostationtime = 0;
+    double users_av_biketime = 0;
+    double users_av_todesttime = 0;
+    double users_DS = 0;
+    double users_HE = 0;
+    double users_RE = 0;
+    int users_numabandon = 0;
     TreeMap<Integer, Integer> users_takefails = new TreeMap<>();
     TreeMap<Integer, Integer> users_returnfails = new TreeMap<>();
-    int users_totalrentalfail=0;
-    int users_totalreturnfail=0;
-    double users_av_additionaltimeloss=0D;
+    int users_totalrentalfail = 0;
+    int users_totalreturnfail = 0;
+    double users_av_additionaltimeloss = 0D;
     GraphManager routeService;
-    
+
     public SimulationResultAnalyser(String analysisdir, String historydir, GraphManager routeService) throws IOException {
         this.analysispath = Paths.get(analysisdir);
-        this.historypath=Paths.get(historydir);
-        stations=new ArrayList<HistoricStation>();
-        this.routeService=routeService;
+        this.historypath = Paths.get(historydir);
+        this.routeService = routeService;
     }
+
     public SimulationResultAnalyser(String analysisdir, String historydir) throws IOException {
         this.analysispath = Paths.get(analysisdir);
-        this.historypath=Paths.get(historydir);
-        stations=new ArrayList<HistoricStation>();
-        this.routeService=null;
+        this.historypath = Paths.get(historydir);
+        this.routeService = null;
     }
 
     public void analyzeSimulation() throws IOException, GraphHopperIntegrationException, GeoRouteCreationException {
         // read global values
         File json = historypath.resolve("final-global-values.json").toFile();
         FileReader red = new FileReader(json);
-        FinalGlobalValues fgv=gson.fromJson(red, FinalGlobalValues.class);
-        totalsimtimespecified=fgv.getTotalTimeSimulation();
+        FinalGlobalValues fgv = gson.fromJson(red, FinalGlobalValues.class);
+        totalsimtimespecified = fgv.getTotalTimeSimulation();
         red.close();
 
         // setup metrics
-        stationmetrics=new TreeMap<Integer, StationMetric>();
-        usermetrics=new TreeMap<Integer, UserMetric>();
-        
+        stationmetrics = new TreeMap<Integer, StationMetric>();
+        usermetrics = new TreeMap<Integer, UserMetric>();
+
         //preprocess data (read initial station info
         preprocess();
-        
+
         //read history
         File file = new File(historypath.toString());
         File[] directories = file.listFiles(new FilenameFilter() {
@@ -163,25 +167,24 @@ public class SimulationResultAnalyser {
                 return new File(current, name).isFile();
             }
         });
-        LinkedList<File> filelist=new LinkedList<File>();
+        LinkedList<File> filelist = new LinkedList<File>();
         for (File histname : directories) {
             if (histname.getName().matches("\\d+\\-\\d+\\_\\d+\\.json")) {
-                int i=0;
-                int valuen=Integer.parseInt(histname.getName().substring(0, histname.getName().indexOf('-')));
-                for (i=0; i < filelist.size(); i++){
-                    int valueo=Integer.parseInt(filelist.get(i).getName().substring(0, filelist.get(i).getName().indexOf('-')));
-                    if (valuen<valueo){
-                       break;
+                int i = 0;
+                int valuen = Integer.parseInt(histname.getName().substring(0, histname.getName().indexOf('-')));
+                for (i = 0; i < filelist.size(); i++) {
+                    int valueo = Integer.parseInt(filelist.get(i).getName().substring(0, filelist.get(i).getName().indexOf('-')));
+                    if (valuen < valueo) {
+                        break;
                     }
                 }
                 filelist.add(i, histname);
             }
-        } 
-        currentsimtime=0;
-        for (File histname : filelist  ) {
+        }
+        for (File histname : filelist) {
             processHistoryEntries(readHistoryEntries(histname));
         }
-        
+
         //write the results to files
         postprocess();
         File auxiliaryDir = analysispath.toFile();
@@ -191,261 +194,316 @@ public class SimulationResultAnalyser {
         WriteGeneraldata();
         WiteUserdata();
         WiteStationdata();
-     }
+    }
 
-    private Integer getUserID(Collection<HistoryJsonClasses.IdReference> ent){
-        for (HistoryJsonClasses.IdReference ref:ent){
-            if (ref.getType().equals("users")){
-                return (Integer)ref.getId();
+    private Integer getUserID(Collection<HistoryJsonClasses.IdReference> ent) {
+        for (HistoryJsonClasses.IdReference ref : ent) {
+            if (ref.getType().equals("users")) {
+                return (Integer) ref.getId();
             }
         }
         throw new RuntimeException("no user id found");
     }
-    private Integer getStationID(Collection<HistoryJsonClasses.IdReference> ent){
-        for (HistoryJsonClasses.IdReference ref:ent){
-            if (ref.getType().equals("stations")){
-                return (Integer)ref.getId();
+
+    private Integer getStationID(Collection<HistoryJsonClasses.IdReference> ent) {
+        for (HistoryJsonClasses.IdReference ref : ent) {
+            if (ref.getType().equals("stations")) {
+                return (Integer) ref.getId();
             }
         }
         return null;
     }
 
-    private void addUserData(UserMetric um,int userid, Map<String, List<JsonObject>> newEntities) {
-        //get the userposition
-        if (newEntities==null) throw new RuntimeException("user not found in new entities");
-        List<JsonObject> users=newEntities.get("users");
-        if (users==null) throw new RuntimeException("user not found in new entities");
-        HistoricUser hu=gson.fromJson(users.get(0),HistoricUser.class);
-        if (userid!=hu.getId()) throw new RuntimeException("user not found in new entities");
-       
-        //now copy the user data:
-        um.origin=hu.getPosition();
-        um.destination=hu.getDestinationLocation();
-        um.walkvelocity=hu.getWalkingVelocity();
-        um.cyclevelocity=hu.getCyclingVelocity();
+    private void analyzeUserData(Map<String, List<JsonObject>> newEntities, String name, Integer userid, Integer stationId, int time, Event.RESULT_TYPE result) {
+        //check new user appearance first
+        if (name.equals("EventUserAppears")) {
+            UserMetric newUM = new UserMetric();
+            if (null != usermetrics.put(userid, newUM)) {
+                throw new RuntimeException("user should not exist in historyanalysis");
+            }
+            if (newEntities == null) {
+                throw new RuntimeException("user not found in new entities");
+            }
+            List<JsonObject> users = newEntities.get("users");
+            if (users == null) {
+                throw new RuntimeException("user not found in new entities");
+            }
+            HistoricUser hu = gson.fromJson(users.get(0), HistoricUser.class);
+            if (userid != hu.getId()) {
+                throw new RuntimeException("user not found in new entities");
+            }
+
+            //now copy the user data:
+            newUM.origin = hu.getPosition();
+            newUM.destination = hu.getDestinationLocation();
+            newUM.walkvelocity = hu.getWalkingVelocity();
+            newUM.cyclevelocity = hu.getCyclingVelocity();
+            newUM.timeapp = time;
+            newUM.lastposition = newUM.origin;
+            return;
+        }
+
+        // in any other case the user should exist
+        UserMetric usM = usermetrics.get(userid);
+        StationMetric stM = null;
+        if (stationId != null) {
+            stM = stationmetrics.get(stationId);
+        }
+        switch (name) {
+            case "EventUserArrivesAtStationToRentBike":
+                usM.artificialtime += (usM.lastposition.distanceTo(stM.position) / standardstraightLineWalkingVelocity);
+                usM.lastposition = stM.position;
+                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RENTAL) {
+                    usM.succbikerentals++;
+                    usM.timegetbike = time;
+                    //user rents bike
+                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RENTAL) {
+                    usM.failedbikerentals++;
+                }
+                break;
+            case "EventUserArrivesAtStationToReturnBike":
+                usM.artificialtime += (usM.lastposition.distanceTo(stM.position) / standardstraightLineCyclingVelocity);
+                usM.lastposition = stM.position;
+                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RETURN) {
+                    usM.succbikereturns++;
+                    usM.timeretbike = time;
+                    //user returns bike
+                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RETURN) {
+                    usM.failedbaikereturns++;
+                }
+                break;
+            case "EventUserTriesToReserveSlot":
+                if (result == Event.RESULT_TYPE.SUCCESSFUL_SLOT_RESERVATION) {
+                    usM.succslotreservations++;
+                } else if (result == Event.RESULT_TYPE.FAILED_SLOT_RESERVATION) {
+                    usM.failesslotreservations++;
+                }
+                break;
+            case "EventUserTriesToReserveBike":
+                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RESERVATION) {
+                    usM.succbikereservations++;
+                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RESERVATION) {
+                    usM.failedbikereservations++;
+                }
+                break;
+            case "EventUserLeavesSystem":
+                usM.artificialtime += (usM.lastposition.distanceTo(usM.destination) / standardstraightLineWalkingVelocity);
+                usM.lastposition = usM.destination;
+                usM.leafreason = result;
+                if (time<=totalsimtimespecified) {
+                    usM.finishedinsimtime = true;
+                }
+                //user leafs
+                usM.timeleafe = time;
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void analyzeStationData(String name, StationMetric stM, Event.RESULT_TYPE result) {
+
+        switch (name) {
+            case "EventUserArrivesAtStationToRentBike":
+                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RENTAL) {
+                    stM.succbikerentals++;
+                    //user rents bike
+                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RENTAL) {
+                    stM.failedbikerentals++;
+                }
+                break;
+            case "EventUserArrivesAtStationToReturnBike":
+                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RETURN) {
+                    stM.succbikereturns++;
+                    //user returns bike
+                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RETURN) {
+                    stM.failedbaikereturns++;
+                }
+                break;
+            case "EventUserTriesToReserveSlot":
+                if (result == Event.RESULT_TYPE.SUCCESSFUL_SLOT_RESERVATION) {
+                    stM.succslotreservations++;
+                } else if (result == Event.RESULT_TYPE.FAILED_SLOT_RESERVATION) {
+                    stM.failesslotreservations++;
+                }
+                break;
+            case "EventUserTriesToReserveBike":
+                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RESERVATION) {
+                    stM.succbikereservations++;
+                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RESERVATION) {
+                    stM.failedbikereservations++;
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private void processHistoryEntries(HistoryJsonClasses.TimeEntry[] historyentries) {
- 
+
         //find the entries
-        for (HistoryJsonClasses.TimeEntry historyentry : historyentries){
-            int time=historyentry.getTime();
-            
-            //only analyse the events up to the final simulation time
-            if (time>totalsimtimespecified) continue;
-            ////////////////////////////////////////////
+        for (HistoryJsonClasses.TimeEntry historyentry : historyentries) {
+            int time = historyentry.getTime();
+
+            for (HistoryJsonClasses.EventEntry ee : historyentry.getEvents()) {
+                Event.RESULT_TYPE result = ee.getResult();
+                String name = ee.getName();
+                Collection<HistoryJsonClasses.IdReference> involvedEntities = ee.getInvolvedEntities();
+                Integer userid = getUserID(involvedEntities);
+                Integer stationid = getStationID(involvedEntities);
+
+                analyzeUserData(ee.getNewEntities(), name, userid, stationid, time, result);
  
-            if (time<currentsimtime)
-                throw new RuntimeException("some error in the fistory: entry after total simulation time");
-            else currentsimtime=time;
-            for (HistoryJsonClasses.EventEntry ee: historyentry.getEvents()){
-                Event.RESULT_TYPE result=ee.getResult();
-                String name=ee.getName();
-                
-                Collection<HistoryJsonClasses.IdReference> involvedEntities=ee.getInvolvedEntities();
-                Integer userid=getUserID(involvedEntities);
-                //check new user appearance first
-                if (name.equals("EventUserAppears")) {
-                    UserMetric newUM=new UserMetric();
-                    if (null!=usermetrics.put(userid,newUM)){
-                        throw new RuntimeException("user should not exist in historyanalysis");
-                    }
-                    addUserData(newUM,userid,ee.getNewEntities());
-                    newUM.timeapp=time;
-                    continue;
-                } 
-                // in any other case the user should exist
-                UserMetric usM=usermetrics.get(userid);
-                Integer stationid=getStationID(involvedEntities);
-                //the changes in the bike metrics are only calculated up to the total specified simulation time
-                checkChangesAvBikes(ee.getChanges(),time,stationid);
-                StationMetric stM=null;
-                if (stationid!=null) stM=stationmetrics.get(stationid);
-                switch (name) {
-                    case "EventUserArrivesAtStationToRentBike":
-                        if (result==Event.RESULT_TYPE.SUCCESSFUL_BIKE_RENTAL) {
-                            stM.succbikerentals++;
-                            usM.succbikerentals++;
-                            usM.timegetbike=time;
-                            //user rents bike
-                        } else if(result==Event.RESULT_TYPE.FAILED_BIKE_RENTAL){
-                            stM.failedbikerentals++;
-                            usM.failedbikerentals++;
-                        }   break;
-                    case "EventUserArrivesAtStationToReturnBike":
-                        if( result==Event.RESULT_TYPE.SUCCESSFUL_BIKE_RETURN) {
-                            stM.succbikereturns++;
-                            usM.succbikereturns++;
-                            usM.timeretbike=time;
-                            //user returns bike
-                        } else if(result==Event.RESULT_TYPE.FAILED_BIKE_RETURN){
-                            stM.failedbaikereturns++;
-                            usM.failedbaikereturns++;
-                        }   break;
-                    case "EventUserTriesToReserveSlot":
-                        if( result==Event.RESULT_TYPE.SUCCESSFUL_SLOT_RESERVATION) {
-                            stM.succslotreservations++;
-                            usM.succslotreservations++;
-                        } else if( result==Event.RESULT_TYPE.FAILED_SLOT_RESERVATION) {
-                            stM.failesslotreservations++;
-                            usM.failesslotreservations++;
-                        }   break;
-                    case "EventUserTriesToReserveBike":
-                        if( result==Event.RESULT_TYPE.SUCCESSFUL_BIKE_RESERVATION) {
-                            stM.succbikereservations++;
-                            usM.succbikereservations++;
-                        } else if( result==Event.RESULT_TYPE.FAILED_BIKE_RESERVATION) {
-                            stM.failedbikereservations++;
-                            usM.failedbikereservations++;
-                        }   break;
-                    case "EventUserLeavesSystem":
-                        usM.leafreason=result;
-                        usM.finishedinsimtime=true;
-                        //user leafs
-                        usM.timeleafe=time;
-                        break;
-                    default:
-                        break;
+                //station changes are inly considered up to totalsimulationtime
+                if (time <= totalsimtimespecified && stationid!=null) {
+                    StationMetric sm=stationmetrics.get(stationid);
+                    checkChangesAvBikes(ee.getChanges(), time, sm);
+                    analyzeStationData(name, sm, result);
                 }
-            }
+             }
         }
     }
-    
-    private void postprocess() throws GraphHopperIntegrationException, GeoRouteCreationException  {
+
+    private void postprocess() throws GraphHopperIntegrationException, GeoRouteCreationException {
         //add the rest times for the stations
-        stations_numerwithEmptytimes=0;
-        stations_av_emptytime_stations=0;
-        stations_av_equilibrium=0;
-        stations_num=stationmetrics.size();
+        stations_numerwithEmptytimes = 0;
+        stations_av_emptytime_stations = 0;
+        stations_av_equilibrium = 0;
+        stations_num = stationmetrics.size();
         for (StationMetric sm : stationmetrics.values()) {
-            if (sm.timelastchange>totalsimtimespecified)
+            if (sm.timelastchange > totalsimtimespecified) {
                 throw new RuntimeException("some error");
-            double time=totalsimtimespecified-sm.timelastchange;
-            if(sm.currentavbikes==0) {
-                sm.emtytime+=time;
             }
-            sm.balancingquality+=Math.abs((double)sm.currentavbikes-((double)sm.capacity/2D))*(double)time;
-            sm.balancingquality=sm.balancingquality/totalsimtimespecified;
-            if (sm.emtytime>0) stations_numerwithEmptytimes++;
-            stations_av_emptytime_stations+=sm.emtytime;
-            stations_av_equilibrium+=sm.balancingquality;
+            double time = totalsimtimespecified - sm.timelastchange;
+            if (sm.currentavbikes == 0) {
+                sm.emtytime += time;
+            }
+            sm.balancingquality += Math.abs((double) sm.currentavbikes - ((double) sm.capacity / 2D)) * (double) time;
+            sm.balancingquality = sm.balancingquality / totalsimtimespecified;
+            if (sm.emtytime > 0) {
+                stations_numerwithEmptytimes++;
+            }
+            stations_av_emptytime_stations += sm.emtytime;
+            stations_av_equilibrium += sm.balancingquality;
         }
-        stations_av_emptytime_stations=stations_av_emptytime_stations/(60D*(double)stations_num);
-        stations_av_equilibrium=stations_av_equilibrium /(double)stations_num;
-        
-  //      System.out.println("in postprocess");
+        stations_av_emptytime_stations = stations_av_emptytime_stations / (60D * (double) stations_num);
+        stations_av_equilibrium = stations_av_equilibrium / (double) stations_num;
+
+        //      System.out.println("in postprocess");
         //globval values for users
-        users_num=usermetrics.size();
-        users_finishedInSimTime=0;
-        users_av_tostationtime=0;
-        users_av_biketime=0;
-        users_av_todesttime=0;
+        users_num = usermetrics.size();
+        users_finishedInSimTime = 0;
+        users_av_tostationtime = 0;
+        users_av_biketime = 0;
+        users_av_todesttime = 0;
         users_takefails = new TreeMap<>();
         users_returnfails = new TreeMap<>();
-        users_av_additionaltimeloss=0;
-        int succusers=0;
-        int i=0; int printi=0;
+        users_av_additionaltimeloss = 0;
+        users_totalrentalfail = 0;
+        users_totalreturnfail = 0;
+        int succusers = 0;
+        int i = 0;
+        int printi = 0;
         for (UserMetric um : usermetrics.values()) {
             if (um.finishedinsimtime) {
                 users_finishedInSimTime++;
-                if (um.timegetbike!=-1) {//time counts if user did not abandom
+                if (um.timegetbike >= 0) {//time counts if user did not abandom
                     succusers++;
-                    users_av_tostationtime+=um.timegetbike-um.timeapp;
-                    users_av_biketime+=um.timeretbike-um.timegetbike;
-                    users_av_todesttime+=um.timeleafe-um.timeretbike;
-                    users_totalrentalfail+=um.failedbikerentals;
-                    users_totalreturnfail+=um.failedbaikereturns;
-                    Integer old=users_takefails.get(um.failedbikerentals);
-                    if (old==null){
-                        users_takefails.put(um.failedbikerentals,1);
-                    } else{
-                        users_takefails.put(um.failedbikerentals,old+1);
-                    } 
-                    old=users_returnfails.get(um.failedbaikereturns);
-                    if (old==null){
-                        users_returnfails.put(um.failedbaikereturns,1);
-                    } else{
-                        users_returnfails.put(um.failedbaikereturns,old+1);
-                    } 
-                    addTimeComparison(um);
-
-          /*          if (i==printi) {
-                        System.out.println("in postprocess: " + printi + " users");
-                        printi+=1000;
+                    users_av_tostationtime += um.timegetbike - um.timeapp;
+                    users_av_biketime += um.timeretbike - um.timegetbike;
+                    users_av_todesttime += um.timeleafe - um.timeretbike;
+                    users_totalrentalfail += um.failedbikerentals;
+                    users_totalreturnfail += um.failedbaikereturns;
+                    Integer old = users_takefails.get(um.failedbikerentals);
+                    if (old == null) {
+                        users_takefails.put(um.failedbikerentals, 1);
+                    } else {
+                        users_takefails.put(um.failedbikerentals, old + 1);
                     }
-                    i++;
-*/
-                    um.additionaltimeloss=(um.timeleafe-um.timeapp) - um.bestaproxtime;
-                    users_av_additionaltimeloss+=um.additionaltimeloss;
+                    old = users_returnfails.get(um.failedbaikereturns);
+                    if (old == null) {
+                        users_returnfails.put(um.failedbaikereturns, 1);
+                    } else {
+                        users_returnfails.put(um.failedbaikereturns, old + 1);
+                    }
+                    addTimeComparison(um);
+                    users_av_additionaltimeloss += um.additionaltimeloss;
                 }
-                if (um.leafreason!=Event.RESULT_TYPE.EXIT_AFTER_REACHING_DESTINATION) {
+                if (um.leafreason != Event.RESULT_TYPE.EXIT_AFTER_REACHING_DESTINATION) {
                     users_numabandon++;
                 }
             }
         }
-        if (users_finishedInSimTime!=succusers+users_numabandon){
+        if (users_finishedInSimTime != succusers + users_numabandon) {
             throw new RuntimeException("something wrong in data analsysis");
         }
-        users_av_additionaltimeloss=users_av_additionaltimeloss/((double)succusers*60D);
-        users_av_tostationtime=users_av_tostationtime/((double)succusers*60D);
-        users_av_biketime=users_av_biketime /((double)succusers*60D);
-        users_av_todesttime=users_av_todesttime /((double)succusers*60D);
-        users_DS=(double)succusers/(double)users_finishedInSimTime;
-        users_HE=(double)succusers/((double)users_totalrentalfail+succusers);
-        users_RE=(double)succusers/((double)users_totalreturnfail+succusers);
+        users_av_additionaltimeloss = users_av_additionaltimeloss / ((double) succusers * 60D);
+        users_av_tostationtime = users_av_tostationtime / ((double) succusers * 60D);
+        users_av_biketime = users_av_biketime / ((double) succusers * 60D);
+        users_av_todesttime = users_av_todesttime / ((double) succusers * 60D);
+        users_DS = (double) succusers / (double) users_finishedInSimTime;
+        users_HE = (double) succusers / ((double) users_totalrentalfail + succusers);
+        users_RE = (double) succusers / ((double) users_totalreturnfail + succusers);
     }
-    
+
     private void preprocess() throws IOException {
         File stfile = historypath.resolve("entities/stations.json").toFile();
-        FileReader r=new FileReader(stfile);
+        FileReader r = new FileReader(stfile);
         JsonObject jo = gson.fromJson(new FileReader(stfile), JsonObject.class);
-        JsonArray st=jo.getAsJsonArray("instances");
-        for (JsonElement je:st){
-            HistoricStation hs=gson.fromJson(je, HistoricStation.class);
-            stations.add(hs);
-            Integer id=hs.getId();
-            StationMetric sm=new StationMetric();
-            sm.capacity=hs.getCapacity();
-            sm.currentavbikes=hs.getAvailablebikes();
-            if (stationmetrics.put(id, sm)!=null) 
+        JsonArray st = jo.getAsJsonArray("instances");
+        for (JsonElement je : st) {
+            HistoricStation hs = gson.fromJson(je, HistoricStation.class);
+            Integer id = hs.getId();
+            StationMetric sm = new StationMetric();
+            sm.capacity = hs.getCapacity();
+            sm.currentavbikes = hs.getAvailablebikes();
+            sm.position = hs.getPosition();
+            sm.id = id;
+            if (stationmetrics.put(id, sm) != null) {
                 throw new RuntimeException("duplicate station");
+            }
         }
         r.close();
-     }
-            
-    
-    private void checkChangesAvBikes(Map<String, List<JsonObject>> changes, int currenttime, Integer stid){
-        if (changes==null) return;
-        List<JsonObject> stationch=changes.get("stations");
-        if (stationch==null) return;
-        for (JsonObject o:stationch){
-            int id=o.get("id").getAsInt();
-            if (stid.intValue()!=id)
+    }
+
+    private void checkChangesAvBikes(Map<String, List<JsonObject>> changes, int currenttime, StationMetric sm) {
+        if (changes == null) {
+            return;
+        }
+        List<JsonObject> stationch = changes.get("stations");
+        if (stationch == null) {
+            return;
+        }
+        for (JsonObject o : stationch) {
+            int id = o.get("id").getAsInt();
+            if (sm.id != id) {
                 throw new RuntimeException("station not in involved entities but in changes");
-            JsonObject o1=o.getAsJsonObject("availablebikes");
-            if(o1!=null){
-                int oldv=o1.get("old").getAsInt();
-                int newv=o1.get("new").getAsInt();
-                StationMetric sm=stationmetrics.get(id);
-                if (sm.currentavbikes!=oldv)
+            }
+            JsonObject o1 = o.getAsJsonObject("availablebikes");
+            if (o1 != null) {
+                int oldv = o1.get("old").getAsInt();
+                int newv = o1.get("new").getAsInt();
+                if (sm.currentavbikes != oldv) {
                     throw new RuntimeException("invalid value");
-                double time=currenttime-sm.timelastchange;
-                if(sm.currentavbikes==0) {
-                    sm.emtytime+=time;
                 }
-                sm.balancingquality+=Math.abs((double)sm.currentavbikes-((double)sm.capacity/2D))*(double)time;
-                sm.currentavbikes=newv;
-                sm.timelastchange=currenttime;
-           }
+                double time = currenttime - sm.timelastchange;
+                if (sm.currentavbikes == 0) {
+                    sm.emtytime += time;
+                }
+                sm.balancingquality += Math.abs((double) sm.currentavbikes - ((double) sm.capacity / 2D)) * (double) time;
+                sm.currentavbikes = newv;
+                sm.timelastchange = currenttime;
+            }
         }
     }
 
     private static HistoryJsonClasses.TimeEntry[] readHistoryEntries(File name) throws IOException {
         // it creates a file with the specified name in the history directory
- 
+
         // itreads the specified content from the  file
         FileReader reader = new FileReader(name);
-        HistoryJsonClasses.TimeEntry[] timeentries=gson.fromJson(reader, HistoryJsonClasses.TimeEntry[].class);
+        HistoryJsonClasses.TimeEntry[] timeentries = gson.fromJson(reader, HistoryJsonClasses.TimeEntry[].class);
         reader.close();
         return timeentries;
     }
@@ -464,20 +522,20 @@ public class SimulationResultAnalyser {
 
         //first line statation data
         int maxrentfails = users_takefails.lastKey();
-        int maxreturnfails=users_returnfails.lastKey();
+        int maxreturnfails = users_returnfails.lastKey();
 
         String[] record = new String[3];
         record[0] = "simulatiuon time (min)";
-        record[1] = Double.toString((double)totalsimtimespecified/60D);
-        record[2] = "all results are calculated up to this time (users not finishing up to this time are ignored)";
+        record[1] = Double.toString((double) totalsimtimespecified / 60D);
+        record[2] = "all global results are calculated up to this time (users not finishing up to this time are ignored)";
         csvWriter.writeNext(record);
 
-         //write empty line
+        //write empty line
         csvWriter.writeNext(new String[]{""});
 
         //Now set the String array for writing
-        record = new String[13+maxrentfails+maxreturnfails+2];
-        
+        record = new String[13 + maxrentfails + maxreturnfails + 2];
+
         //write header for user data
         record[0] = "#users total";
         record[1] = "#users finished in simulationtime";
@@ -503,7 +561,7 @@ public class SimulationResultAnalyser {
             j++;
         }
         csvWriter.writeNext(record);
-        
+
         //write global user data
         record[0] = Integer.toString(users_num);
         record[1] = Integer.toString(users_finishedInSimTime);
@@ -514,15 +572,15 @@ public class SimulationResultAnalyser {
         record[6] = Double.toString(users_av_tostationtime);
         record[7] = Double.toString(users_av_biketime);
         record[8] = Double.toString(users_av_todesttime);
-        record[9] = Double.toString(users_av_tostationtime+users_av_biketime+users_av_todesttime);
-        record[10] = Double.toString(users_av_additionaltimeloss);  
+        record[9] = Double.toString(users_av_tostationtime + users_av_biketime + users_av_todesttime);
+        record[10] = Double.toString(users_av_additionaltimeloss);
         record[11] = Integer.toString(users_totalrentalfail);
         record[12] = Integer.toString(users_totalreturnfail);
         for (Integer key : users_takefails.keySet()) {
-                record[13 + key] = Integer.toString(users_takefails.get(key));
+            record[13 + key] = Integer.toString(users_takefails.get(key));
         }
         for (Integer key : users_returnfails.keySet()) {
-                record[13 + maxrentfails + 1 + key] = Integer.toString(users_returnfails.get(key)); 
+            record[13 + maxrentfails + 1 + key] = Integer.toString(users_returnfails.get(key));
         }
         csvWriter.writeNext(record);
 
@@ -530,7 +588,7 @@ public class SimulationResultAnalyser {
         csvWriter.writeNext(new String[]{""});
 
         //now write sation summary
-        record = new String[3];
+        record = new String[4];
         record[0] = "#stations";
         record[1] = "#stations with empty times";
         record[2] = "Av. empty times (min)";
@@ -555,59 +613,74 @@ public class SimulationResultAnalyser {
                 CSVWriter.DEFAULT_LINE_END);
 
         //Now set the String array for writing
-        String[] record = new String[15];
+        String[] record = new String[17];
 
         //write header
         record[0] = "id";
         record[1] = "finished in simulationtime";
-        record[2] = "time to origin station (min)";
-        record[3] = "cycling time (min)";
-        record[4] = "time to destination place (min)";
-        record[5] = "additional time used over best aproximate time (min)";
-        record[6] = "exit reason";
-        record[7] = "Successful bike reservations";
-        record[8] = "Failed bike reservations";
-        record[9] = "Successful slot reservations";
-        record[10] = "Failed slot reservations";
-        record[11] = "Successful bike rentals";
-        record[12] = "Failed bike rentals";
-        record[13] = "Successful bike returns";
-        record[14] = "Failed bike returns";
+        record[2] = "appearance time (sec form start)";
+        record[3] = "get bike time (sec from start)";
+        record[4] = "return bike time (sec from start)";
+        record[5] = "at final destination (sec from start)";
+        record[6] = "total time (min)";
+        record[7] = "additional time used over best aproximate time (min)";
+        record[8] = "exit reason";
+        record[9] = "Successful bike reservations";
+        record[10] = "Failed bike reservations";
+        record[11] = "Successful slot reservations";
+        record[12] = "Failed slot reservations";
+        record[13] = "Successful bike rentals";
+        record[14] = "Failed bike rentals";
+        record[15] = "Successful bike returns";
+        record[16] = "Failed bike returns";
         csvWriter.writeNext(record);
 
         //now write the user values
-        for (Integer id : usermetrics.keySet()) {
-            UserMetric um=usermetrics.get(id);
+         for (Integer id : usermetrics.keySet()) {
+            boolean aband=true;
+            UserMetric um = usermetrics.get(id);
             record[0] = Integer.toString(id);
-            if (um.finishedinsimtime )  {
+            record[2] = Integer.toString(um.timeapp);
+            if (um.timegetbike >= 0) {
+                aband=false;
+            }
+            if (um.finishedinsimtime) {
                 record[1] = "yes";
-                record[6] = um.leafreason.toString();
-            }
-            else {
+             } else {
                 record[1] = "no";
-                record[6] = "";
             }
-            
-            if (um.finishedinsimtime && um.timegetbike>=0){
-                record[2] = Double.toString((double)(um.timegetbike-um.timeapp)/60D);
-                record[3] = Double.toString((double)(um.timeretbike-um.timegetbike)/60D);
-                record[4] = Double.toString(((double)um.timeleafe-um.timeretbike)/60D);
-                record[5] = Double.toString(((double)um.additionaltimeloss)/60D);
-
+            if (um.timegetbike >= 0) {
+                record[3] = Integer.toString(um.timegetbike);
             } else {
-                record[2] = "";
                 record[3] = "";
+            }
+            if (um.timeretbike >= 0) {
+                record[4] = Integer.toString(um.timeretbike);
+            } else {
                 record[4] = "";
+            }
+            if (um.timegetbike >= 0) {
+                record[5] = Integer.toString(um.timeleafe);
+            } else {
                 record[5] = "";
             }
-            record[7] = Integer.toString(um.succbikereservations);
-            record[8] = Integer.toString(um.failedbikereservations);
-            record[9] = Integer.toString(um.succslotreservations);
-            record[10] = Integer.toString(um.failesslotreservations);
-            record[11] = Integer.toString(um.succbikerentals);
-            record[12] =Integer.toString(um.failedbikerentals);
-            record[13] = Integer.toString(um.succbikereturns);
-            record[14] =Integer.toString(um.failedbaikereturns);
+            if (um.finishedinsimtime && !aband) {
+                record[6] = Double.toString(((double) (um.timeleafe - um.timeapp)) / 60D);
+                record[7] = Double.toString(((double) um.additionaltimeloss) / 60D);
+            } else {
+                record[6] = "";
+                record[7] = "";
+            }
+            if (um.finishedinsimtime) record[8] = um.leafreason.toString();
+            else record[8] = "";
+            record[9] = Integer.toString(um.succbikereservations);
+            record[10] = Integer.toString(um.failedbikereservations);
+            record[11] = Integer.toString(um.succslotreservations);
+            record[12] = Integer.toString(um.failesslotreservations);
+            record[13] = Integer.toString(um.succbikerentals);
+            record[14] = Integer.toString(um.failedbikerentals);
+            record[15] = Integer.toString(um.succbikereturns);
+            record[16] = Integer.toString(um.failedbaikereturns);
             //write line
             csvWriter.writeNext(record);
         }
@@ -642,64 +715,63 @@ public class SimulationResultAnalyser {
 
         //now write the station data
         for (Integer id : stationmetrics.keySet()) {
-            StationMetric sm=stationmetrics.get(id);
+            StationMetric sm = stationmetrics.get(id);
             //postprocess information
             record[0] = Integer.toString(id);
-            record[1] = Double.toString((double)sm.emtytime/60D);
+            record[1] = Double.toString((double) sm.emtytime / 60D);
             record[2] = Double.toString(sm.balancingquality);
             record[3] = Integer.toString(sm.succbikereservations);
             record[4] = Integer.toString(sm.failedbikereservations);
             record[5] = Integer.toString(sm.succslotreservations);
             record[6] = Integer.toString(sm.failesslotreservations);
             record[7] = Integer.toString(sm.succbikerentals);
-            record[8] =Integer.toString(sm.failedbikerentals);
+            record[8] = Integer.toString(sm.failedbikerentals);
             record[9] = Integer.toString(sm.succbikereturns);
-            record[10] =Integer.toString(sm.failedbaikereturns);
+            record[10] = Integer.toString(sm.failedbaikereturns);
             //write line
             csvWriter.writeNext(record);
         }
         writer.close();
     }
-    
-        //compare the shortes routetime with the actual routetime 
-        //the shortes rute is calculated by specifying the closest station to the user position, the clostes station to the user destination 
-        // and searching the rutepartes inbetween 
+
+    //compare the shortes routetime with the actual routetime 
+    //the shortes rute is calculated by specifying the closest station to the user position, the clostes station to the user destination 
+    // and searching the rutepartes inbetween 
     private void addTimeComparison(UserMetric um) throws GraphHopperIntegrationException, GeoRouteCreationException {
- 
-        double closeststartdist=Double.MAX_VALUE;
-        double closestenddist=Double.MAX_VALUE;
-        HistoricStation bestStartStation=null;
-        HistoricStation bestEndStation =null;
-        for (HistoricStation hs:stations){
-            double currentdist=hs.getPosition().distanceTo(um.origin);
-            if (currentdist<closeststartdist){
-                closeststartdist=currentdist;
-                bestStartStation=hs;
+
+        double closeststartdist = Double.MAX_VALUE;
+        double closestenddist = Double.MAX_VALUE;
+        StationMetric bestStartStation = null;
+        StationMetric bestEndStation = null;
+        for (StationMetric hs : stationmetrics.values()) {
+            double currentdist = hs.position.distanceTo(um.origin);
+            if (currentdist < closeststartdist) {
+                closeststartdist = currentdist;
+                bestStartStation = hs;
             }
-            currentdist=hs.getPosition().distanceTo(um.destination);
-            if (currentdist<closestenddist){
-                closestenddist=currentdist;
-                bestEndStation=hs;
+            currentdist = hs.position.distanceTo(um.destination);
+            if (currentdist < closestenddist) {
+                closestenddist = currentdist;
+                bestEndStation = hs;
             }
         }
         //Now get the routes
-        int shortesttime=0;
-        if (routeService!=null) {
-            GeoRoute gr=routeService.obtainShortestRouteBetween(um.origin, bestStartStation.getPosition(), "foot");
-            shortesttime+=(int)(gr.getTotalDistance()/um.walkvelocity);
-            gr=routeService.obtainShortestRouteBetween(bestStartStation.getPosition(), bestEndStation.getPosition(), "bike");
-            shortesttime+=(int)(gr.getTotalDistance()/um.cyclevelocity);
-            gr=routeService.obtainShortestRouteBetween(bestEndStation.getPosition(), um.destination, "foot");
-            shortesttime+=(int)(gr.getTotalDistance()/um.walkvelocity);
+        double shortesttime = 0;
+        if (routeService != null) {
+            GeoRoute gr = routeService.obtainShortestRouteBetween(um.origin, bestStartStation.position, "foot");
+            shortesttime += (int) (gr.getTotalDistance() / um.walkvelocity);
+            gr = routeService.obtainShortestRouteBetween(bestStartStation.position, bestEndStation.position, "bike");
+            shortesttime += (int) (gr.getTotalDistance() / um.cyclevelocity);
+            gr = routeService.obtainShortestRouteBetween(bestEndStation.position, um.destination, "foot");
+            shortesttime += (int) (gr.getTotalDistance() / um.walkvelocity);
+            um.additionaltimeloss = (um.timeleafe - um.timeapp) - shortesttime;
         } else {
 
-            shortesttime=(int)((um.origin.distanceTo(bestStartStation.getPosition())/this.standardstraightLineWalkingVelocity)+
-                (bestStartStation.getPosition().distanceTo(bestEndStation.getPosition())/this.standardstraightLineCyclingVelocity)+
-                (bestEndStation.getPosition().distanceTo(um.destination)/this.standardstraightLineWalkingVelocity));
+            shortesttime =  ((um.origin.distanceTo(bestStartStation.position) / this.standardstraightLineWalkingVelocity)
+                    + (bestStartStation.position.distanceTo(bestEndStation.position) / this.standardstraightLineCyclingVelocity)
+                    + (bestEndStation.position.distanceTo(um.destination) / this.standardstraightLineWalkingVelocity));
+            um.additionaltimeloss = (int)(um.artificialtime - shortesttime);
         }
-        um.bestaproxtime=shortesttime;
-        
     }
 
 }
-
