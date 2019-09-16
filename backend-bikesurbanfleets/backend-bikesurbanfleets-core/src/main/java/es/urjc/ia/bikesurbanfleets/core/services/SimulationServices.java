@@ -12,6 +12,8 @@ import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.InformationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.worldentities.fleetManager.FleetManagementSystemType;
+import es.urjc.ia.bikesurbanfleets.worldentities.fleetManager.FleetManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import org.reflections.Reflections;
@@ -32,6 +34,7 @@ public class SimulationServices {
     private InformationSystem informationSystem;
     private GraphManager graphManager;
     private DemandManager demandManager;
+    private FleetManager fleetManager;
     
     private Gson gson = new Gson();
  
@@ -50,7 +53,9 @@ public class SimulationServices {
         this.graphManager = initGraphManager(reflections, globalInfo.getGraphManagerType(), 
                 globalInfo.getGraphParameters(), GlobalInfo.TEMP_DIR);
         //setup the recomendation system
-        this.recommendationSystem = initRecommendationSystem(reflections, globalInfo.getRecommendationSystemTypeJsonDescription());
+        this.recommendationSystem = initRecommendationSystem(reflections, globalInfo.getRecommendationSystemJsonDescription());
+        //setup the fleetManagersystem
+        this.fleetManager = initFleetManagementSystem(reflections, globalInfo.getFleetManagerJsonDescription());
         checkService();
     }
     
@@ -118,6 +123,30 @@ public class SimulationServices {
                     return recomSys;
                 } catch (Exception e) {
                     MessageGuiFormatter.showErrorsForGui("Error Creating Recommendation System");
+                    MessageGuiFormatter.showErrorsForGui(e);
+                }
+            }
+        }
+        return null;
+    }
+
+        private FleetManager initFleetManagementSystem(Reflections reflections, JsonObject systemdef) throws IllegalStateException {
+
+        //find the recomendersystemtype
+        Set<Class<?>> managementSystemClasses = reflections.getTypesAnnotatedWith(FleetManagementSystemType.class);
+
+        String type = systemdef.get("typeName").getAsString();
+
+        for (Class<?> SystemClass : managementSystemClasses) {
+            String TypeAnnotation = SystemClass.getAnnotation(FleetManagementSystemType.class).value();
+            if (TypeAnnotation.equals(type)) {
+
+                try {
+                    Constructor constructor = SystemClass.getConstructor(JsonObject.class, SimulationServices.class);
+                    FleetManager Sys = (FleetManager) constructor.newInstance(systemdef, this);
+                    return Sys;
+                } catch (Exception e) {
+                    MessageGuiFormatter.showErrorsForGui("Error Creating FleetManagement System");
                     MessageGuiFormatter.showErrorsForGui(e);
                 }
             }

@@ -60,8 +60,15 @@ public class GlobalInfo {
     /**
      * Recommendation system that will be used by the agents
      */
-    private JsonObject recommendationSystemType;
+    private JsonObject recommendationSystem;
 
+    /**
+     * Fleet managment system that will be used 
+     */
+    private JsonObject fleetManagementSystem=null;
+    public JsonObject getFleetManagerJsonDescription() {
+        return this.fleetManagementSystem;
+    }
     /**
      * Graph implementation that will be used by the agents to get routes
      * between points
@@ -86,12 +93,12 @@ public class GlobalInfo {
         return totalSimulationTime;
     }
 
-    public void setOtherRecommendationSystemType(JsonObject recommendationSystemType) {
-        this.recommendationSystemType = recommendationSystemType;
+    public void setOtherRecommendationSystem(JsonObject recommendationSystem) {
+        this.recommendationSystem = recommendationSystem;
     }
 
-    public JsonObject getRecommendationSystemTypeJsonDescription() {
-        return this.recommendationSystemType;
+    public JsonObject getRecommendationSystemJsonDescription() {
+        return this.recommendationSystem;
     }
 
     public boolean isDebugMode() {
