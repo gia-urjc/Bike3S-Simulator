@@ -266,9 +266,18 @@ public class ComplexCostCalculator2 {
                     System.out.println("EEEEERRRRROOOOORRRR: invalid cost station " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
             }
             //normalize the extracost
-            extracosttake = extracosttake * getTakeFactor(wp.sd.getStation(), timeoffset);
-            extracostreturn = extracostreturn* getReturnFactor(wp.sd.getStation(), timeoffset);;
-
+            if (predictionNormalisation==5) {
+                double retrate=getReturnFactor(wp.sd.getStation(),timeoffset,1);
+                double takerate=getTakeFactor(wp.sd.getStation(), timeoffset, 1);
+                if (takerate>=retrate) {
+                    extracosttake=  extracosttake * (takerate-retrate);
+                } else {
+                    extracostreturn=  extracostreturn * (retrate-takerate);                
+                }
+            } else {
+                extracosttake = extracosttake * getTakeFactor(wp.sd.getStation(), timeoffset,predictionNormalisation);
+                extracostreturn = extracostreturn* getReturnFactor(wp.sd.getStation(), timeoffset,predictionNormalisation);;
+            }
             acctakecost+= wp.takeprob * extracosttake;
             accreturncost+= wp.takeprob * extracostreturn;
         }
@@ -313,8 +322,19 @@ public class ComplexCostCalculator2 {
                     System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
             }
             //normalize the extracost
-            extracosttake = extracosttake * getTakeFactor(wp.sd.getStation(), timeoffset);
-            extracostreturn = extracostreturn* getReturnFactor(wp.sd.getStation(),timeoffset);;
+            //normalize the extracost
+            if (predictionNormalisation==5) {
+                double retrate=getReturnFactor(wp.sd.getStation(),timeoffset,1);
+                double takerate=getTakeFactor(wp.sd.getStation(), timeoffset, 1);
+                if (takerate>=retrate) {
+                    extracosttake=  extracosttake * (takerate-retrate);
+                } else {
+                    extracostreturn=  extracostreturn * (retrate-takerate);                
+                }
+            } else {         
+                extracosttake = extracosttake * getTakeFactor(wp.sd.getStation(), timeoffset, predictionNormalisation);
+                extracostreturn = extracostreturn* getReturnFactor(wp.sd.getStation(),timeoffset, predictionNormalisation);
+            } 
 
             acctakecost+= wp.returnprob * extracosttake;
             accreturncost+= wp.returnprob * extracostreturn;
@@ -324,8 +344,8 @@ public class ComplexCostCalculator2 {
         sd.setIndividualCost(usercostreturn).setTakecostdiff(acctakecost).setReturncostdiff(accreturncost);
         return globalcost;
     }
-   private double getTakeFactor(Station s, double timeoffset){
-         switch(predictionNormalisation){
+   private double getTakeFactor(Station s, double timeoffset, int p){
+         switch(p){
             case (0) :
                 return 1;
             case (1) :
@@ -340,8 +360,8 @@ public class ComplexCostCalculator2 {
         }
          return 1;
     }
-     private double getReturnFactor(Station s, double timeoffset){
-        switch(predictionNormalisation){
+     private double getReturnFactor(Station s, double timeoffset,int p){
+        switch(p){
             case (0) :
                  return 1;
             case (1) :
