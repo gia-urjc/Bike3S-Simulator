@@ -30,8 +30,6 @@ public class CompareTestApplication {
     private static String historyDir;
     private static String analisisDir;
     private static String baseTestsDir;
-    private static String mapPath;
-    private static String demandDataPath;
     private static String schemaPath;
     private static String dataAnalyzerPath;
     private static String analysisScriptPath;
@@ -48,8 +46,6 @@ public class CompareTestApplication {
         //testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurroundWithDemand";
  //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/version_usersmax600/cost_complex_prediction";
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests600max/global_local_demand";
-        mapPath = projectDir + "/../madrid.osm";
-        demandDataPath = projectDir + "/../demandDataMadrid0817_0918.csv";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -104,10 +100,6 @@ public class CompareTestApplication {
         ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
         GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
         
-        //modify globalinfo with other parameters
-        globalInfo.setOtherGraphParameters(mapPath);
-        globalInfo.setOtherDemandDataFilePath(demandDataPath);
-
         //now loop through the tests
         ArrayList<String> testnames = new ArrayList<String>();
         for (JsonObject t : tests.tests) {
@@ -154,7 +146,7 @@ public class CompareTestApplication {
         try {
 
             //modify recomenderspecification with the one from the test
-            globalInfo.setOtherRecommendationSystemType(recomendertype);
+            globalInfo.setOtherRecommendationSystem(recomendertype);
 
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             //modify user type specification with the one from the test
@@ -167,12 +159,8 @@ public class CompareTestApplication {
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
 
             //3. do simulation
-            //TODO mapPath not obligatory for other graph managers
-            if (mapPath != null) {
-                new SimulationEngine(globalInfo, stationsInfo, usersInfo);
-            } else {
-                MessageGuiFormatter.showErrorsForGui("You should specify a map directory");
-            }
+            new SimulationEngine(globalInfo, stationsInfo, usersInfo);
+            
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());

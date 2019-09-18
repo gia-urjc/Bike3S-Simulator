@@ -1,6 +1,5 @@
 package es.urjc.ia.bikesurbanfleets.worldentities.infraestructure;
 
-import es.urjc.ia.bikesurbanfleets.common.demand.DemandManager;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
@@ -30,8 +29,6 @@ public class InfrastructureManager {
      */
     private List<Station> stations;
 
-    private DemandManager demandManager;
-
     private boolean demandmissingwarning = false;
     /**
      * These are all the bikes from all stations at the system.
@@ -51,7 +48,6 @@ public class InfrastructureManager {
 
     public InfrastructureManager(List<Station> stations) throws IOException {
 
-        this.demandManager = demandManager;
         this.stations = stations;
         this.bikes = stations.stream().map(Station::getSlots).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
         OptionalInt i = stations.stream().mapToInt(Station::getCapacity).max();

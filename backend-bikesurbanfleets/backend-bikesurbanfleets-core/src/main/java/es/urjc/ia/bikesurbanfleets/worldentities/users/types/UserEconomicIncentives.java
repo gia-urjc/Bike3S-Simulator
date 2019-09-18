@@ -2,13 +2,13 @@ package es.urjc.ia.bikesurbanfleets.worldentities.users.types;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
-import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.simpleRecommendationSystemTypes.StationComparator;
-import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.Recommendation;
-import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystems.incentives.Incentive;
-import es.urjc.ia.bikesurbanfleets.worldentities.consultSystems.recommendationSystems.incentives.Money;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple.StationComparator;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Incentives.Incentive;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Incentives.Money;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;

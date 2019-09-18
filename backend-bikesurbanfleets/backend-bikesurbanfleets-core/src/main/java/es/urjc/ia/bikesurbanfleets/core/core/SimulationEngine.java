@@ -2,7 +2,7 @@ package es.urjc.ia.bikesurbanfleets.core.core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
@@ -18,6 +18,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.common.log.Debug;
+import es.urjc.ia.bikesurbanfleets.services.fleetManager.FleetManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserFactory;
 
@@ -41,7 +42,9 @@ public final class SimulationEngine {
     private static Comparator<Event> eventComparatorByTime() {
         return (e1, e2) -> Integer.compare(e1.getInstant(), e2.getInstant());
     }
-    private PriorityQueue<Event> eventsQueue;
+    private PriorityQueue<Event> UserEventsQueue;
+    private PriorityQueue<Event> ManagingEventsQueue;
+    private int totalUsers;
 
     /**
      * It creates an event queue where its events are sorted by the time instant
@@ -82,16 +85,22 @@ public final class SimulationEngine {
 
         //6.   generate the initial events (userappears)
         List<EventUserAppears> userevents=getUserAppearanceEvents(usersInfo, services, globalInfo.getRandomSeed());
-        eventsQueue = new PriorityQueue<>(userevents.size()+20,eventComparatorByTime());
-        eventsQueue.addAll(userevents);
+        UserEventsQueue = new PriorityQueue<>(userevents.size()+20,eventComparatorByTime());
+        UserEventsQueue.addAll(userevents);
+        totalUsers=userevents.size();
 
-        //7.
+        //7.   if a fleetmanager is available, call its initialisation 
+        ManagingEventsQueue = new PriorityQueue<>(10,eventComparatorByTime());
+        FleetManager fleetManager=services.getFleetManager();
+        fleetManager.initialActions(ManagingEventsQueue);
+        
+        //8.
         //******************************************
         //do simulation
         //******************************************
         this.run();
 
-        //8.
+        //9.
         //******************************************
         //close everything afterwards
         //******************************************
@@ -130,22 +139,31 @@ public final class SimulationEngine {
     public void run() throws Exception {
 
         // Those variables are used to control de percentage of the simulation done
-        int totalUsers = eventsQueue.size();
         double percentage = 0;
         double oldpercentagepresented = 0;
         int lastInstant = 0;
         int order = 0;
-        Event event = null;
+        Event userevent = null;
+        Event managementevent=null;
+        Event currentEvent=null;
         int currentInstant;
 
         MessageGuiFormatter.showPercentageForGui(percentage);
         try {
 
-            while (!eventsQueue.isEmpty()) {
-                event = eventsQueue.poll();  // retrieves and removes first element
-
+            while (!UserEventsQueue.isEmpty() || !ManagingEventsQueue.isEmpty()) {
+                userevent = UserEventsQueue.peek();  // retrieves but does not remove first elements
+                managementevent=ManagingEventsQueue.peek();
+                
+                //get the earliest one
+                if (userevent==null)  currentEvent=managementevent;
+                else if (managementevent==null) currentEvent=userevent;
+                else if (managementevent.getInstant()<=userevent.getInstant()) currentEvent=managementevent;
+                else currentEvent=userevent;
+                
+                   
                 //check if the instant is after the last one 
-                currentInstant=event.getInstant();
+                currentInstant=currentEvent.getInstant();
                 if (currentInstant < lastInstant) {
                     throw new RuntimeException("Illegal event execution");
                 }
@@ -159,7 +177,7 @@ public final class SimulationEngine {
                 SimulationDateTime.setCurrentSimulationInstant(currentInstant);
                 
                 // Shows the actual percentage in the stdout for frontend
-                if (event.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
+                if (currentEvent.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
                     //show only every 5 percent
                     percentage += (((double) 1 / (double) totalUsers) * 100);
                     if (percentage >= oldpercentagepresented + 5D) {
@@ -169,22 +187,22 @@ public final class SimulationEngine {
                 }
 
                 //execute event
-                Event newEvent = event.execute();
+                Event newEvent = currentEvent.execute();
                 if (newEvent != null) {
-                    eventsQueue.add(newEvent);
+                    UserEventsQueue.add(newEvent);
                 }
                 //put event on output if debug
                 if (Debug.isDebugmode()) {
-                    System.out.println(event.toString());
+                    System.out.println(currentEvent.toString());
                 }
 
                 //reguister the event in the history
-                History.registerEvent(event, event.getInstant(), order);
-                lastInstant = event.getInstant();
+                History.registerEvent(currentEvent, currentEvent.getInstant(), order);
+                lastInstant = currentEvent.getInstant();
             }
             MessageGuiFormatter.showPercentageForGui(100D);
         } catch (Exception e) {
-            exceptionTreatment(e, event);
+            exceptionTreatment(e, currentEvent);
         }
 
     }
