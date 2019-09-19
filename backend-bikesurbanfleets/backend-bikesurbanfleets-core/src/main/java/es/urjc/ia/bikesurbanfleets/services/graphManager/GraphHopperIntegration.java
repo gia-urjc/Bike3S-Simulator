@@ -30,6 +30,7 @@ public class GraphHopperIntegration implements GraphManager {
 
     public class GraphManParameters {
         private String mapFile=null;
+        private String tempDirectory=null;
     }
 
     GraphManParameters parameters=null;
@@ -39,15 +40,16 @@ public class GraphHopperIntegration implements GraphManager {
     private GeoPoint startPosition;
     private GeoPoint endPosition;
 
-    public GraphHopperIntegration(JsonObject parameterdef, String temp_dir) throws Exception {
+    public GraphHopperIntegration(JsonObject parameterdef) throws Exception {
         this.parameters = new GraphManParameters();
         getParameters(parameterdef, this.parameters);
-        setup(temp_dir);
+        setup(parameters.tempDirectory);
     }
     public GraphHopperIntegration(String mapFile, String temp_dir) throws IOException {
         this.parameters = new GraphManParameters();
         parameters.mapFile=mapFile;
-        setup(temp_dir);
+        parameters.tempDirectory=temp_dir;
+        setup(parameters.tempDirectory);
     }
     private void setup(String temp_dir) throws IOException {
     

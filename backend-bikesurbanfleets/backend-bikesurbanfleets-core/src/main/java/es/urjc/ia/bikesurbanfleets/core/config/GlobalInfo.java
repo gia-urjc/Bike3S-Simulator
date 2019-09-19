@@ -85,35 +85,35 @@ public class GlobalInfo {
     /**
      * Recommendation system that will be used by the agents
      */
-    private JsonObject recommendationSystem=null;
+    private JsonObject recommendationSystemType=null;
     public void setOtherRecommendationSystem(JsonObject recommendationSystem) {
-        this.recommendationSystem = recommendationSystem;
+        this.recommendationSystemType = recommendationSystem;
     }
     public JsonObject getRecommendationSystemJsonDescription() {
-        return this.recommendationSystem;
+        return this.recommendationSystemType;
     }
 
     //demandmanager
-    private JsonObject demandManager=null;
+    private JsonObject demandManagerType=null;
     public JsonObject getdemandManagerJsonDescription() {
-        return this.demandManager;
+        return this.demandManagerType;
     }
 
     /**
      * Fleet manager that will be used 
      */
-    private JsonObject fleetManager=null;
+    private JsonObject fleetManagerType=null;
     public JsonObject getFleetManagerJsonDescription() {
-        return this.fleetManager;
+        return this.fleetManagerType;
     }
    
     /**
      * Graph implementation that will be used by the agents to get routes
      * between points
      */
-    private JsonObject graphManager=null;
+    private JsonObject graphManagerType=null;
     public JsonObject getgraphManagerJsonDescription() {
-        return this.graphManager;
+        return this.graphManagerType;
     }
 
 }

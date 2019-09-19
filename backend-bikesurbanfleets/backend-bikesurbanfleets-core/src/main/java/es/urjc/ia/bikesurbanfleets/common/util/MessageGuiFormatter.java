@@ -8,8 +8,8 @@ import java.util.Arrays;
 
 public class MessageGuiFormatter {
 
-    private static String ERROR_PATTERN = "[Error]";
-    private static String PERCENTAGE_PATTERN = "[Percentage]";
+    private static String ERROR_PATTERN = "[Error] ";
+    private static String PERCENTAGE_PATTERN = "[Percentage of users appeared] ";
 
     /**
      * Takes a string and separate it in a list of string that will be sended one by one
@@ -29,6 +29,6 @@ public class MessageGuiFormatter {
     }
 
     public static void showPercentageForGui(double percentage) {
-        System.out.println(PERCENTAGE_PATTERN + Precision.round(percentage, 2) + "Time:" + SimulationDateTime.getCurrentSimulationDateTime() );
+        System.out.println(PERCENTAGE_PATTERN + Precision.round(percentage, 2) + " Time:" + SimulationDateTime.getCurrentSimulationDateTime() );
     }
 }

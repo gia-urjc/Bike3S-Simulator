@@ -136,37 +136,36 @@ public final class SimulationEngine {
         return eventUserAppearsList;
     }
 
-    public void run() throws Exception {
+    public synchronized void run() throws Exception {
 
         // Those variables are used to control de percentage of the simulation done
-        double percentage = 0;
-        double oldpercentagepresented = 0;
+        double percentage = 0D;
+        double oldpercentagepresented = 0D;
         int lastInstant = 0;
         int order = 0;
-        Event userevent = null;
-        Event managementevent=null;
         Event currentEvent=null;
-        int currentInstant;
 
         MessageGuiFormatter.showPercentageForGui(percentage);
         try {
-
             while (!UserEventsQueue.isEmpty() || !ManagingEventsQueue.isEmpty()) {
-                userevent = UserEventsQueue.peek();  // retrieves but does not remove first elements
-                managementevent=ManagingEventsQueue.peek();
+                Event userevent = UserEventsQueue.peek();  // retrieves but does not remove first elements
+                Event managementevent=ManagingEventsQueue.peek();
                 
-                //get the earliest one
-                if (userevent==null)  currentEvent=managementevent;
-                else if (managementevent==null) currentEvent=userevent;
-                else if (managementevent.getInstant()<=userevent.getInstant()) currentEvent=managementevent;
-                else currentEvent=userevent;
-                
-                   
-                //check if the instant is after the last one 
-                currentInstant=currentEvent.getInstant();
-                if (currentInstant < lastInstant) {
+                //check if the next events are later than the last one 
+                if (userevent!=null && userevent.getInstant() < lastInstant) {
                     throw new RuntimeException("Illegal event execution");
                 }
+                if (managementevent!=null && managementevent.getInstant() < lastInstant) {
+                    throw new RuntimeException("Illegal event execution");
+                }
+
+                //now get the earliest event to execute
+                if (userevent==null) currentEvent=processManagementEvent(); 
+                else if (managementevent==null) currentEvent=processUserEvent();
+                else if (managementevent.getInstant()<=userevent.getInstant()) currentEvent=processManagementEvent();
+                else currentEvent=processUserEvent();
+                
+                int currentInstant=currentEvent.getInstant();
                 if (currentInstant > lastInstant) {
                     order = 0;
                 } else {
@@ -186,11 +185,6 @@ public final class SimulationEngine {
                     }
                 }
 
-                //execute event
-                Event newEvent = currentEvent.execute();
-                if (newEvent != null) {
-                    UserEventsQueue.add(newEvent);
-                }
                 //put event on output if debug
                 if (Debug.isDebugmode()) {
                     System.out.println(currentEvent.toString());
@@ -206,6 +200,22 @@ public final class SimulationEngine {
         }
 
     }
+    public Event processUserEvent() throws Exception {
+        Event event = UserEventsQueue.poll();  // retrieves first element and executes
+        Event newEvent = event.execute();
+        if (newEvent != null) {
+            UserEventsQueue.add(newEvent);
+        }
+        return event;
+     }
+    public Event processManagementEvent() throws Exception {
+        Event event = ManagingEventsQueue.poll();  // retrieves first element and executes
+        Event newEvent = event.execute();
+        if (newEvent != null) {
+            ManagingEventsQueue.add(newEvent);
+        }
+        return event;
+     }
 
     private void exceptionTreatment(Exception e, Event ev) {
         MessageGuiFormatter.showErrorsForGui(e);

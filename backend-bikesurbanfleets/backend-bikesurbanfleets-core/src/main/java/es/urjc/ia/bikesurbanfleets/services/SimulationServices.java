@@ -45,33 +45,45 @@ public class SimulationServices {
         
         //setup the demandManager
         
-        this.demandManager = (DemandManager) getDemandManager(
+        System.out.println("load demandManager");
+        this.demandManager= (DemandManager) getDemandManager(
                 findManagerClass(reflections, globalInfo.getdemandManagerJsonDescription(), DemandManagerType.class, "DemandManager"),
                 globalInfo.getdemandManagerJsonDescription());
+        if (demandManager!=null) System.out.println("demandManager loaded");
+        else System.out.println("!!no demandManager loaded");
+        
         //setup the graph manager
+        System.out.println("load GraphManager");
         this.graphManager = (GraphManager) getGraphManager(
                 findManagerClass(reflections, globalInfo.getgraphManagerJsonDescription(), GraphManagerType.class, "GraphManager"),
                 globalInfo.getgraphManagerJsonDescription());
+        if (graphManager!=null) System.out.println("graphManager loaded");
+        else System.out.println("!!no graphManager loaded");
+
         //setup the recomendation system
+        System.out.println("load recommendationSystem");
         this.recommendationSystem = (RecommendationSystem) getRecommendationSystem(
                 findManagerClass(reflections, globalInfo.getRecommendationSystemJsonDescription(), RecommendationSystemType.class, "Recommendation System"),
                 globalInfo.getRecommendationSystemJsonDescription());
+        if (recommendationSystem!=null) System.out.println("recommendationSystem loaded");
+        else System.out.println("!!no recommendationSystem loaded");
+
         //setup the fleetManagersystem
+        System.out.println("load fleetManager");
         this.fleetManager = (FleetManager) getFleetManager(
                 findManagerClass(reflections, globalInfo.getFleetManagerJsonDescription(), FleetManagerType.class, "FleetManager"),
                 globalInfo.getFleetManagerJsonDescription());
+        if (fleetManager!=null) System.out.println("fleetManager loaded");
+        else System.out.println("!!no fleetManager loaded");
         checkService();
     }
     
     private Class findManagerClass(Reflections reflections, JsonObject jsondescription, Class annotationclasstype, String servicetype) throws Exception{
-        System.out.println("load " + servicetype);
-        if (jsondescription==null) {
-            System.out.println("no " + servicetype + " loaded");
-            return null;
+         if (jsondescription==null) {
+             return null;
         }
         String type = jsondescription.get("typeName").getAsString();
         if (type.equals("none")) {
-            System.out.println("no " + servicetype + " loaded");
             return null;
         }
 
