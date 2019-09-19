@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.urjc.ia.bikesurbanfleets.core.events;
+package es.urjc.ia.bikesurbanfleets.core.UserEvents;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
@@ -59,8 +59,8 @@ public class EventUserTriesToReserveSlot extends EventUser {
 
     /**
      * if the reservation has been sucessful, the user goes towards the sation
-     * and there are two possibilities: EventSlotReservationTimeout or
-     * EventUserArrivesAtStationToReturnBike(with reservation)
+ and there are two possibilities: EventUserSlotReservationTimeout or
+ EventUserArrivesAtStationToReturnBike(with reservation)
      */
     private Event manageFactsAfterSlotReservation(Reservation reservation) throws Exception {
         int arrivalTime = user.goToStation(station);
@@ -68,7 +68,7 @@ public class EventUserTriesToReserveSlot extends EventUser {
         debugEventLog("User has been able to reserve slot and goes with bike to the station");
         if (Reservation.VALID_TIME < arrivalTime) {
             GeoPoint pointTimeOut = user.reachedPointUntilTimeOut();
-            return new EventSlotReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, station, pointTimeOut);
+            return new EventUserSlotReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, station, pointTimeOut);
         } else {
             return new EventUserArrivesAtStationToReturnBike(this.getInstant() + arrivalTime, user, station, reservation);
         }

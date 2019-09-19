@@ -521,9 +521,13 @@ public class SimulationResultAnalyser {
         csvWriter.writeNext(new String[]{""});
 
         //first line statation data
-        int maxrentfails = users_takefails.lastKey();
-        int maxreturnfails = users_returnfails.lastKey();
-
+        int maxrentfails;
+        if (users_takefails.isEmpty()) maxrentfails=0;
+        else maxrentfails=users_takefails.lastKey();
+        int maxreturnfails;
+        if (users_returnfails.isEmpty()) maxreturnfails=0;
+        else maxreturnfails=users_returnfails.lastKey();
+ 
         String[] record = new String[3];
         record[0] = "simulatiuon time (min)";
         record[1] = Double.toString((double) totalsimtimespecified / 60D);

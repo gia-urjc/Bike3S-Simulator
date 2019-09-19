@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.core.events;
+package es.urjc.ia.bikesurbanfleets.core.UserEvents;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
@@ -111,9 +111,9 @@ public abstract class EventUser implements Event {
         }
     }
 
-    public void debugClose(User user, int id) {
+    public void debugClose() {
         try {
-            Debug.closeLog(user, id);
+            Debug.closeLog(user, user.getId());
         } catch (IOException e) {
             MessageGuiFormatter.showErrorsForGui(e);
         }

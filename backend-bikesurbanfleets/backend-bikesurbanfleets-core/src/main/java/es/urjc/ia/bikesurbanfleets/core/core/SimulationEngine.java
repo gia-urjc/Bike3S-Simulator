@@ -8,7 +8,7 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.core.config.StationsConfig;
 import es.urjc.ia.bikesurbanfleets.core.config.UsersConfig;
-import es.urjc.ia.bikesurbanfleets.core.events.EventUserAppears;
+import es.urjc.ia.bikesurbanfleets.core.UserEvents.EventUserAppears;
 import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
@@ -79,6 +79,7 @@ public final class SimulationEngine {
         List<Entity> initialentities = new ArrayList<Entity>();
         initialentities.addAll(services.getInfrastructureManager().consultBikes());
         initialentities.addAll(services.getInfrastructureManager().consultStations());
+        initialentities.add(services.getFleetManager());
         History.init(globalInfo.getHistoryOutputPath(), GlobalInfo.TIMEENTRIES_PER_HISTORYFILE,
                 globalInfo.getBoundingBox(), globalInfo.getTotalSimulationTime(), initialentities, 
                 services.getRecommendationSystem().getParameterString());

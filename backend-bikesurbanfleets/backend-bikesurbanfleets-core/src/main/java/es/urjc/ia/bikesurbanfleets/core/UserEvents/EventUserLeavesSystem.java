@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.core.events;
+package es.urjc.ia.bikesurbanfleets.core.UserEvents;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class EventUserLeavesSystem extends EventUser {
         user.leaveSystem();
         user.setState(User.STATE.LEFT_SYSTEM);
         debugEventLog("User left the system");
-        debugClose(user, user.getId());
+        debugClose();
        
         //set the result of the event
         //the result of EventUserLeavesSystem is any of the possible exit rerasons

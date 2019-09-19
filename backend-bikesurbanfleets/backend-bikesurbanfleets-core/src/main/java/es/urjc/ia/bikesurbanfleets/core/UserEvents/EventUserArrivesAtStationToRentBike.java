@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.urjc.ia.bikesurbanfleets.core.events;
+package es.urjc.ia.bikesurbanfleets.core.UserEvents;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;

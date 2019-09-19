@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.core.events;
+package es.urjc.ia.bikesurbanfleets.core.UserEvents;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
@@ -11,14 +11,14 @@ import es.urjc.ia.bikesurbanfleets.worldentities.users.UserMemory;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class EventBikeReservationTimeout extends EventUser {
+public class EventUserBikeReservationTimeout extends EventUser {
 
     private Reservation reservation;
     private GeoPoint positionTimeOut;
     private Station station;
     private double distwalked;
 
-    public EventBikeReservationTimeout(int instant, User user, Reservation reservation, Station st, GeoPoint positionTimeOut, double distwalkedtilTimeout) {
+    public EventUserBikeReservationTimeout(int instant, User user, Reservation reservation, Station st, GeoPoint positionTimeOut, double distwalkedtilTimeout) {
         super(instant, user);
         this.involvedEntities = new ArrayList<>(Arrays.asList(user,st, reservation, reservation.getBike()));
         this.newEntities = null;
@@ -40,7 +40,7 @@ public class EventBikeReservationTimeout extends EventUser {
         Event e = manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_RESERVATION_TIMEOUT);
        
         //set the result of the event
-        //the result of EventBikeReservationTimeout is always success
+        //the result of EventUserBikeReservationTimeout is always success
         setResult(Event.RESULT_TYPE.SUCCESS);
 
         return e;

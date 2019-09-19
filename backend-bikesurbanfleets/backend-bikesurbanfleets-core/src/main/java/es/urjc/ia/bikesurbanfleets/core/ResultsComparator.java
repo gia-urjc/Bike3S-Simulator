@@ -97,10 +97,10 @@ public class ResultsComparator {
         int maxrentfails = 0;
         int maxreturnfails = 0;
         for (TestResult tr : testresults.values()) {
-            if (tr.userdata.usertakefails.lastKey() > maxrentfails) {
+            if (!tr.userdata.usertakefails.isEmpty() && tr.userdata.usertakefails.lastKey() > maxrentfails) {
                 maxrentfails = tr.userdata.usertakefails.lastKey();
             }
-            if (tr.userdata.userreturnfails.lastKey() > maxreturnfails) {
+            if (! tr.userdata.userreturnfails.isEmpty() && tr.userdata.userreturnfails.lastKey() > maxreturnfails) {
                 maxreturnfails = tr.userdata.userreturnfails.lastKey();
             }
         }

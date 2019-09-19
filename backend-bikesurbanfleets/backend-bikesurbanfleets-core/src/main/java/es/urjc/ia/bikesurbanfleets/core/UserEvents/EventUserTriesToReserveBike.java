@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.urjc.ia.bikesurbanfleets.core.events;
+package es.urjc.ia.bikesurbanfleets.core.UserEvents;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
@@ -58,8 +58,8 @@ public class EventUserTriesToReserveBike extends EventUser {
 
     /**
      * if the reservation has been sucessful, the user goes towards the sation
-     * and there are two possibilities: EventBikeReservationTimeout or
-     * EventUserArrivesAtStationToRentBike(with reservation)
+ and there are two possibilities: EventUserBikeReservationTimeout or
+ EventUserArrivesAtStationToRentBike(with reservation)
      */
     private Event manageFactsAfterReservation(Reservation reservation) throws Exception {
         int arrivalTime = user.goToStation(station);
@@ -68,7 +68,7 @@ public class EventUserTriesToReserveBike extends EventUser {
         if (Reservation.VALID_TIME < arrivalTime) {
             GeoPoint pointTimeOut = user.reachedPointUntilTimeOut();
             double distwalkedtilTimeout=(user.getRoute().getTotalDistance()* arrivalTime)/Reservation.VALID_TIME;
-            return new EventBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, station, pointTimeOut, distwalkedtilTimeout);
+            return new EventUserBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, station, pointTimeOut, distwalkedtilTimeout);
         } else {
             return new EventUserArrivesAtStationToRentBike(this.getInstant() + arrivalTime, user, station, reservation);
         }
