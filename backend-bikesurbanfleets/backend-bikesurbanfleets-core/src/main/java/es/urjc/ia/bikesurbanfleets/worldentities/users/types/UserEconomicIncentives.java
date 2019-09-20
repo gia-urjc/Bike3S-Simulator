@@ -9,7 +9,7 @@ import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple.Station
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Incentives.Incentive;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Incentives.Money;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;

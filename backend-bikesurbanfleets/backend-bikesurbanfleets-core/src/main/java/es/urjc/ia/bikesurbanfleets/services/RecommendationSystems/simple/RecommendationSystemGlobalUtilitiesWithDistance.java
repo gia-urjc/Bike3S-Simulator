@@ -10,8 +10,8 @@ import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.UtilitiesGlobalLocalUtilityMethods;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.StationManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -69,7 +69,7 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
         List<Recommendation> result;
-        List<Station> stations = validStationsToRentBike(infrastructureManager.consultStations()).stream()
+        List<Station> stations = validStationsToRentBike(stationManager.consultStations()).stream()
                 .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
@@ -88,7 +88,7 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();;
-        List<Station> stations = validStationsToReturnBike(infrastructureManager.consultStations()).stream().collect(Collectors.toList());
+        List<Station> stations = validStationsToReturnBike(stationManager.consultStations()).stream().collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, destination, false);
@@ -129,8 +129,8 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
         for (Station s : stations) {
             double idealAvailable = s.getCapacity() / 2D;
             double utildif = UtilitiesGlobalLocalUtilityMethods.calculateClosedSquaredStationUtilityDifferencewithoutDemand(s, rentbike);
-            double normedUtilityDiff = utildif * ((double) s.getCapacity() / (double) infrastructureManager.getMaxStationCapacity());
-            double maxcap=infrastructureManager.getMaxStationCapacity();
+            double normedUtilityDiff = utildif * ((double) s.getCapacity() / (double) stationManager.getMaxStationCapacity());
+            double maxcap=stationManager.getMaxStationCapacity();
             double utilitymax=(maxcap-1)*4/(maxcap*maxcap);
             double utilitynorm=(normedUtilityDiff+utilitymax)/(2*utilitymax);
             double dist = point.distanceTo(s.getPosition());

@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation.ReservationState;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation.ReservationType;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation.ReservationState;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation.ReservationType;
 
 /**
  * This class keeps track of the number of times that a same event has happend.

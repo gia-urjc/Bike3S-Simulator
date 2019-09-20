@@ -7,8 +7,8 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple.StationComparator;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.StationManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,7 +23,7 @@ public abstract class RecommendationSystem {
     /**
      * It provides information about the infraestructure state.
      */
-    protected InfrastructureManager infrastructureManager;
+    protected StationManager stationManager;
     protected DemandManager demandManager;
 
     public DemandManager getDemandManager() {
@@ -51,7 +51,7 @@ public abstract class RecommendationSystem {
     }
 
     public RecommendationSystem(SimulationServices simulationServices) {
-        this.infrastructureManager = simulationServices.getInfrastructureManager();
+        this.stationManager = simulationServices.getStationManager();
         this.demandManager=simulationServices.getDemandManager();
     }
     
@@ -93,9 +93,9 @@ public abstract class RecommendationSystem {
             Comparator<Station> byDistance = StationComparator.byDistance(point);
             List<Station> temp1;
             if (take) {
-                temp1 = validStationsToRentBike(infrastructureManager.consultStations());
+                temp1 = validStationsToRentBike(stationManager.consultStations());
             } else {
-                temp1 = validStationsToReturnBike(infrastructureManager.consultStations());
+                temp1 = validStationsToReturnBike(stationManager.consultStations());
             }
             List<Station> temp = temp1.stream().sorted(byDistance).collect(Collectors.toList());
             while (numrecsrequired > 0 && i < temp.size()) {

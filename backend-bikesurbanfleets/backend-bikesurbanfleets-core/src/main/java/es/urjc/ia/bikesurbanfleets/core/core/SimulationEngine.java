@@ -14,9 +14,9 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
 import es.urjc.ia.bikesurbanfleets.history.History;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.common.log.Debug;
 import es.urjc.ia.bikesurbanfleets.core.ManagingEvents.EventManaging;
 import es.urjc.ia.bikesurbanfleets.core.UserEvents.EventUser;
@@ -79,8 +79,8 @@ public final class SimulationEngine {
  
         //5. get all initial entities and set up the history
         List<Entity> initialentities = new ArrayList<Entity>();
-        initialentities.addAll(services.getInfrastructureManager().consultBikes());
-        initialentities.addAll(services.getInfrastructureManager().consultStations());
+        initialentities.addAll(services.getStationManager().consultBikes());
+        initialentities.addAll(services.getStationManager().consultStations());
         initialentities.add(services.getFleetManager());
         History.init(globalInfo.getHistoryOutputPath(), GlobalInfo.TIMEENTRIES_PER_HISTORYFILE,
                 globalInfo.getBoundingBox(), globalInfo.getTotalSimulationTime(), initialentities, 

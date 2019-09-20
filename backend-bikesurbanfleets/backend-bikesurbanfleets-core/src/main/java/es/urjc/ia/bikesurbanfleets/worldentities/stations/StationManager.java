@@ -1,8 +1,10 @@
-package es.urjc.ia.bikesurbanfleets.worldentities.infraestructure;
+package es.urjc.ia.bikesurbanfleets.worldentities.stations;
 
+import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple.StationComparator;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
  *
  * @author IAgroup
  */
-public class InfrastructureManager {
+public class StationManager {
 
     /**
      * These are all the stations at the system.
@@ -45,7 +47,7 @@ public class InfrastructureManager {
         return minStationCapacity;
     }
 
-    public InfrastructureManager(List<Station> stations) throws IOException {
+    public StationManager(List<Station> stations) throws IOException {
 
         this.stations = stations;
         this.bikes = stations.stream().map(Station::getSlots).flatMap(List::stream).filter(Objects::nonNull).collect(Collectors.toList());
@@ -61,6 +63,7 @@ public class InfrastructureManager {
         minStationCapacity = i.getAsInt();
     }
 
+    
     public class UsageData {
 
         public int numberStations = 0;
@@ -100,6 +103,12 @@ public class InfrastructureManager {
     }
     public List<Station> consultStations() {
         return stations;
+    }
+    public Station consultStation(int id) {
+        List<Station> candidates=stations.stream().filter(station -> station.getId()==id).collect(Collectors.toList());
+        if (candidates.isEmpty()) return null;
+        if (candidates.size()>1) throw new RuntimeException("more than one station with same id");
+        return candidates.get(0);
     }
 
     public List<Bike> consultBikes() {

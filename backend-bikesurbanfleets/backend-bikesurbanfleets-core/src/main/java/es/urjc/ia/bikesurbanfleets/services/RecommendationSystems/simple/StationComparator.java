@@ -3,7 +3,7 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple;
 import java.util.Comparator;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
 public class StationComparator {
 	

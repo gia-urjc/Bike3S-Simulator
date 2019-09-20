@@ -10,7 +10,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.history.JsonIdentifier;
 import es.urjc.ia.bikesurbanfleets.services.fleetManager.FleetManager;
 import es.urjc.ia.bikesurbanfleets.services.fleetManager.FleetManagerType;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
 /**
  *

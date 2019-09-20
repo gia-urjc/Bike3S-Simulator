@@ -1,9 +1,9 @@
-package es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.deserializers;
+package es.urjc.ia.bikesurbanfleets.worldentities.stations.deserializers;
 
 import com.google.gson.*;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

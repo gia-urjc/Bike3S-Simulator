@@ -7,8 +7,8 @@ package es.urjc.ia.bikesurbanfleets.core.ManagingEvents;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.services.fleetManager.FleetManager;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

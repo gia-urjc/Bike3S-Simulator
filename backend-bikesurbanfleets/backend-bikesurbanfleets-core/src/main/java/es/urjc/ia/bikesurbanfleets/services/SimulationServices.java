@@ -11,8 +11,8 @@ import es.urjc.ia.bikesurbanfleets.services.fleetManager.FleetManager;
 import es.urjc.ia.bikesurbanfleets.services.fleetManager.FleetManagerType;
 import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManagerType;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.StationManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -25,7 +25,7 @@ public class SimulationServices {
     private final String INIT_EXCEPTION_MESSAGE = "Simulation Service is not correctly started."
             + " You should init all the services";
 
-    private InfrastructureManager infrastructureManager;
+    private StationManager stationManager;
     private RecommendationSystem recommendationSystem;
     private InformationSystem informationSystem;
     private GraphManager graphManager;
@@ -39,9 +39,9 @@ public class SimulationServices {
     public void initSimulationServices(GlobalInfo globalInfo, List<Station> stations) throws Exception{
        Reflections reflections = new Reflections();
         //setup the infrastructureManager
-        this.infrastructureManager = new InfrastructureManager(stations);
+        this.stationManager = new StationManager(stations);
         //setup the information system
-        this.informationSystem = new InformationSystem(this.infrastructureManager);
+        this.informationSystem = new InformationSystem(this.stationManager);
         
         //setup the demandManager
         
@@ -123,8 +123,8 @@ public class SimulationServices {
     public FleetManager getFleetManager() throws IllegalStateException {
         return this.fleetManager;
     }
-    public InfrastructureManager getInfrastructureManager() throws IllegalStateException {
-        return this.infrastructureManager;
+    public StationManager getStationManager() throws IllegalStateException {
+        return this.stationManager;
     }
 
     public RecommendationSystem getRecommendationSystem() {
@@ -144,7 +144,7 @@ public class SimulationServices {
     }
 
     private void checkService() throws IllegalStateException {
-        if ( graphManager == null || informationSystem==null || infrastructureManager==null) {
+        if ( graphManager == null || informationSystem==null || stationManager==null) {
             throw new IllegalStateException(INIT_EXCEPTION_MESSAGE);
         }
     }

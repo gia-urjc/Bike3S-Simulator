@@ -10,7 +10,7 @@ import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -103,7 +103,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint currentposition) {
         List<Recommendation> result;
-        List<Station> stations = infrastructureManager.consultStations().stream().
+        List<Station> stations = stationManager.consultStations().stream().
                 sorted(byDistance(currentposition)).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
@@ -134,7 +134,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = infrastructureManager.consultStations().stream().
+        List<Station> stations = stationManager.consultStations().stream().
                 sorted(byDistance(destination)).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {

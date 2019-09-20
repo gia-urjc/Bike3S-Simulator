@@ -9,8 +9,9 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.core.ManagingEvents.EventManaging;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.StationManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -24,12 +25,12 @@ public abstract class FleetManager implements Entity{
     /**
      * These are all the stations at the system.
      */
-    private List<Station> stations;
+    StationManager stationManager;
     //the store of bikes that are taken from the system
     private List<Bike> bikestore;
 
     public FleetManager(SimulationServices simulationServices) {
-        stations = simulationServices.getInfrastructureManager().consultStations();
+        stationManager = simulationServices.getStationManager();
         bikestore=new LinkedList<Bike>();
     }
     //method that can check the stations and does corrective actions

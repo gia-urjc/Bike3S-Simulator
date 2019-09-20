@@ -19,7 +19,9 @@ import java.util.List;
  */
 public abstract class EventManaging implements Event {
     
-   /**
+    static final Event.EVENT_TYPE event_type=Event.EVENT_TYPE.MANAGER_EVENT;
+
+    /**
      * It is the time instant when event happens.
      */
     protected int instant;
@@ -37,7 +39,11 @@ public abstract class EventManaging implements Event {
         manager=m;
     }
 
-    public int getInstant() {
+    public final Event.EVENT_TYPE getEventType(){
+        return event_type;
+    }
+
+    public final int getInstant() {
         return instant;
     }
 
@@ -45,22 +51,22 @@ public abstract class EventManaging implements Event {
         return print();
     }
     
-    public List<Entity> getNewEntities() {
+    public final List<Entity> getNewEntities() {
         return newEntities;
     }
 
-    public List<Entity> getOldEntities() {
+    public final List<Entity> getOldEntities() {
         return oldEntities;
     }
 
-    public List<Entity> getInvolvedEntities() {
+    public final List<Entity> getInvolvedEntities() {
         return involvedEntities;
     }
     
-    public Event.RESULT_TYPE getResult() {
+    public final Event.RESULT_TYPE getResult() {
         return result;
     };
-    public void setResult(Event.RESULT_TYPE result){
+    public final void setResult(Event.RESULT_TYPE result){
         this.result=result;
     };
 
@@ -82,7 +88,7 @@ public abstract class EventManaging implements Event {
      *
      * @throws IOException
      */
-    public void debugEventLog(String message) {
+    public final void debugEventLog(String message) {
         try {
             Debug.log(message, manager, this);
         } catch (IOException e) {
@@ -96,7 +102,7 @@ public abstract class EventManaging implements Event {
      *
      * @throws IOException
      */
-    public void debugEventLog() {
+    public final void debugEventLog() {
         try {
             Debug.log(manager, this);
         } catch (IOException e) {
@@ -104,7 +110,7 @@ public abstract class EventManaging implements Event {
         }
     }
 
-    public void debugClose() {
+    public final void debugClose() {
         try {
             Debug.closeLog(manager, manager.getId());
         } catch (IOException e) {

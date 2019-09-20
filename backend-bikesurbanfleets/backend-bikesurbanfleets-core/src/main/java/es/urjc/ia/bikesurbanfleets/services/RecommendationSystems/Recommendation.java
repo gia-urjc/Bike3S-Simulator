@@ -1,7 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems;
 
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Incentives.Incentive;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
 public class Recommendation {
 

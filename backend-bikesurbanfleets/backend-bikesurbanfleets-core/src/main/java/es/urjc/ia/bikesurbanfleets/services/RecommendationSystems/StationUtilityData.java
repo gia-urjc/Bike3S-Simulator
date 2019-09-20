@@ -1,7 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import java.util.Objects;
 
 public class StationUtilityData {

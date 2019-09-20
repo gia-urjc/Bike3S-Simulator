@@ -59,6 +59,12 @@ public class HistoryJsonClasses {
         private String name;
 
         /**
+         * This is the type of the event (user or manager).
+         */
+        @Expose
+        private Event.EVENT_TYPE type;
+ 
+        /**
          * It is the order of the event at the specified time (necessary if
          * there are more than one events at the same time).
          */
@@ -78,7 +84,7 @@ public class HistoryJsonClasses {
         @Expose
         private Map<String, List<JsonObject>> oldEntities;
 
-        EventEntry(String name, int order, Event.RESULT_TYPE res, Collection<IdReference> involved, Map<String, List<JsonObject>> changes, 
+        EventEntry(String name, Event.EVENT_TYPE type, int order, Event.RESULT_TYPE res, Collection<IdReference> involved, Map<String, List<JsonObject>> changes, 
                 Map<String, List<JsonObject>> newEntities, Map<String, List<JsonObject>> oldEntities) {
             this.name = name;
             this.order = order;
@@ -87,10 +93,15 @@ public class HistoryJsonClasses {
             this.oldEntities = oldEntities;
             this.result=res;
             this.involvedEntities=involved;
+            this.type=type;
         }
 
         public String getName() {
             return name;
+        }
+        
+        public Event.EVENT_TYPE getEventType() {
+            return type;
         }
 
         public Event.RESULT_TYPE getResult() {

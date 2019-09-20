@@ -1,9 +1,9 @@
 package es.urjc.ia.bikesurbanfleets.core.UserEvents;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserMemory;

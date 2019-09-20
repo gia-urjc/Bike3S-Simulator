@@ -13,9 +13,9 @@ import es.urjc.ia.bikesurbanfleets.history.entities.HistoricReservation;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricStation;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
 import es.urjc.ia.bikesurbanfleets.services.fleetManager.FleetManager;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 
 /**

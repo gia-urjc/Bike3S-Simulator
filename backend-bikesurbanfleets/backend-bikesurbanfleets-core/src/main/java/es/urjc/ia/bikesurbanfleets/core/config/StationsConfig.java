@@ -3,7 +3,7 @@ package es.urjc.ia.bikesurbanfleets.core.config;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
 
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.deserializers.StationDeserializer;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.deserializers.StationDeserializer;
 
 import java.util.List;
 

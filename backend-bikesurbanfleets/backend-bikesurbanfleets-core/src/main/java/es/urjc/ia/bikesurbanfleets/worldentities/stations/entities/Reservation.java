@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities;
+package es.urjc.ia.bikesurbanfleets.worldentities.stations.entities;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;

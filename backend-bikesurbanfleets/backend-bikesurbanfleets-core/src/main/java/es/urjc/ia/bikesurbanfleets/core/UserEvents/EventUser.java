@@ -30,6 +30,7 @@ public abstract class EventUser implements Event {
     protected List<Entity> involvedEntities;
     private RESULT_TYPE result;
 
+    static final Event.EVENT_TYPE event_type=Event.EVENT_TYPE.USER_EVENT;
     /**
      * It is the user who is involved in the event.
      */
@@ -40,34 +41,38 @@ public abstract class EventUser implements Event {
         this.user = user;
     }
 
-    public int getInstant() {
+    public final Event.EVENT_TYPE getEventType(){
+        return event_type;
+    }
+    
+    public final int getInstant() {
         return instant;
     }
 
-    public User getUser() {
+    public final User getUser() {
         return user;
     }
 
-    public String toString() {
+    public final String  toString() {
         return print();
     }
     
-    public List<Entity> getNewEntities() {
+    public final List<Entity> getNewEntities() {
         return newEntities;
     }
 
-    public List<Entity> getOldEntities() {
+    public final List<Entity> getOldEntities() {
         return oldEntities;
     }
 
-    public List<Entity> getInvolvedEntities() {
+    public final List<Entity> getInvolvedEntities() {
         return involvedEntities;
     }
     
-    public RESULT_TYPE getResult() {
+    public final RESULT_TYPE getResult() {
         return result;
     };
-    public void setResult(RESULT_TYPE result){
+    public final void setResult(RESULT_TYPE result){
         this.result=result;
     };
 
@@ -89,7 +94,7 @@ public abstract class EventUser implements Event {
      *
      * @throws IOException
      */
-    public void debugEventLog(String message) {
+    public final void debugEventLog(String message) {
         try {
             Debug.log(message, user, this);
         } catch (IOException e) {
@@ -103,7 +108,7 @@ public abstract class EventUser implements Event {
      *
      * @throws IOException
      */
-    public void debugEventLog() {
+    public final void debugEventLog() {
         try {
             Debug.log(user, this);
         } catch (IOException e) {
@@ -111,7 +116,7 @@ public abstract class EventUser implements Event {
         }
     }
 
-    public void debugClose() {
+    public final void debugClose() {
         try {
             Debug.closeLog(user, user.getId());
         } catch (IOException e) {
@@ -141,7 +146,7 @@ public abstract class EventUser implements Event {
      * teh user decision: EventUserLeavesSystem,
      * EventUserArrivesAtStationToRentBike, EventUserTriesToReserveBike.
      */
-    protected EventUser manageUserRentalDecision(UserDecision userdecision, Event.EXIT_REASON reason) throws Exception {
+    protected final EventUser manageUserRentalDecision(UserDecision userdecision, Event.EXIT_REASON reason) throws Exception {
         if (userdecision instanceof UserDecisionLeaveSystem) {
             user.setState(User.STATE.LEAVING);
             debugEventLog("User decides to leave the system");
@@ -177,7 +182,7 @@ public abstract class EventUser implements Event {
      * teh user decision: EventUserLeavesSystem,
      * EventUserArrivesAtStationToReturnBike, EventUserTriesToReserveSlot.
      */
-    protected EventUser manageUserReturnDecision(UserDecisionStation uds) throws Exception {
+    protected final EventUser manageUserReturnDecision(UserDecisionStation uds) throws Exception {
         if (!uds.reserve) { //user decides to go to a station
             user.setState(User.STATE.WITH_BIKE_TO_STATION);
             int arrivalTime = user.goToStation(uds.station);

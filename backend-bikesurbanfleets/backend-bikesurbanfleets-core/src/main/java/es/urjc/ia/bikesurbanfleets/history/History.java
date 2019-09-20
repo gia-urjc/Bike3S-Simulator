@@ -197,7 +197,9 @@ public class History {
         // It adds the event to the current time instant
  
         serializedEvents.get(instant).add(
-                new HistoryJsonClasses.EventEntry(event.getClass().getSimpleName(), order, event.getResult(),involved,changes, serializedNewEntities, serializedOldEntities));
+                new HistoryJsonClasses.EventEntry(event.getClass().getSimpleName(), event.getEventType(),
+                        order, event.getResult(),involved,
+                        changes, serializedNewEntities, serializedOldEntities));
     }
 
     private static List<HistoryJsonClasses.IdReference> getReferencesInvolvedEntities(List<Entity> invEntities) {
