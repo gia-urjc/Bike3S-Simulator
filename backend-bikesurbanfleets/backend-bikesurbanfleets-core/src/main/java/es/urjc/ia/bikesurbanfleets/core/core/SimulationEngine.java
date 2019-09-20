@@ -18,6 +18,8 @@ import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import es.urjc.ia.bikesurbanfleets.common.log.Debug;
+import es.urjc.ia.bikesurbanfleets.core.ManagingEvents.EventManaging;
+import es.urjc.ia.bikesurbanfleets.core.UserEvents.EventUser;
 import es.urjc.ia.bikesurbanfleets.services.fleetManager.FleetManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserFactory;
@@ -42,8 +44,8 @@ public final class SimulationEngine {
     private static Comparator<Event> eventComparatorByTime() {
         return (e1, e2) -> Integer.compare(e1.getInstant(), e2.getInstant());
     }
-    private PriorityQueue<Event> UserEventsQueue;
-    private PriorityQueue<Event> ManagingEventsQueue;
+    private PriorityQueue<EventUser> UserEventsQueue;
+    private PriorityQueue<EventManaging> ManagingEventsQueue;
     private int totalUsers;
 
     /**
@@ -93,7 +95,10 @@ public final class SimulationEngine {
         //7.   if a fleetmanager is available, call its initialisation 
         ManagingEventsQueue = new PriorityQueue<>(10,eventComparatorByTime());
         FleetManager fleetManager=services.getFleetManager();
-        fleetManager.initialActions(ManagingEventsQueue);
+        List<EventManaging> initManagingEvents=fleetManager.initialActions();
+        if (initManagingEvents != null) {
+            ManagingEventsQueue.addAll(initManagingEvents);
+        }
         
         //8.
         //******************************************
@@ -202,18 +207,18 @@ public final class SimulationEngine {
 
     }
     public Event processUserEvent() throws Exception {
-        Event event = UserEventsQueue.poll();  // retrieves first element and executes
-        Event newEvent = event.execute();
+        EventUser event = UserEventsQueue.poll();  // retrieves first element and executes
+        EventUser newEvent = event.execute();
         if (newEvent != null) {
             UserEventsQueue.add(newEvent);
         }
         return event;
      }
     public Event processManagementEvent() throws Exception {
-        Event event = ManagingEventsQueue.poll();  // retrieves first element and executes
-        Event newEvent = event.execute();
-        if (newEvent != null) {
-            ManagingEventsQueue.add(newEvent);
+        EventManaging event = ManagingEventsQueue.poll();  // retrieves first element and executes
+        List<EventManaging> newEvents = event.execute();
+        if (newEvents != null) {
+            ManagingEventsQueue.addAll(newEvents);
         }
         return event;
      }

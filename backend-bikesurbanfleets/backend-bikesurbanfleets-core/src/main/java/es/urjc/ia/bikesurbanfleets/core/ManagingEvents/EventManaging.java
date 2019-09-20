@@ -68,7 +68,7 @@ public abstract class EventManaging implements Event {
     /**
      * It proccesses the event so that the relevant changes at the system occur.
      */
-    public abstract Event execute() throws Exception;
+    public abstract List<EventManaging> execute() throws Exception;
 
 
     /*
@@ -117,5 +117,5 @@ public abstract class EventManaging implements Event {
         END - DEBUG METHODS
         =================
 
-    /**
+    */
 }

@@ -47,7 +47,7 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
     }
 
     @Override
-    public Event execute() throws Exception {
+    public EventUser execute() throws Exception {
         user.setPosition(station.getPosition());
         debugEventLog("At enter the event");
         boolean returned = false;
@@ -59,7 +59,7 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
         } else {//try to get a bike
             returned = user.returnBikeWithoutReservationTo(station);
         }
-        Event e;
+        EventUser e;
         if (returned) { //user returned the bike 
             debugEventLog("User returned Bike");
             e = manageFactAfterBikeReturn();
@@ -77,7 +77,7 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
         return e;
     }
 
-    private Event manageFactAfterBikeReturn() throws Exception {
+    private EventUser manageFactAfterBikeReturn() throws Exception {
         GeoPoint point = user.getDestinationPlace();
         int arrivalTime = user.goToPointInCity(point);
         user.setState(User.STATE.WALK_TO_DESTINATION);

@@ -29,7 +29,6 @@ public class InfrastructureManager {
      */
     private List<Station> stations;
 
-    private boolean demandmissingwarning = false;
     /**
      * These are all the bikes from all stations at the system.
      */

@@ -27,13 +27,6 @@ public interface Event {
     int getInstant();
 
     /**
-     * It proccesses the event so that the relevant changes at the system occur.
-     * @return a list of generated events as a consequence of event execution.
-     * @throws Exception
-     */
-    Event execute() throws Exception;
-    
-    /**
      * @return a list with all the entities that are updated (but not created) in the event.
      */
     List<Entity> getInvolvedEntities();

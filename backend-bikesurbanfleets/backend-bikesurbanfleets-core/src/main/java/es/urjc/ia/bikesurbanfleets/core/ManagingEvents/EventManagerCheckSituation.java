@@ -17,34 +17,19 @@ import java.util.List;
  *
  * @author holger
  */
-public class EventManagerAddBikesToStation extends EventManaging{
-
-    private Station s;
+public class EventManagerCheckSituation extends EventManaging{
     
-    public EventManagerAddBikesToStation(int instant, FleetManager manager, Station s) {
+    public EventManagerCheckSituation(int instant, FleetManager manager) {
         super(instant, manager);
-        this.s=s;
-        this.involvedEntities= new ArrayList<>(Arrays.asList(manager, s));
+        this.involvedEntities= new ArrayList<>(Arrays.asList(manager));
         this.newEntities = null;
         this.oldEntities=null;
     }
 
+    @Override
     public List<EventManaging> execute() throws Exception {
-        debugEventLog("At enter the event");
-        Bike b = manager.getBikeFromStore();
-        if (b==null) throw new RuntimeException("No bikes in store");
-        boolean sucess=s.returnBikeWithoutReservation(b);
-        involvedEntities.add(b);
-
-        if (sucess) {
-            setResult(Event.RESULT_TYPE.SUCCESS);
-        }
-        else { //bike can not put into slot 
-            //TODO: what to do here
-            manager.putBikeIntoStore(b);
-            setResult(Event.RESULT_TYPE.FAIL);
-        }
+        manager.checkSituation();
         return null;
     }
-    
+  
 }

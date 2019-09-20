@@ -32,13 +32,13 @@ public class EventUserTriesToReserveSlot extends EventUser {
     }
 
     @Override
-    public Event execute() throws Exception {
+    public EventUser execute() throws Exception {
         debugEventLog("At enter the event");
 
         Reservation reservation = station.getSlotReservation(user, this.instant);
         this.involvedEntities.add(reservation);
         this.newEntities = new ArrayList<>(Arrays.asList(reservation));
-        Event e;
+        EventUser e;
         if (reservation.getState() == Reservation.ReservationState.ACTIVE) {   // user has been able to reserve a slot
             user.addReservation(reservation);
             e = manageFactsAfterSlotReservation(reservation);
@@ -62,7 +62,7 @@ public class EventUserTriesToReserveSlot extends EventUser {
  and there are two possibilities: EventUserSlotReservationTimeout or
  EventUserArrivesAtStationToReturnBike(with reservation)
      */
-    private Event manageFactsAfterSlotReservation(Reservation reservation) throws Exception {
+    private EventUser manageFactsAfterSlotReservation(Reservation reservation) throws Exception {
         int arrivalTime = user.goToStation(station);
         user.setState(User.STATE.WITH_BIKE_TO_STATION);
         debugEventLog("User has been able to reserve slot and goes with bike to the station");

@@ -11,6 +11,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -19,27 +20,26 @@ import java.util.Arrays;
 public class EventManagerTakeBikesFromStation extends EventManaging{
 
     private Station s;
-    private int numerbikes;
     
-    public EventManagerTakeBikesFromStation(int instant, FleetManager manager, Station s, int numberbikes) {
+    public EventManagerTakeBikesFromStation(int instant, FleetManager manager, Station s) {
         super(instant, manager);
         this.s=s;
-        this.numerbikes=numberbikes;
         this.involvedEntities= new ArrayList<>(Arrays.asList(manager, s));
         this.newEntities = null;
         this.oldEntities=null;
     }
 
     @Override
-    public Event execute() throws Exception {
+    public List<EventManaging> execute() throws Exception {
         debugEventLog("At enter the event");
         Bike b=s.removeBikeWithoutReservation();
         if (b==null) {
-            manager.addBike(b);
+            setResult(Event.RESULT_TYPE.FAIL);
+        } else {
+            manager.putBikeIntoStore(b);
+            involvedEntities.add(b);
             setResult(Event.RESULT_TYPE.SUCCESS);
-        } else setResult(Event.RESULT_TYPE.FAIL);
-
-        return null;
+        }
+         return null;
     }
-    
 }

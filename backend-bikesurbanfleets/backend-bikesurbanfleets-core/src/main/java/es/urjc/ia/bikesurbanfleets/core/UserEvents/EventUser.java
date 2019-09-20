@@ -75,7 +75,7 @@ public abstract class EventUser implements Event {
     /**
      * It proccesses the event so that the relevant changes at the system occur.
      */
-    public abstract Event execute() throws Exception;
+    public abstract EventUser execute() throws Exception;
 
 
     /*
@@ -141,7 +141,7 @@ public abstract class EventUser implements Event {
      * teh user decision: EventUserLeavesSystem,
      * EventUserArrivesAtStationToRentBike, EventUserTriesToReserveBike.
      */
-    protected Event manageUserRentalDecision(UserDecision userdecision, Event.EXIT_REASON reason) throws Exception {
+    protected EventUser manageUserRentalDecision(UserDecision userdecision, Event.EXIT_REASON reason) throws Exception {
         if (userdecision instanceof UserDecisionLeaveSystem) {
             user.setState(User.STATE.LEAVING);
             debugEventLog("User decides to leave the system");
@@ -177,7 +177,7 @@ public abstract class EventUser implements Event {
      * teh user decision: EventUserLeavesSystem,
      * EventUserArrivesAtStationToReturnBike, EventUserTriesToReserveSlot.
      */
-    protected Event manageUserReturnDecision(UserDecisionStation uds) throws Exception {
+    protected EventUser manageUserReturnDecision(UserDecisionStation uds) throws Exception {
         if (!uds.reserve) { //user decides to go to a station
             user.setState(User.STATE.WITH_BIKE_TO_STATION);
             int arrivalTime = user.goToStation(uds.station);

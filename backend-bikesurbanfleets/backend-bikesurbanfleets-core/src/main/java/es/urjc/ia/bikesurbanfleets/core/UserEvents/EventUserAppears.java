@@ -22,11 +22,11 @@ public class EventUserAppears extends EventUser {
     }
 
     @Override
-    public Event execute() throws Exception {
+    public EventUser execute() throws Exception {
         user.setPosition(position);
         debugEventLog("At enter the event");
         UserDecision ud = user.decideAfterAppearning();
-        Event e = manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_APPEARING);
+        EventUser e = manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_APPEARING);
         
         //set the result of the event
         //the result of EventUserAppears is always success

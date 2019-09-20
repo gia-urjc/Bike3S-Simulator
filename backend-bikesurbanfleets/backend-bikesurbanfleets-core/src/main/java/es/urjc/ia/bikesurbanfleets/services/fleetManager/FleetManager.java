@@ -7,9 +7,11 @@ package es.urjc.ia.bikesurbanfleets.services.fleetManager;
 
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.core.ManagingEvents.EventManaging;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -23,19 +25,29 @@ public abstract class FleetManager implements Entity{
      * These are all the stations at the system.
      */
     private List<Station> stations;
+    //the store of bikes that are taken from the system
+    private List<Bike> bikestore;
 
     public FleetManager(SimulationServices simulationServices) {
         stations = simulationServices.getInfrastructureManager().consultStations();
+        bikestore=new LinkedList<Bike>();
     }
     //method that can check the stations and does corrective actions
-    public abstract void initialActions(PriorityQueue<Event> restEvents);
+    public abstract List<EventManaging> initialActions();
         
     //method that can check the stations and does corrective actions
-    public abstract void doManagementActions(PriorityQueue<Event> restEvents);
+    public abstract List<EventManaging> checkSituation();
     
-    //method for getting a bike from somewhere
-    public abstract Bike getBike();
-    public abstract void addBike(Bike b);
+    //method for getting a bike from a station
+    //returns true if sucessful and false otherwise
+    final public void putBikeIntoStore(Bike b) {
+        bikestore.add(b);
+    }
+    //returns true if sucessful and false otherwise
+    public final Bike getBikeFromStore(){
+        if (bikestore.size()==0) throw new RuntimeException("can not take a bike from the store; no bikes");
+        return bikestore.remove(0);
+    }
 
     final public int getId(){
         return 1;

@@ -18,7 +18,7 @@ public class EventUserLeavesSystem extends EventUser {
     }
 
     @Override
-    public Event execute() throws Exception {
+    public EventUser execute() throws Exception {
         debugEventLog("At enter the event");
         user.leaveSystem();
         user.setState(User.STATE.LEFT_SYSTEM);

@@ -47,7 +47,7 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
     }
 
     @Override
-    public Event execute() throws Exception {
+    public EventUser execute() throws Exception {
         double lastwalkeddist=user.getRoute().getTotalDistance(); 
         user.getMemory().addWalkedToTakeBikeDistance(lastwalkeddist);
         user.setPosition(station.getPosition());
@@ -62,7 +62,7 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
             bike = user.removeBikeWithoutReservationFrom(station);
         }
         //now generate the next event
-        Event e;
+        EventUser e;
         if (bike) { //user got a bike without an reservation
             debugEventLog("User removed Bike");
             e= manageDecisionWithBike();
@@ -81,7 +81,7 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
         return e;
     }
 
-    private Event manageDecisionWithBike() throws Exception {
+    private EventUser manageDecisionWithBike() throws Exception {
         UserDecision ud = user.decideAfterGettingBike();
         if (ud instanceof UserDecisionGoToPointInCity) {
             UserDecisionGoToPointInCity uds = (UserDecisionGoToPointInCity) ud;

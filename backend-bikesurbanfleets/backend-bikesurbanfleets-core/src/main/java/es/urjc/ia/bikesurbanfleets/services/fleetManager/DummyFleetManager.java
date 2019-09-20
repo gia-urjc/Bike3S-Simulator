@@ -8,7 +8,9 @@ package es.urjc.ia.bikesurbanfleets.services.fleetManager;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.core.ManagingEvents.EventManaging;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
+import java.util.List;
 import java.util.PriorityQueue;
 
 /**
@@ -17,6 +19,7 @@ import java.util.PriorityQueue;
  */
 @FleetManagerType("Dummy")
 public class DummyFleetManager extends FleetManager{
+
  
     public class FleetManagerParameters {
     }
@@ -29,7 +32,7 @@ public class DummyFleetManager extends FleetManager{
      }
 
     //this manager does nothing
-    public void doManagementActions(PriorityQueue<Event> restEvents){return;};
+    public List<EventManaging> checkSituation(){return null;}
 
-    public void initialActions(PriorityQueue<Event> restEvents) {return;}
+    public List<EventManaging> initialActions() {return null;}
 }

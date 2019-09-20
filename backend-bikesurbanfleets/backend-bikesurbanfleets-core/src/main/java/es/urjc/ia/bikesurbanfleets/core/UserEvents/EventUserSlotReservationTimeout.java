@@ -29,13 +29,13 @@ public class EventUserSlotReservationTimeout extends EventUser {
     }
 
     @Override
-    public Event execute() throws Exception {
+    public EventUser execute() throws Exception {
         user.setPosition(positionTimeOut);
         debugEventLog("At enter the event");
         station.cancelSlotReservationByTimeout(reservation, instant);
         user.getMemory().update(UserMemory.FactType.SLOT_RESERVATION_TIMEOUT,station);
         UserDecisionStation ud = user.decideAfterSlotReservationTimeout();
-        Event e=  manageUserReturnDecision(ud);
+        EventUser e=  manageUserReturnDecision(ud);
        
         //set the result of the event
         //the result of EventUserSlotReservationTimeout is always success

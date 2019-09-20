@@ -25,11 +25,11 @@ public class EventUserWantsToReturnBike extends EventUser {
     }
 
     @Override
-    public Event execute() throws Exception {
+    public EventUser execute() throws Exception {
         user.setPosition(currentPosition);
         debugEventLog("At enter the event");
         UserDecisionStation ud = user.decideAfterFinishingRide();
-        Event e = manageUserReturnDecision(ud);
+        EventUser e = manageUserReturnDecision(ud);
         
         //set the result of the event
         //the result of EventUserWantsToReturnBike is always success
