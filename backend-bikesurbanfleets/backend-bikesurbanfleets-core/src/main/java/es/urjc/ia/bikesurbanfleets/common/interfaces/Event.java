@@ -9,6 +9,8 @@ import java.util.List;
  */
 public interface Event {
     
+    public enum EVENT_TYPE { USER_EVENT, MANAGER_EVENT}
+    
     public enum RESULT_TYPE {
         FAILED_BIKE_RENTAL, SUCCESSFUL_BIKE_RENTAL, FAILED_BIKE_RETURN, SUCCESSFUL_BIKE_RETURN, FAILED_BIKE_RESERVATION, SUCCESSFUL_BIKE_RESERVATION,
         FAILED_SLOT_RESERVATION, SUCCESSFUL_SLOT_RESERVATION, SUCCESS, FAIL,
@@ -25,14 +27,9 @@ public interface Event {
      * @return the time instant when the event will ocurr.
      */
     int getInstant();
-
-    /**
-     * It proccesses the event so that the relevant changes at the system occur.
-     * @return a list of generated events as a consequence of event execution.
-     * @throws Exception
-     */
-    Event execute() throws Exception;
     
+    EVENT_TYPE getEventType();
+
     /**
      * @return a list with all the entities that are updated (but not created) in the event.
      */

@@ -1,7 +1,7 @@
 package es.urjc.ia.bikesurbanfleets.core.config;
 
 import com.google.gson.Gson;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.InfrastructureManager;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.StationManager;
 
 import java.io.FileReader;
 import java.io.IOException;

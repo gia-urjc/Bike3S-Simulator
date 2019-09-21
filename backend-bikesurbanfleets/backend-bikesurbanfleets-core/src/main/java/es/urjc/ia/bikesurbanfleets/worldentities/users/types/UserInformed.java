@@ -8,8 +8,8 @@ package es.urjc.ia.bikesurbanfleets.worldentities.users.types;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Station;
-import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -12,12 +12,6 @@ public class GlobalInfo {
     public final static int TIMEENTRIES_PER_HISTORYFILE = 10000;
 
     /**
-     * if true, demand data will be loaded.
-     * if false or not present in the json description, demand data will not be used
-     */
-    private boolean loadDemandData=false;
-
-    /**
      * It is the time period during a reservation is valid or active.
      */
     private int reservationTime;
@@ -53,52 +47,12 @@ public class GlobalInfo {
      * Path where history files stored
      */
     private String historyOutputPath = DEFAULT_HISTORY_OUTPUT_PATH;
-    /**
-     * Path where deman data file is written
-     */
-    private String demandDataFilePath;
-    /**
-     * Recommendation system that will be used by the agents
-     */
-    private JsonObject recommendationSystem;
-
-    /**
-     * Fleet managment system that will be used 
-     */
-    private JsonObject fleetManagementSystem=null;
-    public JsonObject getFleetManagerJsonDescription() {
-        return this.fleetManagementSystem;
-    }
-    /**
-     * Graph implementation that will be used by the agents to get routes
-     * between points
-     */
-    private String graphManagerType;
-
-    private JsonObject graphParameters;
-
-    public String getGraphManagerType() {
-        return graphManagerType;
-    }
-
-    public JsonObject getGraphParameters() {
-        return graphParameters;
-    }
 
     public int getReservationTime() {
         return reservationTime;
     }
-
     public int getTotalSimulationTime() {
         return totalSimulationTime;
-    }
-
-    public void setOtherRecommendationSystem(JsonObject recommendationSystem) {
-        this.recommendationSystem = recommendationSystem;
-    }
-
-    public JsonObject getRecommendationSystemJsonDescription() {
-        return this.recommendationSystem;
     }
 
     public boolean isDebugMode() {
@@ -120,27 +74,46 @@ public class GlobalInfo {
     public void setOtherHistoryOutputPath(String historyOutputPath) {
         this.historyOutputPath = historyOutputPath;
     }
-
-    public void setOtherDemandDataFilePath(String demandDataFilePath) {
-        this.demandDataFilePath = demandDataFilePath;
-    }
-
-    public boolean isLoadDemandData() {
-        return loadDemandData;
-    }
-
-    public String getDemandDataFilePath() {
-        return demandDataFilePath;
-    }
-
-    public void setOtherGraphParameters(String mapPath) {
-        // TODO make it flexible to different properties
-        this.graphParameters = new JsonObject();
-        graphParameters.addProperty("mapDir", mapPath);
-    }
-
+    
     public String getStartDateTime() {
         return startDateTime;
     }
     
+    
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // configuration of the different services that maight be flexible (implemented by different classes)
+    /**
+     * Recommendation system that will be used by the agents
+     */
+    private JsonObject recommendationSystemType=null;
+    public void setOtherRecommendationSystem(JsonObject recommendationSystem) {
+        this.recommendationSystemType = recommendationSystem;
+    }
+    public JsonObject getRecommendationSystemJsonDescription() {
+        return this.recommendationSystemType;
+    }
+
+    //demandmanager
+    private JsonObject demandManagerType=null;
+    public JsonObject getdemandManagerJsonDescription() {
+        return this.demandManagerType;
+    }
+
+    /**
+     * Fleet manager that will be used 
+     */
+    private JsonObject fleetManagerType=null;
+    public JsonObject getFleetManagerJsonDescription() {
+        return this.fleetManagerType;
+    }
+   
+    /**
+     * Graph implementation that will be used by the agents to get routes
+     * between points
+     */
+    private JsonObject graphManagerType=null;
+    public JsonObject getgraphManagerJsonDescription() {
+        return this.graphManagerType;
+    }
+
 }

@@ -3,7 +3,7 @@ package es.urjc.ia.bikesurbanfleets.history.entities;
 import com.google.gson.annotations.Expose;
 
 import es.urjc.ia.bikesurbanfleets.history.JsonIdentifier;
-import es.urjc.ia.bikesurbanfleets.worldentities.infraestructure.entities.Bike;
+import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Bike;
 
 /**
  * It contains the rlevant information of a specific bike, e. g, its history.

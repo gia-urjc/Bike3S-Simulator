@@ -27,8 +27,6 @@ public class ApplicationHolger {
     private static String globalConfig;
     private static String usersConfig;
     private static String stationsConfig;
-    private static String mapPath;
-    private static String demandDataPath;
     private static String historyOutputPath;
     private static String validator;
     private static boolean callFromFrontend;
@@ -79,8 +77,6 @@ public class ApplicationHolger {
         globalConfig = basedir +"/conf/global_configuration.json";
         usersConfig = basedir+ "/conf/users_configuration.json";
         stationsConfig = basedir+ "/conf/stations_configuration.json";
-        mapPath = projectDir+"Bike3STests/madrid.osm";
-        demandDataPath = projectDir + "Bike3STests/datosViajesBiciMad.csv";
         historyOutputPath = basedir+ "/hist";
         validator = "";
         callFromFrontend = true;
@@ -116,21 +112,13 @@ public class ApplicationHolger {
             if(historyOutputPath != null) {
                 globalInfo.setOtherHistoryOutputPath(historyOutputPath);
             }
-            globalInfo.setOtherGraphParameters(mapPath);
-            globalInfo.setOtherDemandDataFilePath(demandDataPath);
 
             //2. read stations and user configurations
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
 
             //3. do simulation
-            //TODO mapPath not obligatory for other graph managers
-            if(mapPath != null) {
-                new SimulationEngine(globalInfo, stationsInfo, usersInfo);
-            }
-            else {
-                MessageGuiFormatter.showErrorsForGui("You should specify a map directory");
-            }
+            new SimulationEngine(globalInfo, stationsInfo, usersInfo);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
@@ -185,9 +173,6 @@ public class ApplicationHolger {
         }
         else if(validator == null && !callFromFrontend) {
             warningMessage = "Warning: you don't specify a validator, configuration file will not be validated on backend";
-        }
-        else if(mapPath == null) {
-            exMessage = "You should specify a map directory";
         }
 
         if(exMessage != null) {

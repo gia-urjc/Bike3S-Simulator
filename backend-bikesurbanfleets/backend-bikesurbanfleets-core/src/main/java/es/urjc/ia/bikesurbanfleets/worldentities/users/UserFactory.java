@@ -3,7 +3,7 @@ package es.urjc.ia.bikesurbanfleets.worldentities.users;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import es.urjc.ia.bikesurbanfleets.core.services.SimulationServices;
+import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import org.reflections.Reflections;
 

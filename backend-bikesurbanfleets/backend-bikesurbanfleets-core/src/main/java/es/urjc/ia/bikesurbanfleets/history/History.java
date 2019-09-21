@@ -29,6 +29,7 @@ public class History {
 
     private final static String FINAL_GLOBAL_VALUES_FILENAME = "final-global-values.json";
     private final static String SIMULATION_PARAMETERS_FILENAME = "simulation_parameters.json";
+    private static int lastValueWritten;
 
     private static int TIMEENTRIES_PER_FILE;
     private static Gson gson = new GsonBuilder()
@@ -94,6 +95,7 @@ public class History {
             outputDirectory.mkdirs();
         }
         TIMEENTRIES_PER_FILE = TIMEENTRIES_PER_HISTORYFILE;
+        lastValueWritten=0;
         //write the global information in a file
         HistoryJsonClasses.FinalGlobalValues finalGlobalValues = new HistoryJsonClasses.FinalGlobalValues(boundingBox,totalSimulationTime);
         writeJson(FINAL_GLOBAL_VALUES_FILENAME, finalGlobalValues, gsonAll);
@@ -195,7 +197,9 @@ public class History {
         // It adds the event to the current time instant
  
         serializedEvents.get(instant).add(
-                new HistoryJsonClasses.EventEntry(event.getClass().getSimpleName(), order, event.getResult(),involved,changes, serializedNewEntities, serializedOldEntities));
+                new HistoryJsonClasses.EventEntry(event.getClass().getSimpleName(), event.getEventType(),
+                        order, event.getResult(),involved,
+                        changes, serializedNewEntities, serializedOldEntities));
     }
 
     private static List<HistoryJsonClasses.IdReference> getReferencesInvolvedEntities(List<Entity> invEntities) {
@@ -362,9 +366,14 @@ public class History {
          * "first time instant of the simulation-last time instant of the simulation.number of
          * registered time instants of the simulation.json"
          */
+        int from=lastValueWritten;//serializedEvents.firstKey()
+        int to;
+        if (serializedEvents.isEmpty()) to=lastValueWritten;//serializedEvents.lastKey()
+        else to=serializedEvents.lastKey();
+        lastValueWritten=to;
         String fileName = new StringBuilder()
-                .append(serializedEvents.firstKey()).append("-")
-                .append(serializedEvents.lastKey()).append("_")
+                .append(from).append("-")
+                .append(to).append("_")
                 .append(serializedEvents.size()).append(".json").toString();
 
         writeJson(fileName, timeEntries, gson);

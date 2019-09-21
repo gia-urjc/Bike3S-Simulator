@@ -26,8 +26,6 @@ public class Application {
     private static String globalConfig;
     private static String usersConfig;
     private static String stationsConfig;
-    private static String mapPath;
-    private static String demandDataPath;
     private static String historyOutputPath;
     private static String validator;
     private static boolean callFromFrontend;
@@ -75,8 +73,6 @@ public class Application {
         globalConfig = cmd.getOptionValue("globalConfig");
         usersConfig = cmd.getOptionValue("usersConfig");
         stationsConfig = cmd.getOptionValue("stationsConfig");
-        mapPath = cmd.getOptionValue("mapPath");
-        demandDataPath = cmd.getOptionValue("demandDataFile");
         historyOutputPath = cmd.getOptionValue("historyOutput");
         validator = cmd.getOptionValue("validator");
         callFromFrontend = cmd.hasOption("callFromFrontend");
@@ -91,21 +87,13 @@ public class Application {
             if(historyOutputPath != null) {
                 globalInfo.setOtherHistoryOutputPath(historyOutputPath);
             }
-            globalInfo.setOtherGraphParameters(mapPath);
-            globalInfo.setOtherDemandDataFilePath(demandDataPath);
     
             //2. read stations and user configurations
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
 
             //3. do simulation
-            //TODO mapPath not obligatory for other graph managers
-            if(mapPath != null) {
                 new SimulationEngine(globalInfo, stationsInfo, usersInfo);
-            }
-            else {
-                MessageGuiFormatter.showErrorsForGui("You should specify a map directory");
-            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
@@ -160,9 +148,6 @@ public class Application {
         }
         else if(validator == null && !callFromFrontend) {
             warningMessage = "Warning: you don't specify a validator, configuration file will not be validated on backend";
-        }
-        else if(mapPath == null) {
-            exMessage = "You should specify a map directory";
         }
 
         if(exMessage != null) {

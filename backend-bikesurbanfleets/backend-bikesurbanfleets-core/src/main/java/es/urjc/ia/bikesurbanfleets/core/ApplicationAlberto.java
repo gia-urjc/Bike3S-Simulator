@@ -25,8 +25,6 @@ public class ApplicationAlberto {
     private static String globalConfig;
     private static String usersConfig;
     private static String stationsConfig;
-    private static String mapPath;
-    private static String demandDataPath;
     private static String historyOutputPath;
     private static String validator;
     private static boolean callFromFrontend;
@@ -88,8 +86,6 @@ public class ApplicationAlberto {
         globalConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/global_configuration.json";
         usersConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/users_configuration.json";
         stationsConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/stations_configuration.json";
-        mapPath = PROJECT_HOME + "Bike3STests/madrid.osm";
-        demandDataPath = PROJECT_HOME + "Bike3STests/datosViajesBiciMad.csv";
         historyOutputPath = PROJECT_HOME + "Bike3STests/"+ test +"/hist";
         validator = "";
         callFromFrontend = true;
@@ -104,8 +100,6 @@ public class ApplicationAlberto {
             if(historyOutputPath != null) {
                 globalInfo.setOtherHistoryOutputPath(historyOutputPath);
             }
-            globalInfo.setOtherGraphParameters(mapPath);
-            globalInfo.setOtherDemandDataFilePath(demandDataPath);
 
             //2. read stations and user configurations
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
@@ -113,12 +107,7 @@ public class ApplicationAlberto {
 
             //3. do simulation
             //TODO mapPath not obligatory for other graph managers
-            if(mapPath != null) {
-                new SimulationEngine(globalInfo, stationsInfo, usersInfo);
-            }
-            else {
-                MessageGuiFormatter.showErrorsForGui("You should specify a map directory");
-            }
+            new SimulationEngine(globalInfo, stationsInfo, usersInfo);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
@@ -173,9 +162,6 @@ public class ApplicationAlberto {
         }
         else if(validator == null && !callFromFrontend) {
             warningMessage = "Warning: you don't specify a validator, configuration file will not be validated on backend";
-        }
-        else if(mapPath == null) {
-            exMessage = "You should specify a map directory";
         }
 
         if(exMessage != null) {

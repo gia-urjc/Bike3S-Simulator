@@ -14,8 +14,8 @@ import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GraphHopperIntegration;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GraphManager;
+import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphHopperIntegration;
+import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
@@ -87,6 +87,13 @@ public class SimulationResultAnalyser {
         double artificialtime = 0;
         GeoPoint lastposition;
     }
+    class ManagerEventMetric {
+        int managerID = 0;
+        String eventname="";
+        Event.RESULT_TYPE result;
+        int time;
+        int stationid;
+    }
 
     class StationMetric {
 
@@ -108,7 +115,8 @@ public class SimulationResultAnalyser {
     }
     TreeMap<Integer, StationMetric> stationmetrics = new TreeMap<Integer, StationMetric>();
     TreeMap<Integer, UserMetric> usermetrics = new TreeMap<Integer, UserMetric>();
-
+    LinkedList<ManagerEventMetric> managereventsmetric=new LinkedList<ManagerEventMetric>();
+    
     private Path analysispath;
     private Path historypath;
     private int totalsimtimespecified = 0;
@@ -192,8 +200,9 @@ public class SimulationResultAnalyser {
             auxiliaryDir.mkdirs();
         }
         WriteGeneraldata();
-        WiteUserdata();
-        WiteStationdata();
+        WriteUserdata();
+        WriteStationdata();
+        WriteManagerdata();
     }
 
     private Integer getUserID(Collection<HistoryJsonClasses.IdReference> ent) {
@@ -208,6 +217,15 @@ public class SimulationResultAnalyser {
     private Integer getStationID(Collection<HistoryJsonClasses.IdReference> ent) {
         for (HistoryJsonClasses.IdReference ref : ent) {
             if (ref.getType().equals("stations")) {
+                return (Integer) ref.getId();
+            }
+        }
+        return null;
+    }
+    
+    private Integer getManagerID(Collection<HistoryJsonClasses.IdReference> ent) {
+        for (HistoryJsonClasses.IdReference ref : ent) {
+            if (ref.getType().equals("fleetmanager")) {
                 return (Integer) ref.getId();
             }
         }
@@ -301,6 +319,17 @@ public class SimulationResultAnalyser {
         }
 
     }
+    private void analyzeManagerData(Map<String, List<JsonObject>> newEntities, String name, Integer managerid, Integer stationId, int time, Event.RESULT_TYPE result) {
+        //simply add the event
+        ManagerEventMetric newMEM = new ManagerEventMetric();
+        newMEM.eventname=name;
+        newMEM.managerID=managerid;
+        newMEM.time=time;
+        newMEM.result=result;
+        if (stationId!=null) newMEM.stationid=stationId;
+        else newMEM.stationid=-1;
+        managereventsmetric.add(newMEM);
+     }
 
     private void analyzeStationData(String name, StationMetric stM, Event.RESULT_TYPE result) {
 
@@ -347,15 +376,22 @@ public class SimulationResultAnalyser {
             int time = historyentry.getTime();
 
             for (HistoryJsonClasses.EventEntry ee : historyentry.getEvents()) {
+                Event.EVENT_TYPE type= ee.getEventType();
                 Event.RESULT_TYPE result = ee.getResult();
                 String name = ee.getName();
                 Collection<HistoryJsonClasses.IdReference> involvedEntities = ee.getInvolvedEntities();
-                Integer userid = getUserID(involvedEntities);
-                Integer stationid = getStationID(involvedEntities);
-
-                analyzeUserData(ee.getNewEntities(), name, userid, stationid, time, result);
- 
-                //station changes are inly considered up to totalsimulationtime
+                Integer stationid = getStationID(involvedEntities); //can have a station
+                if (type==Event.EVENT_TYPE.USER_EVENT) {
+                    Integer userid = getUserID(involvedEntities); //must have a user involved
+                    if (userid==null) throw new RuntimeException("event must have a user");
+                    analyzeUserData(ee.getNewEntities(), name, userid, stationid, time, result);
+                } else if (type==Event.EVENT_TYPE.MANAGER_EVENT) {
+                    Integer managerid = getManagerID(involvedEntities); //must have a user involved
+                    if (managerid==null) throw new RuntimeException("event must have a manager");
+                    analyzeManagerData(ee.getNewEntities(), name, managerid, stationid, time, result);
+                }    
+                //station changes are inly considered up to totalsimulationtime 
+                // for any tpe of event check changes in stations
                 if (time <= totalsimtimespecified && stationid!=null) {
                     StationMetric sm=stationmetrics.get(stationid);
                     checkChangesAvBikes(ee.getChanges(), time, sm);
@@ -521,9 +557,13 @@ public class SimulationResultAnalyser {
         csvWriter.writeNext(new String[]{""});
 
         //first line statation data
-        int maxrentfails = users_takefails.lastKey();
-        int maxreturnfails = users_returnfails.lastKey();
-
+        int maxrentfails;
+        if (users_takefails.isEmpty()) maxrentfails=0;
+        else maxrentfails=users_takefails.lastKey();
+        int maxreturnfails;
+        if (users_returnfails.isEmpty()) maxreturnfails=0;
+        else maxreturnfails=users_returnfails.lastKey();
+ 
         String[] record = new String[3];
         record[0] = "simulatiuon time (min)";
         record[1] = Double.toString((double) totalsimtimespecified / 60D);
@@ -603,7 +643,7 @@ public class SimulationResultAnalyser {
         writer.close();
     }
 
-    private void WiteUserdata() throws IOException {
+    private void WriteUserdata() throws IOException {
         File outfile = this.analysispath.resolve("users.csv").toFile();
         Writer writer = new FileWriter(outfile);
         CSVWriter csvWriter = new CSVWriter(writer,
@@ -686,8 +726,42 @@ public class SimulationResultAnalyser {
         }
         writer.close();
     }
+    
+    private void WriteManagerdata() throws IOException {
+        File outfile = this.analysispath.resolve("fleetManager.csv").toFile();
+        Writer writer = new FileWriter(outfile);
+        CSVWriter csvWriter = new CSVWriter(writer,
+                ';',
+                CSVWriter.NO_QUOTE_CHARACTER,
+                CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                CSVWriter.DEFAULT_LINE_END);
 
-    private void WiteStationdata() throws IOException {
+        //Now set the String array for writing
+        String[] record = new String[5];
+
+        //write header
+        record[0] = "manager id";
+        record[1] = "event";
+        record[2] = "time";
+        record[3] = "result";
+        record[4] = "involved station";
+        csvWriter.writeNext(record);
+
+        //now write the user values
+         for (ManagerEventMetric mem : managereventsmetric) {
+            record[0] = Integer.toString(mem.managerID);
+            record[1] = mem.eventname;
+            record[2] = Integer.toString(mem.time);
+            record[3] = mem.result.toString();
+            if (mem.stationid>=0) record[4] = Integer.toString(mem.stationid);
+            else record[4] = "";
+            //write line
+            csvWriter.writeNext(record);
+        }
+        writer.close();
+    }
+
+    private void WriteStationdata() throws IOException {
         File outfile = this.analysispath.resolve("stations.csv").toFile();
         Writer writer = new FileWriter(outfile);
         CSVWriter csvWriter = new CSVWriter(writer,
