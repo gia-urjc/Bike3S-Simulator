@@ -1,5 +1,6 @@
 package es.urjc.ia.bikesurbanfleets.core;
 
+import es.urjc.ia.bikesurbanfleets.resultanalysis.ResultsComparator;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
@@ -42,7 +43,7 @@ public class CompareTestApplication {
  //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurr";
         //testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurroundWithDemand";
  //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/version_usersmax600/cost_complex_prediction";
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/refactorcheck";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/refactorcheck2";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -56,7 +57,7 @@ public class CompareTestApplication {
         System.gc();
     }
 
-    private void executeTests(String testFile) throws FileNotFoundException, IOException, InterruptedException, GraphHopperIntegrationException, GeoRouteCreationException {
+    private void executeTests(String testFile) throws Exception {
         //Create auxiliary folders
         File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
         if (!auxiliaryDir.exists()) {
@@ -111,7 +112,7 @@ public class CompareTestApplication {
             testnames.add(testdir);
 
             runSimulationTest(globalInfo, jsonReader, testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
-            runResultAanalisis(testdir);
+            runResultAnalisis(testdir);
         }
         new ResultsComparator(analisisDir, historyDir, analisisDir + "compareResults.csv", globalInfo.getTotalSimulationTime()).compareTestResults();
         //script requires autorization    runscriptR();
@@ -164,7 +165,7 @@ public class CompareTestApplication {
         }
     }
 
-    private void runResultAanalisis(String testdir) throws IOException, InterruptedException, GraphHopperIntegrationException, GeoRouteCreationException {
+    private void runResultAnalisis(String testdir) throws Exception {
         SimulationResultAnalyser sra=new SimulationResultAnalyser(analisisDir+testdir, historyDir+testdir);
         sra.analyzeSimulation();
    }

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class UserObedient extends UserUninformed {
 
     private double lastexpetedProbability;
-    private final boolean printHints = true;
+    private final boolean printHints = false;
 
     public UserObedient(JsonObject userdef, SimulationServices services, long seed) throws Exception {
         super(userdef, services, seed);

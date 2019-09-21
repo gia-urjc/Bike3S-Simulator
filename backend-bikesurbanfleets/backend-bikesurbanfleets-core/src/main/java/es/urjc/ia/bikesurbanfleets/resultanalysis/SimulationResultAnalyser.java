@@ -44,6 +44,7 @@ import java.util.TreeMap;
  */
 public class SimulationResultAnalyser {
 
+    
     double standardstraightLineWalkingVelocity = 1.4 / GeoPoint.STRAIGT_LINE_FACTOR;
     double standardstraightLineCyclingVelocity = 6 / GeoPoint.STRAIGT_LINE_FACTOR;
 
@@ -63,8 +64,7 @@ public class SimulationResultAnalyser {
             .setPrettyPrinting()
             .create();
 
-    class UserMetric {
-
+    private class UserMetric {
         int timeapp = -1;
         int timegetbike = -1;
         int timeretbike = -1;
@@ -87,15 +87,17 @@ public class SimulationResultAnalyser {
         double artificialtime = 0;
         GeoPoint lastposition;
     }
-    class ManagerEventMetric {
+
+    private class ManagerEventMetric {
+
         int managerID = 0;
-        String eventname="";
+        String eventname = "";
         Event.RESULT_TYPE result;
         int time;
         int stationid;
     }
 
-    class StationMetric {
+    private class StationMetric {
 
         GeoPoint position;
         int id;
@@ -115,29 +117,13 @@ public class SimulationResultAnalyser {
     }
     TreeMap<Integer, StationMetric> stationmetrics = new TreeMap<Integer, StationMetric>();
     TreeMap<Integer, UserMetric> usermetrics = new TreeMap<Integer, UserMetric>();
-    LinkedList<ManagerEventMetric> managereventsmetric=new LinkedList<ManagerEventMetric>();
+    LinkedList<ManagerEventMetric> managereventsmetric = new LinkedList<ManagerEventMetric>();
     
+
     private Path analysispath;
     private Path historypath;
     private int totalsimtimespecified = 0;
-    int stations_num;
-    int stations_numerwithEmptytimes = 0;
-    double stations_av_emptytime_stations = 0;
-    double stations_av_equilibrium = 0;
-    int users_num;
-    int users_finishedInSimTime = 0;
-    double users_av_tostationtime = 0;
-    double users_av_biketime = 0;
-    double users_av_todesttime = 0;
-    double users_DS = 0;
-    double users_HE = 0;
-    double users_RE = 0;
-    int users_numabandon = 0;
-    TreeMap<Integer, Integer> users_takefails = new TreeMap<>();
-    TreeMap<Integer, Integer> users_returnfails = new TreeMap<>();
-    int users_totalrentalfail = 0;
-    int users_totalreturnfail = 0;
-    double users_av_additionaltimeloss = 0D;
+    
     GraphManager routeService;
 
     public SimulationResultAnalyser(String analysisdir, String historydir, GraphManager routeService) throws IOException {
@@ -152,7 +138,7 @@ public class SimulationResultAnalyser {
         this.routeService = null;
     }
 
-    public void analyzeSimulation() throws IOException, GraphHopperIntegrationException, GeoRouteCreationException {
+    public void analyzeSimulation() throws Exception {
         // read global values
         File json = historypath.resolve("final-global-values.json").toFile();
         FileReader red = new FileReader(json);
@@ -165,7 +151,7 @@ public class SimulationResultAnalyser {
         usermetrics = new TreeMap<Integer, UserMetric>();
 
         //preprocess data (read initial station info
-        preprocess();
+        preprocessGetStationData();
 
         //read history
         File file = new File(historypath.toString());
@@ -192,44 +178,104 @@ public class SimulationResultAnalyser {
         for (File histname : filelist) {
             processHistoryEntries(readHistoryEntries(histname));
         }
+        
+        //postprocess user data and station data
+        // changes some parts in the individual user and station data
+        postProcessStationData();
+        postProcessUserData();
 
+        
         //write the results to files
-        postprocess();
         File auxiliaryDir = analysispath.toFile();
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
-        WriteGeneraldata();
         WriteUserdata();
         WriteStationdata();
         WriteManagerdata();
+        
+        //now generate global information for a summary file
+        GlobalStationDataForExecution stationdata=getGlobalStationData();
+        GlobalUserDataForExecution userdata=getGlobalUserData();
+        GlobalManagerDataForExecution managerdata=getGlobalManagerData();
+       
+        WriteGeneraldata(stationdata, userdata, managerdata);
+        
+        //analyse station ocupation
+        StationOccupationAnalysis soa=new StationOccupationAnalysis(this.analysispath, this.historypath);
+        soa.analyzeStationOccupation();
+
     }
 
     private Integer getUserID(Collection<HistoryJsonClasses.IdReference> ent) {
+        Integer ret=null;
         for (HistoryJsonClasses.IdReference ref : ent) {
             if (ref.getType().equals("users")) {
-                return (Integer) ref.getId();
+                if (ret!=null) throw new RuntimeException("more than one user found in event");
+                ret= (Integer) ref.getId();
             }
         }
+        if (ret!=null) return ret;
         throw new RuntimeException("no user id found");
     }
 
     private Integer getStationID(Collection<HistoryJsonClasses.IdReference> ent) {
+       Integer ret=null;
         for (HistoryJsonClasses.IdReference ref : ent) {
             if (ref.getType().equals("stations")) {
-                return (Integer) ref.getId();
+                if (ret!=null) throw new RuntimeException("more than one station found in event");
+                ret= (Integer) ref.getId();
             }
         }
-        return null;
+        return ret;
     }
-    
+
     private Integer getManagerID(Collection<HistoryJsonClasses.IdReference> ent) {
+        Integer ret=null;
         for (HistoryJsonClasses.IdReference ref : ent) {
             if (ref.getType().equals("fleetmanager")) {
-                return (Integer) ref.getId();
+                if (ret!=null) throw new RuntimeException("more than one fleetmanager found in event");
+                ret= (Integer) ref.getId();
             }
         }
-        return null;
+        if (ret!=null) return ret;
+        throw new RuntimeException("no fleetmanager id found");
+    }
+
+    private void processHistoryEntries(HistoryJsonClasses.TimeEntry[] historyentries) {
+
+        //find the entries
+        for (HistoryJsonClasses.TimeEntry historyentry : historyentries) {
+            int time = historyentry.getTime();
+
+            for (HistoryJsonClasses.EventEntry ee : historyentry.getEvents()) {
+                Event.EVENT_TYPE type = ee.getEventType();
+                Event.RESULT_TYPE result = ee.getResult();
+                String name = ee.getName();
+                Collection<HistoryJsonClasses.IdReference> involvedEntities = ee.getInvolvedEntities();
+                Integer stationid = getStationID(involvedEntities); //can have a station
+                if (type == Event.EVENT_TYPE.USER_EVENT) {
+                    Integer userid = getUserID(involvedEntities); //must have a user involved
+                    if (userid == null) {
+                        throw new RuntimeException("event must have a user");
+                    }
+                    analyzeUserData(ee.getNewEntities(), name, userid, stationid, time, result);
+                } else if (type == Event.EVENT_TYPE.MANAGER_EVENT) {
+                    Integer managerid = getManagerID(involvedEntities); //must have a user involved
+                    if (managerid == null) {
+                        throw new RuntimeException("event must have a manager");
+                    }
+                    analyzeManagerData(ee.getNewEntities(), name, managerid, stationid, time, result);
+                }
+                //station changes are inly considered up to totalsimulationtime 
+                // for any tpe of event check changes in stations
+                if (time <= totalsimtimespecified && stationid != null) {
+                    StationMetric sm = stationmetrics.get(stationid);
+                    checkChangesAvBikes(ee.getChanges(), time, sm);
+                    analyzeStationData(name, sm, result);
+                }
+            }
+        }
     }
 
     private void analyzeUserData(Map<String, List<JsonObject>> newEntities, String name, Integer userid, Integer stationId, int time, Event.RESULT_TYPE result) {
@@ -308,7 +354,7 @@ public class SimulationResultAnalyser {
                 usM.artificialtime += (usM.lastposition.distanceTo(usM.destination) / standardstraightLineWalkingVelocity);
                 usM.lastposition = usM.destination;
                 usM.leafreason = result;
-                if (time<=totalsimtimespecified) {
+                if (time <= totalsimtimespecified) {
                     usM.finishedinsimtime = true;
                 }
                 //user leafs
@@ -319,17 +365,21 @@ public class SimulationResultAnalyser {
         }
 
     }
+
     private void analyzeManagerData(Map<String, List<JsonObject>> newEntities, String name, Integer managerid, Integer stationId, int time, Event.RESULT_TYPE result) {
         //simply add the event
         ManagerEventMetric newMEM = new ManagerEventMetric();
-        newMEM.eventname=name;
-        newMEM.managerID=managerid;
-        newMEM.time=time;
-        newMEM.result=result;
-        if (stationId!=null) newMEM.stationid=stationId;
-        else newMEM.stationid=-1;
+        newMEM.eventname = name;
+        newMEM.managerID = managerid;
+        newMEM.time = time;
+        newMEM.result = result;
+        if (stationId != null) {
+            newMEM.stationid = stationId;
+        } else {
+            newMEM.stationid = -1;
+        }
         managereventsmetric.add(newMEM);
-     }
+    }
 
     private void analyzeStationData(String name, StationMetric stM, Event.RESULT_TYPE result) {
 
@@ -369,45 +419,9 @@ public class SimulationResultAnalyser {
         }
     }
 
-    private void processHistoryEntries(HistoryJsonClasses.TimeEntry[] historyentries) {
-
-        //find the entries
-        for (HistoryJsonClasses.TimeEntry historyentry : historyentries) {
-            int time = historyentry.getTime();
-
-            for (HistoryJsonClasses.EventEntry ee : historyentry.getEvents()) {
-                Event.EVENT_TYPE type= ee.getEventType();
-                Event.RESULT_TYPE result = ee.getResult();
-                String name = ee.getName();
-                Collection<HistoryJsonClasses.IdReference> involvedEntities = ee.getInvolvedEntities();
-                Integer stationid = getStationID(involvedEntities); //can have a station
-                if (type==Event.EVENT_TYPE.USER_EVENT) {
-                    Integer userid = getUserID(involvedEntities); //must have a user involved
-                    if (userid==null) throw new RuntimeException("event must have a user");
-                    analyzeUserData(ee.getNewEntities(), name, userid, stationid, time, result);
-                } else if (type==Event.EVENT_TYPE.MANAGER_EVENT) {
-                    Integer managerid = getManagerID(involvedEntities); //must have a user involved
-                    if (managerid==null) throw new RuntimeException("event must have a manager");
-                    analyzeManagerData(ee.getNewEntities(), name, managerid, stationid, time, result);
-                }    
-                //station changes are inly considered up to totalsimulationtime 
-                // for any tpe of event check changes in stations
-                if (time <= totalsimtimespecified && stationid!=null) {
-                    StationMetric sm=stationmetrics.get(stationid);
-                    checkChangesAvBikes(ee.getChanges(), time, sm);
-                    analyzeStationData(name, sm, result);
-                }
-             }
-        }
-    }
-
-    private void postprocess() throws GraphHopperIntegrationException, GeoRouteCreationException {
+    private void postProcessStationData()  {
         //add the rest times for the stations
-        stations_numerwithEmptytimes = 0;
-        stations_av_emptytime_stations = 0;
-        stations_av_equilibrium = 0;
-        stations_num = stationmetrics.size();
-        for (StationMetric sm : stationmetrics.values()) {
+       for (StationMetric sm : stationmetrics.values()) {
             if (sm.timelastchange > totalsimtimespecified) {
                 throw new RuntimeException("some error");
             }
@@ -417,73 +431,119 @@ public class SimulationResultAnalyser {
             }
             sm.balancingquality += Math.abs((double) sm.currentavbikes - ((double) sm.capacity / 2D)) * (double) time;
             sm.balancingquality = sm.balancingquality / totalsimtimespecified;
-            if (sm.emtytime > 0) {
-                stations_numerwithEmptytimes++;
-            }
-            stations_av_emptytime_stations += sm.emtytime;
-            stations_av_equilibrium += sm.balancingquality;
         }
-        stations_av_emptytime_stations = stations_av_emptytime_stations / (60D * (double) stations_num);
-        stations_av_equilibrium = stations_av_equilibrium / (double) stations_num;
-
-        //      System.out.println("in postprocess");
-        //globval values for users
-        users_num = usermetrics.size();
-        users_finishedInSimTime = 0;
-        users_av_tostationtime = 0;
-        users_av_biketime = 0;
-        users_av_todesttime = 0;
-        users_takefails = new TreeMap<>();
-        users_returnfails = new TreeMap<>();
-        users_av_additionaltimeloss = 0;
-        users_totalrentalfail = 0;
-        users_totalreturnfail = 0;
-        int succusers = 0;
-        int i = 0;
-        int printi = 0;
+    }
+    private void postProcessUserData() throws Exception {
         for (UserMetric um : usermetrics.values()) {
             if (um.finishedinsimtime) {
-                users_finishedInSimTime++;
                 if (um.timegetbike >= 0) {//time counts if user did not abandom
-                    succusers++;
-                    users_av_tostationtime += um.timegetbike - um.timeapp;
-                    users_av_biketime += um.timeretbike - um.timegetbike;
-                    users_av_todesttime += um.timeleafe - um.timeretbike;
-                    users_totalrentalfail += um.failedbikerentals;
-                    users_totalreturnfail += um.failedbaikereturns;
-                    Integer old = users_takefails.get(um.failedbikerentals);
-                    if (old == null) {
-                        users_takefails.put(um.failedbikerentals, 1);
-                    } else {
-                        users_takefails.put(um.failedbikerentals, old + 1);
-                    }
-                    old = users_returnfails.get(um.failedbaikereturns);
-                    if (old == null) {
-                        users_returnfails.put(um.failedbaikereturns, 1);
-                    } else {
-                        users_returnfails.put(um.failedbaikereturns, old + 1);
-                    }
                     addTimeComparison(um);
-                    users_av_additionaltimeloss += um.additionaltimeloss;
-                }
-                if (um.leafreason != Event.RESULT_TYPE.EXIT_AFTER_REACHING_DESTINATION) {
-                    users_numabandon++;
                 }
             }
         }
-        if (users_finishedInSimTime != succusers + users_numabandon) {
-            throw new RuntimeException("something wrong in data analsysis");
-        }
-        users_av_additionaltimeloss = users_av_additionaltimeloss / ((double) succusers * 60D);
-        users_av_tostationtime = users_av_tostationtime / ((double) succusers * 60D);
-        users_av_biketime = users_av_biketime / ((double) succusers * 60D);
-        users_av_todesttime = users_av_todesttime / ((double) succusers * 60D);
-        users_DS = (double) succusers / (double) users_finishedInSimTime;
-        users_HE = (double) succusers / ((double) users_totalrentalfail + succusers);
-        users_RE = (double) succusers / ((double) users_totalreturnfail + succusers);
     }
 
-    private void preprocess() throws IOException {
+    private GlobalStationDataForExecution getGlobalStationData() throws GraphHopperIntegrationException, GeoRouteCreationException {
+        GlobalStationDataForExecution dat=new GlobalStationDataForExecution();
+        dat.numstationwithemtytimes = 0;
+        dat.totalemptytimes = 0;
+        dat.totaldeviationfromequilibrium = 0;
+        dat.totalstations = stationmetrics.size();
+        for (StationMetric sm : stationmetrics.values()) {
+            if (sm.emtytime > 0) {
+                dat.numstationwithemtytimes++;
+            }
+            dat.totalemptytimes += sm.emtytime;
+            dat.totaldeviationfromequilibrium += sm.balancingquality;
+        }
+        dat.totalemptytimes = dat.totalemptytimes / (60D * (double) dat.totalstations);
+        dat.totaldeviationfromequilibrium = dat.totaldeviationfromequilibrium / (double) dat.totalstations;
+
+        return dat;
+    }
+   
+    private GlobalUserDataForExecution getGlobalUserData() throws GraphHopperIntegrationException, GeoRouteCreationException {
+        //globval values for users
+        GlobalUserDataForExecution dat=new GlobalUserDataForExecution();
+        dat.totalusers = usermetrics.size();
+        dat.finishedusers  = 0;
+        dat.avtostationtime  = 0;
+        dat.avbetweenstationtime  = 0;
+        dat.avfromstationtime  = 0;
+        dat.usertakefails  = new TreeMap<>();
+        dat.userreturnfails  = new TreeMap<>();
+        dat.avtimeloss = 0;
+        dat.totalfailedrentals = 0;
+        dat.totalfailedreturns = 0;
+        dat.avabandonos=0;
+        int succusers = 0;
+        int i = 0;
+        for (UserMetric um : usermetrics.values()) {
+            if (um.finishedinsimtime) {
+                dat.finishedusers++;
+                if (um.timegetbike >= 0) {//time counts if user did not abandom
+                    succusers++;
+                    dat.avtostationtime += um.timegetbike - um.timeapp;
+                    dat.avbetweenstationtime += um.timeretbike - um.timegetbike;
+                    dat.avfromstationtime += um.timeleafe - um.timeretbike;
+                    dat.totalfailedrentals += um.failedbikerentals;
+                    dat.totalfailedreturns += um.failedbaikereturns;
+                    Integer old = dat.usertakefails.get(um.failedbikerentals);
+                    if (old == null) {
+                        dat.usertakefails.put(um.failedbikerentals, 1);
+                    } else {
+                        dat.usertakefails.put(um.failedbikerentals, old + 1);
+                    }
+                    old = dat.userreturnfails.get(um.failedbaikereturns);
+                    if (old == null) {
+                        dat.userreturnfails.put(um.failedbaikereturns, 1);
+                    } else {
+                        dat.userreturnfails.put(um.failedbaikereturns, old + 1);
+                    }
+                    dat.avtimeloss += um.additionaltimeloss;
+                }
+                if (um.leafreason != Event.RESULT_TYPE.EXIT_AFTER_REACHING_DESTINATION) {
+                    dat.avabandonos++;
+                }
+            }
+        }
+        if (dat.finishedusers != succusers + dat.avabandonos) {
+            throw new RuntimeException("something wrong in data analsysis");
+        }
+        dat.avtimeloss = dat.avtimeloss / ((double) succusers * 60D);
+        dat.avtostationtime = dat.avtostationtime / ((double) succusers * 60D);
+        dat.avbetweenstationtime = dat.avbetweenstationtime / ((double) succusers * 60D);
+        dat.avfromstationtime = dat.avfromstationtime / ((double) succusers * 60D);
+        dat.DS = (double) succusers / (double) dat.finishedusers;
+        dat.HE = (double) succusers / ((double) dat.totalfailedrentals + succusers);
+        dat.RE = (double) succusers / ((double) dat.totalfailedreturns + succusers);
+
+        return dat;
+    }
+
+    private GlobalManagerDataForExecution getGlobalManagerData() throws GraphHopperIntegrationException, GeoRouteCreationException {
+//globval values for manager
+        GlobalManagerDataForExecution dat=new GlobalManagerDataForExecution();
+        dat.manager_event_data = new TreeMap<String, int[]>();
+        dat.totalevents = managereventsmetric.size();
+        for (ManagerEventMetric mem : managereventsmetric) {
+            int[] d=dat.manager_event_data.get(mem.eventname);
+            if (d==null) {
+                int[] v ={0,0,0}; 
+                d=v;
+                dat.manager_event_data.put(mem.eventname,d);
+            } 
+            d[0]=d[0]+1;
+            if (mem.result==Event.RESULT_TYPE.SUCCESS){
+                d[1]=d[1]+1;
+            } else if (mem.result==Event.RESULT_TYPE.FAIL){
+                d[2]=d[2]+1;
+            } else throw new RuntimeException("resulttype not allowed");
+        }
+        return dat;
+    }
+
+    private void preprocessGetStationData() throws IOException {
         File stfile = historypath.resolve("entities/stations.json").toFile();
         FileReader r = new FileReader(stfile);
         JsonObject jo = gson.fromJson(new FileReader(stfile), JsonObject.class);
@@ -544,7 +604,10 @@ public class SimulationResultAnalyser {
         return timeentries;
     }
 
-    private void WriteGeneraldata() throws IOException {
+    private void WriteGeneraldata(GlobalStationDataForExecution stationdat,
+            GlobalUserDataForExecution userdat,
+            GlobalManagerDataForExecution managerdat
+    ) throws IOException {
         File outfile = this.analysispath.resolve("global_values.csv").toFile();
         Writer writer = new FileWriter(outfile);
         CSVWriter csvWriter = new CSVWriter(writer,
@@ -558,12 +621,18 @@ public class SimulationResultAnalyser {
 
         //first line statation data
         int maxrentfails;
-        if (users_takefails.isEmpty()) maxrentfails=0;
-        else maxrentfails=users_takefails.lastKey();
+        if (userdat.usertakefails.isEmpty()) {
+            maxrentfails = 0;
+        } else {
+            maxrentfails = userdat.usertakefails.lastKey();
+        }
         int maxreturnfails;
-        if (users_returnfails.isEmpty()) maxreturnfails=0;
-        else maxreturnfails=users_returnfails.lastKey();
- 
+        if (userdat.userreturnfails.isEmpty()) {
+            maxreturnfails = 0;
+        } else {
+            maxreturnfails = userdat.userreturnfails.lastKey();
+        }
+
         String[] record = new String[3];
         record[0] = "simulatiuon time (min)";
         record[1] = Double.toString((double) totalsimtimespecified / 60D);
@@ -603,24 +672,24 @@ public class SimulationResultAnalyser {
         csvWriter.writeNext(record);
 
         //write global user data
-        record[0] = Integer.toString(users_num);
-        record[1] = Integer.toString(users_finishedInSimTime);
-        record[2] = Integer.toString(users_numabandon);
-        record[3] = Double.toString(users_DS);
-        record[4] = Double.toString(users_HE);
-        record[5] = Double.toString(users_RE);
-        record[6] = Double.toString(users_av_tostationtime);
-        record[7] = Double.toString(users_av_biketime);
-        record[8] = Double.toString(users_av_todesttime);
-        record[9] = Double.toString(users_av_tostationtime + users_av_biketime + users_av_todesttime);
-        record[10] = Double.toString(users_av_additionaltimeloss);
-        record[11] = Integer.toString(users_totalrentalfail);
-        record[12] = Integer.toString(users_totalreturnfail);
-        for (Integer key : users_takefails.keySet()) {
-            record[13 + key] = Integer.toString(users_takefails.get(key));
+        record[0] = Integer.toString(userdat.totalusers);
+        record[1] = Integer.toString(userdat.finishedusers);
+        record[2] = Integer.toString(userdat.avabandonos);
+        record[3] = Double.toString(userdat.DS);
+        record[4] = Double.toString(userdat.HE);
+        record[5] = Double.toString(userdat.RE);
+        record[6] = Double.toString(userdat.avtostationtime);
+        record[7] = Double.toString(userdat.avbetweenstationtime);
+        record[8] = Double.toString(userdat.avfromstationtime);
+        record[9] = Double.toString(userdat.avtostationtime + userdat.avbetweenstationtime + userdat.avfromstationtime);
+        record[10] = Double.toString(userdat.avtimeloss);
+        record[11] = Integer.toString(userdat.totalfailedrentals);
+        record[12] = Integer.toString(userdat.totalfailedreturns);
+        for (Integer key : userdat.usertakefails.keySet()) {
+            record[13 + key] = Integer.toString(userdat.usertakefails.get(key));
         }
-        for (Integer key : users_returnfails.keySet()) {
-            record[13 + maxrentfails + 1 + key] = Integer.toString(users_returnfails.get(key));
+        for (Integer key : userdat.userreturnfails.keySet()) {
+            record[13 + maxrentfails + 1 + key] = Integer.toString(userdat.userreturnfails.get(key));
         }
         csvWriter.writeNext(record);
 
@@ -635,10 +704,36 @@ public class SimulationResultAnalyser {
         record[3] = "Av. equilibrium desviation (over stations and simulationtime)";
         csvWriter.writeNext(record);
 
-        record[0] = Integer.toString(stations_num);
-        record[1] = Integer.toString(stations_numerwithEmptytimes);
-        record[2] = Double.toString(stations_av_emptytime_stations);
-        record[3] = Double.toString(stations_av_equilibrium);
+        record[0] = Integer.toString(stationdat.totalstations);
+        record[1] = Integer.toString(stationdat.numstationwithemtytimes);
+        record[2] = Double.toString(stationdat.totalemptytimes);
+        record[3] = Double.toString(stationdat.totaldeviationfromequilibrium);
+        csvWriter.writeNext(record);
+        
+        //write empty line
+        csvWriter.writeNext(new String[]{""});
+
+        //now write manager summary
+        record = new String[1+(3*managerdat.manager_event_data.keySet().size())];
+        record[0] = "#total managing events";
+        i=1;
+        for (String ev: managerdat.manager_event_data.keySet()){
+            record[i]=ev+" #all";
+            record[i+1]=ev+" #success";
+            record[i+2]=ev+" #failed";
+            i=i+3;
+        }
+        csvWriter.writeNext(record);
+
+        record[0] = Integer.toString(managerdat.totalevents);
+        i=1;
+        for (String ev: managerdat.manager_event_data.keySet()){
+            int [] dat=managerdat.manager_event_data.get(ev);
+            record[i]=Integer.toString(dat[0]);
+            record[i+1]=Integer.toString(dat[1]);
+            record[i+2]=Integer.toString(dat[2]);
+            i=i+3;
+        }
         csvWriter.writeNext(record);
         writer.close();
     }
@@ -676,17 +771,17 @@ public class SimulationResultAnalyser {
         csvWriter.writeNext(record);
 
         //now write the user values
-         for (Integer id : usermetrics.keySet()) {
-            boolean aband=true;
+        for (Integer id : usermetrics.keySet()) {
+            boolean aband = true;
             UserMetric um = usermetrics.get(id);
             record[0] = Integer.toString(id);
             record[2] = Integer.toString(um.timeapp);
             if (um.timegetbike >= 0) {
-                aband=false;
+                aband = false;
             }
             if (um.finishedinsimtime) {
                 record[1] = "yes";
-             } else {
+            } else {
                 record[1] = "no";
             }
             if (um.timegetbike >= 0) {
@@ -711,8 +806,11 @@ public class SimulationResultAnalyser {
                 record[6] = "";
                 record[7] = "";
             }
-            if (um.finishedinsimtime) record[8] = um.leafreason.toString();
-            else record[8] = "";
+            if (um.finishedinsimtime) {
+                record[8] = um.leafreason.toString();
+            } else {
+                record[8] = "";
+            }
             record[9] = Integer.toString(um.succbikereservations);
             record[10] = Integer.toString(um.failedbikereservations);
             record[11] = Integer.toString(um.succslotreservations);
@@ -726,7 +824,7 @@ public class SimulationResultAnalyser {
         }
         writer.close();
     }
-    
+
     private void WriteManagerdata() throws IOException {
         File outfile = this.analysispath.resolve("fleetManager.csv").toFile();
         Writer writer = new FileWriter(outfile);
@@ -748,13 +846,16 @@ public class SimulationResultAnalyser {
         csvWriter.writeNext(record);
 
         //now write the user values
-         for (ManagerEventMetric mem : managereventsmetric) {
+        for (ManagerEventMetric mem : managereventsmetric) {
             record[0] = Integer.toString(mem.managerID);
             record[1] = mem.eventname;
             record[2] = Integer.toString(mem.time);
             record[3] = mem.result.toString();
-            if (mem.stationid>=0) record[4] = Integer.toString(mem.stationid);
-            else record[4] = "";
+            if (mem.stationid >= 0) {
+                record[4] = Integer.toString(mem.stationid);
+            } else {
+                record[4] = "";
+            }
             //write line
             csvWriter.writeNext(record);
         }
@@ -811,7 +912,7 @@ public class SimulationResultAnalyser {
     //compare the shortes routetime with the actual routetime 
     //the shortes rute is calculated by specifying the closest station to the user position, the clostes station to the user destination 
     // and searching the rutepartes inbetween 
-    private void addTimeComparison(UserMetric um) throws GraphHopperIntegrationException, GeoRouteCreationException {
+    private void addTimeComparison(UserMetric um) throws Exception {
 
         double closeststartdist = Double.MAX_VALUE;
         double closestenddist = Double.MAX_VALUE;
@@ -841,10 +942,10 @@ public class SimulationResultAnalyser {
             um.additionaltimeloss = (um.timeleafe - um.timeapp) - shortesttime;
         } else {
 
-            shortesttime =  ((um.origin.distanceTo(bestStartStation.position) / this.standardstraightLineWalkingVelocity)
+            shortesttime = ((um.origin.distanceTo(bestStartStation.position) / this.standardstraightLineWalkingVelocity)
                     + (bestStartStation.position.distanceTo(bestEndStation.position) / this.standardstraightLineCyclingVelocity)
                     + (bestEndStation.position.distanceTo(um.destination) / this.standardstraightLineWalkingVelocity));
-            um.additionaltimeloss = (int)(um.artificialtime - shortesttime);
+            um.additionaltimeloss = (int) (um.artificialtime - shortesttime);
         }
     }
 
