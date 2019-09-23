@@ -19,7 +19,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation.R
  */
 public class UserMemory {
     
-    public enum FactType {
+    public static enum FactType {
         BIKE_RESERVATION_TIMEOUT, BIKE_FAILED_RESERVATION, BIKES_UNAVAILABLE, SLOTS_UNAVAILABLE,
         SLOT_RESERVATION_TIMEOUT, SLOT_FAILED_RESERVATION
     }

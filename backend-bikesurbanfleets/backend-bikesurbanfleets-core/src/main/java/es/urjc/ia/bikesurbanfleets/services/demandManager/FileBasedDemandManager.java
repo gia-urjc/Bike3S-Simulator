@@ -22,7 +22,7 @@ import java.util.HashMap;
 @DemandManagerType("FileBasedDemandManager")
 public class FileBasedDemandManager extends DemandManager{
 
-    public class DemandManParameters {
+    private static class DemandManParameters {
         private String demandDataFile=null;
     }
 
@@ -45,7 +45,7 @@ public class FileBasedDemandManager extends DemandManager{
     //this is the minimum demand that is assumed if teh obtained demand is 0
     private final static double MIN_DEMAND = 0.05;
 
-    private class DemandResult {
+    private static class DemandResult {
 
         boolean hasdemand;
         double demand;
@@ -202,7 +202,7 @@ public class FileBasedDemandManager extends DemandManager{
         }
     }
 
-    private class Demand {
+    private static class Demand {
 
         HashMap< Integer, StationData> stationMap;
         HashMap< Month, HashMap<Day, double[][]>> globalDemand;
@@ -360,7 +360,7 @@ public class FileBasedDemandManager extends DemandManager{
     }
 
     //class for storing the demand for one sinle station or also for the sum of all stations
-    class StationData {
+    private static class StationData {
 
         HashMap<Month, MonthData> monthMap;
 
@@ -409,7 +409,7 @@ public class FileBasedDemandManager extends DemandManager{
         }
     }
 
-    class MonthData {
+    private static class MonthData {
 
         HashMap<Day, DayData> dayMap;
 
@@ -455,7 +455,7 @@ public class FileBasedDemandManager extends DemandManager{
         }
     }
 
-    class DayData {
+    private static class DayData {
 
         int[][] data;
 

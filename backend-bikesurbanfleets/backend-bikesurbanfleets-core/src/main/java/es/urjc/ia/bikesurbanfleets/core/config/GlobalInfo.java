@@ -10,6 +10,9 @@ public class GlobalInfo {
     public static String DEBUG_DIR = TEMP_DIR;
     private static String DEFAULT_HISTORY_OUTPUT_PATH = HOME_DIR + "/history";
     public final static int TIMEENTRIES_PER_HISTORYFILE = 10000;
+    
+    //for checking the station ocuppation should be >0
+    public final static int STATION_OCCUPATION_CHECK_INTERVAL=60*60; //every 1 hour
 
     /**
      * It is the time period during a reservation is valid or active.

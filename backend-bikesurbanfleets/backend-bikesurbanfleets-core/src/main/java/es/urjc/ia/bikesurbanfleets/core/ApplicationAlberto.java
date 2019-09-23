@@ -7,6 +7,7 @@ import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
+import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -14,7 +15,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import java.io.File;
-
 
 public class ApplicationAlberto {
 
@@ -26,13 +26,14 @@ public class ApplicationAlberto {
     private static String usersConfig;
     private static String stationsConfig;
     private static String historyOutputPath;
+    private static String analysisOutputPath;
     private static String validator;
     private static boolean callFromFrontend;
 
     private static String PROJECT_HOME = "/Users/albertofernandez/git/Bike3S/";
-    
+
     private static CommandLine commandParser(String[] args) throws ParseException {
-        
+
         Options options = new Options();
         options.addOption("globalSchema", true, "Directory to global schema validation");
         options.addOption("usersSchema", true, "Directory to users schema validation");
@@ -43,23 +44,24 @@ public class ApplicationAlberto {
         options.addOption("mapPath", true, "Directory to map");
         options.addOption("demandDataFile", true, "The csv file with demand data");
         options.addOption("historyOutput", true, "History Path for the simulation");
+        options.addOption("analysisOutput", true, "Analysis Path for the simulation");
         options.addOption("validator", true, "Directory to the js validator");
         options.addOption("callFromFrontend", false, "Backend has been called by frontend");
-    
+
         CommandLineParser parser = new DefaultParser();
         return parser.parse(options, args);
-        
+
     }
-    
+
     public static void main(String[] args) throws Exception {
 
         //Create auxiliary folder
         File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
-        if(!auxiliaryDir.exists()) {
+        if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
 
-  /*      CommandLine cmd;
+        /*      CommandLine cmd;
         try {
             cmd = commandParser(args);
         } catch (ParseException e1) {
@@ -75,29 +77,30 @@ public class ApplicationAlberto {
         stationsConfig = cmd.getOptionValue("stationsConfig");
         mapPath = cmd.getOptionValue("mapPath");
         historyOutputPath = cmd.getOptionValue("historyOutput");
+        analysisOutputPath =cmd.getOptionValue("analysisOutput");
         validator = cmd.getOptionValue("validator");
         callFromFrontend = cmd.hasOption("callFromFrontend");
-*/
+         */
         globalSchema = "";
         usersSchema = "";
         stationsSchema = "";
 //        String test="informed";
-        String test="paperAT2018/inf";
-        globalConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/global_configuration.json";
-        usersConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/users_configuration.json";
-        stationsConfig = PROJECT_HOME + "Bike3STests/"+ test +"/conf/stations_configuration.json";
-        historyOutputPath = PROJECT_HOME + "Bike3STests/"+ test +"/hist";
+        String test = "paperAT2018/inf";
+        globalConfig = PROJECT_HOME + "Bike3STests/" + test + "/conf/global_configuration.json";
+        usersConfig = PROJECT_HOME + "Bike3STests/" + test + "/conf/users_configuration.json";
+        stationsConfig = PROJECT_HOME + "Bike3STests/" + test + "/conf/stations_configuration.json";
+        historyOutputPath = PROJECT_HOME + "Bike3STests/" + test + "/hist";
+        analysisOutputPath= PROJECT_HOME + "Bike3STests/" + test +"/analysis";
         validator = "";
         callFromFrontend = true;
-       
-   //     checkParams(); // If not valid, throws exception
 
+        //     checkParams(); // If not valid, throws exception
         try {
             //1.read global configuration (and setup some changes)
             //to do maybe change graph parameters into the global config file
             ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
             GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
-            if(historyOutputPath != null) {
+            if (historyOutputPath != null) {
                 globalInfo.setOtherHistoryOutputPath(historyOutputPath);
             }
 
@@ -108,18 +111,22 @@ public class ApplicationAlberto {
             //3. do simulation
             //TODO mapPath not obligatory for other graph managers
             new SimulationEngine(globalInfo, stationsInfo, usersInfo);
+
+            //4. analyse the simulation results
+            SimulationResultAnalyser sra = new SimulationResultAnalyser(analysisOutputPath, historyOutputPath);
+            sra.analyzeSimulation();
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
     }
 
-
     private static void checkParams() throws Exception {
 
         String exMessage = null; // Message for exceptions
         String warningMessage = null;
-        if(hasAllSchemasAndConfig()) {
+        if (hasAllSchemasAndConfig()) {
 
             ValidationParams vParams = new ValidationParams();
             vParams.setSchemaDir(globalSchema).setJsonDir(globalConfig).setJsValidatorDir(validator);
@@ -135,41 +142,38 @@ public class ApplicationAlberto {
             System.out.println(usersConfigValidation);
             System.out.println(stationsConfigValidation);
 
-            if((!globalConfigValidation.equals("OK")
+            if ((!globalConfigValidation.equals("OK")
                     || !usersConfigValidation.equals("OK") || !stationsConfigValidation.equals("OK"))) {
 
-                exMessage = "JSON has errors \n Global configuration errors \n" + globalConfigValidation + "\n" +
-                        "Stations configuration errors \n" + stationsConfigValidation + "\n" +
-                        "Users configuration errors \n" + usersConfigValidation;
+                exMessage = "JSON has errors \n Global configuration errors \n" + globalConfigValidation + "\n"
+                        + "Stations configuration errors \n" + stationsConfigValidation + "\n"
+                        + "Users configuration errors \n" + usersConfigValidation;
 
             } else if (globalConfigValidation.equals("NODE_NOT_INSALLED")) {
 
-                exMessage = "Node is necessary to execute validator: " + validator + ". \n" +
-                        "Verify if node is installed or install node";
+                exMessage = "Node is necessary to execute validator: " + validator + ". \n"
+                        + "Verify if node is installed or install node";
 
-            } else if(globalConfigValidation.equals("OK") && stationsConfigValidation.equals("OK")
+            } else if (globalConfigValidation.equals("OK") && stationsConfigValidation.equals("OK")
                     && usersConfigValidation.equals("OK")) {
 
                 System.out.println("Validation configuration input: OK\n");
             }
-        }
-        else if(globalConfig == null || stationsConfig == null || usersConfig == null) {
+        } else if (globalConfig == null || stationsConfig == null || usersConfig == null) {
             exMessage = "You should specify a configuration file";
-        }
-        else if((globalSchema == null || usersSchema == null || stationsSchema == null) && validator != null) {
+        } else if ((globalSchema == null || usersSchema == null || stationsSchema == null) && validator != null) {
             exMessage = "You should specify all schema paths";
 
-        }
-        else if(validator == null && !callFromFrontend) {
+        } else if (validator == null && !callFromFrontend) {
             warningMessage = "Warning: you don't specify a validator, configuration file will not be validated on backend";
         }
 
-        if(exMessage != null) {
+        if (exMessage != null) {
             System.out.println("Exception");
             throw new ValidationException(exMessage);
         }
 
-        if(warningMessage != null) {
+        if (warningMessage != null) {
             System.out.println(warningMessage);
         }
     }

@@ -40,7 +40,7 @@ public abstract class User implements Entity {
         idgenerator=new IdGenerator();
     }
 
-    public enum STATE {
+    public static enum STATE {
         APPEARED, TRY_BIKE_RESERVATION, WALK_TO_STATION, WITH_BIKE_TO_STATION, WITH_BIKE_ON_RIDE, TRY_SLOT_RESERVATION, WALK_TO_DESTINATION, EXIT_AFTER_TIMEOUT,
         LEAVING, LEFT_SYSTEM 
     }

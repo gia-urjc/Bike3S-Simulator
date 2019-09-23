@@ -8,6 +8,7 @@ import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.config.ConfigJsonReader;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
+import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -27,6 +28,7 @@ public class Application {
     private static String usersConfig;
     private static String stationsConfig;
     private static String historyOutputPath;
+    private static String analysisOutputPath;
     private static String validator;
     private static boolean callFromFrontend;
 
@@ -43,6 +45,7 @@ public class Application {
         options.addOption("mapPath", true, "Directory to map");
         options.addOption("demandDataFile", true, "The csv file with demand data");
         options.addOption("historyOutput", true, "History Path for the simulation");
+        options.addOption("analysisOutput", true, "Analysis Path for the simulation");
         options.addOption("validator", true, "Directory to the js validator");
         options.addOption("callFromFrontend", false, "Backend has been called by frontend");
     
@@ -74,6 +77,7 @@ public class Application {
         usersConfig = cmd.getOptionValue("usersConfig");
         stationsConfig = cmd.getOptionValue("stationsConfig");
         historyOutputPath = cmd.getOptionValue("historyOutput");
+        analysisOutputPath =cmd.getOptionValue("analysisOutput");
         validator = cmd.getOptionValue("validator");
         callFromFrontend = cmd.hasOption("callFromFrontend");
         
@@ -93,7 +97,12 @@ public class Application {
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
 
             //3. do simulation
-                new SimulationEngine(globalInfo, stationsInfo, usersInfo);
+            new SimulationEngine(globalInfo, stationsInfo, usersInfo);
+                        
+            //4. analyse the simulation results
+            SimulationResultAnalyser sra = new SimulationResultAnalyser(analysisOutputPath, historyOutputPath);
+            sra.analyzeSimulation();
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());

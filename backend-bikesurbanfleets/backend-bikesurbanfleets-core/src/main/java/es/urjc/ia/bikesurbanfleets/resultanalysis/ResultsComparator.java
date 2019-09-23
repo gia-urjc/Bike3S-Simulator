@@ -11,6 +11,9 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.resultanalysis.ManagerDataAnalyzer.GlobalManagerDataForExecution;
+import es.urjc.ia.bikesurbanfleets.resultanalysis.StationDataAnalyzer.GlobalStationDataForExecution;
+import es.urjc.ia.bikesurbanfleets.resultanalysis.UserDataAnalyzer.GlobalUserDataForExecution;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -87,11 +90,11 @@ public class ResultsComparator {
         //write empty line
         csvWriter.writeNext(new String[]{""});
 
-        String[] record = new String[3];
-        record[0] = "simulation time (min)";
-        record[1] = Double.toString((double) totalsimtime / 60D);
-        record[2] = "all results are calculated up to this time (users not finishing up to this time are ignored)";
-        csvWriter.writeNext(record);
+        String[] desc = new String[3];
+        desc[0] = "simulation time (min)";
+        desc[1] = Double.toString((double) totalsimtime / 60D);
+        desc[2] = "the data correspond to values up to this time (users, changes and any events after that time are ignored; also users that do not appear in this tiem are ignored)";
+        csvWriter.writeNext(desc);
     }
 
     private void WriteUserdata(TreeMap<String, TestResult> testresults, CSVWriter csvWriter) throws IOException {
@@ -115,7 +118,7 @@ public class ResultsComparator {
         //setup header
         record[0] = "Testname";
         record[1] = "recommerderParameters";
-        record[2] = "#users total";
+        record[2] = "#users total (up to simulationtime)";
         record[3] = "#users finished in simulationtime";
         record[4] = "#abandoned";
         record[5] = "DS";
@@ -253,8 +256,7 @@ public class ResultsComparator {
     }
     
 
-    private class TestResult {
-
+    static private class TestResult {
         GlobalStationDataForExecution stationdata = new GlobalStationDataForExecution();
         GlobalUserDataForExecution userdata = new GlobalUserDataForExecution();
         GlobalManagerDataForExecution managerdata = new GlobalManagerDataForExecution();
@@ -381,7 +383,7 @@ public class ResultsComparator {
                 .build();
         CSVReader csvReader
                 = new CSVReaderBuilder(filereader)
-                .withSkipLines(1)
+                .withSkipLines(2)
                 .withCSVParser(parser)
                 .build();
         List<String[]> allData = csvReader.readAll();

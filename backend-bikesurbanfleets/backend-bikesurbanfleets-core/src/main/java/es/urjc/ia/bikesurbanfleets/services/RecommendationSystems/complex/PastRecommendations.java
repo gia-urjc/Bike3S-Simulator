@@ -19,7 +19,7 @@ public class PastRecommendations {
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //the following methods store information on the receommendations done before
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    private class PotentialEvent {
+    private static class PotentialEvent {
 
         boolean take; //or return
         int expectedendtime;
@@ -34,7 +34,7 @@ public class PastRecommendations {
     private HashMap<Integer, LinkedList<PotentialEvent>> registeredBikeEventsPerStation = new HashMap<>();
 
     //result class for getExpectedBikechanges
-    public class ExpBikeChangeResult {
+    public static class ExpBikeChangeResult {
 
         public int changes = 0;
         public int minpostchanges = 0;

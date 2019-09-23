@@ -28,7 +28,7 @@ import java.util.List;
 @GraphManagerType("GRAPH_HOPPER")
 public class GraphHopperIntegration implements GraphManager {
 
-    public class GraphManParameters {
+    private static class GraphManParameters {
         private String mapFile=null;
         private String tempDirectory=null;
     }

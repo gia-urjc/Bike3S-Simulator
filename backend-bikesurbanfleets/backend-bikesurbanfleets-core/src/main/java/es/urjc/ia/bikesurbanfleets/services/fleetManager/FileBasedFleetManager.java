@@ -25,7 +25,7 @@ import java.util.List;
 @FleetManagerType("FileBasedFleetManager")
 public class FileBasedFleetManager extends FleetManager{
 
-    public class FleetManagerParameters {
+    private static class FleetManagerParameters {
         String EventFile=null;
     }
     FleetManagerParameters parameters=null;
@@ -75,10 +75,10 @@ public class FileBasedFleetManager extends FleetManager{
         newevs.add(new EventManagerAddBikesToStation(evdescription.timeInstant+evdescription.travelTime, this, retstation));
     }
     
-    private class managingEvents{
+    private static class managingEvents{
         List<managingEvent> managingEvents;
     } 
-    private class managingEvent{
+    private static class managingEvent{
         int timeInstant;
         int idInitialStation;
         int idEndStation;

@@ -64,7 +64,7 @@ public class StationManager {
     }
 
     
-    public class UsageData {
+    private static class UsageData {
 
         public int numberStations = 0;
         public int totalNumberBikes = 0;

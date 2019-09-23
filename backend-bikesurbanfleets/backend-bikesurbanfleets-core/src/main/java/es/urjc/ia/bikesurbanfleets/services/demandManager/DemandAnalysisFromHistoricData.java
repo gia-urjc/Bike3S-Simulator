@@ -165,7 +165,7 @@ public class DemandAnalysisFromHistoricData {
         writer.close();
     }
 
-    class StatData {
+    private static class StatData {
 
         HashMap<Integer, HashMap<Integer, HashMap<Integer, int[][]>>> daydata = new HashMap<Integer, HashMap<Integer, HashMap<Integer, int[][]>>>();
 
@@ -198,7 +198,7 @@ public class DemandAnalysisFromHistoricData {
         }
     }
 
-    class Data {
+    private static class Data {
 
         HashMap<Integer, StatData> valueMap = new HashMap<Integer, StatData>();
         //if take ==true a bike is taken

@@ -7,6 +7,7 @@ import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
+import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -29,6 +30,7 @@ public class ApplicationHolger {
     private static String stationsConfig;
     private static String historyOutputPath;
     private static String validator;
+    private static String analysisOutputPath;
     private static boolean callFromFrontend;
 
     
@@ -44,6 +46,7 @@ public class ApplicationHolger {
         options.addOption("mapPath", true, "Directory to map");
         options.addOption("demandDataFile", true, "The csv file with demand data");
         options.addOption("historyOutput", true, "History Path for the simulation");
+        options.addOption("analysisOutput", true, "Analysis Path for the simulation");
         options.addOption("validator", true, "Directory to the js validator");
         options.addOption("callFromFrontend", false, "Backend has been called by frontend");
     
@@ -78,6 +81,7 @@ public class ApplicationHolger {
         usersConfig = basedir+ "/conf/users_configuration.json";
         stationsConfig = basedir+ "/conf/stations_configuration.json";
         historyOutputPath = basedir+ "/hist";
+        analysisOutputPath= basedir+"/analysis";
         validator = "";
         callFromFrontend = true;
 
@@ -97,6 +101,7 @@ public class ApplicationHolger {
         stationsConfig = cmd.getOptionValue("stationsConfig");
         mapPath = cmd.getOptionValue("mapPath");
         historyOutputPath = cmd.getOptionValue("historyOutput");
+        analysisOutputPath =cmd.getOptionValue("analysisOutput");
         validator = cmd.getOptionValue("validator");
         callFromFrontend = cmd.hasOption("callFromFrontend");
 */
@@ -119,6 +124,11 @@ public class ApplicationHolger {
 
             //3. do simulation
             new SimulationEngine(globalInfo, stationsInfo, usersInfo);
+            
+            //4. analyse the simulation results
+            SimulationResultAnalyser sra = new SimulationResultAnalyser(analysisOutputPath, historyOutputPath);
+            sra.analyzeSimulation();
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());

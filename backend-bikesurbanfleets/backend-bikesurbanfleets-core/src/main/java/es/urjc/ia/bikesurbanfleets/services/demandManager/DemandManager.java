@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  */
 public abstract class DemandManager {
  
-    public enum Month {
+    public static enum Month {
         Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dic, Summer, Winter, All;
 
         public static Month toDemandMangerMonth(java.time.Month m) {
@@ -47,7 +47,7 @@ public abstract class DemandManager {
         }
     }
 
-    public enum Day {
+    public static enum Day {
         Mon, Tue, Wed, Thu, Fri, Sat, Sun, Weekday, Weekend;
 
         public static Day toDemandMangerDay(java.time.DayOfWeek d) {

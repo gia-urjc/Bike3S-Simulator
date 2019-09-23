@@ -1,12 +1,10 @@
 package es.urjc.ia.bikesurbanfleets.core;
 
-import es.urjc.ia.bikesurbanfleets.resultanalysis.ResultsComparator;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
+import es.urjc.ia.bikesurbanfleets.resultanalysis.ResultsComparator;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
 import java.io.*;
 import java.text.DateFormat;
@@ -40,9 +38,9 @@ public class CompareTestApplication {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
         // String projectDir = System.getProperty("user.dir") + File.separator + "Bike3S";
- //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurr";
+        //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurr";
         //testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurroundWithDemand";
- //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/version_usersmax600/cost_complex_prediction";
+        //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/version_usersmax600/cost_complex_prediction";
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/refactorcheck2";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -69,7 +67,7 @@ public class CompareTestApplication {
         Tests tests = gson.fromJson(reader, Tests.class);
         //create new dir on basedir
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
-        
+
         Date date = new Date();
         baseTestsDir = testsDir + "/" + dateFormat.format(date);
         auxiliaryDir = new File(baseTestsDir);
@@ -97,7 +95,7 @@ public class CompareTestApplication {
         String stationsConfig = testsDir + "/conf/stations_configuration.json";
         ConfigJsonReader jsonReader = new ConfigJsonReader(globalConfig, stationsConfig, usersConfig);
         GlobalInfo globalInfo = jsonReader.readGlobalConfiguration();
-        
+
         //now loop through the tests
         ArrayList<String> testnames = new ArrayList<String>();
         for (JsonObject t : tests.tests) {
@@ -112,7 +110,6 @@ public class CompareTestApplication {
             testnames.add(testdir);
 
             runSimulationTest(globalInfo, jsonReader, testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
-            runResultAnalisis(testdir);
         }
         new ResultsComparator(analisisDir, historyDir, analisisDir + "compareResults.csv", globalInfo.getTotalSimulationTime()).compareTestResults();
         //script requires autorization    runscriptR();
@@ -158,48 +155,15 @@ public class CompareTestApplication {
 
             //3. do simulation
             new SimulationEngine(globalInfo, stationsInfo, usersInfo);
-            
+
+            //4. analyse the simulation results
+            SimulationResultAnalyser sra = new SimulationResultAnalyser(analisisDir + testdir, historyDir + testdir);
+            sra.analyzeSimulation();
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    private void runResultAnalisis(String testdir) throws Exception {
-        SimulationResultAnalyser sra=new SimulationResultAnalyser(analisisDir+testdir, historyDir+testdir);
-        sra.analyzeSimulation();
-   }
-
-    private void runscriptR() throws IOException, InterruptedException {
-
-        List<String> command = new ArrayList<String>();
-        command.add(analysisScriptPath + "./generateMarkdown.sh");
-        command.add(analysisScriptPath);
-        command.add(analisisDir + "report.html");
-        command.add(analisisDir);
-
-        System.out.println("\nexecuting: " + command.toString().replaceAll(",", ""));
-        ProcessBuilder pb = new ProcessBuilder(command);
-        pb.directory(new File(analisisDir));
-
-        Process p = pb.start(); // Start the process.
-        p.waitFor(); // Wait for the process to finish.
-
-        //Obtengo la salida de la ejecución del proceso
-        System.out.println("----------------------------------------");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        StringBuilder builder = new StringBuilder();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            builder.append(line);
-            builder.append(System.getProperty("line.separator"));
-        }
-
-        String resultExecution = builder.toString();
-        System.out.println(resultExecution);
-        System.out.println("----------------------------------------");
-
-        System.out.println("Script executed successfully");
     }
 
 }

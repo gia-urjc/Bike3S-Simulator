@@ -21,7 +21,7 @@ import java.util.PriorityQueue;
 public class DummyFleetManager extends FleetManager{
 
  
-    public class FleetManagerParameters {
+    private static class FleetManagerParameters {
     }
     FleetManagerParameters parameters=null;
 
