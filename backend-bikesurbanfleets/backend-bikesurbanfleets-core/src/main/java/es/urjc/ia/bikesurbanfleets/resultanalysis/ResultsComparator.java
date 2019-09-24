@@ -47,7 +47,7 @@ public class ResultsComparator {
     }
 
     public void compareTestResults() throws IOException {
-        //copy the script file to the directory
+        //copy the script file to the directory á
         Path analysispath = new File(analysisdir).toPath();
         File file = new File(analysisdir);
         String[] directories = file.list(new FilenameFilter() {
