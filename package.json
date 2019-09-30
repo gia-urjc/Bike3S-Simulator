@@ -65,7 +65,7 @@
     "font-awesome": "^4.7.0",
     "fs-extra": "^4.0.3",
     "install": "^0.11.0",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.0",
     "json-schema-builder-ts": "github:cruizba/json-schema-builder",
     "json2csv": "^3.11.5",
     "jsoneditor": "^5.22.0",
