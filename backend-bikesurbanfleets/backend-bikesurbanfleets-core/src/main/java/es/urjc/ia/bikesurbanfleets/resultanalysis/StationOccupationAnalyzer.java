@@ -42,6 +42,7 @@ public class StationOccupationAnalyzer {
     private TreeMap<Integer, int[]> stationoccupation = new TreeMap<Integer, int[]>();
 
     private int nexttimecheck;
+    private boolean first=true;
 
     StationOccupationAnalyzer(TreeMap<Integer, StationDataAnalyzer.StationMetric> stations) {
         if (GlobalInfo.STATION_OCCUPATION_CHECK_INTERVAL <= 0) {
@@ -49,6 +50,7 @@ public class StationOccupationAnalyzer {
         }
         stationmetrics = stations;
         nexttimecheck = 0;
+        first=true;
     }
 
     void postProcessAndWrite(Path outpath, int totalsimtimespecified) throws Exception {
@@ -110,7 +112,7 @@ public class StationOccupationAnalyzer {
         csvWriter.writeNext(record2);
 
         //write availabe bikes header
-        String[] record3 = {"#available bikes per station at time (in minutes) from start"};
+        String[] record3 = {"#available bikes per station at time (in seconds) from start"};
         csvWriter.writeNext(record3);
 
         //now write the availabler bikes
@@ -119,7 +121,7 @@ public class StationOccupationAnalyzer {
             if (occupation.length != numstations) {
                 throw new RuntimeException("something wrong in station occupation calculation");
             }
-            record[0] = Double.toString(((double) time) / 60D);
+            record[0] = Integer.toString( time);
             //now write the values for this time
             for (int j = 0; j < numstations; j++) {
                 record[j + 1] = Integer.toString(occupation[j]);
@@ -139,7 +141,12 @@ public class StationOccupationAnalyzer {
                 i++;
             }
             stationoccupation.put(nexttimecheck, timeoccupation);
+            if (first) {
+                nexttimecheck+=120;
+                first=false;
+            } else {
             nexttimecheck = nexttimecheck + GlobalInfo.STATION_OCCUPATION_CHECK_INTERVAL;
+            }
         }
     }
 

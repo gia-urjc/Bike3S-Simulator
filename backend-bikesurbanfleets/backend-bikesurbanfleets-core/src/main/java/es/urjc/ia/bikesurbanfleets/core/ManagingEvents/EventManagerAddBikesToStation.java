@@ -32,18 +32,22 @@ public class EventManagerAddBikesToStation extends EventManaging{
     public List<EventManaging> execute() throws Exception {
         debugEventLog("At enter the event");
         Bike b = manager.getBikeFromStore();
-        if (b==null) throw new RuntimeException("No bikes in store");
-        boolean sucess=s.returnBikeWithoutReservation(b);
-        involvedEntities.add(b);
-
-        if (sucess) {
-            setResult(Event.RESULT_TYPE.SUCCESS);
-        }
-        else { //bike can not put into slot 
-            //TODO: what to do here
-            manager.putBikeIntoStore(b);
+        if (b==null) {
             setResult(Event.RESULT_TYPE.FAIL);
+        } else {
+            boolean sucess=s.returnBikeWithoutReservation(b);
+            involvedEntities.add(b);
+
+            if (sucess) {
+                setResult(Event.RESULT_TYPE.SUCCESS);
+            }
+            else { //bike can not put into slot 
+                //TODO: what to do here
+                manager.putBikeIntoStore(b);
+                setResult(Event.RESULT_TYPE.FAIL);
+            }
         }
+ 
         return null;
     }
     

@@ -33,6 +33,10 @@ public class SimulatedRealUser extends User {
 
     @Override
     public UserDecision decideAfterFailedRental() {
+        Station s = determineStationToRentBike();
+        if (s != null) { //user has found a station
+            return new UserDecisionStation(s, false);
+        } //if not he would leave
         return new UserDecisionLeaveSystem();
     }
 
@@ -123,7 +127,7 @@ public class SimulatedRealUser extends User {
         Station destination = null;
         List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
         List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace);
-        finalStations.removeAll(triedStations);
+//        finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);
         } else {

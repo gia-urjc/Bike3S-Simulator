@@ -12,7 +12,7 @@ public class GlobalInfo {
     public final static int TIMEENTRIES_PER_HISTORYFILE = 10000;
     
     //for checking the station ocuppation should be >0
-    public final static int STATION_OCCUPATION_CHECK_INTERVAL=60*60; //every 1 hour
+    public final static int STATION_OCCUPATION_CHECK_INTERVAL=300; //every 2 min
 
     /**
      * It is the time period during a reservation is valid or active.

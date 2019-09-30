@@ -46,7 +46,7 @@ public abstract class FleetManager implements Entity{
     }
     //returns true if sucessful and false otherwise
     public final Bike getBikeFromStore(){
-        if (bikestore.size()==0) throw new RuntimeException("can not take a bike from the store; no bikes");
+        if (bikestore.size()==0) return null;
         return bikestore.remove(0);
     }
 

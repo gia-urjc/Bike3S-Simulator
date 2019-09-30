@@ -40,6 +40,6 @@ public class EventManagerTakeBikesFromStation extends EventManaging{
             involvedEntities.add(b);
             setResult(Event.RESULT_TYPE.SUCCESS);
         }
-         return null;
+        return null;
     }
 }
