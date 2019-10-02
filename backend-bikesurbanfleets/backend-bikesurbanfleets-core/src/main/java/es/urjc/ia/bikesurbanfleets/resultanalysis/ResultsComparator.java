@@ -163,7 +163,7 @@ public class ResultsComparator {
             record[9] = Double.toString(res.userdata.avbetweenstationtime / 60D);
             record[10] = Double.toString(res.userdata.avfromstationtime / 60D);
             record[11] = Double.toString((res.userdata.avfromstationtime + res.userdata.avbetweenstationtime + res.userdata.avtostationtime) / 60D);
-            record[12] = Double.toString(res.userdata.avwaitingtime);
+            record[12] = Double.toString(res.userdata.avwaitingtime / 60D);
             record[13] = Double.toString(res.userdata.avtimeloss);
             record[14] = Integer.toString(res.userdata.totalfailedrentals);
             record[15] = Integer.toString(res.userdata.totalfailedreturns);

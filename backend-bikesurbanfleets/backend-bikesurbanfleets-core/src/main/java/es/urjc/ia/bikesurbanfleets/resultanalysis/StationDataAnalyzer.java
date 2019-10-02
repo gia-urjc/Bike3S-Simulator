@@ -162,17 +162,17 @@ class StationDataAnalyzer {
         if (stationid != null) {
             StationMetric sm = stationmetrics.get(stationid);
             checkChangesAvBikes(ee.getChanges(), time, sm);
-            analyzeStationData(name, sm, result);
+            analyzeStationData(name, sm, result,ee.getAdditionalInfo());
         }
     }
 
-    private void analyzeStationData(String name, StationMetric stM, Event.RESULT_TYPE result) {
+    private void analyzeStationData(String name, StationMetric stM, Event.RESULT_TYPE result, Event.ADDITIONAL_INFO info) {
         switch (name) {
             case "EventUserArrivesAtStationToRentBike":
                 if (result == Event.RESULT_TYPE.SUCCESS) {
                     stM.succbikerentals++;
                     //user rents bike
-                } else if (result == Event.RESULT_TYPE.FAIL) {
+                } else if (result == Event.RESULT_TYPE.FAIL && info != Event.ADDITIONAL_INFO.RETRY_EVENT) {
                     stM.failedbikerentals++;
                 }
                 break;
@@ -180,21 +180,21 @@ class StationDataAnalyzer {
                 if (result == Event.RESULT_TYPE.SUCCESS) {
                     stM.succbikereturns++;
                     //user returns bike
-                } else if (result == Event.RESULT_TYPE.FAIL) {
+                } else if (result == Event.RESULT_TYPE.FAIL && info != Event.ADDITIONAL_INFO.RETRY_EVENT) {
                     stM.failedbaikereturns++;
                 }
                 break;
             case "EventUserTriesToReserveSlot":
                 if (result == Event.RESULT_TYPE.SUCCESS) {
                     stM.succslotreservations++;
-                } else if (result == Event.RESULT_TYPE.FAIL) {
+                } else if (result == Event.RESULT_TYPE.FAIL && info != Event.ADDITIONAL_INFO.RETRY_EVENT) {
                     stM.failesslotreservations++;
                 }
                 break;
             case "EventUserTriesToReserveBike":
                 if (result == Event.RESULT_TYPE.SUCCESS) {
                     stM.succbikereservations++;
-                } else if (result == Event.RESULT_TYPE.FAIL) {
+                } else if (result == Event.RESULT_TYPE.FAIL && info != Event.ADDITIONAL_INFO.RETRY_EVENT) {
                     stM.failedbikereservations++;
                 }
                 break;
