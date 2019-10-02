@@ -156,19 +156,18 @@ public final class SimulationEngine {
             while (!UserEventsQueue.isEmpty() || !ManagingEventsQueue.isEmpty()) {
                 
                 //get the earliest event to execute
-                Event currentevent=null;
                 Event userevent = UserEventsQueue.peek();  // retrieves but does not remove first elements
                 Event managementevent=ManagingEventsQueue.peek();
-                if (userevent==null) currentevent=ManagingEventsQueue.poll();
-                else if (managementevent==null) currentevent=UserEventsQueue.poll();
-                else if (managementevent.getInstant()<=userevent.getInstant()) currentevent=ManagingEventsQueue.poll();
-                else currentevent=UserEventsQueue.poll();
+                if (userevent==null) currentEvent=ManagingEventsQueue.poll();
+                else if (managementevent==null) currentEvent=UserEventsQueue.poll();
+                else if (managementevent.getInstant()<=userevent.getInstant()) currentEvent=ManagingEventsQueue.poll();
+                else currentEvent=UserEventsQueue.poll();
 
                 //check the time
-                if (currentevent.getInstant()< lastInstant) {
+                if (currentEvent.getInstant()< lastInstant) {
                     throw new RuntimeException("Illegal event execution");
                 }
-                if (currentevent.getInstant()>= simulationtime) {
+                if (currentEvent.getInstant()>= simulationtime) {
                     System.out.println("Finished because out of ending simulation time.");
                     break; //goes out of the loop
                 }
@@ -177,13 +176,13 @@ public final class SimulationEngine {
                 //set the current simulation date and instant
                 SimulationDateTime.setCurrentSimulationInstant(currentEvent.getInstant());
                 //now process the event
-                if (currentevent instanceof EventUser) {
-                    EventUser newEvent = ((EventUser)currentevent).execute();
+                if (currentEvent instanceof EventUser) {
+                    EventUser newEvent = ((EventUser)currentEvent).execute();
                     if (newEvent != null) {
                         UserEventsQueue.add(newEvent);
                     }
                 } else {//if it is managingevent
-                    List<EventManaging> newEvents = ((EventManaging)currentevent).execute();
+                    List<EventManaging> newEvents = ((EventManaging)currentEvent).execute();
                     if (newEvents != null) {
                         ManagingEventsQueue.addAll(newEvents);
                     }
