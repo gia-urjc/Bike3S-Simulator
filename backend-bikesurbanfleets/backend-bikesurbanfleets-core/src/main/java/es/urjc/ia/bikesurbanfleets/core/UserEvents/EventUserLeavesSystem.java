@@ -7,9 +7,9 @@ import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 
 public class EventUserLeavesSystem extends EventUser {
 
-    Event.EXIT_REASON reason;
+    EventUser.EXIT_REASON reason;
     
-    public EventUserLeavesSystem(int instant, User user, Event.EXIT_REASON reason) {
+    public EventUserLeavesSystem(int instant, User user, EventUser.EXIT_REASON reason) {
         super(instant, user);
         this.involvedEntities = new ArrayList<>(Arrays.asList(user));
         this.newEntities = null;
@@ -27,8 +27,9 @@ public class EventUserLeavesSystem extends EventUser {
        
         //set the result of the event
         //the result of EventUserLeavesSystem is any of the possible exit rerasons
-        setResult(Event.RESULT_TYPE.valueOf(this.reason.name()));
+        setResultInfo(Event.RESULT_TYPE.SUCCESS, Event.ADDITIONAL_INFO.valueOf(this.reason.name()));
 
+        //decide what to do afterwards
         return null;
     }
 }

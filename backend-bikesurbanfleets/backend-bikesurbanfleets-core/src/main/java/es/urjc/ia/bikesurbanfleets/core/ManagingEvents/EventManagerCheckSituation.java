@@ -29,6 +29,7 @@ public class EventManagerCheckSituation extends EventManaging{
     @Override
     public List<EventManaging> execute() throws Exception {
         manager.checkSituation();
+        setResultInfo(Event.RESULT_TYPE.SUCCESS, null);
         return null;
     }
   

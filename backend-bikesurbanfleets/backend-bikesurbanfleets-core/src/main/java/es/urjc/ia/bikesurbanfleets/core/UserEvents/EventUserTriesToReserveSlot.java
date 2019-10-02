@@ -10,7 +10,6 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserMemory;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,14 +20,16 @@ import java.util.Arrays;
  */
 public class EventUserTriesToReserveSlot extends EventUser {
 
-    private Station station;
+    Station station;
+    private boolean waitingEvent=false;
 
-    public EventUserTriesToReserveSlot(int instant, User user, Station station) {
+    public EventUserTriesToReserveSlot(int instant, User user, Station station, boolean wait) {
         super(instant, user);
         this.involvedEntities = new ArrayList<>(Arrays.asList(user, station));
         this.newEntities = null;
         this.oldEntities = null;
         this.station = station;
+        waitingEvent=wait;
     }
 
     @Override
@@ -38,6 +39,15 @@ public class EventUserTriesToReserveSlot extends EventUser {
         Reservation reservation = station.getSlotReservation(user, this.instant);
         this.involvedEntities.add(reservation);
         this.newEntities = new ArrayList<>(Arrays.asList(reservation));
+
+        //set the result of the event
+        //the result of EventUserTriesToReserveSlot is either SUCCESS or FAIL
+        ADDITIONAL_INFO info=null;
+        if(waitingEvent) info=ADDITIONAL_INFO.RETRY_EVENT;
+        if (reservation.getState() == Reservation.ReservationState.ACTIVE) setResultInfo(Event.RESULT_TYPE.SUCCESS, info);
+        else setResultInfo(Event.RESULT_TYPE.FAIL, info);
+   
+        //now decide what to do afterwards
         EventUser e;
         if (reservation.getState() == Reservation.ReservationState.ACTIVE) {   // user has been able to reserve a slot
             user.addReservation(reservation);
@@ -46,13 +56,8 @@ public class EventUserTriesToReserveSlot extends EventUser {
             this.oldEntities = new ArrayList<>(Arrays.asList(reservation));
             user.getMemory().update(UserMemory.FactType.SLOT_FAILED_RESERVATION,station);
             debugEventLog("User has not been able to reserve slot");
-            UserDecisionStation ud = user.decideAfterFailedSlotReservation();
-            e = manageUserReturnDecision(ud);
+            e = manageUserReturnDecision(DECISION_TYPE.AFTER_FAILED_SLOT_RESERVATION);
         }
-        //set the result of the event
-        //the result of EventUserTriesToReserveSlot is either SUCCESSFUL_SLOT_RESERVATION or FAILED_SLOT_RESERVATION
-        if (reservation.getState() == Reservation.ReservationState.ACTIVE) setResult(Event.RESULT_TYPE.SUCCESSFUL_SLOT_RESERVATION);
-        else setResult(Event.RESULT_TYPE.FAILED_SLOT_RESERVATION);
         
         return e;
     }
@@ -70,7 +75,7 @@ public class EventUserTriesToReserveSlot extends EventUser {
             GeoPoint pointTimeOut = user.reachedPointUntilTimeOut();
             return new EventUserSlotReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, station, pointTimeOut);
         } else {
-            return new EventUserArrivesAtStationToReturnBike(this.getInstant() + arrivalTime, user, station, reservation);
+            return new EventUserArrivesAtStationToReturnBike(this.getInstant() + arrivalTime, user, station, reservation, false);
         }
     }
 }

@@ -104,7 +104,7 @@ public final class SimulationEngine {
         //******************************************
         //do simulation
         //******************************************
-        this.run();
+        this.run(globalInfo.getTotalSimulationTime());
 
         //9.
         //******************************************
@@ -142,7 +142,7 @@ public final class SimulationEngine {
         return eventUserAppearsList;
     }
 
-    public synchronized void run() throws Exception {
+    public synchronized void run(int simulationtime) throws Exception {
 
         // Those variables are used to control de percentage of the simulation done
         double percentage = 0D;
@@ -154,32 +154,54 @@ public final class SimulationEngine {
         MessageGuiFormatter.showPercentageForGui(percentage);
         try {
             while (!UserEventsQueue.isEmpty() || !ManagingEventsQueue.isEmpty()) {
+                
+                //get the earliest event to execute
+                Event currentevent=null;
                 Event userevent = UserEventsQueue.peek();  // retrieves but does not remove first elements
                 Event managementevent=ManagingEventsQueue.peek();
-                
-                //check if the next events are later than the last one 
-                if (userevent!=null && userevent.getInstant() < lastInstant) {
+                if (userevent==null) currentevent=ManagingEventsQueue.poll();
+                else if (managementevent==null) currentevent=UserEventsQueue.poll();
+                else if (managementevent.getInstant()<=userevent.getInstant()) currentevent=ManagingEventsQueue.poll();
+                else currentevent=UserEventsQueue.poll();
+
+                //check the time
+                if (currentevent.getInstant()< lastInstant) {
                     throw new RuntimeException("Illegal event execution");
                 }
-                if (managementevent!=null && managementevent.getInstant() < lastInstant) {
-                    throw new RuntimeException("Illegal event execution");
+                if (currentevent.getInstant()>= simulationtime) {
+                    System.out.println("Finished because out of ending simulation time.");
+                    break; //goes out of the loop
+                }
+                
+                //The event has to be processed
+                //set the current simulation date and instant
+                SimulationDateTime.setCurrentSimulationInstant(currentEvent.getInstant());
+                //now process the event
+                if (currentevent instanceof EventUser) {
+                    EventUser newEvent = ((EventUser)currentevent).execute();
+                    if (newEvent != null) {
+                        UserEventsQueue.add(newEvent);
+                    }
+                } else {//if it is managingevent
+                    List<EventManaging> newEvents = ((EventManaging)currentevent).execute();
+                    if (newEvents != null) {
+                        ManagingEventsQueue.addAll(newEvents);
+                    }
                 }
 
-                //now get the earliest event to execute
-                if (userevent==null) currentEvent=processManagementEvent(); 
-                else if (managementevent==null) currentEvent=processUserEvent();
-                else if (managementevent.getInstant()<=userevent.getInstant()) currentEvent=processManagementEvent();
-                else currentEvent=processUserEvent();
+                //put event on output if debug
+                if (Debug.isDebugmode()) {
+                    System.out.println(currentEvent.toString());
+                }
+
+                //reguister the event in the history
                 
-                int currentInstant=currentEvent.getInstant();
-                if (currentInstant > lastInstant) {
+                if (currentEvent.getInstant() > lastInstant) {
                     order = 0;
                 } else {
                     order++;
                 }
-
-                //set the current simulation date and instant
-                SimulationDateTime.setCurrentSimulationInstant(currentInstant);
+                History.registerEvent(currentEvent, currentEvent.getInstant(), order);
                 
                 // Shows the actual percentage in the stdout for frontend
                 if (currentEvent.getClass().getSimpleName().equals(EventUserAppears.class.getSimpleName())) {
@@ -190,14 +212,6 @@ public final class SimulationEngine {
                         oldpercentagepresented = percentage;
                     }
                 }
-
-                //put event on output if debug
-                if (Debug.isDebugmode()) {
-                    System.out.println(currentEvent.toString());
-                }
-
-                //reguister the event in the history
-                History.registerEvent(currentEvent, currentEvent.getInstant(), order);
                 lastInstant = currentEvent.getInstant();
             }
             MessageGuiFormatter.showPercentageForGui(100D);
@@ -206,24 +220,8 @@ public final class SimulationEngine {
         }
 
     }
-    public Event processUserEvent() throws Exception {
-        EventUser event = UserEventsQueue.poll();  // retrieves first element and executes
-        EventUser newEvent = event.execute();
-        if (newEvent != null) {
-            UserEventsQueue.add(newEvent);
-        }
-        return event;
-     }
-    public Event processManagementEvent() throws Exception {
-        EventManaging event = ManagingEventsQueue.poll();  // retrieves first element and executes
-        List<EventManaging> newEvents = event.execute();
-        if (newEvents != null) {
-            ManagingEventsQueue.addAll(newEvents);
-        }
-        return event;
-     }
 
-    private void exceptionTreatment(Exception e, Event ev) {
+        private void exceptionTreatment(Exception e, Event ev) {
         MessageGuiFormatter.showErrorsForGui(e);
         System.out.println(ev.toString());
         throw new RuntimeException(e.getMessage());

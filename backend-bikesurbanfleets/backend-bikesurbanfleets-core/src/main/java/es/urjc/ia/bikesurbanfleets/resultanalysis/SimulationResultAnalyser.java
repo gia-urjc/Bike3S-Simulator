@@ -250,7 +250,7 @@ public class SimulationResultAnalyser {
         csvWriter.writeNext(new String[]{""});
 
         //Now set the String array for writing
-        String[] record = new String[13 + maxrentfails + maxreturnfails + 2];
+        String[] record = new String[14 + maxrentfails + maxreturnfails + 2];
 
         //write header for user data
         record[0] = "#users total";
@@ -263,17 +263,18 @@ public class SimulationResultAnalyser {
         record[7] = "Av. time from orig to dest station (min)(only succesfull users)";
         record[8] = "Av. time to final destination (min)(only succesfull users)";
         record[9] = "Av. total time (min)";
-        record[10] = "Av. timeloss (min)";
-        record[11] = "#failed rentals (only succesfull users)";
-        record[12] = "#failed returns (only succesfull users)";
+        record[10] = "Av. waitingtime in the total time (min)";
+        record[11] = "Av. timeloss (min)";
+        record[12] = "#failed rentals (only succesfull users)";
+        record[13] = "#failed returns (only succesfull users)";
         int i = 0;
         while (i <= maxrentfails) {
-            record[13 + i] = "# with " + i + " rental fails";
+            record[14 + i] = "# with " + i + " rental fails";
             i++;
         }
         int j = 0;
         while (j <= maxreturnfails) {
-            record[13 + i + j] = "# with " + j + " return fails";
+            record[14 + i + j] = "# with " + j + " return fails";
             j++;
         }
         csvWriter.writeNext(record);
@@ -289,14 +290,15 @@ public class SimulationResultAnalyser {
         record[7] = Double.toString(userdat.avbetweenstationtime);
         record[8] = Double.toString(userdat.avfromstationtime);
         record[9] = Double.toString(userdat.avtostationtime + userdat.avbetweenstationtime + userdat.avfromstationtime);
-        record[10] = Double.toString(userdat.avtimeloss);
-        record[11] = Integer.toString(userdat.totalfailedrentals);
-        record[12] = Integer.toString(userdat.totalfailedreturns);
+        record[10] = Double.toString(userdat.avwaitingtime);
+        record[11] = Double.toString(userdat.avtimeloss);
+        record[12] = Integer.toString(userdat.totalfailedrentals);
+        record[13] = Integer.toString(userdat.totalfailedreturns);
         for (Integer key : userdat.usertakefails.keySet()) {
-            record[13 + key] = Integer.toString(userdat.usertakefails.get(key));
+            record[14 + key] = Integer.toString(userdat.usertakefails.get(key));
         }
         for (Integer key : userdat.userreturnfails.keySet()) {
-            record[13 + maxrentfails + 1 + key] = Integer.toString(userdat.userreturnfails.get(key));
+            record[14 + maxrentfails + 1 + key] = Integer.toString(userdat.userreturnfails.get(key));
         }
         csvWriter.writeNext(record);
 

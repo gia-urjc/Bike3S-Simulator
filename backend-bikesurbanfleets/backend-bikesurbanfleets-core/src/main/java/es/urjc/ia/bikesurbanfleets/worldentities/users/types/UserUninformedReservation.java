@@ -14,7 +14,8 @@ import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToPointInCity;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionLeaveSystem;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionReserveBike;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionReserveSlot;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +33,7 @@ public class UserUninformedReservation extends User {
         if (s != null) { //user has found a station
             double dist=s.getPosition().distanceTo(this.getPosition());
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionStation(s, true);
+                return new UserDecisionReserveBike(s);
             }
         } //if not he would leave
         return new UserDecisionLeaveSystem();
@@ -48,7 +49,7 @@ public class UserUninformedReservation extends User {
         if (s != null) { //user has found a station
             double dist=s.getPosition().distanceTo(this.getPosition());
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionStation(s, true);
+                return new UserDecisionReserveBike(s);
             }
         } //if not he would leave
         return new UserDecisionLeaveSystem();
@@ -65,7 +66,7 @@ public class UserUninformedReservation extends User {
         if (s != null) { //user has found a station
             double dist=s.getPosition().distanceTo(this.getPosition());
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionStation(s, true);
+                return new UserDecisionReserveBike(s);
             }
         } //if not he would leave
         return new UserDecisionLeaveSystem();
@@ -77,7 +78,7 @@ public class UserUninformedReservation extends User {
         if (s != null) { //user has found a station
             double dist=s.getPosition().distanceTo(this.getPosition());
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionStation(s, true);
+                return new UserDecisionReserveBike(s);
             }
         } //if not he would leave
         return new UserDecisionLeaveSystem();
@@ -89,33 +90,33 @@ public class UserUninformedReservation extends User {
             return new UserDecisionGoToPointInCity(parameters.intermediatePosition);
         } else {
             Station s = determineStationToReturnBike();
-            return new UserDecisionStation(s, true);
+            return new UserDecisionReserveSlot(s);
         }
     }
 
     @Override
-    public UserDecisionStation decideAfterFailedReturn() {
+    public UserDecision decideAfterFailedReturn() {
         Station s = determineStationToReturnBike();
-        return new UserDecisionStation(s, true);
+        return new UserDecisionReserveSlot(s);
     }
 
     @Override
-    public UserDecisionStation decideAfterFinishingRide() {
+    public UserDecision decideAfterFinishingRide() {
         Station s = determineStationToReturnBike();
-        return new UserDecisionStation(s, true);
+        return new UserDecisionReserveSlot(s);
     }
 
     @Override
-    public UserDecisionStation decideAfterFailedSlotReservation() {
+    public UserDecision decideAfterFailedSlotReservation() {
         Station s = determineStationToReturnBike();
-        return new UserDecisionStation(s, true);
+        return new UserDecisionReserveSlot(s);
     }
 
     @Override
-    public UserDecisionStation decideAfterSlotReservationTimeout() {
+    public UserDecision decideAfterSlotReservationTimeout() {
             Station s = this.getDestinationStation();
             if (s != null) { //user has found a station
-                return new UserDecisionStation(s, true);
+                return new UserDecisionReserveSlot(s);
             } else {
                 throw new RuntimeException("User " + this.getId() + " cant return a bike, no slots");
             }

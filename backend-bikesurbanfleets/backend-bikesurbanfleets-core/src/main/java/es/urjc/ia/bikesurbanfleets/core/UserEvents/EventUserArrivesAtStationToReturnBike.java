@@ -10,7 +10,6 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserMemory;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,11 +21,12 @@ import java.util.List;
  */
 public class EventUserArrivesAtStationToReturnBike extends EventUser {
 
-    private Station station;
+    Station station;
     private Reservation reservation;
     private boolean activereservation;
+    private boolean waitingEvent=false;
 
-    public EventUserArrivesAtStationToReturnBike(int instant, User user, Station station, Reservation reservation) {
+    public EventUserArrivesAtStationToReturnBike(int instant, User user, Station station, Reservation reservation, boolean wait) {
         super(instant, user);
         this.involvedEntities = new ArrayList<>(Arrays.asList(user, station, reservation, user.getBike()));
         this.newEntities = null;
@@ -34,9 +34,10 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
         this.station = station;
         this.reservation = reservation;
         this.activereservation = true;
+        waitingEvent=wait;
     }
 
-    public EventUserArrivesAtStationToReturnBike(int instant, User user, Station station) {
+    public EventUserArrivesAtStationToReturnBike(int instant, User user, Station station, boolean wait) {
         super(instant, user);
         this.involvedEntities = new ArrayList<>(Arrays.asList(user, station));
         this.newEntities = null;
@@ -44,6 +45,7 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
         this.station = station;
         this.activereservation = false;
         this.reservation = null;
+        waitingEvent=wait;
     }
 
     @Override
@@ -59,6 +61,14 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
         } else {//try to get a bike
             returned = user.returnBikeWithoutReservationTo(station);
         }
+        //set the result of the event
+        //the result of EventUserArrivesAtStationToReturnBike is either SUCCESS or FAIL
+        ADDITIONAL_INFO info=null;
+        if(waitingEvent) info=ADDITIONAL_INFO.RETRY_EVENT;
+        if (returned) setResultInfo(Event.RESULT_TYPE.SUCCESS,info);
+        else setResultInfo(Event.RESULT_TYPE.FAIL,info);
+
+        //decide what to do afterwards
         EventUser e;
         if (returned) { //user returned the bike 
             debugEventLog("User returned Bike");
@@ -66,13 +76,8 @@ public class EventUserArrivesAtStationToReturnBike extends EventUser {
         } else { //was not able to get a bike
             user.getMemory().update(UserMemory.FactType.SLOTS_UNAVAILABLE, station);
             debugEventLog("User was not able to return the  bike");
-            UserDecisionStation ud = user.decideAfterFailedReturn();
-            e = manageUserReturnDecision(ud);
+            e = manageUserReturnDecision(DECISION_TYPE.AFTER_FAILED_BIKE_RETURN);
         }
-        //set the result of the event
-        //the result of EventUserArrivesAtStationToReturnBike is either SUCCESSFUL_BIKE_RETURN or FAILED_BIKE_RETURN
-        if (returned) setResult(Event.RESULT_TYPE.SUCCESSFUL_BIKE_RETURN);
-        else setResult(Event.RESULT_TYPE.FAILED_BIKE_RETURN);
         
         return e;
     }

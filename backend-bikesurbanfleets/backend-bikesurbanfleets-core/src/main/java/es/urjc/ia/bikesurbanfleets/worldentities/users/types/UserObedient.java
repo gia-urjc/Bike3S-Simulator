@@ -10,8 +10,10 @@ import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionLeaveSystem;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionReserveBike;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionReserveSlot;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import java.util.List;
 import java.util.function.Predicate;
@@ -43,19 +45,19 @@ public class UserObedient extends UserUninformed {
         if (s != null) { //user has found a station
             double dist=s.getPosition().distanceTo(this.getPosition());
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionStation(s, false);
+                return new UserDecisionGoToStation(s);
             }
         } //if not he would leave
         return new UserDecisionLeaveSystem();
     }
-
+ 
     @Override
-    public UserDecisionStation decideAfterFailedReturn() {
+    public UserDecision decideAfterFailedReturn() {
         if (printHints) {
              System.out.format("[Info] User: %3d Failed return. last probability was:  %9.8f %n" , this.getId(),lastexpetedProbability);
         }
         Station s = determineStationToReturnBike();
-        return new UserDecisionStation(s, false);
+        return new UserDecisionGoToStation(s);
     }
 
     @Override

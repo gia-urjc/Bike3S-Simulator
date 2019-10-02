@@ -11,14 +11,12 @@ import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
  *
  * @author holger
  */
-public class UserDecisionStation implements UserDecision{
+public class UserDecisionReserveSlot implements UserDecision{
     
     public final Station station;
-    public final boolean reserve;
     
-    public UserDecisionStation(Station station, boolean reserve){
+    public UserDecisionReserveSlot(Station station){
         this.station=station;
-        this.reserve=reserve;
     }
     
 }

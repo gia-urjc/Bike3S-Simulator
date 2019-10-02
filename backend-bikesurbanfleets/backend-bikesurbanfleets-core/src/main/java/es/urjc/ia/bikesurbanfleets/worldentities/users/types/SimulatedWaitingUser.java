@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package es.urjc.ia.bikesurbanfleets.worldentities.users.types;
 
 import com.google.gson.JsonObject;
@@ -10,6 +15,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToPointInCity;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionLeaveSystem;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionReserveBike;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import java.util.List;
@@ -17,15 +23,18 @@ import java.util.stream.Collectors;
 
 /**
  *
- * @author holger
+ * this user does no reservations and just waits if no sucess
  */
-@UserType("USER_SIMULATED")
-public class SimulatedRealUser extends User {
+@UserType("USER_SIMULATEDWAITING")
+public class SimulatedWaitingUser extends User {
+
+    private Station laststation = null;
 
     @Override
     public UserDecision decideAfterAppearning() {
         Station s = determineStationToRentBike();
         if (s != null) { //user has found a station
+            laststation = s;
             return new UserDecisionGoToStation(s);
         } //if not he would leave
         return new UserDecisionLeaveSystem();
@@ -33,11 +42,7 @@ public class SimulatedRealUser extends User {
 
     @Override
     public UserDecision decideAfterFailedRental() {
- /*       Station s = determineStationToRentBike();
-        if (s != null) { //user has found a station
-            return new UserDecisionStation(s, false);
-        } //if not he would leave
-   */     return new UserDecisionLeaveSystem();
+        return new UserDecisionGoToStation(laststation);
     }
 
     //no reservations will take place
@@ -55,21 +60,22 @@ public class SimulatedRealUser extends User {
     public UserDecision decideAfterGettingBike() {
         if (parameters.intermediatePosition != null) {
             return new UserDecisionGoToPointInCity(parameters.intermediatePosition);
-        }else {
+        } else {
             Station s = determineStationToReturnBike();
+            laststation = s;
             return new UserDecisionGoToStation(s);
         }
     }
 
     @Override
     public UserDecision decideAfterFailedReturn() {
-        Station s = determineStationToReturnBike();
-        return new UserDecisionGoToStation(s);
+        return new UserDecisionGoToStation(laststation);
     }
 
     @Override
     public UserDecision decideAfterFinishingRide() {
         Station s = determineStationToReturnBike();
+        laststation = s;
         return new UserDecisionGoToStation(s);
     }
 
@@ -89,14 +95,14 @@ public class SimulatedRealUser extends User {
 
         //default constructor used if no parameters are specified
         private Parameters() {
-         }
+        }
         GeoPoint intermediatePosition = null;
 
     }
 
     Parameters parameters;
 
-    public SimulatedRealUser(JsonObject userdef, SimulationServices services, long seed) throws Exception {
+    public SimulatedWaitingUser(JsonObject userdef, SimulationServices services, long seed) throws Exception {
         super(services, userdef, seed);
         //***********Parameter treatment*****************************
         //if this user has parameters this is the right declaration
@@ -127,7 +133,7 @@ public class SimulatedRealUser extends User {
         Station destination = null;
         List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
         List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace);
-        finalStations.removeAll(triedStations);
+        //      finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);
         } else {

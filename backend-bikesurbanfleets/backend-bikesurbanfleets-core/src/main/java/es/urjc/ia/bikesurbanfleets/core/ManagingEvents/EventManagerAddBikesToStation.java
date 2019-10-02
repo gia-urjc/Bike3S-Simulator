@@ -33,18 +33,18 @@ public class EventManagerAddBikesToStation extends EventManaging{
         debugEventLog("At enter the event");
         Bike b = manager.getBikeFromStore();
         if (b==null) {
-            setResult(Event.RESULT_TYPE.FAIL);
+            setResultInfo(Event.RESULT_TYPE.FAIL, null);
         } else {
             boolean sucess=s.returnBikeWithoutReservation(b);
             involvedEntities.add(b);
 
             if (sucess) {
-                setResult(Event.RESULT_TYPE.SUCCESS);
+                setResultInfo(Event.RESULT_TYPE.SUCCESS, null);
             }
             else { //bike can not put into slot 
                 //TODO: what to do here
                 manager.putBikeIntoStore(b);
-                setResult(Event.RESULT_TYPE.FAIL);
+                setResultInfo(Event.RESULT_TYPE.FAIL, null);
             }
         }
  

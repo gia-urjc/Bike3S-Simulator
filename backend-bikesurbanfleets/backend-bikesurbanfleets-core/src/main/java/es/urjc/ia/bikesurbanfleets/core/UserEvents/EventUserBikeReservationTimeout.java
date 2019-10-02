@@ -36,12 +36,13 @@ public class EventUserBikeReservationTimeout extends EventUser {
         debugEventLog("At enter the event");
         station.cancelBikeReservationByTimeout(reservation, instant);
         user.getMemory().update(UserMemory.FactType.BIKE_RESERVATION_TIMEOUT, station);
-        UserDecision ud = user.decideAfterBikeReservationTimeout();
-        EventUser e = manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_RESERVATION_TIMEOUT);
-       
+
         //set the result of the event
         //the result of EventUserBikeReservationTimeout is always success
-        setResult(Event.RESULT_TYPE.SUCCESS);
+        setResultInfo(Event.RESULT_TYPE.SUCCESS, null);
+
+        //decide what to do afterwards
+        EventUser e = manageUserRentalDecision(DECISION_TYPE.AFTER_BIKE_RESERVATION_TIMEOUT);
 
         return e;
     }

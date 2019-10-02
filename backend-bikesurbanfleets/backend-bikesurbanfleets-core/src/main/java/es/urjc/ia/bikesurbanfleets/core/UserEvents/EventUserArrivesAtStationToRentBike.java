@@ -11,7 +11,6 @@ import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToPointInCity;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserMemory;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,11 +21,12 @@ import java.util.Arrays;
  */
 public class EventUserArrivesAtStationToRentBike extends EventUser {
 
-    private Station station;
+    Station station;
     private Reservation reservation;
     private boolean activereservation;
+    private boolean waitingEvent=false;
 
-    public EventUserArrivesAtStationToRentBike(int instant, User user, Station station, Reservation reservation) {
+    public EventUserArrivesAtStationToRentBike(int instant, User user, Station station, Reservation reservation, boolean wait) {
         super(instant, user);
         this.involvedEntities = new ArrayList<>(Arrays.asList(user, station, reservation, reservation.getBike()));
         this.newEntities = null;
@@ -34,9 +34,10 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
         this.station = station;
         this.reservation = reservation;
         this.activereservation = true;
+        waitingEvent=wait;
     }
 
-    public EventUserArrivesAtStationToRentBike(int instant, User user, Station station) {
+    public EventUserArrivesAtStationToRentBike(int instant, User user, Station station, boolean wait) {
         super(instant, user);
         this.involvedEntities = new ArrayList<>(Arrays.asList(user, station));
         this.newEntities = null;
@@ -44,6 +45,7 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
         this.station = station;
         this.activereservation = false;
         this.reservation = null;
+        waitingEvent=wait;
     }
 
     @Override
@@ -61,38 +63,24 @@ public class EventUserArrivesAtStationToRentBike extends EventUser {
         } else {//try to get a bike
             bike = user.removeBikeWithoutReservationFrom(station);
         }
-        //now generate the next event
+        //set the result of the event
+        //the result of EventUserArrivesAtStationToRentBike is either SUCCESS or FAIL
+        ADDITIONAL_INFO info=null;
+        if(waitingEvent) info=ADDITIONAL_INFO.RETRY_EVENT;
+        if (bike) setResultInfo(Event.RESULT_TYPE.SUCCESS, info);
+        else setResultInfo(Event.RESULT_TYPE.FAIL, info);
+
+        //decide what to do afterwards
         EventUser e;
         if (bike) { //user got a bike without an reservation
             debugEventLog("User removed Bike");
-            e= manageDecisionWithBike();
+            e= manageUserDecisionAfterGettingBike(DECISION_TYPE.AFTER_SUCESSFUL_BIKE_RENTAL);
         } else { //was not able to get a bike
             user.getMemory().update(UserMemory.FactType.BIKES_UNAVAILABLE,station);
             debugEventLog("User did not get a bike");
-            UserDecision ud = user.decideAfterFailedRental();
-            e= manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_FAILED_BIKE_RENTAL);
+            e= manageUserRentalDecision(DECISION_TYPE.AFTER_FAILED_BIKE_RENTAL);
         }
-       
-        //set the result of the event
-        //the result of EventUserArrivesAtStationToRentBike is either SUCCESSFUL_BIKE_RENTAL or FAILED_BIKE_RENTAL
-        if (bike) setResult(Event.RESULT_TYPE.SUCCESSFUL_BIKE_RENTAL);
-        else setResult(Event.RESULT_TYPE.FAILED_BIKE_RENTAL);
-        
+      
         return e;
-    }
-
-    private EventUser manageDecisionWithBike() throws Exception {
-        UserDecision ud = user.decideAfterGettingBike();
-        if (ud instanceof UserDecisionGoToPointInCity) {
-            UserDecisionGoToPointInCity uds = (UserDecisionGoToPointInCity) ud;
-            int arrivalTime = user.goToPointInCity(uds.point);
-            user.setState(User.STATE.WITH_BIKE_ON_RIDE);
-            debugEventLog("User decides to take a ride");
-            return new EventUserWantsToReturnBike(getInstant() + arrivalTime, user, uds.point);
-        } else if (ud instanceof UserDecisionStation) {
-            return manageUserReturnDecision((UserDecisionStation) ud);
-        } else {
-            throw new RuntimeException("erroneous user decision");
-        }
     }
 }

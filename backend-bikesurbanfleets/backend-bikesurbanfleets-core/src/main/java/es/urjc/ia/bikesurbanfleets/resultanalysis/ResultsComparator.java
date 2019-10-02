@@ -113,7 +113,7 @@ public class ResultsComparator {
         }
 
         //Now set the String array for writing
-        String[] record = new String[15 + maxrentfails + maxreturnfails + 2];
+        String[] record = new String[16 + maxrentfails + maxreturnfails + 2];
 
         //setup header
         record[0] = "Testname";
@@ -128,17 +128,18 @@ public class ResultsComparator {
         record[9] = "Av. time from orig to dest station (min)(only succesfull users)";
         record[10] = "Av. time to final destination (min)(only succesfull users)";
         record[11] = "Av. total time (min)";
-        record[12] = "Av. timeloss (min)";
-        record[13] = "#failed rentals (only succesfull users)";
-        record[14] = "#failed returns (only succesfull users)";
+        record[12] = "Av. waitingtime in the total time (min)";
+        record[13] = "Av. timeloss (min)";
+        record[14] = "#failed rentals (only succesfull users)";
+        record[15] = "#failed returns (only succesfull users)";
         int i = 0;
         while (i <= maxrentfails) {
-            record[15 + i] = "# with " + i + " rental fails";
+            record[16 + i] = "# with " + i + " rental fails";
             i++;
         }
         int j = 0;
         while (j <= maxreturnfails) {
-            record[15 + i + j] = "# with " + j + " return fails";
+            record[16 + i + j] = "# with " + j + " return fails";
             j++;
         }
         //write header
@@ -162,14 +163,15 @@ public class ResultsComparator {
             record[9] = Double.toString(res.userdata.avbetweenstationtime / 60D);
             record[10] = Double.toString(res.userdata.avfromstationtime / 60D);
             record[11] = Double.toString((res.userdata.avfromstationtime + res.userdata.avbetweenstationtime + res.userdata.avtostationtime) / 60D);
-            record[12] = Double.toString(res.userdata.avtimeloss);
-            record[13] = Integer.toString(res.userdata.totalfailedrentals);
-            record[14] = Integer.toString(res.userdata.totalfailedreturns);
+            record[12] = Double.toString(res.userdata.avwaitingtime);
+            record[13] = Double.toString(res.userdata.avtimeloss);
+            record[14] = Integer.toString(res.userdata.totalfailedrentals);
+            record[15] = Integer.toString(res.userdata.totalfailedreturns);
             for (Integer key : res.userdata.usertakefails.keySet()) {
-                record[15 + key] = Integer.toString(res.userdata.usertakefails.get(key));
+                record[16 + key] = Integer.toString(res.userdata.usertakefails.get(key));
             }
             for (Integer key : res.userdata.userreturnfails.keySet()) {
-                record[15 + maxrentfails + 1 + key] = Integer.toString(res.userdata.userreturnfails.get(key));
+                record[16 + maxrentfails + 1 + key] = Integer.toString(res.userdata.userreturnfails.get(key));
             }
             //write line
             csvWriter.writeNext(record);
@@ -277,6 +279,7 @@ public class ResultsComparator {
         int totalusers = 0;
         int usersfinishedintime = 0;
         double totaltimeloss = 0;
+        double totalwaitingtime=0;
         int failedRentalsUsersWithBike = 0;
         int failedResturnsUsersWithBike = 0;
         int usersreacheddestination = 0;
@@ -309,6 +312,7 @@ public class ResultsComparator {
                         userreturnfails.put(Integer.parseInt(line[16]), current + 1);
                     }
                     totaltimeloss += Double.parseDouble(line[7]);
+                    totalwaitingtime+= Double.parseDouble(line[17]);
                 } else { //abandonados
                     if (!(line[13].equals("0")) || !(line[15].equals("0"))) {
                         throw new RuntimeException("error in results");
@@ -331,6 +335,7 @@ public class ResultsComparator {
         dat.HE = ((double) (usersreacheddestination)) / ((double) (usersreacheddestination + failedRentalsUsersWithBike));
         dat.RE = ((double) (usersreacheddestination)) / ((double) (usersreacheddestination + failedResturnsUsersWithBike));
         dat.avtimeloss = totaltimeloss / ((double) usersreacheddestination);
+        dat.avwaitingtime=totalwaitingtime/ ((double) usersreacheddestination);
     }
 
     private void analyzeManager(String test, GlobalManagerDataForExecution dat) throws IOException {

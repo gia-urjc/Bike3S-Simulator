@@ -26,11 +26,12 @@ public class EventUserArrivesAtDestinationInCity extends EventUser {
         debugEventLog("At enter the event");
         user.setState(User.STATE.LEAVING);
         debugEventLog("User leaves the system");
-        EventUser e = new EventUserLeavesSystem(this.getInstant(), user, Event.EXIT_REASON.EXIT_AFTER_REACHING_DESTINATION);
-       
         //set the result of the event
         //the result of EventUserArrivesAtDestinationInCity is always success
-        setResult(Event.RESULT_TYPE.SUCCESS);
+        setResultInfo(Event.RESULT_TYPE.SUCCESS, null);
+
+        //decide what to do afterwards
+        EventUser e = new EventUserLeavesSystem(this.getInstant(), user, EventUser.EXIT_REASON.EXIT_AFTER_REACHING_DESTINATION);
 
         return e;
      }

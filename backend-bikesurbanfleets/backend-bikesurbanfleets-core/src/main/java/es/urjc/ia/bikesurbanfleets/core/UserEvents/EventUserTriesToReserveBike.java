@@ -21,14 +21,17 @@ import java.util.Arrays;
  */
 public class EventUserTriesToReserveBike extends EventUser {
 
-    private Station station;
+    Station station;
+    private boolean waitingEvent=false;
 
-    public EventUserTriesToReserveBike(int instant, User user, Station station) {
+
+    public EventUserTriesToReserveBike(int instant, User user, Station station, boolean wait) {
         super(instant, user);
         this.involvedEntities = new ArrayList<>(Arrays.asList(user, station));
         this.newEntities = null;
         this.oldEntities=null;
         this.station = station;
+        waitingEvent=wait;
     }
 
     @Override
@@ -38,6 +41,15 @@ public class EventUserTriesToReserveBike extends EventUser {
         Reservation reservation = station.getBikeReservation(user, this.instant);
         this.involvedEntities.add(reservation);
         this.newEntities = new ArrayList<>(Arrays.asList(reservation));
+
+        //set the result of the event
+        //the result of EventUserTriesToReserveBike is either SUCCESS or FAIL
+        ADDITIONAL_INFO info=null;
+        if(waitingEvent) info=ADDITIONAL_INFO.RETRY_EVENT;
+        if (reservation.getState() == Reservation.ReservationState.ACTIVE) setResultInfo(Event.RESULT_TYPE.SUCCESS, info);
+        else setResultInfo(Event.RESULT_TYPE.FAIL, info);
+
+        //decide what to do afterwards
         EventUser e;
         if (reservation.getState() == Reservation.ReservationState.ACTIVE) {   // user has been able to reserve a bike
             this.involvedEntities.add(reservation.getBike());
@@ -45,13 +57,8 @@ public class EventUserTriesToReserveBike extends EventUser {
         } else {  // user has notbeen able to reserve a bike
             this.oldEntities = new ArrayList<>(Arrays.asList(reservation));
             debugEventLog("User has not been able to reserve bike");
-            UserDecision ud = user.decideAfterFailedBikeReservation();
-            e = manageUserRentalDecision(ud, Event.EXIT_REASON.EXIT_AFTER_FAILED_BIKE_RENTAL);
+            e = manageUserRentalDecision(DECISION_TYPE.AFTER_FAILED_BIKE_RESERVATION);
         }
-        //set the result of the event
-        //the result of EventUserTriesToReserveBike is either SUCCESSFUL_BIKE_RESERVATION or FAILED_BIKE_RESERVATION
-        if (reservation.getState() == Reservation.ReservationState.ACTIVE) setResult(Event.RESULT_TYPE.SUCCESSFUL_BIKE_RESERVATION);
-        else setResult(Event.RESULT_TYPE.FAILED_BIKE_RESERVATION);
         
         return e;
     }
@@ -70,7 +77,7 @@ public class EventUserTriesToReserveBike extends EventUser {
             double distwalkedtilTimeout=(user.getRoute().getTotalDistance()* arrivalTime)/Reservation.VALID_TIME;
             return new EventUserBikeReservationTimeout(this.getInstant() + Reservation.VALID_TIME, user, reservation, station, pointTimeOut, distwalkedtilTimeout);
         } else {
-            return new EventUserArrivesAtStationToRentBike(this.getInstant() + arrivalTime, user, station, reservation);
+            return new EventUserArrivesAtStationToRentBike(this.getInstant() + arrivalTime, user, station, reservation, false);
         }
     }
 

@@ -169,32 +169,32 @@ class StationDataAnalyzer {
     private void analyzeStationData(String name, StationMetric stM, Event.RESULT_TYPE result) {
         switch (name) {
             case "EventUserArrivesAtStationToRentBike":
-                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RENTAL) {
+                if (result == Event.RESULT_TYPE.SUCCESS) {
                     stM.succbikerentals++;
                     //user rents bike
-                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RENTAL) {
+                } else if (result == Event.RESULT_TYPE.FAIL) {
                     stM.failedbikerentals++;
                 }
                 break;
             case "EventUserArrivesAtStationToReturnBike":
-                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RETURN) {
+                if (result == Event.RESULT_TYPE.SUCCESS) {
                     stM.succbikereturns++;
                     //user returns bike
-                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RETURN) {
+                } else if (result == Event.RESULT_TYPE.FAIL) {
                     stM.failedbaikereturns++;
                 }
                 break;
             case "EventUserTriesToReserveSlot":
-                if (result == Event.RESULT_TYPE.SUCCESSFUL_SLOT_RESERVATION) {
+                if (result == Event.RESULT_TYPE.SUCCESS) {
                     stM.succslotreservations++;
-                } else if (result == Event.RESULT_TYPE.FAILED_SLOT_RESERVATION) {
+                } else if (result == Event.RESULT_TYPE.FAIL) {
                     stM.failesslotreservations++;
                 }
                 break;
             case "EventUserTriesToReserveBike":
-                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RESERVATION) {
+                if (result == Event.RESULT_TYPE.SUCCESS) {
                     stM.succbikereservations++;
-                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RESERVATION) {
+                } else if (result == Event.RESULT_TYPE.FAIL) {
                     stM.failedbikereservations++;
                 }
                 break;

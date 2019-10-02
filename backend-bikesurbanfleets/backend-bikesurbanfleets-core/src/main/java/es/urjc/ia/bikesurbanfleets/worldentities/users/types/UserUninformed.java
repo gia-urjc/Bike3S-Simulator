@@ -10,8 +10,9 @@ import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToPointInCity;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionLeaveSystem;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class UserUninformed extends User {
         if (s != null) { //user has found a station
             double dist=s.getPosition().distanceTo(this.getPosition());
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionStation(s, false);
+                return new UserDecisionGoToStation(s);
             }
         } //if not he would leave
         return new UserDecisionLeaveSystem();
@@ -49,7 +50,7 @@ public class UserUninformed extends User {
         if (s != null) { //user has found a station
             double dist=s.getPosition().distanceTo(this.getPosition());
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionStation(s, false);
+                return new UserDecisionGoToStation(s);
             }
         } //if not he would leave
         return new UserDecisionLeaveSystem();
@@ -72,29 +73,29 @@ public class UserUninformed extends User {
             return new UserDecisionGoToPointInCity(parameters.intermediatePosition);
         } else {
             Station s = determineStationToReturnBike();
-            return new UserDecisionStation(s, false);
+            return new UserDecisionGoToStation(s);
         }
     }
 
     @Override
-    public UserDecisionStation decideAfterFailedReturn() {
+    public UserDecision decideAfterFailedReturn() {
         Station s = determineStationToReturnBike();
-        return new UserDecisionStation(s, false);
+        return new UserDecisionGoToStation(s);
     }
 
     @Override
-    public UserDecisionStation decideAfterFinishingRide() {
+    public UserDecision decideAfterFinishingRide() {
         Station s = determineStationToReturnBike();
-        return new UserDecisionStation(s, false);
+        return new UserDecisionGoToStation(s);
     }
 
     @Override
-    public UserDecisionStation decideAfterFailedSlotReservation() {
+    public UserDecision decideAfterFailedSlotReservation() {
         return null;
     }
     //TODO: should this method appear in User class?  
     @Override
-    public UserDecisionStation decideAfterSlotReservationTimeout() {
+    public UserDecision decideAfterSlotReservationTimeout() {
         return null;
     }
 

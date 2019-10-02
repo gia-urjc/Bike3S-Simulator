@@ -491,14 +491,14 @@ public abstract class User implements Entity {
      * @return a user decision. Possible outcomes is UserDecisionStation with 
      * or without a slot reservation 
      */
-    public abstract UserDecisionStation decideAfterFailedReturn();
+    public abstract UserDecision decideAfterFailedReturn();
 
      /**
      * User decides what to do after finishing a bike ride to a point in the city .
      * @return a user decision. Possible outcomes are UserDecisionStation with 
      * or without a slot reservation 
      */
-    public abstract UserDecisionStation decideAfterFinishingRide();
+    public abstract UserDecision decideAfterFinishingRide();
 
     /**
      * User decides what to do after a failed Slot Reservation.
@@ -506,7 +506,7 @@ public abstract class User implements Entity {
      * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
      * r without a slot reservation
      */
-    public abstract UserDecisionStation decideAfterFailedSlotReservation();
+    public abstract UserDecision decideAfterFailedSlotReservation();
     
    /**
      * User decides what to do after a Slot Reservation timeout.
@@ -514,7 +514,7 @@ public abstract class User implements Entity {
      * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
      * or without a slot reservation
      */
-    public abstract UserDecisionStation decideAfterSlotReservationTimeout();
+    public abstract UserDecision decideAfterSlotReservationTimeout();
 
     /********************************************
      * Methods for getting stations

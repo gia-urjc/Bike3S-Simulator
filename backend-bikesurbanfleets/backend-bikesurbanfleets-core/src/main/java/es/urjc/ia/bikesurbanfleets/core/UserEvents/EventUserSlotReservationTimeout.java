@@ -5,7 +5,6 @@ import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserMemory;
 
 import java.util.ArrayList;
@@ -34,13 +33,15 @@ public class EventUserSlotReservationTimeout extends EventUser {
         debugEventLog("At enter the event");
         station.cancelSlotReservationByTimeout(reservation, instant);
         user.getMemory().update(UserMemory.FactType.SLOT_RESERVATION_TIMEOUT,station);
-        UserDecisionStation ud = user.decideAfterSlotReservationTimeout();
-        EventUser e=  manageUserReturnDecision(ud);
-       
+
         //set the result of the event
         //the result of EventUserSlotReservationTimeout is always success
-        setResult(Event.RESULT_TYPE.SUCCESS);
+        setResultInfo(Event.RESULT_TYPE.SUCCESS, null);
 
+        
+        //decide what to do afterwards
+        EventUser e=  manageUserReturnDecision(DECISION_TYPE.AFTER_SLOT_RESERVATION_TIMEOUT);
+       
         return e;
      }
 }

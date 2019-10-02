@@ -29,6 +29,8 @@ public abstract class EventManaging implements Event {
     protected List<Entity> oldEntities;
     protected List<Entity> involvedEntities;
     private Event.RESULT_TYPE result;
+    private ADDITIONAL_INFO additionalInfo;
+    
     /**
      * It is the manager how issued the event.
      */
@@ -66,8 +68,12 @@ public abstract class EventManaging implements Event {
     public final Event.RESULT_TYPE getResult() {
         return result;
     };
-    public final void setResult(Event.RESULT_TYPE result){
+    public ADDITIONAL_INFO getAdditionalInfo() {
+        return additionalInfo;
+    }
+    public final void setResultInfo(Event.RESULT_TYPE result, Event.ADDITIONAL_INFO info){
         this.result=result;
+        this.additionalInfo=info;
     };
 
 

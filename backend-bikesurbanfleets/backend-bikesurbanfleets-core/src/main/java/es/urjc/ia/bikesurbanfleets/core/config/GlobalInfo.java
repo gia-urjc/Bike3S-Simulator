@@ -13,6 +13,9 @@ public class GlobalInfo {
     
     //for checking the station ocuppation should be >0
     public final static int STATION_OCCUPATION_CHECK_INTERVAL=300; //every 2 min
+    
+    //
+    public final static int USERWAITING_INTERVAL=1;
 
     /**
      * It is the time period during a reservation is valid or active.

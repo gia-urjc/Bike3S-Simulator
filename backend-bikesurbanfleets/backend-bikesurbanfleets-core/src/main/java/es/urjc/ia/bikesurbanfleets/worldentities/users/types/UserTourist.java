@@ -10,8 +10,10 @@ import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToPointInCity;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionLeaveSystem;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionReserveBike;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -177,7 +179,8 @@ public class UserTourist extends User {
         Station s = determineStationToRentBike();
         int percentage = rando.nextInt(0, 100);
         boolean reserve = percentage < parameters.bikeReservationPercentage;
-        return new UserDecisionStation(s, reserve);
+            if (reserve) return new UserDecisionReserveBike(s);
+            else return new UserDecisionGoToStation(s);
     }
 
     @Override
@@ -188,7 +191,8 @@ public class UserTourist extends User {
             Station s = determineStationToRentBike();
             int percentage = rando.nextInt(0, 100);
             boolean reserve = percentage < parameters.bikeReservationPercentage;
-            return new UserDecisionStation(s, reserve);
+            if (reserve) return new UserDecisionReserveBike(s);
+            else return new UserDecisionGoToStation(s);
         }
     }
 
@@ -199,12 +203,13 @@ public class UserTourist extends User {
         Station s;
         if (gotooldstation) {
             s = this.getDestinationStation();
-            return new UserDecisionStation(s, false);
+            return new UserDecisionGoToStation(s);
         } else {
             s = determineStationToRentBike();
             percentage = rando.nextInt(0, 100);
             boolean reserve = percentage < parameters.bikeReservationPercentage;
-            return new UserDecisionStation(s, reserve);
+            if (reserve) return new UserDecisionReserveBike(s);
+            else return new UserDecisionGoToStation(s);
         }
     }
 
@@ -214,12 +219,13 @@ public class UserTourist extends User {
         boolean reserveAtSame = arrivalTime < parameters.MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION ? false : rando.nextBoolean();
 
         if (reserveAtSame) {
-            return new UserDecisionStation(this.getDestinationStation(), true);
+            return new UserDecisionReserveBike(this.getDestinationStation());
         } else {
             Station s = determineStationToRentBike();
             int percentage = rando.nextInt(0, 100);
             boolean reserve = percentage < parameters.bikeReservationPercentage;
-            return new UserDecisionStation(s, reserve);
+            if (reserve) return new UserDecisionReserveBike(s);
+            else return new UserDecisionGoToStation(s);
         }
      }
 
@@ -229,29 +235,29 @@ public class UserTourist extends User {
             return new UserDecisionGoToPointInCity(parameters.touristDestination);
         } else {
             Station s = determineStationToReturnBike();
-            return new UserDecisionStation(s, false);
+            return new UserDecisionGoToStation(s);
         }
     }
 
     @Override
-    public UserDecisionStation decideAfterFailedReturn() {
+    public UserDecision decideAfterFailedReturn() {
         Station s = determineStationToReturnBike();
-        return new UserDecisionStation(s, false);
+        return new UserDecisionGoToStation(s);
     }
 
     @Override
-    public UserDecisionStation decideAfterFinishingRide() {
+    public UserDecision decideAfterFinishingRide() {
         Station s = determineStationToReturnBike();
-        return new UserDecisionStation(s, false);
+        return new UserDecisionGoToStation(s);
     }
 
     @Override
-    public UserDecisionStation decideAfterFailedSlotReservation() {
+    public UserDecision decideAfterFailedSlotReservation() {
         return null;
     }
 
     @Override
-    public UserDecisionStation decideAfterSlotReservationTimeout() {
+    public UserDecision decideAfterSlotReservationTimeout() {
         return null;
     }
 

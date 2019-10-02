@@ -9,11 +9,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
+import es.urjc.ia.bikesurbanfleets.core.UserEvents.EventUser;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricEntity;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.log4j.LogMF;
 
 /**
  *
@@ -56,13 +58,13 @@ public class HistoryJsonClasses {
          * It is the name of the event.
          */
         @Expose
-        private String name;
+        private String name=null;
 
         /**
          * This is the type of the event (user or manager).
          */
         @Expose
-        private Event.EVENT_TYPE type;
+        private Event.EVENT_TYPE type=null;
  
         /**
          * It is the order of the event at the specified time (necessary if
@@ -72,20 +74,23 @@ public class HistoryJsonClasses {
         private int order;
         
         @Expose
-        private Event.RESULT_TYPE result;
+        private Event.RESULT_TYPE result=null;
         
         @Expose
-        private Collection<IdReference> involvedEntities;
+        private Event.ADDITIONAL_INFO info=null;
 
         @Expose
-        private Map<String, List<JsonObject>> changes;
+        private Collection<IdReference> involvedEntities=null;
+
         @Expose
-        private Map<String, List<JsonObject>> newEntities;
+        private Map<String, List<JsonObject>> changes=null;
         @Expose
-        private Map<String, List<JsonObject>> oldEntities;
+        private Map<String, List<JsonObject>> newEntities=null;
+        @Expose
+        private Map<String, List<JsonObject>> oldEntities=null;
 
         EventEntry(String name, Event.EVENT_TYPE type, int order, Event.RESULT_TYPE res, Collection<IdReference> involved, Map<String, List<JsonObject>> changes, 
-                Map<String, List<JsonObject>> newEntities, Map<String, List<JsonObject>> oldEntities) {
+                Map<String, List<JsonObject>> newEntities, Map<String, List<JsonObject>> oldEntities, Event.ADDITIONAL_INFO info) {
             this.name = name;
             this.order = order;
             this.changes = changes;
@@ -94,6 +99,7 @@ public class HistoryJsonClasses {
             this.result=res;
             this.involvedEntities=involved;
             this.type=type;
+            this.info=info;
         }
 
         public String getName() {
@@ -117,6 +123,10 @@ public class HistoryJsonClasses {
         }
         public Map<String, List<JsonObject>> getChanges() {
             return changes;
+        }
+
+        public Event.ADDITIONAL_INFO getAdditionalInfo() {
+            return info;
         }
       
     }

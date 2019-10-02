@@ -109,7 +109,6 @@ public class ManagerDataAnalyzer {
             newMEM.stationid = -1;
         }
         managereventsmetric.add(newMEM);
-
     }
 
     static class GlobalManagerDataForExecution {

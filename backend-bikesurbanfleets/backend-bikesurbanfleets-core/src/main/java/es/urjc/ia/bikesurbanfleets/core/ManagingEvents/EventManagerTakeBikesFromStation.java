@@ -34,11 +34,11 @@ public class EventManagerTakeBikesFromStation extends EventManaging{
         debugEventLog("At enter the event");
         Bike b=s.removeBikeWithoutReservation();
         if (b==null) {
-            setResult(Event.RESULT_TYPE.FAIL);
+            setResultInfo(Event.RESULT_TYPE.FAIL, null);
         } else {
             manager.putBikeIntoStore(b);
             involvedEntities.add(b);
-            setResult(Event.RESULT_TYPE.SUCCESS);
+            setResultInfo(Event.RESULT_TYPE.SUCCESS, null);
         }
         return null;
     }

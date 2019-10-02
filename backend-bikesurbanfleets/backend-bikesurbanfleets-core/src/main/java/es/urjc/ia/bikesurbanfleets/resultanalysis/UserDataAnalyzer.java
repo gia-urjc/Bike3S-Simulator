@@ -12,6 +12,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
+import es.urjc.ia.bikesurbanfleets.core.UserEvents.EventUser;
 import es.urjc.ia.bikesurbanfleets.history.HistoryJsonClasses;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.StationDataAnalyzer.StationMetric;
@@ -39,11 +40,13 @@ class UserDataAnalyzer {
 
     private static class UserMetric {
 
+        int timelastevent = 0;
         int timeapp = -1;
         int timegetbike = -1;
         int timeretbike = -1;
         int timeleafe = -1;
-        Event.RESULT_TYPE leafreason;
+        int waitingtime = 0;
+        EventUser.EXIT_REASON leafreason = null;
         int succbikereservations = 0;
         int failedbikereservations = 0;
         int succslotreservations = 0;
@@ -103,7 +106,7 @@ class UserDataAnalyzer {
         csvWriter.writeNext(desc);
 
         //Now set the String array for writing
-        String[] record = new String[17];
+        String[] record = new String[18];
 
         //write header
         record[0] = "id";
@@ -123,6 +126,8 @@ class UserDataAnalyzer {
         record[14] = "Failed bike rentals";
         record[15] = "Successful bike returns";
         record[16] = "Failed bike returns";
+        record[17] = "Time waited to retry";
+
         csvWriter.writeNext(record);
 
         //now write the user values
@@ -174,6 +179,7 @@ class UserDataAnalyzer {
             record[14] = Integer.toString(um.failedbikerentals);
             record[15] = Integer.toString(um.succbikereturns);
             record[16] = Integer.toString(um.failedbaikereturns);
+            record[17] = Integer.toString(um.waitingtime);
             //write line
             csvWriter.writeNext(record);
         }
@@ -261,12 +267,16 @@ class UserDataAnalyzer {
             newUM.cyclevelocity = hu.getCyclingVelocity();
             newUM.timeapp = time;
             newUM.lastposition = newUM.origin;
+            newUM.timelastevent = time;
             return;
         }
 
         // in any other case the user should exist
         UserMetric usM = usermetrics.get(userid);
         Integer stationid = SimulationResultAnalyser.getStationID(ee.getInvolvedEntities());
+        if (usM.timelastevent > time) {
+            throw new RuntimeException("event can not be before last event");
+        }
         StationMetric stM = null;
         if (stationid != null) {
             stM = stationmetrics.get(stationid);
@@ -275,43 +285,59 @@ class UserDataAnalyzer {
             case "EventUserArrivesAtStationToRentBike":
                 usM.artificialtime += (usM.lastposition.distanceTo(stM.position) / standardstraightLineWalkingVelocity);
                 usM.lastposition = stM.position;
-                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RENTAL) {
+                if (result == Event.RESULT_TYPE.SUCCESS) {
                     usM.succbikerentals++;
                     usM.timegetbike = time;
                     //user rents bike
-                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RENTAL) {
-                    usM.failedbikerentals++;
+                } else if (result == Event.RESULT_TYPE.FAIL) {
+                    if (ee.getAdditionalInfo() == Event.ADDITIONAL_INFO.RETRY_EVENT) {
+                        usM.waitingtime += time - usM.timelastevent;
+                    } else {
+                        usM.failedbikerentals++;
+                    }
                 }
                 break;
             case "EventUserArrivesAtStationToReturnBike":
                 usM.artificialtime += (usM.lastposition.distanceTo(stM.position) / standardstraightLineCyclingVelocity);
                 usM.lastposition = stM.position;
-                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RETURN) {
+                if (result == Event.RESULT_TYPE.SUCCESS) {
                     usM.succbikereturns++;
                     usM.timeretbike = time;
                     //user returns bike
-                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RETURN) {
-                    usM.failedbaikereturns++;
+                } else if (result == Event.RESULT_TYPE.FAIL) {
+                    if (ee.getAdditionalInfo() == Event.ADDITIONAL_INFO.RETRY_EVENT) {
+                        usM.waitingtime += time - usM.timelastevent;
+                    } else {
+                        usM.failedbaikereturns++;
+                    }
                 }
                 break;
             case "EventUserTriesToReserveSlot":
-                if (result == Event.RESULT_TYPE.SUCCESSFUL_SLOT_RESERVATION) {
+                if (result == Event.RESULT_TYPE.SUCCESS) {
                     usM.succslotreservations++;
-                } else if (result == Event.RESULT_TYPE.FAILED_SLOT_RESERVATION) {
-                    usM.failesslotreservations++;
+                } else if (result == Event.RESULT_TYPE.FAIL) {
+                    if (ee.getAdditionalInfo() == Event.ADDITIONAL_INFO.RETRY_EVENT) {
+                        usM.waitingtime += time - usM.timelastevent;
+                    } else {
+                        usM.failesslotreservations++;
+                    }
                 }
                 break;
             case "EventUserTriesToReserveBike":
-                if (result == Event.RESULT_TYPE.SUCCESSFUL_BIKE_RESERVATION) {
+                if (result == Event.RESULT_TYPE.SUCCESS) {
                     usM.succbikereservations++;
-                } else if (result == Event.RESULT_TYPE.FAILED_BIKE_RESERVATION) {
-                    usM.failedbikereservations++;
+                } else if (result == Event.RESULT_TYPE.FAIL) {
+                    if (ee.getAdditionalInfo() == Event.ADDITIONAL_INFO.RETRY_EVENT) {
+                        usM.waitingtime += time - usM.timelastevent;
+                    } else {
+                        usM.failedbikereservations++;
+                    }
                 }
                 break;
             case "EventUserLeavesSystem":
                 usM.artificialtime += (usM.lastposition.distanceTo(usM.destination) / standardstraightLineWalkingVelocity);
                 usM.lastposition = usM.destination;
-                usM.leafreason = result;
+                usM.leafreason = EventUser.EXIT_REASON.valueOf(ee.getAdditionalInfo().name());
                 usM.finishedinsimtime = true;
                 //user leafs
                 usM.timeleafe = time;
@@ -319,10 +345,11 @@ class UserDataAnalyzer {
             default:
                 break;
         }
-
+        usM.timelastevent = time;
     }
 
     static class GlobalUserDataForExecution {
+
         double avtostationtime = 0;
         int totalusers = 0;
         int finishedusers = 0;
@@ -337,9 +364,10 @@ class UserDataAnalyzer {
         double avtimeloss = 0;
         int totalfailedrentals = 0;
         int totalfailedreturns = 0;
+        double avwaitingtime=0;
     }
 
-    GlobalUserDataForExecution getGlobalUserData()  {
+    GlobalUserDataForExecution getGlobalUserData() {
         //globval values for users
         GlobalUserDataForExecution dat = new GlobalUserDataForExecution();
         dat.totalusers = usermetrics.size();
@@ -353,6 +381,7 @@ class UserDataAnalyzer {
         dat.totalfailedrentals = 0;
         dat.totalfailedreturns = 0;
         dat.avabandonos = 0;
+        dat.avwaitingtime=0;
         int succusers = 0;
         int i = 0;
         for (UserMetric um : usermetrics.values()) {
@@ -365,6 +394,7 @@ class UserDataAnalyzer {
                     dat.avfromstationtime += um.timeleafe - um.timeretbike;
                     dat.totalfailedrentals += um.failedbikerentals;
                     dat.totalfailedreturns += um.failedbaikereturns;
+                    dat.avwaitingtime+=um.waitingtime;
                     Integer old = dat.usertakefails.get(um.failedbikerentals);
                     if (old == null) {
                         dat.usertakefails.put(um.failedbikerentals, 1);
@@ -379,7 +409,7 @@ class UserDataAnalyzer {
                     }
                     dat.avtimeloss += um.additionaltimeloss;
                 }
-                if (um.leafreason != Event.RESULT_TYPE.EXIT_AFTER_REACHING_DESTINATION) {
+                if (um.leafreason != EventUser.EXIT_REASON.EXIT_AFTER_REACHING_DESTINATION) {
                     dat.avabandonos++;
                 }
             }
@@ -391,6 +421,7 @@ class UserDataAnalyzer {
         dat.avtostationtime = dat.avtostationtime / ((double) succusers * 60D);
         dat.avbetweenstationtime = dat.avbetweenstationtime / ((double) succusers * 60D);
         dat.avfromstationtime = dat.avfromstationtime / ((double) succusers * 60D);
+        dat.avwaitingtime=dat.avwaitingtime/ ((double) succusers * 60D);
         dat.DS = (double) succusers / (double) dat.finishedusers;
         dat.HE = (double) succusers / ((double) dat.totalfailedrentals + succusers);
         dat.RE = (double) succusers / ((double) dat.totalfailedreturns + succusers);

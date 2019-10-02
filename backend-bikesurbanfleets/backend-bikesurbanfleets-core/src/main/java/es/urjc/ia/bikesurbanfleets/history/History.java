@@ -199,7 +199,7 @@ public class History {
         serializedEvents.get(instant).add(
                 new HistoryJsonClasses.EventEntry(event.getClass().getSimpleName(), event.getEventType(),
                         order, event.getResult(),involved,
-                        changes, serializedNewEntities, serializedOldEntities));
+                        changes, serializedNewEntities, serializedOldEntities, event.getAdditionalInfo()));
     }
 
     private static List<HistoryJsonClasses.IdReference> getReferencesInvolvedEntities(List<Entity> invEntities) {

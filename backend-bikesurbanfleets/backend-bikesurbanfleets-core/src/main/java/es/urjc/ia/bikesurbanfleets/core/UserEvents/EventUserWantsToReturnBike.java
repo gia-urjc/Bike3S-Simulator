@@ -6,7 +6,6 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToPointInCity;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionStation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,12 +27,13 @@ public class EventUserWantsToReturnBike extends EventUser {
     public EventUser execute() throws Exception {
         user.setPosition(currentPosition);
         debugEventLog("At enter the event");
-        UserDecisionStation ud = user.decideAfterFinishingRide();
-        EventUser e = manageUserReturnDecision(ud);
-        
+
         //set the result of the event
         //the result of EventUserWantsToReturnBike is always success
-        setResult(Event.RESULT_TYPE.SUCCESS);
+        setResultInfo(Event.RESULT_TYPE.SUCCESS, null);
+
+        //decide what to do afterwards
+        EventUser e = manageUserReturnDecision(DECISION_TYPE.AFTER_FINISHING_RIDE);
 
         return e;
     }
