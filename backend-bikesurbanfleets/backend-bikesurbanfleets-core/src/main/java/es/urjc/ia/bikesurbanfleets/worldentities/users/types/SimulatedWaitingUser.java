@@ -8,6 +8,7 @@ package es.urjc.ia.bikesurbanfleets.worldentities.users.types;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class SimulatedWaitingUser extends User {
 
     private Station laststation = null;
+    private int waitingstart = -1;
 
     @Override
     public UserDecision decideAfterAppearning() {
@@ -42,7 +44,14 @@ public class SimulatedWaitingUser extends User {
 
     @Override
     public UserDecision decideAfterFailedRental() {
-        return new UserDecisionGoToStation(laststation);
+        if (waitingstart == -1) {
+            waitingstart = (int) SimulationDateTime.getCurrentSimulationInstant();
+        }
+        if ((SimulationDateTime.getCurrentSimulationInstant() - waitingstart) > parameters.MaxWaitingTime) {
+            return new UserDecisionLeaveSystem();
+        } else {
+            return new UserDecisionGoToStation(laststation);
+        }
     }
 
     //no reservations will take place
@@ -58,6 +67,7 @@ public class SimulatedWaitingUser extends User {
 
     @Override
     public UserDecision decideAfterGettingBike() {
+        waitingstart = -1;
         if (parameters.intermediatePosition != null) {
             return new UserDecisionGoToPointInCity(parameters.intermediatePosition);
         } else {
@@ -69,13 +79,24 @@ public class SimulatedWaitingUser extends User {
 
     @Override
     public UserDecision decideAfterFailedReturn() {
-        return new UserDecisionGoToStation(laststation);
+        if (waitingstart == -1) {
+            waitingstart = (int) SimulationDateTime.getCurrentSimulationInstant();
+        }
+        if ((SimulationDateTime.getCurrentSimulationInstant() - waitingstart) > parameters.MaxWaitingTime) {
+            Station s = determineStationToReturnBike();
+            laststation = s;
+            waitingstart = -1;
+            return new UserDecisionGoToStation(s);
+        } else {
+            return new UserDecisionGoToStation(laststation);
+        }
     }
 
     @Override
     public UserDecision decideAfterFinishingRide() {
         Station s = determineStationToReturnBike();
         laststation = s;
+        waitingstart = -1;
         return new UserDecisionGoToStation(s);
     }
 
@@ -97,6 +118,7 @@ public class SimulatedWaitingUser extends User {
         private Parameters() {
         }
         GeoPoint intermediatePosition = null;
+        int MaxWaitingTime = 600;
 
     }
 
@@ -133,7 +155,7 @@ public class SimulatedWaitingUser extends User {
         Station destination = null;
         List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
         List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace);
-        //      finalStations.removeAll(triedStations);
+        finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);
         } else {
