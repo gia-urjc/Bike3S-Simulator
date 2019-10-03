@@ -50,8 +50,6 @@ public class UserEconomicIncentives extends UserObedient {
  
         int maxDistanceToRentBike = 600;
 
-        GeoPoint intermediatePosition = null;
-
         @Override
         public String toString() {
             return "Parameters{"

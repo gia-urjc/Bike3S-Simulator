@@ -41,7 +41,7 @@ public class CompareTestApplication {
         //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurr";
         //testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurroundWithDemand";
         //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/version_usersmax600/cost_complex_prediction";
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/SimulationJournalEvaluationTest/evaluationTest_manager";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/SimulationJournalEvaluationTest/evaluationTest_nomanager";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -99,8 +99,21 @@ public class CompareTestApplication {
         //now loop through the tests
         ArrayList<String> testnames = new ArrayList<String>();
         for (JsonObject t : tests.tests) {
-            String usertype = t.getAsJsonObject("userType").get("typeName").getAsString();
-            String recomendertype = t.getAsJsonObject("recommendationSystemType").get("typeName").getAsString();
+            JsonObject userob = t.getAsJsonObject("userType");
+            String usertype;
+            if (userob == null || userob.get("typeName")==null) {
+                usertype = "origin";
+            } else {
+                usertype = userob.get("typeName").getAsString();
+            }
+            JsonObject recomenderob = t.getAsJsonObject("recommendationSystemType");
+            String recomendertype;
+            if (recomenderob == null || recomenderob.get("typeName")==null) {
+                recomendertype = "origin";
+            } else {
+                recomendertype = recomenderob.get("typeName").getAsString();
+            }
+            
             String testdir = usertype + "_" + recomendertype;
             int i = 0;
             while (exists(testdir + i, testnames)) {
@@ -109,7 +122,7 @@ public class CompareTestApplication {
             testdir = testdir + i;
             testnames.add(testdir);
 
-            runSimulationTest(globalInfo, jsonReader, testdir, t.getAsJsonObject("userType"), t.getAsJsonObject("recommendationSystemType"));
+            runSimulationTest(globalInfo, jsonReader, testdir, userob, recomenderob);
         }
         new ResultsComparator(analisisDir, historyDir, analisisDir + "compareResults.csv", globalInfo.getTotalSimulationTime()).compareTestResults();
         //script requires autorization    runscriptR();
@@ -141,14 +154,18 @@ public class CompareTestApplication {
         try {
 
             //modify recomenderspecification with the one from the test
-            globalInfo.setOtherRecommendationSystem(recomendertype);
-
+            if (recomendertype != null && recomendertype.get("typeName")!=null) {
+                globalInfo.setOtherRecommendationSystem(recomendertype);
+            }
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             //modify user type specification with the one from the test
-            List<JsonObject> users = usersInfo.getUsers();
-            for (JsonObject user : users) {
-                user.remove("userType");
-                user.add("userType", usertype);
+            if (usertype!=null && usertype.get("typeName")!=null){
+                List<JsonObject> users = usersInfo.getUsers();
+                for (JsonObject user : users) {
+                    //substitute the usertype
+                    user.remove("userType");
+                    user.add("userType", usertype);
+                }
             }
 
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();

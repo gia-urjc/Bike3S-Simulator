@@ -53,8 +53,8 @@ public class SimulatedRealUser extends User {
 
     @Override
     public UserDecision decideAfterGettingBike() {
-        if (parameters.intermediatePosition != null) {
-            return new UserDecisionGoToPointInCity(parameters.intermediatePosition);
+        if (intermediatePosition != null) {
+            return new UserDecisionGoToPointInCity(intermediatePosition);
         }else {
             Station s = determineStationToReturnBike();
             return new UserDecisionGoToStation(s);
@@ -90,8 +90,6 @@ public class SimulatedRealUser extends User {
         //default constructor used if no parameters are specified
         private Parameters() {
          }
-        GeoPoint intermediatePosition = null;
-
     }
 
     Parameters parameters;

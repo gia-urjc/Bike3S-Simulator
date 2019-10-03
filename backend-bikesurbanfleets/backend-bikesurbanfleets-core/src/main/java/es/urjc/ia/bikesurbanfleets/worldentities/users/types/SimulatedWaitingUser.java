@@ -68,8 +68,8 @@ public class SimulatedWaitingUser extends User {
     @Override
     public UserDecision decideAfterGettingBike() {
         waitingstart = -1;
-        if (parameters.intermediatePosition != null) {
-            return new UserDecisionGoToPointInCity(parameters.intermediatePosition);
+        if (intermediatePosition != null) {
+            return new UserDecisionGoToPointInCity(intermediatePosition);
         } else {
             Station s = determineStationToReturnBike();
             laststation = s;
@@ -117,7 +117,6 @@ public class SimulatedWaitingUser extends User {
         //default constructor used if no parameters are specified
         private Parameters() {
         }
-        GeoPoint intermediatePosition = null;
         int MaxWaitingTime = 600;
 
     }

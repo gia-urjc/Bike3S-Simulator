@@ -86,8 +86,8 @@ public class UserUninformedReservation extends User {
 
     @Override
     public UserDecision decideAfterGettingBike() {
-        if (parameters.intermediatePosition != null) {
-            return new UserDecisionGoToPointInCity(parameters.intermediatePosition);
+        if (intermediatePosition != null) {
+            return new UserDecisionGoToPointInCity(intermediatePosition);
         } else {
             Station s = determineStationToReturnBike();
             return new UserDecisionReserveSlot(s);
@@ -135,7 +135,6 @@ public class UserUninformedReservation extends User {
 
          int maxDistanceToRentBike = 600;
 
-         GeoPoint intermediatePosition=null;
     }
 
     Parameters parameters;

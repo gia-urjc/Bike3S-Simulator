@@ -85,6 +85,11 @@ public abstract class User implements Entity {
     protected double cyclingVelocity;
 
     /**
+     * Intermediate position is a position in the area where the user whats to go between start end endposition
+     */
+    protected GeoPoint intermediatePosition;
+    
+    /**
      * It is the user current (bike or slot) reservation, i. e., the last
      * reservation user has made. If user hasn't made a reservation, this
      * attribute is null.
@@ -166,6 +171,12 @@ public abstract class User implements Entity {
         aux = userdef.get("cyclingVelocity");
         if (aux != null) {
             cyclingVelocity = aux.getAsDouble();
+        }
+        aux = userdef.get("intermediatePosition");
+        if (aux != null) {
+            intermediatePosition = gson.fromJson(aux, GeoPoint.class);
+        } else {
+            intermediatePosition=null;
         }
     }
 
