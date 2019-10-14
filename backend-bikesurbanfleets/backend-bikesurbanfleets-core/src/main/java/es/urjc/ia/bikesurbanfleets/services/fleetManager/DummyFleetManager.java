@@ -17,18 +17,13 @@ import java.util.PriorityQueue;
  *
  * @author holger
  */
-@FleetManagerType("Dummy")
+@FleetManagerType("DummyFleetManager")
 public class DummyFleetManager extends FleetManager{
 
  
-    private static class FleetManagerParameters {
-    }
-    FleetManagerParameters parameters=null;
-
     public DummyFleetManager(JsonObject parameterdef, SimulationServices ss) throws Exception {
         super(ss);
-        this.parameters = new FleetManagerParameters();
-        getParameters(parameterdef, this.parameters);
+        getParameters(parameterdef, null);
      }
 
     //this manager does nothing

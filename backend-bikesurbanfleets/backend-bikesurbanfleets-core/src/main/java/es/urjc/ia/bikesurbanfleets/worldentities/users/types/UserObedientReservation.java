@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @UserType("USER_OBEDIENT_RES")
 public class UserObedientReservation extends UserUninformedReservation {
     
-    private final boolean printHints = true;
+    private final boolean printHints = false;
 
     public UserObedientReservation(JsonObject userdef, SimulationServices services, long seed) throws Exception{
         super(userdef, services, seed);
