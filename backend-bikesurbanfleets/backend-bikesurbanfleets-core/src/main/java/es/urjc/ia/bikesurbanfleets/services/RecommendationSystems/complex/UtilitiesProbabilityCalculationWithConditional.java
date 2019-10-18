@@ -14,7 +14,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
  *
  * @author holger
  */
-public class UtilitiesProbabilityCalculation extends UtilitiesProbabilityCalculator{
+public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesProbabilityCalculator{
   
     final private double probabilityUsersObey ;
     final private boolean takeintoaccountexpected ;
@@ -22,7 +22,7 @@ public class UtilitiesProbabilityCalculation extends UtilitiesProbabilityCalcula
     final private PastRecommendations pastrecs;
     final private int additionalResourcesDesiredInProbability;
     
-    public UtilitiesProbabilityCalculation(DemandManager dm, PastRecommendations pastrecs, double probabilityUsersObey,
+    public UtilitiesProbabilityCalculationWithConditional(DemandManager dm, PastRecommendations pastrecs, double probabilityUsersObey,
             boolean takeintoaccountexpected, boolean takeintoaccountcompromised, int additionalResourcesDesiredInProbability
     ) {
         this.dm = dm;
@@ -38,153 +38,175 @@ public class UtilitiesProbabilityCalculation extends UtilitiesProbabilityCalcula
 
    // Probabilities form now to timeoffset 
     public double calculateTakeProbability(Station s, double timeoffset) {
-        int estimatedbikes = s.availableBikes();
+        int currentbikes = s.availableBikes();
+        int estimatedbikechanges=0;
+        int compromisedbikes=0;
         if (takeintoaccountexpected) {
             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
-            estimatedbikes += (int) Math.floor(er.changes * probabilityUsersObey);
+            estimatedbikechanges = (int) Math.floor(er.changes * probabilityUsersObey);
             if (takeintoaccountcompromised) {
-                estimatedbikes += (int) Math.floor(er.minpostchanges * probabilityUsersObey);
+                compromisedbikes = (int) Math.floor(er.minpostchanges * probabilityUsersObey);
              }
         }
-        
-        estimatedbikes -=additionalResourcesDesiredInProbability;
         double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a bike exists and that is exists after taking one 
-        int k = 1 - estimatedbikes;
-        double probbike = ProbabilityDistributions.calculateCDFSkellamProbability(returndemandrate, takedemandrate, k);
+        int availablebikesestimated = currentbikes+ estimatedbikechanges+ compromisedbikes;
+/*        if (availablebikesestimated<0 || availablebikesestimated>s.getCapacity())
+            System.out.println("situacion rara: station: " + s.getId() + " capacity: " + s.getCapacity()+ 
+                    " currentbikes: " + currentbikes + " estimatedchange: " + estimatedbikechanges + 
+                    " compromisedbikes: "+ compromisedbikes + " total: " + availablebikesestimated);
+  */    availablebikesestimated-= additionalResourcesDesiredInProbability;
+        int k = 1 - availablebikesestimated;
+        double probbike = ProbabilityDistributions.conditionalCDFSkellamProbability(returndemandrate, takedemandrate, k,estimatedbikechanges);  
         return probbike;
     }
     public double calculateReturnProbability(Station s, double timeoffset) {
-        int estimatedslots = s.availableSlots();
+        int currentslots = s.availableSlots();
+        int estimatedbikechanges=0;
+        int compromisedslots=0;
         if (takeintoaccountexpected) {
             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
-            estimatedslots -= (int) Math.floor(er.changes * probabilityUsersObey);
+            estimatedbikechanges = (int) Math.floor(er.changes * probabilityUsersObey);
             if (takeintoaccountcompromised) {
                 //            if ((estimatedbikes+minpostchanges)<=0){
-                estimatedslots -= (int) Math.floor(er.maxpostchanges * probabilityUsersObey);
+                compromisedslots = (int) Math.floor(er.maxpostchanges * probabilityUsersObey);
                 //            }
             }
         }
-        estimatedslots -=additionalResourcesDesiredInProbability;
         double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a slot exists and that is exists after taking one 
-        int k = 1 - estimatedslots;
-        double probslot = ProbabilityDistributions.calculateCDFSkellamProbability(takedemandrate, returndemandrate, k);
+        int availableslotsestimated = currentslots- estimatedbikechanges - compromisedslots;
+  /*      if (availableslotsestimated<0 || availableslotsestimated>s.getCapacity())
+            System.out.println("situacion rara: station: " + s.getId() + " capacity: " + s.getCapacity()+ 
+                    " currentslots: " + currentslots + " estimatedchange: " + estimatedbikechanges + 
+                    " compromisedslots: "+ compromisedslots + " total: " + availableslotsestimated);
+    */  availableslotsestimated-= additionalResourcesDesiredInProbability;
+        int k = 1 - availableslotsestimated;
+        double probslot = ProbabilityDistributions.conditionalCDFSkellamProbability(takedemandrate, returndemandrate, k,-estimatedbikechanges);  
         return probslot;
     }
     //methods for calculation probabilities    
     public ProbabilityData calculateAllTakeProbabilities(StationUtilityData sd, double timeoffset) {
         ProbabilityData pd=new ProbabilityData();
         Station s = sd.getStation();
-        int estimatedbikes = s.availableBikes();
-        int estimatedslots = s.availableSlots();
+        int currentbikes = s.availableBikes();
+        int currentslots = s.availableSlots();
+        int estimatedbikechanges=0;
+        int compromisedbikes=0;
+        int compromisedslots=0;
+
         if (takeintoaccountexpected) {
             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
-            estimatedbikes += (int) Math.floor(er.changes * probabilityUsersObey);
-            estimatedslots -= (int) Math.floor(er.changes * probabilityUsersObey);
+            estimatedbikechanges += (int) Math.floor(er.changes * probabilityUsersObey);
             if (takeintoaccountcompromised) {
                 //            if ((estimatedbikes+minpostchanges)<=0){
-                estimatedbikes += (int) Math.floor(er.minpostchanges * probabilityUsersObey);
-                estimatedslots -= (int) Math.floor(er.maxpostchanges * probabilityUsersObey);
+                compromisedbikes += (int) Math.floor(er.minpostchanges * probabilityUsersObey);
+                compromisedslots -= (int) Math.floor(er.maxpostchanges * probabilityUsersObey);
                 //            }
             }
         }
-        estimatedbikes -=additionalResourcesDesiredInProbability;
-        estimatedslots -=additionalResourcesDesiredInProbability;
         double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a bike exists and that is exists after taking one 
-        int k = 1 - estimatedbikes;
-        pd.probabilityTake = ProbabilityDistributions.calculateCDFSkellamProbability(returndemandrate, takedemandrate, k);
-        pd.probabilityTakeAfterTake = pd.probabilityTake - ProbabilityDistributions.calculateSkellamProbability(returndemandrate, takedemandrate, k);
+        int availablebikesestimated = currentbikes+ estimatedbikechanges+ compromisedbikes;
+        availablebikesestimated-= additionalResourcesDesiredInProbability;
+        int k = 1 - availablebikesestimated;
+        pd.probabilityTake = ProbabilityDistributions.conditionalCDFSkellamProbability(returndemandrate, takedemandrate, k, estimatedbikechanges);
+        pd.probabilityTakeAfterTake = ProbabilityDistributions.conditionalCDFSkellamProbability(returndemandrate, takedemandrate, k+1, estimatedbikechanges-1);
 
         //probability that a slot exists and that is exists after taking one 
-        k = 1 - estimatedslots;
-        pd.probabilityReturn = ProbabilityDistributions.calculateCDFSkellamProbability(takedemandrate, returndemandrate, k);
-        k = k - 1;
-        pd.probabilityReturnAfterTake = pd.probabilityReturn + ProbabilityDistributions.calculateSkellamProbability(takedemandrate, returndemandrate, k);
+        int availableslotsestimated = currentslots- estimatedbikechanges - compromisedslots;
+        availableslotsestimated-= additionalResourcesDesiredInProbability;
+        k = 1 - availableslotsestimated;
+        pd.probabilityReturn = ProbabilityDistributions.conditionalCDFSkellamProbability(takedemandrate, returndemandrate, k,-estimatedbikechanges);
+        pd.probabilityReturnAfterTake = ProbabilityDistributions.conditionalCDFSkellamProbability(takedemandrate, returndemandrate, k-1,-(estimatedbikechanges-1));
 
         return pd;
     }
 
-     //methods for calculation probabilities    
+    //methods for calculation probabilities    
     public ProbabilityData calculateAllReturnProbabilities(StationUtilityData sd, double timeoffset) {
         ProbabilityData pd=new ProbabilityData();
         Station s = sd.getStation();
-        int estimatedbikes = s.availableBikes();
-        int estimatedslots = s.availableSlots();
+        int currentbikes = s.availableBikes();
+        int currentslots = s.availableSlots();
+        int estimatedbikechanges=0;
+        int compromisedbikes=0;
+        int compromisedslots=0;
+
         if (takeintoaccountexpected) {
             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
-            estimatedbikes += (int) Math.floor(er.changes * probabilityUsersObey);
-            estimatedslots -= (int) Math.floor(er.changes * probabilityUsersObey);
+            estimatedbikechanges += (int) Math.floor(er.changes * probabilityUsersObey);
             if (takeintoaccountcompromised) {
                 //            if ((estimatedbikes+minpostchanges)<=0){
-                estimatedbikes += (int) Math.floor(er.minpostchanges * probabilityUsersObey);
-                estimatedslots -= (int) Math.floor(er.maxpostchanges * probabilityUsersObey);
+                compromisedbikes += (int) Math.floor(er.minpostchanges * probabilityUsersObey);
+                compromisedslots -= (int) Math.floor(er.maxpostchanges * probabilityUsersObey);
                 //            }
             }
         }
-        estimatedbikes -=additionalResourcesDesiredInProbability;
-        estimatedslots -=additionalResourcesDesiredInProbability;
         double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a bike exists and that is exists after taking one 
-        int k = 1 - estimatedbikes;
-        pd.probabilityTake = ProbabilityDistributions.calculateCDFSkellamProbability(returndemandrate, takedemandrate, k);
-        k = k - 1;
-        pd.probabilityTakeAfterRerturn = pd.probabilityTake + ProbabilityDistributions.calculateSkellamProbability(returndemandrate, takedemandrate, k);
+        int availablebikesestimated = currentbikes+ estimatedbikechanges+ compromisedbikes;
+        availablebikesestimated-= additionalResourcesDesiredInProbability;
+        int k = 1 - availablebikesestimated;
+        pd.probabilityTake = ProbabilityDistributions.conditionalCDFSkellamProbability(returndemandrate, takedemandrate, k, estimatedbikechanges);
+        pd.probabilityTakeAfterRerturn = ProbabilityDistributions.conditionalCDFSkellamProbability(returndemandrate, takedemandrate, k-1, estimatedbikechanges+1);
 
         //probability that a slot exists and that is exists after taking one 
-        k = 1 - estimatedslots;
-        pd.probabilityReturn = ProbabilityDistributions.calculateCDFSkellamProbability(takedemandrate, returndemandrate, k);
-        pd.probabilityReturnAfterReturn = pd.probabilityReturn - ProbabilityDistributions.calculateSkellamProbability(takedemandrate, returndemandrate, k);
+        int availableslotsestimated = currentslots- estimatedbikechanges - compromisedslots;
+        availableslotsestimated-= additionalResourcesDesiredInProbability;
+        k = 1 - availableslotsestimated;
+        pd.probabilityReturn = ProbabilityDistributions.conditionalCDFSkellamProbability(takedemandrate, returndemandrate, k,-estimatedbikechanges);
+        pd.probabilityReturnAfterReturn = ProbabilityDistributions.conditionalCDFSkellamProbability(takedemandrate, returndemandrate, k+1,-(estimatedbikechanges+1));
 
         return pd;
-
     }
-   
+ 
     //methods for calculation probabilities    
     public ProbabilityData calculateAllProbabilities(StationUtilityData sd, double timeoffset) {
         ProbabilityData pd=new ProbabilityData();
         Station s = sd.getStation();
-        int estimatedbikes = s.availableBikes();
-        int estimatedslots = s.availableSlots();
+        int currentbikes = s.availableBikes();
+        int currentslots = s.availableSlots();
+        int estimatedbikechanges=0;
+        int compromisedbikes=0;
+        int compromisedslots=0;
+
         if (takeintoaccountexpected) {
             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
-            estimatedbikes += (int) Math.floor(er.changes * probabilityUsersObey);
-            estimatedslots -= (int) Math.floor(er.changes * probabilityUsersObey);
+            estimatedbikechanges += (int) Math.floor(er.changes * probabilityUsersObey);
             if (takeintoaccountcompromised) {
                 //            if ((estimatedbikes+minpostchanges)<=0){
-                estimatedbikes += (int) Math.floor(er.minpostchanges * probabilityUsersObey);
-                estimatedslots -= (int) Math.floor(er.maxpostchanges * probabilityUsersObey);
+                compromisedbikes += (int) Math.floor(er.minpostchanges * probabilityUsersObey);
+                compromisedslots -= (int) Math.floor(er.maxpostchanges * probabilityUsersObey);
                 //            }
             }
         }
-        estimatedbikes -=additionalResourcesDesiredInProbability;
-        estimatedslots -=additionalResourcesDesiredInProbability;
         double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a bike exists and that is exists after taking one 
-        int k = 1 - estimatedbikes;
-        pd.probabilityTake = ProbabilityDistributions.calculateCDFSkellamProbability(returndemandrate, takedemandrate, k);
-        pd.probabilityTakeAfterTake = pd.probabilityTake - ProbabilityDistributions.calculateSkellamProbability(returndemandrate, takedemandrate, k);
-        k = k - 1;
-        pd.probabilityTakeAfterRerturn = pd.probabilityTake + ProbabilityDistributions.calculateSkellamProbability(returndemandrate, takedemandrate, k);
+        int availablebikesestimated = currentbikes+ estimatedbikechanges+ compromisedbikes;
+        availablebikesestimated-= additionalResourcesDesiredInProbability;
+        int k = 1 - availablebikesestimated;
+        pd.probabilityTake = ProbabilityDistributions.conditionalCDFSkellamProbability(returndemandrate, takedemandrate, k, estimatedbikechanges);
+        pd.probabilityTakeAfterTake = ProbabilityDistributions.conditionalCDFSkellamProbability(returndemandrate, takedemandrate, k+1, estimatedbikechanges-1);
+        pd.probabilityTakeAfterRerturn = ProbabilityDistributions.conditionalCDFSkellamProbability(returndemandrate, takedemandrate, k-1, estimatedbikechanges+1);
 
         //probability that a slot exists and that is exists after taking one 
-        k = 1 - estimatedslots;
-        pd.probabilityReturn = ProbabilityDistributions.calculateCDFSkellamProbability(takedemandrate, returndemandrate, k);
-        pd.probabilityReturnAfterReturn = pd.probabilityReturn - ProbabilityDistributions.calculateSkellamProbability(takedemandrate, returndemandrate, k);
-        k = k - 1;
-        pd.probabilityReturnAfterTake = pd.probabilityReturn + ProbabilityDistributions.calculateSkellamProbability(takedemandrate, returndemandrate, k);
-
+        int availableslotsestimated = currentslots- estimatedbikechanges - compromisedslots;
+        availableslotsestimated-= additionalResourcesDesiredInProbability;
+        k = 1 - availableslotsestimated;
+        pd.probabilityReturn = ProbabilityDistributions.conditionalCDFSkellamProbability(takedemandrate, returndemandrate, k,-estimatedbikechanges);
+        pd.probabilityReturnAfterReturn = ProbabilityDistributions.conditionalCDFSkellamProbability(takedemandrate, returndemandrate, k+1,-(estimatedbikechanges+1));
+        pd.probabilityReturnAfterTake = ProbabilityDistributions.conditionalCDFSkellamProbability(takedemandrate, returndemandrate, k-1,-(estimatedbikechanges-1));
         return pd;
      }
     

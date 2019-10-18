@@ -18,7 +18,7 @@ public abstract class RecommendationSystem {
     private int minNumberRecommendations=10;
 
     //variable to print debug output for analysis
-    protected final boolean printHints = true;
+    protected final boolean printHints = false;
 
     /**
      * It provides information about the infraestructure state.

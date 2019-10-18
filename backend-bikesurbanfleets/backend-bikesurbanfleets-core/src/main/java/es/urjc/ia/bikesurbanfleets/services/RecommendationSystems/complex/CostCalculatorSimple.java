@@ -20,7 +20,7 @@ public class CostCalculatorSimple {
     //methods for cost calculations
     public CostCalculatorSimple(double marginprob, double maxcost,
             double walkvel, double cycvel, 
-            double maxDistanceRecomendation, UtilitiesProbabilityCalculation recutils,
+            double maxDistanceRecomendation, UtilitiesProbabilityCalculator recutils,
             boolean squaredTimes, int PredictionNorm) {
         minimumMarginProbability = marginprob;
         walkingVelocity=walkvel;
@@ -40,7 +40,7 @@ public class CostCalculatorSimple {
     final double walkingVelocity;
     final double cyclingVelocity;
     final double maxDistanceRecomendation;
-    UtilitiesProbabilityCalculation probutils;
+    UtilitiesProbabilityCalculator probutils;
     final double maxWalktime;
 
 

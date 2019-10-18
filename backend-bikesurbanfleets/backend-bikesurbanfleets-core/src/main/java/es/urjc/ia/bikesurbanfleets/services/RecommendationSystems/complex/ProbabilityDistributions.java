@@ -9,7 +9,7 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
  *
  * @author holger
  */
-public class SellamDistribution {
+public class ProbabilityDistributions {
     
     public static final double ACC = 4.0; 
     public static final double BIGNO = 1.0e10;
@@ -18,6 +18,21 @@ public class SellamDistribution {
     public static void main(String[] args) {
         double a =calculateSkellamProbability(10,10,-11);
         System.out.printf("%10.6f", a);
+        System.out.println();
+        double my1=1;
+        double my2=1;
+        int desired=5;
+        int knownneg=-1;
+        int knownpos=1;
+        System.out.println("desired "+ desired+ " known " + knownpos + 
+                " p(x>="+ desired+")=" + conditionalCDFSkellamProbability(my1,my2,desired, 0)+
+                " p(x>="+ desired+"|" + knownpos +")=" + conditionalCDFSkellamProbability(my1,my2,desired, knownpos) +
+                " p(x>="+ (desired-knownpos)+")=" + conditionalCDFSkellamProbability(my1,my2,desired-knownpos, 0) );
+                
+        System.out.println("desired "+ desired+ " known " + knownneg + 
+                " p(x>="+ desired+")=" + conditionalCDFSkellamProbability(my1,my2,desired, 0)+
+                " p(x>="+ desired+"|" + knownneg +")=" + conditionalCDFSkellamProbability(my1,my2,desired, knownneg) +
+                " p(x>="+ (desired-knownneg)+")=" + conditionalCDFSkellamProbability(my1,my2,desired-knownneg, 0) );
      }
 
    // calculates prob of P(x=k) of my1 -my2
@@ -159,7 +174,7 @@ public class SellamDistribution {
         //my1>0 && num>0
         double c=Math.exp(-(my1));
         double sum=0;
-        for (int i=Math.min(num, 0); i<=highest_value;i++){
+        for (int i=num; i<=highest_value;i++){
             sum=sum + c*Math.pow(my1, i)/Factorial(i);
         }
         if (sum==Double.NaN || sum>=1D) {
@@ -170,14 +185,47 @@ public class SellamDistribution {
 
     public static double Factorial(int i) {
         
-        long factorial = 1; // declarar e inicializar factorial en 1
+        double factorial = 1; // declarar e inicializar factorial en 1
         
         while(i != 0)
         {
             factorial *= i;
             i--;
         }
-        return i;
+        return factorial;
  
+    }
+    
+    //my1 and my2 are the two parameters of the two poisson variables
+    // Calculates the probability of having k events with the two parameters my1 and my2 and conditiont to that we
+    //know that there are already b events compromised
+    // b may ne positiv or negativa
+    public static double conditionalCDFSkellamProbability(double my1, double my2, int k, int b){
+        if (b==0){
+            return calculateCDFSkellamProbability(my1, my2, k);
+        } else if (b>0){
+            double intersection=calculateCDFSkellamProbability(my1, my2, k);
+            for (int i=0; i<=b-k; i++){
+                double positivepart=0;
+                for (int j=k+i; j<=b-1; j++){
+                    positivepart+=calculatePoissonProbability(my1,j);
+                }
+                double negativepart=calculatePoissonProbability(my2,i);
+                intersection=intersection-(positivepart * negativepart);
+            }
+            double P_Positive_mayorigual_b=calculateCDFPoissonProbability(my1,b);
+            return intersection/ P_Positive_mayorigual_b;
+        } else if (b<0){
+            b=Math.abs(b);
+            double intersection=calculateCDFSkellamProbability(my1, my2, k);
+            for (int i=0; i<=b-1; i++){
+                double positivepart=calculateCDFPoissonProbability(my1,k+i);
+                double negativepart=calculatePoissonProbability(my2,i);
+                intersection=intersection-(positivepart * negativepart);
+            }
+            double P_Negative_mayorigual_b=calculateCDFPoissonProbability(my2,b);
+            return intersection/ P_Negative_mayorigual_b;
+        }
+        throw new RuntimeException("impossible path");
     }
 }

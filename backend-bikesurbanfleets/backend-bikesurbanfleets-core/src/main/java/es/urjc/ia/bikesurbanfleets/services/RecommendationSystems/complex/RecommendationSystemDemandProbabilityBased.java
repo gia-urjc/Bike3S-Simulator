@@ -64,7 +64,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     protected double straightLineCyclingVelocity ;
 
     protected RecommendationParameters baseparameters;
-    protected UtilitiesProbabilityCalculation probutils;
+    protected UtilitiesProbabilityCalculator probutils;
     private PastRecommendations pastrecs;
     
     public RecommendationSystemDemandProbabilityBased(JsonObject recomenderdef, SimulationServices ss) throws Exception {
@@ -92,7 +92,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         straightLineCyclingVelocity = this.baseparameters.cyclingVelocity/STRAIGT_LINE_FACTOR;
         
         pastrecs=new PastRecommendations();
-        probutils=new UtilitiesProbabilityCalculation(getDemandManager(), pastrecs, baseparameters.probabilityUsersObey,
+        probutils=new UtilitiesProbabilityCalculationWithConditional(getDemandManager(), pastrecs, baseparameters.probabilityUsersObey,
                  baseparameters.takeintoaccountexpected, baseparameters.takeintoaccountcompromised, baseparameters.additionalResourcesDesiredInProbability);
     }
 

@@ -18,11 +18,11 @@ import java.util.List;
  *
  * @author holger
  */
-public class ComplexCostCalculator2 {
+public class ComplexCostCalculator3 {
     
 
     //methods for cost calculations
-    public ComplexCostCalculator2(double marginprob, double maxcost, double unsuccostrent, double unsuccostret,
+    public ComplexCostCalculator3(double marginprob, double maxcost, double unsuccostrent, double unsuccostret,
             double penalfactorrent, double penalfactorret, double walkvel, double cycvel, double minsecondaryprob,
             double maxDistanceRecomendation, UtilitiesProbabilityCalculator probutils,
             boolean squaredTimes, int PredictionNorm) {
@@ -245,9 +245,9 @@ public class ComplexCostCalculator2 {
         double accreturncost = 0;
         lookedlist.clear();
         List<StationUtilityData> newlookedlist = new ArrayList<>();
-        for (stationPoint wp : way) {
-     //       if (wp.offsettimereached>timeintervallforPrediction) break;
-            double timeoffset=Math.max(timeintervallforPrediction, sd.getWalkTime());//wp.offsettimereached
+        stationPoint wp=way.get(0);
+        if (wp.offsettimereached<=timeintervallforPrediction) {
+            double timeoffset=timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getWalkTime());//wp.offsettimereached
             ProbabilityData pd=probutils.calculateAllTakeProbabilities(wp.sd, timeoffset);
             //calculate takecost difference
             newlookedlist=new ArrayList<>();//holger(lookedlist);
@@ -293,9 +293,9 @@ public class ComplexCostCalculator2 {
         double accreturncost = 0;
         lookedlist.clear();
         List<StationUtilityData> newlookedlist = new ArrayList<>();
-        for (stationPoint wp : way) {
-  //          if (wp.offsettimereached>timeintervallforPrediction) break;
-            double timeoffset=Math.max(timeintervallforPrediction, sd.getBiketime());//wp.offsettimereached
+        stationPoint wp=way.get(0);
+        if (wp.offsettimereached<=timeintervallforPrediction) {
+            double timeoffset=timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getBiketime());//wp.offsettimereached
             ProbabilityData pd=probutils.calculateAllReturnProbabilities(wp.sd, timeoffset);
             //calculate takecost difference
             newlookedlist=new ArrayList<>();//holger(lookedlist);
