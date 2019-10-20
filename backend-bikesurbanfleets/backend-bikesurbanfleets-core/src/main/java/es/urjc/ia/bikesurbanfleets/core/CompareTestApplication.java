@@ -41,8 +41,8 @@ public class CompareTestApplication {
         //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurr";
         //testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurroundWithDemand";
         //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/version_usersmax600/cost_complex_prediction";
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_ usersrandom_halfbikes/cost_complex_prediction_cond";
-   //     testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/test";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/2018-07-20T07_halbikes_random/cost_prediction";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/test";
          //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

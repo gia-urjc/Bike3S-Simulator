@@ -172,7 +172,7 @@ public class ComplexCostCalculator2 {
             if (!lookedlist.contains(nei)) {
                 double newacctime=accwalktime+s.getPosition().distanceTo(nei.getStation().getPosition())/ walkingVelocity ;
                 if (newacctime<= (maxWalktime*1.2)) {
-                    double rentprob=probutils.calculateTakeProbability(s, newacctime);
+                    double rentprob=probutils.calculateTakeProbability(nei.getStation(), newacctime);
                     if (rentprob > minProbSecondaryRecommendation) {
                         double timecost=getSqarewalkTimeRent(newacctime);
                         double thisprob= rentprob;
@@ -198,7 +198,7 @@ public class ComplexCostCalculator2 {
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei)) {
                 double altthisbiketime = accbiketime + s.getPosition().distanceTo(nei.getStation().getPosition()) / cyclingVelocity;
-                double returnprob=probutils.calculateTakeProbability(s, altthisbiketime);
+                double returnprob=probutils.calculateTakeProbability(nei.getStation(), altthisbiketime);
                 if (returnprob > minProbSecondaryRecommendation) {
                     double altthiswalktime = nei.getStation().getPosition().distanceTo(destination) / walkingVelocity;
                     double timecost=getSqareReturnDistanceCost(altthisbiketime, altthiswalktime);
