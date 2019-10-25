@@ -78,7 +78,7 @@ public class CostCalculatorSimple {
         double usercosttake = calculateCostRentSimple(sd, sd.getProbabilityTake(), sd.getWalkTime());
         
         double timeoffset=Math.max(timeintervallforPrediction, sd.getWalkTime());
-        UtilitiesProbabilityCalculation.ProbabilityData pd=probutils.calculateAllTakeProbabilities(sd, timeoffset);
+        UtilitiesProbabilityCalculation.ProbabilityData pd=probutils.calculateAllTakeProbabilitiesWithArrival(sd, sd.getWalkTime(),timeoffset);
 
         //analyze global costs
         //takecost if bike is taken     
@@ -109,7 +109,7 @@ public class CostCalculatorSimple {
         double timeoffset=Math.max(timeintervallforPrediction, sd.getBiketime());
         double usercostreturn = calculateCostReturnSimple(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
 
-        UtilitiesProbabilityCalculation.ProbabilityData pd=probutils.calculateAllReturnProbabilities(sd, timeoffset);
+        UtilitiesProbabilityCalculation.ProbabilityData pd=probutils.calculateAllReturnProbabilitiesWithArrival(sd, sd.getBiketime(), timeoffset);
         //analyze global costs
         //takecost if bike is taken   
         double costtake = calculateCostRentSimple(sd, pd.probabilityTake, 0);

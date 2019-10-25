@@ -23,7 +23,7 @@ public class PastRecommendations {
 
         boolean take; //or return
         int expectedendtime;
-
+        
         PotentialEvent(boolean take, int expectedendtime) {
             this.take = take;
             this.expectedendtime = expectedendtime;
@@ -39,16 +39,18 @@ public class PastRecommendations {
         public int changes = 0;
         public int minpostchanges = 0;
         public int maxpostchanges = 0;
+        public long lastendinstantexpected=0;
     }
 
     public ExpBikeChangeResult getExpectedBikechanges(int stationid, double timeoffset) {
         ExpBikeChangeResult er = new ExpBikeChangeResult();
+        long currentinstant = SimulationDateTime.getCurrentSimulationInstant();
+        er.lastendinstantexpected=currentinstant;
         int postchanges = 0;
         List<PotentialEvent> list = registeredBikeEventsPerStation.get(stationid);
         if (list == null) {
             return er;
         }
-        long currentinstant = SimulationDateTime.getCurrentSimulationInstant();
         Iterator<PotentialEvent> i = list.iterator();
         while (i.hasNext()) {
             PotentialEvent e = i.next(); // must be called before you can call i.remove()
@@ -60,6 +62,7 @@ public class PastRecommendations {
                 } else {
                     er.changes++;
                 }
+                if (e.expectedendtime>er.lastendinstantexpected) er.lastendinstantexpected=e.expectedendtime;
             } else {// e.expectedendtime>currentinstant+timeoffset are taken in to consideration if compromised is true
                 if (e.take) {
                     postchanges--;
@@ -84,7 +87,7 @@ public class PastRecommendations {
             list = new LinkedList<>();
             registeredBikeEventsPerStation.put(stationid, list);
         }
-        int endtime = (int) SimulationDateTime.getCurrentSimulationInstant() + timeoffset;
+        int endtime = (int) SimulationDateTime.getCurrentSimulationInstant()+ timeoffset;
         //put the element in its position in the list
         boolean done = false;
         for (int i = list.size() - 1; i >= 0; i--) {

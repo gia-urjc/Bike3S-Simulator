@@ -22,7 +22,9 @@ export const EntryPoint = sAnyOf(
         }),
         radiusAppears: sNumber().xMin(0),
         radiusGoTo: sNumber().xMin(0),
-        totalUsers: sInteger().xMin(0)
+        totalUsers: sInteger().xMin(0),
+        cyclingVelocity: sNumber().xMin(0),
+        walkingVelocity: sNumber().xMin(0)
     }).require('entryPointType', 'userType', 'distribution', 'positionAppearance', 'destinationPlace', 'radiusAppears', 'radiusGoTo'),
     sObject({
         entryPointType: sConst('SINGLEUSER'),

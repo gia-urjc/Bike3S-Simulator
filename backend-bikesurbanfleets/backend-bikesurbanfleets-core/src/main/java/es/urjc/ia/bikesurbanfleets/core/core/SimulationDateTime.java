@@ -37,6 +37,10 @@ public class SimulationDateTime {
         if (dateTimeSet) return currentSimulationDateTime;
         return null;
     }
+    public static LocalDateTime getSimulationDateTimeFromOffset(long offset) {
+        if (dateTimeSet) return initialSimulationDateTime.plusSeconds(offset);
+        return null;
+    }
 
     public static long getCurrentSimulationInstant() {
         return currentSimulationInstant;

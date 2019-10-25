@@ -33,7 +33,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         private int maxDistanceRecommendation = 600;
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double minimumMarginProbability = 0.001;
-        private double minProbBestNeighbourRecommendation = 0.5;
+        private double minProbBestNeighbourRecommendation = 0.05;
         private double desireableProbability = 0.5;
         private double penalisationfactorrent = 1;
         private double penalisationfactorreturn = 1;
@@ -56,7 +56,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     }
 
     private RecommendationParameters parameters;
-    private ComplexCostCalculator2 ucc;
+    private ComplexCostCalculator3 ucc;
 
     public RecommendationSystemDemandProbabilityCostGlobalPrediction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef,ss);
@@ -70,7 +70,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc=new ComplexCostCalculator2(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
+        ucc=new ComplexCostCalculator3(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
                 parameters.unsucesscostReturn,
             parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,

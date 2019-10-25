@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
+    <parent>
         <groupId>es.urjc.ia</groupId>
         <artifactId>backend-app</artifactId>
         <version>1.0</version>
     </parent>
 
-	<groupId>es.urjc.ia</groupId>
-	<artifactId>bikesurbanfleets-core</artifactId>
-	<version>1.0</version>
+    <groupId>es.urjc.ia</groupId>
+    <artifactId>bikesurbanfleets-core</artifactId>
+    <version>1.0</version>
 	
-	<build>
-		<plugins>
-			<plugin>
-  				<artifactId>maven-assembly-plugin</artifactId>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -35,9 +35,9 @@
                         </manifest>
                     </archive>
                 </configuration>
-			</plugin>
-		</plugins>
-	</build>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>com.opencsv</groupId>

@@ -1,11 +1,12 @@
 /*
-Here probability is calculatest as follows:
-P(finding a bike in sercain time)=P(x>=k|knownfuturebikes) where k=1-currentbikes
-where knownfuturebike are the expected bikes in future
+ Here probability is calculatest as follows:
+P(finding a bike in sercain time)=P(x>=k|knownfuturebikes) where k=1-currentbikes-knownfuturebikes
+where knownfuturebikes are the expected bikes in future
 The probability is calculated through skellam
-That is here, expected bikes in the futer (or takes of bikes) are treated as conditionals for the probability calculation
+That is here, expected bikes in the futer (or takes of bikes) are treated as alredy happend and the probability of extra bikes is calculated such that this 
+bikes condition the posibility to get more bikes
 
- * To change this license header, choose License Headers in Project Properties.
+* To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -22,7 +23,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
  *
  * @author holger
  */
-public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesProbabilityCalculator{
+public class UtilitiesProbabilityCalculationWithConditional2 extends UtilitiesProbabilityCalculator{
   
     final private double probabilityUsersObey ;
     final private boolean takeintoaccountexpected ;
@@ -30,7 +31,7 @@ public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesPro
     final private PastRecommendations pastrecs;
     final private int additionalResourcesDesiredInProbability;
     
-    public UtilitiesProbabilityCalculationWithConditional(DemandManager dm, PastRecommendations pastrecs, double probabilityUsersObey,
+    public UtilitiesProbabilityCalculationWithConditional2(DemandManager dm, PastRecommendations pastrecs, double probabilityUsersObey,
             boolean takeintoaccountexpected, boolean takeintoaccountcompromised, int additionalResourcesDesiredInProbability
     ) {
         this.dm = dm;
@@ -60,13 +61,13 @@ public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesPro
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a bike exists and that is exists after taking one 
-        int availablebikesestimated = currentbikes- additionalResourcesDesiredInProbability;
         int knownbikestocome=estimatedbikechanges+compromisedbikes;
+        int availablebikesestimated = currentbikes + knownbikestocome - additionalResourcesDesiredInProbability;
         int k = 1 - availablebikesestimated;
         double probbike = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k,knownbikestocome);  
         return probbike;
     }
-    public double calculateReturnProbability(Station s, double timeoffset) {
+    public double calculateReturnProbability(Station s, double timeoffset)  {
         int currentslots = s.availableSlots();
         int estimatedbikechanges=0;
         int compromisedslots=0;
@@ -83,15 +84,15 @@ public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesPro
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a slot exists and that is exists after taking one 
-        int availableslotsestimated = currentslots- additionalResourcesDesiredInProbability;
         int knownslotstocome=-estimatedbikechanges-compromisedslots;
+        int availableslotsestimated = currentslots + knownslotstocome - additionalResourcesDesiredInProbability;
         int k = 1 - availableslotsestimated;
         double probslot = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k,knownslotstocome);  
         return probslot;
     }
     //methods for calculation probabilities    
-    public ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
-        ProbabilityData pd=new ProbabilityData();
+    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+        UtilitiesProbabilityCalculator.ProbabilityData pd=new UtilitiesProbabilityCalculator.ProbabilityData();
         Station s = sd.getStation();
         int currentbikes = s.availableBikes();
         int currentslots = s.availableSlots();
@@ -113,25 +114,25 @@ public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesPro
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
 
         //probability that a bike exists and that is exists after taking one 
-        int availablebikesestimated = currentbikes-additionalResourcesDesiredInProbability;
         int knownbikestocome=estimatedbikechanges+compromisedbikes;
+        int availablebikesestimated = currentbikes + knownbikestocome -additionalResourcesDesiredInProbability;
         int k = 1 - availablebikesestimated;
         pd.probabilityTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k, knownbikestocome);
-        pd.probabilityTakeAfterTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k, knownbikestocome-1);
+        pd.probabilityTakeAfterTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k+1, knownbikestocome-1);
 
         //probability that a slot exists and that is exists after taking one 
-        int availableslotsestimated = currentslots- additionalResourcesDesiredInProbability;
         int knownslotstocome=-estimatedbikechanges-compromisedslots;
+        int availableslotsestimated = currentslots + knownslotstocome - additionalResourcesDesiredInProbability;
         k = 1 - availableslotsestimated;
         pd.probabilityReturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k,knownslotstocome);
-        pd.probabilityReturnAfterTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k,knownslotstocome+1);
+        pd.probabilityReturnAfterTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k-1,knownslotstocome+1);
 
         return pd;
     }
 
     //methods for calculation probabilities    
-    public ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
-        ProbabilityData pd=new ProbabilityData();
+    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+        UtilitiesProbabilityCalculator.ProbabilityData pd=new UtilitiesProbabilityCalculator.ProbabilityData();
         Station s = sd.getStation();
         int currentbikes = s.availableBikes();
         int currentslots = s.availableSlots();
@@ -153,25 +154,25 @@ public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesPro
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
 
         //probability that a bike exists and that is exists after taking one 
-        int availablebikesestimated = currentbikes-additionalResourcesDesiredInProbability;
         int knownbikestocome=estimatedbikechanges+compromisedbikes;
+        int availablebikesestimated = currentbikes+ knownbikestocome -additionalResourcesDesiredInProbability;
         int k = 1 - availablebikesestimated;
         pd.probabilityTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k, knownbikestocome);
-        pd.probabilityTakeAfterRerturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k, knownbikestocome+1);
+        pd.probabilityTakeAfterRerturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k-1, knownbikestocome+1);
 
         //probability that a slot exists and that is exists after taking one 
-        int availableslotsestimated = currentslots- additionalResourcesDesiredInProbability;
         int knownslotstocome=-estimatedbikechanges-compromisedslots;
+        int availableslotsestimated = currentslots+ knownslotstocome - additionalResourcesDesiredInProbability;
         k = 1 - availableslotsestimated;
         pd.probabilityReturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k,knownslotstocome);
-        pd.probabilityReturnAfterReturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k,knownslotstocome-1);
+        pd.probabilityReturnAfterReturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k+1,knownslotstocome-1);
 
         return pd;
     }
  
     //methods for calculation probabilities    
-    public ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
-        ProbabilityData pd=new ProbabilityData();
+    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+        UtilitiesProbabilityCalculator.ProbabilityData pd=new UtilitiesProbabilityCalculator.ProbabilityData();
         Station s = sd.getStation();
         int currentbikes = s.availableBikes();
         int currentslots = s.availableSlots();
@@ -193,20 +194,20 @@ public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesPro
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
 
         //probability that a bike exists and that is exists after taking one 
-        int availablebikesestimated = currentbikes-additionalResourcesDesiredInProbability;
         int knownbikestocome=estimatedbikechanges+compromisedbikes;
+        int availablebikesestimated = currentbikes+ knownbikestocome -additionalResourcesDesiredInProbability;
         int k = 1 - availablebikesestimated;
         pd.probabilityTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k, knownbikestocome);
-        pd.probabilityTakeAfterTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k, knownbikestocome-1);
-        pd.probabilityTakeAfterRerturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k, knownbikestocome+1);
+        pd.probabilityTakeAfterTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k+1, knownbikestocome-1);
+        pd.probabilityTakeAfterRerturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(returndemandrate, takedemandrate, k-1, knownbikestocome+1);
 
         //probability that a slot exists and that is exists after taking one 
-        int availableslotsestimated = currentslots- additionalResourcesDesiredInProbability;
         int knownslotstocome=-estimatedbikechanges-compromisedslots;
+        int availableslotsestimated = currentslots+ knownslotstocome - additionalResourcesDesiredInProbability;
         k = 1 - availableslotsestimated;
         pd.probabilityReturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k,knownslotstocome);
-        pd.probabilityReturnAfterReturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k,knownslotstocome-1);
-        pd.probabilityReturnAfterTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k,knownslotstocome+1);
+        pd.probabilityReturnAfterReturn = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k+1,knownslotstocome-1);
+        pd.probabilityReturnAfterTake = ProbabilityDistributions.conditionalUpCDFSkellamProbability(takedemandrate, returndemandrate, k-1,knownslotstocome+1);
         return pd;
      }
     

@@ -92,7 +92,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         straightLineCyclingVelocity = this.baseparameters.cyclingVelocity/STRAIGT_LINE_FACTOR;
         
         pastrecs=new PastRecommendations();
-        probutils=new UtilitiesProbabilityCalculationWithConditional(getDemandManager(), pastrecs, baseparameters.probabilityUsersObey,
+        probutils=new UtilitiesProbabilityCalculation(getDemandManager(), pastrecs, baseparameters.probabilityUsersObey,
                  baseparameters.takeintoaccountexpected, baseparameters.takeintoaccountcompromised, baseparameters.additionalResourcesDesiredInProbability);
     }
 

@@ -244,7 +244,7 @@ private StationUtilityData bestNeighbourRent(Station s, double newmargprob, List
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei)) {
                 double altthisbiketime = accbiketime + s.getPosition().distanceTo(nei.getStation().getPosition()) / cyclingVelocity;
-                double returnprob=probutils.calculateTakeProbability(nei.getStation(), altthisbiketime);
+                double returnprob=probutils.calculateReturnProbability(nei.getStation(), altthisbiketime);
                 if (returnprob > minProbSecondaryRecommendation) {
                     double altthiswalktime = nei.getStation().getPosition().distanceTo(destination) / walkingVelocity;
                     double timecost=getSqareReturnDistanceCost(altthisbiketime, altthiswalktime);

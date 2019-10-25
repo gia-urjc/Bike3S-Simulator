@@ -29,14 +29,20 @@ public abstract class UtilitiesProbabilityCalculator {
     // Probabilities form now to timeoffset 
     public abstract double calculateTakeProbability(Station s, double timeoffset) ;
     public abstract double calculateReturnProbability(Station s, double timeoffset) ;
+    
     //methods for calculation probabilities    
-    public abstract ProbabilityData calculateAllTakeProbabilities(StationUtilityData sd, double timeoffset) ;
-
-     //methods for calculation probabilities    
-    public abstract ProbabilityData calculateAllReturnProbabilities(StationUtilityData sd, double timeoffset) ;
-   
-    //methods for calculation probabilities    
-    public abstract ProbabilityData calculateAllProbabilities(StationUtilityData sd, double timeoffset) ;
+    public abstract ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant);
+    public ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, double offsetinstantArrivalCurrent, double futureinstant){
+        return calculateAllTakeProbabilitiesWithArrival( sd, (long) offsetinstantArrivalCurrent, (long) futureinstant);
+    };
+    public abstract ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) ;
+    public ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, double offsetinstantArrivalCurrent, double futureinstant){
+        return calculateAllReturnProbabilitiesWithArrival( sd, (long) offsetinstantArrivalCurrent, (long) futureinstant);
+    };
+    public abstract ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) ;
+    public ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, double offsetinstantArrivalCurrent, double futureinstant){
+        return calculateAllProbabilitiesWithArrival( sd, (long) offsetinstantArrivalCurrent, (long) futureinstant);
+    };
     
     //methods for calculation probabilities    
     public abstract double calculateProbabilityAtLeast1UserArrivingForTake(Station s, double timeoffset) ;
