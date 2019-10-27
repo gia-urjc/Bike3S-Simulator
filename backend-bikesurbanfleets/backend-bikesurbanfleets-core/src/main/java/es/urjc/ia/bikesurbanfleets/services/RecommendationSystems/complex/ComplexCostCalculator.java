@@ -218,7 +218,7 @@ private StationUtilityData bestNeighbourRent(Station s, double newmargprob, List
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei)) {
                 double newacctime=accwalktime+s.getPosition().distanceTo(nei.getStation().getPosition())/ walkingVelocity ;
-          //holger      if (newacctime<= (maxWalktime*1.2)) {
+                if (newacctime<= (maxWalktime*1.2)) {
                     double rentprob=probutils.calculateTakeProbability(nei.getStation(), newacctime);
                     if (rentprob > minProbSecondaryRecommendation) {
                         double timecost=getSqarewalkTimeRent(newacctime);
@@ -231,7 +231,7 @@ private StationUtilityData bestNeighbourRent(Station s, double newmargprob, List
                             bestneighbour = nei;
                         }
                     }
-        //        }
+                }
             }
         }
         return bestneighbour;

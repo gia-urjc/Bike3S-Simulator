@@ -56,7 +56,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     }
 
     private RecommendationParameters parameters;
-    private ComplexCostCalculator3 ucc;
+    private ComplexCostCalculator2 ucc;
 
     public RecommendationSystemDemandProbabilityCostGlobalPrediction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef,ss);
@@ -70,7 +70,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc=new ComplexCostCalculator3(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
+        ucc=new ComplexCostCalculator2(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
                 parameters.unsucesscostReturn,
             parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
