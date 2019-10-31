@@ -57,24 +57,24 @@ public class ProbabilityDistributions {
         double my2 = 1.875;
         int desired = 2;
         int knownpos = 1;
-         int knownneg = -1;
-       
+        int knownneg = -1;
+
         int known = 1;
-            double p1 = conditionalUpCDFSkellamProbability(my1, my2, desired, 0);
-            double p2 = conditionalUpCDFSkellamProbability(my1, my2, desired, known);
-            double p3 = conditionalUpCDFSkellamProbability(my1, my2, desired - known, 0);
-            double porcentajep2 = (p2 - p1) * 100 / (p3 - p1);
-            System.out.println("desired " + desired + " known " + known
-                    + " p(x>=" + desired + ")=" + p1
-                    + " p(x>=" + desired + "|" + known + ")=" + p2
-                    + " p(x>=" + (desired - knownpos) + ")=" + p3 + " porcentaje: " + porcentajep2);
+        double p1 = conditionalUpCDFSkellamProbability(my1, my2, desired, 0);
+        double p2 = conditionalUpCDFSkellamProbability(my1, my2, desired, known);
+        double p3 = conditionalUpCDFSkellamProbability(my1, my2, desired - known, 0);
+        double porcentajep2 = (p2 - p1) * 100 / (p3 - p1);
+        System.out.println("desired " + desired + " known " + known
+                + " p(x>=" + desired + ")=" + p1
+                + " p(x>=" + desired + "|" + known + ")=" + p2
+                + " p(x>=" + (desired - knownpos) + ")=" + p3 + " porcentaje: " + porcentajep2);
         for (my1 = 0; my1 <= 3; my1 += 0.5) {
 //        for (my2 = 0.1; my2 < 3; my2 += 0.3) {
             System.out.println("my1:" + my1 + " my2:" + my2);
-             p1 = conditionalUpCDFSkellamProbability(my1, my2, desired, 0);
-             p2 = conditionalUpCDFSkellamProbability(my1, my2, desired, knownpos);
-             p3 = conditionalUpCDFSkellamProbability(my1, my2, desired - knownpos, 0);
-             porcentajep2 = (p2 - p1) * 100 / (p3 - p1);
+            p1 = conditionalUpCDFSkellamProbability(my1, my2, desired, 0);
+            p2 = conditionalUpCDFSkellamProbability(my1, my2, desired, knownpos);
+            p3 = conditionalUpCDFSkellamProbability(my1, my2, desired - knownpos, 0);
+            porcentajep2 = (p2 - p1) * 100 / (p3 - p1);
             System.out.println("desired " + desired + " known " + knownpos
                     + " p(x>=" + desired + ")=" + p1
                     + " p(x>=" + desired + "|" + knownpos + ")=" + p2
@@ -85,10 +85,10 @@ public class ProbabilityDistributions {
 //        for (my2 = 0.1; my2 < 3; my2 += 0.3) {
         for (my1 = 0; my1 <= 3; my1 += 0.5) {
             System.out.println("my1:" + my1 + " my2:" + my2);
-             p1 = conditionalUpCDFSkellamProbability(my1, my2, desired, 0);
-             p2 = conditionalUpCDFSkellamProbability(my1, my2, desired, knownneg);
-             p3 = conditionalUpCDFSkellamProbability(my1, my2, desired - knownneg, 0);
-             porcentajep2 = (p2 - p1) * 100 / (p3 - p1);
+            p1 = conditionalUpCDFSkellamProbability(my1, my2, desired, 0);
+            p2 = conditionalUpCDFSkellamProbability(my1, my2, desired, knownneg);
+            p3 = conditionalUpCDFSkellamProbability(my1, my2, desired - knownneg, 0);
+            porcentajep2 = (p2 - p1) * 100 / (p3 - p1);
             System.out.println("desired " + desired + " known " + knownneg
                     + " p(x>=" + desired + ")=" + p1
                     + " p(x>=" + desired + "|" + knownneg + ")=" + p2
@@ -170,7 +170,7 @@ public class ProbabilityDistributions {
             int i;
             double s;
             int meancheck;
-            result=0;
+            result = 0;
             if (k >= 0) {
                 i = k;
                 meancheck = (int) Math.ceil(my1 - my2);
@@ -219,8 +219,8 @@ public class ProbabilityDistributions {
         return round(result);
     }
 
-    // calculates accumulated prob P(X>=k) of my1 -my2
-    // iterating on the negative poisson
+// calculates accumulated prob P(X>=k) of my1 -my2
+// iterating on the negative poisson
     private static double calculateUpCDFSkellamProbabilityIterative(double my1, double my2, int k) {
         if (my1 < 0D || my2 < 0D) {
             throw new RuntimeException(" invalid values my");
@@ -250,7 +250,7 @@ public class ProbabilityDistributions {
             double prevvalor = 0D;
             int meanneg = (int) Math.floor(my2);
             int meanpos = (int) Math.ceil(my1);
-            result=0;
+            result = 0;
             while (true) {
                 double negativepart = negativedist.probability(j);
                 double positivepart = poissonCumulativeUpHelper(positivedist, k + j);
@@ -304,7 +304,7 @@ public class ProbabilityDistributions {
             double prevvalor = 0D;
             int meanneg = (int) Math.floor(my2);
             int meanpos = (int) Math.ceil(my1);
-            result=0;
+            result = 0;
             while (true) {
                 double positivepart = positivedist.probability(i);
                 double negativepart = negativedist.cumulativeProbability(i - k);
@@ -502,16 +502,16 @@ public class ProbabilityDistributions {
                 }
             }
         } else if (my2 == 0) {//special case; no negative expected
-            if (b >0) {
+            if (b > 0) {
                 PoissonDistribution p = new PoissonDistribution(my1);
                 intersection = poissonCumulativeUpHelper(p, Math.max(k, b));
                 denominador = poissonCumulativeUpHelper(p, b);
             } else {// b < 0) 
                 PoissonDistribution p = new PoissonDistribution(my1);
                 intersection = poissonCumulativeUpHelper(my1, k - b);
-                denominador = 1;                
-    //            intersection = poissonCumulativeUpHelper(p, Math.max(k, b));
-    //            denominador = poissonCumulativeUpHelper(p, b);
+                denominador = 1;
+                //            intersection = poissonCumulativeUpHelper(p, Math.max(k, b));
+                //            denominador = poissonCumulativeUpHelper(p, b);
             }
         } else { //my1>0 and my2>0 normal case
             if (b > 0) {
@@ -527,17 +527,19 @@ public class ProbabilityDistributions {
         double comparative_value1 = calculateUpCDFSkellamProbability(my1, my2, k);
         double comparative_value2 = calculateUpCDFSkellamProbability(my1, my2, k - b);
         //checking for small imprecision in calculations
-        if (denominador < intersection && denominador >0.0000001){
-            denominador=intersection;
-        } 
-      
-        double result=intersection / denominador;
-        if (denominador < intersection || denominador <=0D || Double.isNaN(result)) {
-            result=comparative_value2;
+        if (denominador < intersection && denominador > 0.0000001) {
+            denominador = intersection;
+        }
+
+        double result = intersection / denominador;
+        if (denominador < intersection || denominador <= 0D || Double.isNaN(result)) {
+            result = comparative_value2;
         }
         if (b > 0) {
             // it has to fullfill: P(X>=k)<=P(X>=k|b)<=P(x>=k-b)
-            if (comparative_value2<comparative_value1) throw new RuntimeException("invalid values");
+            if (comparative_value2 < comparative_value1) {
+                throw new RuntimeException("invalid values");
+            }
             if (result < comparative_value1) {
                 result = comparative_value1;
             }
@@ -546,7 +548,9 @@ public class ProbabilityDistributions {
             }
         } else { //b<0
             // it has to fullfill: P(X>=k)>=P(X>=k|b)>=P(x>=k-b)
-            if (comparative_value2>comparative_value1) throw new RuntimeException("invalid values");
+            if (comparative_value2 > comparative_value1) {
+                throw new RuntimeException("invalid values");
+            }
             if (result > comparative_value1) {
                 result = comparative_value1;
             }

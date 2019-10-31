@@ -7,6 +7,7 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.UtilitiesProbabilityCalculator.ProbabilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +79,9 @@ public class CostCalculatorSimple {
         double usercosttake = calculateCostRentSimple(sd, sd.getProbabilityTake(), sd.getWalkTime());
         
         double timeoffset=Math.max(timeintervallforPrediction, sd.getWalkTime());
-        UtilitiesProbabilityCalculation.ProbabilityData pd=probutils.calculateAllTakeProbabilitiesWithArrival(sd, sd.getWalkTime(),timeoffset);
+        ProbabilityData pd=probutils.calculateAllTakeProbabilitiesWithArrival(sd, sd.getWalkTime(),timeoffset);
 
+       
         //analyze global costs
         //takecost if bike is taken     
         double costtake = calculateCostRentSimple(sd, pd.probabilityTake, 0);
@@ -109,7 +111,7 @@ public class CostCalculatorSimple {
         double timeoffset=Math.max(timeintervallforPrediction, sd.getBiketime());
         double usercostreturn = calculateCostReturnSimple(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
 
-        UtilitiesProbabilityCalculation.ProbabilityData pd=probutils.calculateAllReturnProbabilitiesWithArrival(sd, sd.getBiketime(), timeoffset);
+        ProbabilityData pd=probutils.calculateAllReturnProbabilitiesWithArrival(sd, sd.getBiketime(), timeoffset);
         //analyze global costs
         //takecost if bike is taken   
         double costtake = calculateCostRentSimple(sd, pd.probabilityTake, 0);

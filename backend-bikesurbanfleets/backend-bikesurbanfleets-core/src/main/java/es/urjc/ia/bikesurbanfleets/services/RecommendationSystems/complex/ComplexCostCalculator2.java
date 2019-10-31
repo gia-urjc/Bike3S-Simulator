@@ -233,7 +233,7 @@ public class ComplexCostCalculator2 {
     //global cost calculation. calculates the cost of taking/returning and also the cost differences
     // returns the global costs
     public double calculateCostsRentAtStation(StationUtilityData sd,
-            List<StationUtilityData> allstats, double timeintervallforPrediction) {
+            List<StationUtilityData> allstats, double timeintervallforPrediction) throws ComplexCostCalculator3.BetterFirstStationException{
         //takecosts
         List<StationUtilityData> lookedlist = new ArrayList<>();
         List<stationPoint> way = new LinkedList<stationPoint>();
@@ -247,7 +247,7 @@ public class ComplexCostCalculator2 {
         List<StationUtilityData> newlookedlist = new ArrayList<>();
         for (stationPoint wp : way) {
      //       if (wp.offsettimereached>timeintervallforPrediction) break;
-            double timeoffset=Math.max(timeintervallforPrediction, sd.getWalkTime());//wp.offsettimereached
+            double timeoffset=Math.max(timeintervallforPrediction, wp.offsettimereached);//sd.getWalkTime());//wp.offsettimereached
             ProbabilityData pd=probutils.calculateAllTakeProbabilitiesWithArrival(wp.sd, sd.getWalkTime(),timeoffset);
             //calculate takecost difference
             newlookedlist=new ArrayList<>();//holger(lookedlist);
@@ -281,7 +281,7 @@ public class ComplexCostCalculator2 {
     }
 
     public double calculateCostsReturnAtStation(StationUtilityData sd, GeoPoint destination,
-            List<StationUtilityData> allstats, double timeintervallforPrediction) {
+            List<StationUtilityData> allstats, double timeintervallforPrediction) throws ComplexCostCalculator3.BetterFirstStationException{
         //return costs
         //take a close point to the station as hipotetical detsination
         List<StationUtilityData> lookedlist = new ArrayList<>();
@@ -295,7 +295,7 @@ public class ComplexCostCalculator2 {
         List<StationUtilityData> newlookedlist = new ArrayList<>();
         for (stationPoint wp : way) {
   //          if (wp.offsettimereached>timeintervallforPrediction) break;
-            double timeoffset=Math.max(timeintervallforPrediction, sd.getBiketime());//wp.offsettimereached
+            double timeoffset=Math.max(timeintervallforPrediction, wp.offsettimereached);//sd.getBiketime());//wp.offsettimereached
             ProbabilityData pd=probutils.calculateAllReturnProbabilitiesWithArrival(wp.sd, sd.getBiketime(),timeoffset);
             //calculate takecost difference
             newlookedlist=new ArrayList<>();//holger(lookedlist);
@@ -337,8 +337,6 @@ public class ComplexCostCalculator2 {
             case (3) :
                 return Math.max(0,probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)-
                        probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset));
-            case (4) :
-                return probutils.calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(s,timeoffset);
         }
          return 1;
     }
@@ -353,8 +351,6 @@ public class ComplexCostCalculator2 {
             case (3) :
                 return Math.max(0,probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)-
                        probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset));
-            case (4) :
-                return probutils.calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(s,timeoffset);
         }
          return 1;
     }
