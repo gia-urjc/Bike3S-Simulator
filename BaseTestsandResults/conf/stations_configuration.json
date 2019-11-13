@@ -1,0 +1,1863 @@
+{
+  "stations": [
+    {
+      "position": {
+        "latitude": 40.4168961,
+        "longitude": -3.7024255
+      },
+      "bikes": 11,
+      "capacity": 24,
+      "id": 1,
+      "name": "Puerta del Sol A",
+      "number": "1a"
+    },
+    {
+      "position": {
+        "latitude": 40.4170009,
+        "longitude": -3.7024207
+      },
+      "bikes": 8,
+      "capacity": 24,
+      "id": 2,
+      "name": "Puerta del Sol B",
+      "number": "1b"
+    },
+    {
+      "position": {
+        "latitude": 40.4205886,
+        "longitude": -3.7058415
+      },
+      "bikes": 1,
+      "capacity": 24,
+      "id": 3,
+      "name": "Miguel Moya",
+      "number": "2"
+    },
+    {
+      "position": {
+        "latitude": 40.4302937,
+        "longitude": -3.7069171
+      },
+      "bikes": 18,
+      "capacity": 18,
+      "id": 4,
+      "name": "Plaza Conde Suchil",
+      "number": "3"
+    },
+    {
+      "position": {
+        "latitude": 40.4285524,
+        "longitude": -3.7025875
+      },
+      "bikes": 7,
+      "capacity": 24,
+      "id": 5,
+      "name": "Malasa�a",
+      "number": "4"
+    },
+    {
+      "position": {
+        "latitude": 40.428528,
+        "longitude": -3.7020599
+      },
+      "bikes": 14,
+      "capacity": 27,
+      "id": 6,
+      "name": "Fuencarral",
+      "number": "5"
+    },
+    {
+      "position": {
+        "latitude": 40.424148,
+        "longitude": -3.698447
+      },
+      "bikes": 8,
+      "capacity": 24,
+      "id": 7,
+      "name": "Colegio Arquitectos",
+      "number": "6"
+    },
+    {
+      "position": {
+        "latitude": 40.4251906,
+        "longitude": -3.6977715
+      },
+      "bikes": 2,
+      "capacity": 21,
+      "id": 8,
+      "name": "Hortaleza",
+      "number": "7"
+    },
+    {
+      "position": {
+        "latitude": 40.4278682,
+        "longitude": -3.6954403
+      },
+      "bikes": 1,
+      "capacity": 24,
+      "id": 9,
+      "name": "Alonso Mart�nez",
+      "number": "8"
+    },
+    {
+      "position": {
+        "latitude": 40.4156057,
+        "longitude": -3.7095084
+      },
+      "bikes": 3,
+      "capacity": 24,
+      "id": 10,
+      "name": "Plaza de San Miguel",
+      "number": "9"
+    },
+    {
+      "position": {
+        "latitude": 40.4250863,
+        "longitude": -3.6918807
+      },
+      "bikes": 0,
+      "capacity": 24,
+      "id": 11,
+      "name": "Marqu�s de la Ensenada",
+      "number": "10"
+    },
+    {
+      "position": {
+        "latitude": 40.4269483,
+        "longitude": -3.7035918
+      },
+      "bikes": 8,
+      "capacity": 24,
+      "id": 12,
+      "name": "San Andr�s",
+      "number": "11"
+    },
+    {
+      "position": {
+        "latitude": 40.4284246,
+        "longitude": -3.7061931
+      },
+      "bikes": 16,
+      "capacity": 24,
+      "id": 13,
+      "name": "San Hermenegildo",
+      "number": "12"
+    },
+    {
+      "position": {
+        "latitude": 40.4273264,
+        "longitude": -3.7104417
+      },
+      "bikes": 20,
+      "capacity": 24,
+      "id": 14,
+      "name": "Conde Duque",
+      "number": "13"
+    },
+    {
+      "position": {
+        "latitude": 40.4260957,
+        "longitude": -3.713479
+      },
+      "bikes": 9,
+      "capacity": 24,
+      "id": 15,
+      "name": "Ventura Rodr�guez",
+      "number": "14"
+    },
+    {
+      "position": {
+        "latitude": 40.4261649,
+        "longitude": -3.7073764
+      },
+      "bikes": 13,
+      "capacity": 21,
+      "id": 16,
+      "name": "San Vicente Ferrer",
+      "number": "15"
+    },
+    {
+      "position": {
+        "latitude": 40.4230721,
+        "longitude": -3.7075065
+      },
+      "bikes": 9,
+      "capacity": 21,
+      "id": 17,
+      "name": "San Bernardo",
+      "number": "16"
+    },
+    {
+      "position": {
+        "latitude": 40.4232649,
+        "longitude": -3.7038312
+      },
+      "bikes": 19,
+      "capacity": 24,
+      "id": 18,
+      "name": "Carlos Cambronero",
+      "number": "17"
+    },
+    {
+      "position": {
+        "latitude": 40.4207773,
+        "longitude": -3.6996502
+      },
+      "bikes": 15,
+      "capacity": 24,
+      "id": 19,
+      "name": "Plaza de Pedro Zerolo",
+      "number": "18"
+    },
+    {
+      "position": {
+        "latitude": 40.4218616,
+        "longitude": -3.6954983
+      },
+      "bikes": 3,
+      "capacity": 24,
+      "id": 20,
+      "name": "Prim",
+      "number": "19"
+    },
+    {
+      "position": {
+        "latitude": 40.4192342,
+        "longitude": -3.6954615
+      },
+      "bikes": 1,
+      "capacity": 30,
+      "id": 21,
+      "name": "Banco de Espa�a A",
+      "number": "20a"
+    },
+    {
+      "position": {
+        "latitude": 40.4200783,
+        "longitude": -3.7065376
+      },
+      "bikes": 5,
+      "capacity": 24,
+      "id": 25,
+      "name": "Jacometrezo",
+      "number": "22"
+    },
+    {
+      "position": {
+        "latitude": 40.4197429,
+        "longitude": -3.7080733
+      },
+      "bikes": 6,
+      "capacity": 24,
+      "id": 26,
+      "name": "Santo Domingo",
+      "number": "23"
+    },
+    {
+      "position": {
+        "latitude": 40.4182146,
+        "longitude": -3.7103538
+      },
+      "bikes": 7,
+      "capacity": 24,
+      "id": 27,
+      "name": "Palacio de Oriente",
+      "number": "24"
+    },
+    {
+      "position": {
+        "latitude": 40.4173114,
+        "longitude": -3.7064809
+      },
+      "bikes": 4,
+      "capacity": 24,
+      "id": 28,
+      "name": "Plaza de Celenque A",
+      "number": "25a"
+    },
+    {
+      "position": {
+        "latitude": 40.4172781,
+        "longitude": -3.7063837
+      },
+      "bikes": 1,
+      "capacity": 24,
+      "id": 29,
+      "name": "Plaza de Celenque B",
+      "number": "25b"
+    },
+    {
+      "position": {
+        "latitude": 40.423855,
+        "longitude": -3.694475
+      },
+      "bikes": 4,
+      "capacity": 24,
+      "id": 30,
+      "name": "Plaza de las Salesas",
+      "number": "26"
+    },
+    {
+      "position": {
+        "latitude": 40.4132798,
+        "longitude": -3.6956178
+      },
+      "bikes": 14,
+      "capacity": 24,
+      "id": 31,
+      "name": "Huertas",
+      "number": "27"
+    },
+    {
+      "position": {
+        "latitude": 40.4181663,
+        "longitude": -3.69926
+      },
+      "bikes": 0,
+      "capacity": 24,
+      "id": 32,
+      "name": "Sevilla",
+      "number": "28"
+    },
+    {
+      "position": {
+        "latitude": 40.4162619,
+        "longitude": -3.6957355
+      },
+      "bikes": 0,
+      "capacity": 24,
+      "id": 33,
+      "name": "Marqu�s de Cubas",
+      "number": "29"
+    },
+    {
+      "position": {
+        "latitude": 40.4192095,
+        "longitude": -3.711504
+      },
+      "bikes": 16,
+      "capacity": 27,
+      "id": 34,
+      "name": "San Quint�n",
+      "number": "30"
+    },
+    {
+      "position": {
+        "latitude": 40.4163638,
+        "longitude": -3.7068969
+      },
+      "bikes": 9,
+      "capacity": 27,
+      "id": 35,
+      "name": "Calle Mayor",
+      "number": "31"
+    },
+    {
+      "position": {
+        "latitude": 40.4150099,
+        "longitude": -3.7061032
+      },
+      "bikes": 8,
+      "capacity": 18,
+      "id": 36,
+      "name": "Plaza de la Provincia",
+      "number": "32"
+    },
+    {
+      "position": {
+        "latitude": 40.4146755,
+        "longitude": -3.7036825
+      },
+      "bikes": 2,
+      "capacity": 24,
+      "id": 38,
+      "name": "Jacinto Benavente",
+      "number": "34"
+    },
+    {
+      "position": {
+        "latitude": 40.4141931,
+        "longitude": -3.7103285
+      },
+      "bikes": 12,
+      "capacity": 24,
+      "id": 39,
+      "name": "Plaza del Cord�n",
+      "number": "35"
+    },
+    {
+      "position": {
+        "latitude": 40.4167281,
+        "longitude": -3.7124038
+      },
+      "bikes": 6,
+      "capacity": 24,
+      "id": 40,
+      "name": "Plaza de Ramales",
+      "number": "36"
+    },
+    {
+      "position": {
+        "latitude": 40.4108442,
+        "longitude": -3.7144964
+      },
+      "bikes": 17,
+      "capacity": 24,
+      "id": 41,
+      "name": "Plaza San Francisco",
+      "number": "37"
+    },
+    {
+      "position": {
+        "latitude": 40.4110406,
+        "longitude": -3.7120734
+      },
+      "bikes": 21,
+      "capacity": 24,
+      "id": 42,
+      "name": "Plaza de los Carros",
+      "number": "38"
+    },
+    {
+      "position": {
+        "latitude": 40.4112744,
+        "longitude": -3.7088337
+      },
+      "bikes": 19,
+      "capacity": 27,
+      "id": 43,
+      "name": "Plaza de la Cebada",
+      "number": "39"
+    },
+    {
+      "position": {
+        "latitude": 40.4138846,
+        "longitude": -3.7049407
+      },
+      "bikes": 11,
+      "capacity": 24,
+      "id": 44,
+      "name": "Conde de Romanones",
+      "number": "40"
+    },
+    {
+      "position": {
+        "latitude": 40.4122047,
+        "longitude": -3.6991147
+      },
+      "bikes": 16,
+      "capacity": 21,
+      "id": 45,
+      "name": "Ant�n Mart�n",
+      "number": "41"
+    },
+    {
+      "position": {
+        "latitude": 40.4107085,
+        "longitude": -3.6982318
+      },
+      "bikes": 21,
+      "capacity": 24,
+      "id": 46,
+      "name": "Santa Isabel",
+      "number": "42"
+    },
+    {
+      "position": {
+        "latitude": 40.4101564,
+        "longitude": -3.7025024
+      },
+      "bikes": 24,
+      "capacity": 24,
+      "id": 47,
+      "name": "Jes�s y Mar�a",
+      "number": "43"
+    },
+    {
+      "position": {
+        "latitude": 40.4097617,
+        "longitude": -3.7040666
+      },
+      "bikes": 20,
+      "capacity": 21,
+      "id": 48,
+      "name": "Plaza de Nelson Mandela",
+      "number": "44"
+    },
+    {
+      "position": {
+        "latitude": 40.4070358,
+        "longitude": -3.7110513
+      },
+      "bikes": 21,
+      "capacity": 21,
+      "id": 49,
+      "name": "Puerta de Toledo",
+      "number": "45"
+    },
+    {
+      "position": {
+        "latitude": 40.4053153,
+        "longitude": -3.7071259
+      },
+      "bikes": 13,
+      "capacity": 24,
+      "id": 50,
+      "name": "Ribera de Curtidores",
+      "number": "46"
+    },
+    {
+      "position": {
+        "latitude": 40.4047851,
+        "longitude": -3.7028265
+      },
+      "bikes": 16,
+      "capacity": 24,
+      "id": 51,
+      "name": "Embajadores 1",
+      "number": "47"
+    },
+    {
+      "position": {
+        "latitude": 40.4056107,
+        "longitude": -3.7022591
+      },
+      "bikes": 21,
+      "capacity": 24,
+      "id": 52,
+      "name": "Embajadores 2",
+      "number": "48"
+    },
+    {
+      "position": {
+        "latitude": 40.4060941,
+        "longitude": -3.6992759
+      },
+      "bikes": 8,
+      "capacity": 24,
+      "id": 53,
+      "name": "Casa Encendida",
+      "number": "49"
+    },
+    {
+      "position": {
+        "latitude": 40.4083684,
+        "longitude": -3.6933463
+      },
+      "bikes": 12,
+      "capacity": 24,
+      "id": 54,
+      "name": "Museo Reina Sof�a",
+      "number": "50"
+    },
+    {
+      "position": {
+        "latitude": 40.4075606,
+        "longitude": -3.6935205
+      },
+      "bikes": 17,
+      "capacity": 27,
+      "id": 55,
+      "name": "Ronda de Atocha",
+      "number": "51"
+    },
+    {
+      "position": {
+        "latitude": 40.4144226,
+        "longitude": -3.7007164
+      },
+      "bikes": 3,
+      "capacity": 24,
+      "id": 56,
+      "name": "Plaza de Santa Ana",
+      "number": "52"
+    },
+    {
+      "position": {
+        "latitude": 40.4089282,
+        "longitude": -3.7008803
+      },
+      "bikes": 13,
+      "capacity": 24,
+      "id": 57,
+      "name": "Plaza de Lavapi�s",
+      "number": "53"
+    },
+    {
+      "position": {
+        "latitude": 40.4266828,
+        "longitude": -3.700423
+      },
+      "bikes": 5,
+      "capacity": 21,
+      "id": 58,
+      "name": "Barcel�",
+      "number": "54"
+    },
+    {
+      "position": {
+        "latitude": 40.4239757,
+        "longitude": -3.7020842
+      },
+      "bikes": 12,
+      "capacity": 24,
+      "id": 59,
+      "name": "Plaza de San Ildefonso",
+      "number": "55"
+    },
+    {
+      "position": {
+        "latitude": 40.4184192,
+        "longitude": -3.7032414
+      },
+      "bikes": 9,
+      "capacity": 24,
+      "id": 60,
+      "name": "Plaza del Carmen ",
+      "number": "56"
+    },
+    {
+      "position": {
+        "latitude": 40.4295658,
+        "longitude": -3.7126299
+      },
+      "bikes": 3,
+      "capacity": 24,
+      "id": 61,
+      "name": "Santa Cruz del Marcenado",
+      "number": "57"
+    },
+    {
+      "position": {
+        "latitude": 40.4222862,
+        "longitude": -3.697895
+      },
+      "bikes": 3,
+      "capacity": 24,
+      "id": 62,
+      "name": "Augusto Figueroa",
+      "number": "58"
+    },
+    {
+      "position": {
+        "latitude": 40.4255495,
+        "longitude": -3.7043418
+      },
+      "bikes": 3,
+      "capacity": 21,
+      "id": 63,
+      "name": "Plaza de Juan Pujol",
+      "number": "59"
+    },
+    {
+      "position": {
+        "latitude": 40.419752,
+        "longitude": -3.688398
+      },
+      "bikes": 3,
+      "capacity": 24,
+      "id": 64,
+      "name": "Plaza de la Independencia",
+      "number": "60"
+    },
+    {
+      "position": {
+        "latitude": 40.4213983,
+        "longitude": -3.6752045
+      },
+      "bikes": 14,
+      "capacity": 24,
+      "id": 65,
+      "name": "Narv�ez",
+      "number": "61"
+    },
+    {
+      "position": {
+        "latitude": 40.4213148,
+        "longitude": -3.6724968
+      },
+      "bikes": 19,
+      "capacity": 24,
+      "id": 66,
+      "name": "O\u0027Donnell",
+      "number": "62"
+    },
+    {
+      "position": {
+        "latitude": 40.4179237,
+        "longitude": -3.6708959
+      },
+      "bikes": 11,
+      "capacity": 24,
+      "id": 67,
+      "name": "Ibiza",
+      "number": "63"
+    },
+    {
+      "position": {
+        "latitude": 40.4165605,
+        "longitude": -3.6904525
+      },
+      "bikes": 1,
+      "capacity": 24,
+      "id": 69,
+      "name": "Antonio Maura",
+      "number": "65"
+    },
+    {
+      "position": {
+        "latitude": 40.4108472,
+        "longitude": -3.693225
+      },
+      "bikes": 1,
+      "capacity": 24,
+      "id": 71,
+      "name": "Almad�n",
+      "number": "67"
+    },
+    {
+      "position": {
+        "latitude": 40.4128372,
+        "longitude": -3.6912023
+      },
+      "bikes": 10,
+      "capacity": 21,
+      "id": 72,
+      "name": "Espalter",
+      "number": "68"
+    },
+    {
+      "position": {
+        "latitude": 40.409808,
+        "longitude": -3.688822
+      },
+      "bikes": 7,
+      "capacity": 27,
+      "id": 73,
+      "name": "Puerta del �ngel Ca�do",
+      "number": "69"
+    },
+    {
+      "position": {
+        "latitude": 40.4153053,
+        "longitude": -3.6779232
+      },
+      "bikes": 17,
+      "capacity": 24,
+      "id": 74,
+      "name": "Puerta del Doce de Octubre",
+      "number": "70"
+    },
+    {
+      "position": {
+        "latitude": 40.4159569,
+        "longitude": -3.6738865
+      },
+      "bikes": 21,
+      "capacity": 24,
+      "id": 75,
+      "name": "Doce de Octubre",
+      "number": "71"
+    },
+    {
+      "position": {
+        "latitude": 40.4157413,
+        "longitude": -3.6691838
+      },
+      "bikes": 22,
+      "capacity": 24,
+      "id": 76,
+      "name": "Sainz de Baranda",
+      "number": "72"
+    },
+    {
+      "position": {
+        "latitude": 40.4114475,
+        "longitude": -3.6689089
+      },
+      "bikes": 22,
+      "capacity": 24,
+      "id": 77,
+      "name": "Plaza de los Astros",
+      "number": "73"
+    },
+    {
+      "position": {
+        "latitude": 40.4117627,
+        "longitude": -3.6766813
+      },
+      "bikes": 16,
+      "capacity": 24,
+      "id": 78,
+      "name": "Puerta del Pac�fico ",
+      "number": "74"
+    },
+    {
+      "position": {
+        "latitude": 40.4082805,
+        "longitude": -3.6784838
+      },
+      "bikes": 23,
+      "capacity": 24,
+      "id": 79,
+      "name": "Men�ndez Pelayo",
+      "number": "75"
+    },
+    {
+      "position": {
+        "latitude": 40.4076726,
+        "longitude": -3.6750121
+      },
+      "bikes": 19,
+      "capacity": 24,
+      "id": 80,
+      "name": "Puerta de Mariano de Cavia",
+      "number": "76"
+    },
+    {
+      "position": {
+        "latitude": 40.40635,
+        "longitude": -3.670422
+      },
+      "bikes": 14,
+      "capacity": 22,
+      "id": 81,
+      "name": "Conde de Casal",
+      "number": "77"
+    },
+    {
+      "position": {
+        "latitude": 40.4009101,
+        "longitude": -3.6744804
+      },
+      "bikes": 18,
+      "capacity": 24,
+      "id": 82,
+      "name": "Pedro Bosch",
+      "number": "78"
+    },
+    {
+      "position": {
+        "latitude": 40.4051451,
+        "longitude": -3.6803874
+      },
+      "bikes": 15,
+      "capacity": 24,
+      "id": 83,
+      "name": "Puerta de Granada",
+      "number": "79"
+    },
+    {
+      "position": {
+        "latitude": 40.4075685,
+        "longitude": -3.6902255
+      },
+      "bikes": 24,
+      "capacity": 24,
+      "id": 84,
+      "name": "Atocha A",
+      "number": "80a"
+    },
+    {
+      "position": {
+        "latitude": 40.4074902,
+        "longitude": -3.6901234
+      },
+      "bikes": 25,
+      "capacity": 27,
+      "id": 85,
+      "name": "Atocha B",
+      "number": "80b"
+    },
+    {
+      "position": {
+        "latitude": 40.409297,
+        "longitude": -3.691987
+      },
+      "bikes": 7,
+      "capacity": 24,
+      "id": 86,
+      "name": "Cuesta de Moyano",
+      "number": "81"
+    },
+    {
+      "position": {
+        "latitude": 40.4084556,
+        "longitude": -3.6697526
+      },
+      "bikes": 12,
+      "capacity": 24,
+      "id": 87,
+      "name": "Ni�o Jes�s",
+      "number": "82"
+    },
+    {
+      "position": {
+        "latitude": 40.4130243,
+        "longitude": -3.6751105
+      },
+      "bikes": 12,
+      "capacity": 24,
+      "id": 88,
+      "name": "P�o Baroja",
+      "number": "83"
+    },
+    {
+      "position": {
+        "latitude": 40.4032501,
+        "longitude": -3.6726019
+      },
+      "bikes": 16,
+      "capacity": 24,
+      "id": 89,
+      "name": "Valderribas",
+      "number": "84"
+    },
+    {
+      "position": {
+        "latitude": 40.421501,
+        "longitude": -3.680008
+      },
+      "bikes": 18,
+      "capacity": 27,
+      "id": 90,
+      "name": "Puerta de Madrid",
+      "number": "85"
+    },
+    {
+      "position": {
+        "latitude": 40.4186148,
+        "longitude": -3.6926217
+      },
+      "bikes": 0,
+      "capacity": 21,
+      "id": 91,
+      "name": "Cibeles",
+      "number": "86"
+    },
+    {
+      "position": {
+        "latitude": 40.427736,
+        "longitude": -3.6832566
+      },
+      "bikes": 2,
+      "capacity": 24,
+      "id": 92,
+      "name": "Ayala",
+      "number": "87"
+    },
+    {
+      "position": {
+        "latitude": 40.4313576,
+        "longitude": -3.6838303
+      },
+      "bikes": 12,
+      "capacity": 24,
+      "id": 93,
+      "name": "Embajada de Italia",
+      "number": "88"
+    },
+    {
+      "position": {
+        "latitude": 40.4272582,
+        "longitude": -3.6752024
+      },
+      "bikes": 10,
+      "capacity": 24,
+      "id": 94,
+      "name": "Conde Pe�alver",
+      "number": "89"
+    },
+    {
+      "position": {
+        "latitude": 40.4250361,
+        "longitude": -3.6837876
+      },
+      "bikes": 0,
+      "capacity": 30,
+      "id": 95,
+      "name": "General Pardi�as",
+      "number": "90"
+    },
+    {
+      "position": {
+        "latitude": 40.426134,
+        "longitude": -3.6787441
+      },
+      "bikes": 9,
+      "capacity": 24,
+      "id": 96,
+      "name": "Pr�ncipe de Vergara",
+      "number": "91"
+    },
+    {
+      "position": {
+        "latitude": 40.4262945,
+        "longitude": -3.6865463
+      },
+      "bikes": 1,
+      "capacity": 24,
+      "id": 97,
+      "name": "Claudio Coello",
+      "number": "92"
+    },
+    {
+      "position": {
+        "latitude": 40.4257046,
+        "longitude": -3.6893698
+      },
+      "bikes": 8,
+      "capacity": 24,
+      "id": 98,
+      "name": "Plaza de Col�n",
+      "number": "93"
+    },
+    {
+      "position": {
+        "latitude": 40.422699,
+        "longitude": -3.6909648
+      },
+      "bikes": 0,
+      "capacity": 21,
+      "id": 99,
+      "name": "Biblioteca Nacional",
+      "number": "94"
+    },
+    {
+      "position": {
+        "latitude": 40.4226584,
+        "longitude": -3.6870548
+      },
+      "bikes": 1,
+      "capacity": 24,
+      "id": 100,
+      "name": "Villanueva",
+      "number": "95"
+    },
+    {
+      "position": {
+        "latitude": 40.422064,
+        "longitude": -3.6821793
+      },
+      "bikes": 10,
+      "capacity": 27,
+      "id": 101,
+      "name": "Castell�",
+      "number": "96"
+    },
+    {
+      "position": {
+        "latitude": 40.4226906,
+        "longitude": -3.6801307
+      },
+      "bikes": 18,
+      "capacity": 27,
+      "id": 102,
+      "name": "Alcal�",
+      "number": "97"
+    },
+    {
+      "position": {
+        "latitude": 40.4242625,
+        "longitude": -3.6753567
+      },
+      "bikes": 12,
+      "capacity": 24,
+      "id": 103,
+      "name": "Plaza de Felipe II",
+      "number": "98"
+    },
+    {
+      "position": {
+        "latitude": 40.4261851,
+        "longitude": -3.6738714
+      },
+      "bikes": 13,
+      "capacity": 24,
+      "id": 104,
+      "name": "Alc�ntara",
+      "number": "99"
+    },
+    {
+      "position": {
+        "latitude": 40.4248457,
+        "longitude": -3.6738635
+      },
+      "bikes": 4,
+      "capacity": 24,
+      "id": 105,
+      "name": "Palacio de Deportes",
+      "number": "100"
+    },
+    {
+      "position": {
+        "latitude": 40.4231526,
+        "longitude": -3.6691523
+      },
+      "bikes": 24,
+      "capacity": 24,
+      "id": 106,
+      "name": "Jorge Juan",
+      "number": "101"
+    },
+    {
+      "position": {
+        "latitude": 40.4211802,
+        "longitude": -3.6840229
+      },
+      "bikes": 3,
+      "capacity": 24,
+      "id": 107,
+      "name": "Vel�zquez",
+      "number": "102"
+    },
+    {
+      "position": {
+        "latitude": 40.4303057,
+        "longitude": -3.6865654
+      },
+      "bikes": 3,
+      "capacity": 24,
+      "id": 108,
+      "name": "Ortega y Gasset",
+      "number": "103"
+    },
+    {
+      "position": {
+        "latitude": 40.4268331,
+        "longitude": -3.6895336
+      },
+      "bikes": 0,
+      "capacity": 21,
+      "id": 109,
+      "name": "Castellana",
+      "number": "104"
+    },
+    {
+      "position": {
+        "latitude": 40.4267905,
+        "longitude": -3.6873922
+      },
+      "bikes": 1,
+      "capacity": 24,
+      "id": 110,
+      "name": "Serrano",
+      "number": "105"
+    },
+    {
+      "position": {
+        "latitude": 40.4251002,
+        "longitude": -3.6877227
+      },
+      "bikes": 0,
+      "capacity": 18,
+      "id": 111,
+      "name": "Col�n A",
+      "number": "106a"
+    },
+    {
+      "position": {
+        "latitude": 40.424963,
+        "longitude": -3.687745
+      },
+      "bikes": 0,
+      "capacity": 18,
+      "id": 112,
+      "name": "Col�n B",
+      "number": "106b"
+    },
+    {
+      "position": {
+        "latitude": 40.4215246,
+        "longitude": -3.6884369
+      },
+      "bikes": 1,
+      "capacity": 24,
+      "id": 113,
+      "name": "Columela",
+      "number": "107"
+    },
+    {
+      "position": {
+        "latitude": 40.4273005,
+        "longitude": -3.6706024
+      },
+      "bikes": 9,
+      "capacity": 27,
+      "id": 114,
+      "name": "M�rtires Concepcionistas",
+      "number": "108"
+    },
+    {
+      "position": {
+        "latitude": 40.4300481,
+        "longitude": -3.6816402
+      },
+      "bikes": 7,
+      "capacity": 24,
+      "id": 115,
+      "name": "Marqu�s de Salamanca",
+      "number": "109"
+    },
+    {
+      "position": {
+        "latitude": 40.4344969,
+        "longitude": -3.7206893
+      },
+      "bikes": 7,
+      "capacity": 24,
+      "id": 116,
+      "name": "Moncloa",
+      "number": "110"
+    },
+    {
+      "position": {
+        "latitude": 40.4337322,
+        "longitude": -3.7175435
+      },
+      "bikes": 17,
+      "capacity": 24,
+      "id": 117,
+      "name": "Arcipreste de Hita A",
+      "number": "111a"
+    },
+    {
+      "position": {
+        "latitude": 40.4337036,
+        "longitude": -3.7175115
+      },
+      "bikes": 18,
+      "capacity": 24,
+      "id": 118,
+      "name": "Arcipreste de Hita B",
+      "number": "111b"
+    },
+    {
+      "position": {
+        "latitude": 40.4325991,
+        "longitude": -3.7246532
+      },
+      "bikes": 9,
+      "capacity": 24,
+      "id": 119,
+      "name": "Paseo de Moret",
+      "number": "112"
+    },
+    {
+      "position": {
+        "latitude": 40.427657,
+        "longitude": -3.7205129
+      },
+      "bikes": 9,
+      "capacity": 24,
+      "id": 120,
+      "name": "Pintor Rosales",
+      "number": "113"
+    },
+    {
+      "position": {
+        "latitude": 40.4277456,
+        "longitude": -3.7174158
+      },
+      "bikes": 17,
+      "capacity": 24,
+      "id": 121,
+      "name": "Quintana",
+      "number": "114"
+    },
+    {
+      "position": {
+        "latitude": 40.4253944,
+        "longitude": -3.7170448
+      },
+      "bikes": 8,
+      "capacity": 24,
+      "id": 122,
+      "name": "Ferraz",
+      "number": "115"
+    },
+    {
+      "position": {
+        "latitude": 40.42402,
+        "longitude": -3.711603
+      },
+      "bikes": 7,
+      "capacity": 24,
+      "id": 123,
+      "name": "Plaza de Espa�a A",
+      "number": "116a"
+    },
+    {
+      "position": {
+        "latitude": 40.42412,
+        "longitude": -3.711703
+      },
+      "bikes": 11,
+      "capacity": 24,
+      "id": 124,
+      "name": "Plaza de Espa�a B",
+      "number": "116b"
+    },
+    {
+      "position": {
+        "latitude": 40.4309797,
+        "longitude": -3.7188898
+      },
+      "bikes": 17,
+      "capacity": 24,
+      "id": 125,
+      "name": "Altamirano",
+      "number": "117"
+    },
+    {
+      "position": {
+        "latitude": 40.400781,
+        "longitude": -3.6882407
+      },
+      "bikes": 18,
+      "capacity": 24,
+      "id": 126,
+      "name": "Juan Mart�n",
+      "number": "118"
+    },
+    {
+      "position": {
+        "latitude": 40.4013216,
+        "longitude": -3.6863218
+      },
+      "bikes": 6,
+      "capacity": 24,
+      "id": 127,
+      "name": "M�ndez �lvaro",
+      "number": "119"
+    },
+    {
+      "position": {
+        "latitude": 40.4032208,
+        "longitude": -3.6944768
+      },
+      "bikes": 18,
+      "capacity": 24,
+      "id": 128,
+      "name": "Palos de la Frontera",
+      "number": "120"
+    },
+    {
+      "position": {
+        "latitude": 40.4017926,
+        "longitude": -3.6987665
+      },
+      "bikes": 22,
+      "capacity": 24,
+      "id": 129,
+      "name": "Santa Mar�a de la Cabeza",
+      "number": "121"
+    },
+    {
+      "position": {
+        "latitude": 40.4295863,
+        "longitude": -3.6963983
+      },
+      "bikes": 11,
+      "capacity": 24,
+      "id": 130,
+      "name": "Santa Engracia 14",
+      "number": "122"
+    },
+    {
+      "position": {
+        "latitude": 40.4306458,
+        "longitude": -3.7133412
+      },
+      "bikes": 14,
+      "capacity": 24,
+      "id": 131,
+      "name": "Guzm�n el Bueno",
+      "number": "123"
+    },
+    {
+      "position": {
+        "latitude": 40.4309524,
+        "longitude": -3.6993465
+      },
+      "bikes": 22,
+      "capacity": 24,
+      "id": 169,
+      "name": "Manuel Silvela",
+      "number": "124"
+    },
+    {
+      "position": {
+        "latitude": 40.435285,
+        "longitude": -3.6948626
+      },
+      "bikes": 11,
+      "capacity": 24,
+      "id": 164,
+      "name": "General Mart�nez Campos ",
+      "number": "125"
+    },
+    {
+      "position": {
+        "latitude": 40.4344731,
+        "longitude": -3.7015686
+      },
+      "bikes": 24,
+      "capacity": 24,
+      "id": 163,
+      "name": "General �lvarez de Castro",
+      "number": "126"
+    },
+    {
+      "position": {
+        "latitude": 40.4338516,
+        "longitude": -3.708439
+      },
+      "bikes": 20,
+      "capacity": 24,
+      "id": 168,
+      "name": "Fernando el Cat�lico",
+      "number": "127"
+    },
+    {
+      "position": {
+        "latitude": 40.438994,
+        "longitude": -3.7154329
+      },
+      "bikes": 15,
+      "capacity": 24,
+      "id": 160,
+      "name": "Cea Berm�dez",
+      "number": "128"
+    },
+    {
+      "position": {
+        "latitude": 40.4385316,
+        "longitude": -3.6982209
+      },
+      "bikes": 15,
+      "capacity": 24,
+      "id": 161,
+      "name": "Jos� Abascal",
+      "number": "129"
+    },
+    {
+      "position": {
+        "latitude": 40.441386,
+        "longitude": -3.7016321
+      },
+      "bikes": 13,
+      "capacity": 20,
+      "id": 157,
+      "name": "Santa Engracia 127",
+      "number": "130"
+    },
+    {
+      "position": {
+        "latitude": 40.4412115,
+        "longitude": -3.7039582
+      },
+      "bikes": 15,
+      "capacity": 24,
+      "id": 156,
+      "name": "Bravo Murillo 44",
+      "number": "131"
+    },
+    {
+      "position": {
+        "latitude": 40.4463667,
+        "longitude": -3.7036675
+      },
+      "bikes": 19,
+      "capacity": 24,
+      "id": 149,
+      "name": "Glorieta de los Cuatro Caminos",
+      "number": "132"
+    },
+    {
+      "position": {
+        "latitude": 40.447125,
+        "longitude": -3.7001669
+      },
+      "bikes": 9,
+      "capacity": 24,
+      "id": 150,
+      "name": "Raimundo Fern�ndez",
+      "number": "133"
+    },
+    {
+      "position": {
+        "latitude": 40.4440297,
+        "longitude": -3.6956047
+      },
+      "bikes": 2,
+      "capacity": 24,
+      "id": 153,
+      "name": "Agust�n de Betancourt",
+      "number": "134"
+    },
+    {
+      "position": {
+        "latitude": 40.4415974,
+        "longitude": -3.6927821
+      },
+      "bikes": 1,
+      "capacity": 24,
+      "id": 158,
+      "name": "Plaza de San Juan de la Cruz",
+      "number": "135"
+    },
+    {
+      "position": {
+        "latitude": 40.4453307,
+        "longitude": -3.690861
+      },
+      "bikes": 8,
+      "capacity": 24,
+      "id": 151,
+      "name": "Castellana 106",
+      "number": "136"
+    },
+    {
+      "position": {
+        "latitude": 40.445411,
+        "longitude": -3.6853312
+      },
+      "bikes": 2,
+      "capacity": 24,
+      "id": 152,
+      "name": "Plaza de la Rep�blica Argentina",
+      "number": "137"
+    },
+    {
+      "position": {
+        "latitude": 40.4457414,
+        "longitude": -3.6917932
+      },
+      "bikes": 6,
+      "capacity": 24,
+      "id": 154,
+      "name": "Paseo de la Castellana con Raimundo Fern�ndez",
+      "number": "138"
+    },
+    {
+      "position": {
+        "latitude": 40.4396792,
+        "longitude": -3.6907784
+      },
+      "bikes": 10,
+      "capacity": 24,
+      "id": 159,
+      "name": "Jos� Guti�rrez Abascal ",
+      "number": "139"
+    },
+    {
+      "position": {
+        "latitude": 40.4379444,
+        "longitude": -3.682862
+      },
+      "bikes": 11,
+      "capacity": 24,
+      "id": 162,
+      "name": "Vel�zquez 130",
+      "number": "140"
+    },
+    {
+      "position": {
+        "latitude": 40.4355143,
+        "longitude": -3.6892368
+      },
+      "bikes": 4,
+      "capacity": 12,
+      "id": 165,
+      "name": "P� Castellana - Glorieta de Emilio Castelar",
+      "number": "141"
+    },
+    {
+      "position": {
+        "latitude": 40.4334087,
+        "longitude": -3.6879154
+      },
+      "bikes": 0,
+      "capacity": 24,
+      "id": 167,
+      "name": "Castellana 42",
+      "number": "142"
+    },
+    {
+      "position": {
+        "latitude": 40.4345973,
+        "longitude": -3.678492
+      },
+      "bikes": 10,
+      "capacity": 24,
+      "id": 166,
+      "name": "Diego de Le�n 52",
+      "number": "143"
+    },
+    {
+      "position": {
+        "latitude": 40.4323655,
+        "longitude": -3.6758555
+      },
+      "bikes": 11,
+      "capacity": 24,
+      "id": 170,
+      "name": "Juan Bravo 50",
+      "number": "144"
+    },
+    {
+      "position": {
+        "latitude": 40.429887,
+        "longitude": -3.6712823
+      },
+      "bikes": 15,
+      "capacity": 24,
+      "id": 171,
+      "name": "Ortega y Gasset 87",
+      "number": "145"
+    },
+    {
+      "position": {
+        "latitude": 40.4442258,
+        "longitude": -3.6787169
+      },
+      "bikes": 14,
+      "capacity": 18,
+      "id": 155,
+      "name": "Mar�a Francisca 1",
+      "number": "146"
+    },
+    {
+      "position": {
+        "latitude": 40.4483269,
+        "longitude": -3.6797296
+      },
+      "bikes": 4,
+      "capacity": 24,
+      "id": 148,
+      "name": "Doctor Arce 45",
+      "number": "147"
+    },
+    {
+      "position": {
+        "latitude": 40.4510188,
+        "longitude": -3.6817962
+      },
+      "bikes": 7,
+      "capacity": 24,
+      "id": 144,
+      "name": "Serrano 210",
+      "number": "148"
+    },
+    {
+      "position": {
+        "latitude": 40.4498613,
+        "longitude": -3.6881689
+      },
+      "bikes": 14,
+      "capacity": 24,
+      "id": 146,
+      "name": "Paseo de la Habana 42",
+      "number": "149"
+    },
+    {
+      "position": {
+        "latitude": 40.4488924,
+        "longitude": -3.6905604
+      },
+      "bikes": 0,
+      "capacity": 24,
+      "id": 147,
+      "name": "Castellana frente a Hermanos Pinz�n",
+      "number": "150"
+    },
+    {
+      "position": {
+        "latitude": 40.4480662,
+        "longitude": -3.695286
+      },
+      "bikes": 0,
+      "capacity": 24,
+      "id": 145,
+      "name": "Orense 12",
+      "number": "151"
+    },
+    {
+      "position": {
+        "latitude": 40.4527164,
+        "longitude": -3.6990077
+      },
+      "bikes": 11,
+      "capacity": 24,
+      "id": 142,
+      "name": "General Per�n 1",
+      "number": "152"
+    },
+    {
+      "position": {
+        "latitude": 40.4522938,
+        "longitude": -3.692651
+      },
+      "bikes": 3,
+      "capacity": 24,
+      "id": 143,
+      "name": "General Per�n con Poeta Joan Maragall",
+      "number": "153"
+    },
+    {
+      "position": {
+        "latitude": 40.4548456,
+        "longitude": -3.6946218
+      },
+      "bikes": 2,
+      "capacity": 24,
+      "id": 141,
+      "name": "Orense 36",
+      "number": "154"
+    },
+    {
+      "position": {
+        "latitude": 40.4572824,
+        "longitude": -3.7009675
+      },
+      "bikes": 16,
+      "capacity": 24,
+      "id": 139,
+      "name": "San Germ�n",
+      "number": "155"
+    },
+    {
+      "position": {
+        "latitude": 40.4592351,
+        "longitude": -3.691533
+      },
+      "bikes": 3,
+      "capacity": 24,
+      "id": 140,
+      "name": "Sor �ngela de la Cruz",
+      "number": "156"
+    },
+    {
+      "position": {
+        "latitude": 40.4591366,
+        "longitude": -3.6894151
+      },
+      "bikes": 7,
+      "capacity": 24,
+      "id": 137,
+      "name": "Castellana 164",
+      "number": "157"
+    },
+    {
+      "position": {
+        "latitude": 40.4585318,
+        "longitude": -3.684715
+      },
+      "bikes": 14,
+      "capacity": 24,
+      "id": 138,
+      "name": "Alberto Alcocer",
+      "number": "158"
+    },
+    {
+      "position": {
+        "latitude": 40.4543852,
+        "longitude": -3.6835926
+      },
+      "bikes": 19,
+      "capacity": 24,
+      "id": 173,
+      "name": "Paseo de la Habana 63",
+      "number": "159"
+    },
+    {
+      "position": {
+        "latitude": 40.4572466,
+        "longitude": -3.6763439
+      },
+      "bikes": 11,
+      "capacity": 24,
+      "id": 172,
+      "name": "Colombia",
+      "number": "160"
+    },
+    {
+      "position": {
+        "latitude": 40.4220812,
+        "longitude": -3.7218482
+      },
+      "bikes": 10,
+      "capacity": 24,
+      "id": 132,
+      "name": "Paseo de la Florida",
+      "number": "161"
+    },
+    {
+      "position": {
+        "latitude": 40.4034076,
+        "longitude": -3.7108108
+      },
+      "bikes": 17,
+      "capacity": 24,
+      "id": 133,
+      "name": "Metro Pir�mides",
+      "number": "162"
+    },
+    {
+      "position": {
+        "latitude": 40.4035988,
+        "longitude": -3.7064516
+      },
+      "bikes": 16,
+      "capacity": 21,
+      "id": 134,
+      "name": "Paseo de la Esperanza",
+      "number": "163"
+    },
+    {
+      "position": {
+        "latitude": 40.3972616,
+        "longitude": -3.6945025
+      },
+      "bikes": 16,
+      "capacity": 24,
+      "id": 136,
+      "name": "Paseo de las Delicias",
+      "number": "164"
+    },
+    {
+      "position": {
+        "latitude": 40.3919385,
+        "longitude": -3.6971829
+      },
+      "bikes": 21,
+      "capacity": 24,
+      "id": 135,
+      "name": "Entrada Matadero",
+      "number": "165"
+    },
+    {
+      "position": {
+        "latitude": 40.4138333,
+        "longitude": -3.7135833
+      },
+      "bikes": 16,
+      "capacity": 24,
+      "id": 174,
+      "name": "Segovia 26",
+      "number": "166"
+    },
+    {
+      "position": {
+        "latitude": 40.413736,
+        "longitude": -3.717487
+      },
+      "bikes": 20,
+      "capacity": 24,
+      "id": 175,
+      "name": "Segovia 45",
+      "number": "167"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "prototype": [
+    "id",
+    "type",
+    "walkingVelocity",
+    "cyclingVelocity",
+    "hasreservation",
+    "position",
+    "destinationLocation",
+    "route",
+    "hasbike"
+  ],
+  "instances": []
+}

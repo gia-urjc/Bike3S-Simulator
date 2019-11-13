@@ -57,11 +57,6 @@ public class ComplexCostCalculator3 {
     final double maxWalktime;
     UtilitiesProbabilityCalculator probutils;
 
-    class BetterFirstStationException extends Exception {
-        BetterFirstStationException(){ super();}
-        
-    }
-
     private double getSqarewalkTimeRent(double accwalktime) {
         if (useSuaredTimes)
         return (accwalktime*accwalktime)/maxWalktime;

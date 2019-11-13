@@ -1,0 +1,227 @@
+[
+  {
+    "time": 86391,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBike",
+        "type": "USER_EVENT",
+        "order": 0,
+        "result": "FAIL",
+        "info": "RETRY_EVENT",
+        "involvedEntities": [
+          {
+            "type": "users",
+            "id": 12270
+          },
+          {
+            "type": "stations",
+            "id": 80
+          }
+        ],
+        "changes": null,
+        "newEntities": null,
+        "oldEntities": null
+      }
+    ]
+  },
+  {
+    "time": 86392,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBike",
+        "type": "USER_EVENT",
+        "order": 0,
+        "result": "FAIL",
+        "info": "RETRY_EVENT",
+        "involvedEntities": [
+          {
+            "type": "users",
+            "id": 12270
+          },
+          {
+            "type": "stations",
+            "id": 80
+          }
+        ],
+        "changes": null,
+        "newEntities": null,
+        "oldEntities": null
+      }
+    ]
+  },
+  {
+    "time": 86393,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBike",
+        "type": "USER_EVENT",
+        "order": 0,
+        "result": "FAIL",
+        "info": "RETRY_EVENT",
+        "involvedEntities": [
+          {
+            "type": "users",
+            "id": 12270
+          },
+          {
+            "type": "stations",
+            "id": 80
+          }
+        ],
+        "changes": null,
+        "newEntities": null,
+        "oldEntities": null
+      }
+    ]
+  },
+  {
+    "time": 86394,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBike",
+        "type": "USER_EVENT",
+        "order": 0,
+        "result": "FAIL",
+        "info": "RETRY_EVENT",
+        "involvedEntities": [
+          {
+            "type": "users",
+            "id": 12270
+          },
+          {
+            "type": "stations",
+            "id": 80
+          }
+        ],
+        "changes": null,
+        "newEntities": null,
+        "oldEntities": null
+      }
+    ]
+  },
+  {
+    "time": 86395,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBike",
+        "type": "USER_EVENT",
+        "order": 0,
+        "result": "FAIL",
+        "info": "RETRY_EVENT",
+        "involvedEntities": [
+          {
+            "type": "users",
+            "id": 12270
+          },
+          {
+            "type": "stations",
+            "id": 80
+          }
+        ],
+        "changes": null,
+        "newEntities": null,
+        "oldEntities": null
+      }
+    ]
+  },
+  {
+    "time": 86396,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBike",
+        "type": "USER_EVENT",
+        "order": 0,
+        "result": "FAIL",
+        "info": "RETRY_EVENT",
+        "involvedEntities": [
+          {
+            "type": "users",
+            "id": 12270
+          },
+          {
+            "type": "stations",
+            "id": 80
+          }
+        ],
+        "changes": null,
+        "newEntities": null,
+        "oldEntities": null
+      }
+    ]
+  },
+  {
+    "time": 86397,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBike",
+        "type": "USER_EVENT",
+        "order": 0,
+        "result": "FAIL",
+        "info": "RETRY_EVENT",
+        "involvedEntities": [
+          {
+            "type": "users",
+            "id": 12270
+          },
+          {
+            "type": "stations",
+            "id": 80
+          }
+        ],
+        "changes": null,
+        "newEntities": null,
+        "oldEntities": null
+      }
+    ]
+  },
+  {
+    "time": 86398,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBike",
+        "type": "USER_EVENT",
+        "order": 0,
+        "result": "FAIL",
+        "info": "RETRY_EVENT",
+        "involvedEntities": [
+          {
+            "type": "users",
+            "id": 12270
+          },
+          {
+            "type": "stations",
+            "id": 80
+          }
+        ],
+        "changes": null,
+        "newEntities": null,
+        "oldEntities": null
+      }
+    ]
+  },
+  {
+    "time": 86399,
+    "events": [
+      {
+        "name": "EventUserArrivesAtStationToReturnBike",
+        "type": "USER_EVENT",
+        "order": 0,
+        "result": "FAIL",
+        "info": "RETRY_EVENT",
+        "involvedEntities": [
+          {
+            "type": "users",
+            "id": 12270
+          },
+          {
+            "type": "stations",
+            "id": 80
+          }
+        ],
+        "changes": null,
+        "newEntities": null,
+        "oldEntities": null
+      }
+    ]
+  }
+]

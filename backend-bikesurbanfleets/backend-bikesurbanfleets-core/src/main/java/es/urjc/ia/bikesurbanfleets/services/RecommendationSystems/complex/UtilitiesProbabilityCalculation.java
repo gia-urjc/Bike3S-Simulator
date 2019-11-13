@@ -104,7 +104,7 @@ public class UtilitiesProbabilityCalculation extends UtilitiesProbabilityCalcula
         double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
 
-        //probability that a bike exists and that is exists after taking one 
+        //probability that a bike exists and that isexists after taking one 
         int k = 1 - estimatedbikes;
         pd.probabilityTake = ProbabilityDistributions.calculateUpCDFSkellamProbability(returndemandrate, takedemandrate, k);
         pd.probabilityTakeAfterTake = pd.probabilityTake - ProbabilityDistributions.calculateSkellamProbability(returndemandrate, takedemandrate, k);

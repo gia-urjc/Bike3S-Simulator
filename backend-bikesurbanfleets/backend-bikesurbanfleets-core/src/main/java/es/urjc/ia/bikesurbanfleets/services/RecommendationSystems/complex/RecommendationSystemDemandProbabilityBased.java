@@ -167,9 +167,9 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     private double probst = 0D;
     private int callst = 0;
 
-    private void printRecomendations(List<StationUtilityData> su, boolean take) {
+    void printRecomendations(List<StationUtilityData> su, boolean take) {
         if (printHints) {
-            int max = Math.min(10, su.size());
+            int max = Math.min(3, su.size());
        //     if (su.get(0).getStation().getId()==8) max=173;
        //     else return;
 
@@ -183,15 +183,14 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     System.out.format("[Info] LOW PROB Take %9.8f %n", su.get(0).getProbabilityTake());
                     lowprobs++;
                 }
-                System.out.println("             id av ca   wdist   wtime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");
+                System.out.println("             id av ca   wtime    prob   indcost tcostdiff  rcostdiff   totcost bestn timetobn bnwt bnprob");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
                             i+1,
                             s.getStation().getId(),
                             s.getStation().availableBikes(),
                             s.getStation().getCapacity(),
-                            s.getWalkdist(),
                             s.getWalkTime(),
                             s.getProbabilityTake(),
                             s.getIndividualCost(),
@@ -202,11 +201,9 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     if (bn!=null){
                         double distto=bn.getStation().getPosition().distanceTo(s.getStation().getPosition());
                         double timeto= (distto / straightLineWalkingVelocity);
-                        System.out.format(" %3d %7.1f %7.1f %7.1f %7.1f %6.5f %n",
+                        System.out.format(" %3d %7.1f %7.1f %6.5f %n",
                             bn.getStation().getId(),
-                            distto,
                             timeto,
-                            bn.getWalkdist(),
                             bn.getWalkTime(),
                             bn.getProbabilityTake());     
                     } else {
@@ -223,17 +220,15 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     System.out.format("[Info] LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());
                     lowprobs++;
                 }
-                System.out.println("             id av ca   wdist   wtime   bdist   btime    prob   indcost tcostdiff  rostdiff   totcost bestn disttobn timetobn bnwd bnwt bnprob");
+                System.out.println("             id av ca   wtime   btime    prob   indcost tcostdiff  rcostdiff   totcost bestn timetobn bnwt bnprob");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %7.1f %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
                             i+1,
                             s.getStation().getId(),
                             s.getStation().availableBikes(),
                             s.getStation().getCapacity(),
-                            s.getWalkdist(),
                             s.getWalkTime(),
-                            s.getBikedist(),
                             s.getBiketime(),
                             s.getProbabilityReturn(),
                             s.getIndividualCost(),
@@ -244,11 +239,9 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     if (bn!=null){
                         double distto=bn.getStation().getPosition().distanceTo(s.getStation().getPosition());
                         double timeto= (distto / straightLineCyclingVelocity);
-                        System.out.format(" %3d %7.1f %7.1f %7.1f %7.1f %6.5f %n",
+                        System.out.format(" %3d %7.1f %7.1f %6.5f %n",
                             bn.getStation().getId(),
-                            distto,
                             timeto,
-                            bn.getWalkdist(),
                             bn.getWalkTime(),
                             bn.getProbabilityReturn());     
                     } else {

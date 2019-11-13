@@ -6,7 +6,6 @@ import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParamet
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.ComplexCostCalculator3.BetterFirstStationException;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
 import java.util.ArrayList;
@@ -42,13 +41,14 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         private double unsucesscostRent = 3000;
         private double unsucesscostReturn = 2000;
         private double MaxCostValue = 5000;
-        private boolean squaredTimes = true;
         private int PredictionNorm = 0;
         private int predictionWindow = 1800;
+        private double normmultiplier=0.5;
 
         @Override
         public String toString() {
-            return "predictionWindow=" + predictionWindow + ", PredictionNorm=" + PredictionNorm + ", squaredTimes=" + squaredTimes + ", maxDistanceRecommendation=" + maxDistanceRecommendation + ", MaxCostValue=" + MaxCostValue + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent + ", unsucesscostReturn=" + unsucesscostReturn;
+            return "predictionWindow=" + predictionWindow + ", PredictionNorm=" + PredictionNorm + ", maxDistanceRecommendation=" + maxDistanceRecommendation + ", MaxCostValue=" + MaxCostValue + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent +
+                    ", unsucesscostReturn=" + unsucesscostReturn + ", normmultiplier=" + normmultiplier;
         }
 
     }
@@ -76,7 +76,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 parameters.unsucesscostReturn,
                 parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity,
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-                parameters.maxDistanceRecommendation, probutils, parameters.squaredTimes, parameters.PredictionNorm);
+                parameters.maxDistanceRecommendation, probutils, parameters.PredictionNorm, parameters.normmultiplier);
     }
 
     @Override

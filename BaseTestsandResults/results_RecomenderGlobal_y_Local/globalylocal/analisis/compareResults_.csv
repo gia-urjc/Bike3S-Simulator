@@ -1,8 +1,0 @@
-
-Testname;#users;DS;HE;RE;Av. time to station (min);Av. time from orig to dest station (min);Av. time to final destination (min);Av. total time (min);# abandoned;# with 0 rental fails;# with 1 rental fails;# with 2 rental fails;# with 0 return fails;# with 1 return fails;# with 2 return fails;# with 3 return fails;# with 4 return fails;# with 5 return fails;# with 6 return fails;# with 7 return fails;# with 8 return fails;# with 9 return fails
-USER_OBEDIENT_GLOBAL_UTILITY_W_DISTANCE0;14877;0.9983195536734557;0.9927143907492815;0.9652303892896601;2.7684071729957807;10.00555705179998;2.9860512613340515;15.760015486129815;25;14756;83;13;14436;340;49;17;8;1;;;;1
-USER_OBEDIENT_LOCAL_UTILITY_W_DISTANCE0;14877;0.9985884250857028;0.9937788480834838;0.9711708178074132;2.79031704361874;9.986223299228147;3.0024984293663617;15.779038772213248;21;14774;71;11;14520;266;47;13;8;2;;;;
-
-test;#stations;#stations with empty times;sum emptytimes all stations(min);average equilibrium dev. over all stations and total time (bikes);avg empty time
-USER_OBEDIENT_GLOBAL_UTILITY_W_DISTANCE0;173;74;6984.35;4.465953757225433;40.37196531791908
-USER_OBEDIENT_LOCAL_UTILITY_W_DISTANCE0;173;67;5782.033333333334;4.3235838150289005;33.42215799614644
