@@ -5,7 +5,7 @@ import {rData} from "json-schema-builder-ts/dist/references";
 import { RecomProperties } from "../common/recomsystems";
 
 export const paramGM = sObject({
-        mapFile: sString,
+        mapFile: sString(),
         tempDirectory: sString
 });
 
