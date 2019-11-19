@@ -52,7 +52,7 @@ export const GlobalConfig = new JsonSchema(options, sObject({
        typeName : sConst('GRAPH_HOPPER'),
        parameters: sObject({
           mapFile: sString(),
-          tempDirectory: sString
+          tempDirectory: sString()
        })
     }),
         
