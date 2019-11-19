@@ -8,16 +8,50 @@ export const GlobalConfig = new JsonSchema(options, sObject({
     totalSimulationTime: UInt,
     reservationTime: sInteger().min(0).max(rData('1/totalSimulationTime')),
     randomSeed: sInteger().min(1),
-    recommendationSystemType: RecomProperties,
-    graphManagerType: sEnum('GRAPH_HOPPER'),
+    startDateTime: sString(),
     boundingBox: sObject({
         northWest: GeoPoint,
         southEast: GeoPoint,
     }).require.all().restrict(),
     debugMode: sBoolean(),
-    loadDemandData: sBoolean(),
-    startDateTime: sString(),
+
+    graphManagerType: GraphManagerProperties,
+    recommendationSystemType: RecomProperties,
+    fleetManagerType: FleetManagerProperties,
+    demandManagerType: DemandManagerProperties
+
 }).require('totalSimulationTime', 'reservationTime', 'boundingBox', 'graphManagerType'));
+
+
+export const paramGM = sObject({
+        mapFile: sString,
+        tempDirectory: sString
+});
+
+export const GraphManagerProperties = sObject({
+    typeName = sEnum('GRAPH_HOPPER'),
+    parameters: paramGM
+});
+
+export const paramFleetManager = sObject({
+        EventFile: sString
+});
+
+export const FleetManagerProperties = sObject({
+    typeName = sEnum('FileBasedFleetManager'),
+    parameters: paramFleetManager
+});
+
+export const paramDemandManager = sObject({
+        demandDataFile: sString
+});
+
+export const DemandManagerProperties = sObject({
+    typeName = sEnum('FileBasedDemandManager'),
+    parameters: paramDemandManager
+});
+
+
 
 export const layout = 
 [
