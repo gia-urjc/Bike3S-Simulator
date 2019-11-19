@@ -4,7 +4,6 @@ import {JsonSchema} from "json-schema-builder-ts";
 import {rData} from "json-schema-builder-ts/dist/references";
 import { RecomProperties } from "../common/recomsystems";
 
-/**
 export const paramGM = sObject({
         mapFile: sString,
         tempDirectory: sString
@@ -14,7 +13,6 @@ export const GraphManagerProperties = sObject({
     typeName = sEnum('GRAPH_HOPPER'),
     parameters: paramGM
 });
-*/
 
 export const paramFleetManager = sObject({
         EventFile: sString()
@@ -45,17 +43,8 @@ export const GlobalConfig = new JsonSchema(options, sObject({
     }).require.all().restrict(),
     debugMode: sBoolean(),
         
-/**
     graphManagerType: GraphManagerProperties,
-*/
-    graphManagerType: sObject({
-       typeName : sConst('GRAPH_HOPPER'),
-       parameters: sObject({
-          mapFile: sString(),
-          tempDirectory: sString()
-       })
-    }),
-        
+
     recommendationSystemType: RecomProperties,
     fleetManagerType: FleetManagerProperties,
     demandManagerType: DemandManagerProperties
