@@ -28,7 +28,7 @@ export const typeParameters = {
         maxDistanceRecommendation: UInt,
         upperProbabilityBound: UInt,
         desireableProbability: sNumber(),
-        desireableProbability: sNumber()
+        probfactor: sNumber()
     },
     DEMAND_cost: {
         maxDistanceRecommendation: UInt,
