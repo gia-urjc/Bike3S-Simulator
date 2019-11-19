@@ -17,7 +17,7 @@ export const GraphManagerProperties = sObject({
 */
 
 export const paramFleetManager = sObject({
-        EventFile: sString
+        EventFile: sString()
 });
 
 export const FleetManagerProperties = sObject({
@@ -26,7 +26,7 @@ export const FleetManagerProperties = sObject({
 });
 
 export const paramDemandManager = sObject({
-        demandDataFile: sString
+        demandDataFile: sString()
 });
 
 export const DemandManagerProperties = sObject({
@@ -51,7 +51,7 @@ export const GlobalConfig = new JsonSchema(options, sObject({
     graphManagerType: sObject({
        typeName = sEnum('GRAPH_HOPPER'),
        parameters: sObject({
-          mapFile: sString,
+          mapFile: sString(),
           tempDirectory: sString
        })
     }),
