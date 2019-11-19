@@ -17,8 +17,8 @@ class BackendCoreArguments {
     globalConfigurationPath: ArgumentInfo;
     usersConfigurationPath: ArgumentInfo;
     stationsConfigurationPath: ArgumentInfo;
-    map: ArgumentInfo;
     historyOuputPath: ArgumentInfo;
+    analysisOutputPath: ArgumentInfo;
 }
 
 class BackendUserGenArguments {
@@ -166,7 +166,7 @@ export class BackendController {
             let rootPath = app.getAppPath();
             let globalConf, stationsConf, usersConf: any;
             try {
-				globalConf  = await fs.readJson(args.globalConfPath);
+                globalConf  = await fs.readJson(args.globalConfPath);
                 stationsConf = await fs.readJson(args.stationsConfPath);
                 usersConf = await fs.readJsonSync(args.usersConfPath);
 
@@ -203,7 +203,7 @@ export class BackendController {
                     '-usersConfig', '"' + args.usersConfPath + '"',
                     '-stationsConfig', '"' + args.stationsConfPath + '"',
                     '-historyOutput', '"' + args.outputHistoryPath + '"',
-                    '-mapPath', '"' + args.mapPath + '"',
+                    '-analysisOutput', '"' + args.analysisOutputPath + '"',
                     `-callFromFrontend`
                 ], {
                     cwd: rootPath,
@@ -236,8 +236,7 @@ export class BackendController {
                 let errorMessage = "Error reading Configuration Path: \n"
                     + "Global Configuration: " + args.globalConfPath + "\n"
                     + "Users Configuration: " + args.usersConfPath + "\n"
-                    + "Stations Configuration: " + args.stationsConfPath + "\n"
-                    + "Map Path: " + args.mapPath + "\n";
+                    + "Stations Configuration: " + args.stationsConfPath ;
                     
                 this.sendInfoToGui('core-error', errorMessage);
                 reject(errorMessage);

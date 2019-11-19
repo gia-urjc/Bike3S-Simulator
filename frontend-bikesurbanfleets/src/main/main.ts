@@ -28,8 +28,6 @@ export namespace Main {
 
         createConfigurationWindow();
 
-        createAnalyseHistoryWindow();
-
         ipcMain.on('open-visualization', (event: any, arg: any) => {
             if(visualization !== null) {
                 visualization.setTitle("Visualization");
@@ -51,12 +49,6 @@ export namespace Main {
             }
         });
 
-        ipcMain.on('open-analyse', (event: any, arg: any) => {
-            if(analyse !== null) {
-                analyse.setTitle("Analyse History");
-                analyse.show();
-            }
-        });
     }
 
     /*===================
@@ -245,43 +237,7 @@ export namespace Main {
         configuration.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/configuration');
     }
 
-    /*===================
-     *
-     *  Analyse History
-     *
-     ===================*/
-
-     function createAnalyseHistoryWindow() {
-        analyse = new BrowserWindow({
-            width: 1000, height: 600,
-            resizable: true, fullscreenable: true,
-            show: false
-        });
-
-        analyse.loadURL(urlFormat({
-            pathname: join(app.getAppPath(), 'frontend', 'index.html'),
-            protocol: 'file',
-            slashes: true
-        }));
-
-        analyse.on('close', async (event) => {
-            event.preventDefault();
-            if(analyse !== null) analyse.hide();
-        });
-
-        analyse.webContents.on('will-navigate', (event, url) => {
-            event.preventDefault(); // prevents dragging images or other documents into browser window
-            shell.openExternal(url); // opens links (or dragged documents) in external browser
-        });
-
-        //if (process.env.target === 'development') {
-        //    analyse.webContents.openDevTools();
-        //}
-
-        analyse.loadURL('file://' + app.getAppPath() + '/frontend/index.html#/analyse');
-    }
-
-    
+  
 
     export async function test(): Promise<void> {
         try {

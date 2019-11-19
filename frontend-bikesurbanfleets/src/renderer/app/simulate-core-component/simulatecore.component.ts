@@ -17,7 +17,7 @@ export class SimulatecoreComponent{
     private usersConfiguration: string;
     private stationsConfiguration: string;
     private historyOutputPath: string;
-    private mapPath: string;
+    private analysisOutputPath: string;
     private percentage: number;
 
     private resultMessage: string;
@@ -45,13 +45,6 @@ export class SimulatecoreComponent{
 		return dialog.showOpenDialog({
             properties: ['openFile', 'createDirectory'],
             filters: [{name: 'JSON Files', extensions: ['json']}]
-        })[0].replace(/\\/g, "/");
-    }
-
-    selectMap(): string {
-        return dialog.showOpenDialog({
-            properties: ['openFile', 'createDirectory'],
-            filters: [{name: 'OSM Files', extensions: ['osm']}]
         })[0].replace(/\\/g, "/");
     }
 
@@ -98,7 +91,7 @@ export class SimulatecoreComponent{
             usersConfPath: this.usersConfiguration,
             stationsConfPath: this.stationsConfiguration,
             outputHistoryPath: this.historyOutputPath,
-            mapPath: this.mapPath
+            analysisOutputPath: this.analysisOutputPath
         };
         console.log(args);
         $('#modal-button').trigger('click');
