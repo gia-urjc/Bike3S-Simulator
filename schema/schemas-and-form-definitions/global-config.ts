@@ -21,7 +21,7 @@ export const paramFleetManager = sObject({
 });
 
 export const FleetManagerProperties = sObject({
-    typeName = sConst('FileBasedFleetManager'),
+    typeName : sConst('FileBasedFleetManager'),
     parameters: paramFleetManager
 });
 
@@ -30,7 +30,7 @@ export const paramDemandManager = sObject({
 });
 
 export const DemandManagerProperties = sObject({
-    typeName = sConst('FileBasedDemandManager'),
+    typeName : sConst('FileBasedDemandManager'),
     parameters: paramDemandManager
 });
 
@@ -49,7 +49,7 @@ export const GlobalConfig = new JsonSchema(options, sObject({
     graphManagerType: GraphManagerProperties,
 */
     graphManagerType: sObject({
-       typeName = sConst('GRAPH_HOPPER'),
+       typeName : sConst('GRAPH_HOPPER'),
        parameters: sObject({
           mapFile: sString(),
           tempDirectory: sString
