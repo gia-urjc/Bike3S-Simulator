@@ -216,9 +216,10 @@ public class DemandAnalysisFromHistoricData {
 
     public static void main(String[] args) throws Exception {
         DemandAnalysisFromHistoricData da=new DemandAnalysisFromHistoricData();
-        String projectDir = "/Users/holger/workspace/BikeProjects/Data_madrid/Datos Uso bicis/";
-        da.ReadFileJson(projectDir+"201708_Usage_Bicimad.json");
-        da.ReadFileJson(projectDir+"201709_Usage_Bicimad.json");
+        String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Datos_Madrid/";
+                
+        da.ReadFileJson(projectDir+"201807_Usage_Bicimad.json");
+   /*     da.ReadFileJson(projectDir+"201709_Usage_Bicimad.json");
         da.ReadFileJson(projectDir+"201710_Usage_Bicimad.json");
         da.ReadFileJson(projectDir+"201711_Usage_Bicimad.json");
         da.ReadFileJson(projectDir+"201712_Usage_Bicimad.json");
@@ -231,7 +232,7 @@ public class DemandAnalysisFromHistoricData {
         da.ReadFileJson(projectDir+"201807_Usage_Bicimad.json");
         da.ReadFileJson(projectDir+"201808_Usage_Bicimad.json");
         da.ReadFileJson(projectDir+"201809_Usage_Bicimad.json");
-       
+   */    
         da.writedata(projectDir+"demandData.csv");
 
     }

@@ -45,10 +45,10 @@ public class DummyDemandManager extends DemandManager{
     public  double getGlobalTakeRatePerHour(LocalDateTime t) {return 0;} ;
     public  double getGlobalReturnRatePerHour(LocalDateTime t) {return 0;} ;
    
-    public  double getStationTakeRatePerHour(int stationID, Month month, Day day, int hour) {return 0;} ;
-    public  double getStationReturnRatePerHour(int stationID, Month month, Day day, int hour) {return 0;} ;
+    public  double getStationTakeRatePerHour(int stationID, Month month, WeekDay day, int hour) {return 0;} ;
+    public  double getStationReturnRatePerHour(int stationID, Month month, WeekDay day, int hour) {return 0;} ;
 
-    public  double getGlobalTakeRatePerHour(Month month, Day day, int hour){return 0;}  ;
-    public  double getGlobalReturnRatePerHour(Month month, Day day, int hour) {return 0;} ;
+    public  double getGlobalTakeRatePerHour(Month month, WeekDay day, int hour){return 0;}  ;
+    public  double getGlobalReturnRatePerHour(Month month, WeekDay day, int hour) {return 0;} ;
 
 }

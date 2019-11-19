@@ -166,6 +166,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     private int callsr = 0;
     private double probst = 0D;
     private int callst = 0;
+    private double avcost=0;
+    private double avcosr=0;
 
     void printRecomendations(List<StationUtilityData> su, boolean take) {
         if (printHints) {
@@ -176,8 +178,9 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             if (take) {
                 System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
                 probst += su.get(0).getProbabilityTake();
+                avcost = ((avcost*callst)+su.get(0).getTotalCost())/(double)(callst+1);
                 callst++;
-                System.out.format("Expected successrate take: %9.8f %n", (probst / callst));
+                System.out.format("Expected successrate take: %9.8f expected cost: %5.1f %n", (probst / callst), avcost);
 
                 if (su.get(0).getProbabilityTake() < 0.6) {
                     System.out.format("[Info] LOW PROB Take %9.8f %n", su.get(0).getProbabilityTake());
@@ -213,8 +216,9 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             } else {
                 System.out.println("Time (return):" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
                 probsr += su.get(0).getProbabilityReturn();
+                avcosr = ((avcosr*callsr)+su.get(0).getTotalCost())/(double)(callsr+1);
                 callsr++;
-                System.out.format("Expected successrate return: %9.8f %n", (probsr / callsr));
+                System.out.format("Expected successrate return: %9.8f expected cost: %5.1f %n", (probsr / callsr), avcosr);
 
                 if (su.get(0).getProbabilityReturn() < 0.6) {
                     System.out.format("[Info] LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());

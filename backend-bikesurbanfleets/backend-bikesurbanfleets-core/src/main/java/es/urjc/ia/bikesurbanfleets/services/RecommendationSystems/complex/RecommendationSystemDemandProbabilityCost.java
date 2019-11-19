@@ -38,9 +38,9 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         private double penalisationfactorrent = 1;
         private double penalisationfactorreturn = 1;
         private double maxStationsToReccomend = 30;
-        private double unsucesscostRent = 3000;
-        private double unsucesscostReturn = 2000;
-        private double MaxCostValue = 5000;
+        private double unsucesscostRent = 5500; //with calculator2bis=between 4000 and 6000
+        private double unsucesscostReturn = 5500; //with calculator2bis=between 4000 and 6000
+        private double MaxCostValue = 5000; //with calculator2bis=0
 
         @Override
         public String toString() {

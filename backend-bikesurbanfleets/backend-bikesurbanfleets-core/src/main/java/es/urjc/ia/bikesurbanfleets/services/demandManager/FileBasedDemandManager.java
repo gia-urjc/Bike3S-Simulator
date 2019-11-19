@@ -43,7 +43,7 @@ public class FileBasedDemandManager extends DemandManager{
 
     //if no demand data is available, the average of all stations in the same period is returned
     //this is the minimum demand that is assumed if teh obtained demand is 0
-    private final static double MIN_DEMAND = 0.05;
+    private final static double MIN_DEMAND = 0.05;//0.05
 
     private static class DemandResult {
 
@@ -104,22 +104,22 @@ public class FileBasedDemandManager extends DemandManager{
     }
 
     public double getStationTakeRatePerHour(int stationID, LocalDateTime t) {
-        return getStationTakeRatePerHour(stationID, Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+        return getStationTakeRatePerHour(stationID, Month.toDemandMangerMonth(t.getMonth()), WeekDay.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
     public double getStationReturnRatePerHour(int stationID, LocalDateTime t) {
-        return getStationReturnRatePerHour(stationID, Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+        return getStationReturnRatePerHour(stationID, Month.toDemandMangerMonth(t.getMonth()), WeekDay.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
     public double getGlobalTakeRatePerHour(LocalDateTime t) {
-        return getGlobalTakeRatePerHour(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+        return getGlobalTakeRatePerHour(Month.toDemandMangerMonth(t.getMonth()), WeekDay.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
     public double getGlobalReturnRatePerHour(LocalDateTime t) {
-        return getGlobalReturnRatePerHour(Month.toDemandMangerMonth(t.getMonth()), Day.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
+        return getGlobalReturnRatePerHour(Month.toDemandMangerMonth(t.getMonth()), WeekDay.toDemandMangerDay(t.getDayOfWeek()), t.getHour());
     }
 
-    public double getStationTakeRatePerHour(int stationID, Month month, Day day, int hour) {
+    public double getStationTakeRatePerHour(int stationID, Month month, WeekDay day, int hour) {
         DemandResult r = dem.getDemandStation(stationID, month, day, hour, true);
         double result;
         if (!r.hasdemand) {
@@ -133,7 +133,7 @@ public class FileBasedDemandManager extends DemandManager{
         return result;
     }
 
-    public double getStationReturnRatePerHour(int stationID, Month month, Day day, int hour) {
+    public double getStationReturnRatePerHour(int stationID, Month month, WeekDay day, int hour) {
         DemandResult r = dem.getDemandStation(stationID, month, day, hour, false);
         double result;
         if (!r.hasdemand) {
@@ -147,7 +147,7 @@ public class FileBasedDemandManager extends DemandManager{
         return result;
     }
 
-    public double getGlobalTakeRatePerHour(Month month, Day day, int hour) {
+    public double getGlobalTakeRatePerHour(Month month, WeekDay day, int hour) {
         double result = dem.getDemandGlobal(month, day, hour, true);
         if (result < MIN_DEMAND) {
             return MIN_DEMAND;
@@ -156,7 +156,7 @@ public class FileBasedDemandManager extends DemandManager{
     }
 
     @Override
-    public double getGlobalReturnRatePerHour(Month month, Day day, int hour) {
+    public double getGlobalReturnRatePerHour(Month month, WeekDay day, int hour) {
         double result = dem.getDemandGlobal(month, day, hour, false);
         if (result < MIN_DEMAND) {
             return MIN_DEMAND;
@@ -205,7 +205,7 @@ public class FileBasedDemandManager extends DemandManager{
     private static class Demand {
 
         HashMap< Integer, StationData> stationMap;
-        HashMap< Month, HashMap<Day, double[][]>> globalDemand;
+        HashMap< Month, HashMap<WeekDay, double[][]>> globalDemand;
         int numberstations;
 
         int getNumberStations() {
@@ -218,22 +218,22 @@ public class FileBasedDemandManager extends DemandManager{
 
         void add(int station, int month, String day, int hour, int take, int ret) {
             //first convert day and month
-            Day d;
+            WeekDay d;
             Month m;
             if (day.equals("lun")) {
-                d = Day.Mon;
+                d = WeekDay.Mon;
             } else if (day.equals("mar")) {
-                d = Day.Tue;
+                d = WeekDay.Tue;
             } else if (day.equals("mie")) {
-                d = Day.Wed;
+                d = WeekDay.Wed;
             } else if (day.equals("jue")) {
-                d = Day.Thu;
+                d = WeekDay.Thu;
             } else if (day.equals("vie")) {
-                d = Day.Fri;
+                d = WeekDay.Fri;
             } else if (day.equals("sab")) {
-                d = Day.Sat;
+                d = WeekDay.Sat;
             } else if (day.equals("dom")) {
-                d = Day.Sun;
+                d = WeekDay.Sun;
             } else {
                 throw new RuntimeException("invalid day text:" + day);
             }
@@ -277,20 +277,20 @@ public class FileBasedDemandManager extends DemandManager{
         }
 
         void setGlobalDemand() {
-            globalDemand = new HashMap< Month, HashMap<Day, double[][]>>(15);
+            globalDemand = new HashMap< Month, HashMap<WeekDay, double[][]>>(15);
             for (int key : stationMap.keySet()) {
                 StationData stationdata = stationMap.get(key);
 
                 for (Month stationmonth : stationdata.monthMap.keySet()) {
                     MonthData stationmonthdata = stationdata.monthMap.get(stationmonth);
 
-                    HashMap<Day, double[][]> globalmonthdata = globalDemand.get(stationmonth);
+                    HashMap<WeekDay, double[][]> globalmonthdata = globalDemand.get(stationmonth);
                     if (globalmonthdata == null) {
-                        globalmonthdata = new HashMap<Day, double[][]>();
+                        globalmonthdata = new HashMap<WeekDay, double[][]>();
                         globalDemand.put(stationmonth, globalmonthdata);
                     }
 
-                    for (Day stationday : stationmonthdata.dayMap.keySet()) {
+                    for (WeekDay stationday : stationmonthdata.dayMap.keySet()) {
                         DayData stationdaydata = stationmonthdata.dayMap.get(stationday);
 
                         double[][] globaldaydata = globalmonthdata.get(stationday);
@@ -317,13 +317,13 @@ public class FileBasedDemandManager extends DemandManager{
             }
         }
 
-        double getAverageStationDemand(Month month, Day day, int hour, boolean take) {
+        double getAverageStationDemand(Month month, WeekDay day, int hour, boolean take) {
             return (getDemandGlobal(month, day, hour, take) / stationMap.size());
         }
 
         //if take==true returns the take demand otherwise returns the return demand
-        double getDemandGlobal(Month month, Day day, int hour, boolean take) {
-            HashMap<Day, double[][]> globalmonthdata = globalDemand.get(month);
+        double getDemandGlobal(Month month, WeekDay day, int hour, boolean take) {
+            HashMap<WeekDay, double[][]> globalmonthdata = globalDemand.get(month);
             if (globalmonthdata == null) {
                 throw new RuntimeException("no global demand available for this period");
             }
@@ -341,7 +341,7 @@ public class FileBasedDemandManager extends DemandManager{
         }
 
         //if take==true returns the take demand otherwise returns the return demand
-        DemandResult getDemandStation(int station, Month month, Day day, int hour, boolean take) {
+        DemandResult getDemandStation(int station, Month month, WeekDay day, int hour, boolean take) {
             StationData sd = stationMap.get(station);
             if (sd == null) {
                 return new DemandResult(false, Double.NaN);
@@ -349,7 +349,7 @@ public class FileBasedDemandManager extends DemandManager{
             return sd.getDemand(month, day, hour, take);
         }
 
-        double getEntries(int station, Month month, Day day, int hour) {
+        double getEntries(int station, Month month, WeekDay day, int hour) {
             StationData sd = stationMap.get(station);
             if (sd == null) {
                 throw new RuntimeException("entries do not exist");
@@ -368,7 +368,7 @@ public class FileBasedDemandManager extends DemandManager{
             monthMap = new HashMap<Month, MonthData>(15);
         }
 
-        private void addData(Month month, Day day, int hour, int take, int ret) {
+        private void addData(Month month, WeekDay day, int hour, int take, int ret) {
             MonthData data = monthMap.get(month);
             if (data == null) {
                 data = new MonthData();
@@ -377,7 +377,7 @@ public class FileBasedDemandManager extends DemandManager{
             data.add(day, hour, take, ret);
         }
 
-        void add(Month month, Day day, int hour, int take, int ret) {
+        void add(Month month, WeekDay day, int hour, int take, int ret) {
             //add the data for the month
             addData(month, day, hour, take, ret);
 
@@ -392,7 +392,7 @@ public class FileBasedDemandManager extends DemandManager{
         }
 
         //if take==true returns the take demand otherwise returns the return demand
-        DemandResult getDemand(Month month, Day day, int hour, boolean take) {
+        DemandResult getDemand(Month month, WeekDay day, int hour, boolean take) {
             MonthData data = monthMap.get(month);
             if (data == null) {
                 return new DemandResult(false, Double.NaN);
@@ -400,7 +400,7 @@ public class FileBasedDemandManager extends DemandManager{
             return data.getDemand(day, hour, take);
         }
 
-        double getEntries(Month month, Day day, int hour) {
+        double getEntries(Month month, WeekDay day, int hour) {
             MonthData data = monthMap.get(month);
             if (data == null) {
                 throw new RuntimeException("no demand data available: month " + month);
@@ -411,13 +411,13 @@ public class FileBasedDemandManager extends DemandManager{
 
     private static class MonthData {
 
-        HashMap<Day, DayData> dayMap;
+        HashMap<WeekDay, DayData> dayMap;
 
         MonthData() {
-            dayMap = new HashMap<Day, DayData>(9);
+            dayMap = new HashMap<WeekDay, DayData>(9);
         }
 
-        private void addData(Day day, int hour, int take, int ret) {
+        private void addData(WeekDay day, int hour, int take, int ret) {
             DayData data = dayMap.get(day);
             if (data == null) {
                 data = new DayData();
@@ -426,19 +426,19 @@ public class FileBasedDemandManager extends DemandManager{
             data.add(hour, take, ret);
         }
 
-        void add(Day day, int hour, int take, int ret) {
+        void add(WeekDay day, int hour, int take, int ret) {
             //add to the day
             addData(day, hour, take, ret);
             //add weekend or weekday
-            if (day == Day.Sat || day == Day.Sun) {
-                addData(Day.Weekend, hour, take, ret);
+            if (day == WeekDay.Sat || day == WeekDay.Sun) {
+                addData(WeekDay.Weekend, hour, take, ret);
             } else {
-                addData(Day.Weekday, hour, take, ret);
+                addData(WeekDay.Weekday, hour, take, ret);
             }
         }
 
         //if take==true returns the take demand otherwise returns the return demand
-        DemandResult getDemand(Day day, int hour, boolean take) {
+        DemandResult getDemand(WeekDay day, int hour, boolean take) {
             DayData data = dayMap.get(day);
             if (data == null) {
                 return new DemandResult(false, Double.NaN);
@@ -446,7 +446,7 @@ public class FileBasedDemandManager extends DemandManager{
             return data.getDemand(hour, take);
         }
 
-        double getEntries(Day day, int hour) {
+        double getEntries(WeekDay day, int hour) {
             DayData data = dayMap.get(day);
             if (data == null) {
                 throw new RuntimeException("no demand data available: day");
@@ -516,12 +516,12 @@ public class FileBasedDemandManager extends DemandManager{
         x=demandManager.getGlobalReturnRateIntervall(currentSimulationDateTime, 3600);
        
         Month[] m = Month.values();
-        Day[] d = Day.values();
+        WeekDay[] d = WeekDay.values();
         System.out.println("!!!!!Station demand:");
 
         
         Month mm = Month.Oct;
-        Day dd = Day.Thu;
+        WeekDay dd = WeekDay.Thu;
         for (int i = 0; i < 24; i++) {
             for (Integer si : demandManager.dem.stationMap.keySet()) {
                 double take = demandManager.getStationTakeRatePerHour(si, mm, dd, i);

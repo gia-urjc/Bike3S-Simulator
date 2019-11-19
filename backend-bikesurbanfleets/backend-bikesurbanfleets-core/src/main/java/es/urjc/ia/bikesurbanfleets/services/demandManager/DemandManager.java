@@ -47,10 +47,10 @@ public abstract class DemandManager {
         }
     }
 
-    public static enum Day {
+    public static enum WeekDay {
         Mon, Tue, Wed, Thu, Fri, Sat, Sun, Weekday, Weekend;
 
-        public static Day toDemandMangerDay(java.time.DayOfWeek d) {
+        public static WeekDay toDemandMangerDay(java.time.DayOfWeek d) {
             switch (d) {
                 case MONDAY:
                     return Mon;
@@ -82,10 +82,10 @@ public abstract class DemandManager {
     public abstract double getGlobalTakeRatePerHour(LocalDateTime t) ;
     public abstract double getGlobalReturnRatePerHour(LocalDateTime t) ;
    
-    public abstract double getStationTakeRatePerHour(int stationID, Month month, Day day, int hour) ;
-    public abstract double getStationReturnRatePerHour(int stationID, Month month, Day day, int hour) ;
+    public abstract double getStationTakeRatePerHour(int stationID, Month month, WeekDay day, int hour) ;
+    public abstract double getStationReturnRatePerHour(int stationID, Month month, WeekDay day, int hour) ;
 
-    public abstract double getGlobalTakeRatePerHour(Month month, Day day, int hour) ;
-    public abstract double getGlobalReturnRatePerHour(Month month, Day day, int hour) ;
+    public abstract double getGlobalTakeRatePerHour(Month month, WeekDay day, int hour) ;
+    public abstract double getGlobalReturnRatePerHour(Month month, WeekDay day, int hour) ;
 
 }

@@ -58,11 +58,13 @@ public class ComplexCostCalculator2Bis {
     UtilitiesProbabilityCalculator probutils;
 
     double calcCostRent(double time, double probability){
+  //      return time;
         if (time>unsuccessCostRent) return unsuccessCostRent;
         else return time+(1-probability)*unsuccessCostRent;
 //        return time/probability;
     }
     double calcCostReturn(double time, double probability){
+     //   return time;
         if (time>unsuccessCostReturn) return unsuccessCostReturn;
         else return time+(1-probability)*unsuccessCostReturn;
 //        return time/probability;
@@ -149,21 +151,32 @@ public class ComplexCostCalculator2Bis {
         }
         return thiscost + margcost;
     }
+    double calcCostRentcomp(double time, double probability){
+        if (time>unsuccessCostRent) return unsuccessCostRent;
+        else return time+(1-probability)*unsuccessCostRent;
+//        return time/probability;
+    }
+    double calcCostReturncomp(double time, double probability){
+        if (time>unsuccessCostReturn) return unsuccessCostReturn;
+        else return time+(1-probability)*unsuccessCostReturn;
+//        return time/probability;
+    }
+ 
     
     double HIGH_VALUE=100000;
     private boolean BetterBestNeighbourRent(StationUtilityData sd,StationUtilityData closestneighbour, double offset){
         double p1=probutils.calculateTakeProbability(sd.getStation(), offset+sd.getWalkTime()) ;
-        double c1=calcCostRent(sd.getWalkTime(),p1);
+        double c1=calcCostRentcomp(sd.getWalkTime(),p1);
         double p2=probutils.calculateTakeProbability(closestneighbour.getStation(), offset+closestneighbour.getWalkTime()) ;
-        double c2=calcCostRent(closestneighbour.getWalkTime(),p2);
+        double c2=calcCostRentcomp(closestneighbour.getWalkTime(),p2);
         if (c2<c1) return true;
         return false;
     }
     private boolean BetterBestNeighbourReturn(StationUtilityData sd,StationUtilityData closestneighbour, double offset){
         double p1=probutils.calculateReturnProbability(sd.getStation(), offset+sd.getBiketime()) ;
-        double c1=calcCostReturn((sd.getBiketime()+sd.getWalkTime()), p1);
+        double c1=calcCostReturncomp((sd.getBiketime()+sd.getWalkTime()), p1);
         double p2=probutils.calculateReturnProbability(closestneighbour.getStation(), offset+closestneighbour.getBiketime()) ;
-        double c2=calcCostReturn((closestneighbour.getBiketime()+closestneighbour.getWalkTime()),p2);
+        double c2=calcCostReturncomp((closestneighbour.getBiketime()+closestneighbour.getWalkTime()),p2);
         if (c2<c1) return true;
         return false;
     }
@@ -191,7 +204,7 @@ public class ComplexCostCalculator2Bis {
                 if (newacctime<= (maxWalktime*1)) {
                     double rentprob=probutils.calculateTakeProbability(nei.getStation(), newacctime+probtimeoffset);
                     if (rentprob > minProbSecondaryRecommendation) {
-                        double thiscost=calcCostRent(newacctime,rentprob);
+                        double thiscost=calcCostRentcomp(newacctime,rentprob);
                         //calculate the cost of this potential neighbour
                         if (thiscost < newbestValueFound) {
                             newbestValueFound = thiscost;
@@ -215,7 +228,7 @@ public class ComplexCostCalculator2Bis {
                 double returnprob=probutils.calculateReturnProbability(nei.getStation(), altthisbiketime+probtimeoffset);
                 if (returnprob > minProbSecondaryRecommendation) {
                     double altthiswalktime = nei.getStation().getPosition().distanceTo(destination) / walkingVelocity;
-                    double thiscost=calcCostReturn(altthisbiketime+ altthiswalktime,returnprob);
+                    double thiscost=calcCostReturncomp(altthisbiketime+ altthiswalktime,returnprob);
                     if (thiscost < newbestValueFound) {
                         newbestValueFound = thiscost;
                         bestneighbour = nei;
