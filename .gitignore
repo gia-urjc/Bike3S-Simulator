@@ -22,3 +22,4 @@ tempUsersConf/
 *.txt
 *.osm
 /nbproject/private/
+/backend-configuration-files/

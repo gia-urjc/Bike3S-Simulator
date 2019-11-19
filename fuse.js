@@ -12,7 +12,8 @@ const progress = require('request-progress');
 const projectRoot = () => process.cwd();
 
 projectRoot.backendRoot = () => path.join(projectRoot(), 'backend-bikesurbanfleets');
-projectRoot.configurationFiles = () => path.join(projectRoot(), 'backend-configuration-files/example-configuration');
+projectRoot.configurationFiles = () => path.join(projectRoot(), 'backend-configuration-files');
+projectRoot.configurationFiles.conf = () => path.join(projectRoot(), 'backend-configuration-files/conf');
 projectRoot.configurationFiles.map = () => path.join(projectRoot(), 'backend-configuration-files/maps');
 
 
@@ -223,17 +224,17 @@ Sparky.task('build:jsonschema-validator', () => {
     fuse.run();
 });
 
-Sparky.task('build:data-analyser', () => {
-    const fuse = FuseBox.init({
-        homeDir: projectRoot.frontend.src(),
-        output: path.join(projectRoot.build.dataAnalyser(), '$name.js'),
-        experimentalFeatures: true
-    });
-
-    const main = fuse.bundle('data-analyser.js').instructions('> [main/DataAnalyserTool.ts]');
-
-    return fuse.run();
-});
+//Sparky.task('build:data-analyser', () => {
+//    const fuse = FuseBox.init({
+//        homeDir: projectRoot.frontend.src(),
+//        output: path.join(projectRoot.build.dataAnalyser(), '$name.js'),
+//        experimentalFeatures: true
+//    });
+//
+//    const main = fuse.bundle('data-analyser.js').instructions('> [main/DataAnalyserTool.ts]');
+//
+//    return fuse.run();
+//});
 
 Sparky.task('build:frontend:main', () => {
     const fuse = FuseBox.init({
@@ -332,67 +333,67 @@ Sparky.task('build:frontend:renderer', () => {
     return fuse.run();
 });
 
-Sparky.task('gen-users:dev', () => new Promise((resolve, reject) => {
-    const userGen = spawn('java', [
-        `-jar`,
-        `bikesurbanfleets-config-usersgenerator-1.0.jar`,
-        '-entryPointsInput', '"' + path.join(projectRoot.configurationFiles(), 'entry-points-configuration.json') + '"',
-        '-globalInput', '"' + path.join(projectRoot.configurationFiles(), 'global-configuration.json') + '"',
-        '-output', '"' + projectRoot.configurationFiles() + '/users-configuration.json"',
-        '-callFromFrontend'
-    ], {
-        cwd: projectRoot.build(),
-        shell: true, // necessary for windows
-        stdio: 'inherit' // pipe to calling process
-    });
+//Sparky.task('gen-users:dev', () => new Promise((resolve, reject) => {
+//    const userGen = spawn('java', [
+//        `-jar`,
+//        `bikesurbanfleets-config-usersgenerator-1.0.jar`,
+//        '-entryPointsInput', '"' + path.join(projectRoot.configurationFiles.conf(), 'entry-points-configuration.json') + '"',
+//        '-globalInput', '"' + path.join(projectRoot.configurationFiles.conf(), 'global-configuration.json') + '"',
+//        '-output', '"' + projectRoot.configurationFiles.conf() + '/users-configuration.json"',
+//        '-callFromFrontend'
+//    ], {
+//        cwd: projectRoot.build(),
+//        shell: true, // necessary for windows
+//        stdio: 'inherit' // pipe to calling process
+//    });
+//
+//    log.time().green('Starting user generation').echo();
+//
+//    userGen.on('error', (error) => {
+//        log.red(error).echo();
+//    });
+//
+//    userGen.on('close', (code) => {
+//        if (code === 0) {
+//            log.time().green('Finished user generation').echo();
+//            resolve();
+//        } else {
+//            log.time().red(`User generation finished with code ${code}`).echo();
+//            reject();
+//    }});
+//}));
 
-    log.time().green('Starting user generation').echo();
-
-    userGen.on('error', (error) => {
-        log.red(error).echo();
-    });
-
-    userGen.on('close', (code) => {
-        if (code === 0) {
-            log.time().green('Finished user generation').echo();
-            resolve();
-        } else {
-            log.time().red(`User generation finished with code ${code}`).echo();
-            reject();
-    }});
-}));
-
-Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
-    const userGen = spawn('java', [
-        `-jar`,
-        `bikesurbanfleets-core-1.0.jar`,
-        '-globalConfig', '"' + path.join(projectRoot.configurationFiles(), 'global-configuration.json') + '"',
-        '-usersConfig', '"' + path.join(projectRoot.configurationFiles(), 'users-configuration.json') + '"',
-        '-stationsConfig', '"' + path.join(projectRoot.configurationFiles(), 'stations-configuration.json') + '"',
-        '-historyOutput', '"' + path.join(projectRoot.build(), 'history') + '"',
-        '-mapPath', '"' + path.join(projectRoot.configurationFiles.map(), 'madrid.osm') + '"',
-        `-callFromFrontend`
-    ], {
-        cwd: projectRoot.build(),
-        shell: true, // necessary for windows
-        stdio: 'inherit' // pipe to calling process
-    });
-
-    log.time().green('Starting development simulation').echo();
-
-    userGen.on('error', (error) => {
-        log.red(error).echo();
-    });
-
-    userGen.on('close', (code) => {
-        if (code === 0) {
-            log.time().green('Finished development simulation').echo();
-            resolve();
-        } else {
-            log.time().red(`User generation finished with code ${code}`).echo();
-            reject();
-    }});
-}));
+//Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
+//    const userGen = spawn('java', [
+//        `-jar`,
+//        `bikesurbanfleets-core-1.0.jar`,
+//        '-globalConfig', '"' + path.join(projectRoot.configurationFiles.conf(), 'global-configuration.json') + '"',
+//        '-usersConfig', '"' + path.join(projectRoot.configurationFiles.conf(), 'users-configuration.json') + '"',
+//        '-stationsConfig', '"' + path.join(projectRoot.configurationFiles.conf(), 'stations-configuration.json') + '"',
+//        '-historyOutput', '"' + path.join(projectRoot.build(), 'history') + '"',
+//        '-mapPath', '"' + path.join(projectRoot.configurationFiles.map(), 'madrid.osm') + '"',
+//        `-callFromFrontend`
+//    ], {
+//        cwd: projectRoot.build(),
+//        shell: true, // necessary for windows
+//        stdio: 'inherit' // pipe to calling process
+//    });
+//
+//    log.time().green('Starting development simulation').echo();
+//
+//    userGen.on('error', (error) => {
+//        log.red(error).echo();
+//    });
+//
+//    userGen.on('close', (code) => {
+//        if (code === 0) {
+//            log.time().green('Finished development simulation').echo();
+//            resolve();
+//        } else {
+//            log.time().red(`User generation finished with code ${code}`).echo();
+//            reject();
+//    }});
+//}));
 
 Sparky.task('copy:assets', async () => {
     await fs.copy(path.join(projectRoot.frontend(), 'assets'), path.join(projectRoot.build.frontend(), 'assets'));
@@ -400,6 +401,9 @@ Sparky.task('copy:assets', async () => {
 
 Sparky.task('download-map:dev', () => new Promise((resolve, reject) => {
     log.time().green('Downloading osm map for development.').echo();
+    if(!fs.existsSync(projectRoot.configurationFiles())) {
+        fs.mkdirSync(projectRoot.configurationFiles());
+    }
     if(!fs.existsSync(projectRoot.configurationFiles.map())) {
         fs.mkdirSync(projectRoot.configurationFiles.map());
     }
@@ -449,12 +453,15 @@ Sparky.task('build:frontend:vscode', () => {
     return Sparky.start('build:frontend');
 });
 
-Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});
+// with data-analyser Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});
+Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator'], () => {});
 
 
-Sparky.task('configure:dev', ['download-map:dev', 'build:dev-backend'], () => {});
+//Sparky.task('configure:dev', ['download-map:dev', 'build:dev-backend'], () => {});
+Sparky.task('configure:dev', ['build:dev-backend'], () => {});
 
-Sparky.task('build:dist', ['download-map:dev', 'build:dev-backend'], () => {
+//Sparky.task('build:dist', ['download-map:dev', 'build:dev-backend'], () => {
+Sparky.task('build:dist', ['build:dev-backend'], () => {
     production = true;
     return Sparky.start('build:frontend');
         
