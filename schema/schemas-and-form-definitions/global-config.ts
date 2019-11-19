@@ -1,5 +1,5 @@
 import {GeoPoint, options, UInt} from "../common/index";
-import {sBoolean, sConst, sInteger, sNumber, sObject, sString} from "json-schema-builder-ts/dist/types";
+import {sBoolean, sConst, sEnum, sInteger, sNumber, sObject, sString} from "json-schema-builder-ts/dist/types";
 import {JsonSchema} from "json-schema-builder-ts";
 import {rData} from "json-schema-builder-ts/dist/references";
 import { RecomProperties } from "../common/recomsystems";
@@ -30,7 +30,7 @@ export const paramDemandManager = sObject({
 });
 
 export const DemandManagerProperties = sObject({
-    typeName : sConst('FileBasedDemandManager'),
+    typeName : sEnum('DummyFleetManager', 'FileBasedDemandManager'),
     parameters: paramDemandManager
 });
 
