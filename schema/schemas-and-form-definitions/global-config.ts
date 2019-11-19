@@ -6,11 +6,11 @@ import { RecomProperties } from "../common/recomsystems";
 
 export const paramGM = sObject({
         mapFile: sString(),
-        tempDirectory: sString
+        tempDirectory: sString()
 });
 
 export const GraphManagerProperties = sObject({
-    typeName = sEnum('GRAPH_HOPPER'),
+    typeName: sEnum('GRAPH_HOPPER'),
     parameters: paramGM
 });
 
