@@ -21,7 +21,7 @@ export const paramFleetManager = sObject({
 });
 
 export const FleetManagerProperties = sObject({
-    typeName : sConst('FileBasedFleetManager'),
+    typeName : sEnum('DummyFleetManager', 'FileBasedFleetManager'),
     parameters: paramFleetManager
 });
 
@@ -30,7 +30,7 @@ export const paramDemandManager = sObject({
 });
 
 export const DemandManagerProperties = sObject({
-    typeName : sEnum('DummyFleetManager', 'FileBasedDemandManager'),
+    typeName : sEnum('FileBasedDemandManager'),
     parameters: paramDemandManager
 });
 
