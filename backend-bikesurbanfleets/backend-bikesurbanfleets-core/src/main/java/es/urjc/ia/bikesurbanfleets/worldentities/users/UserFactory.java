@@ -22,7 +22,7 @@ public class UserFactory {
 
     public UserFactory() {
         // Load User classes by reflection using the annotation UserType
-        Reflections reflections = new Reflections();
+        Reflections reflections = new Reflections("es.urjc.ia.bikesurbanfleets");
         this.userClasses = reflections.getTypesAnnotatedWith(UserType.class);
     }
 

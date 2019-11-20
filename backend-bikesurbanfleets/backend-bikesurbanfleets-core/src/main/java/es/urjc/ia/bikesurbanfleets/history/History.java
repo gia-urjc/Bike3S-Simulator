@@ -110,7 +110,7 @@ public class History {
         }
         //write the initial entities and the prototypes of all historic entities to a file
         //to do maybe not working
-        Set<Class<? extends HistoricEntity>> historicEntitiesClasses = new Reflections().getSubTypesOf(HistoricEntity.class);
+        Set<Class<? extends HistoricEntity>> historicEntitiesClasses = new Reflections("es.urjc.ia.bikesurbanfleets").getSubTypesOf(HistoricEntity.class);
         for (Class<? extends HistoricEntity> histent : historicEntitiesClasses) {
             String jsonIdentifier = HistoryJsonClasses.getJsonIdentifier(histent);
             EntitiesJson entjason = new EntitiesJson(histent, activeEntities.getCollectionFor(histent));

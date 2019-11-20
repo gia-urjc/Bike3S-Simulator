@@ -39,7 +39,7 @@ public class SimulationServices {
     }
 
     public void initSimulationServices(GlobalInfo globalInfo, List<Station> stations) throws Exception {
-        Reflections reflections = new Reflections();
+        Reflections reflections = new Reflections("es.urjc.ia.bikesurbanfleets");
         //setup the infrastructureManager
         this.stationManager = new StationManager(stations);
         //setup the information system

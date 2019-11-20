@@ -1,18 +1,9 @@
 package es.urjc.ia.bikesurbanfleets.core;
 
-import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation;
-import es.urjc.ia.bikesurbanfleets.common.util.JsonValidation.ValidationParams;
-import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
-import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 import java.io.File;
  
@@ -30,9 +21,10 @@ public class ApplicationWithoutParameters {
    
     public static void main(String[] args) throws Exception {
 
-        String projectDir= System.getProperty("user.dir") + File.separator;
+  //      String projectDir= System.getProperty("user.dir") + File.separator;
+        String projectDir= "/Users/holger/workspace/BikeProjects/Bike3S/";
 
-        String test="Bike3STests/paperAT2018/prueba";
+        String test="Bike3STests/test";
         
         String basedir=projectDir+test;
         GlobalInfo.DEBUG_DIR=basedir+ "/debug";
