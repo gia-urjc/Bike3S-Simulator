@@ -23,3 +23,6 @@ tempUsersConf/
 *.osm
 /nbproject/private/
 /backend-configuration-files/
+/simulation-example/test/maps/
+/simulation-example/test/history/
+/simulation-example/test/analysis/

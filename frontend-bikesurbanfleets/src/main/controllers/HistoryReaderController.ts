@@ -29,7 +29,6 @@ export class HistoryReaderController {
 
     static async create(path: string, schemaPath?:string|null): Promise<HistoryReaderController> {
         let reader = new HistoryReaderController(path);
-        console.log(reader.historyPath);
         if(schemaPath === null || schemaPath === undefined) {
             HistoryReaderController.entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
             HistoryReaderController.changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));

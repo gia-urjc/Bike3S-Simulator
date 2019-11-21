@@ -1,0 +1,75 @@
+{  "tests": [
+    { "recommendationSystemType": {}, 
+      "userType": {
+        "typeName": "USER_SIMULATEDWAITING",
+        "parameters": {  
+	    "MaxWaitingTime": 600       
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "AVAILABLE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_SIMULATED",
+        "parameters": {         
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "AVAILABLE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_UNINFORMED",
+        "parameters": {
+              "maxDistanceToRentBike" : 600       
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "AVAILABLE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_INFORMED",
+        "parameters": {
+             "maxDistanceToRentBike" : 600          
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "AVAILABLE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_OBEDIENT",
+        "parameters": {
+              "maxDistanceToRentBike" : 600         
+        }
+      }
+    },
+    { "recommendationSystemType": {
+        "typeName": "DISTANCE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    }, 
+      "userType": {
+        "typeName": "USER_OBEDIENT",
+        "parameters": {
+              "maxDistanceToRentBike" : 600      
+        }
+      }
+    }
+  ]
+}

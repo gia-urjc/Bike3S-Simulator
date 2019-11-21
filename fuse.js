@@ -10,11 +10,11 @@ const request = require('request');
 const progress = require('request-progress');
 
 const projectRoot = () => process.cwd();
-
 projectRoot.backendRoot = () => path.join(projectRoot(), 'backend-bikesurbanfleets');
-projectRoot.configurationFiles = () => path.join(projectRoot(), 'backend-configuration-files');
-projectRoot.configurationFiles.conf = () => path.join(projectRoot(), 'backend-configuration-files/conf');
-projectRoot.configurationFiles.map = () => path.join(projectRoot(), 'backend-configuration-files/maps');
+
+projectRoot.test = () => path.join(projectRoot(), 'simulation-example/test');
+projectRoot.test.conf = () => path.join(projectRoot(), 'simulation-example/test/conf');
+projectRoot.test.map = () => path.join(projectRoot(), 'simulation-example/test/maps');
 
 
 projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfleets');
@@ -32,7 +32,6 @@ projectRoot.build = () => path.join(projectRoot(), 'build');
 projectRoot.build.schema = () => path.join(projectRoot.build(), 'schema');
 projectRoot.build.frontend = () => path.join(projectRoot.build(), 'frontend');
 projectRoot.build.jsonSchemaValidator = () => path.join(projectRoot.build(), 'jsonschema-validator');
-projectRoot.build.dataAnalyser = () => path.join(projectRoot.build(), 'data-analyser');
 
 projectRoot.fuseCache = () => path.join(projectRoot(), '.fusebox');
 projectRoot.schemaCacheDefaults = () => path.join(projectRoot(), '.schema/defaults');
@@ -224,18 +223,6 @@ Sparky.task('build:jsonschema-validator', () => {
     fuse.run();
 });
 
-//Sparky.task('build:data-analyser', () => {
-//    const fuse = FuseBox.init({
-//        homeDir: projectRoot.frontend.src(),
-//        output: path.join(projectRoot.build.dataAnalyser(), '$name.js'),
-//        experimentalFeatures: true
-//    });
-//
-//    const main = fuse.bundle('data-analyser.js').instructions('> [main/DataAnalyserTool.ts]');
-//
-//    return fuse.run();
-//});
-
 Sparky.task('build:frontend:main', () => {
     const fuse = FuseBox.init({
         homeDir: projectRoot.frontend.src(),
@@ -363,37 +350,37 @@ Sparky.task('build:frontend:renderer', () => {
 //    }});
 //}));
 
-//Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
-//    const userGen = spawn('java', [
-//        `-jar`,
-//        `bikesurbanfleets-core-1.0.jar`,
-//        '-globalConfig', '"' + path.join(projectRoot.configurationFiles.conf(), 'global-configuration.json') + '"',
-//        '-usersConfig', '"' + path.join(projectRoot.configurationFiles.conf(), 'users-configuration.json') + '"',
-//        '-stationsConfig', '"' + path.join(projectRoot.configurationFiles.conf(), 'stations-configuration.json') + '"',
-//        '-historyOutput', '"' + path.join(projectRoot.build(), 'history') + '"',
-//        '-mapPath', '"' + path.join(projectRoot.configurationFiles.map(), 'madrid.osm') + '"',
-//        `-callFromFrontend`
-//    ], {
-//        cwd: projectRoot.build(),
-//        shell: true, // necessary for windows
-//        stdio: 'inherit' // pipe to calling process
-//    });
-//
-//    log.time().green('Starting development simulation').echo();
-//
-//    userGen.on('error', (error) => {
-//        log.red(error).echo();
-//    });
-//
-//    userGen.on('close', (code) => {
-//        if (code === 0) {
-//            log.time().green('Finished development simulation').echo();
-//            resolve();
-//        } else {
-//            log.time().red(`User generation finished with code ${code}`).echo();
-//            reject();
-//    }});
-//}));
+Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
+    const userGen = spawn('java', [
+        `-jar`,
+        `bikesurbanfleets-core-1.0.jar`,
+        '-globalConfig', '"' + path.join(projectRoot.test.conf(), 'global_configuration.json') + '"',
+        '-usersConfig', '"' + path.join(projectRoot.test.conf(), 'users_configuration.json') + '"',
+        '-stationsConfig', '"' + path.join(projectRoot.test.conf(), 'stations_configuration.json') + '"',
+        '-historyOutput', '"' + path.join(projectRoot.test(), 'history') + '"',
+        '-analysisOutput', '"' + path.join(projectRoot.test(), 'analysis') + '"',
+        `-callFromFrontend`
+    ], {
+        cwd: projectRoot.build(),
+        shell: true, // necessary for windows
+        stdio: 'inherit' // pipe to calling process
+    });
+
+    log.time().green('Starting test simulation').echo();
+
+    userGen.on('error', (error) => {
+        log.red(error).echo();
+    });
+
+    userGen.on('close', (code) => {
+        if (code === 0) {
+            log.time().green('Finished test simulation').echo();
+            resolve();
+        } else {
+            log.time().red(`Test simulation finished with code ${code}`).echo();
+            reject();
+    }});
+}));
 
 Sparky.task('copy:assets', async () => {
     await fs.copy(path.join(projectRoot.frontend(), 'assets'), path.join(projectRoot.build.frontend(), 'assets'));
@@ -401,13 +388,13 @@ Sparky.task('copy:assets', async () => {
 
 Sparky.task('download-map:dev', () => new Promise((resolve, reject) => {
     log.time().green('Downloading osm map for development.').echo();
-    if(!fs.existsSync(projectRoot.configurationFiles())) {
-        fs.mkdirSync(projectRoot.configurationFiles());
+    if(!fs.existsSync(projectRoot.test())) {
+        fs.mkdirSync(projectRoot.test());
     }
-    if(!fs.existsSync(projectRoot.configurationFiles.map())) {
-        fs.mkdirSync(projectRoot.configurationFiles.map());
+    if(!fs.existsSync(projectRoot.test.map())) {
+        fs.mkdirSync(projectRoot.test.map());
     }
-    let mapFile = path.resolve(projectRoot.configurationFiles.map(), 'madrid.osm');
+    let mapFile = path.resolve(projectRoot.test.map(), 'madrid.osm');
     if(fs.existsSync(mapFile)) {
         log.time().green('Map is currently downloaded').echo();
         resolve();
@@ -434,7 +421,6 @@ Sparky.task('download-map:dev', () => new Promise((resolve, reject) => {
     }
 }));
 
-
 Sparky.task('clean:build', () => Sparky.src(projectRoot.build()).clean(projectRoot.build()));
 
 Sparky.task('clean:cache:fuse', () => Sparky.src(projectRoot.fuseCache()).clean(projectRoot.fuseCache()));
@@ -443,25 +429,19 @@ Sparky.task('clean:cache:schema', () => Sparky.src(projectRoot.schemaCacheDefaul
 
 Sparky.task('clean:cache', ['clean:cache:fuse', 'clean:cache:schema'], () => {});
 
-
-Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:frontend:main'], () => {
-    
-});
+Sparky.task('build:frontend', ['copy:assets', 'build:frontend:renderer', 'build:frontend:main'], () => {});
 
 Sparky.task('build:frontend:vscode', () => {
     fromVSCode = true;
     return Sparky.start('build:frontend');
 });
 
-// with data-analyser Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator', 'build:data-analyser'], () => {});
 Sparky.task('build:dev-backend', ['clean:build', 'clean:cache', 'build:backend', 'build:schema', 'build:jsonschema-validator'], () => {});
 
 
-//Sparky.task('configure:dev', ['download-map:dev', 'build:dev-backend'], () => {});
-Sparky.task('configure:dev', ['build:dev-backend'], () => {});
+Sparky.task('configure:dev', ['download-map:dev', 'build:dev-backend'], () => {});
 
-//Sparky.task('build:dist', ['download-map:dev', 'build:dev-backend'], () => {
-Sparky.task('build:dist', ['build:dev-backend'], () => {
+Sparky.task('build:dist', ['download-map:dev', 'build:dev-backend'], () => {
     production = true;
     return Sparky.start('build:frontend');
         

@@ -47,11 +47,13 @@ The package manager NPM is also required but is usually bundled with the Node.js
 
 This project is development environment agnostic. You can use a IDE or just the command line
 
-### General overview of the spftware architecture 
+### General overview of the software architecture 
 
 The project is separated in two mains parts **backend** and a **frontend**.
 
-![Arquitecture´s image of the system](/assets/Arquitecture_10.png)
+![Arquitecture´s image of the system](/documentation/images/Arquitecture_10.png)
+
+[The user flow is presented here.](documentation/images/Userflow.pdf)
 
 The **backend** is related to all the simulation logic and is implemented in Java. The folder `/backend-bikesurbanfleets` contains this part of the project.
 
@@ -116,9 +118,9 @@ Are you too lazy to configure your IDE? No problem, you can execute this command
 
 **Generate users**:
 
-```
-node fuse gen-users:dev
-```
+**```
+**node fuse gen-users:dev
+**```
 
 **Simulate**:
 
@@ -126,7 +128,8 @@ node fuse gen-users:dev
 node fuse simulate:dev
 ```
 
-The configuration files of the simulation run via `node fuse gen-users:dev` and `node fuse simulate:dev`, are in the project directory in the folder `/backend-configuration-files`. To test quickly simulations without the GUI, you can edit these configuration files and run these commands. The history will be stored in `/build/history`. 
+An example of configuration files of a simulation run via  `node fuse simulate:dev` are provided in the project directory in the folder `/backend-example/test`. To test quickly simulations without the GUI, you can edit these configuration files and run these commands. The history and analysis will be stored in `/backend-example/test/history` and 
+`/backend-example/test/analysis`. 
 
 # <a id="faq-link"></a>F.A.Q 
 
@@ -140,7 +143,7 @@ This project is prepared for any IDE or Text editor you want. Some editors/IDEs 
 
 [WebStorm (Frontend)](documentation/setup_webstorm.md)
 
-[Visual studio Code (Backend and Frontend)](documentation/setup_vscode.md) RECOMMENDED. The project is configured automatically.
+[Visual studio Code (Backend and Frontend)](documentation/setup_vscode.md) 
 
 [Eclipse (Backend)](documentation/setup_eclipse.md)
 

@@ -1,0 +1,12 @@
+{
+  "prototype": [
+    "id",
+    "name"
+  ],
+  "instances": [
+    {
+      "id": 1,
+      "name": "FileBasedFleetManager"
+    }
+  ]
+}
