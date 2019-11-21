@@ -12,10 +12,11 @@ const progress = require('request-progress');
 const projectRoot = () => process.cwd();
 projectRoot.backendRoot = () => path.join(projectRoot(), 'backend-bikesurbanfleets');
 
-projectRoot.test = () => path.join(projectRoot(), 'simulation-example/test');
-projectRoot.test.conf = () => path.join(projectRoot(), 'simulation-example/test/conf');
-projectRoot.test.map = () => path.join(projectRoot(), 'simulation-example/test/maps');
+projectRoot.test = () => path.join(projectRoot(), 'examples/simulation-test');
+projectRoot.test.conf = () => path.join(projectRoot(), 'examples/simulation-test/conf');
+projectRoot.test.map = () => path.join(projectRoot(), 'examples/simulation-test/maps');
 
+projectRoot.generateuserstest = () => path.join(projectRoot(), 'examples/usergeneration-test');
 
 projectRoot.frontend = () => path.join(projectRoot(), 'frontend-bikesurbanfleets');
 projectRoot.frontend.src = () => path.join(projectRoot.frontend(), 'src');
@@ -320,35 +321,35 @@ Sparky.task('build:frontend:renderer', () => {
     return fuse.run();
 });
 
-//Sparky.task('gen-users:dev', () => new Promise((resolve, reject) => {
-//    const userGen = spawn('java', [
-//        `-jar`,
-//        `bikesurbanfleets-config-usersgenerator-1.0.jar`,
-//        '-entryPointsInput', '"' + path.join(projectRoot.configurationFiles.conf(), 'entry-points-configuration.json') + '"',
-//        '-globalInput', '"' + path.join(projectRoot.configurationFiles.conf(), 'global-configuration.json') + '"',
-//        '-output', '"' + projectRoot.configurationFiles.conf() + '/users-configuration.json"',
-//        '-callFromFrontend'
-//    ], {
-//        cwd: projectRoot.build(),
-//        shell: true, // necessary for windows
-//        stdio: 'inherit' // pipe to calling process
-//    });
-//
-//    log.time().green('Starting user generation').echo();
-//
-//    userGen.on('error', (error) => {
-//        log.red(error).echo();
-//    });
-//
-//    userGen.on('close', (code) => {
-//        if (code === 0) {
-//            log.time().green('Finished user generation').echo();
-//            resolve();
-//        } else {
-//            log.time().red(`User generation finished with code ${code}`).echo();
-//            reject();
-//    }});
-//}));
+Sparky.task('gen-users:dev', () => new Promise((resolve, reject) => {
+    const userGen = spawn('java', [
+        `-jar`,
+        `bikesurbanfleets-config-usersgenerator-1.0.jar`,
+        '-entryPointsInput', '"' + path.join(projectRoot.generateuserstest(), 'entryPoints.json') + '"',
+        '-globalInput', '"' + path.join(projectRoot.generateuserstest(), 'global_configuration.json') + '"',
+        '-output', '"' + projectRoot.generateuserstest() + '/users_configuration.json"',
+        '-callFromFrontend'
+    ], {
+        cwd: projectRoot.build(),
+        shell: true, // necessary for windows
+        stdio: 'inherit' // pipe to calling process
+    });
+
+    log.time().green('Starting user generation').echo();
+
+    userGen.on('error', (error) => {
+        log.red(error).echo();
+    });
+
+    userGen.on('close', (code) => {
+        if (code === 0) {
+            log.time().green('Finished user generation').echo();
+            resolve();
+        } else {
+            log.time().red(`User generation finished with code ${code}`).echo();
+            reject();
+    }});
+}));
 
 Sparky.task('simulate:dev', () => new Promise((resolve, reject) => {
     const userGen = spawn('java', [

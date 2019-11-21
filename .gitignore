@@ -26,3 +26,7 @@ tempUsersConf/
 /simulation-example/test/maps/
 /simulation-example/test/history/
 /simulation-example/test/analysis/
+/examples/simulation-test/maps/
+/examples/simulation-test/analysis/
+/examples/simulation-test/history/
+/examples/usergeneration-test/users_configuration.json

@@ -19,7 +19,7 @@ public class EntryPointFactory {
 
     public EntryPointFactory() {
         //Load entry points by reflection using the annotation EntryPointType
-        Reflections reflections = new Reflections();
+        Reflections reflections = new Reflections("es.urjc.ia.bikesurbanfleets.usersgenerator");
         this.entryPointClasses = reflections.getTypesAnnotatedWith(EntryPointType.class);
     }
 

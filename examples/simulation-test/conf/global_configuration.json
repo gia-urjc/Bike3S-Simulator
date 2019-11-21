@@ -1,0 +1,46 @@
+{
+    "boundingBox": {
+        "northWest": {
+            "latitude": 40.56698287529177,
+            "longitude": -3.8768005371093754
+        },
+        "southEast": {
+            "latitude": 40.30759108012253,
+            "longitude": -3.481292724609375
+        }
+    },
+    "debugMode": false,
+    "reservationTime": 1000,
+    "randomSeed": 10,
+    "totalSimulationTime": 86400,
+    "comment": "startDateTime is necessary to take the correct demand data if demand is used in recommendation ",
+    "startDateTime": "2018-07-20T07:00:00",
+    "graphManagerType": {
+	"typeName": "GRAPH_HOPPER",
+        "parameters": {
+            "mapFile": "../examples/simulation-test/maps/madrid.osm",
+            "tempDirectory": "../examples/simulation-test/maps/.Bike3S"
+	}
+    },
+    "comment": "if the typeName for recommendationSystemType is none, no recommender is loaded ",
+    "recommendationSystemType": {
+        "typeName": "DISTANCE_RESOURCES",
+        "parameters": {
+            "maxDistanceRecommendation": 600
+        }
+    },
+    "comment": "if the typeName for demandManagerType is none, no demand manager is loaded ",
+    "demandManagerType": {
+	"typeName": "FileBasedDemandManager",
+        "parameters": {
+            "demandDataFile": "../examples/simulation-test/demandDataMadrid_200718_210718.csv"
+	}
+    },
+    "comment": "if the typeName for fleetManagerType is none, no fleet manager is loaded ",
+    "fleetManagerType": {
+	"typeName": "FileBasedFleetManager",
+        "parameters": {
+            "EventFile": "../examples/simulation-test/conf/managerevents.json"
+	}
+    }
+}

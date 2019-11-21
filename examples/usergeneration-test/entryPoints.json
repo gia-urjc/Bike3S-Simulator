@@ -1,0 +1,47 @@
+{
+    "entryPoints": [
+        {
+            "destinationPlace": {
+                "latitude": 40.4182921391344,
+                "longitude": 3.7205731479823596
+            },
+            "distribution": {
+                "lambda": 5
+            },
+            "entryPointType": "POISSON",
+            "positionAppearance": {
+                "latitude": 40.4182921391344,
+                "longitude": -3.7105731479823594
+            },
+            "radiusAppears": 200,
+            "radiusGoTo": 100,
+            "totalUsers": 100,
+            "userType": {
+                "typeName": "USER_INFORMED"
+            }
+        },
+        {
+            "destinationPlace": {
+                "latitude": 40.42674162847938,
+                "longitude": -3.7014849018305545
+            },
+            "distribution": {
+                "lambda": 1
+            },
+            "entryPointType": "POISSON",
+            "positionAppearance": {
+                "latitude": 40.41674162847938,
+                "longitude": -3.7014849018305545
+            },
+            "radiusAppears": 100,
+            "radiusGoTo": 200,
+            "timeRange": {
+                "end": 30000,
+                "start": 100
+            },
+            "userType": {
+                "typeName": "USER_INFORMED"
+            }
+        }
+    ]
+}

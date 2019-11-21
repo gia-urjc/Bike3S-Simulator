@@ -118,18 +118,26 @@ Are you too lazy to configure your IDE? No problem, you can execute this command
 
 **Generate users**:
 
-**```
-**node fuse gen-users:dev
-**```
+```
+node fuse gen-users:dev
+```
 
+An example user generation can be run via  `node fuse gen-users:dev`.
+The configuration files are taken from the folder `/examples/usergeneration-test`.
+ To test quickly simulations without the GUI, you can use or edit these configuration files and run this command. 
+The results file `users_configuration.json`is created in teh same folder.
+ 
 **Simulate**:
 
 ```
 node fuse simulate:dev
 ```
 
-An example of configuration files of a simulation run via  `node fuse simulate:dev` are provided in the project directory in the folder `/backend-example/test`. To test quickly simulations without the GUI, you can edit these configuration files and run these commands. The history and analysis will be stored in `/backend-example/test/history` and 
-`/backend-example/test/analysis`. 
+An example simulationcan be run via  `node fuse simulate:dev` .
+The configuration files are taken from the folder `/examples/simulation-test`.
+ To test quickly simulations without the GUI, you can use or edit these configuration files and run this command. 
+The results of the simulation (history and analysis) will be stored in `/examples/simulation-test/history` and 
+`/examples/simulation-test/analysis`. 
 
 # <a id="faq-link"></a>F.A.Q 
 

@@ -18,13 +18,13 @@
     "graphManagerType": {
 	"typeName": "GRAPH_HOPPER",
         "parameters": {
-            "mapFile": "../simulation-example/test/maps/madrid.osm",
-            "tempDirectory": "../simulation-example/test/maps/.Bike3S"
+            "mapFile": "/Users/albertofernandez/Bicis-Experimentos/madrid.osm",
+            "tempDirectory": "/Users/albertofernandez/Bicis-Experimentos/20191119/.Bike3S"
 	}
     },
     "comment": "if the typeName for recommendationSystemType is none, no recommender is loaded ",
     "recommendationSystemType": {
-        "typeName": "DISTANCE_RESOURCES",
+        "typeName": "AVAILABLE_RESOURCES",
         "parameters": {
             "maxDistanceRecommendation": 600
         }
@@ -33,14 +33,11 @@
     "demandManagerType": {
 	"typeName": "FileBasedDemandManager",
         "parameters": {
-            "demandDataFile": "../simulation-example/test/demandDataMadrid_200718_210718.csv"
+            "demandDataFile": "/Users/albertofernandez/Bicis-Experimentos/20191119/conf/demandDataMadrid0817_0918.csv"
 	}
     },
     "comment": "if the typeName for fleetManagerType is none, no fleet manager is loaded ",
     "fleetManagerType": {
-	"typeName": "FileBasedFleetManager",
-        "parameters": {
-            "EventFile": "../simulation-example/test/conf/managerevents.json"
-	}
+	"typeName": "DummyFleetManager"
     }
 }
