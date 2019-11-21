@@ -29,6 +29,7 @@ export class HistoryReaderController {
 
     static async create(path: string, schemaPath?:string|null): Promise<HistoryReaderController> {
         let reader = new HistoryReaderController(path);
+        console.log(reader.historyPath);
         if(schemaPath === null || schemaPath === undefined) {
             HistoryReaderController.entityFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/entities.json'));
             HistoryReaderController.changeFileSchema = fs.readJsonSync(paths.join(app.getAppPath(), 'schema/timeentries.json'));
@@ -37,7 +38,7 @@ export class HistoryReaderController {
             HistoryReaderController.entityFileSchema = fs.readJsonSync(paths.join(schemaPath, 'entities.json'));
             HistoryReaderController.changeFileSchema = fs.readJsonSync(paths.join(schemaPath, 'timeentries.json'));
         }
-      //  console.log(reader.historyPath);
+        console.log(reader.historyPath);
         reader.changeFiles = without(await fs.readdir(reader.historyPath), 'entities', '.DS_Store', 'final-global-values.json').sort((a, b) => {
             const [x, y] = [a, b].map((s) => parseInt(s.split('-')[0]));
             return x - y;

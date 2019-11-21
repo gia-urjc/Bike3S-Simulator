@@ -21,11 +21,10 @@ public class ApplicationWithoutParameters {
    
     public static void main(String[] args) throws Exception {
 
-  //      String projectDir= System.getProperty("user.dir") + File.separator;
-        String projectDir= "/Users/holger/workspace/BikeProjects/Bike3S/";
+     //    String projectDir= System.getProperty("user.dir") + File.separator;
 
-        String test="Bike3STests/test";
-        
+     String projectDir= "/Users/holger/";
+        String test="workspace/BikeProjects/Bike3S/Bike3STests/prueba2";
         String basedir=projectDir+test;
         GlobalInfo.DEBUG_DIR=basedir+ "/debug";
         System.out.println("Test:"+test);

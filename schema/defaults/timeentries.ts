@@ -9,13 +9,14 @@ const PropertyChange = sObject({
     new: {},
 });
 
-const ResultTypes = sEnum(
-        'FAILED_BIKE_RENTAL', 'SUCCESSFUL_BIKE_RENTAL', 'FAILED_BIKE_RETURN', 'SUCCESSFUL_BIKE_RETURN', 
-        'FAILED_BIKE_RESERVATION', 'SUCCESSFUL_BIKE_RESERVATION',
-        'FAILED_SLOT_RESERVATION', 'SUCCESSFUL_SLOT_RESERVATION', 'SUCCESS', 'FAIL',
+const EventTypes = sEnum('USER_EVENT', 'MANAGER_EVENT');
+
+const ResultTypes = sEnum('SUCCESS', 'FAIL');
+
+const AdditionalInfo = sEnum(
         'EXIT_AFTER_APPEARING', 
         'EXIT_AFTER_FAILED_BIKE_RESERVATION', 'EXIT_AFTER_FAILED_BIKE_RENTAL', 'EXIT_AFTER_RESERVATION_TIMEOUT',
-        'EXIT_AFTER_REACHING_DESTINATION');
+        'EXIT_AFTER_REACHING_DESTINATION', 'RETRY_EVENT');
     
 
 const EntityChanges = sObject({
@@ -34,13 +35,15 @@ const idreference = sObject({
 
 const EventEntry = sObject({
     name: sString(),
+    type: EventTypes,
     order: UInt,
     result: ResultTypes,
+    info: sAnyOf(AdditionalInfo,sNull()),
     involvedEntities: sAnyOf(sArray(idreference), sNull()),
     newEntities: sAnyOf(sObject().additionalProperties(sArray(EntityDescription)), sNull()),
     changes: sAnyOf(sObject().additionalProperties(sArray(EntityChanges)), sNull()),
     oldEntities: sAnyOf(sObject().additionalProperties(sArray(EntityDescription)), sNull()),
-}).require('name', 'result','order','involvedEntities').restrict();
+}).require('name', 'result','order','involvedEntities', 'type').restrict();
 
 const TimeEntry = sObject({
     time: sInteger(),
