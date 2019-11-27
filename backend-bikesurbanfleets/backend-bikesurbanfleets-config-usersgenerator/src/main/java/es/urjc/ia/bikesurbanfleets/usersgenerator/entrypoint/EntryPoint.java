@@ -50,6 +50,16 @@ public abstract class EntryPoint {
      * @return a list of single users
      */
 
+    /**
+     * It is the cycling velocity of the user.
+     */
+    protected double cyclingVelocity;
+
+    /**
+     * It is the walking velocity of the user.
+     */
+    protected double walkingVelocity;
+
     public String getEntryPointType() {
         return entryPointType;
     }
@@ -65,6 +75,8 @@ public abstract class EntryPoint {
                 ", radiusAppears=" + radiusAppears +
                 ", radiusGoTo=" + radiusGoTo +
                 ", entryPointType='" + entryPointType + '\'' +
+                ", cyclingVelocity='" + cyclingVelocity + '\'' +
+                ", walkingVelocity='" + walkingVelocity + '\'' +
                 '}';
     }
 }

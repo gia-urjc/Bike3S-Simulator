@@ -24,7 +24,7 @@ public class EntryPointSingle extends EntryPoint {
     @Override
     public List<SingleUser> generateUsers() {
         List<SingleUser> singleUsers = new ArrayList<>();
-        SingleUser user = new SingleUser(positionAppearance, destinationPlace, userType, timeInstant);
+        SingleUser user = new SingleUser(positionAppearance, destinationPlace, userType, timeInstant, cyclingVelocity, walkingVelocity);
         singleUsers.add(user);
         return singleUsers;
     }

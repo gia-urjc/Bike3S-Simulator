@@ -12,6 +12,7 @@ import es.urjc.ia.bikesurbanfleets.usersgenerator.entrypoint.distributions.Distr
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * This class represents several users that appears at system with a Poisson distribution, taking as a reference to generate them the same entry point.
@@ -75,7 +76,15 @@ public class EntryPointPoisson extends EntryPoint {
             }
             int timeEvent = distribution.randomInterarrivalDelay();
             currentTime += timeEvent;
-            SingleUser user = new SingleUser(userPosition, userGoTo, userType, currentTime);
+            
+            // generate random cycling and walking velocities
+            // numbers follow Normal distribution N(value,0.1) 
+            Random r = new Random();
+            
+            double randomCyclingVel = Math.max(0.1, r.nextGaussian()*0.1 + cyclingVelocity);
+            double randomWalkingVel = Math.max(0.1, r.nextGaussian()*0.1 + walkingVelocity);
+            
+            SingleUser user = new SingleUser(userPosition, userGoTo, userType, currentTime, randomCyclingVel, randomWalkingVel);
             users.add(user);
         }
         return users;
