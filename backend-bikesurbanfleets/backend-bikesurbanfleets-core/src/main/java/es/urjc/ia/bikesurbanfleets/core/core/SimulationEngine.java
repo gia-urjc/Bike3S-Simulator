@@ -20,6 +20,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.common.log.Debug;
 import es.urjc.ia.bikesurbanfleets.core.ManagingEvents.EventManaging;
 import es.urjc.ia.bikesurbanfleets.core.UserEvents.EventUser;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.services.fleetManager.FleetManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserFactory;
@@ -63,7 +64,7 @@ public final class SimulationEngine {
         Station.resetIdMap();
         User.resetIdGenerator();
         Reservation.resetIdGenerator();
-        Debug.init(globalInfo.isDebugMode(), GlobalInfo.DEBUG_DIR);
+        Debug.init(globalInfo.isDebugMode(), GlobalConfigurationParameters.DEBUG_DIR);
         System.out.println("DEBUG MODE: " + Debug.isDebugmode());
         Reservation.VALID_TIME = globalInfo.getReservationTime();
 
@@ -82,7 +83,7 @@ public final class SimulationEngine {
         initialentities.addAll(services.getStationManager().consultBikes());
         initialentities.addAll(services.getStationManager().consultStations());
         initialentities.add(services.getFleetManager());
-        History.init(globalInfo.getHistoryOutputPath(), GlobalInfo.TIMEENTRIES_PER_HISTORYFILE,
+        History.init(globalInfo.getHistoryOutputPath(), GlobalConfigurationParameters.TIMEENTRIES_PER_HISTORYFILE,
                 globalInfo.getBoundingBox(), globalInfo.getTotalSimulationTime(), initialentities, 
                 services.getRecommendationSystem().getParameterString());
 

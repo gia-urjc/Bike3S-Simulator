@@ -78,7 +78,8 @@ public class UserEconomicIncentives extends UserObedient {
     @Override
     public Station determineStationToRentBike() {
         Station destination = null;
-        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationsToRentBike(this.getPosition());
+        double desiredmaxdistance=parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance();
+        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationsToRentBike(this.getPosition(),desiredmaxdistance);
         List<Station> stations = informationSystem.getAllStations();
         Station nearestStation = nearestStationToRent(stations, this.getPosition());
 

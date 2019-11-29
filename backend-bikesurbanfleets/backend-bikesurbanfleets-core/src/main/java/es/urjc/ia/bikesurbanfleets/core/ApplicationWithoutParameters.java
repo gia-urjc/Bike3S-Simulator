@@ -3,6 +3,7 @@ package es.urjc.ia.bikesurbanfleets.core;
 import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
 
 import java.io.File;
@@ -26,15 +27,15 @@ public class ApplicationWithoutParameters {
      String projectDir= "/Users/holger/";
         String test="workspace/BikeProjects/Bike3S/Bike3STests/prueba2";
         String basedir=projectDir+test;
-        GlobalInfo.DEBUG_DIR=basedir+ "/debug";
+        GlobalConfigurationParameters.DEBUG_DIR=basedir+ "/debug";
         System.out.println("Test:"+test);
 
         //Create auxiliary folders
-        File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
+        File auxiliaryDir = new File(GlobalConfigurationParameters.TEMP_DIR);
         if(!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
-        auxiliaryDir = new File(GlobalInfo.DEBUG_DIR);
+        auxiliaryDir = new File(GlobalConfigurationParameters.DEBUG_DIR);
         if(!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }

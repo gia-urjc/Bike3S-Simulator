@@ -26,28 +26,24 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
 
     public class RecommendationParameters {
 
-        /**
-         * It is the maximum distance in meters between the recommended stations
-         * and the indicated geographical point.
-         */
-        private int maxDistanceRecommendation = 600;
         //this is meters per second corresponds aprox. to 4 and 20 km/h
+        private double maxDistanceRecommendation=600;
         private double minimumMarginProbability = 0.001;
-        private double minProbBestNeighbourRecommendation = 0.05;
-        private double desireableProbability = 0.5;
+        private double minProbBestNeighbourRecommendation = 0.5;
+        private double desireableProbability = 0.8;
         private double penalisationfactorrent = 1;
         private double penalisationfactorreturn = 1;
         private double maxStationsToReccomend = 30;
-        private double unsucesscostRent = 3000;
-        private double unsucesscostReturn = 2000;
+        private double unsucesscostRent = 5000;
+        private double unsucesscostReturn = 5000;
         private double MaxCostValue = 5000;
         private int PredictionNorm = 0;
-        private int predictionWindow = 1800;
+        private int predictionWindow = 900;
         private double normmultiplier=0.5;
 
         @Override
         public String toString() {
-            return "predictionWindow=" + predictionWindow + ", PredictionNorm=" + PredictionNorm + ", maxDistanceRecommendation=" + maxDistanceRecommendation + ", MaxCostValue=" + MaxCostValue + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent +
+            return "predictionWindow=" + predictionWindow + ", PredictionNorm=" + PredictionNorm + ", MaxCostValue=" + MaxCostValue + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent +
                     ", unsucesscostReturn=" + unsucesscostReturn + ", normmultiplier=" + normmultiplier;
         }
 
@@ -77,10 +73,10 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity,
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
                 parameters.maxDistanceRecommendation, probutils, parameters.PredictionNorm, parameters.normmultiplier);
-    }
+     }
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition) {
+    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
         int i = 0;
         boolean goodfound = false;
@@ -88,15 +84,14 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
-            sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
             if (sd.getProbabilityTake() > 0) {
-                if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
+                if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= maxdistance) {
                     goodfound = true;
                 }
                 try {
-                    double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.predictionWindow);
+                    double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.predictionWindow, maxdistance);
                     sd.setTotalCost(cost);
-                    addrent(sd, orderedlist);
+                    addrent(sd, orderedlist, maxdistance);
                     if (goodfound) {
                         i++;
                     }
@@ -118,7 +113,6 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
-            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
             if (sd.getProbabilityReturn() > 0) {
                 if (sd.getProbabilityReturn() > this.parameters.desireableProbability) {
                     goodfound = true;
@@ -140,28 +134,20 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     }
 
     //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation
-                && oldSD.getWalkdist() > this.parameters.maxDistanceRecommendation) {
+    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance) {
+        if (newSD.getWalkdist() <= maxdistance
+                && oldSD.getWalkdist() > maxdistance) {
             return true;
-        } else if (newSD.getWalkdist() > this.parameters.maxDistanceRecommendation
-                && oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
+        } else if (newSD.getWalkdist() > maxdistance
+                && oldSD.getWalkdist() <= maxdistance) {
             return false;
         } else {
-            if (newSD.getTotalCost() < oldSD.getTotalCost()) {
-                return true;
-            } else {
-                return false;
-            }
+            return (newSD.getTotalCost() < oldSD.getTotalCost());
         }
     }
 
     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (newSD.getTotalCost() < oldSD.getTotalCost()) {
-            return true;
-        } else {
-            return false;
-        }
+        return (newSD.getTotalCost() < oldSD.getTotalCost());
     }
 }

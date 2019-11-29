@@ -29,8 +29,7 @@ public class UserInformed extends UserUninformed {
     protected Station determineStationToRentBike() {
 
         Station destination = null;
-        List<Station> finalStations = informationSystem.getStationsWithAvailableBikesOrderedByDistance(this.getPosition()).stream()
-                .filter(station -> station.getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
+        List<Station> finalStations = informationSystem.getStationsWithAvailableBikesOrderedByDistance(this.getPosition());
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);
         }

@@ -28,14 +28,9 @@ public class RecommendationSystemByDistanceAvailableResources extends Recommenda
 
     public class RecommendationParameters {
 
-        /**
-         * It is the maximum distance in meters between the recommended stations
-         * and the indicated geographical point.
-         */
-        private int maxDistanceRecommendation = 600;
         @Override
         public String toString() {
-            return "maxDistanceRecommendation=" + maxDistanceRecommendation ;
+            return "" ;
         }
     }
     public String getParameterString(){
@@ -59,11 +54,11 @@ public class RecommendationSystemByDistanceAvailableResources extends Recommenda
   }
 
     @Override
-    public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
-        List<Station> temp;
+   public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
+         List<Station> temp;
         List<Recommendation> result = new ArrayList<>();
         List<Station> stations = validStationsToRentBike(stationManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+                .filter(station -> station.getPosition().distanceTo(point) <= maxdist).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             temp = stations.stream().sorted(byProportionBetweenDistanceAndBikes(point)).collect(Collectors.toList());

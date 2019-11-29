@@ -67,9 +67,10 @@ public class UserObedient extends UserUninformed {
         if (printHints) {
              System.out.println("User: "+ this.getId() + " asks for renting recommendation%n");
         }
-        List<Recommendation> originRecommendedStations = recommendationSystem.getRecomendedStationsToRentBike(this.getPosition());
+        double desiredmaxdistance=Math.max(0,parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance());
+        List<Recommendation> originRecommendedStations = recommendationSystem.getRecomendedStationsToRentBike(this.getPosition(),desiredmaxdistance);
         List<Recommendation> recommendedStations = originRecommendedStations.stream()
-                .filter(recomendation -> recomendation.getStation().getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
+                .filter(recomendation -> recomendation.getStation().getPosition().distanceTo(this.getPosition()) <=desiredmaxdistance).collect(Collectors.toList());
         boolean noStationAtdist=recommendedStations.isEmpty();
 
         List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts();

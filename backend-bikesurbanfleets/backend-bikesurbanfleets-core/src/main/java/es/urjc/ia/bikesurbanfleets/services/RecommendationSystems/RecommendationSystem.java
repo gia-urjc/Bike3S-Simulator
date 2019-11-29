@@ -55,20 +55,22 @@ public abstract class RecommendationSystem {
         this.demandManager=simulationServices.getDemandManager();
     }
     
-    protected abstract List<Recommendation> recommendStationToRentBike(GeoPoint point);
+    
+    protected abstract List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist);
 
     protected abstract List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination);
 
     public abstract String getParameterString();
    
-    public List<Recommendation> getRecomendedStationsToRentBike(GeoPoint currentposition) {
-        List<Recommendation> rec = recommendStationToRentBike(currentposition);
+    // the methods for getting station recomendations for renting and returning
+    // given currentposition, and destination (if return) and the maximal desired distance from currentposition if rental and from destination if return
+    public List<Recommendation> getRecomendedStationsToRentBike(GeoPoint currentposition, double maxdist) {
+        List<Recommendation> rec = recommendStationToRentBike(currentposition, maxdist);
         if (rec.size() < minNumberRecommendations) {
             addAlternativeRecomendations(currentposition, rec, true);
         }
         return rec;
     }
-
     public List<Recommendation> getRecomendedStationsToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> rec = recommendStationToReturnBike(currentposition, destination);
         if (rec.size() < minNumberRecommendations) {

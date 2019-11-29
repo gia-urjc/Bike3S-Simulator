@@ -1,21 +1,10 @@
 package es.urjc.ia.bikesurbanfleets.core.config;
 
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.util.BoundingBox;
 
 public class GlobalInfo {
-
-    public static final String HOME_DIR = System.getProperty("user.home");
-    public static final String TEMP_DIR = HOME_DIR + "/.Bike3S";
-    public static String DEBUG_DIR = TEMP_DIR;
-    private static String DEFAULT_HISTORY_OUTPUT_PATH = HOME_DIR + "/history";
-    public final static int TIMEENTRIES_PER_HISTORYFILE = 10000;
-    
-    //for checking the station ocuppation should be >0
-    public final static int STATION_OCCUPATION_CHECK_INTERVAL=300; //every 2 min
-    
-    //
-    public final static int USERWAITING_INTERVAL=1;
 
     /**
      * It is the time period during a reservation is valid or active.
@@ -52,7 +41,7 @@ public class GlobalInfo {
     /**
      * Path where history files stored
      */
-    private String historyOutputPath = DEFAULT_HISTORY_OUTPUT_PATH;
+    private String historyOutputPath = GlobalConfigurationParameters.DEFAULT_HISTORY_OUTPUT_PATH;
 
     public int getReservationTime() {
         return reservationTime;

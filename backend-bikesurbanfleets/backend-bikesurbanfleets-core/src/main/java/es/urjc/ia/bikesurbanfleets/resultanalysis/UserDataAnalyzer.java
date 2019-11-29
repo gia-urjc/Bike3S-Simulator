@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 
 /**
  *
@@ -33,8 +34,8 @@ import java.util.TreeMap;
  */
 class UserDataAnalyzer {
 
-    private double standardstraightLineWalkingVelocity = 1.4 / GeoPoint.STRAIGT_LINE_FACTOR;
-    private double standardstraightLineCyclingVelocity = 6 / GeoPoint.STRAIGT_LINE_FACTOR;
+    private double defaultstraightLineWalkingVelocity = GlobalConfigurationParameters.DEFAULT_WALKING_VELOCITY / GlobalConfigurationParameters.STRAIGT_LINE_FACTOR;
+    private double defaultstraightLineCyclingVelocity = GlobalConfigurationParameters.DEFAULT_CYCLING_VELOCITY / GlobalConfigurationParameters.STRAIGT_LINE_FACTOR;
 
     private GraphManager routeService;
 
@@ -219,9 +220,9 @@ class UserDataAnalyzer {
             um.additionaltimeloss = (um.timeleafe - um.timeapp) - shortesttime;
         } else {
 
-            shortesttime = ((um.origin.distanceTo(bestStartStation.position) / this.standardstraightLineWalkingVelocity)
-                    + (bestStartStation.position.distanceTo(bestEndStation.position) / this.standardstraightLineCyclingVelocity)
-                    + (bestEndStation.position.distanceTo(um.destination) / this.standardstraightLineWalkingVelocity));
+            shortesttime = ((um.origin.distanceTo(bestStartStation.position) / this.defaultstraightLineWalkingVelocity)
+                    + (bestStartStation.position.distanceTo(bestEndStation.position) / this.defaultstraightLineCyclingVelocity)
+                    + (bestEndStation.position.distanceTo(um.destination) / this.defaultstraightLineWalkingVelocity));
             um.additionaltimeloss = (int) (um.artificialtime - shortesttime);
         }
     }
@@ -283,7 +284,7 @@ class UserDataAnalyzer {
         }
         switch (name) {
             case "EventUserArrivesAtStationToRentBike":
-                usM.artificialtime += (usM.lastposition.distanceTo(stM.position) / standardstraightLineWalkingVelocity);
+                usM.artificialtime += (usM.lastposition.distanceTo(stM.position) / defaultstraightLineWalkingVelocity);
                 usM.lastposition = stM.position;
                 if (result == Event.RESULT_TYPE.SUCCESS) {
                     usM.succbikerentals++;
@@ -298,7 +299,7 @@ class UserDataAnalyzer {
                 }
                 break;
             case "EventUserArrivesAtStationToReturnBike":
-                usM.artificialtime += (usM.lastposition.distanceTo(stM.position) / standardstraightLineCyclingVelocity);
+                usM.artificialtime += (usM.lastposition.distanceTo(stM.position) / defaultstraightLineCyclingVelocity);
                 usM.lastposition = stM.position;
                 if (result == Event.RESULT_TYPE.SUCCESS) {
                     usM.succbikereturns++;
@@ -335,7 +336,7 @@ class UserDataAnalyzer {
                 }
                 break;
             case "EventUserLeavesSystem":
-                usM.artificialtime += (usM.lastposition.distanceTo(usM.destination) / standardstraightLineWalkingVelocity);
+                usM.artificialtime += (usM.lastposition.distanceTo(usM.destination) / defaultstraightLineWalkingVelocity);
                 usM.lastposition = usM.destination;
                 usM.leafreason = EventUser.EXIT_REASON.valueOf(ee.getAdditionalInfo().name());
                 usM.finishedinsimtime = true;

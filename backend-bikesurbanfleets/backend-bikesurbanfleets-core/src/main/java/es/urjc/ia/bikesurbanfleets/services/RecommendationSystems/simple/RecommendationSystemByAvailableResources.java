@@ -33,11 +33,11 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
-        private int maxDistanceRecommendation = 600;
+        private int maxDistanceRecommendationReturn = 600;
 
         @Override
         public String toString() {
-            return "maxDistanceRecommendation=" + maxDistanceRecommendation ;
+            return "maxDistanceRecommendationReturn=" + maxDistanceRecommendationReturn ;
         }
 
     }
@@ -62,11 +62,11 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
     }
 
     @Override
-    public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
+   public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
         List<Station> temp;
         List<Recommendation> result = new ArrayList<>();
         List<Station> stations = validStationsToRentBike(stationManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+                .filter(station -> station.getPosition().distanceTo(point) <= maxdist).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             Comparator<Station> byBikes = byAvailableBikes(point);
@@ -80,7 +80,7 @@ public class RecommendationSystemByAvailableResources extends RecommendationSyst
         List<Station> temp;
         List<Recommendation> result = new ArrayList<>();
         List<Station> stations = validStationsToReturnBike(stationManager.consultStations()).stream().
-                filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+                filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendationReturn).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             Comparator<Station> bySlots = byAvailableSlots(destination);

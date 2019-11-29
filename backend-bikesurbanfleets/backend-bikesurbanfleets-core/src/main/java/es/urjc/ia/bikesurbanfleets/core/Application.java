@@ -8,6 +8,7 @@ import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.config.ConfigJsonReader;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -57,7 +58,7 @@ public class Application {
     public static void main(String[] args) throws Exception {
 
         //Create auxiliary folder
-        File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
+        File auxiliaryDir = new File(GlobalConfigurationParameters.TEMP_DIR);
         if(!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }

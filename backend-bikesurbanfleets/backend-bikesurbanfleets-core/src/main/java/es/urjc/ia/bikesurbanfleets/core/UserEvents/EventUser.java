@@ -4,7 +4,7 @@ import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.common.util.MessageGuiFormatter;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.log.Debug;
-import static es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo.USERWAITING_INTERVAL;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecision;
@@ -207,7 +207,7 @@ public abstract class EventUser implements Event {
             //check twhether this is a waiting decision
             if (reason == DECISION_TYPE.AFTER_FAILED_BIKE_RENTAL && ((EventUserArrivesAtStationToRentBike) this).station == uds.station) {
                 debugEventLog("User decides to wait at station to get bike: " + uds.station.getId());
-                return new EventUserArrivesAtStationToRentBike(this.instant + USERWAITING_INTERVAL, user, uds.station, true);
+                return new EventUserArrivesAtStationToRentBike(this.instant + GlobalConfigurationParameters.USERWAITING_INTERVAL, user, uds.station, true);
             } else {
                 user.setState(User.STATE.WALK_TO_STATION);
                 int arrivalTime = user.goToStation(uds.station);
@@ -219,7 +219,7 @@ public abstract class EventUser implements Event {
             //check twhether this is a waiting decision
             if (reason == DECISION_TYPE.AFTER_FAILED_BIKE_RESERVATION && ((EventUserTriesToReserveBike) this).station == uds.station) {
                 debugEventLog("User decides to wait to try another reservation at a station" + uds.station.getId());
-                return new EventUserTriesToReserveBike(this.instant + USERWAITING_INTERVAL, user, uds.station, true);
+                return new EventUserTriesToReserveBike(this.instant + GlobalConfigurationParameters.USERWAITING_INTERVAL, user, uds.station, true);
             } else {
                 user.setState(User.STATE.TRY_BIKE_RESERVATION);
                 debugEventLog("User decides to reserve a bike at a station" + uds.station.getId());
@@ -305,7 +305,7 @@ public abstract class EventUser implements Event {
             //check waiting event
             if (reason == DECISION_TYPE.AFTER_FAILED_BIKE_RETURN && ((EventUserArrivesAtStationToReturnBike) this).station == uds.station) {
                 debugEventLog("User decides to wait at station without slot reservation" + uds.station.getId());
-                return new EventUserArrivesAtStationToReturnBike(this.instant + USERWAITING_INTERVAL, user, uds.station, true);
+                return new EventUserArrivesAtStationToReturnBike(this.instant + GlobalConfigurationParameters.USERWAITING_INTERVAL, user, uds.station, true);
             } else {
                 user.setState(User.STATE.WITH_BIKE_TO_STATION);
                 int arrivalTime = user.goToStation(uds.station);
@@ -317,7 +317,7 @@ public abstract class EventUser implements Event {
             //check waiting event
             if (reason == DECISION_TYPE.AFTER_FAILED_SLOT_RESERVATION && ((EventUserTriesToReserveSlot) this).station == uds.station) {
                 debugEventLog("User decides to wait to try another slot reservation at a station" + uds.station.getId());
-                return new EventUserTriesToReserveSlot(this.instant + USERWAITING_INTERVAL, user, uds.station, true);
+                return new EventUserTriesToReserveSlot(this.instant + GlobalConfigurationParameters.USERWAITING_INTERVAL, user, uds.station, true);
             } else {
                 user.setState(User.STATE.TRY_SLOT_RESERVATION);
                 debugEventLog("User decides to reserve a slot at a station" + uds.station.getId());

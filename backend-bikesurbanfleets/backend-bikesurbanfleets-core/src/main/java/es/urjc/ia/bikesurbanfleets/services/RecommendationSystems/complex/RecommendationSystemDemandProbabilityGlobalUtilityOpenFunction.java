@@ -27,11 +27,6 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
 
     public class RecommendationParameters {
 
-        /**
-         * It is the maximum distance in meters between the recommended stations
-         * and the indicated geographical point.
-         */
-        private int maxDistanceRecommendation = 600;
         private double upperProbabilityBound = 0.999;
         private double desireableProbability = 0.6;
 
@@ -40,7 +35,7 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
 
         @Override
         public String toString() {
-            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", upperProbabilityBound=" + upperProbabilityBound + ", desireableProbability=" + desireableProbability + ", factorProb=" + factorProb + ", factorImp=" + factorImp ;
+            return "upperProbabilityBound=" + upperProbabilityBound + ", desireableProbability=" + desireableProbability + ", factorProb=" + factorProb + ", factorImp=" + factorImp ;
         }
     }
     public String getParameterString(){
@@ -64,16 +59,15 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         recutils = new UtilitiesGlobalLocalUtilityMethods(getDemandManager());
     }
     @Override
-    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition) {
+    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
         LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (StationUtilityData sd : stationdata) {
-            sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
             double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, true);
             double normedUtilityDiff = util
                 * recutils.dm.getStationTakeRatePerHour(sd.getStation().getId(),current);
             sd.setUtility(normedUtilityDiff);
-            addrent(sd, orderedlist);
+            addrent(sd, orderedlist, maxdistance);
         }
         return orderedlist;
     }
@@ -83,7 +77,6 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         List<StationUtilityData> orderedlist = new ArrayList<>();
         LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (StationUtilityData sd : stationdata) {
-            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
             double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, false);
             double normedUtilityDiff = util
                 * recutils.dm.getStationReturnRatePerHour(sd.getStation().getId(),current);
@@ -94,10 +87,10 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
     }
  
     //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (oldSD.getWalkdist()<= this.parameters.maxDistanceRecommendation) {
+    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance) {
+        if (oldSD.getWalkdist()<= maxdistance) {
             // if here newSD.getProbability() > oldSD.getProbability()
-            if (newSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
+            if (newSD.getWalkdist() <= maxdistance) {
                 double distdiff = (newSD.getWalkdist() - oldSD.getWalkdist());
                 double probdiff = (newSD.getProbabilityTake()- oldSD.getProbabilityTake()) * this.parameters.factorProb;
                 double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;

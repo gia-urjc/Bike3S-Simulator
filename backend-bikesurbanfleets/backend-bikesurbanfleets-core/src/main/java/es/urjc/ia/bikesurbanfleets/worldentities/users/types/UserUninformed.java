@@ -137,8 +137,7 @@ public class UserUninformed extends User {
         Station destination = null;
         List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts();
         //double walkeddistance=
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition()).stream()
-                .filter(station -> station.getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
+        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition());
         finalStations.removeAll(triedStations);
 
         if (!finalStations.isEmpty()) {

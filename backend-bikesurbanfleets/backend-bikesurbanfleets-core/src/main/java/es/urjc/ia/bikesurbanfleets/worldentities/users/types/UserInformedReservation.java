@@ -28,13 +28,10 @@ public class UserInformedReservation extends UserUninformedReservation {
     @Override
     protected Station determineStationToRentBike() {
         Station destination = null;
-        List<Station> triedStations = getMemory().getStationsWithReservationRentalFailedAttempts(); 
-        List<Station> finalStations = informationSystem.getStationsWithAvailableBikesOrderedByDistance(this.getPosition()).stream()
-                .filter(station -> station.getPosition().distanceTo(this.getPosition()) <= parameters.maxDistanceToRentBike).collect(Collectors.toList());
-        finalStations.removeAll(triedStations);
+        List<Station> finalStations = informationSystem.getStationsWithAvailableBikesOrderedByDistance(this.getPosition());
 
         if (!finalStations.isEmpty()) {
-        	destination = finalStations.get(0);
+                    destination = finalStations.get(0);
         }
         return destination;
     }

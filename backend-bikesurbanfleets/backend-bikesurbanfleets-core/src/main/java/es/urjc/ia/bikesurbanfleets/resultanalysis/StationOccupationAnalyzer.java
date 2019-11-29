@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.core.config.GlobalInfo;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.history.HistoryJsonClasses;
 import es.urjc.ia.bikesurbanfleets.history.entities.HistoricStation;
 import java.io.File;
@@ -45,7 +46,7 @@ public class StationOccupationAnalyzer {
     private boolean first=true;
 
     StationOccupationAnalyzer(TreeMap<Integer, StationDataAnalyzer.StationMetric> stations) {
-        if (GlobalInfo.STATION_OCCUPATION_CHECK_INTERVAL <= 0) {
+        if (GlobalConfigurationParameters.STATION_OCCUPATION_CHECK_INTERVAL <= 0) {
             throw new RuntimeException("invalid values");
         }
         stationmetrics = stations;
@@ -67,7 +68,7 @@ public class StationOccupationAnalyzer {
                 i++;
             }
             stationoccupation.put(nexttimecheck, timeoccupation);
-            nexttimecheck = nexttimecheck + GlobalInfo.STATION_OCCUPATION_CHECK_INTERVAL;
+            nexttimecheck = nexttimecheck + GlobalConfigurationParameters.STATION_OCCUPATION_CHECK_INTERVAL;
         }
         //finally add the entry at totalsimtimespecified 
         int[] timeoccupation = new int[stationmetrics.keySet().size()];
@@ -145,7 +146,7 @@ public class StationOccupationAnalyzer {
                 nexttimecheck+=120;
                 first=false;
             } else {
-            nexttimecheck = nexttimecheck + GlobalInfo.STATION_OCCUPATION_CHECK_INTERVAL;
+            nexttimecheck = nexttimecheck + GlobalConfigurationParameters.STATION_OCCUPATION_CHECK_INTERVAL;
             }
         }
     }

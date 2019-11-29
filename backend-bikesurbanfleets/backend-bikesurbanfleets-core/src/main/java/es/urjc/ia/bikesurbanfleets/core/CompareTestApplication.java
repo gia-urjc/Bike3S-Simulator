@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.ResultsComparator;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
 import java.io.*;
@@ -38,9 +39,9 @@ public class CompareTestApplication {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
         
-    //    testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/prueba";
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_ usersrandom_halfbikes"
-                + "/demand0817_0918/cost_new";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/prueba";
+   //     testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_ usersrandom_halfbikes"
+   //             + "/demand0817_0918/cost";
     //    testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/SimulationJournalEvaluationTest/evaluationTest_withmanager";
          //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -57,7 +58,7 @@ public class CompareTestApplication {
 
     private void executeTests(String testFile) throws Exception {
         //Create auxiliary folders
-        File auxiliaryDir = new File(GlobalInfo.TEMP_DIR);
+        File auxiliaryDir = new File(GlobalConfigurationParameters.TEMP_DIR);
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
@@ -141,8 +142,8 @@ public class CompareTestApplication {
 
     private void runSimulationTest(GlobalInfo globalInfo, ConfigJsonReader jsonReader, String testdir, JsonObject usertype, JsonObject recomendertype) {
         //Create auxiliary folders
-        GlobalInfo.DEBUG_DIR = debugDir + "/" + testdir;
-        File auxiliaryDir = new File(GlobalInfo.DEBUG_DIR);
+        GlobalConfigurationParameters.DEBUG_DIR = debugDir + "/" + testdir;
+        File auxiliaryDir = new File(GlobalConfigurationParameters.DEBUG_DIR);
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }

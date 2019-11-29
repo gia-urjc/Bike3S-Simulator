@@ -30,12 +30,6 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
 
     public class RecommendationParameters {
 
-        /**
-         * It is the maximum distance in meters between the recommended stations
-         * and the indicated geographical point.
-         */
-        private int maxDistanceRecommendation = 600;
-        //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double upperProbabilityBound = 0.999;
         private double desireableProbability = 0.6;
         private double maxStationsToReccomend = 30;
@@ -45,7 +39,7 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
 
         @Override
         public String toString() {
-            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", upperProbabilityBound=" + upperProbabilityBound + ", desireableProbability=" + desireableProbability + ", maxStationsToReccomend=" + maxStationsToReccomend + ", factorProb=" + factorProb + ", factorImp=" + factorImp ;
+            return " upperProbabilityBound=" + upperProbabilityBound + ", desireableProbability=" + desireableProbability + ", maxStationsToReccomend=" + maxStationsToReccomend + ", factorProb=" + factorProb + ", factorImp=" + factorImp ;
         }
     }
     public String getParameterString(){
@@ -69,18 +63,17 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
 
     
      @Override
-    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition) {
+    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
         int i=0;
         for (StationUtilityData sd : stationdata) {
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
-            sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
             if (sd.getProbabilityTake()> 0) {
                 double util=probutils.getGlobalProbabilityImprovementIfTake(sd);
                 sd.setUtility(util);
-                addrent(sd, orderedlist);
+                addrent(sd, orderedlist, maxdistance);
                 i++;
             }
         }
@@ -95,7 +88,6 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
             if (i >= this.parameters.maxStationsToReccomend) {
                 break;
             }
-            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
             if (sd.getProbabilityReturn()> 0) {
                 double util=probutils.getGlobalProbabilityImprovementIfReturn(sd);
                 sd.setUtility(util);
@@ -117,9 +109,9 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
     }
 
     //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
+    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance) {
         // if here newSD.getProbability() > oldSD.getProbability()
-        if (newSD.getWalkdist()<= this.parameters.maxDistanceRecommendation) {
+        if (newSD.getWalkdist()<= maxdistance) {
             if (oldSD.getProbabilityTake() > this.parameters.upperProbabilityBound && newSD.getProbabilityTake() > this.parameters.upperProbabilityBound) {
                 return decideByGlobalUtilityrent(newSD, oldSD);
             }
@@ -135,7 +127,7 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
 
             return false;
         }
-        if (oldSD.getWalkdist() <= this.parameters.maxDistanceRecommendation) {
+        if (oldSD.getWalkdist() <= maxdistance) {
             return false;
         }
                 return decideByGlobalUtilityrent(newSD, oldSD);

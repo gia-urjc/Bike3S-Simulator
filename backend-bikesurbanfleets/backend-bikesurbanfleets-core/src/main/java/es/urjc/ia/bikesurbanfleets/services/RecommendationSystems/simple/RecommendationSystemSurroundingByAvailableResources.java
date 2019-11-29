@@ -34,7 +34,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
-        private int maxDistanceRecommendation = 600;
+        private int maxDistanceRecommendationReturn = 600;
 
         /**
          * It is the maximum distance in meters between a station and the
@@ -44,7 +44,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
 
         @Override
         public String toString() {
-            return  "maxDistanceRecommendation=" + maxDistanceRecommendation + ", MaxDistanceSurroundingStations=" + MaxDistanceSurroundingStations ;
+            return  "maxDistanceRecommendationReturn=" + maxDistanceRecommendationReturn + ", MaxDistanceSurroundingStations=" + MaxDistanceSurroundingStations ;
         }
 
     }
@@ -84,10 +84,10 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
 
 
     @Override
-    public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
+    public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
         List<Recommendation> result = new ArrayList<>();
         List<Station> stations = validStationsToRentBike(stationManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+                .filter(station -> station.getPosition().distanceTo(point) <= maxdist).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationSurroundingData> stationdata = getStationQualityRenting(stations,point);
@@ -103,7 +103,7 @@ public class RecommendationSystemSurroundingByAvailableResources extends Recomme
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
         List<Station> stations = validStationsToReturnBike(stationManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+                .filter(station -> station.getPosition().distanceTo(destination) <= parameters.maxDistanceRecommendationReturn).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationSurroundingData> stationdata = getStationQualityReturning(stations, destination);

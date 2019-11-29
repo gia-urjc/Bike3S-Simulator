@@ -3,9 +3,9 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import static es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint.STRAIGT_LINE_FACTOR;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
@@ -28,32 +28,32 @@ import java.util.stream.Collectors;
  */
 public abstract class RecommendationSystemDemandProbabilityBased extends RecommendationSystem {
 
-    private class RecommendationParameters {
+    class RecommendationParameters {
 
         /**
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
         // the velocities here are real (estimated velocities)
-        // assuming real velocities of 1.4 m/s and 6 m/s for walking and biking (aprox. to 5 and 20 km/h)
+        // assuming real velocities of 1.1 m/s and 4 m/s for walking and biking (aprox. to 4 and 14,4 km/h)
         //Later the velocities are adjusted to straight line velocities
         //given a straight line distance d, the real distance dr may be estimated  
         // as dr=f*d, whewre f will be between 1 and sqrt(2) (if triangle).
         // here we consider f=1.4
         //to translate velocities from realdistances to straight line distances:
         // Vel_straightline=(d/dr)*vel_real -> Vel_straightline=vel_real/f
-        //assuming real velocities of 1.4 m/s and 6 m/s for walking and biking (aprox. to 5 and 20 km/h)
-        //the adapted straight line velocities are: 1m/s and 4.286m/s
-        public double walkingVelocity = 1.4D;
-        public double cyclingVelocity = 6D;
+        //assuming real velocities of 1.1 m/s and 4 m/s for walking and biking (aprox. to 4 and 14,4 km/h)
+        //the adapted straight line velocities are: 0.786m/s and 2.86m/s
+        public double expectedWalkingVelocity = GlobalConfigurationParameters.DEFAULT_WALKING_VELOCITY;
+        public double expectedCyclingVelocity = GlobalConfigurationParameters.DEFAULT_CYCLING_VELOCITY;
         public double probabilityUsersObey = 1D;
         public boolean takeintoaccountexpected = true;
         public boolean takeintoaccountcompromised = true;
-        public int additionalResourcesDesiredInProbability=1;
+        public int additionalResourcesDesiredInProbability=0;
         
          @Override
         public String toString() {
-            return "additionalResourcesDesiredInProbability="+additionalResourcesDesiredInProbability+", walkingVelocity=" + walkingVelocity + ", cyclingVelocity=" + cyclingVelocity + ", probabilityUsersObey=" + probabilityUsersObey + ", takeintoaccountexpected=" + takeintoaccountexpected + ", takeintoaccountcompromised=" + takeintoaccountcompromised ;
+            return "additionalResourcesDesiredInProbability="+additionalResourcesDesiredInProbability+", expectedwalkingVelocity=" + expectedWalkingVelocity + ", expectedcyclingVelocity=" + expectedCyclingVelocity + ", probabilityUsersObey=" + probabilityUsersObey + ", takeintoaccountexpected=" + takeintoaccountexpected + ", takeintoaccountcompromised=" + takeintoaccountcompromised ;
         }
     }
     public String getParameterString(){
@@ -88,29 +88,22 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         // Vel_straightline=(d/dr)*vel_real -> Vel_straightline=vel_real/f
         //assuming real velocities of 1.4 m/s and 6 m/s for walking and biking (aprox. to 5 and 20 km/h)
         //the adapted straight line velocities are: 1m/s and 4.286m/s
-        straightLineWalkingVelocity = this.baseparameters.walkingVelocity/STRAIGT_LINE_FACTOR;
-        straightLineCyclingVelocity = this.baseparameters.cyclingVelocity/STRAIGT_LINE_FACTOR;
+        straightLineWalkingVelocity = this.baseparameters.expectedWalkingVelocity/GlobalConfigurationParameters.STRAIGT_LINE_FACTOR;
+        straightLineCyclingVelocity = this.baseparameters.expectedCyclingVelocity/GlobalConfigurationParameters.STRAIGT_LINE_FACTOR;
         
         pastrecs=new PastRecommendations();
         probutils=new UtilitiesProbabilityCalculation(getDemandManager(), pastrecs, baseparameters.probabilityUsersObey,
                  baseparameters.takeintoaccountexpected, baseparameters.takeintoaccountcompromised, baseparameters.additionalResourcesDesiredInProbability);
     }
 
-    private static Comparator<Station> byDistance(GeoPoint point) {
-        return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point), s2.getPosition().distanceTo(point));
-    }
-
     @Override
-    public List<Recommendation> recommendStationToRentBike(GeoPoint currentposition) {
+    public List<Recommendation> recommendStationToRentBike(GeoPoint currentposition, double maxdist) {
         List<Recommendation> result;
-        List<Station> stations = stationManager.consultStations().stream().
-                sorted(byDistance(currentposition)).collect(Collectors.toList());
-
-        if (!stations.isEmpty()) {
-            List<StationUtilityData> su = getOrderedStationsRent(stations, currentposition);
-            if (su.size() == 0) {
-                System.out.println("ERROR take: no recommendation found with minimal parameters at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
-            }
+        List<StationUtilityData> candidatestations = getCandidateStationsRentOrderedByDistance(currentposition,maxdist);
+        //now do the specific calculation to get the final list of recommended stations
+        List<StationUtilityData> su = specificOrderStationsRent(candidatestations,stationManager.consultStations(), currentposition, maxdist);
+       
+        if (!su.isEmpty()) {
             if (printHints) {
                 printRecomendations(su, true);
             }
@@ -127,21 +120,21 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     (int) (dist / straightLineWalkingVelocity), true);
         } else {
             result = new ArrayList<>();
-            System.out.println("[Warn] no recommendation for take at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
+   //         if (printHints) {
+                System.out.println("[Warn] no recommendation for take (no valid station in distance "+ maxdist+ ") at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
+     //       }
         }
         return result;
     }
     
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = stationManager.consultStations().stream().
-                sorted(byDistance(destination)).collect(Collectors.toList());
+        List<StationUtilityData> candidatestations = getCandidateStationsReturnOrderedByDistance(destination, currentposition);
+        
+        //now do the specific calculation to get the final list of recommended stations
+        List<StationUtilityData> su = specificOrderStationsReturn(candidatestations,stationManager.consultStations(), currentposition, destination);
 
-        if (!stations.isEmpty()) {
-            List<StationUtilityData> su = getOrderedStationsReturn(stations, destination, currentposition);
-            if (su.size() == 0) {
-                System.out.println("[ERROR] return: no recommendation found with minimal parameters at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
-            }
+        if (!su.isEmpty()) {
             if (printHints) {
                 printRecomendations(su, false);
             }
@@ -157,10 +150,82 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             pastrecs.addExpectedBikechange(first.getStation().getId(),
                     (int) (dist / straightLineCyclingVelocity), false);
         } else {
-            System.out.println("[Warn] no recommendation for return at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
+//            if (printHints) {
+                System.out.println("[Warn] no recommendation for return at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
+ //           }
         }
         return result;
     }
+
+    //the list of stations is ordered by distance to currentposition
+    private List<StationUtilityData> getCandidateStationsRentOrderedByDistance(GeoPoint currentposition, double maxdistance) {
+        List<StationUtilityData> temp = new ArrayList<>();
+        for (Station s : stationManager.consultStations()) {
+            double dist = currentposition.distanceTo(s.getPosition());
+            if (dist<=maxdistance) {
+                double offtime = (dist / straightLineWalkingVelocity);
+                StationUtilityData sd = new StationUtilityData(s);
+                sd.setWalkTime(offtime).setWalkdist(dist).setCapacity(s.getCapacity());
+                sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
+                temp.add(sd);
+            }
+        }
+        return temp.stream().sorted(rentByDistance()).collect(Collectors.toList());
+    }
+
+    //the list of stations is ordered by distance to destination
+    private List<StationUtilityData> getCandidateStationsReturnOrderedByDistance(GeoPoint destination, GeoPoint currentposition) {
+        List<StationUtilityData> temp = new ArrayList<>();
+        for (Station s : stationManager.consultStations()) {
+            StationUtilityData sd = new StationUtilityData(s);
+            double bikedist=currentposition.distanceTo(s.getPosition());
+            double biketime = bikedist / straightLineCyclingVelocity;
+            double walkdist=s.getPosition().distanceTo(destination);
+            double walktime =  walkdist / straightLineWalkingVelocity;
+            sd.setWalkTime(walktime).setWalkdist(walkdist)
+                    .setCapacity(s.getCapacity())
+                    .setBikedist(bikedist).setBiketime(biketime);
+            sd.setProbabilityReturn(probutils.calculateReturnProbability(sd.getStation(), sd.getBiketime()));
+            temp.add(sd);
+        }
+        return temp.stream().sorted(returnByTime()).collect(Collectors.toList());
+    }
+
+    private static Comparator<StationUtilityData> rentByDistance() {
+        return (s1, s2) -> Double.compare(s1.getWalkdist(), s2.getWalkdist());
+    }
+    private static Comparator<StationUtilityData> returnByTime() {
+        return (s1, s2) -> Double.compare(s1.getWalkTime()+s1.getBiketime(), s2.getWalkTime()+s2.getBiketime());
+    }
+
+    abstract protected  List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance);
+    abstract protected  List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination );   
+    
+    //methods for ordering the StationUtilityData should be true if the first data should be recomended befor the second
+    //take into account that distance newSD >= distance oldSD
+    abstract protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance);
+    abstract protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD);
+
+    protected void addrent(StationUtilityData d, List<StationUtilityData> temp, double maxdistance) {
+        int i = 0;
+        for (; i < temp.size(); i++) {
+            if (betterOrSameRent(d, temp.get(i), maxdistance)) {
+                break;
+            }
+        }
+        temp.add(i, d);
+    }
+
+    protected void addreturn(StationUtilityData d, List<StationUtilityData> temp) {
+        int i = 0;
+        for (; i < temp.size(); i++) {
+            if (betterOrSameReturn(d, temp.get(i))) {
+                break;
+            }
+        }
+        temp.add(i, d);
+    }
+    
     private int lowprobs = 0;
     private double probsr = 0D;
     private int callsr = 0;
@@ -174,8 +239,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             int max = Math.min(3, su.size());
        //     if (su.get(0).getStation().getId()==8) max=173;
        //     else return;
-
-            if (take) {
+             if (take) {
                 System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
                 probst += su.get(0).getProbabilityTake();
                 avcost = ((avcost*callst)+su.get(0).getTotalCost())/(double)(callst+1);
@@ -256,64 +320,5 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         System.out.println();
         }
     }
-    
-    //the list of stations is ordered by distance to currentposition
-    private List<StationUtilityData> getOrderedStationsRent(List<Station> stations, GeoPoint currentposition) {
-        List<StationUtilityData> temp = new ArrayList<>();
-        for (Station s : stations) {
-            StationUtilityData sd = new StationUtilityData(s);
-            double dist = currentposition.distanceTo(s.getPosition());
-            double offtime = (dist / straightLineWalkingVelocity);
-            sd.setWalkTime(offtime).setWalkdist(dist).setCapacity(s.getCapacity());
-            temp.add(sd);
-        }
-        List<StationUtilityData> ret=specificOrderStationsRent(temp,stations, currentposition);
-        return ret;    
-    }
 
-    //the list of stations is ordered by distance to destination
-    private List<StationUtilityData> getOrderedStationsReturn(List<Station> stations, GeoPoint destination, GeoPoint currentposition) {
-        List<StationUtilityData> temp = new ArrayList<>();
-        for (Station s : stations) {
-            StationUtilityData sd = new StationUtilityData(s);
-            double bikedist=currentposition.distanceTo(s.getPosition());
-            double biketime = bikedist / straightLineCyclingVelocity;
-            double walkdist=s.getPosition().distanceTo(destination);
-            double walktime =  walkdist / straightLineWalkingVelocity;
-            sd.setWalkTime(walktime).setWalkdist(walkdist)
-                    .setCapacity(s.getCapacity())
-                    .setBikedist(bikedist).setBiketime(biketime);
-            temp.add(sd);
-        }
-        List<StationUtilityData> ret=specificOrderStationsReturn(temp,stations, currentposition, destination);
-        return ret;    
-    }
-
-    abstract protected  List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition );
-    abstract protected  List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination );   
-    
-    //methods for ordering the StationUtilityData should be true if the first data should be recomended befor the second
-    //take into account that distance newSD >= distance oldSD
-    abstract protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD);
-    abstract protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD);
-
-    protected void addrent(StationUtilityData d, List<StationUtilityData> temp) {
-        int i = 0;
-        for (; i < temp.size(); i++) {
-            if (betterOrSameRent(d, temp.get(i))) {
-                break;
-            }
-        }
-        temp.add(i, d);
-    }
-
-    protected void addreturn(StationUtilityData d, List<StationUtilityData> temp) {
-        int i = 0;
-        for (; i < temp.size(); i++) {
-            if (betterOrSameReturn(d, temp.get(i))) {
-                break;
-            }
-        }
-        temp.add(i, d);
-    }
 }

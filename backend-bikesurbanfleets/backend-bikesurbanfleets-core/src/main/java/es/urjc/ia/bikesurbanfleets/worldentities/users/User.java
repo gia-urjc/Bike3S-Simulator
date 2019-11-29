@@ -18,6 +18,7 @@ import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -162,8 +163,8 @@ public abstract class User implements Entity {
         }
 
         //optional parameters
-        this.walkingVelocity = 1.4;
-        this.cyclingVelocity = 6.0;
+        this.walkingVelocity = GlobalConfigurationParameters.DEFAULT_WALKING_VELOCITY;
+        this.cyclingVelocity = GlobalConfigurationParameters.DEFAULT_CYCLING_VELOCITY;
         aux = userdef.get("walkingVelocity");
         if (aux != null) {
             walkingVelocity = aux.getAsDouble();

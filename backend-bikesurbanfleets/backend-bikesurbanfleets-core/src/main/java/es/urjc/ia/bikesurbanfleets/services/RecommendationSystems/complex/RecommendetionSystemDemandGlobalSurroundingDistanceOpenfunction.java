@@ -33,12 +33,6 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
     public class RecommendationParameters {
 
         /**
-         * It is the maximum distance in meters between the recommended stations
-         * and the indicated geographical point.
-         */
-        private int maxDistanceRecommendation = 600;
-
-        /**
          * It is the maximum distance in meters between a station and the
          * stations we take into account for checking the area
          */
@@ -48,7 +42,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
 
         @Override
         public String toString() {
-            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", MaxDistanceSurroundingStations=" + MaxDistanceSurroundingStations + ", MaxDistanceNormalizer=" + MaxDistanceNormalizer + ", wheightDistanceStationUtility=" + wheightDistanceStationUtility ;
+            return " MaxDistanceSurroundingStations=" + MaxDistanceSurroundingStations + ", MaxDistanceNormalizer=" + MaxDistanceNormalizer + ", wheightDistanceStationUtility=" + wheightDistanceStationUtility ;
         }
 
     }
@@ -89,10 +83,10 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
             Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
 
     @Override
-    public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
+   public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
         List<Recommendation> result;
         List<Station> stations = validStationsToRentBike(stationManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+                .filter(station -> station.getPosition().distanceTo(point) <= maxdist).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, point, true);

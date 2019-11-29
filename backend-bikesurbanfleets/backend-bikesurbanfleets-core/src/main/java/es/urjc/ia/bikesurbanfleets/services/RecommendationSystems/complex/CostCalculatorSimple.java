@@ -21,56 +21,40 @@ public class CostCalculatorSimple {
     //methods for cost calculations
     public CostCalculatorSimple(double marginprob, double maxcost,
             double walkvel, double cycvel, 
-            double maxDistanceRecomendation, UtilitiesProbabilityCalculator recutils,
-            boolean squaredTimes, int PredictionNorm) {
+            UtilitiesProbabilityCalculator recutils,
+            int PredictionNorm, double normmultiplier) {
         minimumMarginProbability = marginprob;
         walkingVelocity=walkvel;
         cyclingVelocity=cycvel;
-        this.maxDistanceRecomendation=maxDistanceRecomendation;
-        maxWalktime=this.maxDistanceRecomendation/walkingVelocity;
         this.probutils=recutils;
         maxCostValue=maxcost;
-        useSuaredTimes=squaredTimes;
         predictionNormalisation=PredictionNorm;
+        this.normmultiplier=normmultiplier;
     }
 
-    final boolean useSuaredTimes;
     final int predictionNormalisation;
     final double minimumMarginProbability;
     final double maxCostValue;
     final double walkingVelocity;
     final double cyclingVelocity;
-    final double maxDistanceRecomendation;
     UtilitiesProbabilityCalculator probutils;
-    final double maxWalktime;
+    final double normmultiplier;
 
-
-    private double getSqarewalkTimeRent(double accwalktime) {
-        if (useSuaredTimes)
-        return (accwalktime*accwalktime)/maxWalktime;
-        else return accwalktime;
-    }
-    private double getSqareReturnDistanceCost(double accbiketime, double walktime) {
-        if (useSuaredTimes)
-            return (accbiketime + walktime*walktime)/maxWalktime;
-        else return accbiketime+walktime;
-    }
 
     public double calculateCostRentSimple(StationUtilityData sd, double sdprob, double time) {
-        double sqtime=getSqarewalkTimeRent(time);
-        if(sdprob>1-minimumMarginProbability){
-            return (1 - minimumMarginProbability) * sqtime;
+         if(sdprob>1-minimumMarginProbability){
+            return (1 - minimumMarginProbability) * time;
         } else {
-            return (sdprob*sqtime)+ (1-minimumMarginProbability-sdprob)* getSqarewalkTimeRent(maxCostValue);
+            return (sdprob*time)+ (1-minimumMarginProbability-sdprob)* maxCostValue;
         }
     }
 
     public double calculateCostReturnSimple(StationUtilityData sd, double sdprob, double biketime, double walktime) {
-        double sqtime=getSqareReturnDistanceCost(biketime, walktime);
+        double time= biketime+ walktime;
         if(sdprob>1-minimumMarginProbability){
-            return (1 - minimumMarginProbability) * (sqtime);
+            return (1 - minimumMarginProbability) * (time);
         } else {
-            return (sdprob * (sqtime))+ (1-minimumMarginProbability-sdprob)* getSqareReturnDistanceCost(biketime,maxCostValue);
+            return (sdprob * (time))+ (1-minimumMarginProbability-sdprob)* maxCostValue;
         }
     }
 
@@ -139,7 +123,7 @@ public class CostCalculatorSimple {
     private double getTakeFactor(Station s, double timeoffset){
          switch(predictionNormalisation){
             case (0) :
-                return 1;
+                return normmultiplier;
             case (1) :
                 return probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
             case (2) :
@@ -155,7 +139,7 @@ public class CostCalculatorSimple {
      private double getReturnFactor(Station s, double timeoffset){
         switch(predictionNormalisation){
             case (0) :
-                 return 1;
+                 return normmultiplier;
             case (1) :
                 return probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
             case (2) :

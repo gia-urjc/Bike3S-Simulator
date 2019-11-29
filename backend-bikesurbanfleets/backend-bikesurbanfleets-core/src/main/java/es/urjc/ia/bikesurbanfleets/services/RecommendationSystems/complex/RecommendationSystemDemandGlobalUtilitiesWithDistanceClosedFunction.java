@@ -35,13 +35,12 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
          * It is the maximum distance in meters between the recommended stations
          * and the indicated geographical point.
          */
-        private int maxDistanceRecommendation = 600;
         private int MaxDistanceNormalizer=600;
         private double wheightDistanceStationUtility = 0.35;
 
         @Override
         public String toString() {
-            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", MaxDistanceNormalizer=" + MaxDistanceNormalizer + ", wheightDistanceStationUtility=" + wheightDistanceStationUtility ;
+            return  "MaxDistanceNormalizer=" + MaxDistanceNormalizer + ", wheightDistanceStationUtility=" + wheightDistanceStationUtility ;
         }
     }
     public String getParameterString(){
@@ -69,10 +68,10 @@ public class RecommendationSystemDemandGlobalUtilitiesWithDistanceClosedFunction
    Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
  
    @Override
-    public List<Recommendation> recommendStationToRentBike(GeoPoint point) {
+   public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
         List<Recommendation> result;
         List<Station> stations = validStationsToRentBike(stationManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= parameters.maxDistanceRecommendation).collect(Collectors.toList());
+                .filter(station -> station.getPosition().distanceTo(point) <= maxdist).collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, point, true);
