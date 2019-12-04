@@ -233,6 +233,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     private int callst = 0;
     private double avcost=0;
     private double avcosr=0;
+    private double avabandorate=0;
 
     void printRecomendations(List<StationUtilityData> su, boolean take) {
         if (printHints) {
@@ -242,36 +243,39 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
              if (take) {
                 System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
                 probst += su.get(0).getProbabilityTake();
-                avcost = ((avcost*callst)+su.get(0).getTotalCost())/(double)(callst+1);
+                avcost = ((avcost*callst)+su.get(0).getExpectedtimeIfNotAbandon())/(double)(callst+1);
+                avabandorate+=su.get(0).getAbandonProbability();
                 callst++;
-                System.out.format("Expected successrate take: %9.8f expected cost: %5.1f %n", (probst / callst), avcost);
+                System.out.format("Expected successrate take: %9.8f abandon rate % 9.8f expected cost: %5.1f %n", (probst / callst), (avabandorate / callst), avcost);
 
                 if (su.get(0).getProbabilityTake() < 0.6) {
                     System.out.format("[Info] LOW PROB Take %9.8f %n", su.get(0).getProbabilityTake());
                     lowprobs++;
                 }
-                System.out.println("             id av ca   wtime    prob   indcost tcostdiff  rcostdiff   totcost bestn timetobn bnwt bnprob");
+                System.out.println("             id av ca   wtime    prob   totcost   exptime expabandon expunsucces tcostdiff  rcostdiff   bestn timetobn bnprob");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("%-3d Station %3d %2d %2d %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %6.5f %9.2f %9.2f %6.5f %6.4f %9.2f %9.2f",
                             i+1,
                             s.getStation().getId(),
                             s.getStation().availableBikes(),
                             s.getStation().getCapacity(),
                             s.getWalkTime(),
                             s.getProbabilityTake(),
-                            s.getIndividualCost(),
+                            s.getTotalCost(),
+                            s.getExpectedtimeIfNotAbandon(),
+                            s.getAbandonProbability(),
+                            s.getExpectedUnsucesses(),
                             s.getTakecostdiff(),
-                            s.getReturncostdiff(),
-                            s.getTotalCost());
+                            s.getReturncostdiff()
+                            );
                     StationUtilityData bn=s.bestNeighbour;
                     if (bn!=null){
                         double distto=bn.getStation().getPosition().distanceTo(s.getStation().getPosition());
                         double timeto= (distto / straightLineWalkingVelocity);
-                        System.out.format(" %3d %7.1f %7.1f %6.5f %n",
+                        System.out.format(" %3d %7.1f %6.5f %n",
                             bn.getStation().getId(),
                             timeto,
-                            bn.getWalkTime(),
                             bn.getProbabilityTake());     
                     } else {
                         System.out.println("");
@@ -280,7 +284,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             } else {
                 System.out.println("Time (return):" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
                 probsr += su.get(0).getProbabilityReturn();
-                avcosr = ((avcosr*callsr)+su.get(0).getTotalCost())/(double)(callsr+1);
+                avcosr = ((avcosr*callsr)+su.get(0).getExpectedtimeIfNotAbandon())/(double)(callsr+1);
                 callsr++;
                 System.out.format("Expected successrate return: %9.8f expected cost: %5.1f %n", (probsr / callsr), avcosr);
 
@@ -288,10 +292,10 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     System.out.format("[Info] LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());
                     lowprobs++;
                 }
-                System.out.println("             id av ca   wtime   btime    prob   indcost tcostdiff  rcostdiff   totcost bestn timetobn bnwt bnprob");
+                System.out.println("             id av ca   wtime   btime    prob   totcost   exptime expabandon expunsucces tcostdiff  rcostdiff   bestn timetobn bnwt bnprob");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f %9.2f %9.2f %9.2f",
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f %9.2f %6.5f %6.4f %9.2f %9.2f",
                             i+1,
                             s.getStation().getId(),
                             s.getStation().availableBikes(),
@@ -299,10 +303,12 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                             s.getWalkTime(),
                             s.getBiketime(),
                             s.getProbabilityReturn(),
-                            s.getIndividualCost(),
+                            s.getTotalCost(),
+                            s.getExpectedtimeIfNotAbandon(),
+                            s.getAbandonProbability(),
+                            s.getExpectedUnsucesses(),
                             s.getTakecostdiff(),
-                            s.getReturncostdiff(),
-                            s.getTotalCost());
+                            s.getReturncostdiff());
                     StationUtilityData bn=s.bestNeighbour;
                     if (bn!=null){
                         double distto=bn.getStation().getPosition().distanceTo(s.getStation().getPosition());

@@ -26,21 +26,19 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
 
     public class RecommendationParameters {
 
-        private double maxDistanceRecommendation=600;
         private double minimumMarginProbability = 0.001;
-        private double minProbBestNeighbourRecommendation = 0.5;
+        private double minProbBestNeighbourRecommendation = 0;
         private double desireableProbability = 0.8;
-        private double penalisationfactorrent = 1;
-        private double penalisationfactorreturn = 1;
         private double maxStationsToReccomend = 30;
-        private double unsucesscostRent = 5500; //with calculator2bis=between 4000 and 6000
-        private double unsucesscostReturn = 5500; //with calculator2bis=between 4000 and 6000
-        private double MaxCostValue = 5000; //with calculator2bis=0
+        private double unsucesscostRentPenalisation = 6000; //with calculator2bis=between 4000 and 6000
+        private double unsucesscostReturnPenalisation = 6000; //with calculator2bis=between 4000 and 6000
+        private double AbandonPenalisation = 24000; //with calculator2bis=0
 
-        @Override
+                @Override
         public String toString() {
-            return "maxDistanceRecommendation=" + maxDistanceRecommendation + ", MaxCostValue=" + MaxCostValue + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent + ", unsucesscostReturn=" + unsucesscostReturn;
+            return  "minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRentPenalisation=" + unsucesscostRentPenalisation + ", unsucesscostReturnPenalisation=" + unsucesscostReturnPenalisation + ", AbandonPenalisation=" + AbandonPenalisation ;
         }
+
     }
 
     public String getParameterString() {
@@ -62,11 +60,11 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc = new ComplexCostCalculatorNew(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
-                parameters.unsucesscostReturn,
-                parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity,
+        ucc = new ComplexCostCalculatorNew(parameters.minimumMarginProbability, parameters.AbandonPenalisation, parameters.unsucesscostRentPenalisation,
+                parameters.unsucesscostReturnPenalisation,
+                straightLineWalkingVelocity,
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-                parameters.maxDistanceRecommendation, probutils, 0, 0);
+                probutils, 0, 0);
     }
 
     @Override
@@ -85,7 +83,11 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 try {
                     double cost = ucc.calculateCostRentHeuristicNow(sd, stationdata, maxdistance);
 
-                    sd.setTotalCost(cost);
+                    double totalcost=sd.getAbandonProbability()* parameters.AbandonPenalisation + 
+                                     sd.getExpectedUnsucesses()* parameters.unsucesscostRentPenalisation + 
+                                     sd.getExpectedtimeIfNotAbandon();
+                    
+                    sd.setTotalCost(totalcost);
                     addrent(sd, orderedlist, maxdistance);
                     if (goodfound) {
                         i++;
@@ -98,19 +100,19 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             }
         }
 
-  /*      //test probability
+        //test probability
         List<StationUtilityData> orderedlist2 = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
             addrentprob(sd, orderedlist2, maxdistance);
         }
         if ((orderedlist.isEmpty() != orderedlist2.isEmpty()) || (!orderedlist.isEmpty() &&
                 orderedlist.get(0).getStation().getId() != orderedlist2.get(0).getStation().getId())) {
-            System.out.println("!!!Different comming:");
+            System.out.println("!!!Different take:");
 
         }
         System.out.println("prob:");
         printAux(orderedlist2, true);
-*/
+
         return orderedlist;
     }
 
@@ -129,6 +131,9 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 }
                 try {
                     double cost = ucc.calculateCostReturnHeuristicNow(sd, userdestination, stationdata);
+                    double totalcost=sd.getAbandonProbability()* parameters.AbandonPenalisation + 
+                                     sd.getExpectedUnsucesses()* parameters.unsucesscostReturnPenalisation + 
+                                     sd.getExpectedtimeIfNotAbandon();
                     sd.setTotalCost(cost);
                     addreturn(sd, orderedlist);
                     if (goodfound) {
@@ -141,36 +146,73 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             }
 
         }
-  /*      //test probability
+        //test probability
         List<StationUtilityData> orderedlist2 = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
             addreturnprob(sd, orderedlist2);
         }
         if ((orderedlist.isEmpty() != orderedlist2.isEmpty()) || (!orderedlist.isEmpty() &&
                 orderedlist.get(0).getStation().getId() != orderedlist2.get(0).getStation().getId())) {
-            System.out.println("!!!Different comming:");
+            System.out.println("!!!Different return:");
 
         }
         System.out.println("prob:");
         printAux(orderedlist2, false);
-*/
+
         return orderedlist;
     }
 
     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD,double maxdistance) {
-        if (newSD.getWalkdist() <= maxdistance && oldSD.getWalkdist() > maxdistance) {
+/*        if (newSD.getWalkdist() <= maxdistance && oldSD.getWalkdist() > maxdistance) {
             return true;
         } else if (newSD.getWalkdist() > maxdistance && oldSD.getWalkdist() <= maxdistance) {
             return false;
         } else {
             return (newSD.getTotalCost() < oldSD.getTotalCost());
         }
+*/
+        if (newSD.getWalkdist() <= maxdistance
+                && oldSD.getWalkdist() <= maxdistance) {
+            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability
+                    && newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
+                return (newSD.getTotalCost() < oldSD.getTotalCost());
+            }
+            if (newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
+                return true;
+            }
+            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
+                return false;
+            }
+            if (oldSD.getProbabilityTake() >= newSD.getProbabilityTake()) {
+                return false;
+            }
+            return true;
+        }
+        if (oldSD.getWalkdist() <= maxdistance) {
+            return false;
+        }
+        if (newSD.getWalkdist() <= maxdistance) {
+            return true;
+        }
+        return (newSD.getTotalCost() < oldSD.getTotalCost());
     }
 
     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
+//        return (newSD.getTotalCost() < oldSD.getTotalCost()); 
+         if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability
+                && newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return (newSD.getTotalCost() < oldSD.getTotalCost()); 
+        }
+        if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return true;
+        }
+        if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return false;
+        }
         return (newSD.getTotalCost() < oldSD.getTotalCost()); 
+
     }
 
     protected boolean betterOrSameRentDecideSimilarprob(StationUtilityData newSD, StationUtilityData oldSD) {
@@ -284,7 +326,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 }
             } else {
                 System.out.println("Time (return):" + SimulationDateTime.getCurrentSimulationDateTime() + "(" + SimulationDateTime.getCurrentSimulationInstant() + ")");
-
+                if (su.get(0).getBiketime()>10000)System.out.println("Biketime high");
                 if (su.get(0).getProbabilityReturn() < 0.6) {
                     System.out.format("[Info] LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());
                 }

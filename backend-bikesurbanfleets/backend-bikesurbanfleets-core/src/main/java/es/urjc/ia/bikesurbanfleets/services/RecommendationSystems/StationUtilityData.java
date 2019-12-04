@@ -39,6 +39,35 @@ public class StationUtilityData {
         private double probabilityReturnAfterTake;
         private double probabilityTakeAfterRerturn;
         private double probabilityReturnAfterReturn;
+    
+        
+    private double abandonProbability;
+    private double expectedTimeIfNotAbandon;
+    private double expectedUnsucesses;
+
+    public double getExpectedtimeIfNotAbandon() {
+        return expectedTimeIfNotAbandon;
+    }
+
+    public void setExpectedtimeIfNotAbandon(double expectedTimeIfNotAbandon) {
+        this.expectedTimeIfNotAbandon = expectedTimeIfNotAbandon;
+    }
+
+    public double getExpectedUnsucesses() {
+        return expectedUnsucesses;
+    }
+
+    public void setExpectedUnsucesses(double expectedUnsucesses) {
+        this.expectedUnsucesses = expectedUnsucesses;
+    }
+
+    public double getAbandonProbability() {
+        return abandonProbability;
+    }
+
+    public void setAbandonProbability(double abandonProbability) {
+        this.abandonProbability = abandonProbability;
+    }
         
     public double getProbabilityTakeAfterTake() {
         return probabilityTakeAfterTake;

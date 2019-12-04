@@ -25,7 +25,7 @@ public class ComplexCostCalculator2Bis {
     //methods for cost calculations
     public ComplexCostCalculator2Bis(double marginprob, double maxcost, double unsuccostrent, double unsuccostret,
             double penalfactorrent, double penalfactorret, double walkvel, double cycvel, double minsecondaryprob,
-            double maxDistanceRecomendation, UtilitiesProbabilityCalculator probutils,
+            UtilitiesProbabilityCalculator probutils,
             int PredictionNorm, double normmultiplier) {
         minimumMarginProbability = marginprob;
         unsuccessCostRent = unsuccostrent;
@@ -35,8 +35,6 @@ public class ComplexCostCalculator2Bis {
         walkingVelocity=walkvel;
         cyclingVelocity=cycvel;
         minProbSecondaryRecommendation=minsecondaryprob;
-        this.maxDistanceRecomendation=maxDistanceRecomendation;
-        maxWalktime=this.maxDistanceRecomendation/walkingVelocity;
         this.probutils=probutils;
         maxCostValue=maxcost;
         predictionNormalisation=PredictionNorm;
@@ -54,8 +52,6 @@ public class ComplexCostCalculator2Bis {
     final double cyclingVelocity;
     final double minProbSecondaryRecommendation;
     final double maxCostValue;
-    final double maxDistanceRecomendation;
-    final double maxWalktime;
     UtilitiesProbabilityCalculator probutils;
 
     private double calcCostRent(double time, double probability){
@@ -210,7 +206,7 @@ public class ComplexCostCalculator2Bis {
                 double newacctime=accwalktime+(s.getPosition().distanceTo(nei.getStation().getPosition())/ walkingVelocity) ;
                 if (accdist<= (maxdistance*1)) {
                     double rentprob=probutils.calculateTakeProbability(nei.getStation(), newacctime+probtimeoffset);
-                    if (rentprob > minProbSecondaryRecommendation) {
+                    if (rentprob > 0 && rentprob > minProbSecondaryRecommendation) {
                         double thiscost=calcCostRentcomp(newacctime,rentprob);
                         //calculate the cost of this potential neighbour
                         if (thiscost < newbestValueFound) {
@@ -233,7 +229,7 @@ public class ComplexCostCalculator2Bis {
             if (!lookedlist.contains(nei)) {
                 double altthisbiketime = accbiketime + s.getPosition().distanceTo(nei.getStation().getPosition()) / cyclingVelocity;
                 double returnprob=probutils.calculateReturnProbability(nei.getStation(), altthisbiketime+probtimeoffset);
-                if (returnprob > minProbSecondaryRecommendation) {
+                if (returnprob > 0 && returnprob > minProbSecondaryRecommendation) {
                     double altthiswalktime = nei.getStation().getPosition().distanceTo(destination) / walkingVelocity;
                     double thiscost=calcCostReturncomp(altthisbiketime+ altthiswalktime,returnprob);
                     if (thiscost < newbestValueFound) {
@@ -262,11 +258,11 @@ public class ComplexCostCalculator2Bis {
     //global cost calculation. calculates the cost of taking/returning and also the cost differences
     // returns the global costs
     public double calculateCostsRentAtStation(StationUtilityData sd,
-            List<StationUtilityData> allstats, double timeintervallforPrediction, double maxdistance ) throws BetterFirstStationException{
+            List<StationUtilityData> allstats, double timeintervallforPrediction, double maxuserdistance, double maxDistanceRecomendationTake ) throws BetterFirstStationException{
         //takecosts
         List<StationUtilityData> lookedlist = new ArrayList<>();
         List<stationPoint> way = new LinkedList<stationPoint>();
-        double usercosttake = calculateWayCostRentHeuristic(way, sd , 1, sd.getWalkTime(), lookedlist, allstats, true, 0, sd.getProbabilityTake(),0, maxdistance);
+        double usercosttake = calculateWayCostRentHeuristic(way, sd , 1, sd.getWalkTime(), lookedlist, allstats, true, 0, sd.getProbabilityTake(),0, maxuserdistance);
 
         //analyze costs earnings in the timeintervall
         // we take the highest value between timeintervall and the potential arrival of the user at the station
@@ -280,9 +276,9 @@ public class ComplexCostCalculator2Bis {
             ProbabilityData pd=probutils.calculateAllTakeProbabilitiesWithArrival(wp.sd, sd.getWalkTime(),timeoffset);
             //calculate takecost difference
             newlookedlist=new ArrayList<>();//holger(lookedlist);
-            double costtake = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, 1, 0, newlookedlist, allstats, false,0, pd.probabilityTake,timeoffset, maxDistanceRecomendation);
+            double costtake = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, 1, 0, newlookedlist, allstats, false,0, pd.probabilityTake,timeoffset, maxDistanceRecomendationTake);
             newlookedlist=new ArrayList<>();//holger(lookedlist);
-            double costtakeafter = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, 1, 0, newlookedlist, allstats, false, 0, pd.probabilityTakeAfterTake,timeoffset, maxDistanceRecomendation);
+            double costtakeafter = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, 1, 0, newlookedlist, allstats, false, 0, pd.probabilityTakeAfterTake,timeoffset, maxDistanceRecomendationTake);
             double extracosttake=(costtakeafter - costtake) ;
             //calculate return cost difference
             GeoPoint hipodestination = wp.sd.getStation().getPosition();
@@ -310,7 +306,7 @@ public class ComplexCostCalculator2Bis {
     }
 
     public double calculateCostsReturnAtStation(StationUtilityData sd, GeoPoint destination,
-            List<StationUtilityData> allstats, double timeintervallforPrediction) throws BetterFirstStationException{
+            List<StationUtilityData> allstats, double timeintervallforPrediction, double maxDistanceRecomendationTake) throws BetterFirstStationException{
         //return costs
         //take a close point to the station as hipotetical detsination
         List<StationUtilityData> lookedlist = new ArrayList<>();
@@ -328,9 +324,9 @@ public class ComplexCostCalculator2Bis {
             ProbabilityData pd=probutils.calculateAllReturnProbabilitiesWithArrival(wp.sd, sd.getBiketime(),timeoffset);
             //calculate takecost difference
             newlookedlist=new ArrayList<>();//holger(lookedlist);
-            double costtake = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, 1, 0, newlookedlist, allstats, false, 0, pd.probabilityTake,timeoffset, maxDistanceRecomendation);
+            double costtake = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, 1, 0, newlookedlist, allstats, false, 0, pd.probabilityTake,timeoffset, maxDistanceRecomendationTake);
             newlookedlist=new ArrayList<>();//holger(lookedlist);
-            double costtakeafter = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, 1, 0, newlookedlist, allstats, false, 0, pd.probabilityTakeAfterRerturn,timeoffset, maxDistanceRecomendation);
+            double costtakeafter = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, 1, 0, newlookedlist, allstats, false, 0, pd.probabilityTakeAfterRerturn,timeoffset, maxDistanceRecomendationTake);
             double extracosttake=(costtakeafter - costtake) ;
             //calculate return cost difference
             GeoPoint hipodestination = wp.sd.getStation().getPosition();

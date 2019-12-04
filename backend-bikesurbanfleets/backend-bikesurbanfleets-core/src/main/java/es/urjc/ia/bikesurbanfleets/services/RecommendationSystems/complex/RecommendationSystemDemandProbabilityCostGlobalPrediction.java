@@ -27,27 +27,25 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     public class RecommendationParameters {
 
         //this is meters per second corresponds aprox. to 4 and 20 km/h
-        private double maxDistanceRecommendation=600;
+        private double maxDistanceRecommendationTake=600;
         private double minimumMarginProbability = 0.001;
-        private double minProbBestNeighbourRecommendation = 0.5;
+        private double minProbBestNeighbourRecommendation = 0;
         private double desireableProbability = 0.8;
         private double penalisationfactorrent = 1;
         private double penalisationfactorreturn = 1;
         private double maxStationsToReccomend = 30;
-        private double unsucesscostRent = 5000;
-        private double unsucesscostReturn = 5000;
-        private double MaxCostValue = 5000;
+        private double unsucesscostRent = 6000;
+        private double unsucesscostReturn = 6000;
+        private double MaxCostValue = 6000;
         private int PredictionNorm = 0;
         private int predictionWindow = 900;
         private double normmultiplier=0.5;
 
         @Override
         public String toString() {
-            return "predictionWindow=" + predictionWindow + ", PredictionNorm=" + PredictionNorm + ", MaxCostValue=" + MaxCostValue + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent +
-                    ", unsucesscostReturn=" + unsucesscostReturn + ", normmultiplier=" + normmultiplier;
+            return  "maxDistanceRecommendationTake=" + maxDistanceRecommendationTake + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent + ", unsucesscostReturn=" + unsucesscostReturn + ", MaxCostValue=" + MaxCostValue + ", PredictionNorm=" + PredictionNorm + ", predictionWindow=" + predictionWindow + ", normmultiplier=" + normmultiplier ;
         }
-
-    }
+   }
 
     public String getParameterString() {
         return "RecommendationSystemDemandProbabilityCostGlobalPrediction Parameters{" + super.getParameterString() + this.parameters.toString() + "}";
@@ -72,11 +70,11 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 parameters.unsucesscostReturn,
                 parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity,
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-                parameters.maxDistanceRecommendation, probutils, parameters.PredictionNorm, parameters.normmultiplier);
+                probutils, parameters.PredictionNorm, parameters.normmultiplier);
      }
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
+    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxuserdistance) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
         int i = 0;
         boolean goodfound = false;
@@ -85,13 +83,13 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 break;
             }
             if (sd.getProbabilityTake() > 0) {
-                if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= maxdistance) {
+                if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= maxuserdistance) {
                     goodfound = true;
                 }
                 try {
-                    double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.predictionWindow, maxdistance);
+                    double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.predictionWindow, maxuserdistance, this.parameters.maxDistanceRecommendationTake);
                     sd.setTotalCost(cost);
-                    addrent(sd, orderedlist, maxdistance);
+                    addrent(sd, orderedlist, maxuserdistance);
                     if (goodfound) {
                         i++;
                     }
@@ -118,7 +116,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                     goodfound = true;
                 }
                 try {
-                    double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata, this.parameters.predictionWindow);
+                    double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata, this.parameters.predictionWindow,this.parameters.maxDistanceRecommendationTake);
                     sd.setTotalCost(cost);
                     addreturn(sd, orderedlist);
                     if (goodfound) {

@@ -25,14 +25,13 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
 
     public class RecommendationParameters {
 
-        private double upperProbabilityBound = 0.999;
-        private double desireableProbability = 0.6;
+        private double desireableProbability = 0.8;
 
         private double probfactor = 6000D;
 
         @Override
         public String toString() {
-            return "upperProbabilityBound=" + upperProbabilityBound + ", desireableProbability=" + desireableProbability + ", probfactor=" + probfactor;
+            return "desireableProbability=" + desireableProbability + ", probfactor=" + probfactor;
         }
     }
 

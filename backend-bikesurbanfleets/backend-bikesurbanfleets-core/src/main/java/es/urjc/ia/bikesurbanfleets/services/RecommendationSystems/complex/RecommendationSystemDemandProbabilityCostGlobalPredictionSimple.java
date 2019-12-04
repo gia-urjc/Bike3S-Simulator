@@ -24,9 +24,8 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
 
     public class RecommendationParameters {
 
-        private double minimumMarginProbability = 0.001;
         private double desireableProbability = 0.8;
-        private double MaxCostValue = 5000 ;
+        private double MaxCostValue = 6000 ;
         private double maxStationsToReccomend = 30;
         private int PredictionNorm=0;
         private int predictionWindow=900;
@@ -34,7 +33,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
 
         @Override
         public String toString() {
-            return  "normmultiplier=" + normmultiplier + ", predictionWindow="+ predictionWindow + ", PredictionNorm="+ PredictionNorm + ", desireableProbability"+ desireableProbability+"minimumMarginProbability=" + minimumMarginProbability +  ", MaxCostValue=" + MaxCostValue  + ", maxStationsToReccomend=" + maxStationsToReccomend  ;
+            return  "normmultiplier=" + normmultiplier + ", predictionWindow="+ predictionWindow + ", PredictionNorm="+ PredictionNorm + ", desireableProbability"+ desireableProbability +  ", MaxCostValue=" + MaxCostValue  + ", maxStationsToReccomend=" + maxStationsToReccomend  ;
         }
     }
     public String getParameterString(){
@@ -55,7 +54,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        scc=new CostCalculatorSimple(parameters.minimumMarginProbability, 
+        scc=new CostCalculatorSimple(
                 parameters.MaxCostValue,
                 straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, 

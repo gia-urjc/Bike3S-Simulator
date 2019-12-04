@@ -19,11 +19,10 @@ import java.util.List;
 public class CostCalculatorSimple {
 
     //methods for cost calculations
-    public CostCalculatorSimple(double marginprob, double maxcost,
+    public CostCalculatorSimple(double maxcost,
             double walkvel, double cycvel, 
             UtilitiesProbabilityCalculator recutils,
             int PredictionNorm, double normmultiplier) {
-        minimumMarginProbability = marginprob;
         walkingVelocity=walkvel;
         cyclingVelocity=cycvel;
         this.probutils=recutils;
@@ -33,7 +32,6 @@ public class CostCalculatorSimple {
     }
 
     final int predictionNormalisation;
-    final double minimumMarginProbability;
     final double maxCostValue;
     final double walkingVelocity;
     final double cyclingVelocity;
@@ -42,20 +40,12 @@ public class CostCalculatorSimple {
 
 
     public double calculateCostRentSimple(StationUtilityData sd, double sdprob, double time) {
-         if(sdprob>1-minimumMarginProbability){
-            return (1 - minimumMarginProbability) * time;
-        } else {
-            return (sdprob*time)+ (1-minimumMarginProbability-sdprob)* maxCostValue;
-        }
+            return sdprob * time + (1-sdprob)* maxCostValue;
     }
 
     public double calculateCostReturnSimple(StationUtilityData sd, double sdprob, double biketime, double walktime) {
         double time= biketime+ walktime;
-        if(sdprob>1-minimumMarginProbability){
-            return (1 - minimumMarginProbability) * (time);
-        } else {
-            return (sdprob * (time))+ (1-minimumMarginProbability-sdprob)* maxCostValue;
-        }
+            return sdprob * time+ (1-sdprob)* maxCostValue;
     }
 
     public double calculateCostsRentAtStation(StationUtilityData sd, double timeintervallforPrediction) {

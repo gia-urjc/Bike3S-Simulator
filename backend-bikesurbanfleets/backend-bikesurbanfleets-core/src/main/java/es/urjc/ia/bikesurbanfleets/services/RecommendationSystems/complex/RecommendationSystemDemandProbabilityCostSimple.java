@@ -26,14 +26,13 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
     public class RecommendationParameters {
 
 
-        private double minimumMarginProbability = 0.001;
         private double desireableProbability = 0.8;
-        private double MaxCostValue = 5000 ;
+        private double MaxCostValue = 6000 ;
         private double maxStationsToReccomend = 30;
 
         @Override
         public String toString() {
-            return  "desireableProbability"+ desireableProbability+"minimumMarginProbability=" + minimumMarginProbability +   ", MaxCostValue=" + MaxCostValue  + ", maxStationsToReccomend=" + maxStationsToReccomend  ;
+            return  "desireableProbability"+ desireableProbability+ ", MaxCostValue=" + MaxCostValue  + ", maxStationsToReccomend=" + maxStationsToReccomend  ;
         }
      }
 
@@ -56,7 +55,7 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        scc=new CostCalculatorSimple(parameters.minimumMarginProbability, 
+        scc=new CostCalculatorSimple(
                 parameters.MaxCostValue, 
                 straightLineWalkingVelocity, 
                 straightLineCyclingVelocity, 
@@ -85,6 +84,19 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
                 }
             }
         }
+  /*      //test probability
+        List<StationUtilityData> orderedlist2 = new ArrayList<>();
+        for (StationUtilityData sd : stationdata) {
+            addrentprob(sd, orderedlist2, maxdistance);
+        }
+        if ((orderedlist.isEmpty() != orderedlist2.isEmpty()) || (!orderedlist.isEmpty() &&
+                orderedlist.get(0).getStation().getId() != orderedlist2.get(0).getStation().getId())) {
+            System.out.println("!!!Different take:");
+
+        }
+        System.out.println("prob:");
+        printAux(orderedlist2, true);
+*/
         return orderedlist;
     }
 
@@ -110,23 +122,209 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
                 }
             }
         }
+ /*       //test probability
+        List<StationUtilityData> orderedlist2 = new ArrayList<>();
+        for (StationUtilityData sd : stationdata) {
+            addreturnprob(sd, orderedlist2);
+        }
+        if ((orderedlist.isEmpty() != orderedlist2.isEmpty()) || (!orderedlist.isEmpty() &&
+                orderedlist.get(0).getStation().getId() != orderedlist2.get(0).getStation().getId())) {
+            System.out.println("!!!Different return:");
+
+        }
+        System.out.println("prob:");
+        printAux(orderedlist2, false);
+*/
         return orderedlist;
     }
 
-    //take into account that distance newSD >= distance oldSD
+     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD,double maxdistance) {
-        if (newSD.getWalkdist() <= maxdistance && oldSD.getWalkdist() > maxdistance) {
+/*        if (newSD.getWalkdist() <= maxdistance && oldSD.getWalkdist() > maxdistance) {
             return true;
         } else if (newSD.getWalkdist() > maxdistance && oldSD.getWalkdist() <= maxdistance) {
             return false;
         } else {
             return (newSD.getTotalCost() < oldSD.getTotalCost());
         }
+*/
+        if (newSD.getWalkdist() <= maxdistance
+                && oldSD.getWalkdist() <= maxdistance) {
+            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability
+                    && newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
+                return (newSD.getTotalCost() < oldSD.getTotalCost());
+            }
+            if (newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
+                return true;
+            }
+            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
+                return false;
+            }
+            if (oldSD.getProbabilityTake() >= newSD.getProbabilityTake()) {
+                return false;
+            }
+            return true;
+        }
+        if (oldSD.getWalkdist() <= maxdistance) {
+            return false;
+        }
+        if (newSD.getWalkdist() <= maxdistance) {
+            return true;
+        }
+        return (newSD.getTotalCost() < oldSD.getTotalCost());
     }
 
     //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
+//        return (newSD.getTotalCost() < oldSD.getTotalCost()); 
+         if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability
+                && newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return (newSD.getTotalCost() < oldSD.getTotalCost()); 
+        }
+        if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return true;
+        }
+        if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return false;
+        }
         return (newSD.getTotalCost() < oldSD.getTotalCost()); 
+
     }
+
+    protected boolean betterOrSameRentDecideSimilarprob(StationUtilityData newSD, StationUtilityData oldSD) {
+        double timediff = (newSD.getWalkTime() - oldSD.getWalkTime());
+        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * 6000;
+        if (probdiff > timediff) {
+            return true;
+        }
+        return false;
+    }
+
+    //take into account that distance newSD >= distance oldSD
+    protected boolean betterOrSameRentprob(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance) {
+        if (newSD.getWalkdist() <= maxdistance
+                && oldSD.getWalkdist() <= maxdistance) {
+            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability
+                    && newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
+                return betterOrSameRentDecideSimilarprob(newSD, oldSD);
+            }
+            if (newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
+                return true;
+            }
+            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
+                return false;
+            }
+            if (oldSD.getProbabilityTake() >= newSD.getProbabilityTake()) {
+                return false;
+            }
+            return true;
+        }
+        if (oldSD.getWalkdist() <= maxdistance) {
+            return false;
+        }
+        if (newSD.getWalkdist() <= maxdistance) {
+            return true;
+        }
+        return betterOrSameRentDecideSimilarprob(newSD, oldSD);
+    }
+
+    protected boolean betterOrSameReturnDecideSimilarprob(StationUtilityData newSD, StationUtilityData oldSD) {
+
+        double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
+                - (oldSD.getBiketime() + oldSD.getWalkTime()));
+        double probdiff = (newSD.getProbabilityReturn() - oldSD.getProbabilityReturn()) * 6000;
+        if (probdiff > timediff) {
+            return true;
+        }
+        return false;
+    }
+
+    //take into account that distance newSD >= distance oldSD
+    protected boolean betterOrSameReturnprob(StationUtilityData newSD, StationUtilityData oldSD) {
+         if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability
+                && newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return betterOrSameReturnDecideSimilarprob(newSD, oldSD);
+        }
+        if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return true;
+        }
+        if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return false;
+        }
+        return betterOrSameReturnDecideSimilarprob(newSD, oldSD);
+    }
+
+    protected void addrentprob(StationUtilityData d, List<StationUtilityData> temp, double maxdistance) {
+        int i = 0;
+        for (; i < temp.size(); i++) {
+            if (betterOrSameRentprob(d, temp.get(i), maxdistance)) {
+                break;
+            }
+        }
+        temp.add(i, d);
+    }
+
+    protected void addreturnprob(StationUtilityData d, List<StationUtilityData> temp) {
+        int i = 0;
+        for (; i < temp.size(); i++) {
+            if (betterOrSameReturnprob(d, temp.get(i))) {
+                break;
+            }
+        }
+        temp.add(i, d);
+    }
+
+    void printAux(List<StationUtilityData> su, boolean take) {
+        if (printHints) {
+            int max = Math.min(3, su.size());
+            //     if (su.get(0).getStation().getId()==8) max=173;
+            //     else return;
+
+            if (take) {
+                System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime() + "(" + SimulationDateTime.getCurrentSimulationInstant() + ")");
+
+                if (su.get(0).getProbabilityTake() < 0.6) {
+                    System.out.format("[Info] LOW PROB Take %9.8f %n", su.get(0).getProbabilityTake());
+                }
+                System.out.println("             id av ca   wtime    prob   cost");
+                for (int i = 0; i < max; i++) {
+                    StationUtilityData s = su.get(i);
+                    double cost = s.getWalkTime() + 6000 * (1 - s.getProbabilityTake());
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %6.5f %9.2f ",
+                            i + 1,
+                            s.getStation().getId(),
+                            s.getStation().availableBikes(),
+                            s.getStation().getCapacity(),
+                            s.getWalkTime(),
+                            s.getProbabilityTake(),
+                            cost);
+                    System.out.println("");
+                }
+            } else {
+                System.out.println("Time (return):" + SimulationDateTime.getCurrentSimulationDateTime() + "(" + SimulationDateTime.getCurrentSimulationInstant() + ")");
+
+                if (su.get(0).getProbabilityReturn() < 0.6) {
+                    System.out.format("[Info] LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());
+                }
+                System.out.println("             id av ca   wtime   btime    prob   cost");
+                for (int i = 0; i < max; i++) {
+                    StationUtilityData s = su.get(i);
+                    double cost = s.getWalkTime() + s.getBiketime() + 6000 * (1 - s.getProbabilityReturn());
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f ",
+                            i + 1,
+                            s.getStation().getId(),
+                            s.getStation().availableBikes(),
+                            s.getStation().getCapacity(),
+                            s.getWalkTime(),
+                            s.getBiketime(),
+                            s.getProbabilityReturn(),
+                            cost);
+                    System.out.println("");
+                }
+            }
+            System.out.println();
+        }
+    }
+
 
 }
