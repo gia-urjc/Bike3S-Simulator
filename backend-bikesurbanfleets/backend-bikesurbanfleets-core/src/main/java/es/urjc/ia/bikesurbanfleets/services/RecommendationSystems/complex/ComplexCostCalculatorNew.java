@@ -7,7 +7,7 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import static es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters.STRAIGT_LINE_FACTOR;
+import static es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters.STRAIGT_LINE_FACTOR_FOOT;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.UtilitiesProbabilityCalculator.ProbabilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
@@ -63,23 +63,24 @@ public class ComplexCostCalculatorNew {
             double takeprob, double probtimeoffset, double maxdistance, boolean setneihbour) throws BetterFirstStationException {
         
         double accwalkdist=walkdist;
-        double accwalktime=walkdist/expectedwalkingVelocity;
+        double accwalktime=accwalkdist/expectedwalkingVelocity;
         double margprob=1;
-        double thisprob=takeprob;
         boolean end=false;
-        double expectedcost=0;
-        double expectedunsucesses=0;
-        double abandonprob=0;
+        double thisabsolutprob;
+        double thistakeprob=takeprob; 
+        double totalcost=0;
         StationUtilityData current=sd;
+        double extracost=0;
         while (!end) {
-            double thisabsolutprob=margprob*thisprob;
+            thisabsolutprob=margprob*thistakeprob;
             double newmargprob=margprob-thisabsolutprob;
+            double thiscost=accwalktime+ extracost;
             if (newmargprob<= minimumMarginProbability) {
                 way.add(new stationPoint(current,accwalktime, margprob-minimumMarginProbability, 0));
-                expectedcost=expectedcost+(margprob-minimumMarginProbability)*accwalktime;
+                totalcost=totalcost+(margprob-minimumMarginProbability)*thiscost;
                 end=true;
             } else {
-                expectedcost=expectedcost+(thisabsolutprob*accwalktime);
+                totalcost=totalcost+(thisabsolutprob*thiscost);
                 way.add(new stationPoint(current,accwalktime, thisabsolutprob, 0));
                 
                 //find best neighbour
@@ -91,22 +92,20 @@ public class ComplexCostCalculatorNew {
                         current.bestNeighbour = closestneighbour;
                         setneihbour=false;
                     }
-                    accwalkdist = accwalkdist+current.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition());
+                    double newdist = current.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition());
+                    accwalkdist=accwalkdist+newdist;
                     accwalktime=accwalkdist/expectedwalkingVelocity;
-                    thisprob=probutils.calculateTakeProbability(closestneighbour.getStation(), probtimeoffset+accwalktime);
-                    expectedunsucesses=expectedunsucesses+newmargprob;
+                    thistakeprob=probutils.calculateTakeProbability(closestneighbour.getStation(), probtimeoffset+accwalktime);
+                    extracost=extracost+unsuccessCostRent;
                     current=closestneighbour;
                     margprob=newmargprob;
                 } else { //if no best neigbour found we assume a best neigbour with probability 1 at unsuccessCostRent seconds
-                    abandonprob=newmargprob;
+                    totalcost=totalcost+(newmargprob-minimumMarginProbability)*(abandonCost+thiscost);
                     end=true;
                 }    
             }
         }
-        sd.setAbandonProbability(abandonprob);
-        sd.setExpectedUnsucesses(expectedunsucesses);
-        sd.setExpectedtimeIfNotAbandon(expectedcost);
-        return expectedcost;
+        return totalcost;
      }
 
     //DO NOT CHANGE IT IS WORKING :)
@@ -118,22 +117,23 @@ public class ComplexCostCalculatorNew {
         double accbikedist=bikedist;
         double accbiketime=accbikedist/expectedcyclingVelocity;
         double margprob=1;
-        double thisprob=returnprob; 
         boolean end=false;
-        double expectedcost=0;
-        double expectedunsucesses=0;
-        double abandonprob=0;
+        double thisabsolutprob;
+        double thisretprob=returnprob; 
+        double totalcost=0;
+        double extracost=0;
         StationUtilityData current=sd;
         while (!end) {
-            double thisabsolutprob=margprob*thisprob;
+            thisabsolutprob=margprob*thisretprob;
             double newmargprob=margprob-thisabsolutprob;
             double walktime = current.getStation().getPosition().distanceTo(destination)/ expectedwalkingVelocity;
+            double thiscost=walktime+accbiketime + extracost;
             if (newmargprob<= minimumMarginProbability) {
                 way.add(new stationPoint(current,accbiketime, 0,margprob-minimumMarginProbability));
-                expectedcost=expectedcost+(margprob-minimumMarginProbability)*(walktime+accbiketime);
+                totalcost=totalcost+(margprob-minimumMarginProbability)*thiscost;
                 end=true;
             } else {
-                expectedcost=expectedcost+thisabsolutprob*(walktime+accbiketime);
+                totalcost=totalcost+(thisabsolutprob*thiscost);
                 way.add(new stationPoint(current,accbiketime, 0,thisabsolutprob));
                 
                 //find best neighbour
@@ -145,31 +145,28 @@ public class ComplexCostCalculatorNew {
                         current.bestNeighbour = closestneighbour;
                         setneihbour=false;
                     }
-                    accbikedist = accbikedist+current.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition());
+                    double newbikedist = current.getStation().getPosition().distanceTo(closestneighbour.getStation().getPosition());
+                    accbikedist=accbikedist+newbikedist;
                     accbiketime=accbikedist/expectedcyclingVelocity;
-                    thisprob=probutils.calculateReturnProbability(closestneighbour.getStation(), probtimeoffset+accbiketime);
+                    thisretprob=probutils.calculateReturnProbability(closestneighbour.getStation(), probtimeoffset+accbiketime);
                     current=closestneighbour;
-                    expectedunsucesses=expectedunsucesses+newmargprob;
+                    extracost=extracost+unsuccessCostReturn;
                     margprob=newmargprob;
                 } else { //if no best neigbour found we assume a best neigbour with probability 1 at unsuccessCostReturn seconds
-                    abandonprob=newmargprob;
+                    totalcost=totalcost+(newmargprob-minimumMarginProbability)*(abandonCost+extracost+accbiketime);
                     end=true;
                 }    
             }
         }
-        sd.setAbandonProbability(abandonprob);
-        sd.setExpectedUnsucesses(expectedunsucesses);
-        sd.setExpectedtimeIfNotAbandon(expectedcost);
-        return expectedcost;
+        return totalcost;
     }
     
-    double unsuccessCostcomparison=6000;
     double calcCostRentcomp(double time, double probability){
-        return time+(1-probability)*unsuccessCostcomparison;
+        return time+(1-probability)*unsuccessCostRent;
 //        return time/probability;
     }
     double calcCostReturncomp(double walktime, double biketime,double probability){
-        return biketime+ probability*walktime +(1-probability)*unsuccessCostcomparison;
+        return biketime+ probability*walktime +(1-probability)*unsuccessCostReturn;
 //        return time/probability;
     }
  
@@ -213,7 +210,7 @@ public class ComplexCostCalculatorNew {
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei)) {
                 double dist=s.getPosition().distanceTo(nei.getStation().getPosition());
-                if (((accwalkdistance*STRAIGT_LINE_FACTOR) +dist)<= (maxdistance*1.3)) {
+                if (((accwalkdistance*STRAIGT_LINE_FACTOR_FOOT) +dist)<= (maxdistance)) {
                     double newacctime=(accwalkdistance+dist)/expectedwalkingVelocity ;
                     double rentprob=probutils.calculateTakeProbability(nei.getStation(), newacctime+probtimeoffset);
                     if (rentprob > 0 && rentprob > minProbSecondaryRecommendation) {

@@ -72,66 +72,32 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
         return orderedlist;
     }
 
-    protected boolean betterOrSameRentDecideSimilar(StationUtilityData newSD, StationUtilityData oldSD) {
-        double timediff = (newSD.getWalkTime() - oldSD.getWalkTime());
-        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * this.parameters.probfactor;
-        if (probdiff > timediff) {
+    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
+ /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
+                && oldSD.getProbabilityTake() < this.parameters.desireableProbability) {
             return true;
         }
-        return false;
-    }
-
-    //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance) {
-        if (newSD.getWalkdist() <= maxdistance
-                && oldSD.getWalkdist() <= maxdistance) {
-            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability
-                    && newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-                return betterOrSameRentDecideSimilar(newSD, oldSD);
-            }
-            if (newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-                return true;
-            }
-            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-                return false;
-            }
-            if (oldSD.getProbabilityTake() >= newSD.getProbabilityTake()) {
-                return false;
-            }
-            return true;
-        }
-        if (oldSD.getWalkdist() <= maxdistance) {
+        if (newSD.getProbabilityTake() < this.parameters.desireableProbability
+                && oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
             return false;
         }
-        if (newSD.getWalkdist() <= maxdistance) {
-            return true;
-        }
-        return betterOrSameRentDecideSimilar(newSD, oldSD);
+   */     double timediff = (newSD.getWalkTime() - oldSD.getWalkTime());
+        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * this.parameters.probfactor;
+        return probdiff > timediff;
     }
 
-    protected boolean betterOrSameReturnDecideSimilar(StationUtilityData newSD, StationUtilityData oldSD) {
-
-        double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
+    protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
+  /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
+                && oldSD.getProbabilityReturn() < this.parameters.desireableProbability) {
+            return true;
+        }
+        if (newSD.getProbabilityReturn() < this.parameters.desireableProbability
+                && oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return false;
+        }
+  */      double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
                 - (oldSD.getBiketime() + oldSD.getWalkTime()));
         double probdiff = (newSD.getProbabilityReturn() - oldSD.getProbabilityReturn()) * this.parameters.probfactor;
-        if (probdiff > timediff) {
-            return true;
-        }
-        return false;
-    }
-
-    //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability
-                && newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
-            return betterOrSameReturnDecideSimilar(newSD, oldSD);
-        }
-        if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
-            return true;
-        }
-        if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
-            return false;
-        }
-        return betterOrSameReturnDecideSimilar(newSD, oldSD);
+        return probdiff > timediff;
     }
 }

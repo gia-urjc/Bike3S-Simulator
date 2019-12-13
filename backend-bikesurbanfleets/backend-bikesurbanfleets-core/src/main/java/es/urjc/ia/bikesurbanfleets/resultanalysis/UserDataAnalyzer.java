@@ -34,8 +34,8 @@ import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParam
  */
 class UserDataAnalyzer {
 
-    private double defaultstraightLineWalkingVelocity = GlobalConfigurationParameters.DEFAULT_WALKING_VELOCITY / GlobalConfigurationParameters.STRAIGT_LINE_FACTOR;
-    private double defaultstraightLineCyclingVelocity = GlobalConfigurationParameters.DEFAULT_CYCLING_VELOCITY / GlobalConfigurationParameters.STRAIGT_LINE_FACTOR;
+    private double defaultstraightLineWalkingVelocity = GlobalConfigurationParameters.DEFAULT_WALKING_VELOCITY / GlobalConfigurationParameters.STRAIGT_LINE_FACTOR_FOOT;
+    private double defaultstraightLineCyclingVelocity = GlobalConfigurationParameters.DEFAULT_CYCLING_VELOCITY / GlobalConfigurationParameters.STRAIGT_LINE_FACTOR_BIKE;
 
     private GraphManager routeService;
 

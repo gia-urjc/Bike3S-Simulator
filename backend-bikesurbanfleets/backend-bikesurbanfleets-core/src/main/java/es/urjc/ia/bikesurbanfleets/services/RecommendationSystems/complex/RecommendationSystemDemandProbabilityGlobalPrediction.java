@@ -108,32 +108,22 @@ public class RecommendationSystemDemandProbabilityGlobalPrediction extends Recom
                 return false;
     }
 
-    //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance) {
-        // if here newSD.getProbability() > oldSD.getProbability()
-        if (newSD.getWalkdist()<= maxdistance) {
-            if (oldSD.getProbabilityTake() > this.parameters.upperProbabilityBound && newSD.getProbabilityTake() > this.parameters.upperProbabilityBound) {
+    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
+            if (oldSD.getProbabilityTake() >= this.parameters.upperProbabilityBound && newSD.getProbabilityTake() >= this.parameters.upperProbabilityBound) {
                 return decideByGlobalUtilityrent(newSD, oldSD);
             }
-            if (oldSD.getProbabilityTake() > this.parameters.upperProbabilityBound ) return false;
-            if (newSD.getProbabilityTake() > this.parameters.upperProbabilityBound ) return true;
+            if (oldSD.getProbabilityTake() >= this.parameters.upperProbabilityBound ) return false;
+            if (newSD.getProbabilityTake() >= this.parameters.upperProbabilityBound ) return true;
             
-            if (oldSD.getProbabilityTake() > this.parameters.desireableProbability && newSD.getProbabilityTake() > this.parameters.desireableProbability) {
+            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability && newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
                 return decideByGlobalUtilityrent(newSD, oldSD);
             }
-            if (oldSD.getProbabilityTake() > this.parameters.desireableProbability ) return false;
-            if (newSD.getProbabilityTake() > this.parameters.desireableProbability ) return true;
-            if (newSD.getProbabilityTake() > oldSD.getProbabilityTake() ) return true;
-
-            return false;
-        }
-        if (oldSD.getWalkdist() <= maxdistance) {
-            return false;
-        }
-                return decideByGlobalUtilityrent(newSD, oldSD);
+            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability ) return false;
+            if (newSD.getProbabilityTake() >= this.parameters.desireableProbability ) return true;
+            
+            return newSD.getProbabilityTake() > oldSD.getProbabilityTake() ;
     }
 
-    //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
             double timediff = (newSD.getWalkTime()+newSD.getBiketime() - (oldSD.getWalkTime()+oldSD.getBiketime()));
             double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;

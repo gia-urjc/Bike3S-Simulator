@@ -40,13 +40,12 @@ public class CompareTestApplication {
         String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
         
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/prueba";
-   //     testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_ usersrandom_halfbikes"
-   //             + "/demand0817_0918/probability";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_ usersrandom_halfbikes"
+               + "/demand0817_0918/cost_prediction_simple";
     //    testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/SimulationJournalEvaluationTest/evaluationTest_withmanager";
          //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        System.out.println("baseDir " + testsDir);
         String testFile = testsDir + "/tests.json";
         schemaPath = projectDir + "/build/schema";
         dataAnalyzerPath = projectDir + "/build/data-analyser";
@@ -75,6 +74,8 @@ public class CompareTestApplication {
         if (!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
+        System.out.println("Test directory " + baseTestsDir);
+
         debugDir = baseTestsDir + "/debug/";
         auxiliaryDir = new File(debugDir);
         if (!auxiliaryDir.exists()) {

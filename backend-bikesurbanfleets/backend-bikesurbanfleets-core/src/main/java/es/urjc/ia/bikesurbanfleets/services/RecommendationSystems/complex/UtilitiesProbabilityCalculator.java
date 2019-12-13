@@ -47,6 +47,9 @@ public abstract class UtilitiesProbabilityCalculator {
     //methods for calculation probabilities    
     public abstract double calculateProbabilityAtLeast1UserArrivingForTake(Station s, double timeoffset) ;
     public abstract double calculateProbabilityAtLeast1UserArrivingForReturn(Station s, double timeoffset) ;
+    
+    public abstract double calculateExpectedReturns(Station s, double timeoffset) ;
+    public abstract double calculateExpectedTakes(Station s, double timeoffset) ;
 
     //methods for calculation probabilities    
     public abstract double calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(Station s, double timeoffset) ;

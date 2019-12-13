@@ -111,34 +111,91 @@ public class CostCalculatorSimple {
     }
     
     private double getTakeFactor(Station s, double timeoffset){
-         switch(predictionNormalisation){
+        double fixedmult=normmultiplier;
+        double takerate=probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double probtake=probutils.calculateProbabilityAtLeast1UserArrivingForTake(s,timeoffset);
+        double diff=Math.max(0,probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)-
+                       probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset));
+        double takeonlyprob=probutils.calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(s,timeoffset);;
+        double takeexpected=probutils.calculateExpectedTakes(s, timeoffset);
+
+   /*     System.out.println("take Station avb/avs " + s.getId() + " " + s.availableBikes()+ "/"+ s.availableSlots() + " " +
+               "fixedmult " + fixedmult + " " + 
+               "takerate " + takerate + " " + 
+               "probtake " + probtake + " " + 
+               "diff " + diff + " " + 
+                "takeonlyprob " + takeonlyprob + " "  +
+                 "takeexpected " + takeexpected + " "  +
+              "retu rate " +probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)+ " "  +
+                "take rate " +probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)+ " " 
+               );
+    */    switch(predictionNormalisation){
             case (0) :
                 return normmultiplier;
             case (1) :
-                return probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+                return normmultiplier*probutils.calculateProbabilityAtLeast1UserArrivingForTake(s,timeoffset);
             case (2) :
-                return probutils.calculateProbabilityAtLeast1UserArrivingForTake(s,timeoffset);
-            case (3) :
-                return Math.max(0,probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)-
+                return normmultiplier*Math.max(0,probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)-
                        probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset));
+            case (3) :
+                return normmultiplier*(probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)+
+                       probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset))/2;
             case (4) :
-                return probutils.calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(s,timeoffset);
+                return normmultiplier*probutils.calculateExpectedTakes(s, timeoffset);
+            case (5) :
+                return normmultiplier*(
+                        ((probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)+
+                       probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset))/2)+
+                        (probutils.calculateProbabilityAtLeast1UserArrivingForTake(s,timeoffset)));
+            case (6) :
+                return normmultiplier*probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+            case (7) :
+                return normmultiplier*probutils.calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(s,timeoffset);
         }
          return 1;
     }
      private double getReturnFactor(Station s, double timeoffset){
-        switch(predictionNormalisation){
+        double fixedmult=normmultiplier;
+        double returnrate=probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double probreturn=probutils.calculateProbabilityAtLeast1UserArrivingForReturn(s,timeoffset);
+        double diff=Math.max(0,probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)-
+                       probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset));
+        double returnonlyprob=probutils.calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(s,timeoffset);
+        double returnexpected=probutils.calculateExpectedReturns(s, timeoffset);
+ 
+ /*       System.out.println("retu Station avb/avs " + s.getId() + " " + s.availableBikes()+ "/"+ s.availableSlots() + " " +
+               "fixedmult " + fixedmult + " " + 
+               "returate " + returnrate + " " + 
+               "probretu " + probreturn + " " + 
+               "diff " + diff + " " + 
+                "retuonlyprob " + returnonlyprob + " "  +
+                "retuexpected " + returnexpected + " "  +
+                "retu rate " +probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)+ " "  +
+                "take rate " +probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)+ " " 
+                
+               );
+   */     switch(predictionNormalisation){
             case (0) :
                  return normmultiplier;
             case (1) :
-                return probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+                return normmultiplier*probutils.calculateProbabilityAtLeast1UserArrivingForReturn(s,timeoffset);
             case (2) :
-                return probutils.calculateProbabilityAtLeast1UserArrivingForReturn(s,timeoffset);
-            case (3) :
-                return Math.max(0,probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)-
+                return normmultiplier*Math.max(0,probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)-
                        probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset));
+            case (3) :
+                return normmultiplier*(probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)+
+                       probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset))/2;
             case (4) :
-                return probutils.calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(s,timeoffset);
+                return normmultiplier*probutils.calculateExpectedReturns(s, timeoffset);
+            case (5) :
+                return normmultiplier*(
+                        ((probutils.dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset)+
+                       probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset))/2)+
+                        (probutils.calculateProbabilityAtLeast1UserArrivingForReturn(s,timeoffset)));
+            case (6) :
+                return normmultiplier*probutils.dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+           case (7) :
+                return normmultiplier*probutils.calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(s,timeoffset);
         }
          return 1;
     }

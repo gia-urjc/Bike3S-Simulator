@@ -221,6 +221,17 @@ public class UtilitiesProbabilityCalculationReducedTime extends UtilitiesProbabi
         return ProbabilityDistributions.calculateUpCDFPoissonProbability(returndemandrate, 1);
     }
    
+    public double calculateExpectedTakes(Station s, double timeoffset) {
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        return ProbabilityDistributions.calculateUpCDFSkellamProbabilityTimesNumer(takedemandrate, returndemandrate, 1);
+    }
+    public double calculateExpectedReturns(Station s, double timeoffset) {
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        return ProbabilityDistributions.calculateUpCDFSkellamProbabilityTimesNumer(returndemandrate, takedemandrate, 1);
+    }
+
     public double getGlobalProbabilityImprovementIfTake(StationUtilityData sd ) {
         int timeoffset=(int)sd.getWalkTime();
         double futtakedemand = dm.getStationTakeRateIntervall(sd.getStation().getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);

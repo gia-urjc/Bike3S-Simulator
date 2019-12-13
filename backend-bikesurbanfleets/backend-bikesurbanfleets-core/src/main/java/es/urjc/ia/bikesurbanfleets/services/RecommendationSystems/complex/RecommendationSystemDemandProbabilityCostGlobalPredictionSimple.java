@@ -111,22 +111,28 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
     }
 
 
-    //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance) {
-        if (newSD.getWalkdist() <= maxdistance
-                && oldSD.getWalkdist() > maxdistance) {
+    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
+ /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
+                && oldSD.getProbabilityTake() < this.parameters.desireableProbability) {
             return true;
-        } else if (newSD.getWalkdist() > maxdistance
-                && oldSD.getWalkdist() <= maxdistance) {
-            return false;
-        } else {
-            return (newSD.getTotalCost() < oldSD.getTotalCost());
         }
+        if (newSD.getProbabilityTake() < this.parameters.desireableProbability
+                && oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
+            return false;
+        }
+   */     return (newSD.getTotalCost() < oldSD.getTotalCost());
     }
 
-    //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        return (newSD.getTotalCost() < oldSD.getTotalCost());
+  /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
+                && oldSD.getProbabilityReturn() < this.parameters.desireableProbability) {
+            return true;
+        }
+        if (newSD.getProbabilityReturn() < this.parameters.desireableProbability
+                && oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+            return false;
+        }
+  */     return newSD.getTotalCost() < oldSD.getTotalCost();
     }
 
  }

@@ -86,21 +86,7 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         return orderedlist;
     }
  
-    //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance) {
-        if (oldSD.getWalkdist()<= maxdistance) {
-            // if here newSD.getProbability() > oldSD.getProbability()
-            if (newSD.getWalkdist() <= maxdistance) {
-                double distdiff = (newSD.getWalkdist() - oldSD.getWalkdist());
-                double probdiff = (newSD.getProbabilityTake()- oldSD.getProbabilityTake()) * this.parameters.factorProb;
-                double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
-                if ((probdiff + utildiff) > (distdiff)) {
-                    return true;
-                }
-                return false;
-            }
-            return false;
-        }
+    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
         double distdiff = (newSD.getWalkdist() - oldSD.getWalkdist());
         double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * this.parameters.factorProb;
         double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;

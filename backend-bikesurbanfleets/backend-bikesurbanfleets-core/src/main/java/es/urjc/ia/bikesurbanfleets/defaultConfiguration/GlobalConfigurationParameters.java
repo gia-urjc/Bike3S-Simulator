@@ -38,7 +38,8 @@ public class GlobalConfigurationParameters {
     public final static double DEFAULT_WALKING_VELOCITY=1.4D;
     public final static double DEFAULT_CYCLING_VELOCITY=4.0D;
     //The factor used to conevrt straight line distances or times or velocity to approximate real times, distance, velocitioes
-    public final static double STRAIGT_LINE_FACTOR=1.7D;
+    public final static double STRAIGT_LINE_FACTOR_BIKE=1.6D;
+    public final static double STRAIGT_LINE_FACTOR_FOOT=1.3D;
     
 
 }

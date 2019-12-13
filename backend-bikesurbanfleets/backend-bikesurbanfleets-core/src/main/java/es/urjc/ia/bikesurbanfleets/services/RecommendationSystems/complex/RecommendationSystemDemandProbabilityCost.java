@@ -46,7 +46,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     }
 
     private RecommendationParameters parameters;
-    private ComplexCostCalculatorNew ucc;
+    private ComplexCostCalculatorNew2 ucc;
 
     public RecommendationSystemDemandProbabilityCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef, ss);
@@ -60,7 +60,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc = new ComplexCostCalculatorNew(parameters.minimumMarginProbability, parameters.AbandonPenalisation, parameters.unsucesscostRentPenalisation,
+        ucc = new ComplexCostCalculatorNew2(parameters.minimumMarginProbability, parameters.AbandonPenalisation, parameters.unsucesscostRentPenalisation,
                 parameters.unsucesscostReturnPenalisation,
                 straightLineWalkingVelocity,
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
@@ -83,8 +83,8 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 try {
                     double cost = ucc.calculateCostRentHeuristicNow(sd, stationdata, maxdistance);
 
-                    double totalcost=sd.getAbandonProbability()* parameters.AbandonPenalisation + 
-                                     sd.getExpectedUnsucesses()* parameters.unsucesscostRentPenalisation + 
+                    double totalcost=(sd.getAbandonProbability())* parameters.AbandonPenalisation + 
+                                     (sd.getExpectedUnsucesses())* parameters.unsucesscostRentPenalisation + 
                                      sd.getExpectedtimeIfNotAbandon();
                     
                     sd.setTotalCost(totalcost);
@@ -131,10 +131,10 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 }
                 try {
                     double cost = ucc.calculateCostReturnHeuristicNow(sd, userdestination, stationdata);
-                    double totalcost=sd.getAbandonProbability()* parameters.AbandonPenalisation + 
-                                     sd.getExpectedUnsucesses()* parameters.unsucesscostReturnPenalisation + 
+                    double totalcost=(sd.getAbandonProbability())* parameters.AbandonPenalisation + 
+                                     (sd.getExpectedUnsucesses())* parameters.unsucesscostReturnPenalisation + 
                                      sd.getExpectedtimeIfNotAbandon();
-                    sd.setTotalCost(cost);
+                    sd.setTotalCost(totalcost);
                     addreturn(sd, orderedlist);
                     if (goodfound) {
                         i++;
@@ -162,130 +162,75 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         return orderedlist;
     }
 
-    //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD,double maxdistance) {
-/*        if (newSD.getWalkdist() <= maxdistance && oldSD.getWalkdist() > maxdistance) {
-            return true;
-        } else if (newSD.getWalkdist() > maxdistance && oldSD.getWalkdist() <= maxdistance) {
-            return false;
-        } else {
-            return (newSD.getTotalCost() < oldSD.getTotalCost());
-        }
-*/
-        if (newSD.getWalkdist() <= maxdistance
-                && oldSD.getWalkdist() <= maxdistance) {
-            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability
-                    && newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-                return (newSD.getTotalCost() < oldSD.getTotalCost());
-            }
-            if (newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-                return true;
-            }
-            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-                return false;
-            }
-            if (oldSD.getProbabilityTake() >= newSD.getProbabilityTake()) {
-                return false;
-            }
+
+    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
+ /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
+                && oldSD.getProbabilityTake() < this.parameters.desireableProbability) {
             return true;
         }
-        if (oldSD.getWalkdist() <= maxdistance) {
+        if (newSD.getProbabilityTake() < this.parameters.desireableProbability
+                && oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
             return false;
         }
-        if (newSD.getWalkdist() <= maxdistance) {
-            return true;
-        }
-        return (newSD.getTotalCost() < oldSD.getTotalCost());
+   */     return (newSD.getTotalCost() < oldSD.getTotalCost());
     }
 
-    //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-//        return (newSD.getTotalCost() < oldSD.getTotalCost()); 
-         if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability
-                && newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
-            return (newSD.getTotalCost() < oldSD.getTotalCost()); 
-        }
-        if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+  /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
+                && oldSD.getProbabilityReturn() < this.parameters.desireableProbability) {
             return true;
         }
-        if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+        if (newSD.getProbabilityReturn() < this.parameters.desireableProbability
+                && oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
             return false;
         }
-        return (newSD.getTotalCost() < oldSD.getTotalCost()); 
-
+  */     return newSD.getTotalCost() < oldSD.getTotalCost();
     }
 
-    protected boolean betterOrSameRentDecideSimilarprob(StationUtilityData newSD, StationUtilityData oldSD) {
-        double timediff = (newSD.getWalkTime() - oldSD.getWalkTime());
-        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * 6000;
-        if (probdiff > timediff) {
+    ///////////////////////
+    //methods for comparing with probability
+    ///////////////////////
+    protected boolean betterOrSameRentprob(StationUtilityData newSD, StationUtilityData oldSD) {
+ /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
+                && oldSD.getProbabilityTake() < this.parameters.desireableProbability) {
             return true;
         }
-        return false;
-    }
-
-    //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameRentprob(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance) {
-        if (newSD.getWalkdist() <= maxdistance
-                && oldSD.getWalkdist() <= maxdistance) {
-            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability
-                    && newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-                return betterOrSameRentDecideSimilarprob(newSD, oldSD);
-            }
-            if (newSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-                return true;
-            }
-            if (oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-                return false;
-            }
-            if (oldSD.getProbabilityTake() >= newSD.getProbabilityTake()) {
-                return false;
-            }
-            return true;
-        }
-        if (oldSD.getWalkdist() <= maxdistance) {
+        if (newSD.getProbabilityTake() < this.parameters.desireableProbability
+                && oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
             return false;
         }
-        if (newSD.getWalkdist() <= maxdistance) {
-            return true;
-        }
-        return betterOrSameRentDecideSimilarprob(newSD, oldSD);
+   */     double timediff = (newSD.getWalkTime() - oldSD.getWalkTime());
+        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * this.parameters.unsucesscostRentPenalisation;
+        return probdiff > timediff;
     }
 
-    protected boolean betterOrSameReturnDecideSimilarprob(StationUtilityData newSD, StationUtilityData oldSD) {
-
-        double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
-                - (oldSD.getBiketime() + oldSD.getWalkTime()));
-        double probdiff = (newSD.getProbabilityReturn() - oldSD.getProbabilityReturn()) * 6000;
-        if (probdiff > timediff) {
-            return true;
-        }
-        return false;
-    }
-
-    //take into account that distance newSD >= distance oldSD
     protected boolean betterOrSameReturnprob(StationUtilityData newSD, StationUtilityData oldSD) {
-         if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability
-                && newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
-            return betterOrSameReturnDecideSimilarprob(newSD, oldSD);
-        }
-        if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+  /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
+                && oldSD.getProbabilityReturn() < this.parameters.desireableProbability) {
             return true;
         }
-        if (oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
+        if (newSD.getProbabilityReturn() < this.parameters.desireableProbability
+                && oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
             return false;
         }
-        return betterOrSameReturnDecideSimilarprob(newSD, oldSD);
+  */      double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
+                - (oldSD.getBiketime() + oldSD.getWalkTime()));
+        double probdiff = (newSD.getProbabilityReturn() - oldSD.getProbabilityReturn()) * this.parameters.unsucesscostReturnPenalisation;
+        return probdiff > timediff;
     }
 
-    protected void addrentprob(StationUtilityData d, List<StationUtilityData> temp, double maxdistance) {
+
+    protected void addrentprob(StationUtilityData newSD, List<StationUtilityData> temp, double maxdistance) {
         int i = 0;
         for (; i < temp.size(); i++) {
-            if (betterOrSameRentprob(d, temp.get(i), maxdistance)) {
+            StationUtilityData oldSD=temp.get(i);
+            if (newSD.getWalkdist() <= maxdistance && oldSD.getWalkdist() > maxdistance)  break;
+            if (newSD.getWalkdist() > maxdistance && oldSD.getWalkdist() <= maxdistance)  continue;
+            if (betterOrSameRentprob(newSD, oldSD)) {
                 break;
             }
         }
-        temp.add(i, d);
+        temp.add(i, newSD);
     }
 
     protected void addreturnprob(StationUtilityData d, List<StationUtilityData> temp) {

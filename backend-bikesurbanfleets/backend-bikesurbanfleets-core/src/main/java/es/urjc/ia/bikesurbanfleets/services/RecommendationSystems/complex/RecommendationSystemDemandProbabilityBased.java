@@ -88,8 +88,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         // Vel_straightline=(d/dr)*vel_real -> Vel_straightline=vel_real/f
         //assuming real velocities of 1.4 m/s and 6 m/s for walking and biking (aprox. to 5 and 20 km/h)
         //the adapted straight line velocities are: 1m/s and 4.286m/s
-        straightLineWalkingVelocity = this.baseparameters.expectedWalkingVelocity/GlobalConfigurationParameters.STRAIGT_LINE_FACTOR;
-        straightLineCyclingVelocity = this.baseparameters.expectedCyclingVelocity/GlobalConfigurationParameters.STRAIGT_LINE_FACTOR;
+        straightLineWalkingVelocity = this.baseparameters.expectedWalkingVelocity/GlobalConfigurationParameters.STRAIGT_LINE_FACTOR_FOOT;
+        straightLineCyclingVelocity = this.baseparameters.expectedCyclingVelocity/GlobalConfigurationParameters.STRAIGT_LINE_FACTOR_BIKE;
         
         pastrecs=new PastRecommendations();
         probutils=new UtilitiesProbabilityCalculation(getDemandManager(), pastrecs, baseparameters.probabilityUsersObey,
@@ -203,17 +203,20 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     
     //methods for ordering the StationUtilityData should be true if the first data should be recomended befor the second
     //take into account that distance newSD >= distance oldSD
-    abstract protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD, double maxdistance);
+    abstract protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD);
     abstract protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD);
 
-    protected void addrent(StationUtilityData d, List<StationUtilityData> temp, double maxdistance) {
+    protected void addrent(StationUtilityData newSD, List<StationUtilityData> temp, double maxdistance) {
         int i = 0;
         for (; i < temp.size(); i++) {
-            if (betterOrSameRent(d, temp.get(i), maxdistance)) {
+            StationUtilityData oldSD=temp.get(i);
+            if (newSD.getWalkdist() <= maxdistance && oldSD.getWalkdist() > maxdistance)  break;
+            if (newSD.getWalkdist() > maxdistance && oldSD.getWalkdist() <= maxdistance)  continue;
+            if (betterOrSameRent(newSD, oldSD)) {
                 break;
             }
         }
-        temp.add(i, d);
+        temp.add(i, newSD);
     }
 
     protected void addreturn(StationUtilityData d, List<StationUtilityData> temp) {
@@ -255,7 +258,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                 System.out.println("             id av ca   wtime    prob   totcost   exptime expabandon expunsucces tcostdiff  rcostdiff   bestn timetobn bnprob");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("%-3d Station %3d %2d %2d %7.1f %6.5f %9.2f %9.2f %6.5f %6.4f %9.2f %9.2f",
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %6.5f %9.2f %9.2f    %6.5f     %6.4f %9.2f  %9.2f",
                             i+1,
                             s.getStation().getId(),
                             s.getStation().availableBikes(),

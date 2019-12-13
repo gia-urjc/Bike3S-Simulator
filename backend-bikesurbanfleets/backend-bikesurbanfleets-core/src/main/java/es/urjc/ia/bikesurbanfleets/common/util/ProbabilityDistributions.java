@@ -140,6 +140,58 @@ public class ProbabilityDistributions {
         return round(s);
     }
 
+         // calculates sum of P(X=i)*i for k>=k of my1 -my2 
+    public static double calculateUpCDFSkellamProbabilityTimesNumer(double my1, double my2, int k) {
+        if (my1 < 0D || my2 < 0D) {
+            throw new RuntimeException(" invalid values my");
+        }
+        if (my1 <= 1.0e-10) {
+            my1 = 0;
+        }
+        if (my2 <= 1.0e-10) {
+            my2 = 0;
+        }
+
+        double result = 0;
+        if (my1 == 0 && my2 == 0) { //special case; no changes expected
+            if (k <= 0) {
+                result = 0;
+            } else {
+                result = 0;
+            }
+        } else if (my1 == 0) {
+            result = poissonCumulativeDownHelperTimesNumer(my2, -k);
+        } else if (my2 == 0) {
+            result = round(poissonCumulativeUpHelperTimesNumer(my1, k));
+        } else { //my1>0 and my2>0
+            double c = Math.exp(-(my1 + my2));
+            double ratio = Math.sqrt(my1 / my2);
+            double mean = Math.sqrt(my1 * my2);
+            int i;
+            double s;
+            int meancheck;
+            result = 0;
+                 i = k;
+                meancheck = (int) Math.ceil(my1 - my2);
+                while (true) {
+                    int j = Math.abs(i);
+                    if (j == 0) {
+                        s = c * Math.pow(ratio, i) * bessi0(2D * mean);
+                    } else if (j == 1) {
+                        s = c * Math.pow(ratio, i) * bessi1(2D * mean);
+                    } else {
+                        s = c * Math.pow(ratio, i) * bessi(Math.abs(i), 2D * mean);
+                    }
+                    result += (s*i);
+                    if (i > meancheck && s < checkTerminationvalue) {
+                        break;
+                    }
+                    i++;
+                }
+        }
+        return round(result);
+    }
+   
     // calculates accumulated prob P(X>=k) of my1 -my2
     public static double calculateUpCDFSkellamProbability(double my1, double my2, int k) {
         if (my1 < 0D || my2 < 0D) {
@@ -438,7 +490,23 @@ public class ProbabilityDistributions {
         PoissonDistribution p = new PoissonDistribution(my1);
         return p.cumulativeProbability(num);
     }
-
+     private static double poissonCumulativeDownHelperTimesNumer(double my1, int num) {
+        if (num <= 0) {
+            return 0;
+        }
+        if (my1 == 0 && num >= 0) {
+            return 0;
+        }
+        //else my1>0 and num>0
+        double result=0;
+        PoissonDistribution p = new PoissonDistribution(my1);
+        for (int i=num; i>=0;i--){
+            result+=(p.probability(i)*i);
+        }
+        return result;
+    }
+   
+        
     //P(X>=num)
     private static double poissonCumulativeUpHelper(double my1, int num) {
         if (num <= 0) {
@@ -451,12 +519,27 @@ public class ProbabilityDistributions {
         PoissonDistribution p = new PoissonDistribution(my1);
         return poissonCumulativeUpHelper(p, num);
     }
+    private static double poissonCumulativeUpHelperTimesNumer(double my1, int num) {
+        if (num <= 0) {
+            return my1;
+        }
+        if (my1 == 0 && num > 0) {
+            return 0;
+        }
+        //else my1>0 and num>0
+        double result=0;
+        PoissonDistribution p = new PoissonDistribution(my1);
+        for (int i=num-1; i>=0;i--){
+            result+=(p.probability(i)*i);
+        }
+        return my1-result;
+    }
 
     //P(X>=num)
     private static double poissonCumulativeUpHelper(PoissonDistribution p, int num) {
         return (1 - p.cumulativeProbability(num - 1));
     }
-
+ 
     //my1 and my2 are the two parameters of the two poisson variables
     // Calculates the probability of having k events with the two parameters my1 and my2 and conditiont to that we
     //know that there are already b events compromised
