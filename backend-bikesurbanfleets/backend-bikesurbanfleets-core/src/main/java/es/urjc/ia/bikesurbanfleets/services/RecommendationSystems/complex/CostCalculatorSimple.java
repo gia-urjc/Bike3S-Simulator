@@ -37,15 +37,17 @@ public class CostCalculatorSimple {
     final double cyclingVelocity;
     UtilitiesProbabilityCalculator probutils;
     final double normmultiplier;
+    final double estimatedavwalktimenearest=150;
+    final double estimatedavbiketimenearest=1000;
 
 
     public double calculateCostRentSimple(StationUtilityData sd, double sdprob, double time) {
-            return sdprob * time + (1-sdprob)* maxCostValue;
+            return  sdprob*time + (1-sdprob)* maxCostValue;
     }
 
     public double calculateCostReturnSimple(StationUtilityData sd, double sdprob, double biketime, double walktime) {
         double time= biketime+ walktime;
-            return sdprob * time+ (1-sdprob)* maxCostValue;
+            return  sdprob*time+ (1-sdprob)* maxCostValue;
     }
 
     public double calculateCostsRentAtStation(StationUtilityData sd, double timeintervallforPrediction) {
@@ -57,13 +59,13 @@ public class CostCalculatorSimple {
 
        
         //analyze global costs
-        //takecost if bike is taken     
-        double costtake = calculateCostRentSimple(sd, pd.probabilityTake, 0);
-        double costtakeafter = calculateCostRentSimple(sd, pd.probabilityTakeAfterTake,0);
+        //takecost if bike is taken   
+        double costtake = calculateCostRentSimple(sd, pd.probabilityTake, estimatedavwalktimenearest);
+        double costtakeafter = calculateCostRentSimple(sd, pd.probabilityTakeAfterTake,estimatedavwalktimenearest);
         //return costs
         //take a close point to the station as hipotetical detsination
-        double costreturn = calculateCostReturnSimple(sd, pd.probabilityReturn, 0, 0);
-        double costreturnafter = calculateCostReturnSimple(sd, pd.probabilityReturnAfterTake, 0, 0);
+        double costreturn = calculateCostReturnSimple(sd, pd.probabilityReturn, estimatedavbiketimenearest, estimatedavwalktimenearest);
+        double costreturnafter = calculateCostReturnSimple(sd, pd.probabilityReturnAfterTake, estimatedavbiketimenearest, estimatedavwalktimenearest);
 
         double extracosttake = costtakeafter - costtake;
         double extracostreturn = costreturnafter - costreturn;
@@ -74,7 +76,7 @@ public class CostCalculatorSimple {
         extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset) * sd.getProbabilityTake();
         extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset) * sd.getProbabilityTake();
         
-        double globalcost = usercosttake + extracosttake + extracostreturn;
+        double globalcost = usercosttake + extracosttake + 0*extracostreturn;
         sd.setIndividualCost(usercosttake).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
                 .setTotalCost(globalcost);
         return globalcost;
@@ -88,13 +90,13 @@ public class CostCalculatorSimple {
         ProbabilityData pd=probutils.calculateAllReturnProbabilitiesWithArrival(sd, sd.getBiketime(), timeoffset);
         //analyze global costs
         //takecost if bike is taken   
-        double costtake = calculateCostRentSimple(sd, pd.probabilityTake, 0);
-        double costtakeafter = calculateCostRentSimple(sd, pd.probabilityTakeAfterRerturn, 0);
+        double costtake = calculateCostRentSimple(sd, pd.probabilityTake, estimatedavwalktimenearest);
+        double costtakeafter = calculateCostRentSimple(sd, pd.probabilityTakeAfterRerturn, estimatedavwalktimenearest);
 
         //return costs
         //take a close point to the station as hipotetical detsination
-        double costreturnhip = calculateCostReturnSimple(sd, pd.probabilityReturn, 0, 0);
-        double costreturnafterhip = calculateCostReturnSimple(sd, pd.probabilityReturnAfterReturn,0, 0);
+        double costreturnhip = calculateCostReturnSimple(sd, pd.probabilityReturn, estimatedavbiketimenearest, estimatedavwalktimenearest);
+        double costreturnafterhip = calculateCostReturnSimple(sd, pd.probabilityReturnAfterReturn,estimatedavbiketimenearest, estimatedavwalktimenearest);
         double extracosttake = costtakeafter - costtake;
         double extracostreturn = costreturnafterhip - costreturnhip;
         if (extracostreturn<0 || extracosttake>0){
@@ -104,7 +106,7 @@ public class CostCalculatorSimple {
         extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset) * sd.getProbabilityReturn();
         extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset)* sd.getProbabilityReturn();
 
-        double globalcost = usercostreturn+extracosttake+extracostreturn;
+        double globalcost = usercostreturn+extracosttake+1*extracostreturn;
         sd.setIndividualCost(usercostreturn).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
                 .setTotalCost(globalcost);
         return globalcost;

@@ -83,6 +83,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
                 }
             }
         }
+        reorder(orderedlist, true);
         return orderedlist;
     }
 
@@ -107,9 +108,33 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
                 }
             }
         }
+        reorder(orderedlist, false);
         return orderedlist;
     }
 
+    private void reorder(List<StationUtilityData> list, boolean take){
+    /*    double cost1;
+        double cost2;
+        if (list.size()>1){
+            cost1=list.get(0).getIndividualCost();
+            cost2=list.get(1).getIndividualCost();
+            //if the individual cost of the first is the best leave it first
+            if (cost1<= cost2) return;
+            else { //the second has better individual cost
+                
+                cost1=list.get(0).getTakecostdiff();
+                cost2=list.get(1).getTakecostdiff();
+                double prob2=cost1/(cost1+cost2);
+                double rand=Math.random();
+                if (rand<prob2){
+                    StationUtilityData aux=  list.get(0);
+                    list.remove(0);
+                    list.add(1, aux);
+                }
+            }
+        }
+    */    return;
+    }
 
     protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
  /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
@@ -121,6 +146,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
             return false;
         }
    */     return (newSD.getTotalCost() < oldSD.getTotalCost());
+      //  return (newSD.getIndividualCost()+newSD.getTakecostdiff() < oldSD.getIndividualCost()+oldSD.getTakecostdiff());
     }
 
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
@@ -133,6 +159,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
             return false;
         }
   */     return newSD.getTotalCost() < oldSD.getTotalCost();
+     //  return (newSD.getIndividualCost()+newSD.getTakecostdiff() < oldSD.getIndividualCost()+oldSD.getTakecostdiff());
     }
 
  }

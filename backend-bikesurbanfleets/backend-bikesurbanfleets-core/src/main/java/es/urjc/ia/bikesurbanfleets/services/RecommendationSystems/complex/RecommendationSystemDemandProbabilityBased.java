@@ -255,10 +255,10 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     System.out.format("[Info] LOW PROB Take %9.8f %n", su.get(0).getProbabilityTake());
                     lowprobs++;
                 }
-                System.out.println("             id av ca   wtime    prob   totcost   exptime expabandon expunsucces tcostdiff  rcostdiff   bestn timetobn bnprob");
+                System.out.println("             id av ca   wtime    prob   totcost   exptime expabandon expunsucces tcostdiff  rcostdiff  aux   bestn timetobn bnprob ");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("%-3d Station %3d %2d %2d %7.1f %6.5f %9.2f %9.2f    %6.5f     %6.4f %9.2f  %9.2f",
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %6.5f %9.2f %9.2f    %6.5f     %6.4f %9.2f  %9.2f %9.2f",
                             i+1,
                             s.getStation().getId(),
                             s.getStation().availableBikes(),
@@ -270,7 +270,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                             s.getAbandonProbability(),
                             s.getExpectedUnsucesses(),
                             s.getTakecostdiff(),
-                            s.getReturncostdiff()
+                            s.getReturncostdiff(),
+                            s.aux
                             );
                     StationUtilityData bn=s.bestNeighbour;
                     if (bn!=null){
@@ -295,10 +296,10 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     System.out.format("[Info] LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());
                     lowprobs++;
                 }
-                System.out.println("             id av ca   wtime   btime    prob   totcost   exptime expabandon expunsucces tcostdiff  rcostdiff   bestn timetobn bnwt bnprob");
+                System.out.println("             id av ca   wtime   btime    prob   totcost   exptime expabandon expunsucces tcostdiff  rcostdiff  aux   bestn timetobn bnwt bnprob ");
                 for (int i = 0; i < max; i++) {
                     StationUtilityData s = su.get(i);
-                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f %9.2f %6.5f %6.4f %9.2f %9.2f",
+                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f %9.2f %6.5f %6.4f %9.2f %9.2f %9.2f",
                             i+1,
                             s.getStation().getId(),
                             s.getStation().availableBikes(),
@@ -311,7 +312,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                             s.getAbandonProbability(),
                             s.getExpectedUnsucesses(),
                             s.getTakecostdiff(),
-                            s.getReturncostdiff());
+                            s.getReturncostdiff(),
+                            s.aux);
                     StationUtilityData bn=s.bestNeighbour;
                     if (bn!=null){
                         double distto=bn.getStation().getPosition().distanceTo(s.getStation().getPosition());

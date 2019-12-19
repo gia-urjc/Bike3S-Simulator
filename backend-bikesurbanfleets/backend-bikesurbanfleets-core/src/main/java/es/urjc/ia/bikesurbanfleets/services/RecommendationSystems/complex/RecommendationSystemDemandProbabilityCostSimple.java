@@ -12,6 +12,7 @@ import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import java.text.Bidi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,6 +139,7 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
         return orderedlist;
     }
 
+   
     protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
  /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
                 && oldSD.getProbabilityTake() < this.parameters.desireableProbability) {

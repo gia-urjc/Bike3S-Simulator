@@ -27,32 +27,31 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     public class RecommendationParameters {
 
         //this is meters per second corresponds aprox. to 4 and 20 km/h
-        private double maxDistanceRecommendationTake=600;
-        private double minimumMarginProbability = 0.001;
+        private double maxDistanceRecommendationTake = 600;
+        private double minimumMarginProbability = 0.0001;
         private double minProbBestNeighbourRecommendation = 0;
         private double desireableProbability = 0.8;
-        private double penalisationfactorrent = 1;
-        private double penalisationfactorreturn = 1;
         private double maxStationsToReccomend = 30;
-        private double unsucesscostRent = 6000;
-        private double unsucesscostReturn = 6000;
-        private double MaxCostValue = 6000;
+        private double unsucesscostRentPenalisation = 6000;
+        private double unsucesscostReturnPenalisation = 6000;
+        private double AbandonPenalisation = 24000;
         private int PredictionNorm = 0;
         private int predictionWindow = 900;
-        private double normmultiplier=0.5;
+        private double normmultiplier = 0.5;
 
         @Override
         public String toString() {
-            return  "maxDistanceRecommendationTake=" + maxDistanceRecommendationTake + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", penalisationfactorrent=" + penalisationfactorrent + ", penalisationfactorreturn=" + penalisationfactorreturn + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRent=" + unsucesscostRent + ", unsucesscostReturn=" + unsucesscostReturn + ", MaxCostValue=" + MaxCostValue + ", PredictionNorm=" + PredictionNorm + ", predictionWindow=" + predictionWindow + ", normmultiplier=" + normmultiplier ;
+            return  "maxDistanceRecommendationTake=" + maxDistanceRecommendationTake + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRentPenalisation=" + unsucesscostRentPenalisation + ", unsucesscostReturnPenalisation=" + unsucesscostReturnPenalisation + ", AbandonPenalisation=" + AbandonPenalisation + ", PredictionNorm=" + PredictionNorm + ", predictionWindow=" + predictionWindow + ", normmultiplier=" + normmultiplier ;
         }
-   }
+
+    }
 
     public String getParameterString() {
         return "RecommendationSystemDemandProbabilityCostGlobalPrediction Parameters{" + super.getParameterString() + this.parameters.toString() + "}";
     }
 
     private RecommendationParameters parameters;
-    private ComplexCostCalculator2Bis ucc;
+    private ComplexCostCalculatorNew2 ucc;
 
     public RecommendationSystemDemandProbabilityCostGlobalPrediction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef, ss);
@@ -66,12 +65,12 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc = new ComplexCostCalculator2Bis(parameters.minimumMarginProbability, parameters.MaxCostValue, parameters.unsucesscostRent,
-                parameters.unsucesscostReturn,
-                parameters.penalisationfactorrent, parameters.penalisationfactorreturn, straightLineWalkingVelocity,
+        ucc = new ComplexCostCalculatorNew2(parameters.minimumMarginProbability, parameters.AbandonPenalisation, parameters.unsucesscostRentPenalisation,
+                parameters.unsucesscostReturnPenalisation,
+                straightLineWalkingVelocity,
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
                 probutils, parameters.PredictionNorm, parameters.normmultiplier);
-     }
+    }
 
     @Override
     protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxuserdistance) {
@@ -101,6 +100,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         }
         return orderedlist;
     }
+                    
 
     @Override
     protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
@@ -116,7 +116,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                     goodfound = true;
                 }
                 try {
-                    double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata, this.parameters.predictionWindow,this.parameters.maxDistanceRecommendationTake);
+                    double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata, this.parameters.predictionWindow, this.parameters.maxDistanceRecommendationTake);
                     sd.setTotalCost(cost);
                     addreturn(sd, orderedlist);
                     if (goodfound) {
@@ -132,7 +132,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     }
 
     protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
- /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
+        /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
                 && oldSD.getProbabilityTake() < this.parameters.desireableProbability) {
             return true;
         }
@@ -140,11 +140,11 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 && oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
             return false;
         }
-   */     return (newSD.getTotalCost() < oldSD.getTotalCost());
+         */ return (newSD.getTotalCost() < oldSD.getTotalCost());
     }
 
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-  /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
+        /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
                 && oldSD.getProbabilityReturn() < this.parameters.desireableProbability) {
             return true;
         }
@@ -152,6 +152,6 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 && oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
             return false;
         }
-  */     return newSD.getTotalCost() < oldSD.getTotalCost();
+         */ return newSD.getTotalCost() < oldSD.getTotalCost();
     }
 }

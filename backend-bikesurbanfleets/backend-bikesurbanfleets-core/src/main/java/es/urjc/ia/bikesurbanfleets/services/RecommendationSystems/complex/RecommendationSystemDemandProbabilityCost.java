@@ -26,7 +26,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
 
     public class RecommendationParameters {
 
-        private double minimumMarginProbability = 0.001;
+        private double minimumMarginProbability = 0.0001;
         private double minProbBestNeighbourRecommendation = 0;
         private double desireableProbability = 0.8;
         private double maxStationsToReccomend = 30;
@@ -47,6 +47,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
 
     private RecommendationParameters parameters;
     private ComplexCostCalculatorNew2 ucc;
+    private CostCalculatorSimple scc;
 
     public RecommendationSystemDemandProbabilityCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         super(recomenderdef, ss);
@@ -65,6 +66,11 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 straightLineWalkingVelocity,
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
                 probutils, 0, 0);
+        scc=new CostCalculatorSimple(
+                parameters.unsucesscostRentPenalisation, 
+                straightLineWalkingVelocity, 
+                straightLineCyclingVelocity, 
+                probutils, 0, 0);
     }
 
     @Override
@@ -82,12 +88,10 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 }
                 try {
                     double cost = ucc.calculateCostRentHeuristicNow(sd, stationdata, maxdistance);
-
-                    double totalcost=(sd.getAbandonProbability())* parameters.AbandonPenalisation + 
-                                     (sd.getExpectedUnsucesses())* parameters.unsucesscostRentPenalisation + 
-                                     sd.getExpectedtimeIfNotAbandon();
+                    sd.aux = scc.calculateCostRentSimple(sd, sd.getProbabilityTake(), sd.getWalkTime());
                     
-                    sd.setTotalCost(totalcost);
+                   
+                    sd.setTotalCost(cost);
                     addrent(sd, orderedlist, maxdistance);
                     if (goodfound) {
                         i++;
@@ -131,10 +135,8 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 }
                 try {
                     double cost = ucc.calculateCostReturnHeuristicNow(sd, userdestination, stationdata);
-                    double totalcost=(sd.getAbandonProbability())* parameters.AbandonPenalisation + 
-                                     (sd.getExpectedUnsucesses())* parameters.unsucesscostReturnPenalisation + 
-                                     sd.getExpectedtimeIfNotAbandon();
-                    sd.setTotalCost(totalcost);
+                sd.aux = scc.calculateCostReturnSimple(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
+                    sd.setTotalCost(cost);
                     addreturn(sd, orderedlist);
                     if (goodfound) {
                         i++;

@@ -45,6 +45,7 @@ public class StationUtilityData {
     private double expectedTimeIfNotAbandon;
     private double expectedUnsucesses;
 
+    public double aux;
     public double getExpectedtimeIfNotAbandon() {
         return expectedTimeIfNotAbandon;
     }
