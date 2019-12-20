@@ -38,10 +38,11 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         private int PredictionNorm = 0;
         private int predictionWindow = 900;
         private double normmultiplier = 0.5;
+        private double alfa=0.5;
 
         @Override
         public String toString() {
-            return  "maxDistanceRecommendationTake=" + maxDistanceRecommendationTake + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRentPenalisation=" + unsucesscostRentPenalisation + ", unsucesscostReturnPenalisation=" + unsucesscostReturnPenalisation + ", AbandonPenalisation=" + AbandonPenalisation + ", PredictionNorm=" + PredictionNorm + ", predictionWindow=" + predictionWindow + ", normmultiplier=" + normmultiplier ;
+            return  "alfa=" + alfa + ", maxDistanceRecommendationTake=" + maxDistanceRecommendationTake + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRentPenalisation=" + unsucesscostRentPenalisation + ", unsucesscostReturnPenalisation=" + unsucesscostReturnPenalisation + ", AbandonPenalisation=" + AbandonPenalisation + ", PredictionNorm=" + PredictionNorm + ", predictionWindow=" + predictionWindow + ", normmultiplier=" + normmultiplier ;
         }
 
     }
@@ -69,7 +70,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
                 parameters.unsucesscostReturnPenalisation,
                 straightLineWalkingVelocity,
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-                probutils, parameters.PredictionNorm, parameters.normmultiplier);
+                probutils, parameters.PredictionNorm, parameters.normmultiplier,parameters.alfa);
     }
 
     @Override

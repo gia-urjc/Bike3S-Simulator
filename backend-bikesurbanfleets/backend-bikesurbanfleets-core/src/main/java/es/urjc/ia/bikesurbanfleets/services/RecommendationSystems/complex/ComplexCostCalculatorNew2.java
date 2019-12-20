@@ -26,7 +26,7 @@ public class ComplexCostCalculatorNew2 {
     public ComplexCostCalculatorNew2(double marginprob, double maxcost, double unsuccostrent, double unsuccostret,
             double walkvel, double cycvel, double minsecondaryprob,
             UtilitiesProbabilityCalculator probutils,
-            int PredictionNorm, double normmultiplier) {
+            int PredictionNorm, double normmultiplier, double alfa) {
         minimumMarginProbability = marginprob;
         unsuccessCostRent = unsuccostrent;
         unsuccessCostReturn = unsuccostret;
@@ -37,9 +37,10 @@ public class ComplexCostCalculatorNew2 {
         abandonCost = maxcost;
         predictionNormalisation = PredictionNorm;
         this.normmultiplier = normmultiplier;
+        this.alfa=alfa;
 
     }
-
+    final double alfa;
     final double normmultiplier;
     final int predictionNormalisation;
     final double minimumMarginProbability;
@@ -51,31 +52,38 @@ public class ComplexCostCalculatorNew2 {
     final double abandonCost;
     UtilitiesProbabilityCalculator probutils;
 
-    double alfa = 0.3;
     private double costRent(double oldwalktime,double time, double prob, int iteration) {
-        double gama = Math.pow(alfa, iteration);
+        double gama = 1D/Math.pow((double)(iteration+1), alfa);
         double res = time;//prob*time+(1-prob)*unsuccessCostRent;
-        if (oldwalktime<unsuccessCostRent) {
-            double ratio=oldwalktime/unsuccessCostRent;
-            return (1-ratio) * res + ratio * unsuccessCostRent;
-        } else return unsuccessCostRent;
+  //      return res;
+ //       if (oldwalktime<unsuccessCostRent) {
+ //           double ratio=oldwalktime/unsuccessCostRent;
+ //           return (1-ratio) * res + ratio * unsuccessCostRent;
+ //       } else return unsuccessCostRent;
             
    //     return (gama * res) + ((1 - gama) * unsuccessCostRent);
- //       if (iteration==0) return res;
-   //     else return (0.5 * res) + (0.5 * unsuccessCostRent);
+        if (iteration==0) return res;
+        else {
+            if (res>=unsuccessCostRent) return res;
+            else return (alfa * res) + ((1-alfa) * unsuccessCostRent);
+        }
     }
 
     private double costReturn(double oldbiketime,double wtime, double btime, double prob, int iteration) {
-        double gama = Math.pow(alfa, iteration);
+        double gama = 1D/Math.pow((double)(iteration+1), alfa);
 
         double res = (wtime+btime);//prob*(wtime+btime)+(1-prob)*unsuccessCostReturn;
-        if (oldbiketime<unsuccessCostReturn) {
+  //      return res;
+/*        if (oldbiketime<unsuccessCostReturn) {
             double ratio=oldbiketime/unsuccessCostReturn;
             return (1-ratio) * res + ratio * unsuccessCostReturn;
         } else return unsuccessCostReturn;
-      // return (gama * res) + ((1 - gama) * unsuccessCostReturn);
-  //      if (iteration==0) return res;
-    //    else return (0.5 * res) + (0.5 * unsuccessCostRent);
+  */    // return (gama * res) + ((1 - gama) * unsuccessCostReturn);
+        if (iteration==0) return res;
+        else {
+            if (res>=unsuccessCostReturn) return res;
+            else return (alfa * res) + ((1-alfa) * unsuccessCostReturn);
+        }
 
     }
 
@@ -119,7 +127,7 @@ public class ComplexCostCalculatorNew2 {
                 //find best neighbour
                 lookedlist.add(current);
                 StationUtilityData closestneighbour = bestNeighbourRent(current.getStation(), lookedlist, allstats, accwalkdist, probtimeoffset, maxdistance);
-                if (closestneighbour != null) {
+                if (closestneighbour != null && iteration<1) {
                     //      if (BetterBestNeighbourRent(current,closestneighbour,probtimeoffset+accwalktime)) throw new BetterFirstStationException();
                     if (setneihbour) {
                         current.bestNeighbour = closestneighbour;
@@ -184,7 +192,7 @@ public class ComplexCostCalculatorNew2 {
                 //find best neighbour
                 lookedlist.add(current);
                 StationUtilityData closestneighbour = bestNeighbourReturn(current.getStation(), lookedlist, allstats, destination, accbikedist, probtimeoffset);
-                if (closestneighbour != null) {
+                if (closestneighbour != null  && iteration<1) {
                     //      if (BetterBestNeighbourReturn(current,closestneighbour,probtimeoffset+accbiketime)) throw new BetterFirstStationException();
                     if (setneihbour) {
                         current.bestNeighbour = closestneighbour;
@@ -371,7 +379,7 @@ public class ComplexCostCalculatorNew2 {
             accreturncost += wp.takeprob * extracostreturn;
         }
 
-        double globalcost = usercosttake + acctakecost +  accreturncost;
+        double globalcost = usercosttake + acctakecost +  0* accreturncost;
         sd.setIndividualCost(usercosttake).setTakecostdiff(acctakecost).setReturncostdiff(accreturncost).setTotalCost(globalcost);
         return globalcost;
 
@@ -419,7 +427,7 @@ public class ComplexCostCalculatorNew2 {
             accreturncost += wp.returnprob * extracostreturn;
         }
 
-        double globalcost = usercostreturn + acctakecost + accreturncost;
+        double globalcost = usercostreturn + acctakecost + 0.5*accreturncost;
         sd.setIndividualCost(usercostreturn).setTakecostdiff(acctakecost).setReturncostdiff(accreturncost).setTotalCost(globalcost);
         return globalcost;
     }

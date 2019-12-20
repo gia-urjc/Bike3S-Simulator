@@ -33,10 +33,11 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         private double unsucesscostRentPenalisation = 6000; //with calculator2bis=between 4000 and 6000
         private double unsucesscostReturnPenalisation = 6000; //with calculator2bis=between 4000 and 6000
         private double AbandonPenalisation = 24000; //with calculator2bis=0
+        private double alfa=0.5;
 
                 @Override
         public String toString() {
-            return  "minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRentPenalisation=" + unsucesscostRentPenalisation + ", unsucesscostReturnPenalisation=" + unsucesscostReturnPenalisation + ", AbandonPenalisation=" + AbandonPenalisation ;
+            return  "alfa=" + alfa + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRentPenalisation=" + unsucesscostRentPenalisation + ", unsucesscostReturnPenalisation=" + unsucesscostReturnPenalisation + ", AbandonPenalisation=" + AbandonPenalisation ;
         }
 
     }
@@ -65,7 +66,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
                 parameters.unsucesscostReturnPenalisation,
                 straightLineWalkingVelocity,
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-                probutils, 0, 0);
+                probutils, 0, 0, parameters.alfa);
         scc=new CostCalculatorSimple(
                 parameters.unsucesscostRentPenalisation, 
                 straightLineWalkingVelocity, 

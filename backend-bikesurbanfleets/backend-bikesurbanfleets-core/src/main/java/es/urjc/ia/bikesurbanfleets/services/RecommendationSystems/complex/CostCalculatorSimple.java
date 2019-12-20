@@ -42,12 +42,14 @@ public class CostCalculatorSimple {
 
 
     public double calculateCostRentSimple(StationUtilityData sd, double sdprob, double time) {
-            return  sdprob*time + (1-sdprob)* maxCostValue;
+            if (time >maxCostValue) return time;
+            return  sdprob * time + (1-sdprob)* maxCostValue;
     }
 
     public double calculateCostReturnSimple(StationUtilityData sd, double sdprob, double biketime, double walktime) {
         double time= biketime+ walktime;
-            return  sdprob*time+ (1-sdprob)* maxCostValue;
+            if (time >maxCostValue) return time;
+            return  sdprob * time+ (1-sdprob)* maxCostValue;
     }
 
     public double calculateCostsRentAtStation(StationUtilityData sd, double timeintervallforPrediction) {
@@ -106,7 +108,7 @@ public class CostCalculatorSimple {
         extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset) * sd.getProbabilityReturn();
         extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset)* sd.getProbabilityReturn();
 
-        double globalcost = usercostreturn+extracosttake+1*extracostreturn;
+        double globalcost = usercostreturn+extracosttake+0.5*extracostreturn;
         sd.setIndividualCost(usercostreturn).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
                 .setTotalCost(globalcost);
         return globalcost;
