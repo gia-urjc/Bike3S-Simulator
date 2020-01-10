@@ -53,38 +53,41 @@ public class ComplexCostCalculatorNew2 {
     UtilitiesProbabilityCalculator probutils;
 
     private double costRent(double oldwalktime,double time, double prob, int iteration) {
-        double gama = 1D/Math.pow((double)(iteration+1), alfa);
-        double res = time;//prob*time+(1-prob)*unsuccessCostRent;
-  //      return res;
- //       if (oldwalktime<unsuccessCostRent) {
- //           double ratio=oldwalktime/unsuccessCostRent;
- //           return (1-ratio) * res + ratio * unsuccessCostRent;
- //       } else return unsuccessCostRent;
-            
-   //     return (gama * res) + ((1 - gama) * unsuccessCostRent);
-        if (iteration==0) return res;
+        double timecost=time;
+        if (timecost>=unsuccessCostRent) return timecost;
+        else timecost = prob*time+(1-prob)*unsuccessCostRent;//timecost;
+        
+        double ratio;
+        if (oldwalktime<unsuccessCostRent) {
+            ratio=1-(oldwalktime/unsuccessCostRent);
+        } else ratio=0;
+        double gama = Math.pow(alfa,(double)(iteration));
+        double totalratio=gama;//(gama+ratio)/2.0D;
+
+        if (iteration==0) return timecost;
         else {
-            if (res>=unsuccessCostRent) return res;
-            else return (alfa * res) + ((1-alfa) * unsuccessCostRent);
+            if (timecost>=unsuccessCostRent) return timecost;
+            else return (totalratio * timecost) + ((1-totalratio) * unsuccessCostRent);
         }
     }
 
     private double costReturn(double oldbiketime,double wtime, double btime, double prob, int iteration) {
-        double gama = 1D/Math.pow((double)(iteration+1), alfa);
-
-        double res = (wtime+btime);//prob*(wtime+btime)+(1-prob)*unsuccessCostReturn;
-  //      return res;
-/*        if (oldbiketime<unsuccessCostReturn) {
-            double ratio=oldbiketime/unsuccessCostReturn;
-            return (1-ratio) * res + ratio * unsuccessCostReturn;
-        } else return unsuccessCostReturn;
-  */    // return (gama * res) + ((1 - gama) * unsuccessCostReturn);
-        if (iteration==0) return res;
+        double timecost=wtime+btime;
+        if (timecost>=unsuccessCostReturn)  return timecost;
+        else timecost= prob*(timecost)+(1-prob)*unsuccessCostReturn;//(timecost);
+ 
+        double ratio;
+        if (oldbiketime<unsuccessCostReturn) {
+            ratio=1-(oldbiketime/unsuccessCostReturn);
+        } else ratio=0;
+        double gama = Math.pow(alfa,(double)(iteration));
+        double totalratio=gama;//(gama+ratio)/2.0D;
+        
+        if (iteration==0) return timecost;
         else {
-            if (res>=unsuccessCostReturn) return res;
-            else return (alfa * res) + ((1-alfa) * unsuccessCostReturn);
+            if (timecost>=unsuccessCostReturn) return timecost;
+            else return (totalratio * timecost) + ((1-totalratio) * unsuccessCostReturn);
         }
-
     }
 
     //claculates a "good" way and its cost for taking a bike
@@ -127,7 +130,7 @@ public class ComplexCostCalculatorNew2 {
                 //find best neighbour
                 lookedlist.add(current);
                 StationUtilityData closestneighbour = bestNeighbourRent(current.getStation(), lookedlist, allstats, accwalkdist, probtimeoffset, maxdistance);
-                if (closestneighbour != null && iteration<1) {
+                if (closestneighbour != null ){//&& iteration<1) {
                     //      if (BetterBestNeighbourRent(current,closestneighbour,probtimeoffset+accwalktime)) throw new BetterFirstStationException();
                     if (setneihbour) {
                         current.bestNeighbour = closestneighbour;
@@ -149,7 +152,7 @@ public class ComplexCostCalculatorNew2 {
         sd.setAbandonProbability(abandonprob);
         sd.setExpectedUnsucesses(expectedunsucesses);
         sd.setExpectedtimeIfNotAbandon(expectedcost);
-        double totalcost = (sd.getAbandonProbability()) * abandonCost
+        double totalcost = //(sd.getAbandonProbability()) * abandonCost;
   //              + (sd.getExpectedUnsucesses()) * unsuccessCostRent
                 + sd.getExpectedtimeIfNotAbandon();
         sd.setTotalCost(totalcost);
@@ -192,7 +195,7 @@ public class ComplexCostCalculatorNew2 {
                 //find best neighbour
                 lookedlist.add(current);
                 StationUtilityData closestneighbour = bestNeighbourReturn(current.getStation(), lookedlist, allstats, destination, accbikedist, probtimeoffset);
-                if (closestneighbour != null  && iteration<1) {
+                if (closestneighbour != null ){// && iteration<1) {
                     //      if (BetterBestNeighbourReturn(current,closestneighbour,probtimeoffset+accbiketime)) throw new BetterFirstStationException();
                     if (setneihbour) {
                         current.bestNeighbour = closestneighbour;
@@ -214,7 +217,7 @@ public class ComplexCostCalculatorNew2 {
         sd.setAbandonProbability(abandonprob);
         sd.setExpectedUnsucesses(expectedunsucesses);
         sd.setExpectedtimeIfNotAbandon(expectedcost);
-        double totalcost = (sd.getAbandonProbability()) * abandonCost
+        double totalcost = //(sd.getAbandonProbability()) * abandonCost
   //              + (sd.getExpectedUnsucesses()) * unsuccessCostReturn
                 + sd.getExpectedtimeIfNotAbandon();
         sd.setTotalCost(totalcost);
@@ -332,8 +335,39 @@ public class ComplexCostCalculatorNew2 {
         }
     }
 
-    final double estimatedavwalktimenearest = 150;
-    final double estimatedavbiketimenearest = 1000;
+    final double estimatedavwalkdistnearest = 150;
+    final double estimatedavbikedistnearest = 1000;
+    
+    public double calculateCostRentSecondary(
+            List<stationPoint> way, StationUtilityData sd,
+            double walkdist,
+            List<StationUtilityData> lookedlist,
+            List<StationUtilityData> allstats,
+            double takeprob, double probtimeoffset, double maxdistance, boolean setneihbour) throws BetterFirstStationException {
+//version full
+     //       return calculateWayCostRentHeuristic(way, sd, walkdist, lookedlist, allstats, takeprob, probtimeoffset, maxdistance, setneihbour);
+// version simple
+            double time=walkdist / expectedwalkingVelocity;
+            if (time >unsuccessCostRent) return time;
+            return  takeprob * time + (1-takeprob)* unsuccessCostRent;
+    }
+
+    //DO NOT CHANGE IT IS WORKING :)
+    public double calculateCostReturnSecondary(List<stationPoint> way, StationUtilityData sd,
+            double bikedist, GeoPoint destination,
+            List<StationUtilityData> lookedlist,
+            List<StationUtilityData> allstats,
+            double returnprob, double probtimeoffset, boolean setneihbour) throws BetterFirstStationException {
+ 
+//version full
+    //        return calculateWayCostReturnHeuristic(way, sd, bikedist, destination, lookedlist, allstats, returnprob, probtimeoffset, setneihbour);
+// version simple
+            double biketime = bikedist / expectedcyclingVelocity;
+            double walktime = sd.getStation().getPosition().distanceTo(destination) / expectedwalkingVelocity;
+            double time=walktime+biketime;
+            if (time >unsuccessCostReturn) return time;
+            return  returnprob * time + (1-returnprob)* unsuccessCostReturn;
+    }
 
     //global cost calculation. calculates the cost of taking/returning and also the cost differences
     // returns the global costs
@@ -356,16 +390,16 @@ public class ComplexCostCalculatorNew2 {
             ProbabilityData pd = probutils.calculateAllTakeProbabilitiesWithArrival(wp.sd, sd.getWalkTime(), timeoffset);
             //calculate takecost difference
             newlookedlist = new ArrayList<>();//holger(lookedlist);
-            double costtake = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, estimatedavwalktimenearest, newlookedlist, allstats, pd.probabilityTake, timeoffset, maxDistanceRecomendationTake, false);
+            double costtake = calculateCostRentSecondary(new ArrayList<>(), wp.sd, estimatedavwalkdistnearest, newlookedlist, allstats, pd.probabilityTake, timeoffset, maxDistanceRecomendationTake, false);
             newlookedlist = new ArrayList<>();//holger(lookedlist);
-            double costtakeafter = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, estimatedavwalktimenearest, newlookedlist, allstats, pd.probabilityTakeAfterTake, timeoffset, maxDistanceRecomendationTake, false);
+            double costtakeafter = calculateCostRentSecondary(new ArrayList<>(), wp.sd, estimatedavwalkdistnearest, newlookedlist, allstats, pd.probabilityTakeAfterTake, timeoffset, maxDistanceRecomendationTake, false);
             double extracosttake = (costtakeafter - costtake);
             //calculate return cost difference
             GeoPoint hipodestination = wp.sd.getStation().getPosition();
             newlookedlist = new ArrayList<>();//holger(lookedlist);
-            double costreturnhip = calculateWayCostReturnHeuristic(new ArrayList<>(), wp.sd, estimatedavbiketimenearest, hipodestination, newlookedlist, allstats, pd.probabilityReturn, timeoffset, false);
+            double costreturnhip = calculateCostReturnSecondary(new ArrayList<>(), wp.sd, estimatedavbikedistnearest, hipodestination, newlookedlist, allstats, pd.probabilityReturn, timeoffset, false);
             newlookedlist = new ArrayList<>();//holger(lookedlist);
-            double costreturnafterhip = calculateWayCostReturnHeuristic(new ArrayList<>(), wp.sd, estimatedavbiketimenearest, hipodestination, newlookedlist, allstats, pd.probabilityReturnAfterTake, timeoffset, false);
+            double costreturnafterhip = calculateCostReturnSecondary(new ArrayList<>(), wp.sd, estimatedavbikedistnearest, hipodestination, newlookedlist, allstats, pd.probabilityReturnAfterTake, timeoffset, false);
             double extracostreturn = (costreturnafterhip - costreturnhip);
 
             if (extracostreturn > 0 || extracosttake < 0) {
@@ -379,7 +413,7 @@ public class ComplexCostCalculatorNew2 {
             accreturncost += wp.takeprob * extracostreturn;
         }
 
-        double globalcost = usercosttake + acctakecost +  0* accreturncost;
+        double globalcost = usercosttake + acctakecost +  accreturncost;
         sd.setIndividualCost(usercosttake).setTakecostdiff(acctakecost).setReturncostdiff(accreturncost).setTotalCost(globalcost);
         return globalcost;
 
@@ -404,16 +438,16 @@ public class ComplexCostCalculatorNew2 {
             ProbabilityData pd = probutils.calculateAllReturnProbabilitiesWithArrival(wp.sd, sd.getBiketime(), timeoffset);
             //calculate takecost difference
             newlookedlist = new ArrayList<>();//holger(lookedlist);
-            double costtake = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, estimatedavwalktimenearest, newlookedlist, allstats, pd.probabilityTake, timeoffset, maxDistanceRecomendationTake, false);
+            double costtake = calculateCostRentSecondary(new ArrayList<>(), wp.sd, estimatedavwalkdistnearest, newlookedlist, allstats, pd.probabilityTake, timeoffset, maxDistanceRecomendationTake, false);
             newlookedlist = new ArrayList<>();//holger(lookedlist);
-            double costtakeafter = calculateWayCostRentHeuristic(new ArrayList<>(), wp.sd, estimatedavwalktimenearest, newlookedlist, allstats, pd.probabilityTakeAfterRerturn, timeoffset, maxDistanceRecomendationTake, false);
+            double costtakeafter = calculateCostRentSecondary(new ArrayList<>(), wp.sd, estimatedavwalkdistnearest, newlookedlist, allstats, pd.probabilityTakeAfterRerturn, timeoffset, maxDistanceRecomendationTake, false);
             double extracosttake = (costtakeafter - costtake);
             //calculate return cost difference
             GeoPoint hipodestination = wp.sd.getStation().getPosition();
             newlookedlist = new ArrayList<>();//holger(lookedlist);
-            double costreturnhip = calculateWayCostReturnHeuristic(new ArrayList<>(), wp.sd, estimatedavbiketimenearest, hipodestination, newlookedlist, allstats, pd.probabilityReturn, timeoffset, false);
+            double costreturnhip = calculateCostReturnSecondary(new ArrayList<>(), wp.sd, estimatedavbikedistnearest, hipodestination, newlookedlist, allstats, pd.probabilityReturn, timeoffset, false);
             newlookedlist = new ArrayList<>();//holger(lookedlist);
-            double costreturnafterhip = calculateWayCostReturnHeuristic(new ArrayList<>(), wp.sd, estimatedavbiketimenearest, hipodestination, newlookedlist, allstats, pd.probabilityReturnAfterReturn, timeoffset, false);
+            double costreturnafterhip = calculateCostReturnSecondary(new ArrayList<>(), wp.sd, estimatedavbikedistnearest, hipodestination, newlookedlist, allstats, pd.probabilityReturnAfterReturn, timeoffset, false);
             double extracostreturn = (costreturnafterhip - costreturnhip);
 
             if (extracostreturn < 0 || extracosttake > 0) {
@@ -427,7 +461,7 @@ public class ComplexCostCalculatorNew2 {
             accreturncost += wp.returnprob * extracostreturn;
         }
 
-        double globalcost = usercostreturn + acctakecost + 0.5*accreturncost;
+        double globalcost = usercostreturn + acctakecost + accreturncost;
         sd.setIndividualCost(usercostreturn).setTakecostdiff(acctakecost).setReturncostdiff(accreturncost).setTotalCost(globalcost);
         return globalcost;
     }
