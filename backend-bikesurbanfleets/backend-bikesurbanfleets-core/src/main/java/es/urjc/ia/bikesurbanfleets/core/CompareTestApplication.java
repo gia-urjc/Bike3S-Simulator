@@ -27,9 +27,6 @@ public class CompareTestApplication {
     private static String historyDir;
     private static String analisisDir;
     private static String baseTestsDir;
-    private static String schemaPath;
-    private static String dataAnalyzerPath;
-    private static String analysisScriptPath;
 
     public static void main(String[] args) throws Exception {
         CompareTestApplication hs = new CompareTestApplication();
@@ -37,7 +34,6 @@ public class CompareTestApplication {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // the following parameters may have to be changes
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
         
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/prueba";
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_ usersrandom_halfbikes"
@@ -49,9 +45,6 @@ public class CompareTestApplication {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         String testFile = testsDir + "/tests.json";
-        schemaPath = projectDir + "/build/schema";
-        dataAnalyzerPath = projectDir + "/build/data-analyser";
-        analysisScriptPath = projectDir + "/tools/analysis-script/";
         hs.executeTests(testFile);
         System.out.println("tests execution finished");
         System.gc();

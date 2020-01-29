@@ -33,27 +33,6 @@ public class ApplicationAlberto {
 
     private static String PROJECT_HOME = "/Users/albertofernandez/git/Bike3S/";
 
-    private static CommandLine commandParser(String[] args) throws ParseException {
-
-        Options options = new Options();
-        options.addOption("globalSchema", true, "Directory to global schema validation");
-        options.addOption("usersSchema", true, "Directory to users schema validation");
-        options.addOption("stationsSchema", true, "Directory to stations schema validation");
-        options.addOption("globalConfig", true, "Directory to the global configuration file");
-        options.addOption("usersConfig", true, "Directory to the users configuration file");
-        options.addOption("stationsConfig", true, "Directory to the stations configuration file");
-        options.addOption("mapPath", true, "Directory to map");
-        options.addOption("demandDataFile", true, "The csv file with demand data");
-        options.addOption("historyOutput", true, "History Path for the simulation");
-        options.addOption("analysisOutput", true, "Analysis Path for the simulation");
-        options.addOption("validator", true, "Directory to the js validator");
-        options.addOption("callFromFrontend", false, "Backend has been called by frontend");
-
-        CommandLineParser parser = new DefaultParser();
-        return parser.parse(options, args);
-
-    }
-
     public static void main(String[] args) throws Exception {
 
         //Create auxiliary folder
@@ -62,26 +41,6 @@ public class ApplicationAlberto {
             auxiliaryDir.mkdirs();
         }
 
-        /*      CommandLine cmd;
-        try {
-            cmd = commandParser(args);
-        } catch (ParseException e1) {
-            System.out.println("Error reading params");
-            throw e1;
-        }
-
-        globalSchema = cmd.getOptionValue("globalSchema");
-        usersSchema = cmd.getOptionValue("usersSchema");
-        stationsSchema = cmd.getOptionValue("stationsSchema");
-        globalConfig = cmd.getOptionValue("globalConfig");
-        usersConfig = cmd.getOptionValue("usersConfig");
-        stationsConfig = cmd.getOptionValue("stationsConfig");
-        mapPath = cmd.getOptionValue("mapPath");
-        historyOutputPath = cmd.getOptionValue("historyOutput");
-        analysisOutputPath =cmd.getOptionValue("analysisOutput");
-        validator = cmd.getOptionValue("validator");
-        callFromFrontend = cmd.hasOption("callFromFrontend");
-         */
         globalSchema = "";
         usersSchema = "";
         stationsSchema = "";

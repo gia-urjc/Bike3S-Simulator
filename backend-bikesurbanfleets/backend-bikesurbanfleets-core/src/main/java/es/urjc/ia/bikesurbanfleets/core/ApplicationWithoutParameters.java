@@ -22,13 +22,9 @@ public class ApplicationWithoutParameters {
    
     public static void main(String[] args) throws Exception {
 
-     //    String projectDir= System.getProperty("user.dir") + File.separator;
-
-     String projectDir= "/Users/holger/";
-        String test="workspace/BikeProjects/Bike3S/Bike3STests/prueba2";
-        String basedir=projectDir+test;
-        GlobalConfigurationParameters.DEBUG_DIR=basedir+ "/debug";
-        System.out.println("Test:"+test);
+        String testDir="/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/prueba2";
+        GlobalConfigurationParameters.DEBUG_DIR=testDir+ "/debug";
+        System.out.println("Test:"+testDir);
 
         //Create auxiliary folders
         File auxiliaryDir = new File(GlobalConfigurationParameters.TEMP_DIR);
@@ -39,11 +35,11 @@ public class ApplicationWithoutParameters {
         if(!auxiliaryDir.exists()) {
             auxiliaryDir.mkdirs();
         }
-        globalConfig = basedir +"/conf/global_configuration.json";
-        usersConfig = basedir+ "/conf/users_configuration.json";
-        stationsConfig = basedir+ "/conf/stations_configuration.json";
-        historyOutputPath = basedir+ "/hist";
-        analysisOutputPath= basedir+"/analysis";
+        globalConfig = testDir +"/conf/global_configuration.json";
+        usersConfig = testDir+ "/conf/users_configuration.json";
+        stationsConfig = testDir+ "/conf/stations_configuration.json";
+        historyOutputPath = testDir+ "/hist";
+        analysisOutputPath= testDir+"/analysis";
 
         try {
             

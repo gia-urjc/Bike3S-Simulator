@@ -28,9 +28,6 @@ public class CompareDifferentUserfilesTests {
     private static String historyDir;
     private static String analisisDir;
     private static String baseTestsDir;
-    private static String schemaPath;
-    private static String dataAnalyzerPath;
-    private static String analysisScriptPath;
 
     public static void main(String[] args) throws Exception {
         CompareDifferentUserfilesTests hs = new CompareDifferentUserfilesTests();
@@ -38,8 +35,6 @@ public class CompareDifferentUserfilesTests {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // the following parameters may have to be changes
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        String projectDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3S-Simulator";
-        // String projectDir = System.getProperty("user.dir") + File.separator + "Bike3S";
         //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurr";
         //testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/newVersion/tests/utilityYsurroundWithDemand";
         //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/version_usersmax600/cost_complex_prediction";
@@ -49,9 +44,6 @@ public class CompareDifferentUserfilesTests {
 
         System.out.println("baseDir " + testsDir);
         String testFile = testsDir + "/tests.json";
-        schemaPath = projectDir + "/build/schema";
-        dataAnalyzerPath = projectDir + "/build/data-analyser";
-        analysisScriptPath = projectDir + "/tools/analysis-script/";
         hs.executeTests(testFile);
         System.out.println("tests execution finished");
         System.gc();
