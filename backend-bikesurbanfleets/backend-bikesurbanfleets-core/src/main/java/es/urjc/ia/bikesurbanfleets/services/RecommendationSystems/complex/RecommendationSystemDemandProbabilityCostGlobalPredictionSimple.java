@@ -26,14 +26,13 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
 
         private double desireableProbability = 0.8;
         private double MaxCostValue = 6000 ;
-        private double maxStationsToReccomend = 30;
         private int PredictionNorm=0;
         private int predictionWindow=900;
         private double normmultiplier=0.5;
 
         @Override
         public String toString() {
-            return  "normmultiplier=" + normmultiplier + ", predictionWindow="+ predictionWindow + ", PredictionNorm="+ PredictionNorm + ", desireableProbability"+ desireableProbability +  ", MaxCostValue=" + MaxCostValue  + ", maxStationsToReccomend=" + maxStationsToReccomend  ;
+            return  "normmultiplier=" + normmultiplier + ", predictionWindow="+ predictionWindow + ", PredictionNorm="+ PredictionNorm + ", desireableProbability"+ desireableProbability +  ", MaxCostValue=" + MaxCostValue    ;
         }
     }
     public String getParameterString(){
@@ -65,22 +64,11 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
     @Override
     protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
-        int i=0;
-        boolean goodfound = false;
         for (StationUtilityData sd : stationdata) {
-            if (i >= this.parameters.maxStationsToReccomend) {
-                break;
-            }
             if (sd.getProbabilityTake()> 0) {
-                if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= maxdistance) {
-                    goodfound = true;
-                }
                 double cost = scc.calculateCostsRentAtStation(sd, this.parameters.predictionWindow);
                 sd.setTotalCost(cost);
                 addrent(sd, orderedlist, maxdistance);
-                if (goodfound) {
-                    i++;
-                }
             }
         }
         reorder(orderedlist, true);
@@ -90,22 +78,11 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         @Override
     protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
-        int i=0;
-        boolean goodfound = false;
         for (StationUtilityData sd : stationdata) {
-            if (i >= this.parameters.maxStationsToReccomend) {
-                break;
-            }
             if (sd.getProbabilityReturn()> 0) {
-                if (sd.getProbabilityReturn() > this.parameters.desireableProbability) {
-                    goodfound = true;
-                }
                 double cost = scc.calculateCostsReturnAtStation(sd, this.parameters.predictionWindow);
                 sd.setTotalCost(cost);
                 addreturn(sd, orderedlist);
-                if (goodfound) {
-                    i++;
-                }
             }
         }
         reorder(orderedlist, false);

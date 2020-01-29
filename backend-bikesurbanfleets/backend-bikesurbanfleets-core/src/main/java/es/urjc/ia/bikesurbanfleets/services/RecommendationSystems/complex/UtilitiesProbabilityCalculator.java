@@ -16,7 +16,7 @@ import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
  */
 public abstract class UtilitiesProbabilityCalculator {
     
-    DemandManager dm;
+    protected DemandManager dm;
     public class ProbabilityData{
         public double probabilityTake;
         public double probabilityReturn;

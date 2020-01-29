@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
+package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.not_used_alternatives_not_better;
 
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.PastRecommendations.ExpBikeChangeResult;
@@ -21,6 +21,9 @@ public class UtilitiesGlobalLocalUtilityMethods {
 
     DemandManager dm;
 
+    public DemandManager getDemandManager(){
+        return dm;
+    }
     public UtilitiesGlobalLocalUtilityMethods(DemandManager dm) {
         this.dm = dm;
     }

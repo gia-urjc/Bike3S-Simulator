@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
+package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.not_used_alternatives_not_better;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
-import static es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.UtilitiesGlobalLocalUtilityMethods.getOpenSquaredUtility;
+import static es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.not_used_alternatives_not_better.UtilitiesGlobalLocalUtilityMethods.getOpenSquaredUtility;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
@@ -141,7 +141,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
 
     public List<StationUtilityData> getStationUtility(List<Station> stations, GeoPoint point, boolean rentbike) {
         LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
-        double currentglobalbikedemand=recutils.dm.getGlobalTakeRatePerHour(current);
+        double currentglobalbikedemand=recutils.getDemandManager().getGlobalTakeRatePerHour(current);
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stations) {
 
@@ -192,7 +192,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
         LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (Station other : otherstations) {
             factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
-            multiplication = recutils.dm.getStationTakeRatePerHour(other.getId(),current) * factor;
+            multiplication = recutils.getDemandManager().getStationTakeRatePerHour(other.getId(),current) * factor;
             accideal += multiplication;
         }
         return accideal;

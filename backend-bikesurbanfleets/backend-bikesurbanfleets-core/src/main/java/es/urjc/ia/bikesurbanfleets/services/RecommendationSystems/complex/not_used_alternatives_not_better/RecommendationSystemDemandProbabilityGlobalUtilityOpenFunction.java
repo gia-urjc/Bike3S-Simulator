@@ -1,4 +1,4 @@
-package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
+package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.not_used_alternatives_not_better;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
@@ -7,6 +7,7 @@ import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.RecommendationSystemDemandProbabilityBased;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import java.time.LocalDateTime;
 
@@ -65,7 +66,7 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         for (StationUtilityData sd : stationdata) {
             double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, true);
             double normedUtilityDiff = util
-                * recutils.dm.getStationTakeRatePerHour(sd.getStation().getId(),current);
+                * recutils.getDemandManager().getStationTakeRatePerHour(sd.getStation().getId(),current);
             sd.setUtility(normedUtilityDiff);
             addrent(sd, orderedlist, maxdistance);
         }
@@ -79,7 +80,7 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         for (StationUtilityData sd : stationdata) {
             double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, false);
             double normedUtilityDiff = util
-                * recutils.dm.getStationReturnRatePerHour(sd.getStation().getId(),current);
+                * recutils.getDemandManager().getStationReturnRatePerHour(sd.getStation().getId(),current);
             sd.setUtility(normedUtilityDiff);
             addreturn(sd, orderedlist);
         }

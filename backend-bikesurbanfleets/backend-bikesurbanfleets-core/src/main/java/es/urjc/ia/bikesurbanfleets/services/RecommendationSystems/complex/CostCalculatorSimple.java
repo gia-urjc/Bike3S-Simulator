@@ -38,18 +38,18 @@ public class CostCalculatorSimple {
     UtilitiesProbabilityCalculator probutils;
     final double normmultiplier;
     final double estimatedavwalktimenearest=150;
-    final double estimatedavbiketimenearest=1000;
+    final double estimatedavbiketimenearest=0;
 
 
     public double calculateCostRentSimple(StationUtilityData sd, double sdprob, double time) {
             if (time >maxCostValue) return time;
-            return  sdprob * time + (1-sdprob)* maxCostValue;
+            return  sdprob* time + (1-sdprob)* maxCostValue;
     }
 
     public double calculateCostReturnSimple(StationUtilityData sd, double sdprob, double biketime, double walktime) {
         double time= biketime+ walktime;
             if (time >maxCostValue) return time;
-            return  sdprob * time+ (1-sdprob)* maxCostValue;
+            return  sdprob* time+ (1-sdprob)* maxCostValue;
     }
 
     public double calculateCostsRentAtStation(StationUtilityData sd, double timeintervallforPrediction) {
@@ -78,7 +78,7 @@ public class CostCalculatorSimple {
         extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset) * sd.getProbabilityTake();
         extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset) * sd.getProbabilityTake();
         
-        double globalcost = usercosttake + extracosttake + 0*extracostreturn;
+        double globalcost = usercosttake + extracosttake + 1*extracostreturn;
         sd.setIndividualCost(usercosttake).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
                 .setTotalCost(globalcost);
         return globalcost;
@@ -108,7 +108,7 @@ public class CostCalculatorSimple {
         extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset) * sd.getProbabilityReturn();
         extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset)* sd.getProbabilityReturn();
 
-        double globalcost = usercostreturn+extracosttake+0.5*extracostreturn;
+        double globalcost = usercostreturn+extracosttake+1*extracostreturn;
         sd.setIndividualCost(usercostreturn).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
                 .setTotalCost(globalcost);
         return globalcost;

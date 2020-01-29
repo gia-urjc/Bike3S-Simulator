@@ -47,7 +47,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     }
 
     private RecommendationParameters parameters;
-    private ComplexCostCalculatorNew2 ucc;
+    private ComplexCostCalculator ucc;
     private CostCalculatorSimple scc;
 
     public RecommendationSystemDemandProbabilityCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
@@ -62,7 +62,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
         // if you want another behaviour, then you should overwrite getParameters in this calss
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
-        ucc = new ComplexCostCalculatorNew2(parameters.minimumMarginProbability, parameters.AbandonPenalisation, parameters.unsucesscostRentPenalisation,
+        ucc = new ComplexCostCalculator(parameters.minimumMarginProbability, parameters.AbandonPenalisation, parameters.unsucesscostRentPenalisation,
                 parameters.unsucesscostReturnPenalisation,
                 straightLineWalkingVelocity,
                 straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
@@ -105,19 +105,7 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             }
         }
 
-        //test probability
-        List<StationUtilityData> orderedlist2 = new ArrayList<>();
-        for (StationUtilityData sd : stationdata) {
-            addrentprob(sd, orderedlist2, maxdistance);
-        }
-        if ((orderedlist.isEmpty() != orderedlist2.isEmpty()) || (!orderedlist.isEmpty() &&
-                orderedlist.get(0).getStation().getId() != orderedlist2.get(0).getStation().getId())) {
-            System.out.println("!!!Different take:");
-
-        }
-        System.out.println("prob:");
-        printAux(orderedlist2, true);
-
+ 
         return orderedlist;
     }
 
@@ -149,18 +137,6 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             }
 
         }
-        //test probability
-        List<StationUtilityData> orderedlist2 = new ArrayList<>();
-        for (StationUtilityData sd : stationdata) {
-            addreturnprob(sd, orderedlist2);
-        }
-        if ((orderedlist.isEmpty() != orderedlist2.isEmpty()) || (!orderedlist.isEmpty() &&
-                orderedlist.get(0).getStation().getId() != orderedlist2.get(0).getStation().getId())) {
-            System.out.println("!!!Different return:");
-
-        }
-        System.out.println("prob:");
-        printAux(orderedlist2, false);
 
         return orderedlist;
     }
@@ -188,114 +164,6 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
             return false;
         }
   */     return newSD.getTotalCost() < oldSD.getTotalCost();
-    }
-
-    ///////////////////////
-    //methods for comparing with probability
-    ///////////////////////
-    protected boolean betterOrSameRentprob(StationUtilityData newSD, StationUtilityData oldSD) {
- /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
-                && oldSD.getProbabilityTake() < this.parameters.desireableProbability) {
-            return true;
-        }
-        if (newSD.getProbabilityTake() < this.parameters.desireableProbability
-                && oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-            return false;
-        }
-   */     double timediff = (newSD.getWalkTime() - oldSD.getWalkTime());
-        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * this.parameters.unsucesscostRentPenalisation;
-        return probdiff > timediff;
-    }
-
-    protected boolean betterOrSameReturnprob(StationUtilityData newSD, StationUtilityData oldSD) {
-  /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
-                && oldSD.getProbabilityReturn() < this.parameters.desireableProbability) {
-            return true;
-        }
-        if (newSD.getProbabilityReturn() < this.parameters.desireableProbability
-                && oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
-            return false;
-        }
-  */      double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
-                - (oldSD.getBiketime() + oldSD.getWalkTime()));
-        double probdiff = (newSD.getProbabilityReturn() - oldSD.getProbabilityReturn()) * this.parameters.unsucesscostReturnPenalisation;
-        return probdiff > timediff;
-    }
-
-
-    protected void addrentprob(StationUtilityData newSD, List<StationUtilityData> temp, double maxdistance) {
-        int i = 0;
-        for (; i < temp.size(); i++) {
-            StationUtilityData oldSD=temp.get(i);
-            if (newSD.getWalkdist() <= maxdistance && oldSD.getWalkdist() > maxdistance)  break;
-            if (newSD.getWalkdist() > maxdistance && oldSD.getWalkdist() <= maxdistance)  continue;
-            if (betterOrSameRentprob(newSD, oldSD)) {
-                break;
-            }
-        }
-        temp.add(i, newSD);
-    }
-
-    protected void addreturnprob(StationUtilityData d, List<StationUtilityData> temp) {
-        int i = 0;
-        for (; i < temp.size(); i++) {
-            if (betterOrSameReturnprob(d, temp.get(i))) {
-                break;
-            }
-        }
-        temp.add(i, d);
-    }
-
-    void printAux(List<StationUtilityData> su, boolean take) {
-        if (printHints) {
-            int max = Math.min(3, su.size());
-            //     if (su.get(0).getStation().getId()==8) max=173;
-            //     else return;
-
-            if (take) {
-                System.out.println("Time (take):" + SimulationDateTime.getCurrentSimulationDateTime() + "(" + SimulationDateTime.getCurrentSimulationInstant() + ")");
-
-                if (su.get(0).getProbabilityTake() < 0.6) {
-                    System.out.format("[Info] LOW PROB Take %9.8f %n", su.get(0).getProbabilityTake());
-                }
-                System.out.println("             id av ca   wtime    prob   cost");
-                for (int i = 0; i < max; i++) {
-                    StationUtilityData s = su.get(i);
-                    double cost = s.getWalkTime() + 6000 * (1 - s.getProbabilityTake());
-                    System.out.format("%-3d Station %3d %2d %2d %7.1f %6.5f %9.2f ",
-                            i + 1,
-                            s.getStation().getId(),
-                            s.getStation().availableBikes(),
-                            s.getStation().getCapacity(),
-                            s.getWalkTime(),
-                            s.getProbabilityTake(),
-                            cost);
-                    System.out.println("");
-                }
-            } else {
-                System.out.println("Time (return):" + SimulationDateTime.getCurrentSimulationDateTime() + "(" + SimulationDateTime.getCurrentSimulationInstant() + ")");
-                if (su.get(0).getBiketime()>10000)System.out.println("Biketime high");
-                if (su.get(0).getProbabilityReturn() < 0.6) {
-                    System.out.format("[Info] LOW PROB Return %9.8f %n", su.get(0).getProbabilityReturn());
-                }
-                System.out.println("             id av ca   wtime   btime    prob   cost");
-                for (int i = 0; i < max; i++) {
-                    StationUtilityData s = su.get(i);
-                    double cost = s.getWalkTime() + s.getBiketime() + 6000 * (1 - s.getProbabilityReturn());
-                    System.out.format("%-3d Station %3d %2d %2d %7.1f %7.1f %6.5f %9.2f ",
-                            i + 1,
-                            s.getStation().getId(),
-                            s.getStation().availableBikes(),
-                            s.getStation().getCapacity(),
-                            s.getWalkTime(),
-                            s.getBiketime(),
-                            s.getProbabilityReturn(),
-                            cost);
-                    System.out.println("");
-                }
-            }
-            System.out.println();
-        }
     }
 
 }
