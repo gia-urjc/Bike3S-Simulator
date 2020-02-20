@@ -30,9 +30,8 @@ public class StationProbabilitiesQueueBased {
             k4=new double[capacity+1];
            
         }
-        calculateProbs(initialnumberbikes) ;
     }
-    private void calculateProbs (int initialnumberbikes){
+    public void calculateProbsNormal(int initialnumberbikes){
         if (endtime<h) 
             throw new RuntimeException("invalid endtime");
         
@@ -55,22 +54,50 @@ public class StationProbabilitiesQueueBased {
         }
         probabilities=oldprobs;
     }
-       public double [] getProbabilityDistribution(){
-           return probabilities;
-       } 
-    public double bikeProbability(){
+    public void calculateProbsWithKnownChangesInitiallyadded(int knownchanges,int initialnumberbikes){
+        if (endtime<h) 
+            throw new RuntimeException("invalid endtime");
         
+        int modinitbikes=initialnumberbikes+knownchanges;
+        if (modinitbikes<0) modinitbikes=0;
+        if (modinitbikes>capacity) modinitbikes=capacity;
+
+        double[] oldprobs=new double[capacity+1];
+        double[] newprobs=new double[capacity+1];
+        for (int i=0; i<=capacity; i++){
+            oldprobs[i]=0;
+        }
+        oldprobs[modinitbikes]=1;
+        
+        double accumulated_h=0;
+        double [] auxpr;
+        while(accumulated_h<=endtime){
+            updater.update(oldprobs,newprobs);
+            accumulated_h=accumulated_h+h;
+            auxpr=oldprobs;
+            oldprobs=newprobs;
+            newprobs=auxpr;
+        }
+        probabilities=oldprobs;
+    }
+
+    public double [] getProbabilityDistribution(){
+           return probabilities;
+    } 
+    //accumulated probability P(x>=k) (there are more or igual k bikes
+    public double BikeProbability(int k){
         double p=0;
-        for (int i=1; i<=capacity; i++){
+        for (int i=Math.max(0,k); i<=capacity; i++){
             p=p+probabilities[i];
         }
         return p;
     }
     
-    public double slotProbability(){
-        
+    //accumulated probability P(x<=k) (there are more or igual k slots
+    public double SlotProbability(int k){
+        k=Math.min(capacity-k, capacity);
         double p=0;
-        for (int i=0; i<capacity; i++){
+        for (int i=0; i<=k; i++){
             p=p+probabilities[i];
         }
         return p;
