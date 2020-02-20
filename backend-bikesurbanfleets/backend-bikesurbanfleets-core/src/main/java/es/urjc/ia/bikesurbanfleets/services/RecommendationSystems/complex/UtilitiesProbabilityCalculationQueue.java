@@ -11,24 +11,27 @@ That is here, expected bikes in the futer (or takes of bikes) are treated as if 
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
 import es.urjc.ia.bikesurbanfleets.common.util.ProbabilityDistributions;
+import es.urjc.ia.bikesurbanfleets.common.util.StationProbabilitiesQueueBased;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import java.util.Map;
 
 /**
  *
  * @author holger
  */
-public class UtilitiesProbabilityCalculation extends UtilitiesProbabilityCalculator{
+public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCalculator{
   
     final private double probabilityUsersObey ;
     final private boolean takeintoaccountexpected ;
     final private boolean takeintoaccountcompromised ;
     final private PastRecommendations pastrecs;
     final private int additionalResourcesDesiredInProbability;
+    final private double h=0.05D;
     
-    public UtilitiesProbabilityCalculation(DemandManager dm, PastRecommendations pastrecs, double probabilityUsersObey,
+    public UtilitiesProbabilityCalculationQueue(DemandManager dm, PastRecommendations pastrecs, double probabilityUsersObey,
             boolean takeintoaccountexpected, boolean takeintoaccountcompromised, int additionalResourcesDesiredInProbability
     ) {
         this.dm = dm;
@@ -42,8 +45,40 @@ public class UtilitiesProbabilityCalculation extends UtilitiesProbabilityCalcula
         this.additionalResourcesDesiredInProbability=additionalResourcesDesiredInProbability;
     }
 
-   // Probabilities form now to timeoffset 
+    private class IntTuple{
+        int avcap;
+        int avbikes;
+        int minpostchanges=0;
+        int maxpostchanges=0;
+    }
+    // get current capacity and available bikes
+    // this takes away reserved bikes and slots and takes into account expected changes
+    private IntTuple getAvailableCapandBikes(Station s, double timeoffset) {
+        IntTuple res =new IntTuple();
+        res.avcap=s.getCapacity()-s.getReservedBikes()-s.getReservedSlots();
+        res.avbikes=s.availableBikes();
+        if (takeintoaccountexpected) {
+            PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
+            res.avbikes += (int) Math.floor(er.changes * probabilityUsersObey);
+            if (takeintoaccountcompromised) {
+                res.maxpostchanges=(int) Math.floor(er.maxpostchanges * probabilityUsersObey);
+                res.minpostchanges=(int) Math.floor(er.minpostchanges * probabilityUsersObey);
+            }
+        }
+        return res;
+    }
+
+    // Probabilities form now to timeoffset 
     public double calculateTakeProbability(Station s, double timeoffset) {
+        IntTuple avCB=getAvailableCapandBikes( s,  timeoffset);
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+
+        StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
+                takedemandrate,avCB.avcap,1,estimatedbikes);
+        return pc.bikeProbability(); 
+
         int estimatedbikes = s.availableBikes();
         if (takeintoaccountexpected) {
             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
@@ -57,10 +92,11 @@ public class UtilitiesProbabilityCalculation extends UtilitiesProbabilityCalcula
         double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
-        //probability that a bike exists and that is exists after taking one 
-        int k = 1 - estimatedbikes;
-        double probbike = ProbabilityDistributions.calculateUpCDFSkellamProbability(returndemandrate, takedemandrate, k);
-        return probbike;
+        StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
+                takedemandrate,s.getCapacity(),1,estimatedbikes
+        );
+        return pc.bikeProbability(); 
     }
     public double calculateReturnProbability(Station s, double timeoffset) {
         int estimatedslots = s.availableSlots();
@@ -77,10 +113,11 @@ public class UtilitiesProbabilityCalculation extends UtilitiesProbabilityCalcula
         double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
-        //probability that a slot exists and that is exists after taking one 
-        int k = 1 - estimatedslots;
-        double probslot = ProbabilityDistributions.calculateUpCDFSkellamProbability(takedemandrate, returndemandrate, k);
-        return probslot;
+        StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,takedemandrate,
+                returndemandrate,s.getCapacity(),1,estimatedslots
+        );
+        return pc.bikeProbability(); 
     }
     //methods for calculation probabilities    
     public ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
@@ -104,16 +141,24 @@ public class UtilitiesProbabilityCalculation extends UtilitiesProbabilityCalcula
         double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
 
-        //probability that a bike exists and that isexists after taking one 
-        int k = 1 - estimatedbikes;
-        pd.probabilityTake = ProbabilityDistributions.calculateUpCDFSkellamProbability(returndemandrate, takedemandrate, k);
-        pd.probabilityTakeAfterTake = pd.probabilityTake - ProbabilityDistributions.calculateSkellamProbability(returndemandrate, takedemandrate, k);
+        StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
+                takedemandrate,s.getCapacity(),1,estimatedbikes);
+        pd.probabilityTake = pc.bikeProbability();
+        pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
+                takedemandrate,s.getCapacity(),1,estimatedbikes-1);
+        pd.probabilityTakeAfterTake = pc.bikeProbability();
 
         //probability that a slot exists and that is exists after taking one 
-        k = 1 - estimatedslots;
-        pd.probabilityReturn = ProbabilityDistributions.calculateUpCDFSkellamProbability(takedemandrate, returndemandrate, k);
-        k = k - 1;
-        pd.probabilityReturnAfterTake = pd.probabilityReturn + ProbabilityDistributions.calculateSkellamProbability(takedemandrate, returndemandrate, k);
+        pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,takedemandrate,
+                returndemandrate,s.getCapacity(),1,estimatedslots);
+        pd.probabilityReturn = pc.bikeProbability();
+        pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,takedemandrate,
+                returndemandrate,s.getCapacity(),1,estimatedslots+1);
+        pd.probabilityReturnAfterTake = pc.bikeProbability();
 
         return pd;
     }
@@ -141,15 +186,24 @@ public class UtilitiesProbabilityCalculation extends UtilitiesProbabilityCalcula
         double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
 
         //probability that a bike exists and that is exists after taking one 
-        int k = 1 - estimatedbikes;
-        pd.probabilityTake = ProbabilityDistributions.calculateUpCDFSkellamProbability(returndemandrate, takedemandrate, k);
-        k = k - 1;
-        pd.probabilityTakeAfterRerturn = pd.probabilityTake + ProbabilityDistributions.calculateSkellamProbability(returndemandrate, takedemandrate, k);
+        StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
+                takedemandrate,s.getCapacity(),1,estimatedbikes);
+        pd.probabilityTake = pc.bikeProbability();
+        pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
+                takedemandrate,s.getCapacity(),1,estimatedbikes+1);
+        pd.probabilityTakeAfterRerturn = pc.bikeProbability();
 
         //probability that a slot exists and that is exists after taking one 
-        k = 1 - estimatedslots;
-        pd.probabilityReturn = ProbabilityDistributions.calculateUpCDFSkellamProbability(takedemandrate, returndemandrate, k);
-        pd.probabilityReturnAfterReturn = pd.probabilityReturn - ProbabilityDistributions.calculateSkellamProbability(takedemandrate, returndemandrate, k);
+        pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,takedemandrate,
+                returndemandrate,s.getCapacity(),1,estimatedslots);
+        pd.probabilityReturn = pc.bikeProbability();
+        pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,takedemandrate,
+                returndemandrate,s.getCapacity(),1,estimatedslots-1);
+        pd.probabilityReturnAfterReturn = pc.bikeProbability();
 
         return pd;
 
