@@ -16,6 +16,7 @@ import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import java.util.Map;
 
 /**
  *
@@ -44,8 +45,40 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
         this.additionalResourcesDesiredInProbability=additionalResourcesDesiredInProbability;
     }
 
-   // Probabilities form now to timeoffset 
+    private class IntTuple{
+        int avcap;
+        int avbikes;
+        int minpostchanges=0;
+        int maxpostchanges=0;
+    }
+    // get current capacity and available bikes
+    // this takes away reserved bikes and slots and takes into account expected changes
+    private IntTuple getAvailableCapandBikes(Station s, double timeoffset) {
+        IntTuple res =new IntTuple();
+        res.avcap=s.getCapacity()-s.getReservedBikes()-s.getReservedSlots();
+        res.avbikes=s.availableBikes();
+        if (takeintoaccountexpected) {
+            PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
+            res.avbikes += (int) Math.floor(er.changes * probabilityUsersObey);
+            if (takeintoaccountcompromised) {
+                res.maxpostchanges=(int) Math.floor(er.maxpostchanges * probabilityUsersObey);
+                res.minpostchanges=(int) Math.floor(er.minpostchanges * probabilityUsersObey);
+            }
+        }
+        return res;
+    }
+
+    // Probabilities form now to timeoffset 
     public double calculateTakeProbability(Station s, double timeoffset) {
+        IntTuple avCB=getAvailableCapandBikes( s,  timeoffset);
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+
+        StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
+                takedemandrate,avCB.avcap,1,estimatedbikes);
+        return pc.bikeProbability(); 
+
         int estimatedbikes = s.availableBikes();
         if (takeintoaccountexpected) {
             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
