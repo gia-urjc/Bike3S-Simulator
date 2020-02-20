@@ -80,14 +80,13 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
             }
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } else {
-            result = new ArrayList<>();
-            System.out.println("no recommendation for take at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
+            result = new ArrayList<>(0);
         }
         return result;
     }
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
-        List<Recommendation> result = new ArrayList<>();
+        List<Recommendation> result ;
         List<Station> stations = validStationsToReturnBike(stationManager.consultStations()).stream().collect(Collectors.toList());
 
         if (!stations.isEmpty()) {
@@ -98,8 +97,8 @@ public class RecommendationSystemDemandLocalUtilitiesWithDistanceClosedFunction 
             }
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
         } else {
-            System.out.println("no recommendation for return at Time:" + SimulationDateTime.getCurrentSimulationDateTime());
-        }
+           result = new ArrayList<>(0);
+         }
         return result;
     }
 

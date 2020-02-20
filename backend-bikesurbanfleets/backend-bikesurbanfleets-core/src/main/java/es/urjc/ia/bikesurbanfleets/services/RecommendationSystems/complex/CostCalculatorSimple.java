@@ -78,7 +78,7 @@ public class CostCalculatorSimple {
         extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset) * sd.getProbabilityTake();
         extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset) * sd.getProbabilityTake();
         
-        double globalcost = usercosttake + extracosttake + 1*extracostreturn;
+        double globalcost = usercosttake + extracosttake + extracostreturn;
         sd.setIndividualCost(usercosttake).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
                 .setTotalCost(globalcost);
         return globalcost;
@@ -108,7 +108,7 @@ public class CostCalculatorSimple {
         extracosttake = extracosttake * getTakeFactor(sd.getStation(), timeoffset) * sd.getProbabilityReturn();
         extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), timeoffset)* sd.getProbabilityReturn();
 
-        double globalcost = usercostreturn+extracosttake+1*extracostreturn;
+        double globalcost = usercostreturn+extracosttake+extracostreturn;
         sd.setIndividualCost(usercostreturn).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
                 .setTotalCost(globalcost);
         return globalcost;

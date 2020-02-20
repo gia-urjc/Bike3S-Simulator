@@ -119,16 +119,13 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             pastrecs.addExpectedBikechange(first.getStation().getId(),
                     (int) (dist / straightLineWalkingVelocity), true);
         } else {
-            result = new ArrayList<>();
-   //         if (printHints) {
-                System.out.println("[Warn] no recommendation for take (no valid station in distance "+ maxdist+ ") at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
-     //       }
+            result = new ArrayList<>(0);
         }
         return result;
     }
     
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
-        List<Recommendation> result = new ArrayList<>();
+        List<Recommendation> result;
         List<StationUtilityData> candidatestations = getCandidateStationsReturnOrderedByDistance(destination, currentposition);
         
         //now do the specific calculation to get the final list of recommended stations
@@ -150,9 +147,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             pastrecs.addExpectedBikechange(first.getStation().getId(),
                     (int) (dist / straightLineCyclingVelocity), false);
         } else {
-//            if (printHints) {
-                System.out.println("[Warn] no recommendation for return at Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
- //           }
+            result = new ArrayList<>(0);
         }
         return result;
     }
