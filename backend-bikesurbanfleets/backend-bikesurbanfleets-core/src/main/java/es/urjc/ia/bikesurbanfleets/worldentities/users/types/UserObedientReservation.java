@@ -47,11 +47,11 @@ public class UserObedientReservation extends UserUninformedReservation {
         } else {
             if (printHints) {
                 if (!originRecommendedStations.isEmpty() && noStationAtdist) {
-                    System.out.println("[Warn] User " + this.getId() + " not accepted recommended station when taking because of distance: " + originRecommendedStations.get(0).getStation().getPosition().distanceTo(this.getPosition()));
+                    System.out.println("[UserInfo] User " + this.getId() + " not accepted recommended station when taking because of distance: " + originRecommendedStations.get(0).getStation().getPosition().distanceTo(this.getPosition()));
                 } else if (!originRecommendedStations.isEmpty() && !noStationAtdist) {
-                    System.out.println("[Warn] User " + this.getId() + " no station used (all recommendation tried already) ");
+                    System.out.println("[UserInfo] User " + this.getId() + " no station used (all recommendation tried already) ");
                 } else {
-                    System.out.println("[Warn] User " + this.getId() + " no recommendation obtained ");
+                    System.out.println("[UserInfo] User " + this.getId() + " no recommendation obtained ");
                  }
             }
         }

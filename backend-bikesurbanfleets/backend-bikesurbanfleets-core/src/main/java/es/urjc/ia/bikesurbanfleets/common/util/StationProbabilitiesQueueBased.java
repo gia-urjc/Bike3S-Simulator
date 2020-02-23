@@ -7,12 +7,12 @@ package es.urjc.ia.bikesurbanfleets.common.util;
 public class StationProbabilitiesQueueBased {
     double[] probabilities;
     int capacity;
-    double lambda;
-    double my;
+    final double lambda;
+    final double  my;
     double h;
     double endtime;
     public enum Type  {Euler, RungeKutta};
-    Updater updater;
+    final Updater updater;
     
     Type type; 
     public StationProbabilitiesQueueBased(Type type, double h,double lambda, double my, int capacity, double endtime, int initialnumberbikes){
@@ -20,16 +20,17 @@ public class StationProbabilitiesQueueBased {
         this.lambda=lambda;
         this.my=my;
         this.h=h;
+        double hcheck=1D/(Math.max(lambda, my)*2);
+        if (this.h>hcheck) this.h=hcheck;
         this.endtime=endtime;
         if (type==Type.Euler) updater=EulerUpdater;
-        if (type==Type.RungeKutta) {
+        else if (type==Type.RungeKutta) {
             updater=RungeKutta4Updater;
             k1=new double[capacity+1];
             k2=new double[capacity+1];
             k3=new double[capacity+1];
             k4=new double[capacity+1];
-           
-        }
+        } else updater=null;
         calculateProbs(initialnumberbikes) ;
     }
     private void calculateProbs (int initialnumberbikes){
@@ -58,19 +59,20 @@ public class StationProbabilitiesQueueBased {
        public double [] getProbabilityDistribution(){
            return probabilities;
        } 
-    public double bikeProbability(){
-        
+    //accumulated probability P(x>=k) (there are more or igual k bikes
+    public double kOrMoreBikesProbability(int k){
         double p=0;
-        for (int i=1; i<=capacity; i++){
+        for (int i=Math.max(0,k); i<=capacity; i++){
             p=p+probabilities[i];
         }
         return p;
     }
     
-    public double slotProbability(){
-        
+    //accumulated probability P(x<=k) (there are more or igual k slots
+    public double kOrMoreSlotsProbability(int k){
+        k=Math.min(capacity-k, capacity);
         double p=0;
-        for (int i=0; i<capacity; i++){
+        for (int i=0; i<=k; i++){
             p=p+probabilities[i];
         }
         return p;

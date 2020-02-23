@@ -92,7 +92,7 @@ public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesPro
         return probslot;
     }
     //methods for calculation probabilities    
-    public ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) {
         ProbabilityData pd=new ProbabilityData();
         Station s = sd.getStation();
         int currentbikes = s.availableBikes();
@@ -132,7 +132,7 @@ public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesPro
     }
 
     //methods for calculation probabilities    
-    public ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) {
         ProbabilityData pd=new ProbabilityData();
         Station s = sd.getStation();
         int currentbikes = s.availableBikes();
@@ -172,7 +172,7 @@ public class UtilitiesProbabilityCalculationWithConditional extends UtilitiesPro
     }
  
     //methods for calculation probabilities    
-    public ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) {
         ProbabilityData pd=new ProbabilityData();
         Station s = sd.getStation();
         int currentbikes = s.availableBikes();

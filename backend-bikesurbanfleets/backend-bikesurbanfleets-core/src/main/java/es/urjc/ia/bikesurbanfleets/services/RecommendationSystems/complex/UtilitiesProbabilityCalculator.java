@@ -31,18 +31,9 @@ public abstract class UtilitiesProbabilityCalculator {
     public abstract double calculateReturnProbability(Station s, double timeoffset) ;
     
     //methods for calculation probabilities    
-    public abstract ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant);
-    public ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, double offsetinstantArrivalCurrent, double futureinstant){
-        return calculateAllTakeProbabilitiesWithArrival( sd, (long) offsetinstantArrivalCurrent, (long) futureinstant);
-    };
-    public abstract ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) ;
-    public ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, double offsetinstantArrivalCurrent, double futureinstant){
-        return calculateAllReturnProbabilitiesWithArrival( sd, (long) offsetinstantArrivalCurrent, (long) futureinstant);
-    };
-    public abstract ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) ;
-    public ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, double offsetinstantArrivalCurrent, double futureinstant){
-        return calculateAllProbabilitiesWithArrival( sd, (long) offsetinstantArrivalCurrent, (long) futureinstant);
-    };
+    public abstract ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, double futureinstant);
+    public abstract ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) ;
+    public abstract ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) ;
     
     //methods for calculation probabilities    
     public abstract double calculateProbabilityAtLeast1UserArrivingForTake(Station s, double timeoffset) ;

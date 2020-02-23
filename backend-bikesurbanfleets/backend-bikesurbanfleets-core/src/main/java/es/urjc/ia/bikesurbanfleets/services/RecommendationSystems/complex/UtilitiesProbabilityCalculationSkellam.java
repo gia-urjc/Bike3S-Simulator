@@ -83,13 +83,13 @@ public class UtilitiesProbabilityCalculationSkellam extends UtilitiesProbability
         return probslot;
     }
     //methods for calculation probabilities    
-    public ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, double timeoffset) {
         ProbabilityData pd=new ProbabilityData();
         Station s = sd.getStation();
         int estimatedbikes = s.availableBikes();
         int estimatedslots = s.availableSlots();
         if (takeintoaccountexpected) {
-            PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), futureinstant);
+            PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
             estimatedbikes += (int) Math.floor(er.changes * probabilityUsersObey);
             estimatedslots -= (int) Math.floor(er.changes * probabilityUsersObey);
             if (takeintoaccountcompromised) {
@@ -101,8 +101,8 @@ public class UtilitiesProbabilityCalculationSkellam extends UtilitiesProbability
         }
         estimatedbikes -=additionalResourcesDesiredInProbability;
         estimatedslots -=additionalResourcesDesiredInProbability;
-        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
-        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a bike exists and that isexists after taking one 
         int k = 1 - estimatedbikes;
@@ -119,13 +119,13 @@ public class UtilitiesProbabilityCalculationSkellam extends UtilitiesProbability
     }
 
      //methods for calculation probabilities    
-    public ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, double timeoffset) {
         ProbabilityData pd=new ProbabilityData();
         Station s = sd.getStation();
         int estimatedbikes = s.availableBikes();
         int estimatedslots = s.availableSlots();
         if (takeintoaccountexpected) {
-            PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), futureinstant);
+            PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
             estimatedbikes += (int) Math.floor(er.changes * probabilityUsersObey);
             estimatedslots -= (int) Math.floor(er.changes * probabilityUsersObey);
             if (takeintoaccountcompromised) {
@@ -137,8 +137,8 @@ public class UtilitiesProbabilityCalculationSkellam extends UtilitiesProbability
         }
         estimatedbikes -=additionalResourcesDesiredInProbability;
         estimatedslots -=additionalResourcesDesiredInProbability;
-        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
-        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a bike exists and that is exists after taking one 
         int k = 1 - estimatedbikes;
@@ -156,13 +156,13 @@ public class UtilitiesProbabilityCalculationSkellam extends UtilitiesProbability
     }
    
     //methods for calculation probabilities    
-    public ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, double timeoffset) {
         ProbabilityData pd=new ProbabilityData();
         Station s = sd.getStation();
         int estimatedbikes = s.availableBikes();
         int estimatedslots = s.availableSlots();
         if (takeintoaccountexpected) {
-            PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), futureinstant);
+            PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
             estimatedbikes += (int) Math.floor(er.changes * probabilityUsersObey);
             estimatedslots -= (int) Math.floor(er.changes * probabilityUsersObey);
             if (takeintoaccountcompromised) {
@@ -174,8 +174,8 @@ public class UtilitiesProbabilityCalculationSkellam extends UtilitiesProbability
         }
         estimatedbikes -=additionalResourcesDesiredInProbability;
         estimatedslots -=additionalResourcesDesiredInProbability;
-        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
-        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), futureinstant);
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
 
         //probability that a bike exists and that is exists after taking one 
         int k = 1 - estimatedbikes;

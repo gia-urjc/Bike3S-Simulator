@@ -25,7 +25,7 @@ public class GlobalConfigurationParameters {
     
 
         // the velocities here are real (estimated velocities)
-        // assuming real velocities of 1.1 m/s and 4 m/s for walking and biking (aprox. to 4 and 14,4 km/h)
+        // assuming real velocities of 1.4 m/s and 4 m/s for walking and biking (aprox. to 4 and 14,4 km/h)
         //Later the velocities are adjusted to straight line velocities
         //given a straight line distance d, the real distance dr may be estimated  
         // as dr=f*d, whewre f will be between 1 and sqrt(2) (if triangle).
@@ -39,7 +39,7 @@ public class GlobalConfigurationParameters {
     public final static double DEFAULT_CYCLING_VELOCITY=4.0D;
     //The factor used to conevrt straight line distances or times or velocity to approximate real times, distance, velocitioes
     public final static double STRAIGT_LINE_FACTOR_BIKE=1.6D;
-    public final static double STRAIGT_LINE_FACTOR_FOOT=1.3D;
+    public final static double STRAIGT_LINE_FACTOR_FOOT=1.8D;
     
 
 }

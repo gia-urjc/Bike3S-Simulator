@@ -98,7 +98,11 @@ public class UtilitiesProbabilityCalculationReducedTime extends UtilitiesProbabi
         return probslot;
     }
     //methods for calculation probabilities    
-    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) {
+//just included for compilation
+//the next line should be passed as a parameter
+        long offsetinstantArrivalCurrent=0;
+// until here
         UtilitiesProbabilityCalculator.ProbabilityData pd=new UtilitiesProbabilityCalculator.ProbabilityData();
         Station s = sd.getStation();
         
@@ -122,7 +126,7 @@ public class UtilitiesProbabilityCalculationReducedTime extends UtilitiesProbabi
         if (offsetlastexpected<0 || offsetinstantArrivalCurrent<0) throw new RuntimeException("imposible path");
         if(offsetinstantArrivalCurrent>offsetlastexpected && offsetinstantArrivalCurrent<=futureinstant){
             h.lastknownChangeTime=SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(offsetinstantArrivalCurrent);
-            h.newoffset=futureinstant-offsetinstantArrivalCurrent;
+            h.newoffset=(long)(futureinstant-offsetinstantArrivalCurrent);
             takedemandrate = dm.getStationTakeRateIntervall(s.getId(), h.lastknownChangeTime, h.newoffset);
             returndemandrate = dm.getStationReturnRateIntervall(s.getId(), h.lastknownChangeTime, h.newoffset);
         }
@@ -132,7 +136,11 @@ public class UtilitiesProbabilityCalculationReducedTime extends UtilitiesProbabi
     }
 
      //methods for calculation probabilities    
-    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) {
+//just included for compilation
+//the next line should be passed as a parameter
+        long offsetinstantArrivalCurrent=0;
+// until here
         UtilitiesProbabilityCalculator.ProbabilityData pd=new UtilitiesProbabilityCalculator.ProbabilityData();
         Station s = sd.getStation();
         
@@ -156,7 +164,7 @@ public class UtilitiesProbabilityCalculationReducedTime extends UtilitiesProbabi
         if (offsetlastexpected<0 || offsetinstantArrivalCurrent<0) throw new RuntimeException("imposible path");
         if(offsetinstantArrivalCurrent>offsetlastexpected && offsetinstantArrivalCurrent<=futureinstant){
             h.lastknownChangeTime=SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(offsetinstantArrivalCurrent);
-            h.newoffset=futureinstant-offsetinstantArrivalCurrent;
+            h.newoffset=(long)(futureinstant-offsetinstantArrivalCurrent);
             takedemandrate = dm.getStationTakeRateIntervall(s.getId(), h.lastknownChangeTime, h.newoffset);
             returndemandrate = dm.getStationReturnRateIntervall(s.getId(), h.lastknownChangeTime, h.newoffset);
         }
@@ -165,7 +173,11 @@ public class UtilitiesProbabilityCalculationReducedTime extends UtilitiesProbabi
         return pd;
     }
     //methods for calculation probabilities    
-    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) {
+//just included for compilation
+//the next line should be passed as a parameter
+        long offsetinstantArrivalCurrent=0;
+// until here
         UtilitiesProbabilityCalculator.ProbabilityData pd=new UtilitiesProbabilityCalculator.ProbabilityData();
         Station s = sd.getStation();
         
@@ -189,7 +201,7 @@ public class UtilitiesProbabilityCalculationReducedTime extends UtilitiesProbabi
         if (offsetlastexpected<0 || offsetinstantArrivalCurrent<0) throw new RuntimeException("imposible path");
         if(offsetinstantArrivalCurrent>offsetlastexpected && offsetinstantArrivalCurrent<=futureinstant){
             h.lastknownChangeTime=SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(offsetinstantArrivalCurrent);
-            h.newoffset=futureinstant-offsetinstantArrivalCurrent;
+            h.newoffset=(long)(futureinstant-offsetinstantArrivalCurrent);
             takedemandrate = dm.getStationTakeRateIntervall(s.getId(), h.lastknownChangeTime, h.newoffset);
             returndemandrate = dm.getStationReturnRateIntervall(s.getId(), h.lastknownChangeTime, h.newoffset);
         }

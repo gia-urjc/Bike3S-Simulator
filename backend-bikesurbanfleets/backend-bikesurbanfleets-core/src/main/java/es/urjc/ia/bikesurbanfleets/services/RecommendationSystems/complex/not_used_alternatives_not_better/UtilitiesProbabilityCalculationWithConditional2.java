@@ -93,7 +93,7 @@ public class UtilitiesProbabilityCalculationWithConditional2 extends UtilitiesPr
         return probslot;
     }
     //methods for calculation probabilities    
-    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) {
         UtilitiesProbabilityCalculator.ProbabilityData pd=new UtilitiesProbabilityCalculator.ProbabilityData();
         Station s = sd.getStation();
         int currentbikes = s.availableBikes();
@@ -133,7 +133,7 @@ public class UtilitiesProbabilityCalculationWithConditional2 extends UtilitiesPr
     }
 
     //methods for calculation probabilities    
-    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllReturnProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) {
         UtilitiesProbabilityCalculator.ProbabilityData pd=new UtilitiesProbabilityCalculator.ProbabilityData();
         Station s = sd.getStation();
         int currentbikes = s.availableBikes();
@@ -173,7 +173,7 @@ public class UtilitiesProbabilityCalculationWithConditional2 extends UtilitiesPr
     }
  
     //methods for calculation probabilities    
-    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, long offsetinstantArrivalCurrent, long futureinstant) {
+    public UtilitiesProbabilityCalculator.ProbabilityData calculateAllProbabilitiesWithArrival(StationUtilityData sd, double futureinstant) {
         UtilitiesProbabilityCalculator.ProbabilityData pd=new UtilitiesProbabilityCalculator.ProbabilityData();
         Station s = sd.getStation();
         int currentbikes = s.availableBikes();

@@ -13,7 +13,6 @@ import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToPointInCi
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionGoToStation;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionLeaveSystem;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,15 +28,31 @@ import java.util.stream.Collectors;
 @UserType("USER_UNINFORMED")
 public class UserUninformed extends User {
 
+    boolean printHints = true;
+    static double ratio=0;
+    static int rationumber=0;
+    double lastdist=0;
+    double lastwalked=0;
     @Override
     public UserDecision decideAfterAppearning() {
-        Station s = determineStationToRentBike();        
+        Station s = determineStationToRentBike();
         if (s != null) { //user has found a station
-            double dist=s.getPosition().distanceTo(this.getPosition());
-            if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
+            double dist = s.getPosition().distanceTo(this.getPosition());
+            if (dist <= parameters.maxDistanceToRentBike - getMemory().getWalkedToTakeBikeDistance()) {
+                lastdist=dist;
+                lastwalked=getMemory().getWalkedToTakeBikeDistance();
                 return new UserDecisionGoToStation(s);
             }
+            if (printHints) {
+                System.out.format("[UserInfo] User: %d abandons after appearing. Station at distance %f found. But has walked %d meters of %f maximum.%n", this.getId(),
+                        dist, getMemory().getWalkedToTakeBikeDistance(), parameters.maxDistanceToRentBike);
+            }
+            return new UserDecisionLeaveSystem();
         } //if not he would leave
+        if (printHints) {
+            System.out.format("[UserInfo] User: %d abandons after appearing. No station found. Has walked %f meters of %d maximum.%n", this.getId(),
+                    getMemory().getWalkedToTakeBikeDistance(), parameters.maxDistanceToRentBike);
+        }
         return new UserDecisionLeaveSystem();
     }
 
@@ -46,13 +61,33 @@ public class UserUninformed extends User {
 //        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts) {
 //            return new UserDecisionLeaveSystem();
 //        } else {
+            if (printHints) {
+                UserInformed.ratio=(UserInformed.ratio * UserInformed.rationumber)
+                        + (getMemory().getWalkedToTakeBikeDistance() - lastwalked)/lastdist;
+                UserInformed.rationumber++;
+                UserInformed.ratio=UserInformed.ratio/UserInformed.rationumber;               
+                System.out.format("[UserInfo] Total ratio real/estimated distance: %f. %n", UserInformed.ratio);
+                System.out.format("[UserInfo] User: %d after failed rental. Estimated distance %f. Real distance %f. Ratio %f.%n", this.getId(),
+                    lastdist, getMemory().getWalkedToTakeBikeDistance() - lastwalked,   (getMemory().getWalkedToTakeBikeDistance() - lastwalked)/lastdist);
+            }
         Station s = determineStationToRentBike();
         if (s != null) { //user has found a station
-            double dist=s.getPosition().distanceTo(this.getPosition());
-            if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
+            double dist = s.getPosition().distanceTo(this.getPosition());
+            if (dist <= parameters.maxDistanceToRentBike - getMemory().getWalkedToTakeBikeDistance()) {
+                lastdist=dist;
+                lastwalked=getMemory().getWalkedToTakeBikeDistance();
                 return new UserDecisionGoToStation(s);
             }
+            if (printHints) {
+                System.out.format("[UserInfo] User: %d abandons after failed rental. Station at distance %f found. But has walked %f meters of %d maximum.%n", this.getId(),
+                        dist, getMemory().getWalkedToTakeBikeDistance(), parameters.maxDistanceToRentBike);
+            }
+            return new UserDecisionLeaveSystem();
         } //if not he would leave
+        if (printHints) {
+            System.out.format("[UserInfo] User: %d abandons after failed rental. No station found. Has walked %f meters of %d maximum.%n", this.getId(),
+                    getMemory().getWalkedToTakeBikeDistance(), parameters.maxDistanceToRentBike);
+        }
         return new UserDecisionLeaveSystem();
     }
 
@@ -69,6 +104,15 @@ public class UserUninformed extends User {
 
     @Override
     public UserDecision decideAfterGettingBike() {
+            if (printHints) {
+                UserInformed.ratio=(UserInformed.ratio * UserInformed.rationumber)
+                        + (getMemory().getWalkedToTakeBikeDistance() - lastwalked)/lastdist;
+                UserInformed.rationumber++;
+                UserInformed.ratio=UserInformed.ratio/UserInformed.rationumber;               
+                System.out.format("[UserInfo] Total ratio real/estimated distance: %f. %n", UserInformed.ratio);
+                System.out.format("[UserInfo] User: %d after sucessful rental. Estimated distance %f. Real distance %f. Ratio %f.%n", this.getId(),
+                    lastdist, getMemory().getWalkedToTakeBikeDistance() - lastwalked,   (getMemory().getWalkedToTakeBikeDistance() - lastwalked)/lastdist);
+            }
         if (intermediatePosition != null) {
             return new UserDecisionGoToPointInCity(intermediatePosition);
         } else {
@@ -93,6 +137,7 @@ public class UserUninformed extends User {
     public UserDecision decideAfterFailedSlotReservation() {
         return null;
     }
+
     //TODO: should this method appear in User class?  
     @Override
     public UserDecision decideAfterSlotReservationTimeout() {
@@ -110,8 +155,7 @@ public class UserUninformed extends User {
          * It is the number of times that the user will try to rent a bike
          * (without a bike reservation) before deciding to leave the system.
          */
-  //      int minRentalAttempts = 3;
-
+        //      int minRentalAttempts = 3;
         int maxDistanceToRentBike = 600;
     }
 

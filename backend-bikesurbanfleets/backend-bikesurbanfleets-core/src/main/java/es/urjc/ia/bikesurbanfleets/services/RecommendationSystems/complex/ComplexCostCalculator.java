@@ -54,7 +54,8 @@ public class ComplexCostCalculator {
 
     private double costRent(double oldwalktime,double time, double prob, int iteration) {
         double timecost=time;
-        if (timecost>=unsuccessCostRent) return timecost;
+        return timecost;
+   /*     if (timecost>=unsuccessCostRent) return timecost;
         else timecost = prob*time+(1-prob)*unsuccessCostRent;//timecost;
         
         double ratio;
@@ -69,11 +70,12 @@ public class ComplexCostCalculator {
             if (timecost>=unsuccessCostRent) return timecost;
             else return (totalratio * timecost) + ((1-totalratio) * unsuccessCostRent);
         }
-    }
+  */  }
 
     private double costReturn(double oldbiketime,double wtime, double btime, double prob, int iteration) {
         double timecost=wtime+btime;
-        if (timecost>=unsuccessCostReturn)  return timecost;
+        return timecost;
+   /*     if (timecost>=unsuccessCostReturn)  return timecost;
         else timecost= prob*(timecost)+(1-prob)*unsuccessCostReturn;//(timecost);
  
         double ratio;
@@ -88,9 +90,9 @@ public class ComplexCostCalculator {
             if (timecost>=unsuccessCostReturn) return timecost;
             else return (totalratio * timecost) + ((1-totalratio) * unsuccessCostReturn);
         }
-    }
+*/    }
 
-    //claculates a "good" way and its cost for taking a bike
+   //claculates a "good" way and its cost for taking a bike
     //this is a sequence of stantions where the user can take a bike up to a probabilkity of 1-minimumMarginProbability
     //probtimeoffset is a timeoffset for calculating cost in the future
     //e.g. calculate the cost for getting a bike if the user appears at a walkingtime distances in 10 minutes (values are in seconds)
@@ -232,7 +234,7 @@ public class ComplexCostCalculator {
     }
 
     double calcCostReturncomp(double walktime, double biketime, double probability) {
-        return biketime + probability * walktime + (1 - probability) * unsuccessCostcomparison;
+        return biketime + walktime + (1 - probability) * unsuccessCostcomparison;
 //        return time/probability;
     }
 
@@ -281,7 +283,7 @@ public class ComplexCostCalculator {
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei)) {
                 double dist = s.getPosition().distanceTo(nei.getStation().getPosition());
-                if (((accwalkdistance * STRAIGT_LINE_FACTOR_FOOT) + dist) <= (maxdistance)) {
+                if (((accwalkdistance * STRAIGT_LINE_FACTOR_FOOT)*2.2D + dist) <= (maxdistance)) {
                     double newacctime = (accwalkdistance + dist) / expectedwalkingVelocity;
                     double rentprob = probutils.calculateTakeProbability(nei.getStation(), newacctime + probtimeoffset);
                     if (rentprob > 0 && rentprob > minProbSecondaryRecommendation) {
@@ -386,7 +388,7 @@ public class ComplexCostCalculator {
         {
             //       if (wp.offsettimereached>timeintervallforPrediction) break;
             double timeoffset = Math.max(timeintervallforPrediction, wp.offsettimereached);//sd.getWalkTime());//wp.offsettimereached
-            ProbabilityData pd = probutils.calculateAllTakeProbabilitiesWithArrival(wp.sd, sd.getWalkTime(), timeoffset);
+            ProbabilityData pd = probutils.calculateAllTakeProbabilitiesWithArrival(wp.sd, timeoffset);
             //calculate takecost difference
             double extracosttake = calculateCostRentDifference(wp.sd, estimatedavwalkdistnearest, allstats, pd.probabilityTake, pd.probabilityTakeAfterTake, timeoffset, maxDistanceRecomendationTake);
             //calculate return cost difference
@@ -428,7 +430,7 @@ public class ComplexCostCalculator {
         {
             //          if (wp.offsettimereached>timeintervallforPrediction) break;
             double timeoffset = Math.max(timeintervallforPrediction, wp.offsettimereached);//sd.getBiketime());//wp.offsettimereached
-            ProbabilityData pd = probutils.calculateAllReturnProbabilitiesWithArrival(wp.sd, sd.getBiketime(), timeoffset);
+            ProbabilityData pd = probutils.calculateAllReturnProbabilitiesWithArrival(wp.sd, timeoffset);
             //calculate takecost difference
             double   extracosttake = calculateCostRentDifference(wp.sd, estimatedavwalkdistnearest, allstats, pd.probabilityTake, pd.probabilityTakeAfterRerturn, timeoffset, maxDistanceRecomendationTake);
               //calculate return cost difference
