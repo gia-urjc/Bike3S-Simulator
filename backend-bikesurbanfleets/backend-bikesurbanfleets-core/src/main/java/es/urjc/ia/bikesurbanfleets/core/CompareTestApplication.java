@@ -34,6 +34,13 @@ public class CompareTestApplication {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // the following parameters may have to be changes
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //tests_20_7_2018_full_randomusers
+        //tests_20_9_2018_full_randomusers
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/pruebas journal balancing/tests_20_9_2018_full_randomusers/baseline";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/pruebas journal balancing/tests_20_9_2018_full_randomusers/costprediction";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/pruebas journal balancing/tests_20_9_2018_halfbikes_randomusers/baseline";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/pruebas journal balancing/tests_20_9_2018_halfbikes_randomusers/costprediction";
+ //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/pruebas journal balancing/tests_20_9_2018_maximum_randomusers";
         
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_usersrandom_halfbikes"
     //           + "/newProbAnalysis/simple";

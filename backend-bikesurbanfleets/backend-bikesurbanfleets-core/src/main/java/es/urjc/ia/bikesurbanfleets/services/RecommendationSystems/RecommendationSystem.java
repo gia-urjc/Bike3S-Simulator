@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
+import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple.StationComparator;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;
@@ -18,7 +19,7 @@ public abstract class RecommendationSystem {
     private int minNumberRecommendations=10;
 
     //variable to print debug output for analysis
-    protected final boolean printHints = true;
+    protected final boolean printHints = false;
 
     /**
      * It provides information about the infraestructure state.
@@ -67,6 +68,9 @@ public abstract class RecommendationSystem {
     public List<Recommendation> getRecomendedStationsToRentBike(GeoPoint currentposition, double maxdist) {
         List<Recommendation> rec = recommendStationToRentBike(currentposition, maxdist);
         if (rec.size() < minNumberRecommendations) {
+            if (rec.size()==0) {
+                System.out.println("[Warn] no recommentadtions for renting at "+ maxdist + "meters. Adding the closest stations with bikes to fill.  Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
+            }
             addAlternativeRecomendations(currentposition, rec, true);
         }
         return rec;
@@ -74,6 +78,9 @@ public abstract class RecommendationSystem {
     public List<Recommendation> getRecomendedStationsToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> rec = recommendStationToReturnBike(currentposition, destination);
         if (rec.size() < minNumberRecommendations) {
+            if (rec.size()==0) {
+                System.out.println("[Warn] no recommentadtions for returning. Adding the closest stations with slots to fill.  Time:" + SimulationDateTime.getCurrentSimulationDateTime()+ "("+SimulationDateTime.getCurrentSimulationInstant()+")");
+            }
             addAlternativeRecomendations(destination, rec, false);
         }
         return rec;
