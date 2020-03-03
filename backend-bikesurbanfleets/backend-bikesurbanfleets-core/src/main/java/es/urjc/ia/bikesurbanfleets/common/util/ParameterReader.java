@@ -9,15 +9,22 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * This class has just a static method that reads json definitions of parameters from a json text
- * to overwrite the values of the fields of the passed objetc with the values defined in json
+ * This class has just a static method that reads json definitions of parameters
+ * from a json text to overwrite the values of the fields of the passed objetc
+ * with the values defined in json
+ *
  * @author IAgroup
  *
  */
 public class ParameterReader {
-    
+
+    private static Gson gson = new Gson();
+
     //it takes a jsonobjetc that must have the following form:
     //  ...{
     //    "typeName": "USER_PAPERAT2018_OBHOLGER",
@@ -33,8 +40,9 @@ public class ParameterReader {
     // if there is no parameter entry, the object is not altered
     // parameters that do not exist in either para o the json definition are ignired
     public static void getParameters(JsonObject jsondefinition, Object param) throws IllegalArgumentException, IllegalAccessException {
-        if (param == null) 
+        if (param == null) {
             return;
+        }
         //read specific parameters
         JsonObject jsonparameters = jsondefinition.getAsJsonObject("parameters");
         //if no parameters are specified, the original parameters are used
@@ -43,10 +51,9 @@ public class ParameterReader {
         }
 
         //if parameters are present substitute their values with the values from the parameters specified in jason
-        Field[] fields = param.getClass().getDeclaredFields();
         JsonElement aux;
-        Gson gson = new Gson();
-        for (Field f : fields) {
+        List<Field> F=getAllFields(param.getClass());
+        for (Field f : F) {
             aux = jsonparameters.get(f.getName());
             if (aux != null) {
                 f.setAccessible(true);
@@ -56,4 +63,14 @@ public class ParameterReader {
         return;
     }
 
+    public static List<Field> getAllFields(Class<?> type) {
+        List<Field> fields=new ArrayList<>();
+        fields.addAll(Arrays.asList(type.getDeclaredFields()));
+        while (type.getSuperclass() != null) {
+            type=type.getSuperclass();
+            fields.addAll(Arrays.asList(type.getDeclaredFields()));
+        }
+
+        return fields;
+    }
 }

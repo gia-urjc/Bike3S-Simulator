@@ -24,8 +24,7 @@ import java.util.List;
 @RecommendationSystemType("DEMAND_cost_prediction")
 public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends RecommendationSystemDemandProbabilityBased {
 
-    public class RecommendationParameters {
-
+    public static class RecommendationParameters extends RecommendationSystemDemandProbabilityBased.RecommendationParameters{
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double maxDistanceRecommendationTake = 600;
         private double minimumMarginProbability = 0.0001;
@@ -39,37 +38,21 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         private int predictionWindow = 900;
         private double normmultiplier = 0.5;
         private double alfa=0.5;
-
-        @Override
-        public String toString() {
-            return  "alfa=" + alfa + ", maxDistanceRecommendationTake=" + maxDistanceRecommendationTake + ", minimumMarginProbability=" + minimumMarginProbability + ", minProbBestNeighbourRecommendation=" + minProbBestNeighbourRecommendation + ", desireableProbability=" + desireableProbability + ", maxStationsToReccomend=" + maxStationsToReccomend + ", unsucesscostRentPenalisation=" + unsucesscostRentPenalisation + ", unsucesscostReturnPenalisation=" + unsucesscostReturnPenalisation + ", AbandonPenalisation=" + AbandonPenalisation + ", PredictionNorm=" + PredictionNorm + ", predictionWindow=" + predictionWindow + ", normmultiplier=" + normmultiplier ;
-        }
-
-    }
-
-    public String getParameterString() {
-        return "RecommendationSystemDemandProbabilityCostGlobalPrediction Parameters{" + super.getParameterString() + this.parameters.toString() + "}";
     }
 
     private RecommendationParameters parameters;
     private ComplexCostCalculator ucc;
 
     public RecommendationSystemDemandProbabilityCostGlobalPrediction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
-        super(recomenderdef, ss);
         //***********Parameter treatment*****************************
-        //if this recomender has parameters this is the right declaration
-        //if no parameters are used this code just has to be commented
-        //"getparameters" is defined in USER such that a value of Parameters 
-        // is overwritten if there is a values specified in the jason description of the recomender
-        // if no value is specified in jason, then the orriginal value of that field is mantained
-        // that means that teh paramerts are all optional
-        // if you want another behaviour, then you should overwrite getParameters in this calss
-        this.parameters = new RecommendationParameters();
-        getParameters(recomenderdef, this.parameters);
+        //parameters are read in the superclass
+        //afterwards, they have to be cast to this parameters class
+        super(recomenderdef, ss, new RecommendationParameters());
+        this.parameters= (RecommendationParameters)(super.parameters);
         ucc = new ComplexCostCalculator(parameters.minimumMarginProbability, parameters.AbandonPenalisation, parameters.unsucesscostRentPenalisation,
                 parameters.unsucesscostReturnPenalisation,
-                expWalkingVelocity,
-                expCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
+                parameters.expectedWalkingVelocity,
+                parameters.expectedCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
                 probutils, parameters.PredictionNorm, parameters.normmultiplier,parameters.alfa,
                 graphManager);
     }

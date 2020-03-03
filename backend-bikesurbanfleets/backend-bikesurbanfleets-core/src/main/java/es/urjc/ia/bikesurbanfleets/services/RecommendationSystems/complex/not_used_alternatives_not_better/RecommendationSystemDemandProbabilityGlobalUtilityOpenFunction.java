@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
@@ -26,37 +27,22 @@ import java.util.List;
 @RecommendationSystemType("DEMAND_PROBABILITY_GLOBAL_UTILITY")
 public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction extends RecommendationSystemDemandProbabilityBased {
 
-    public class RecommendationParameters {
-
+    public static class RecommendationParameters extends RecommendationSystemDemandProbabilityBased.RecommendationParameters{
         private double upperProbabilityBound = 0.999;
         private double desireableProbability = 0.6;
 
         private double factorProb = 2000D;
         private double factorImp = 1000D;
-
-        @Override
-        public String toString() {
-            return "upperProbabilityBound=" + upperProbabilityBound + ", desireableProbability=" + desireableProbability + ", factorProb=" + factorProb + ", factorImp=" + factorImp ;
-        }
-    }
-    public String getParameterString(){
-        return "RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
     }
     private RecommendationParameters parameters;
     private UtilitiesGlobalLocalUtilityMethods recutils;
 
     public RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
-        super(recomenderdef, ss);
         //***********Parameter treatment*****************************
-        //if this recomender has parameters this is the right declaration
-        //if no parameters are used this code just has to be commented
-        //"getparameters" is defined in USER such that a value of Parameters 
-        // is overwritten if there is a values specified in the jason description of the recomender
-        // if no value is specified in jason, then the orriginal value of that field is mantained
-        // that means that teh paramerts are all optional
-        // if you want another behaviour, then you should overwrite getParameters in this calss
-        this.parameters = new RecommendationParameters();
-        getParameters(recomenderdef, this.parameters);
+        //parameters are read in the superclass
+        //afterwards, they have to be cast to this parameters class
+        super(recomenderdef, ss, new RecommendationParameters());
+        this.parameters= (RecommendationParameters)(super.parameters);
         recutils = new UtilitiesGlobalLocalUtilityMethods(getDemandManager());
     }
     @Override

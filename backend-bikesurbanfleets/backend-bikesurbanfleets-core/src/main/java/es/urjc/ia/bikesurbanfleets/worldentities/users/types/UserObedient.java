@@ -30,7 +30,7 @@ public class UserObedient extends UserUninformed {
 
     public UserObedient(JsonObject userdef, SimulationServices services, long seed) throws Exception {
         super(userdef, services, seed);
-        printHints = true;
+        printHints = false;
     }
 
     @Override

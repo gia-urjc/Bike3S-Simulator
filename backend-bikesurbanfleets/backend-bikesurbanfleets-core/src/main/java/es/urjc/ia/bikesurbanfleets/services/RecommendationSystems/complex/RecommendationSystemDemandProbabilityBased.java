@@ -12,6 +12,7 @@ import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.types.UserUninformed;
 import java.lang.reflect.Field;
 
 import java.util.ArrayList;
@@ -32,82 +33,22 @@ import java.util.stream.Collectors;
  */
 public abstract class RecommendationSystemDemandProbabilityBased extends RecommendationSystem {
 
-    class RecommendationParameters {
-
-        /**
-         * It is the maximum distance in meters between the recommended stations
-         * and the indicated geographical point.
-         */
-        // the velocities here are real (estimated velocities)
-        // assuming real velocities of 1.1 m/s and 4 m/s for walking and biking (aprox. to 4 and 14,4 km/h)
-        //Later the velocities are adjusted to straight line velocities
-        //given a straight line distance d, the real distance dr may be estimated  
-        // as dr=f*d, whewre f will be between 1 and sqrt(2) (if triangle).
-        // here we consider f=1.4
-        //to translate velocities from realdistances to straight line distances:
-        // Vel_straightline=(d/dr)*vel_real -> Vel_straightline=vel_real/f
-        //assuming real velocities of 1.1 m/s and 4 m/s for walking and biking (aprox. to 4 and 14,4 km/h)
-        //the adapted straight line velocities are: 0.786m/s and 2.86m/s
-        public double expectedWalkingVelocity = GlobalConfigurationParameters.DEFAULT_WALKING_VELOCITY;
-        public double expectedCyclingVelocity = GlobalConfigurationParameters.DEFAULT_CYCLING_VELOCITY;
+    public static class RecommendationParameters extends RecommendationSystem.RecommendationParameters{
         public double probabilityUsersObey = 1D;
         public boolean takeintoaccountexpected = true;
         public boolean takeintoaccountcompromised = true;
         public int additionalResourcesDesiredInProbability=0;
-        
-         @Override
-        public String toString() {
-            String s="";      
-            for (Field f:this.getClass().getFields()){
-                try {
-                    s=f.getName()+f.get(this);
-                } catch (Exception ex) {
-                    throw new RuntimeException("Error in writing parameters");
-                }
-            }
-            return s;
-     //       {            return "additionalResourcesDesiredInProbability="+additionalResourcesDesiredInProbability+", expectedwalkingVelocity=" + expectedWalkingVelocity + ", expectedcyclingVelocity=" + expectedCyclingVelocity + ", probabilityUsersObey=" + probabilityUsersObey + ", takeintoaccountexpected=" + takeintoaccountexpected + ", takeintoaccountcompromised=" + takeintoaccountcompromised ;
-        }
     }
-    public String getParameterString(){
-        return this.baseparameters.toString();
-    }
-
-    protected double expWalkingVelocity ;
-    protected double expCyclingVelocity ;
-
-    protected RecommendationParameters baseparameters;
     protected UtilitiesProbabilityCalculator probutils;
-    private PastRecommendations pastrecs;
-    
-    public RecommendationSystemDemandProbabilityBased(JsonObject recomenderdef, SimulationServices ss) throws Exception {
-        super(ss);
-        //***********Parameter treatment*****************************
-        //if this recomender has parameters this is the right declaration
-        //if no parameters are used this code just has to be commented
-        //"getparameters" is defined in USER such that a value of Parameters 
-        // is overwritten if there is a values specified in the jason description of the recomender
-        // if no value is specified in jason, then the orriginal value of that field is mantained
-        // that means that teh paramerts are all optional
-        // if you want another behaviour, then you should overwrite getParameters in this calss
-        this.baseparameters = new RecommendationParameters();
-        getParameters(recomenderdef, this.baseparameters);
-        //calculate the corresponding straightline velocities
-        // the distances here are straight line distances
-        //given a straight line distance d, the real distance dr may be estimated  
-        // as dr=f*d, whewre f will be between 1 and sqrt(2) (if triangle).
-        // here we consider f=1.4
-        //to translate velocities from realdistances to straight line distances:
-        // Vel_straightline=(d/dr)*vel_real -> Vel_straightline=vel_real/f
-        //assuming real velocities of 1.4 m/s and 6 m/s for walking and biking (aprox. to 5 and 20 km/h)
-        //the adapted straight line velocities are: 1m/s and 4.286m/s
-        expWalkingVelocity = this.baseparameters.expectedWalkingVelocity;
-        expCyclingVelocity = this.baseparameters.expectedCyclingVelocity;
-        
-        pastrecs=new PastRecommendations();
-        probutils=new UtilitiesProbabilityCalculationQueue(getDemandManager(), pastrecs, baseparameters.probabilityUsersObey,
-                 baseparameters.takeintoaccountexpected, baseparameters.takeintoaccountcompromised, baseparameters.additionalResourcesDesiredInProbability);
+
+    protected RecommendationParameters parameters;
+    public RecommendationSystemDemandProbabilityBased(JsonObject recomenderdef, SimulationServices ss, RecommendationParameters parameters) throws Exception {
+        super(recomenderdef,ss, parameters);
+        this.parameters=(RecommendationParameters)super.parameters;
+        probutils=new UtilitiesProbabilityCalculationSkellam(getDemandManager(), pastRecomendations, parameters.probabilityUsersObey,
+                 parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised, parameters.additionalResourcesDesiredInProbability);
     }
+
 
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint currentposition, double maxdist) {
@@ -126,9 +67,6 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                 return r;
             }
             ).collect(Collectors.toList());
-            //add values to the expeted takes
-            StationUtilityData first = su.get(0);
-            pastrecs.addExpectedBikechange(first.getStation().getId(),(int)first.getWalkTime(),true);
         } else {
             result = new ArrayList<>(0);
         }
@@ -152,9 +90,6 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                 return r;
             }
             ).collect(Collectors.toList());
-            //add values to the expeted returns
-            StationUtilityData first = su.get(0);
-            pastrecs.addExpectedBikechange(first.getStation().getId(),(int)first.getBiketime(), false);
         } else {
             result = new ArrayList<>(0);
         }
@@ -169,7 +104,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             if (dist<=maxdistance) {
                 dist = graphManager.estimateDistance(currentposition, s.getPosition() ,"foot");
                 if (dist<=maxdistance) {
-                    double offtime = (dist / expWalkingVelocity);
+                    double offtime = (dist / parameters.expectedWalkingVelocity);
                     StationUtilityData sd = new StationUtilityData(s);
                     sd.setWalkTime(offtime).setWalkdist(dist).setCapacity(s.getCapacity());
                     sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
@@ -186,9 +121,9 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         for (Station s : stationManager.consultStations()) {
             StationUtilityData sd = new StationUtilityData(s);
             double bikedist = graphManager.estimateDistance(currentposition, s.getPosition() ,"bike");
-            double biketime = bikedist / expCyclingVelocity;
+            double biketime = bikedist / parameters.expectedCyclingVelocity;
             double walkdist = graphManager.estimateDistance(s.getPosition(),destination ,"foot");
-            double walktime =  walkdist / expWalkingVelocity;
+            double walktime =  walkdist / parameters.expectedWalkingVelocity;
             sd.setWalkTime(walktime).setWalkdist(walkdist)
                     .setCapacity(s.getCapacity())
                     .setBikedist(bikedist).setBiketime(biketime);
@@ -283,7 +218,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     StationUtilityData bn=s.bestNeighbour;
                     if (bn!=null){
                         double distto=graphManager.estimateDistance(s.getStation().getPosition(), bn.getStation().getPosition() ,"foot");
-                        double timeto= (distto / expWalkingVelocity);
+                        double timeto= (distto / parameters.expectedWalkingVelocity);
                         System.out.format(" %3d %7.1f %6.5f %n",
                             bn.getStation().getId(),
                             timeto,
@@ -324,7 +259,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                     StationUtilityData bn=s.bestNeighbour;
                     if (bn!=null){
                         double distto=graphManager.estimateDistance(s.getStation().getPosition(), bn.getStation().getPosition() ,"bike");
-                        double timeto= (distto / expCyclingVelocity);
+                        double timeto= (distto / parameters.expectedCyclingVelocity);
                         System.out.format(" %3d %7.1f %7.1f %6.5f %n",
                             bn.getStation().getId(),
                             timeto,

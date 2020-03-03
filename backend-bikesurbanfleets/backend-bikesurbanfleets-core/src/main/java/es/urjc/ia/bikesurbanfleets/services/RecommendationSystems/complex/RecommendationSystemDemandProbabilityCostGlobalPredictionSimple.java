@@ -22,37 +22,22 @@ import java.util.List;
 @RecommendationSystemType("DEMAND_cost_prediction_simple")
 public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple extends RecommendationSystemDemandProbabilityBased {
 
-    public class RecommendationParameters {
-
+    public static class RecommendationParameters extends RecommendationSystemDemandProbabilityBased.RecommendationParameters{
         private double desireableProbability = 0.8;
         private double MaxCostValue = 6000 ;
         private int PredictionNorm=0;
         private int predictionWindow=900;
         private double normmultiplier=0.5;
-
-        @Override
-        public String toString() {
-            return  "normmultiplier=" + normmultiplier + ", predictionWindow="+ predictionWindow + ", PredictionNorm="+ PredictionNorm + ", desireableProbability"+ desireableProbability +  ", MaxCostValue=" + MaxCostValue    ;
-        }
-    }
-    public String getParameterString(){
-        return "RecommendationSystemDemandProbabilityCostGlobalPredictionSimple Parameters{"+ super.getParameterString() + this.parameters.toString() + "}";
     }
     private RecommendationParameters parameters;
     private CostCalculatorSimple scc;
 
     public RecommendationSystemDemandProbabilityCostGlobalPredictionSimple(JsonObject recomenderdef, SimulationServices ss) throws Exception {
-        super(recomenderdef,ss);
         //***********Parameter treatment*****************************
-        //if this recomender has parameters this is the right declaration
-        //if no parameters are used this code just has to be commented
-        //"getparameters" is defined in USER such that a value of Parameters 
-        // is overwritten if there is a values specified in the jason description of the recomender
-        // if no value is specified in jason, then the orriginal value of that field is mantained
-        // that means that teh paramerts are all optional
-        // if you want another behaviour, then you should overwrite getParameters in this calss
-        this.parameters = new RecommendationParameters();
-        getParameters(recomenderdef, this.parameters);
+        //parameters are read in the superclass
+        //afterwards, they have to be cast to this parameters class
+        super(recomenderdef, ss, new RecommendationParameters());
+        this.parameters= (RecommendationParameters)(super.parameters);
         scc=new CostCalculatorSimple(
                 parameters.MaxCostValue, 
                 probutils, parameters.PredictionNorm, parameters.normmultiplier);

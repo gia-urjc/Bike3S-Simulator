@@ -21,37 +21,21 @@ import java.util.List;
  *
  */
 @RecommendationSystemType("DEMAND_PROBABILITY")
-public class RecommendationSystemDemandProbability extends RecommendationSystemDemandProbabilityBased {
+public final class RecommendationSystemDemandProbability extends RecommendationSystemDemandProbabilityBased {
 
-    public class RecommendationParameters {
-
-        private double desireableProbability = 0.8;
-
-        private double probfactor = 6000D;
-
-        @Override
-        public String toString() {
-            return "desireableProbability=" + desireableProbability + ", probfactor=" + probfactor;
-        }
+    public static class RecommendationParameters extends RecommendationSystemDemandProbabilityBased.RecommendationParameters{
+         double desireableProbability = 0.8;
+         double probfactor = 6000D;
     }
-
-    public String getParameterString() {
-        return "RecommendationSystemDemandProbabilityTime Parameters{" + super.getParameterString() + this.parameters.toString() + "}";
-    }
+    
     private RecommendationParameters parameters;
-
     public RecommendationSystemDemandProbability(JsonObject recomenderdef, SimulationServices ss) throws Exception {
-        super(recomenderdef, ss);
         //***********Parameter treatment*****************************
-        //if this recomender has parameters this is the right declaration
-        //if no parameters are used this code just has to be commented
-        //"getparameters" is defined in USER such that a value of Parameters 
-        // is overwritten if there is a values specified in the jason description of the recomender
-        // if no value is specified in jason, then the orriginal value of that field is mantained
-        // that means that teh paramerts are all optional
-        // if you want another behaviour, then you should overwrite getParameters in this calss
-        this.parameters = new RecommendationParameters();
-        getParameters(recomenderdef, this.parameters);
+        //parameters are read in the superclass
+        //afterwards, they have to be cast to this parameters class
+        super(recomenderdef, ss, new RecommendationParameters());
+        getParameters(recomenderdef, parameters);
+        this.parameters= (RecommendationParameters)(super.parameters);
     }
 
     @Override
@@ -82,7 +66,7 @@ public class RecommendationSystemDemandProbability extends RecommendationSystemD
             return false;
         }
    */     double timediff = (newSD.getWalkTime() - oldSD.getWalkTime());
-        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * this.parameters.probfactor;
+        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * parameters.probfactor;
         return probdiff > timediff;
     }
 

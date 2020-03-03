@@ -30,25 +30,14 @@ import java.util.stream.Collectors;
 @RecommendationSystemType("SURROUNDING_LOCAL_UTILITY_W_DISTANCE_DEMAND_OPENFUNCTION")
 public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction extends RecommendationSystem {
 
-    public class RecommendationParameters {
-
+    public static class RecommendationParameters extends RecommendationSystem.RecommendationParameters{
         /**
          * It is the maximum distance in meters between a station and the
          * stations we take into account for checking the area
          */
         private double MaxDistanceSurroundingStations = 500;
         private int MaxDistanceNormalizer=600;
-
         private double wheightDistanceStationUtility = 0.35;
-
-        @Override
-        public String toString() {
-            return " MaxDistanceSurroundingStations=" + MaxDistanceSurroundingStations + ", MaxDistanceNormalizer=" + MaxDistanceNormalizer + ", wheightDistanceStationUtility=" + wheightDistanceStationUtility ;
-        }
-
-    }
-    public String getParameterString(){
-        return "SURROUNDING_LOCAL_UTILITY_W_DISTANCE_DEMAND_OPENFUNCTION Parameters{"+ this.parameters.toString() + "}";
     }
 
     private class StationSurroundingData {
@@ -70,17 +59,11 @@ public class RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction exte
     Comparator<StationUtilityData> DescUtility = (sq1, sq2) -> Double.compare(sq2.getUtility(), sq1.getUtility());
 
     public RecommendetionSystemDemandLocalSurroundingDistanceOpenfunction(JsonObject recomenderdef, SimulationServices ss) throws Exception {
-        super(ss);
         //***********Parameter treatment*****************************
-        //if this recomender has parameters this is the right declaration
-        //if no parameters are used this code just has to be commented
-        //"getparameters" is defined in USER such that a value of Parameters 
-        // is overwritten if there is a values specified in the jason description of the recomender
-        // if no value is specified in jason, then the orriginal value of that field is mantained
-        // that means that teh paramerts are all optional
-        // if you want another behaviour, then you should overwrite getParameters in this calss
-        this.parameters = new RecommendationParameters();
-        getParameters(recomenderdef, this.parameters);
+        //parameters are read in the superclass
+        //afterwards, they have to be cast to this parameters class
+        super(recomenderdef, ss, new RecommendationParameters());
+        this.parameters= (RecommendationParameters)(super.parameters);
         recutils=new UtilitiesGlobalLocalUtilityMethods(getDemandManager());
     }
 
