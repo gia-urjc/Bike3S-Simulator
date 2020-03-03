@@ -118,8 +118,8 @@ public abstract class RecommendationSystem {
         } else { //add expected change to station
             Recommendation first = rec.get(0);
             double timetoreach = (graphManager.estimateDistance(currentposition, first.getStation().getPosition(), "bike")
-                    / parameters.expectedWalkingVelocity);
-            pastRecomendations.addExpectedBikechange(first.getStation().getId(), (int) timetoreach, true);
+                    / parameters.expectedCyclingVelocity);
+            pastRecomendations.addExpectedBikechange(first.getStation().getId(), (int) timetoreach, false);
         }
         return rec;
     }
