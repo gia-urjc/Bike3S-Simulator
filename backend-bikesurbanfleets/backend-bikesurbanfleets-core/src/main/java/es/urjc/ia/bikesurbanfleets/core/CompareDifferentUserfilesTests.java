@@ -8,6 +8,7 @@ import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.ResultsComparator;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
+import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -156,6 +157,11 @@ public class CompareDifferentUserfilesTests {
             if (recomendertype != null && recomendertype.get("typeName") != null) {
                 globalInfo.setOtherRecommendationSystem(recomendertype);
             }
+
+            //2. load Graph Manager
+            GraphManager graphManager=GraphManager.getGraphManager(globalInfo);
+
+            //3. read stations and user configurations
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             //modify user type specification with the one from the test
             if (usertype != null && usertype.get("typeName") != null) {
@@ -166,14 +172,13 @@ public class CompareDifferentUserfilesTests {
                     user.add("userType", usertype);
                 }
             }
-
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
 
-            //3. do simulation
-            new SimulationEngine(globalInfo, stationsInfo, usersInfo);
+            //4. do simulation
+            new SimulationEngine(globalInfo, stationsInfo, usersInfo, graphManager);
 
-            //4. analyse the simulation results
-            SimulationResultAnalyser sra = new SimulationResultAnalyser(analisisDir + testdir, historyDir + testdir);
+            //5. analyse the simulation results
+            SimulationResultAnalyser sra = new SimulationResultAnalyser(analisisDir + testdir, historyDir + testdir,graphManager);
             sra.analyzeSimulation();
 
         } catch (Exception e) {

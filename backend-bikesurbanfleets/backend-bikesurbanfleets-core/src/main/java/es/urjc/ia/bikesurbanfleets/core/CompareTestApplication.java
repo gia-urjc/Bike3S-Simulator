@@ -7,6 +7,7 @@ import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.ResultsComparator;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
+import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,21 +35,15 @@ public class CompareTestApplication {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // the following parameters may have to be changes
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //tests_20_7_2018_full_randomusers
-        //tests_20_9_2018_full_randomusers
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/pruebas journal balancing/tests_20_9_2018_full_randomusers/baseline";
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/pruebas journal balancing/tests_20_9_2018_full_randomusers/costprediction";
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/pruebas journal balancing/tests_20_9_2018_halfbikes_randomusers/baseline";
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/pruebas journal balancing/tests_20_9_2018_halfbikes_randomusers/costprediction";
- //       testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/pruebas journal balancing/tests_20_9_2018_maximum_randomusers";
         
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_usersrandom_halfbikes"
-    //           + "/newProbAnalysis/simple";
+               + "/newProbAnalysisEucledean/sameVelocity/"
      //   + "/newProbAnalysis/probability_skellam";
      //   + "/newProbAnalysis/probability_queue";
     //    + "/newProbAnalysis/cost_simple";
-        + "/newProbAnalysis/cost_comp_prueba";
-   //     + "/newProbAnalysis/probability_queue_prueba";
+    //    + "/newProbAnalysis/cost_comp_prueba";
+     //   + "probability_skellam";
+        + "cost_comp_prueba";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         String testFile = testsDir + "/tests.json";
@@ -163,6 +158,11 @@ public class CompareTestApplication {
             if (recomendertype != null && recomendertype.get("typeName")!=null) {
                 globalInfo.setOtherRecommendationSystem(recomendertype);
             }
+
+            //2. load Graph Manager
+            GraphManager graphManager=GraphManager.getGraphManager(globalInfo);
+
+            //3. read stations and user configurations
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             //modify user type specification with the one from the test
             if (usertype!=null && usertype.get("typeName")!=null){
@@ -173,14 +173,13 @@ public class CompareTestApplication {
                     user.add("userType", usertype);
                 }
             }
-
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
 
-            //3. do simulation
-            new SimulationEngine(globalInfo, stationsInfo, usersInfo);
+            //4. do simulation
+            new SimulationEngine(globalInfo, stationsInfo, usersInfo, graphManager);
 
-            //4. analyse the simulation results
-            SimulationResultAnalyser sra = new SimulationResultAnalyser(analisisDir + testdir, historyDir + testdir);
+            //5. analyse the simulation results
+            SimulationResultAnalyser sra = new SimulationResultAnalyser(analisisDir + testdir, historyDir + testdir,graphManager);
             sra.analyzeSimulation();
 
         } catch (Exception e) {

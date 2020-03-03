@@ -10,6 +10,7 @@ That is here, expected bikes in the futer (or takes of bikes) are treated as if 
  */
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.PastRecommendations;
 import es.urjc.ia.bikesurbanfleets.common.util.ProbabilityDistributions;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;

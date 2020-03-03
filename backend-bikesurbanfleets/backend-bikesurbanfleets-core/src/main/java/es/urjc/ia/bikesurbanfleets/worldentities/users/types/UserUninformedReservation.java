@@ -31,7 +31,7 @@ public class UserUninformedReservation extends User {
     public UserDecision decideAfterAppearning() {
         Station s = determineStationToRentBike();        
         if (s != null) { //user has found a station
-            double dist=s.getPosition().distanceTo(this.getPosition());
+            double dist=routeService.estimateDistance(this.getPosition(), s.getPosition(), "foot");
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
                 return new UserDecisionReserveBike(s);
             }
@@ -47,7 +47,7 @@ public class UserUninformedReservation extends User {
 //        } else {
         Station s = determineStationToRentBike();
         if (s != null) { //user has found a station
-            double dist=s.getPosition().distanceTo(this.getPosition());
+            double dist=routeService.estimateDistance(this.getPosition(), s.getPosition(), "foot");
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
                 return new UserDecisionReserveBike(s);
             }
@@ -64,7 +64,7 @@ public class UserUninformedReservation extends User {
 //        } else {
         Station s = determineStationToRentBike();
         if (s != null) { //user has found a station
-            double dist=s.getPosition().distanceTo(this.getPosition());
+            double dist=routeService.estimateDistance(this.getPosition(), s.getPosition(), "foot");
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
                 return new UserDecisionReserveBike(s);
             }
@@ -76,7 +76,7 @@ public class UserUninformedReservation extends User {
     public UserDecision decideAfterBikeReservationTimeout() {
         Station s = this.getDestinationStation();
         if (s != null) { //user has found a station
-            double dist=s.getPosition().distanceTo(this.getPosition());
+            double dist=routeService.estimateDistance(this.getPosition(), s.getPosition(), "foot");
             if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
                 return new UserDecisionReserveBike(s);
             }
@@ -133,7 +133,7 @@ public class UserUninformedReservation extends User {
          */
  //        int minRentalAttempts = 3;
 
-         int maxDistanceToRentBike = 600;
+         double maxDistanceToRentBike = 600;
 
     }
 
@@ -158,7 +158,7 @@ public class UserUninformedReservation extends User {
         Station destination = null;
         List<Station> triedStations = getMemory().getStationsWithReservationRentalFailedAttempts(); 
 
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition());
+        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition(),"foot");
         finalStations.removeAll(triedStations);
 
         if (!finalStations.isEmpty()) {
@@ -172,7 +172,7 @@ public class UserUninformedReservation extends User {
         Station destination = null;
         List<Station> triedStations = getMemory().getStationsWithReservationReturnFailedAttempts(); 
 
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace);
+        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace,"foot");
         finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
         	destination = finalStations.get(0);

@@ -1,19 +1,12 @@
 package es.urjc.ia.bikesurbanfleets.worldentities.stations;
 
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;

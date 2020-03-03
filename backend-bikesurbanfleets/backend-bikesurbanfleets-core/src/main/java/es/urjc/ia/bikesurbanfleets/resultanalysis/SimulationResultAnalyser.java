@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphHopperIntegration;
+import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphHopperManager;
 import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
@@ -53,7 +53,7 @@ public class SimulationResultAnalyser {
         String tempdir = System.getProperty("user.home") + "/.Bike3S";
         String mapdir = "/Users/holger/workspace/BikeProjects/Bike3S/madrid.osm";
 
-        GraphManager gm = new GraphHopperIntegration(mapdir, tempdir);
+        GraphManager gm = new GraphHopperManager(mapdir, tempdir);
         SimulationResultAnalyser sa = new SimulationResultAnalyser(analysisdir, historydir, gm);
         sa.analyzeSimulation();
     }
@@ -91,10 +91,6 @@ public class SimulationResultAnalyser {
         manageranalyzer = new ManagerDataAnalyzer();
         stationoccanalyzer = new StationOccupationAnalyzer(stationanalyzer.getStationData());
 
-    }
-
-    public SimulationResultAnalyser(String analysisdir, String historydir) throws IOException {
-        this(analysisdir, historydir, null);
     }
 
     public void analyzeSimulation() throws Exception {

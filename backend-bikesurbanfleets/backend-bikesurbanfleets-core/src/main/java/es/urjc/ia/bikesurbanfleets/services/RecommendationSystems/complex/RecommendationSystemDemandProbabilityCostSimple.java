@@ -57,8 +57,6 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
         getParameters(recomenderdef, this.parameters);
         scc=new CostCalculatorSimple(
                 parameters.MaxCostValue, 
-                straightLineWalkingVelocity, 
-                straightLineCyclingVelocity, 
                 probutils, 0, 0);
     }
 

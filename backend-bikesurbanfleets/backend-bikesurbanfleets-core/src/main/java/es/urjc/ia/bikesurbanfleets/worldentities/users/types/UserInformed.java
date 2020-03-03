@@ -29,7 +29,7 @@ public class UserInformed extends UserUninformed {
     protected Station determineStationToRentBike() {
 
         Station destination = null;
-        List<Station> finalStations = informationSystem.getStationsWithAvailableBikesOrderedByDistance(this.getPosition());
+        List<Station> finalStations = informationSystem.getStationsWithAvailableBikesOrderedByWalkDistance(this.getPosition());
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);
         }
@@ -39,7 +39,7 @@ public class UserInformed extends UserUninformed {
     @Override
     protected Station determineStationToReturnBike() {
         Station destination = null;
-        List<Station> finalStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.destinationPlace);
+        List<Station> finalStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.destinationPlace ,"foot");
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);
         } else {

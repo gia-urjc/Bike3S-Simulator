@@ -10,12 +10,14 @@ That is here, expected bikes in the futer (or takes of bikes) are treated as if 
  */
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.PastRecommendations;
 import es.urjc.ia.bikesurbanfleets.common.util.ProbabilityDistributions;
 import es.urjc.ia.bikesurbanfleets.common.util.StationProbabilitiesQueueBased;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -24,6 +26,10 @@ import java.util.Map;
  */
 public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCalculator{
   
+    final private double maxAverageDistanceToStationForTake=500D;
+    final private double squaredMaxAverageDistanceToStationForTake=maxAverageDistanceToStationForTake*maxAverageDistanceToStationForTake;
+    final private double maxAverageDistanceToStationForReturn=3000D;
+    final private double squaredMaxAverageDistanceToStationForReturn=maxAverageDistanceToStationForReturn*maxAverageDistanceToStationForReturn;
     final private double probabilityUsersObey ;
     final private boolean takeintoaccountexpected ;
     final private boolean takeintoaccountcompromised ;
@@ -50,16 +56,24 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
         int avbikes;
         int minpostchanges=0;
         int maxpostchanges=0;
+        double takedemandrate;
+        double returndemandrate;
     }
     // get current capacity and available bikes
     // this takes away reserved bikes and slots and takes into account expected changes
     private IntTuple getAvailableCapandBikes(Station s, double timeoffset) {
         IntTuple res =new IntTuple();
+        double reductionfactortake=1d;
+        double reductionfactorreturn=1d;
+        long lastKnownEventTime=SimulationDateTime.getCurrentSimulationInstant();;
         res.avcap=s.getCapacity()-s.getReservedBikes()-s.getReservedSlots();
         res.avbikes=s.availableBikes();
         if (takeintoaccountexpected) {
+            reductionfactortake=(timeoffset*timeoffset)/squaredMaxAverageDistanceToStationForTake;
+            reductionfactorreturn=(timeoffset*timeoffset)/squaredMaxAverageDistanceToStationForReturn;
             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
             res.avbikes += (int) Math.floor(er.changes * probabilityUsersObey);
+            lastKnownEventTime=er.lastendinstantexpected;
             //normalize just in case
             if (res.avbikes<0) res.avbikes=0;
             if (res.avbikes>res.avcap) res.avbikes=res.avcap;
@@ -68,27 +82,34 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
                 res.minpostchanges=(int) Math.floor(er.minpostchanges * probabilityUsersObey);
             }
         }
+        reductionfactortake=Math.min(reductionfactortake,1D);
+        reductionfactorreturn=Math.min(reductionfactorreturn, 1D);
+        double redfactor=1D;//Math.min(reductionfactorreturn,reductionfactortake);
+        long addseconds=Math.max(0, lastKnownEventTime-SimulationDateTime.getCurrentSimulationInstant());
+     //   System.out.println("station " + s.getId()+ " time " + timeoffset+ " reductionfactortake " + reductionfactortake+ " reductionfactorreturn "+ reductionfactortake);
+        res.takedemandrate = redfactor*dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        res.returndemandrate = redfactor*dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);        
+   //     LocalDateTime lastdatetime=SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(addseconds);
+   //     res.takedemandrate = redfactor*dm.getStationTakeRateIntervall(s.getId(), lastdatetime, timeoffset);
+   //     res.returndemandrate = redfactor*dm.getStationReturnRateIntervall(s.getId(), lastdatetime, timeoffset);        
+
         return res;
     }
 
     // Probabilities form now to timeoffset 
     public double calculateTakeProbability(Station s, double timeoffset) {
         IntTuple avCB=getAvailableCapandBikes( s,  timeoffset);
-        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
-        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);        
         StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
-                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
-                takedemandrate,avCB.avcap,1,avCB.avbikes);     
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,avCB.returndemandrate,
+                avCB.takedemandrate,avCB.avcap,1,avCB.avbikes);     
         int requiredbikes=1+ additionalResourcesDesiredInProbability -avCB.minpostchanges;
         return pc.kOrMoreBikesProbability(requiredbikes); 
     }
     public double calculateReturnProbability(Station s, double timeoffset) {
         IntTuple avCB=getAvailableCapandBikes( s,  timeoffset);
-        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
-        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);        
         StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
-                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
-                takedemandrate,avCB.avcap,1,avCB.avbikes); 
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,avCB.returndemandrate,
+                avCB.takedemandrate,avCB.avcap,1,avCB.avbikes); 
         int requiredslots=1+ additionalResourcesDesiredInProbability +avCB.maxpostchanges;
         return pc.kOrMoreSlotsProbability(requiredslots); 
     }
@@ -97,11 +118,9 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
         Station s = sd.getStation();
         ProbabilityData pd=new ProbabilityData();
         IntTuple avCB=getAvailableCapandBikes( s,  timeoffset);
-        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
-        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);        
         StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
-                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
-                takedemandrate,avCB.avcap,1,avCB.avbikes);     
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,avCB.returndemandrate,
+                avCB.takedemandrate,avCB.avcap,1,avCB.avbikes);     
         int requiredbikes=1+ additionalResourcesDesiredInProbability -avCB.minpostchanges;
         int requiredslots=1+ additionalResourcesDesiredInProbability +avCB.maxpostchanges;        
         pd.probabilityTake = pc.kOrMoreBikesProbability(requiredbikes);
@@ -116,11 +135,9 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
         Station s = sd.getStation();
         ProbabilityData pd=new ProbabilityData();
         IntTuple avCB=getAvailableCapandBikes( s,  timeoffset);
-        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
-        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);        
         StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
-                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
-                takedemandrate,avCB.avcap,1,avCB.avbikes);     
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,avCB.returndemandrate,
+                avCB.takedemandrate,avCB.avcap,1,avCB.avbikes);     
         int requiredbikes=1+ additionalResourcesDesiredInProbability -avCB.minpostchanges;
         int requiredslots=1+ additionalResourcesDesiredInProbability +avCB.maxpostchanges;        
         pd.probabilityTake = pc.kOrMoreBikesProbability(requiredbikes);
@@ -135,11 +152,9 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
         Station s = sd.getStation();
         ProbabilityData pd=new ProbabilityData();
         IntTuple avCB=getAvailableCapandBikes( s,  timeoffset);
-        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
-        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);        
         StationProbabilitiesQueueBased pc=new StationProbabilitiesQueueBased(
-                StationProbabilitiesQueueBased.Type.RungeKutta,h,returndemandrate,
-                takedemandrate,avCB.avcap,1,avCB.avbikes);     
+                StationProbabilitiesQueueBased.Type.RungeKutta,h,avCB.returndemandrate,
+                avCB.takedemandrate,avCB.avcap,1,avCB.avbikes);     
         int requiredbikes=1+ additionalResourcesDesiredInProbability -avCB.minpostchanges;
         int requiredslots=1+ additionalResourcesDesiredInProbability +avCB.maxpostchanges;        
         pd.probabilityTake = pc.kOrMoreBikesProbability(requiredbikes);

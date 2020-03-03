@@ -73,11 +73,10 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToRentBike(stationManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= maxdist).collect(Collectors.toList());
+        List<Station> candidatestations = stationsWithBikesInWalkingDistance( point,  maxdist);
 
-        if (!stations.isEmpty()) {
-            List<StationSurroundingData> stationdata = getStationQualityandDistanceRenting(stations, point);
+        if (!candidatestations.isEmpty()) {
+            List<StationSurroundingData> stationdata = getStationQualityandDistanceRenting(candidatestations, point);
             List<StationSurroundingData> temp = stationdata.stream().sorted(byProportionBetweenDistanceAndQuality).collect(Collectors.toList());
             result = temp.stream().map(StationSurroundingData -> new Recommendation(StationSurroundingData.station, null)).collect(Collectors.toList());
         }
@@ -86,10 +85,10 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToReturnBike(stationManager.consultStations()).stream().collect(Collectors.toList());
+        List<Station> candidatestations = stationsWithSlots();
 
-        if (!stations.isEmpty()) {
-            List<StationSurroundingData> stationdata = getStationQualityandDistanceReturning(stations, destination);
+        if (!candidatestations.isEmpty()) {
+            List<StationSurroundingData> stationdata = getStationQualityandDistanceReturning(candidatestations, destination);
             List<StationSurroundingData> temp = stationdata.stream().sorted(byProportionBetweenDistanceAndQuality).collect(Collectors.toList());
             result = temp.stream().map(StationSurroundingData -> new Recommendation(StationSurroundingData.station, null)).collect(Collectors.toList());
         } 
@@ -101,14 +100,14 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
         for (Station candidatestation : stations) {
             double summation = 0;
             List<Station> otherstations = stationManager.consultStations().stream()
-                    .filter(other -> candidatestation.getPosition().distanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
+                    .filter(other -> candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
             double factor, multiplication;
             for (Station other : otherstations) {
-                factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
+                factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
                 multiplication = other.availableBikes() * factor;
                 summation += multiplication;
             }
-            double dist=candidatestation.getPosition().distanceTo(userpoint);
+            double dist=graphManager.estimateDistance(userpoint, candidatestation.getPosition() ,"foot");
             stationdat.add(new StationSurroundingData(candidatestation, summation,dist));
         }
         return stationdat;
@@ -120,14 +119,14 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
         for (Station candidatestation : stations) {
             double summation = 0;
             List<Station> otherstations = stationManager.consultStations().stream()
-                    .filter(other -> candidatestation.getPosition().distanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
+                    .filter(other -> candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
             double factor, multiplication;
             for (Station other : otherstations) {
-                factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
+                factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
                 multiplication = other.availableSlots() * factor;
                 summation += multiplication;
             }
-            double dist=candidatestation.getPosition().distanceTo(userpoint);
+            double dist=graphManager.estimateDistance(candidatestation.getPosition(),userpoint ,"foot");
             stationdat.add(new StationSurroundingData(candidatestation, summation,dist));
         }
         return stationdat;

@@ -54,9 +54,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         this.parameters = new RecommendationParameters();
         getParameters(recomenderdef, this.parameters);
         scc=new CostCalculatorSimple(
-                parameters.MaxCostValue,
-                straightLineWalkingVelocity, 
-                straightLineCyclingVelocity, 
+                parameters.MaxCostValue, 
                 probutils, parameters.PredictionNorm, parameters.normmultiplier);
     }
 

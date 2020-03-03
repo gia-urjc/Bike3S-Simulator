@@ -12,6 +12,7 @@ import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParamet
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.services.StationComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.StationManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import java.util.ArrayList;
@@ -55,13 +56,14 @@ public class RecommendationSystemByDistanceAvailableResources extends Recommenda
 
     @Override
    public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
-         List<Station> temp;
+        List<Station> temp;
         List<Recommendation> result = new ArrayList<>();
-        List<Station> stations = validStationsToRentBike(stationManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= maxdist).collect(Collectors.toList());
+        List<Station> candidatestations = stationsWithBikesInWalkingDistance( point,  maxdist);
 
-        if (!stations.isEmpty()) {
-            temp = stations.stream().sorted(byProportionBetweenDistanceAndBikes(point)).collect(Collectors.toList());
+        if (!candidatestations.isEmpty()) {
+            temp = candidatestations.stream().sorted(
+                    StationComparator.byProportionBetweenDistanceAndBikes(point, graphManager,"foot")
+            ).collect(Collectors.toList());
             result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
         }
         return result;
@@ -71,27 +73,14 @@ public class RecommendationSystemByDistanceAvailableResources extends Recommenda
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Station> temp;
         List<Recommendation> result = new ArrayList<>();
-        
-        List<Station> stations = validStationsToReturnBike(stationManager.consultStations()).stream().collect(Collectors.toList());
-        if (!stations.isEmpty()) {
-            temp = stations.stream().sorted(byProportionBetweenDistanceAndSlots(destination)).collect(Collectors.toList());
+        List<Station> candidatestations = stationsWithSlots();
+        if (!candidatestations.isEmpty()) {
+            temp = candidatestations.stream().sorted(
+                    StationComparator.byProportionBetweenDistanceAndSlots(destination, graphManager, "foot")
+            ).collect(Collectors.toList());
             result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
         } 
         return result;
     }
-
-    	public static Comparator<Station> byProportionBetweenDistanceAndBikes(GeoPoint point) {
-		return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point)/
-                                                    (double) s1.availableBikes(),
-                                                  s2.getPosition().distanceTo(point)/
-                                                    (double) s2.availableBikes());
-	}
-
-	public static Comparator<Station> byProportionBetweenDistanceAndSlots(GeoPoint point) {
-		return (s1, s2) -> Double.compare(s1.getPosition().distanceTo(point)/
-                                                    (double) s1.availableSlots(),
-                                                  s2.getPosition().distanceTo(point)/
-                                                    (double) s2.availableSlots());
-	}
 
 }

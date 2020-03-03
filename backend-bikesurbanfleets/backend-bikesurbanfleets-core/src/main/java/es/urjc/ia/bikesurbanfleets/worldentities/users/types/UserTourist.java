@@ -45,7 +45,7 @@ public class UserTourist extends User {
          * witohout making a new reservation after a reservation timeout event
          * has happened.
          */
-        private final int MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
+        private final double MIN_ARRIVALTIME_TO_RESERVE_AT_SAME_STATION = 180;
 
         /**
          * It is the place the tourist wants to visit after renting a b ike.
@@ -56,7 +56,7 @@ public class UserTourist extends User {
          * It is the number of times that a reservation timeout event musts
          * occurs before the user decides to leave the system.
          */
-        private int minReservationTimeouts = rando.nextInt(1, 3);
+        private double minReservationTimeouts = rando.nextInt(1, 3);
 
         /**
          * It is the number of times that the user tries to rent a bike (without
@@ -67,24 +67,24 @@ public class UserTourist extends User {
         /**
          * It determines the rate with which the user will reserve a bike.
          */
-        private int bikeReservationPercentage = 50;
+        private double bikeReservationPercentage = 50;
 
         /**
          * It determines the rate with which the user will reserve a slot.
          */
-        private int slotReservationPercentage = 50;
+        private double slotReservationPercentage = 50;
 
         /**
          * It determines the rate with which the user will choose a new
          * destination station after a timeout event happens.
          */
-        private int reservationTimeoutPercentage = 50;
+        private double reservationTimeoutPercentage = 50;
 
         /**
          * It determines the rate with which the user will choose a new
          * destination station after he hasn't been able to make a reservation.
          */
-        private int failedReservationPercentage = 50;
+        private double failedReservationPercentage = 50;
 
         //default constructor used if no parameters are specified
         private Parameters() {
@@ -129,7 +129,7 @@ public class UserTourist extends User {
      */
     @Override
     protected Station determineStationToRentBike() {
-        List<Station> recommendedStations = informationSystem.getStationsWithAvailableBikesOrderedByDistance(this.getPosition());
+        List<Station> recommendedStations = informationSystem.getStationsWithAvailableBikesOrderedByWalkDistance(this.getPosition());
         Station destination = null;
 
         if (!recommendedStations.isEmpty()) {
@@ -155,7 +155,7 @@ public class UserTourist extends User {
      */
     @Override
     protected Station determineStationToReturnBike() {
-        List<Station> recommendedStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.getPosition());
+        List<Station> recommendedStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.getPosition(),"bike");
 
         int end = parameters.SELECTION_STATIONS_SET < recommendedStations.size()
                 ? parameters.SELECTION_STATIONS_SET : recommendedStations.size();

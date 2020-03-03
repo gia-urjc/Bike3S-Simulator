@@ -62,7 +62,7 @@ public class BoundingCircle {
     }
     
     public boolean isPointInCircle(GeoPoint pos) {
-        return radius > center.distanceTo(pos);
+        return radius > center.eucleadeanDistanceTo(pos);
     }
 
 }

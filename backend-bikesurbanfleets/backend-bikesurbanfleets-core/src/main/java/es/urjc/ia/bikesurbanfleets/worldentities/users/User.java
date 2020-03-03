@@ -7,9 +7,6 @@ import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Entity;
 import es.urjc.ia.bikesurbanfleets.common.util.IdGenerator;
 import es.urjc.ia.bikesurbanfleets.common.util.SimpleRandom;
@@ -19,10 +16,6 @@ import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Bike;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Reservation;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This is the main entity of the the system. It represents the basic behaviour
@@ -386,27 +379,14 @@ public abstract class User implements Entity {
      * @throws GeoRouteCreationException
      * @throws GraphHopperIntegrationException
      */
-    private GeoRoute calculateRoute(GeoPoint destinationPoint) throws GeoRouteCreationException, GraphHopperIntegrationException {
+    private GeoRoute calculateRoute(GeoPoint destinationPoint) {
         String vehicle = this.bike == null ? "foot" : "bike";
-
-        if (this.position.equals(destinationPoint)) {
-            List<GeoPoint> patchedRoute = new ArrayList<>(Arrays.asList(this.position, destinationPoint));
-            return new GeoRoute(patchedRoute);
-        }
-        try {
-            return routeService.obtainShortestRouteBetween(this.position, destinationPoint, vehicle);
-        } catch (Exception e) {
-            List<GeoPoint> patchedRoute = new ArrayList<>(Arrays.asList(this.position, destinationPoint));
-            return new GeoRoute(patchedRoute);
-        }
-
+        return routeService.obtainShortestRouteBetween(this.position, destinationPoint, vehicle);
     }
 
     /**
      * Time in seconds that user takes in arriving to a GeoPoint time =
      * distance/velocity
-     *
-     * @throws Exception
      */
     protected int timeToReach() {
         return (int) (route.getTotalDistance() / getAverageVelocity());
@@ -416,10 +396,8 @@ public abstract class User implements Entity {
      * It calculates the geographical point of the route the user has reached when 
      * he/she loose the reservation because of its expiration.
      * @return the reached geographical point when reservation timeout happens
-     * @throws GeoRouteException
-     * @throws GeoRouteCreationException
      */
-    public GeoPoint reachedPointUntilTimeOut() throws GeoRouteException, GeoRouteCreationException {
+    public GeoPoint reachedPointUntilTimeOut() {
         return route.calculatePositionByTimeAndVelocity(Reservation.VALID_TIME, this.getAverageVelocity());
     }
 

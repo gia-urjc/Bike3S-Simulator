@@ -68,11 +68,10 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
     @Override
     public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
         List<Recommendation> result ;
-        List<Station> stations = validStationsToRentBike(stationManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= maxdist).collect(Collectors.toList());
+        List<Station> candidatestations = stationsWithBikesInWalkingDistance( point,  maxdist);
 
-        if (!stations.isEmpty()) {
-            List<StationUtilityData> su = getStationUtility(stations, point, true);
+        if (!candidatestations.isEmpty()) {
+            List<StationUtilityData> su = getStationUtility(candidatestations, point, true);
             List<StationUtilityData> temp = su.stream().sorted(DescUtility).collect(Collectors.toList());
             if (printHints) {
                 printRecomendations(temp, true);
@@ -86,10 +85,10 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result ;
-        List<Station> stations = validStationsToReturnBike(stationManager.consultStations()).stream().collect(Collectors.toList());
+        List<Station> candidatestations = stationsWithSlots();
 
-        if (!stations.isEmpty()) {
-            List<StationUtilityData> su = getStationUtility(stations, destination, false);
+        if (!candidatestations.isEmpty()) {
+            List<StationUtilityData> su = getStationUtility(candidatestations, destination, false);
             List<StationUtilityData> temp = su.stream().sorted(DescUtility).collect(Collectors.toList());
             if (printHints) {
                 printRecomendations(temp, false);
@@ -131,7 +130,7 @@ public class RecommendationSystemGlobalUtilitiesWithDistance extends Recommendat
             double maxcap=stationManager.getMaxStationCapacity();
             double utilitymax=(maxcap-1)*4/(maxcap*maxcap);
             double utilitynorm=(normedUtilityDiff+utilitymax)/(2*utilitymax);
-            double dist = point.distanceTo(s.getPosition());
+            double dist = graphManager.estimateDistance(s.getPosition(),point ,"foot");
             double norm_distance=1-(dist / parameters.MaxDistanceNormalizer);
             double globalutility=parameters.wheightDistanceStationUtility*norm_distance+
                     (1-parameters.wheightDistanceStationUtility)*(utilitynorm);

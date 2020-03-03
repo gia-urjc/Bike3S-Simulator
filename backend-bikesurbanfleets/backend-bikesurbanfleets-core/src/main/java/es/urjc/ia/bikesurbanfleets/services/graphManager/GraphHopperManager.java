@@ -24,9 +24,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @GraphManagerType("GRAPH_HOPPER")
-public class GraphHopperIntegration implements GraphManager {
+public class GraphHopperManager implements GraphManager {
 
     private static class GraphManParameters {
         private String mapFile=null;
@@ -35,17 +37,18 @@ public class GraphHopperIntegration implements GraphManager {
 
     GraphManParameters parameters=null;
     private GraphHopper hopper;
-    private GHResponse rsp;
+    private GeoRoute lastroute;
 
-    private GeoPoint startPosition;
-    private GeoPoint endPosition;
+    private GeoPoint laststartPosition;
+    private GeoPoint lastendPosition;
+    private String lastVehicle="";
 
-    public GraphHopperIntegration(JsonObject parameterdef) throws Exception {
+    public GraphHopperManager(JsonObject parameterdef) throws Exception {
         this.parameters = new GraphManParameters();
         getParameters(parameterdef, this.parameters);
         setup(parameters.tempDirectory);
     }
-    public GraphHopperIntegration(String mapFile, String temp_dir) throws IOException {
+    public GraphHopperManager(String mapFile, String temp_dir) throws IOException {
         this.parameters = new GraphManParameters();
         parameters.mapFile=mapFile;
         parameters.tempDirectory=temp_dir;
@@ -75,10 +78,10 @@ public class GraphHopperIntegration implements GraphManager {
         hopper.importOrLoad();
     }
 
-    private GeoRoute responseGHToRoute(PathWrapper path) throws GeoRouteCreationException{
+    private static GeoRoute responseGHToRoute(PathWrapper path, GeoPoint start, GeoPoint end) throws GeoRouteCreationException{
         List<GeoPoint> geoPointList = new ArrayList<>();
         PointList ghPointList = path.getPoints();
-        geoPointList.add(startPosition);
+        geoPointList.add(start);
         GHPoint3D prev = null;
         for(GHPoint3D p: ghPointList) {
             if(prev != null && p.equals(prev)){
@@ -87,15 +90,21 @@ public class GraphHopperIntegration implements GraphManager {
             geoPointList.add(new GeoPoint(p.getLat(), p.getLon()));
             prev = p;
         }
-        geoPointList.add(endPosition);
+        geoPointList.add(end);
         GeoRoute route = new GeoRoute(geoPointList);
         return route;
     }
 
+    private GeoRoute gotItAlready(GeoPoint startPosition, GeoPoint endPosition, String vehicle){
+        if(startPosition.equals(this.laststartPosition) 
+                && endPosition.equals(this.lastendPosition)
+                && vehicle.equals(lastVehicle)) return this.lastroute;
+        else return null;        
+    }
 
-    private void calculateRoutes(GeoPoint startPosition, GeoPoint endPosition, String vehicle) throws GraphHopperIntegrationException  {
-        if(!startPosition.equals(this.startPosition) || !endPosition.equals(this.endPosition)) {
-            GHRequest req = new GHRequest(
+    private void calculateRoute(GeoPoint startPosition, GeoPoint endPosition, String vehicle) throws GraphHopperIntegrationException, GeoRouteCreationException  {
+        if(gotItAlready(startPosition, endPosition, vehicle)==null) {
+             GHRequest req = new GHRequest(
                     startPosition.getLatitude(), startPosition.getLongitude(),
                     endPosition.getLatitude(), endPosition.getLongitude())
                     .setWeighting("fastest")
@@ -107,60 +116,45 @@ public class GraphHopperIntegration implements GraphManager {
                     throw new GraphHopperIntegrationException(exception.getMessage());
                 }
             }
-            this.rsp = rsp;
-            this.startPosition = startPosition;
-            this.endPosition = endPosition;
-        }
+            PathWrapper path = rsp.getBest();
+            this.lastroute = responseGHToRoute(path,startPosition,endPosition);
+            this.laststartPosition = startPosition;
+            this.lastendPosition = endPosition;
+            this.lastVehicle=vehicle;
+       }
     }
 
     @Override
-    public GeoRoute obtainShortestRouteBetween(GeoPoint startPosition, GeoPoint endPosition, String vehicle) throws GraphHopperIntegrationException, GeoRouteCreationException {
+    public GeoRoute obtainShortestRouteBetween(GeoPoint startPosition, GeoPoint endPosition, String vehicle)  {
         if(startPosition.equals(endPosition)) {
-            return new GeoRoute(Arrays.asList(startPosition, endPosition));
+            return new GeoRoute(startPosition, endPosition);
         }
         try {
-            calculateRoutes(startPosition, endPosition, vehicle);
+            calculateRoute(startPosition, endPosition, vehicle);
+        } catch (Exception e) {
+            this.lastroute = new GeoRoute(startPosition, endPosition);
+            this.laststartPosition = startPosition;
+            this.lastendPosition = endPosition;
+            this.lastVehicle=vehicle;
         }
-        catch(GraphHopperIntegrationException exception) {
-            if(exception.getMessage().equals("Connection between locations not found")) {
-                calculateRoutes(startPosition, endPosition, "foot");
-            }
-            else throw new GraphHopperIntegrationException(exception.getMessage());
-        }
-        PathWrapper path = rsp.getBest();
-        return responseGHToRoute(path);
+        return this.lastroute;
     }
 
     @Override
-    public List<GeoRoute> obtainAllRoutesBetween(GeoPoint startPosition, GeoPoint endPosition, String vehicle) throws GraphHopperIntegrationException, GeoRouteCreationException {
+    public double estimateDistance(GeoPoint startPosition, GeoPoint endPosition, String vehicle)  {
         if(startPosition.equals(endPosition)) {
-            List<GeoPoint> pointsNewRoute = new ArrayList<>(Arrays.asList(startPosition, endPosition));
-            List<GeoRoute> newRoutes = new ArrayList<>();
-            GeoRoute newRoute = new GeoRoute(pointsNewRoute);
-            newRoutes.add(newRoute);
-            return newRoutes;
+            return 0;
         }
         try {
-            calculateRoutes(startPosition, endPosition, vehicle);
+            calculateRoute(startPosition, endPosition, vehicle);
+        } catch (Exception e) {
+            this.lastroute = new GeoRoute(startPosition, endPosition);
+            this.laststartPosition = startPosition;
+            this.lastendPosition = endPosition;
+            this.lastVehicle=vehicle;
         }
-        catch(GraphHopperIntegrationException exception) {
-            if(exception.getMessage().equals("Connection between locations not found")) {
-                calculateRoutes(startPosition, endPosition, "foot");
-            }
-            else throw new GraphHopperIntegrationException(exception.getMessage());
-        }
-        List<GeoRoute> routes = new ArrayList<>();
-        for(PathWrapper p: rsp.getAll()) {
-            routes.add(responseGHToRoute(p));
-        }
-        return routes;
+        return this.lastroute.getTotalDistance();
     }
-
-    @Override
-    public boolean hasAlternativesRoutes(GeoPoint startPosition, GeoPoint endPosition, String vehicle) throws GraphHopperIntegrationException {
-        calculateRoutes(startPosition, endPosition, vehicle);
-        return rsp.hasAlternatives();
-    }
-
+    
 }
 

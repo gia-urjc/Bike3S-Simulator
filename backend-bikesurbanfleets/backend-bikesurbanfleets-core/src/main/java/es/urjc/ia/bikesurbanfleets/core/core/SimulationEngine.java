@@ -22,6 +22,7 @@ import es.urjc.ia.bikesurbanfleets.core.ManagingEvents.EventManaging;
 import es.urjc.ia.bikesurbanfleets.core.UserEvents.EventUser;
 import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.services.fleetManager.FleetManager;
+import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserFactory;
 
@@ -53,7 +54,7 @@ public final class SimulationEngine {
      * It creates an event queue where its events are sorted by the time instant
      * when they'll occur.
      */
-    public SimulationEngine(GlobalInfo globalInfo, StationsConfig stationsInfo, UsersConfig usersInfo) throws Exception {
+    public SimulationEngine(GlobalInfo globalInfo, StationsConfig stationsInfo, UsersConfig usersInfo, GraphManager graphManager) throws Exception {
 
         //******************************************
         //setup everything for doing the simulation
@@ -72,7 +73,7 @@ public final class SimulationEngine {
         List<Station> stations = setUpStations(stationsInfo);
 
         //3.   set up general services for the simulation and initiualize them
-        SimulationServices services = new SimulationServices();
+        SimulationServices services = new SimulationServices(graphManager);
         services.initSimulationServices(globalInfo, stations);
         
         //4. set the simulation date and time

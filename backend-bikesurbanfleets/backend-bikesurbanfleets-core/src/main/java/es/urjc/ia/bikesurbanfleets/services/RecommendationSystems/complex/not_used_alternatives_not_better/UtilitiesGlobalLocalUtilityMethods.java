@@ -6,7 +6,7 @@
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.not_used_alternatives_not_better;
 
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.PastRecommendations.ExpBikeChangeResult;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.PastRecommendations.ExpBikeChangeResult;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;

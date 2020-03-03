@@ -28,7 +28,7 @@ public class UserInformedReservation extends UserUninformedReservation {
     @Override
     protected Station determineStationToRentBike() {
         Station destination = null;
-        List<Station> finalStations = informationSystem.getStationsWithAvailableBikesOrderedByDistance(this.getPosition());
+        List<Station> finalStations = informationSystem.getStationsWithAvailableBikesOrderedByWalkDistance(this.getPosition());
 
         if (!finalStations.isEmpty()) {
                     destination = finalStations.get(0);
@@ -40,7 +40,7 @@ public class UserInformedReservation extends UserUninformedReservation {
     protected Station determineStationToReturnBike() {
         Station destination = null;
         List<Station> triedStations = getMemory().getStationsWithReservationReturnFailedAttempts(); 
-        List<Station> finalStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.destinationPlace);
+        List<Station> finalStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.destinationPlace,"foot");
         finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);

@@ -40,7 +40,8 @@ public class StationUtilityData {
         private double probabilityTakeAfterRerturn;
         private double probabilityReturnAfterReturn;
     
-        
+    private int expectedBikesWhernArriving;
+    private int expectedSlotsWhenArriving;
     private double abandonProbability;
     private double expectedTimeIfNotAbandon;
     private double expectedUnsucesses;
@@ -104,6 +105,23 @@ public class StationUtilityData {
     public StationUtilityData setProbabilityReturnAfterReturn(double probabilityReturnAfterReturn) {
         this.probabilityReturnAfterReturn = probabilityReturnAfterReturn;
         return this;
+    }
+
+    public int getExpectedBikesWhernArriving() {
+        return expectedBikesWhernArriving;
+    }
+
+    public StationUtilityData setExpectedBikesWhernArriving(int expectedBikesWhernArriving) {
+        this.expectedBikesWhernArriving = expectedBikesWhernArriving;
+        return this;
+    }
+
+    public int getExpectedSlotsWhenArriving() {
+        return expectedSlotsWhenArriving;
+    }
+
+    public void setExpectedSlotsWhenArriving(int expectedSlotsWhenArriving) {
+        this.expectedSlotsWhenArriving = expectedSlotsWhenArriving;
     }
 
 

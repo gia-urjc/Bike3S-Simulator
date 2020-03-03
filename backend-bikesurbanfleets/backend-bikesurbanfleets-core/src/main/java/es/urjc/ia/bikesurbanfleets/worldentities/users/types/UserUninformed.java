@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @UserType("USER_UNINFORMED")
 public class UserUninformed extends User {
 
-    boolean printHints = true;
+    boolean printHints = false;
     static double ratio=0;
     static int rationumber=0;
     double lastdist=0;
@@ -37,20 +37,20 @@ public class UserUninformed extends User {
     public UserDecision decideAfterAppearning() {
         Station s = determineStationToRentBike();
         if (s != null) { //user has found a station
-            double dist = s.getPosition().distanceTo(this.getPosition());
+            double dist=routeService.estimateDistance(this.getPosition(), s.getPosition(), "foot");
             if (dist <= parameters.maxDistanceToRentBike - getMemory().getWalkedToTakeBikeDistance()) {
                 lastdist=dist;
                 lastwalked=getMemory().getWalkedToTakeBikeDistance();
                 return new UserDecisionGoToStation(s);
             }
             if (printHints) {
-                System.out.format("[UserInfo] User: %d abandons after appearing. Station at distance %f found. But has walked %d meters of %f maximum.%n", this.getId(),
+                System.out.format("[UserInfo] User: %d abandons after appearing. Station at distance %f found. But has walked %f meters of %f maximum.%n", this.getId(),
                         dist, getMemory().getWalkedToTakeBikeDistance(), parameters.maxDistanceToRentBike);
             }
             return new UserDecisionLeaveSystem();
         } //if not he would leave
         if (printHints) {
-            System.out.format("[UserInfo] User: %d abandons after appearing. No station found. Has walked %f meters of %d maximum.%n", this.getId(),
+            System.out.format("[UserInfo] User: %d abandons after appearing. No station found. Has walked %f meters of %f maximum.%n", this.getId(),
                     getMemory().getWalkedToTakeBikeDistance(), parameters.maxDistanceToRentBike);
         }
         return new UserDecisionLeaveSystem();
@@ -72,20 +72,20 @@ public class UserUninformed extends User {
             }
         Station s = determineStationToRentBike();
         if (s != null) { //user has found a station
-            double dist = s.getPosition().distanceTo(this.getPosition());
+            double dist=routeService.estimateDistance(this.getPosition(), s.getPosition(), "foot");
             if (dist <= parameters.maxDistanceToRentBike - getMemory().getWalkedToTakeBikeDistance()) {
                 lastdist=dist;
                 lastwalked=getMemory().getWalkedToTakeBikeDistance();
                 return new UserDecisionGoToStation(s);
             }
             if (printHints) {
-                System.out.format("[UserInfo] User: %d abandons after failed rental. Station at distance %f found. But has walked %f meters of %d maximum.%n", this.getId(),
+                System.out.format("[UserInfo] User: %d abandons after failed rental. Station at distance %f found. But has walked %f meters of %f maximum.%n", this.getId(),
                         dist, getMemory().getWalkedToTakeBikeDistance(), parameters.maxDistanceToRentBike);
             }
             return new UserDecisionLeaveSystem();
         } //if not he would leave
         if (printHints) {
-            System.out.format("[UserInfo] User: %d abandons after failed rental. No station found. Has walked %f meters of %d maximum.%n", this.getId(),
+            System.out.format("[UserInfo] User: %d abandons after failed rental. No station found. Has walked %f meters of %f maximum.%n", this.getId(),
                     getMemory().getWalkedToTakeBikeDistance(), parameters.maxDistanceToRentBike);
         }
         return new UserDecisionLeaveSystem();
@@ -156,7 +156,7 @@ public class UserUninformed extends User {
          * (without a bike reservation) before deciding to leave the system.
          */
         //      int minRentalAttempts = 3;
-        int maxDistanceToRentBike = 600;
+        double maxDistanceToRentBike = 600;
     }
 
     Parameters parameters;
@@ -181,7 +181,7 @@ public class UserUninformed extends User {
         Station destination = null;
         List<Station> triedStations = getMemory().getStationsWithRentalFailedAttempts();
         //double walkeddistance=
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition());
+        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition(),"foot");
         finalStations.removeAll(triedStations);
 
         if (!finalStations.isEmpty()) {
@@ -194,7 +194,7 @@ public class UserUninformed extends User {
     protected Station determineStationToReturnBike() {
         Station destination = null;
         List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace);
+        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace,"foot");
         finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);

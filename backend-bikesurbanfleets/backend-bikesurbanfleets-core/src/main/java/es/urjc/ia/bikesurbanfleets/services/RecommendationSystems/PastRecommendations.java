@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
+package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems;
 
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import java.util.HashMap;
@@ -40,6 +40,7 @@ public class PastRecommendations {
         public int minpostchanges = 0;
         public int maxpostchanges = 0;
         public long lastendinstantexpected=0;
+        
     }
 
     public ExpBikeChangeResult getExpectedBikechanges(int stationid, double timeoffset) {
@@ -62,7 +63,8 @@ public class PastRecommendations {
                 } else {
                     er.changes++;
                 }
-                if (e.expectedendtime>er.lastendinstantexpected) er.lastendinstantexpected=e.expectedendtime;
+                if (e.expectedendtime>er.lastendinstantexpected) 
+                    er.lastendinstantexpected=e.expectedendtime;
             } else {// e.expectedendtime>currentinstant+timeoffset are taken in to consideration if compromised is true
                 if (e.take) {
                     postchanges--;

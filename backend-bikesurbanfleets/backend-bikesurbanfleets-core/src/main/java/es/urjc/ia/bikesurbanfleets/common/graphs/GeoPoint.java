@@ -59,14 +59,14 @@ public class GeoPoint {
      * @return The distance in meters.
      * @see <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula on Wikipedia</a>
      */
-    public double distanceTo(GeoPoint point) {
+    public double eucleadeanDistanceTo(GeoPoint point) {
         double[] f = {Math.toRadians(this.latitude), Math.toRadians(point.latitude)};
         double[] l = {Math.toRadians(this.longitude), Math.toRadians(point.longitude)};
         double h = haversine(f[1] - f[0]) + Math.cos(f[0]) * Math.cos(f[1]) * haversine(l[1] - l[0]);
         return 2 * EARTH_RADIUS * Math.asin(Math.sqrt(h));
     }
 
-    private double haversine(double value) {
+    private static double haversine(double value) {
         return Math.pow(Math.sin(value / 2), 2);
     }
 
@@ -75,10 +75,10 @@ public class GeoPoint {
      * @param point2 It is the second point which determines the angle.
      * @return an angle in radians.
      */
-    public double bearing(GeoPoint point) {
+    private static double bearing(GeoPoint origin, GeoPoint point) {
         // the latitudes and longitudes of these points are in radians
-        double latitudePoint1 = Math.toRadians(latitude);
-        double longitudePoint1 = Math.toRadians(longitude);
+        double latitudePoint1 = Math.toRadians(origin.latitude);
+        double longitudePoint1 = Math.toRadians(origin.longitude);
         double latitudePoint2 = Math.toRadians(point.getLatitude());
         double longitudePoint2 = Math.toRadians(point.getLongitude());
 
@@ -99,14 +99,14 @@ public class GeoPoint {
      * @param destination It is the destination point.
      * @return the reached point between the origin and the destination points.
      */
-    public GeoPoint reachedPoint(double distance, GeoPoint destination) {
+    public static GeoPoint reachedPoint(GeoPoint origin,double distance, GeoPoint destination) {
         // these 2 variables are in radians
-        double latitudePoint = Math.toRadians(latitude);
-        double longitudePoint = Math.toRadians(longitude);
+        double latitudePoint = Math.toRadians(origin.latitude);
+        double longitudePoint = Math.toRadians(origin.longitude);
 
         double senLatitude = Math.sin(latitudePoint);
         double cosLatitude = Math.cos(latitudePoint);
-        double bearing = Math.toRadians(this.bearing(destination));
+        double bearing = Math.toRadians(bearing(origin,destination));
         double theta = distance / GeoPoint.EARTH_RADIUS;
         double senBearing = Math.sin(bearing);
         double cosBearing = Math.cos(bearing);

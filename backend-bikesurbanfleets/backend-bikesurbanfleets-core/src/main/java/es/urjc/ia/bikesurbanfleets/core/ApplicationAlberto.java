@@ -9,6 +9,7 @@ import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.core.exceptions.ValidationException;
 import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
+import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -63,17 +64,18 @@ public class ApplicationAlberto {
             if (historyOutputPath != null) {
                 globalInfo.setOtherHistoryOutputPath(historyOutputPath);
             }
+            //2. load Graph Manager
+            GraphManager graphManager=GraphManager.getGraphManager(globalInfo);
 
-            //2. read stations and user configurations
+            //3. read stations and user configurations
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
 
-            //3. do simulation
-            //TODO mapPath not obligatory for other graph managers
-            new SimulationEngine(globalInfo, stationsInfo, usersInfo);
+            //4. do simulation
+            new SimulationEngine(globalInfo, stationsInfo, usersInfo, graphManager);
 
-            //4. analyse the simulation results
-            SimulationResultAnalyser sra = new SimulationResultAnalyser(analysisOutputPath, historyOutputPath);
+            //5. analyse the simulation results
+            SimulationResultAnalyser sra = new SimulationResultAnalyser(analysisOutputPath, historyOutputPath,graphManager);
             sra.analyzeSimulation();
 
         } catch (Exception e) {

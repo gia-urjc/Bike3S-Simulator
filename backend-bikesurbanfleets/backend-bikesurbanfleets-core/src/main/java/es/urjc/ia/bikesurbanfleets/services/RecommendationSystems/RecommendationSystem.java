@@ -5,9 +5,11 @@ import java.util.stream.Collectors;
 
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple.StationComparator;
+import es.urjc.ia.bikesurbanfleets.services.StationComparator;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;
+import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.StationManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
@@ -19,49 +21,55 @@ public abstract class RecommendationSystem {
     private int minNumberRecommendations=10;
 
     //variable to print debug output for analysis
-    protected final boolean printHints = false;
+    protected final boolean printHints = true;
 
     /**
      * It provides information about the infraestructure state.
      */
-    protected StationManager stationManager;
-    protected DemandManager demandManager;
-
+    protected static StationManager stationManager;
+    protected static DemandManager demandManager;
+    protected static GraphManager graphManager;
+ 
     public DemandManager getDemandManager() {
         return demandManager;
     }
+    
+    class RecommendationParameters {
 
-    /**
-     * It filters stations which have not available bikes.
-     *
-     * @return a list of stations with available bikes.
-     */
-    protected static List<Station> validStationsToRentBike(List<Station> stations) {
-        return stations.stream().filter(station -> station.availableBikes() > 0)
-                .collect(Collectors.toList());
+        // the velocities here are real (estimated velocities)
+        // assuming real velocities of 1.1 m/s and 4 m/s for walking and biking (aprox. to 4 and 14,4 km/h)
+        //Later the velocities are adjusted to straight line velocities
+        //given a straight line distance d, the real distance dr may be estimated  
+        // as dr=f*d, whewre f will be between 1 and sqrt(2) (if triangle).
+        // here we consider f=1.4
+        //to translate velocities from realdistances to straight line distances:
+        // Vel_straightline=(d/dr)*vel_real -> Vel_straightline=vel_real/f
+        //assuming real velocities of 1.1 m/s and 4 m/s for walking and biking (aprox. to 4 and 14,4 km/h)
+        //the adapted straight line velocities are: 0.786m/s and 2.86m/s
+        public double expectedWalkingVelocity = GlobalConfigurationParameters.DEFAULT_WALKING_VELOCITY;
+        public double expectedCyclingVelocity = GlobalConfigurationParameters.DEFAULT_CYCLING_VELOCITY;
+        
+         @Override
+        public String toString() {
+            return " expectedwalkingVelocity=" + expectedWalkingVelocity + ", expectedcyclingVelocity=" + expectedCyclingVelocity  ;
+        }
     }
-
-    /**
-     * It filters stations which have not available bikes.
-     *
-     * @return a list of stations with available bikes.
-     */
-    protected static List<Station> validStationsToReturnBike(List<Station> stations) {
-        return stations.stream().filter((station) -> station.availableSlots() > 0)
-                .collect(Collectors.toList());
+    public String getParameterString(){
+        return this.parameters.toString();
     }
-
+    
+    protected RecommendationParameters parameters;
+ 
     public RecommendationSystem(SimulationServices simulationServices) {
-        this.stationManager = simulationServices.getStationManager();
-        this.demandManager=simulationServices.getDemandManager();
-    }
+        stationManager = simulationServices.getStationManager();
+        demandManager=simulationServices.getDemandManager();
+        graphManager=simulationServices.getGraphManager();
+     }
     
     
     protected abstract List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist);
 
     protected abstract List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination);
-
-    public abstract String getParameterString();
    
     // the methods for getting station recomendations for renting and returning
     // given currentposition, and destination (if return) and the maximal desired distance from currentposition if rental and from destination if return
@@ -99,12 +107,12 @@ public abstract class RecommendationSystem {
         int numrecsrequired = minNumberRecommendations - recs.size();
         if (numrecsrequired > 0) {
             int i = 0;
-            Comparator<Station> byDistance = StationComparator.byDistance(point);
+            Comparator<Station> byDistance= StationComparator.byDistance(point, graphManager, "foot");
             List<Station> temp1;
             if (take) {
-                temp1 = validStationsToRentBike(stationManager.consultStations());
-            } else {
-                temp1 = validStationsToReturnBike(stationManager.consultStations());
+                temp1 = stationsWithBikes();
+             } else {
+                temp1 = stationsWithSlots();
             }
             List<Station> temp = temp1.stream().sorted(byDistance).collect(Collectors.toList());
             while (numrecsrequired > 0 && i < temp.size()) {
@@ -130,6 +138,43 @@ public abstract class RecommendationSystem {
             throw new RuntimeException("invalid program state");
         }
         return (value - minvalue) / (maxvalue - minvalue);
+    }
+
+        /**
+     * It filters stations which have not available bikes.
+     *
+     * @return a list of stations with available bikes.
+     */
+    protected static List<Station> stationsWithBikes() {
+        List<Station> stations = stationManager.consultStations().stream().filter(station -> station.availableBikes() > 0)
+                .collect(Collectors.toList());
+        return  stations;
+    }
+    
+    protected static List<Station> stationsWithBikesInWalkingDistance(GeoPoint position, double maxdist) {
+        List<Station> stations = stationManager.consultStations().stream()
+                .filter(station -> station.availableBikes() > 0 && 
+                        graphManager.estimateDistance(position, station.getPosition(), "foot")<=maxdist)
+                .collect(Collectors.toList());
+        return stations;
+    }
+
+    /**
+     * It filters stations which have not available bikes.
+     *
+     * @return a list of stations with available bikes.
+     */
+    protected static List<Station> stationsWithSlots() {
+        List<Station> stations = stationManager.consultStations().stream().filter(station -> station.availableSlots() > 0)
+                .collect(Collectors.toList());
+        return  stations;
+    }
+    protected static List<Station> stationsWithSlotsInWalkingDistance(GeoPoint position, double maxdist) {
+        List<Station> stations = stationManager.consultStations().stream()
+                .filter(station -> (station.availableSlots() > 0) && 
+                       (graphManager.estimateDistance(station.getPosition(), position ,"foot")<=maxdist))
+                .collect(Collectors.toList());
+        return stations;
     }
 
 }

@@ -9,8 +9,6 @@ import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.core.UserEvents.EventUser;
 import es.urjc.ia.bikesurbanfleets.history.HistoryJsonClasses;
@@ -33,9 +31,6 @@ import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParam
  * @author holger
  */
 class UserDataAnalyzer {
-
-    private double defaultstraightLineWalkingVelocity = GlobalConfigurationParameters.DEFAULT_WALKING_VELOCITY / GlobalConfigurationParameters.STRAIGT_LINE_FACTOR_FOOT;
-    private double defaultstraightLineCyclingVelocity = GlobalConfigurationParameters.DEFAULT_CYCLING_VELOCITY / GlobalConfigurationParameters.STRAIGT_LINE_FACTOR_BIKE;
 
     private GraphManager routeService;
 
@@ -62,7 +57,6 @@ class UserDataAnalyzer {
         double walkvelocity;
         double cyclevelocity;
         double additionaltimeloss = 0;
-        double artificialtime = 0;
         GeoPoint lastposition;
     }
 
@@ -197,12 +191,12 @@ class UserDataAnalyzer {
         StationMetric bestStartStation = null;
         StationMetric bestEndStation = null;
         for (StationMetric hs : stationmetrics.values()) {
-            double currentdist = hs.position.distanceTo(um.origin);
+            double currentdist = routeService.estimateDistance(um.origin, hs.position, "foot");
             if (currentdist < closeststartdist) {
                 closeststartdist = currentdist;
                 bestStartStation = hs;
             }
-            currentdist = hs.position.distanceTo(um.destination);
+            currentdist = routeService.estimateDistance(hs.position, um.destination, "foot");
             if (currentdist < closestenddist) {
                 closestenddist = currentdist;
                 bestEndStation = hs;
@@ -210,21 +204,12 @@ class UserDataAnalyzer {
         }
         //Now get the routes
         double shortesttime = 0;
-        if (routeService != null) {
-            GeoRoute gr = routeService.obtainShortestRouteBetween(um.origin, bestStartStation.position, "foot");
-            shortesttime += (int) (gr.getTotalDistance() / um.walkvelocity);
-            gr = routeService.obtainShortestRouteBetween(bestStartStation.position, bestEndStation.position, "bike");
-            shortesttime += (int) (gr.getTotalDistance() / um.cyclevelocity);
-            gr = routeService.obtainShortestRouteBetween(bestEndStation.position, um.destination, "foot");
-            shortesttime += (int) (gr.getTotalDistance() / um.walkvelocity);
-            um.additionaltimeloss = (um.timeleafe - um.timeapp) - shortesttime;
-        } else {
+        shortesttime += (int) (closeststartdist / um.walkvelocity);
+        double bikedist = (int) routeService.estimateDistance(bestStartStation.position, bestEndStation.position, "bike");
+        shortesttime += (int) (bikedist / um.cyclevelocity);
+        shortesttime += (int) (closestenddist / um.walkvelocity);
+        um.additionaltimeloss = (um.timeleafe - um.timeapp) - shortesttime;
 
-            shortesttime = ((um.origin.distanceTo(bestStartStation.position) / this.defaultstraightLineWalkingVelocity)
-                    + (bestStartStation.position.distanceTo(bestEndStation.position) / this.defaultstraightLineCyclingVelocity)
-                    + (bestEndStation.position.distanceTo(um.destination) / this.defaultstraightLineWalkingVelocity));
-            um.additionaltimeloss = (int) (um.artificialtime - shortesttime);
-        }
     }
 
     void analyzeEventEntryInTime(HistoryJsonClasses.EventEntry ee, int time) {
@@ -284,7 +269,6 @@ class UserDataAnalyzer {
         }
         switch (name) {
             case "EventUserArrivesAtStationToRentBike":
-                usM.artificialtime += (usM.lastposition.distanceTo(stM.position) / defaultstraightLineWalkingVelocity);
                 usM.lastposition = stM.position;
                 if (result == Event.RESULT_TYPE.SUCCESS) {
                     usM.succbikerentals++;
@@ -299,7 +283,6 @@ class UserDataAnalyzer {
                 }
                 break;
             case "EventUserArrivesAtStationToReturnBike":
-                usM.artificialtime += (usM.lastposition.distanceTo(stM.position) / defaultstraightLineCyclingVelocity);
                 usM.lastposition = stM.position;
                 if (result == Event.RESULT_TYPE.SUCCESS) {
                     usM.succbikereturns++;
@@ -336,7 +319,6 @@ class UserDataAnalyzer {
                 }
                 break;
             case "EventUserLeavesSystem":
-                usM.artificialtime += (usM.lastposition.distanceTo(usM.destination) / defaultstraightLineWalkingVelocity);
                 usM.lastposition = usM.destination;
                 usM.leafreason = EventUser.EXIT_REASON.valueOf(ee.getAdditionalInfo().name());
                 usM.finishedinsimtime = true;
@@ -365,7 +347,7 @@ class UserDataAnalyzer {
         double avtimeloss = 0;
         int totalfailedrentals = 0;
         int totalfailedreturns = 0;
-        double avwaitingtime=0;
+        double avwaitingtime = 0;
     }
 
     GlobalUserDataForExecution getGlobalUserData() {
@@ -382,7 +364,7 @@ class UserDataAnalyzer {
         dat.totalfailedrentals = 0;
         dat.totalfailedreturns = 0;
         dat.avabandonos = 0;
-        dat.avwaitingtime=0;
+        dat.avwaitingtime = 0;
         int succusers = 0;
         int i = 0;
         for (UserMetric um : usermetrics.values()) {
@@ -395,7 +377,7 @@ class UserDataAnalyzer {
                     dat.avfromstationtime += um.timeleafe - um.timeretbike;
                     dat.totalfailedrentals += um.failedbikerentals;
                     dat.totalfailedreturns += um.failedbaikereturns;
-                    dat.avwaitingtime+=um.waitingtime;
+                    dat.avwaitingtime += um.waitingtime;
                     Integer old = dat.usertakefails.get(um.failedbikerentals);
                     if (old == null) {
                         dat.usertakefails.put(um.failedbikerentals, 1);
@@ -422,7 +404,7 @@ class UserDataAnalyzer {
         dat.avtostationtime = dat.avtostationtime / ((double) succusers * 60D);
         dat.avbetweenstationtime = dat.avbetweenstationtime / ((double) succusers * 60D);
         dat.avfromstationtime = dat.avfromstationtime / ((double) succusers * 60D);
-        dat.avwaitingtime=dat.avwaitingtime/ ((double) succusers * 60D);
+        dat.avwaitingtime = dat.avwaitingtime / ((double) succusers * 60D);
         dat.DS = (double) succusers / (double) dat.finishedusers;
         dat.HE = (double) succusers / ((double) dat.totalfailedrentals + succusers);
         dat.RE = (double) succusers / ((double) dat.totalfailedreturns + succusers);

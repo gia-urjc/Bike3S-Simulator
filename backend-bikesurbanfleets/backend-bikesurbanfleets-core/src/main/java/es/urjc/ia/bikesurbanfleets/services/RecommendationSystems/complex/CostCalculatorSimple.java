@@ -20,11 +20,8 @@ public class CostCalculatorSimple {
 
     //methods for cost calculations
     public CostCalculatorSimple(double maxcost,
-            double walkvel, double cycvel, 
             UtilitiesProbabilityCalculator recutils,
             int PredictionNorm, double normmultiplier) {
-        walkingVelocity=walkvel;
-        cyclingVelocity=cycvel;
         this.probutils=recutils;
         maxCostValue=maxcost;
         predictionNormalisation=PredictionNorm;
@@ -33,8 +30,6 @@ public class CostCalculatorSimple {
 
     final int predictionNormalisation;
     final double maxCostValue;
-    final double walkingVelocity;
-    final double cyclingVelocity;
     UtilitiesProbabilityCalculator probutils;
     final double normmultiplier;
     final double estimatedavwalktimenearest=150;

@@ -36,7 +36,9 @@ public class UserObedientReservation extends UserUninformedReservation {
         double desiredmaxdistance=Math.max(0,parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance());
         List<Recommendation> originRecommendedStations = recommendationSystem.getRecomendedStationsToRentBike(this.getPosition(),desiredmaxdistance);
         List<Recommendation> recommendedStations = originRecommendedStations.stream()
-                .filter(recomendation -> recomendation.getStation().getPosition().distanceTo(this.getPosition()) <= desiredmaxdistance).collect(Collectors.toList());
+                .filter(recomendation -> 
+                        routeService.estimateDistance(this.getPosition(), recomendation.getStation().getPosition(), "foot")
+                         <= desiredmaxdistance).collect(Collectors.toList());
         boolean noStationAtdist=recommendedStations.isEmpty();
 
         List<Station> triedStations = getMemory().getStationsWithReservationRentalFailedAttempts();
@@ -47,7 +49,8 @@ public class UserObedientReservation extends UserUninformedReservation {
         } else {
             if (printHints) {
                 if (!originRecommendedStations.isEmpty() && noStationAtdist) {
-                    System.out.println("[UserInfo] User " + this.getId() + " not accepted recommended station when taking because of distance: " + originRecommendedStations.get(0).getStation().getPosition().distanceTo(this.getPosition()));
+                    System.out.println("[UserInfo] User " + this.getId() + " not accepted recommended station when taking because of distance: " 
+                            + routeService.estimateDistance(this.getPosition(), originRecommendedStations.get(0).getStation().getPosition(), "foot"));
                 } else if (!originRecommendedStations.isEmpty() && !noStationAtdist) {
                     System.out.println("[UserInfo] User " + this.getId() + " no station used (all recommendation tried already) ");
                 } else {
@@ -82,7 +85,7 @@ public class UserObedientReservation extends UserUninformedReservation {
             destination = recommendedStations.get(0).getStation();
         } else {            
             System.out.println("[Warn] User " + this.getId() + " no (new) return station recommended, will try return at closest station with slot");
-            List<Station> finalStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.destinationPlace);
+            List<Station> finalStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.destinationPlace,"foot");
             if (!finalStations.isEmpty()) {
                 destination = finalStations.get(0);
             } else {

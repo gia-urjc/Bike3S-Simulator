@@ -117,7 +117,7 @@ public class SimulatedWaitingUser extends User {
         //default constructor used if no parameters are specified
         private Parameters() {
         }
-        int MaxWaitingTime = 600;
+        double MaxWaitingTime = 600;
 
     }
 
@@ -141,7 +141,7 @@ public class SimulatedWaitingUser extends User {
     protected Station determineStationToRentBike() {
 
         Station destination = null;
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition()).stream().collect(Collectors.toList());
+        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition(), "foot").stream().collect(Collectors.toList());
 
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);
@@ -153,7 +153,7 @@ public class SimulatedWaitingUser extends User {
     protected Station determineStationToReturnBike() {
         Station destination = null;
         List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace);
+        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace, "foot");
         finalStations.removeAll(triedStations);
         if (!finalStations.isEmpty()) {
             destination = finalStations.get(0);

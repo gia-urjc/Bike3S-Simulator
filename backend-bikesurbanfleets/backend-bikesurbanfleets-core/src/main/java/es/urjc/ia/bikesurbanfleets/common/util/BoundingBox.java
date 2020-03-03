@@ -39,12 +39,12 @@ public class BoundingBox {
     
     public double getWidth() {
         GeoPoint northEast = new GeoPoint(northWest.getLatitude(), southEast.getLongitude());
-        return northWest.distanceTo(northEast);
+        return northWest.eucleadeanDistanceTo(northEast);
     }
     
     public double getHeight() {
         GeoPoint southWest = new GeoPoint(southEast.getLatitude(), northWest.getLongitude());
-        return northWest.distanceTo(southWest);
+        return northWest.eucleadeanDistanceTo(southWest);
     }
     
     /**

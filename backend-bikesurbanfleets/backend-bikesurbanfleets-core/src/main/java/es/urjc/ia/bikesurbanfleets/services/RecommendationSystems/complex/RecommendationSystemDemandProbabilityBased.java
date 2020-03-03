@@ -1,6 +1,7 @@
 
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.PastRecommendations;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
@@ -11,10 +12,13 @@ import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import java.lang.reflect.Field;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -53,15 +57,24 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         
          @Override
         public String toString() {
-            return "additionalResourcesDesiredInProbability="+additionalResourcesDesiredInProbability+", expectedwalkingVelocity=" + expectedWalkingVelocity + ", expectedcyclingVelocity=" + expectedCyclingVelocity + ", probabilityUsersObey=" + probabilityUsersObey + ", takeintoaccountexpected=" + takeintoaccountexpected + ", takeintoaccountcompromised=" + takeintoaccountcompromised ;
+            String s="";      
+            for (Field f:this.getClass().getFields()){
+                try {
+                    s=f.getName()+f.get(this);
+                } catch (Exception ex) {
+                    throw new RuntimeException("Error in writing parameters");
+                }
+            }
+            return s;
+     //       {            return "additionalResourcesDesiredInProbability="+additionalResourcesDesiredInProbability+", expectedwalkingVelocity=" + expectedWalkingVelocity + ", expectedcyclingVelocity=" + expectedCyclingVelocity + ", probabilityUsersObey=" + probabilityUsersObey + ", takeintoaccountexpected=" + takeintoaccountexpected + ", takeintoaccountcompromised=" + takeintoaccountcompromised ;
         }
     }
     public String getParameterString(){
         return this.baseparameters.toString();
     }
 
-    protected double straightLineWalkingVelocity ;
-    protected double straightLineCyclingVelocity ;
+    protected double expWalkingVelocity ;
+    protected double expCyclingVelocity ;
 
     protected RecommendationParameters baseparameters;
     protected UtilitiesProbabilityCalculator probutils;
@@ -88,8 +101,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         // Vel_straightline=(d/dr)*vel_real -> Vel_straightline=vel_real/f
         //assuming real velocities of 1.4 m/s and 6 m/s for walking and biking (aprox. to 5 and 20 km/h)
         //the adapted straight line velocities are: 1m/s and 4.286m/s
-        straightLineWalkingVelocity = this.baseparameters.expectedWalkingVelocity/GlobalConfigurationParameters.STRAIGT_LINE_FACTOR_FOOT;
-        straightLineCyclingVelocity = this.baseparameters.expectedCyclingVelocity/GlobalConfigurationParameters.STRAIGT_LINE_FACTOR_BIKE;
+        expWalkingVelocity = this.baseparameters.expectedWalkingVelocity;
+        expCyclingVelocity = this.baseparameters.expectedCyclingVelocity;
         
         pastrecs=new PastRecommendations();
         probutils=new UtilitiesProbabilityCalculationQueue(getDemandManager(), pastrecs, baseparameters.probabilityUsersObey,
@@ -115,9 +128,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             ).collect(Collectors.toList());
             //add values to the expeted takes
             StationUtilityData first = su.get(0);
-            double dist = currentposition.distanceTo(first.getStation().getPosition());
-            pastrecs.addExpectedBikechange(first.getStation().getId(),
-                    (int) (dist / straightLineWalkingVelocity), true);
+            pastrecs.addExpectedBikechange(first.getStation().getId(),(int)first.getWalkTime(),true);
         } else {
             result = new ArrayList<>(0);
         }
@@ -143,9 +154,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
             ).collect(Collectors.toList());
             //add values to the expeted returns
             StationUtilityData first = su.get(0);
-            double dist = currentposition.distanceTo(first.getStation().getPosition());
-            pastrecs.addExpectedBikechange(first.getStation().getId(),
-                    (int) (dist / straightLineCyclingVelocity), false);
+            pastrecs.addExpectedBikechange(first.getStation().getId(),(int)first.getBiketime(), false);
         } else {
             result = new ArrayList<>(0);
         }
@@ -156,13 +165,16 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     private List<StationUtilityData> getCandidateStationsRentOrderedByDistance(GeoPoint currentposition, double maxdistance) {
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stationManager.consultStations()) {
-            double dist = currentposition.distanceTo(s.getPosition());
+            double dist = currentposition.eucleadeanDistanceTo(s.getPosition());
             if (dist<=maxdistance) {
-                double offtime = (dist / straightLineWalkingVelocity);
-                StationUtilityData sd = new StationUtilityData(s);
-                sd.setWalkTime(offtime).setWalkdist(dist).setCapacity(s.getCapacity());
-                sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
-                temp.add(sd);
+                dist = graphManager.estimateDistance(currentposition, s.getPosition() ,"foot");
+                if (dist<=maxdistance) {
+                    double offtime = (dist / expWalkingVelocity);
+                    StationUtilityData sd = new StationUtilityData(s);
+                    sd.setWalkTime(offtime).setWalkdist(dist).setCapacity(s.getCapacity());
+                    sd.setProbabilityTake(probutils.calculateTakeProbability(sd.getStation(), sd.getWalkTime()));
+                    temp.add(sd);
+                }
             }
         }
         return temp.stream().sorted(rentByDistance()).collect(Collectors.toList());
@@ -173,10 +185,10 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         List<StationUtilityData> temp = new ArrayList<>();
         for (Station s : stationManager.consultStations()) {
             StationUtilityData sd = new StationUtilityData(s);
-            double bikedist=currentposition.distanceTo(s.getPosition());
-            double biketime = bikedist / straightLineCyclingVelocity;
-            double walkdist=s.getPosition().distanceTo(destination);
-            double walktime =  walkdist / straightLineWalkingVelocity;
+            double bikedist = graphManager.estimateDistance(currentposition, s.getPosition() ,"bike");
+            double biketime = bikedist / expCyclingVelocity;
+            double walkdist = graphManager.estimateDistance(s.getPosition(),destination ,"foot");
+            double walktime =  walkdist / expWalkingVelocity;
             sd.setWalkTime(walktime).setWalkdist(walkdist)
                     .setCapacity(s.getCapacity())
                     .setBikedist(bikedist).setBiketime(biketime);
@@ -270,8 +282,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                             );
                     StationUtilityData bn=s.bestNeighbour;
                     if (bn!=null){
-                        double distto=bn.getStation().getPosition().distanceTo(s.getStation().getPosition());
-                        double timeto= (distto / straightLineWalkingVelocity);
+                        double distto=graphManager.estimateDistance(s.getStation().getPosition(), bn.getStation().getPosition() ,"foot");
+                        double timeto= (distto / expWalkingVelocity);
                         System.out.format(" %3d %7.1f %6.5f %n",
                             bn.getStation().getId(),
                             timeto,
@@ -311,8 +323,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                             s.aux);
                     StationUtilityData bn=s.bestNeighbour;
                     if (bn!=null){
-                        double distto=bn.getStation().getPosition().distanceTo(s.getStation().getPosition());
-                        double timeto= (distto / straightLineCyclingVelocity);
+                        double distto=graphManager.estimateDistance(s.getStation().getPosition(), bn.getStation().getPosition() ,"bike");
+                        double timeto= (distto / expCyclingVelocity);
                         System.out.format(" %3d %7.1f %7.1f %6.5f %n",
                             bn.getStation().getId(),
                             timeto,

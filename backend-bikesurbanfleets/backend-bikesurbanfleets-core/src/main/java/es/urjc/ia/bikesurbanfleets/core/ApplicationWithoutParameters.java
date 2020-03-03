@@ -5,6 +5,7 @@ import es.urjc.ia.bikesurbanfleets.core.config.*;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationEngine;
 import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.SimulationResultAnalyser;
+import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 
 import java.io.File;
  
@@ -51,15 +52,18 @@ public class ApplicationWithoutParameters {
                 globalInfo.setOtherHistoryOutputPath(historyOutputPath);
             }
 
-            //2. read stations and user configurations
+            //2. load Graph Manager
+            GraphManager graphManager=GraphManager.getGraphManager(globalInfo);
+
+            //3. read stations and user configurations
             UsersConfig usersInfo = jsonReader.readUsersConfiguration();
             StationsConfig stationsInfo = jsonReader.readStationsConfiguration();
 
-            //3. do simulation
-            new SimulationEngine(globalInfo, stationsInfo, usersInfo);
+            //4. do simulation
+            new SimulationEngine(globalInfo, stationsInfo, usersInfo, graphManager);
             
-            //4. analyse the simulation results
-            SimulationResultAnalyser sra = new SimulationResultAnalyser(analysisOutputPath, historyOutputPath);
+            //5. analyse the simulation results
+            SimulationResultAnalyser sra = new SimulationResultAnalyser(analysisOutputPath, historyOutputPath,graphManager);
             sra.analyzeSimulation();
 
         } catch (Exception e) {

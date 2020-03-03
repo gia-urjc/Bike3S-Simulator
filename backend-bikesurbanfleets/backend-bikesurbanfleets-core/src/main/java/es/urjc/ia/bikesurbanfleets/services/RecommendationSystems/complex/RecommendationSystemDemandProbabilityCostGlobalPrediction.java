@@ -68,9 +68,10 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         getParameters(recomenderdef, this.parameters);
         ucc = new ComplexCostCalculator(parameters.minimumMarginProbability, parameters.AbandonPenalisation, parameters.unsucesscostRentPenalisation,
                 parameters.unsucesscostReturnPenalisation,
-                straightLineWalkingVelocity,
-                straightLineCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-                probutils, parameters.PredictionNorm, parameters.normmultiplier,parameters.alfa);
+                expWalkingVelocity,
+                expCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
+                probutils, parameters.PredictionNorm, parameters.normmultiplier,parameters.alfa,
+                graphManager);
     }
 
     @Override

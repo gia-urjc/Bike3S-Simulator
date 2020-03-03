@@ -35,11 +35,10 @@ public class GlobalConfigurationParameters {
         //assuming real velocities of 1.1 m/s and 4 m/s for walking and biking (aprox. to 4 and 14,4 km/h)
         //the adapted straight line velocities are: 0.786m/s and 2.86m/s
     //default values 
+    //these values are used in the recommednation services
+    // theuy are also used as defeult velocities for users, if no other velocities are specified for a user
     public final static double DEFAULT_WALKING_VELOCITY=1.4D;
     public final static double DEFAULT_CYCLING_VELOCITY=4.0D;
-    //The factor used to conevrt straight line distances or times or velocity to approximate real times, distance, velocitioes
-    public final static double STRAIGT_LINE_FACTOR_BIKE=1.6D;
-    public final static double STRAIGT_LINE_FACTOR_FOOT=1.8D;
     
 
 }

@@ -5,6 +5,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationExce
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,6 +43,11 @@ public class GeoRoute {
             this.totalDistance=calculateDistance();
        }
     }
+    public GeoRoute(GeoPoint startPosition, GeoPoint endPosition)  {
+            this.routePoints=Arrays.asList(startPosition, endPosition);
+            this.encodedPoints=encode(routePoints);
+            this.totalDistance=calculateDistance();
+    }
 
     public double getTotalDistance() {
         return totalDistance;
@@ -57,7 +63,7 @@ public class GeoRoute {
         for (int i = 0; i < points.size() - 1; i++) {
             GeoPoint currentPoint = points.get(i);
             GeoPoint nextPoint = points.get(i + 1);
-            Double currentDistance = currentPoint.distanceTo(nextPoint);
+            Double currentDistance = currentPoint.eucleadeanDistanceTo(nextPoint);
             totalDistance += currentDistance;
         }
         return totalDistance;
@@ -73,7 +79,7 @@ public class GeoRoute {
      * @param velocity It is the speed at which the entity travels.
      * @return the traveled subroute.
      */
-    public GeoPoint calculatePositionByTimeAndVelocity(double finalTime, double velocity) throws GeoRouteException, GeoRouteCreationException {
+    public GeoPoint calculatePositionByTimeAndVelocity(double finalTime, double velocity) {
         //get the points as list
         List<GeoPoint> points = routePoints;
          
@@ -87,7 +93,7 @@ public class GeoRoute {
         while (i < points.size() - 1 && currentTime < finalTime) {
             currentPoint = points.get(i);
             nextPoint = points.get(i + 1);
-            currentDistance = currentPoint.distanceTo(nextPoint);
+            currentDistance = currentPoint.eucleadeanDistanceTo(nextPoint);
             totalDistance += currentDistance;
             currentTime += currentDistance / velocity;
             i++;
@@ -97,19 +103,19 @@ public class GeoRoute {
          * his destination more time that reservation valid time. Then, if time that user 
          * takes to arrive is lower than reservation valid time, this is an error: timeout mustn't ocurrs 	
          */
-        if (currentTime < finalTime) {
-            throw new GeoRouteException("Can't create intermediate position");
-        }
+   //     if (currentTime < finalTime) {
+   //         throw new GeoRouteException("Can't create intermediate position");
+   //     }
         
         GeoPoint newPoint = nextPoint; 
-        if (currentTime  != finalTime) {
+        if (currentTime  >= finalTime) {
 	        /* finalTime * velocity is the real distance the user has been able to travel until the timeout.
 	         * x is the distance between th known geographical point the user has 
 	         * reached and the real geographical point the user has arrived at.
 	         */
 	        double x = totalDistance - finalTime * velocity;
 	        double intermedDistance = currentDistance - x;
-	        newPoint = currentPoint.reachedPoint(intermedDistance, nextPoint);
+	        newPoint = GeoPoint.reachedPoint(currentPoint,intermedDistance, nextPoint);
         }
         return newPoint;
     }

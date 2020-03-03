@@ -85,11 +85,10 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
     @Override
    public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
         List<Recommendation> result;
-        List<Station> stations = validStationsToRentBike(stationManager.consultStations()).stream()
-                .filter(station -> station.getPosition().distanceTo(point) <= maxdist).collect(Collectors.toList());
+        List<Station> candidatestations = stationsWithBikesInWalkingDistance( point,  maxdist);
 
-        if (!stations.isEmpty()) {
-            List<StationUtilityData> su = getStationUtility(stations, point, true);
+        if (!candidatestations.isEmpty()) {
+            List<StationUtilityData> su = getStationUtility(candidatestations, point, true);
             List<StationUtilityData> temp = su.stream().sorted(DescUtility).collect(Collectors.toList());
             if (printHints) printRecomendations(temp, true);
             result = temp.stream().map(sq -> new Recommendation(sq.getStation(), null)).collect(Collectors.toList());
@@ -101,7 +100,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
 
     public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> result;
-        List<Station> stations = validStationsToReturnBike(stationManager.consultStations()).stream().collect(Collectors.toList());
+        List<Station> stations = stationsWithSlots();
 
         if (!stations.isEmpty()) {
             List<StationUtilityData> su = getStationUtility(stations, destination, false);
@@ -146,7 +145,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
 
             StationUtilityData sd = new StationUtilityData(s);
             List<Station> otherstations = stationManager.consultStations().stream()
-                .filter(other -> s.getPosition().distanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
+                .filter(other -> s.getPosition().eucleadeanDistanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
 
             double surbikedemand = getSurroundingBikeDemand(s,otherstations);
             double surcapacity=getSurroundingCapacity(s,otherstations);
@@ -165,7 +164,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
                    * (surbikedemand/ currentglobalbikedemand) * stationManager.getNumberStations();
 //                    * (idealbikes/ ud.maxdemand) ;
 
-            double dist = point.distanceTo(s.getPosition());
+            double dist = graphManager.estimateDistance(s.getPosition(),point ,"foot");
             double norm_distance=1-(dist / parameters.MaxDistanceNormalizer);
             double globalutility = parameters.wheightDistanceStationUtility * norm_distance
                     + (1 - parameters.wheightDistanceStationUtility) * (normedUtilityDiff);
@@ -190,7 +189,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
         double factor, multiplication;
         LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (Station other : otherstations) {
-            factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
+            factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
             multiplication = recutils.getDemandManager().getStationTakeRatePerHour(other.getId(),current) * factor;
             accideal += multiplication;
         }
@@ -202,7 +201,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
         double factor, multiplication;
         LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
         for (Station other : otherstations) {
-            factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
+            factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
             multiplication = recutils.dm.getStationReturnRatePerHour(other.getId(),current) * factor;
             accideal += multiplication;
         }
@@ -213,7 +212,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
         double accocc = 0;
         double factor, multiplication;
         for (Station other : otherstations) {
-            factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
+            factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
             multiplication = other.availableBikes() * factor;
             accocc += multiplication;
         }
@@ -223,7 +222,7 @@ public class RecommendetionSystemDemandGlobalSurroundingDistanceOpenfunction ext
         double accocc = 0;
         double factor, multiplication;
         for (Station other : otherstations) {
-            factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().distanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
+            factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
             multiplication = other.getCapacity() * factor;
             accocc += multiplication;
         }

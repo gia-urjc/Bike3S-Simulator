@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple.StationComparator;
+import es.urjc.ia.bikesurbanfleets.services.StationComparator;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Incentives.Incentive;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Incentives.Money;
@@ -46,9 +46,9 @@ public class UserEconomicIncentives extends UserObedient {
         private int minRentalAttempts = 3;
         private int COMPENSATION = 10;   // 1 incentive unit  per 10 meters
         private int EXTRA = 30;   // 30% of quality
-        private int maxdistance = 800; //800 meters
+        private double maxdistance = 800; //800 meters
  
-        int maxDistanceToRentBike = 600;
+        double maxDistanceToRentBike = 600;
 
         @Override
         public String toString() {
@@ -153,8 +153,8 @@ public class UserEconomicIncentives extends UserObedient {
     }
 
     private double compensation(GeoPoint point, Station nearestStation, Station recommendedStation) {
-        double distanceToNearestStation = nearestStation.getPosition().distanceTo(point);
-        double distanceToRecommendedStation = recommendedStation.getPosition().distanceTo(point);
+        double distanceToNearestStation = routeService.estimateDistance(point,nearestStation.getPosition(),"foot");
+        double distanceToRecommendedStation = routeService.estimateDistance(point,recommendedStation.getPosition(),"foot");
         return (distanceToRecommendedStation - distanceToNearestStation) / parameters.COMPENSATION;
     }
 
@@ -166,7 +166,7 @@ public class UserEconomicIncentives extends UserObedient {
             double maxDistance = parameters.maxdistance;
             double distance = 0.0;
             for (Station s : stations) {
-                distance = station.getPosition().distanceTo(s.getPosition());
+                distance = station.getPosition().eucleadeanDistanceTo(s.getPosition());
                 if (maxDistance > distance) {
                     factor = (maxDistance - distance) / maxDistance;
                 }
@@ -185,7 +185,7 @@ public class UserEconomicIncentives extends UserObedient {
             double maxDistance = parameters.maxdistance;
             double distance = 0.0;
             for (Station s : stations) {
-                distance = station.getPosition().distanceTo(s.getPosition());
+                distance = station.getPosition().eucleadeanDistanceTo(s.getPosition());
                 if (maxDistance > distance) {
                     factor = (maxDistance - distance) / maxDistance;
                 }
@@ -197,14 +197,14 @@ public class UserEconomicIncentives extends UserObedient {
     }
 
     private Station nearestStationToRent(List<Station> stations, GeoPoint point) {
-        Comparator<Station> byDistance = StationComparator.byDistance(point);
+        Comparator<Station> byDistance = StationComparator.byDistance(point, routeService,"foot");
         List<Station> orderedStations = stations.stream().filter(s -> s.availableBikes() > 0)
                 .sorted(byDistance).collect(Collectors.toList());
         return orderedStations.get(0);
     }
 
     private Station nearestStationToReturn(List<Station> stations, GeoPoint point) {
-        Comparator<Station> byDistance = StationComparator.byDistance(point);
+        Comparator<Station> byDistance = StationComparator.byDistance(point, routeService,"foot");
         List<Station> orderedStations = stations.stream().filter(s -> s.availableSlots() > 0)
                 .sorted(byDistance).collect(Collectors.toList());
         return orderedStations.get(0);
