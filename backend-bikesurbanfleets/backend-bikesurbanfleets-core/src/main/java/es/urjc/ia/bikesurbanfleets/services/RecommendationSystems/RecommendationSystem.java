@@ -94,34 +94,36 @@ public abstract class RecommendationSystem {
     // given currentposition, and destination (if return) and the maximal desired distance from currentposition if rental and from destination if return
     public List<Recommendation> getRecomendedStationsToRentBike(GeoPoint currentposition, double maxdist) {
         List<Recommendation> rec = recommendStationToRentBike(currentposition, maxdist);
+        if (!rec.isEmpty()){//add expected change to station
+            Recommendation first = rec.get(0);
+            double timetoreach = (graphManager.estimateDistance(currentposition, first.getStation().getPosition(), "foot")
+                    / parameters.expectedWalkingVelocity);
+            pastRecomendations.addExpectedBikechange(first.getStation().getId(), (int) timetoreach, true);
+        }
         if (rec.size() < minNumberRecommendations) {
             if (rec.size() == 0) {
                 System.out.println("[Warn] no recommentadtions for renting at " + maxdist + "meters. Adding the closest stations with bikes to fill.  Time:" + SimulationDateTime.getCurrentSimulationDateTime() + "(" + SimulationDateTime.getCurrentSimulationInstant() + ")");
             }
             addAlternativeRecomendations(currentposition, rec, true);
-        } else { //add expected change to station
-            Recommendation first = rec.get(0);
-            double timetoreach = (graphManager.estimateDistance(currentposition, first.getStation().getPosition(), "foot")
-                    / parameters.expectedWalkingVelocity);
-            pastRecomendations.addExpectedBikechange(first.getStation().getId(), (int) timetoreach, true);
         }
         return rec;
     }
 
     public List<Recommendation> getRecomendedStationsToReturnBike(GeoPoint currentposition, GeoPoint destination) {
         List<Recommendation> rec = recommendStationToReturnBike(currentposition, destination);
-        if (rec.size() < minNumberRecommendations) {
-            if (rec.size() == 0) {
-                System.out.println("[Warn] no recommentadtions for returning. Adding the closest stations with slots to fill.  Time:" + SimulationDateTime.getCurrentSimulationDateTime() + "(" + SimulationDateTime.getCurrentSimulationInstant() + ")");
-            }
-            addAlternativeRecomendations(destination, rec, false);
-        } else { //add expected change to station
+        if (!rec.isEmpty()){//add expected change to station
             Recommendation first = rec.get(0);
             double timetoreach = (graphManager.estimateDistance(currentposition, first.getStation().getPosition(), "bike")
                     / parameters.expectedCyclingVelocity);
             pastRecomendations.addExpectedBikechange(first.getStation().getId(), (int) timetoreach, false);
         }
-        return rec;
+        if (rec.size() < minNumberRecommendations) {
+            if (rec.size() == 0) {
+                System.out.println("[Warn] no recommentadtions for returning. Adding the closest stations with slots to fill.  Time:" + SimulationDateTime.getCurrentSimulationDateTime() + "(" + SimulationDateTime.getCurrentSimulationInstant() + ")");
+            }
+            addAlternativeRecomendations(destination, rec, false);
+        } 
+       return rec;
     }
 
     private boolean containsStation(List<Recommendation> recs, Station s) {

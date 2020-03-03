@@ -45,7 +45,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
     public RecommendationSystemDemandProbabilityBased(JsonObject recomenderdef, SimulationServices ss, RecommendationParameters parameters) throws Exception {
         super(recomenderdef,ss, parameters);
         this.parameters=(RecommendationParameters)super.parameters;
-        probutils=new UtilitiesProbabilityCalculationSkellam(getDemandManager(), pastRecomendations, parameters.probabilityUsersObey,
+        probutils=new UtilitiesProbabilityCalculationQueue(getDemandManager(), pastRecomendations, parameters.probabilityUsersObey,
                  parameters.takeintoaccountexpected, parameters.takeintoaccountcompromised, parameters.additionalResourcesDesiredInProbability);
     }
 
