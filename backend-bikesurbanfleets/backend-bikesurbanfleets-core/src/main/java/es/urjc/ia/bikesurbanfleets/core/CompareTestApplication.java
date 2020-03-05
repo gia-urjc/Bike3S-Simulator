@@ -42,7 +42,8 @@ public class CompareTestApplication {
     //    + "/newProbAnalysis/cost_simple";
     //    + "/newProbAnalysis/cost_comp_prueba";
      //   + "probability_skellam";
-        + "probability_queue_prueba";
+     //   +"simple";
+        + "cost_comp_prueba";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         String testFile = testsDir + "/tests.json";

@@ -53,6 +53,7 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
 
     private class IntTuple{
         int avcap;
+        int avslots;
         int avbikes;
         int minpostchanges=0;
         int maxpostchanges=0;
@@ -72,16 +73,17 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
             reductionfactortake=(timeoffset*timeoffset)/squaredMaxAverageDistanceToStationForTake;
             reductionfactorreturn=(timeoffset*timeoffset)/squaredMaxAverageDistanceToStationForReturn;
             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
-            res.avbikes += (int) Math.floor(er.changes * probabilityUsersObey);
+            res.avbikes += er.changes;//(int) Math.floor(er.changes * probabilityUsersObey);
             lastKnownEventTime=er.lastendinstantexpected;
             //normalize just in case
             if (res.avbikes<0) res.avbikes=0;
             if (res.avbikes>res.avcap) res.avbikes=res.avcap;
             if (takeintoaccountcompromised) {
-                res.maxpostchanges=(int) Math.floor(er.maxpostchanges * probabilityUsersObey);
-                res.minpostchanges=(int) Math.floor(er.minpostchanges * probabilityUsersObey);
+                res.maxpostchanges=er.maxpostchanges;//(int) Math.floor(er.maxpostchanges * probabilityUsersObey);
+                res.minpostchanges=er.minpostchanges;//(int) Math.floor(er.minpostchanges * probabilityUsersObey);
             }
         }
+        res.avslots=res.avcap-res.avbikes;
         reductionfactortake=Math.min(reductionfactortake,1D);
         reductionfactorreturn=Math.min(reductionfactorreturn, 1D);
         double redfactor=1D;//Math.min(reductionfactorreturn,reductionfactortake);
@@ -103,7 +105,8 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
                 StationProbabilitiesQueueBased.Type.RungeKutta,h,avCB.returndemandrate,
                 avCB.takedemandrate,avCB.avcap,1,avCB.avbikes);     
         int requiredbikes=1+ additionalResourcesDesiredInProbability -avCB.minpostchanges;
-        return pc.kOrMoreBikesProbability(requiredbikes); 
+        if (avCB.avbikes+avCB.minpostchanges<=0 && avCB.minpostchanges<0) return 0;
+        return Math.pow(pc.kOrMoreBikesProbability(requiredbikes),1); 
     }
     public double calculateReturnProbability(Station s, double timeoffset) {
         IntTuple avCB=getAvailableCapandBikes( s,  timeoffset);
@@ -111,7 +114,8 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
                 StationProbabilitiesQueueBased.Type.RungeKutta,h,avCB.returndemandrate,
                 avCB.takedemandrate,avCB.avcap,1,avCB.avbikes); 
         int requiredslots=1+ additionalResourcesDesiredInProbability +avCB.maxpostchanges;
-        return pc.kOrMoreSlotsProbability(requiredslots); 
+        if ((avCB.avslots-avCB.maxpostchanges)<=0 && avCB.maxpostchanges>0) return 0;
+        return Math.pow(pc.kOrMoreSlotsProbability(requiredslots),1); 
     }
     //methods for calculation probabilities    
     public ProbabilityData calculateAllTakeProbabilitiesWithArrival(StationUtilityData sd,double timeoffset) {

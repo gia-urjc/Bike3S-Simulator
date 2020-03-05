@@ -284,6 +284,7 @@ public class ComplexCostCalculator {
     private StationUtilityData bestNeighbourRent(double lastprob,Station s, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats,
             double accwalkdistance, double probtimeoffset, double maxdistance) {
         double newbestValueFound = Double.MAX_VALUE;
+        double currentcost=calcCostRentcomp((accwalkdistance) / expectedwalkingVelocity,lastprob);
         StationUtilityData bestneighbour = null;
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei)) {
@@ -293,12 +294,14 @@ public class ComplexCostCalculator {
                     if ((accwalkdistance + dist) <= maxdistance) {
                         double newacctime = (accwalkdistance + dist) / expectedwalkingVelocity;
                         double rentprob = probutils.calculateTakeProbability(nei.getStation(), newacctime + probtimeoffset);
-                        if (rentprob > 0 && rentprob > minProbSecondaryRecommendation && rentprob<lastprob) {
+                        if (rentprob > 0 && rentprob > minProbSecondaryRecommendation ) {
                             double thiscost = calcCostRentcomp(newacctime, rentprob);
+                            if (thiscost<currentcost) {
                             //calculate the cost of this potential neighbour
-                            if (thiscost < newbestValueFound) {
-                                newbestValueFound = thiscost;
-                                bestneighbour = nei;
+                                 if (thiscost < newbestValueFound) {
+                                    newbestValueFound = thiscost;
+                                    bestneighbour = nei;
+                                }
                             }
                         }
                     }
@@ -312,19 +315,25 @@ public class ComplexCostCalculator {
     private StationUtilityData bestNeighbourReturn(double lastprob,Station s, List<StationUtilityData> lookedlist, List<StationUtilityData> allstats, GeoPoint destination,
             double accbikedistance, double probtimeoffset) {
         double newbestValueFound = Double.MAX_VALUE;
+        double lastwalkdist=graphManager.estimateDistance(s.getPosition() ,destination,"foot");
+        double lastwalktime = lastwalkdist / expectedwalkingVelocity;
+
+        double currentcost=calcCostReturncomp(lastwalktime,(accbikedistance) / expectedcyclingVelocity,lastprob);
         StationUtilityData bestneighbour = null;
         for (StationUtilityData nei : allstats) {
             if (!lookedlist.contains(nei)) {
                 double dist=graphManager.estimateDistance(s.getPosition(), nei.getStation().getPosition() ,"bike");
                 double altthisbiketime = (accbikedistance + dist) / expectedcyclingVelocity;
                 double returnprob = probutils.calculateReturnProbability(nei.getStation(), altthisbiketime + probtimeoffset);
-                if (returnprob > 0 && returnprob > minProbSecondaryRecommendation && returnprob<lastprob) {
+                if (returnprob > 0 && returnprob > minProbSecondaryRecommendation ) {
                     dist=graphManager.estimateDistance(nei.getStation().getPosition() ,destination,"foot");
                     double altthiswalktime = dist / expectedwalkingVelocity;
                     double thiscost = calcCostReturncomp(altthiswalktime, altthisbiketime, returnprob);
-                    if (thiscost < newbestValueFound) {
-                        newbestValueFound = thiscost;
-                        bestneighbour = nei;
+                    if (thiscost<currentcost) {
+                        if (thiscost < newbestValueFound) {
+                            newbestValueFound = thiscost;
+                            bestneighbour = nei;
+                        }
                     }
                 }
             }
