@@ -43,44 +43,64 @@ public class UtilitiesProbabilityCalculationSkellam extends UtilitiesProbability
         this.additionalResourcesDesiredInProbability=additionalResourcesDesiredInProbability;
     }
 
+        private class IntTuple{
+        int avcap;
+        int avslots;
+        int avbikes;
+        int changes;
+        int minpostchanges=0;
+        int maxpostchanges=0;
+        double takedemandrate;
+        double returndemandrate;
+    }
+    // get current capacity and available bikes
+    // this takes away reserved bikes and slots and takes into account expected changes
+    private IntTuple getAvailableCapandBikes(Station s, double timeoffset) {
+        IntTuple res =new IntTuple();
+        res.avcap=s.getCapacity()-s.getReservedBikes()-s.getReservedSlots();
+        res.avbikes=s.availableBikes();
+        res.avslots=res.avcap-res.avbikes;
+        if (takeintoaccountexpected) {
+             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
+            res.avbikes += (int) Math.floor(er.changes * probabilityUsersObey);
+            res.avslots =res.avslots- (int) Math.floor(er.changes * probabilityUsersObey);
+            if (takeintoaccountcompromised) {
+                res.maxpostchanges=(int) er.maxpostchanges ;
+                res.minpostchanges=(int) er.minpostchanges ;
+            }
+        }
+        if (res.avbikes<0) res.avbikes=0;
+        if (res.avbikes>res.avcap) res.avbikes=res.avcap;
+        if (res.avslots<0) res.avslots=0;
+        if (res.avslots>res.avcap) res.avslots=res.avcap;
+        res.takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        res.returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);        
+        return res;
+    }
+
    // Probabilities form now to timeoffset 
     public double calculateTakeProbability(Station s, double timeoffset) {
-        int estimatedbikes = s.availableBikes();
-        if (takeintoaccountexpected) {
-            PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
-            estimatedbikes += (int) Math.floor(er.changes * probabilityUsersObey);
-            if (takeintoaccountcompromised) {
-                estimatedbikes += (int) Math.floor(er.minpostchanges * probabilityUsersObey);
-             }
+        IntTuple avCB=getAvailableCapandBikes( s,  timeoffset);
+        //if there are other demands already registered, dont' take the last bike
+        if (avCB.avbikes <=-avCB.minpostchanges && avCB.minpostchanges<0) {
+            return 0;
         }
-        
-        estimatedbikes -=additionalResourcesDesiredInProbability;
-        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
-        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
-
+        int estimatedbikes = avCB.avbikes + avCB.minpostchanges- additionalResourcesDesiredInProbability;
         //probability that a bike exists and that is exists after taking one 
         int k = 1 - estimatedbikes;
-        double probbike = ProbabilityDistributions.calculateUpCDFSkellamProbability(returndemandrate, takedemandrate, k);
+        double probbike = ProbabilityDistributions.calculateUpCDFSkellamProbability(avCB.returndemandrate, avCB.takedemandrate, k);
         return probbike;
     }
     public double calculateReturnProbability(Station s, double timeoffset) {
-        int estimatedslots = s.availableSlots();
-        if (takeintoaccountexpected) {
-            PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), timeoffset);
-            estimatedslots -= (int) Math.floor(er.changes * probabilityUsersObey);
-            if (takeintoaccountcompromised) {
-                //            if ((estimatedbikes+minpostchanges)<=0){
-                estimatedslots -= (int) Math.floor(er.maxpostchanges * probabilityUsersObey);
-                //            }
-            }
+        IntTuple avCB=getAvailableCapandBikes( s,  timeoffset);
+        //if there are other demands already registered, dont' take the last bike
+        if (avCB.avslots <=avCB.maxpostchanges && avCB.maxpostchanges>0) {
+            return 0;
         }
-        estimatedslots -=additionalResourcesDesiredInProbability;
-        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
-        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(), SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
-
+        int estimatedslots=(avCB.avslots - avCB.maxpostchanges)- additionalResourcesDesiredInProbability;
         //probability that a slot exists and that is exists after taking one 
         int k = 1 - estimatedslots;
-        double probslot = ProbabilityDistributions.calculateUpCDFSkellamProbability(takedemandrate, returndemandrate, k);
+        double probslot = ProbabilityDistributions.calculateUpCDFSkellamProbability(avCB.takedemandrate, avCB.returndemandrate, k);
         return probslot;
     }
     //methods for calculation probabilities    
