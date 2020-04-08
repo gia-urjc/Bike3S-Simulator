@@ -30,7 +30,6 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         private double minimumMarginProbability = 0.0001;
         private double minProbBestNeighbourRecommendation = 0;
         private double desireableProbability = 0.8;
-        private double maxStationsToReccomend = 30;
         private double unsucesscostRentPenalisation = 6000;
         private double unsucesscostReturnPenalisation = 6000;
         private double AbandonPenalisation = 24000;
@@ -49,7 +48,9 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         //afterwards, they have to be cast to this parameters class
         super(recomenderdef, ss, new RecommendationParameters());
         this.parameters= (RecommendationParameters)(super.parameters);
-        ucc = new ComplexCostCalculator(parameters.minimumMarginProbability, parameters.AbandonPenalisation, parameters.unsucesscostRentPenalisation,
+        ucc = new ComplexCostCalculator(parameters.minimumMarginProbability, 
+                parameters.AbandonPenalisation, 
+                parameters.unsucesscostRentPenalisation,
                 parameters.unsucesscostReturnPenalisation,
                 parameters.expectedWalkingVelocity,
                 parameters.expectedCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
@@ -60,24 +61,13 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     @Override
     protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxuserdistance) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
-        int i = 0;
-        boolean goodfound = false;
         for (StationUtilityData sd : stationdata) {
-            if (i >= this.parameters.maxStationsToReccomend) {
-                break;
-            }
-            if (sd.getProbabilityTake() > 0) {
-                if (sd.getProbabilityTake() > this.parameters.desireableProbability && sd.getWalkdist() <= maxuserdistance) {
-                    goodfound = true;
-                }
+             if (sd.getProbabilityTake() > 0) {
                 try {
-                    double cost = ucc.calculateCostsRentAtStation(sd, stationdata, this.parameters.predictionWindow, maxuserdistance, this.parameters.maxDistanceRecommendationTake);
+                    double cost = ucc.calculateCostsRentAtStation(sd, allstations, this.parameters.predictionWindow, maxuserdistance, this.parameters.maxDistanceRecommendationTake);
                     sd.setTotalCost(cost);
                     addrent(sd, orderedlist, maxuserdistance);
-                    if (goodfound) {
-                        i++;
-                    }
-                } catch (BetterFirstStationException e) {
+                } catch (Exception e) {
                     System.out.println("Better neighbour");
 
                 }
@@ -90,26 +80,14 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
     @Override
     protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
-        int i = 0;
-        boolean goodfound = false;
         for (StationUtilityData sd : stationdata) {
-            if (i >= this.parameters.maxStationsToReccomend) {
-                break;
-            }
             if (sd.getProbabilityReturn() > 0) {
-                if (sd.getProbabilityReturn() > this.parameters.desireableProbability) {
-                    goodfound = true;
-                }
                 try {
-                    double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, stationdata, this.parameters.predictionWindow, this.parameters.maxDistanceRecommendationTake);
+                    double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, allstations, this.parameters.predictionWindow, this.parameters.maxDistanceRecommendationTake);
                     sd.setTotalCost(cost);
                     addreturn(sd, orderedlist);
-                    if (goodfound) {
-                        i++;
-                    }
-                } catch (BetterFirstStationException e) {
+                } catch (Exception e) {
                     System.out.println("Better neighbour");
-
                 }
             }
         }

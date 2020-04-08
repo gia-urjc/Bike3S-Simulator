@@ -18,7 +18,9 @@ public class StationUtilityData {
     private double availableBikes;
     
     //info on best neighbour
-    public StationUtilityData bestNeighbour;
+    public Station bestNeighbour;
+    public double bestNeighbourReturnWalktime;
+    public double bestNeighbourProbability;
     
     //distances and time 
     private double bikedist;
@@ -46,7 +48,7 @@ public class StationUtilityData {
     private double expectedTimeIfNotAbandon;
     private double expectedUnsucesses;
 
-    public double aux;
+
     public double getExpectedtimeIfNotAbandon() {
         return expectedTimeIfNotAbandon;
     }

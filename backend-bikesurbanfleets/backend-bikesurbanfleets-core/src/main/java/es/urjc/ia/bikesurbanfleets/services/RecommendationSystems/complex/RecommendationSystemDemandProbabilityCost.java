@@ -55,15 +55,13 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
-            if (sd.getProbabilityTake() > 0) {
                 try {
-                    double cost = ucc.calculateCostRentHeuristicNow(sd, stationdata, maxdistance);                  
+                    double cost = ucc.calculateCostRentHeuristicNow(sd, allstations, maxdistance);                  
                     sd.setTotalCost(cost);
                     addrent(sd, orderedlist, maxdistance);
-                } catch (BetterFirstStationException e) {
+                } catch (Exception e) {
                     System.out.println("Better neighbour");
                 }
-            }
         }
         return orderedlist;
     }
@@ -72,15 +70,13 @@ public class RecommendationSystemDemandProbabilityCost extends RecommendationSys
     protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
         List<StationUtilityData> orderedlist = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
-            if (sd.getProbabilityReturn() > 0) {
                 try {
-                    double cost = ucc.calculateCostReturnHeuristicNow(sd, userdestination, stationdata);
+                    double cost = ucc.calculateCostReturnHeuristicNow(sd, userdestination, allstations);
                     sd.setTotalCost(cost);
                     addreturn(sd, orderedlist);
-                } catch (BetterFirstStationException e) {
+                } catch (Exception e) {
                     System.out.println("Better neighbour");
                 }
-            }
         }
         return orderedlist;
     }

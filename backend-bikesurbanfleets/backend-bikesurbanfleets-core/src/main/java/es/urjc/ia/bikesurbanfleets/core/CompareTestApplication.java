@@ -36,14 +36,17 @@ public class CompareTestApplication {
         // the following parameters may have to be changes
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_usersrandom_halfbikes"
-               + "/newProbAnalysisEucledean/sameVelocity/"
-     //   + "/newProbAnalysis/probability_skellam";
-     //   + "/newProbAnalysis/probability_queue";
-    //    + "/newProbAnalysis/cost_simple";
-    //    + "/newProbAnalysis/cost_comp_prueba";
-       + "probability_skellam";
-     //   +"simple";
-    //    + "probability_queue_prueba";
+               + "/newProbAnalysisEucledean/sameVelocity_woutUsersSameStations/"
+     //    +"simple";
+     //  + "probability_queue";
+      //          +"probability_skellam";
+      // + "cost_simple";
+      // + "cost_prediction_simple_prueba";
+       + "cost_prediction_simple";
+     //  + "cost_prediction";
+        
+     //   + "cost_comp_prueba";
+     //   + "cost_surrounding";
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         String testFile = testsDir + "/tests.json";

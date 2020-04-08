@@ -5,6 +5,7 @@
  */
 package es.urjc.ia.bikesurbanfleets.resultanalysis;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
@@ -36,6 +37,7 @@ class UserDataAnalyzer {
 
     private static class UserMetric {
 
+        int id=0;
         int timelastevent = 0;
         int timeapp = -1;
         int timegetbike = -1;
@@ -58,6 +60,7 @@ class UserDataAnalyzer {
         double cyclevelocity;
         double additionaltimeloss = 0;
         GeoPoint lastposition;
+        GeoPoint intermediatePosition = null;
     }
 
     private TreeMap<Integer, UserMetric> usermetrics;
@@ -186,30 +189,38 @@ class UserDataAnalyzer {
     // and searching the rutepartes inbetween 
     private void addTimeComparison(UserMetric um) throws Exception {
 
-        double closeststartdist = Double.MAX_VALUE;
-        double closestenddist = Double.MAX_VALUE;
+        double beststarttime = Double.MAX_VALUE;
+        double biketime;
+        double walktime;
         StationMetric bestStartStation = null;
-        StationMetric bestEndStation = null;
         for (StationMetric hs : stationmetrics.values()) {
             double currentdist = routeService.estimateDistance(um.origin, hs.position, "foot");
-            if (currentdist < closeststartdist) {
-                closeststartdist = currentdist;
+            if (currentdist < beststarttime) {
+                beststarttime = currentdist;
                 bestStartStation = hs;
             }
-            currentdist = routeService.estimateDistance(hs.position, um.destination, "foot");
-            if (currentdist < closestenddist) {
-                closestenddist = currentdist;
-                bestEndStation = hs;
+        }
+        beststarttime = (int) (beststarttime / um.walkvelocity);
+        GeoPoint returnstartPosition;
+        //now add the first part of the round trip
+        if (um.intermediatePosition != null) {
+            biketime = (int) (routeService.estimateDistance(bestStartStation.position, um.intermediatePosition, "bike") / um.cyclevelocity);
+            beststarttime = beststarttime + biketime;
+            returnstartPosition = um.intermediatePosition;
+        } else {
+            returnstartPosition = bestStartStation.position;
+        }
+        //now find the rest time (from renting station or intermediate position to final destination)
+        double closestendtime = Double.MAX_VALUE;
+        for (StationMetric hs : stationmetrics.values()) {
+            biketime = (int) (routeService.estimateDistance(returnstartPosition, hs.position, "bike") / um.cyclevelocity);
+            walktime = (int) (routeService.estimateDistance(hs.position, um.destination, "foot") / um.walkvelocity);
+            double aux = biketime + walktime;
+            if (aux < closestendtime) {
+                closestendtime = aux;
             }
         }
-        //Now get the routes
-        double shortesttime = 0;
-        shortesttime += (int) (closeststartdist / um.walkvelocity);
-        double bikedist = (int) routeService.estimateDistance(bestStartStation.position, bestEndStation.position, "bike");
-        shortesttime += (int) (bikedist / um.cyclevelocity);
-        shortesttime += (int) (closestenddist / um.walkvelocity);
-        um.additionaltimeloss = (um.timeleafe - um.timeapp) - shortesttime;
-
+        um.additionaltimeloss = (um.timeleafe - um.timeapp) - (beststarttime + closestendtime);
     }
 
     void analyzeEventEntryInTime(HistoryJsonClasses.EventEntry ee, int time) {
@@ -241,12 +252,14 @@ class UserDataAnalyzer {
                 throw new RuntimeException("user not found in new entities");
 
             }
-            HistoricUser hu = SimulationResultAnalyser.gson.fromJson(users.get(0), HistoricUser.class);
-            if (userid != hu.getId()) {
+            HistoricUser hu = SimulationResultAnalyser.gson.fromJson(users.get(0), HistoricUser.class
+            );
+            if (userid!= hu.getId()) {
                 throw new RuntimeException("user not found in new entities");
             }
 
             //now copy the user data:
+            newUM.id=userid;
             newUM.origin = hu.getPosition();
             newUM.destination = hu.getDestinationLocation();
             newUM.walkvelocity = hu.getWalkingVelocity();
@@ -254,6 +267,7 @@ class UserDataAnalyzer {
             newUM.timeapp = time;
             newUM.lastposition = newUM.origin;
             newUM.timelastevent = time;
+
             return;
         }
 
@@ -318,6 +332,19 @@ class UserDataAnalyzer {
                     }
                 }
                 break;
+            case "EventUserWantsToReturnBike":
+                if (result == Event.RESULT_TYPE.SUCCESS) {
+                    JsonObject userchange = ee.getChanges().get("users").get(0);
+                    if (userchange == null) {
+                        throw new RuntimeException("user must have a change in position");
+                    }
+                    JsonElement j = userchange.get("position").getAsJsonObject().get("new");
+                    usM.intermediatePosition = SimulationResultAnalyser.gson.fromJson(j, GeoPoint.class
+                    );
+                } else {
+                    throw new RuntimeException("wants to return bike event has to be sucessfull");
+                }
+                break;
             case "EventUserLeavesSystem":
                 usM.lastposition = usM.destination;
                 usM.leafreason = EventUser.EXIT_REASON.valueOf(ee.getAdditionalInfo().name());
@@ -329,6 +356,7 @@ class UserDataAnalyzer {
                 break;
         }
         usM.timelastevent = time;
+
     }
 
     static class GlobalUserDataForExecution {

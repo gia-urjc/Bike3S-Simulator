@@ -15,6 +15,8 @@ public class StationProbabilitiesQueueBased {
     final Updater updater;
     
     Type type; 
+    //lambda is the inrate
+    //my is the out rate
     public StationProbabilitiesQueueBased(Type type, double h,double lambda, double my, int capacity, double endtime, int initialnumberbikes){
         this.capacity=capacity;
         this.lambda=lambda;

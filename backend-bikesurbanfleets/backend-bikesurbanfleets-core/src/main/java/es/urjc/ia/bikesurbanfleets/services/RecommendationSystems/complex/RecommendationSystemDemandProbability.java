@@ -66,10 +66,13 @@ public final class RecommendationSystemDemandProbability extends RecommendationS
             return false;
         }
    */     double timediff = (newSD.getWalkTime() - oldSD.getWalkTime());
+    //    double pn=(Math.pow(newSD.getProbabilityTake(),2)+Math.log10(newSD.getProbabilityTake())+1)/2;
+    //    double po=(Math.pow(oldSD.getProbabilityTake(),2)+Math.log10(oldSD.getProbabilityTake())+1)/2;
         double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * parameters.probfactor;
+    //    double probdiff = (pn-po) * parameters.probfactor;
         return probdiff > timediff;
     }
-
+ 
     protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
   /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
                 && oldSD.getProbabilityReturn() < this.parameters.desireableProbability) {
@@ -81,7 +84,10 @@ public final class RecommendationSystemDemandProbability extends RecommendationS
         }
   */      double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
                 - (oldSD.getBiketime() + oldSD.getWalkTime()));
-        double probdiff = (newSD.getProbabilityReturn() - oldSD.getProbabilityReturn()) * this.parameters.probfactor;
+    //    double pn=(Math.pow(newSD.getProbabilityReturn(),2)+Math.log10(newSD.getProbabilityReturn())+1)/2;
+    //    double po=(Math.pow(oldSD.getProbabilityReturn(),2)+Math.log10(oldSD.getProbabilityReturn())+1)/2;
+        double probdiff = (newSD.getProbabilityReturn() - oldSD.getProbabilityReturn()) * parameters.probfactor;
+     //   double probdiff = (pn-po) * parameters.probfactor;
         return probdiff > timediff;
     }
 }

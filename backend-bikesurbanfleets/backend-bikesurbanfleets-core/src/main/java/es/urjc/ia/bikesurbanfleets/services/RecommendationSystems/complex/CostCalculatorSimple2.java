@@ -17,10 +17,10 @@ import java.util.List;
  *
  * @author holger
  */
-public class CostCalculatorSimple {
+public class CostCalculatorSimple2 {
 
     //methods for cost calculations
-    public CostCalculatorSimple(double maxcost,
+    public CostCalculatorSimple2(double maxcost,
             UtilitiesProbabilityCalculator recutils,
             int PredictionNorm, double normmultiplier,
             double walkvel, double cycvel, GraphManager gm) {
@@ -76,8 +76,8 @@ public class CostCalculatorSimple {
         //takecosts
         double usercosttake = calculateCostRent(sd, sd.getProbabilityTake(), sd.getWalkTime());
         
-        double timeoffset=timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getWalkTime());
-        ProbabilityData pd=probutils.calculateFutureTakeProbabilitiesWithArrival(sd.getStation(),0, timeoffset);
+        double expectedarrivaltime=sd.getWalkTime();
+        ProbabilityData pd=probutils.calculateFutureTakeProbabilitiesWithArrival(sd.getStation(), expectedarrivaltime,timeintervallforPrediction );
 
        
         //analyze global costs
@@ -95,8 +95,8 @@ public class CostCalculatorSimple {
                 System.out.println("EEEEERRRRROOOOORRRR: invalid cost station " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
         }
         //normalize the extracost
-        extracosttake = extracosttake * getTakeFactor(sd.getStation(), 0,timeoffset) * sd.getProbabilityTake();
-        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), 0,timeoffset) * sd.getProbabilityTake();
+        extracosttake = extracosttake * getTakeFactor(sd.getStation(), expectedarrivaltime,timeintervallforPrediction) * sd.getProbabilityTake();
+        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), expectedarrivaltime,timeintervallforPrediction) * sd.getProbabilityTake();
         
   //      extracosttake = Math.min(extracosttake, 600);
    //     extracostreturn = Math.max(extracostreturn, 0);
@@ -109,10 +109,10 @@ public class CostCalculatorSimple {
     public double calculateCostsReturnAtStation(StationUtilityData sd, List<Station> allstats,double timeintervallforPrediction) {
         //return costs
         //take a close point to the station as hipotetical detsination
-        double timeoffset=timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getBiketime());
+        double expectedarrivaltime=sd.getBiketime();
         double usercostreturn = calculateCostReturn(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
 
-        ProbabilityData pd=probutils.calculateFutureReturnProbabilitiesWithArrival(sd.getStation(), 0,timeoffset);
+        ProbabilityData pd=probutils.calculateFutureReturnProbabilitiesWithArrival(sd.getStation(), expectedarrivaltime,timeintervallforPrediction);
         //analyze global costs
         //takecost if bike is taken   
         double costtake = calculateCostRent(sd, pd.probabilityTake, estimatedavwalktimenearest);
@@ -128,8 +128,8 @@ public class CostCalculatorSimple {
                 System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
         }
         //normalize the extracost
-        extracosttake = extracosttake * getTakeFactor(sd.getStation(), 0,timeoffset) * sd.getProbabilityReturn();
-        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), 0,timeoffset) * sd.getProbabilityReturn();
+        extracosttake = extracosttake * getTakeFactor(sd.getStation(), expectedarrivaltime,timeintervallforPrediction) * sd.getProbabilityReturn();
+        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), expectedarrivaltime,timeintervallforPrediction) * sd.getProbabilityReturn();
   //      extracosttake = Math.max(extracosttake, -300);
    //     extracostreturn = Math.min(extracostreturn, 0);
 

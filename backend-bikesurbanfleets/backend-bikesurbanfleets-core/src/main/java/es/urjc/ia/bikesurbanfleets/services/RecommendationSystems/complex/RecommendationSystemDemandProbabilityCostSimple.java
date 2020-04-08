@@ -40,7 +40,10 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
         this.parameters= (RecommendationParameters)(super.parameters);
         scc=new CostCalculatorSimple(
                 parameters.MaxCostValue, 
-                probutils, 0, 0);
+                probutils, 0, 0,
+                parameters.expectedWalkingVelocity,
+                parameters.expectedCyclingVelocity, 
+                graphManager);
     }
 
     @Override
@@ -48,7 +51,9 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
         List<StationUtilityData> orderedlist = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
                 double cost = scc.calculateCostRentSimple(sd, sd.getProbabilityTake(), sd.getWalkTime());
-                sd.setTotalCost(cost);
+                sd.setIndividualCost(cost).setTotalCost(cost);
+                sd.setExpectedtimeIfNotAbandon(sd.getWalkTime());
+                sd.setAbandonProbability(1-sd.getProbabilityTake());  
                 addrent(sd, orderedlist, maxdistance);
         }
         return orderedlist;
@@ -59,7 +64,9 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
         List<StationUtilityData> orderedlist = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
                 double cost = scc.calculateCostReturnSimple(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
-                sd.setTotalCost(cost);
+                sd.setIndividualCost(cost).setTotalCost(cost);
+                sd.setExpectedtimeIfNotAbandon(sd.getWalkTime()+sd.getBiketime());
+                sd.setAbandonProbability(1-sd.getProbabilityReturn());  
                 addreturn(sd, orderedlist);
         }
          return orderedlist;

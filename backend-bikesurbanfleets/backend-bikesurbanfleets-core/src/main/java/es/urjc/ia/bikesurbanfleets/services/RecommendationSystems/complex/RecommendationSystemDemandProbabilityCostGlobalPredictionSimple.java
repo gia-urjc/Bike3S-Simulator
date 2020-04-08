@@ -40,7 +40,10 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         this.parameters= (RecommendationParameters)(super.parameters);
         scc=new CostCalculatorSimple(
                 parameters.MaxCostValue, 
-                probutils, parameters.PredictionNorm, parameters.normmultiplier);
+                probutils, parameters.PredictionNorm, parameters.normmultiplier,
+                parameters.expectedWalkingVelocity,
+                parameters.expectedCyclingVelocity, 
+                graphManager);
     }
 
 
@@ -49,8 +52,10 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         List<StationUtilityData> orderedlist = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
             if (sd.getProbabilityTake()> 0) {
-                double cost = scc.calculateCostsRentAtStation(sd, this.parameters.predictionWindow);
+                double cost = scc.calculateCostsRentAtStation(sd, allstations,this.parameters.predictionWindow);
                 sd.setTotalCost(cost);
+                sd.setExpectedtimeIfNotAbandon(sd.getWalkTime());
+                sd.setAbandonProbability(1-sd.getProbabilityTake());  
                 addrent(sd, orderedlist, maxdistance);
             }
         }
@@ -63,8 +68,10 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         List<StationUtilityData> orderedlist = new ArrayList<>();
         for (StationUtilityData sd : stationdata) {
             if (sd.getProbabilityReturn()> 0) {
-                double cost = scc.calculateCostsReturnAtStation(sd, this.parameters.predictionWindow);
+                double cost = scc.calculateCostsReturnAtStation(sd, allstations,this.parameters.predictionWindow);
                 sd.setTotalCost(cost);
+                sd.setExpectedtimeIfNotAbandon(sd.getWalkTime()+sd.getBiketime());
+                sd.setAbandonProbability(1-sd.getProbabilityReturn());  
                 addreturn(sd, orderedlist);
             }
         }
