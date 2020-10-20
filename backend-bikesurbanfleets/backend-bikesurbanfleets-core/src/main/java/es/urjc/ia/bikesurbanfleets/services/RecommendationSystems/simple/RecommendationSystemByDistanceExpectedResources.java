@@ -72,7 +72,7 @@ public class RecommendationSystemByDistanceExpectedResources extends Recommendat
             double walkdist = graphManager.estimateDistance(position, s.getPosition(), "foot");
             if (walkdist <= maxdist) {
                 double walktime = walkdist / parameters.expectedWalkingVelocity;
-                PastRecommendations.ExpBikeChangeResult er = this.pastRecomendations.getExpectedBikechanges(s.getId(), walktime);
+                PastRecommendations.ExpBikeChangeResult er = this.pastRecomendations.getExpectedBikechanges(s.getId(), 0, walktime);
                 int expbikes = s.availableBikes() + er.changes + er.minpostchanges;
                 if (expbikes > 0) {
                     temp.add(s);
@@ -87,7 +87,7 @@ public class RecommendationSystemByDistanceExpectedResources extends Recommendat
         for (Station s : stationManager.consultStations()) {
             double walkdist = graphManager.estimateDistance(position, s.getPosition(), "bike");
             double walktime = walkdist / parameters.expectedWalkingVelocity;
-            PastRecommendations.ExpBikeChangeResult er = this.pastRecomendations.getExpectedBikechanges(s.getId(), walktime);
+            PastRecommendations.ExpBikeChangeResult er = this.pastRecomendations.getExpectedBikechanges(s.getId(),0, walktime);
             int expslots = s.availableSlots() - er.changes - er.maxpostchanges;
             if (expslots > 0) {
                 temp.add(s);

@@ -31,20 +31,27 @@ public abstract class UtilitiesProbabilityCalculator {
     public abstract double calculateReturnProbability(Station s, double timeoffset) ;
     
     //methods for calculation probabilities    
-    public abstract ProbabilityData calculateFutureTakeProbabilitiesWithArrival(Station sd, double fromtime,double totime);
-    public abstract ProbabilityData calculateFutureReturnProbabilitiesWithArrival(Station sd, double fromtime,double totime) ;
-    public abstract ProbabilityData calculateFutureAllProbabilitiesWithArrival(Station sd, double fromtime,double totime) ;
+    //calculates the probabilities of taking or returning bikes at a station at the moment 
+    //currenttime+predictionoffset,
+    // if (or if not) a bike is taken/returned at time currenttime+arrivaloffset
+    // arrivaltime may be before or after the predictioninterval
+    public abstract ProbabilityData calculateFutureProbabilitiesWithAndWithoutArrival(Station sd, double arrivaloffset,double predictionoffset) ;
+    // this case is the same as the one before, but the arrival is exactly the same as the predictionoffset
+    // that is, we predict at currenttime+predictionoffset with and without 1 more bike taken or returnes
+    public abstract ProbabilityData calculateFutureProbabilitiesWithAndWithoutArrival(Station sd, double predictionoffset) ;
     
+   //
     //methods for calculation probabilities    
-    public abstract double calculateProbabilityAtLeast1UserArrivingForTake(Station s, double fromtime,double totime) ;
-    public abstract double calculateProbabilityAtLeast1UserArrivingForReturn(Station s, double fromtime,double totime) ;
+    //the following values are calculated from currenttime+fromtime up to currenttime+fromtime+duration
+    public abstract double calculateProbabilityAtLeast1UserArrivingForTake(Station s, double fromtime,double duration) ;
+    public abstract double calculateProbabilityAtLeast1UserArrivingForReturn(Station s, double fromtime,double duration) ;
     
-    public abstract double calculateExpectedReturns(Station s, double fromtime,double totime) ;
-    public abstract double calculateExpectedTakes(Station s, double fromtime,double totime) ;
+    public abstract double calculateExpectedReturns(Station s, double fromtime,double duration) ;
+    public abstract double calculateExpectedTakes(Station s, double fromtime,double duration) ;
 
     //methods for calculation probabilities    
-    public abstract double calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(Station s, double fromtime,double totime) ;
-    public abstract double calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(Station s, double fromtime,double totime) ;
+    public abstract double calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(Station s, double fromtime,double duration) ;
+    public abstract double calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(Station s, double fromtime,double duration) ;
    
     public  abstract double getGlobalProbabilityImprovementIfTake(StationUtilityData sd ) ;
 

@@ -1,25 +1,18 @@
 
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.PastRecommendations;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
-import es.urjc.ia.bikesurbanfleets.worldentities.users.types.UserUninformed;
-import java.lang.reflect.Field;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -113,7 +106,7 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
                 }
             }
         }
-        return temp.stream().sorted(rentByDistance()).collect(Collectors.toList());
+        return temp.stream().sorted(rentByTime()).collect(Collectors.toList());
     }
 
     //the list of stations is ordered by distance to destination
@@ -134,8 +127,8 @@ public abstract class RecommendationSystemDemandProbabilityBased extends Recomme
         return temp.stream().sorted(returnByTime()).collect(Collectors.toList());
     }
 
-    private static Comparator<StationUtilityData> rentByDistance() {
-        return (s1, s2) -> Double.compare(s1.getWalkdist(), s2.getWalkdist());
+    private static Comparator<StationUtilityData> rentByTime() {
+        return (s1, s2) -> Double.compare(s1.getWalkTime(), s2.getWalkTime());
     }
     private static Comparator<StationUtilityData> returnByTime() {
         return (s1, s2) -> Double.compare(s1.getWalkTime()+s1.getBiketime(), s2.getWalkTime()+s2.getBiketime());

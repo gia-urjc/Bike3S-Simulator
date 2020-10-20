@@ -399,15 +399,15 @@ public class ComplexCostCalculator {
         {
             //       if (wp.offsettimereached>timeintervallforPrediction) break;
             double timeoffset = Math.max(timeintervallforPrediction, wp.offsettimereached);//sd.getWalkTime());//wp.offsettimereached
-            ProbabilityData pd = probutils.calculateFutureTakeProbabilitiesWithArrival(wp.sd,0, timeoffset);
+            ProbabilityData pd = probutils.calculateFutureProbabilitiesWithAndWithoutArrival(wp.sd,timeoffset);
             //calculate takecost difference
             double extracosttake = calculateCostRentDifference(wp.sd, estimatedavwalkdistnearest, allstats, pd.probabilityTake, pd.probabilityTakeAfterTake, timeoffset, maxDistanceRecomendationTake);
             //calculate return cost difference
             GeoPoint hipodestination = wp.sd.getPosition();
             double extracostreturn = calculateCostReturnDifference(wp.sd, estimatedavbikedistnearest, hipodestination, allstats, pd.probabilityReturn, pd.probabilityReturnAfterTake, timeoffset);
 
-            if (extracostreturn > 0 || extracosttake < 0) {
-                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station " + sd.getStation().getId() + " " + extracosttake + " " + extracostreturn);
+            if (extracostreturn>0.0000000001 || extracosttake<-0.0000000001){
+                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in take  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
             }
             //normalize the extracost
             extracosttake = extracosttake * getTakeFactor(wp.sd, 0,timeoffset);
@@ -441,15 +441,15 @@ public class ComplexCostCalculator {
         {
             //          if (wp.offsettimereached>timeintervallforPrediction) break;
             double timeoffset = Math.max(timeintervallforPrediction, wp.offsettimereached);//sd.getBiketime());//wp.offsettimereached
-            ProbabilityData pd = probutils.calculateFutureReturnProbabilitiesWithArrival(wp.sd, 0, timeoffset);
+            ProbabilityData pd = probutils.calculateFutureProbabilitiesWithAndWithoutArrival(wp.sd,timeoffset);
             //calculate takecost difference
             double   extracosttake = calculateCostRentDifference(wp.sd, estimatedavwalkdistnearest, allstats, pd.probabilityTake, pd.probabilityTakeAfterRerturn, timeoffset, maxDistanceRecomendationTake);
               //calculate return cost difference
             GeoPoint hipodestination = wp.sd.getPosition();
             double extracostreturn = calculateCostReturnDifference(wp.sd, estimatedavbikedistnearest, hipodestination, allstats, pd.probabilityReturn, pd.probabilityReturnAfterReturn, timeoffset);
 
-            if (extracostreturn < 0 || extracosttake > 0) {
-                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.getStation().getId() + " " + extracosttake + " " + extracostreturn);
+            if (extracostreturn<-0.0000000001 || extracosttake>0.0000000001){
+                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
             }
             //normalize the extracost
             extracosttake = extracosttake * getTakeFactor(wp.sd, 0,timeoffset);

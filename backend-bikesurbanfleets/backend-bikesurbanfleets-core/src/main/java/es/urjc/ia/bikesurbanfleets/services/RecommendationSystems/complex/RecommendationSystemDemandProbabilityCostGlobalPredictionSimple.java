@@ -30,7 +30,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         private double normmultiplier=0.5;
     }
     private RecommendationParameters parameters;
-    private CostCalculatorSimple scc;
+    private CostCalculatorSimple2 scc;
 
     public RecommendationSystemDemandProbabilityCostGlobalPredictionSimple(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         //***********Parameter treatment*****************************
@@ -38,7 +38,7 @@ public class RecommendationSystemDemandProbabilityCostGlobalPredictionSimple ext
         //afterwards, they have to be cast to this parameters class
         super(recomenderdef, ss, new RecommendationParameters());
         this.parameters= (RecommendationParameters)(super.parameters);
-        scc=new CostCalculatorSimple(
+        scc=new CostCalculatorSimple2(
                 parameters.MaxCostValue, 
                 probutils, parameters.PredictionNorm, parameters.normmultiplier,
                 parameters.expectedWalkingVelocity,

@@ -16,14 +16,15 @@ import java.util.List;
  * @author holger
  */
 public class PastRecommendations {
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //the following methods store information on the receommendations done before
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     private static class PotentialEvent {
 
         boolean take; //or return
         int expectedendtime;
-        
+
         PotentialEvent(boolean take, int expectedendtime) {
             this.take = take;
             this.expectedendtime = expectedendtime;
@@ -39,14 +40,19 @@ public class PastRecommendations {
         public int changes = 0;
         public int minpostchanges = 0;
         public int maxpostchanges = 0;
-        public long lastendinstantexpected=0;
-        
+        public long lastendinstantexpected = 0;
+
     }
 
-    public ExpBikeChangeResult getExpectedBikechanges(int stationid, double timeoffset) {
+    //calculates the expected bike changes at a station between
+    //currenttime+fromtimeoffset and currenttime+totimeoffset
+    public ExpBikeChangeResult getExpectedBikechanges(int stationid, double fromtimeoffset, double totimeoffset) {
+        if (totimeoffset<fromtimeoffset || fromtimeoffset<0) throw new RuntimeException("error in data");
         ExpBikeChangeResult er = new ExpBikeChangeResult();
-        long currentinstant = SimulationDateTime.getCurrentSimulationInstant();
-        er.lastendinstantexpected=currentinstant;
+        double currentinstant = SimulationDateTime.getCurrentSimulationInstant();
+        double frominstant = currentinstant + fromtimeoffset;
+        double toinstant=currentinstant + totimeoffset;;
+        er.lastendinstantexpected = (int)frominstant;
         int postchanges = 0;
         List<PotentialEvent> list = registeredBikeEventsPerStation.get(stationid);
         if (list == null) {
@@ -57,14 +63,17 @@ public class PastRecommendations {
             PotentialEvent e = i.next(); // must be called before you can call i.remove()
             if (e.expectedendtime < currentinstant) {
                 i.remove();
-            } else if (e.expectedendtime < currentinstant + timeoffset) {
+            } else if (e.expectedendtime < frominstant) {
+                ;
+            } else if (e.expectedendtime < toinstant) {
                 if (e.take) {
                     er.changes--;
                 } else {
                     er.changes++;
                 }
-                if (e.expectedendtime>er.lastendinstantexpected) 
-                    er.lastendinstantexpected=e.expectedendtime;
+                if (e.expectedendtime > er.lastendinstantexpected) {
+                    er.lastendinstantexpected = e.expectedendtime;
+                }
             } else {// e.expectedendtime>currentinstant+timeoffset are taken in to consideration if compromised is true
                 if (e.take) {
                     postchanges--;
@@ -89,7 +98,7 @@ public class PastRecommendations {
             list = new LinkedList<>();
             registeredBikeEventsPerStation.put(stationid, list);
         }
-        int endtime = (int) SimulationDateTime.getCurrentSimulationInstant()+ timeoffset;
+        int endtime = (int) SimulationDateTime.getCurrentSimulationInstant() + timeoffset;
         //put the element in its position in the list
         boolean done = false;
         for (int i = list.size() - 1; i >= 0; i--) {

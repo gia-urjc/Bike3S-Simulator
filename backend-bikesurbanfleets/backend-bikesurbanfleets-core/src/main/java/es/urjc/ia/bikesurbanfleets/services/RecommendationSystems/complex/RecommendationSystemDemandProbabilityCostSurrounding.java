@@ -123,7 +123,7 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Recomm
                     dist = graphManager.estimateDistance(station.getStation().getPosition(), s.getPosition(), "foot");
                     if ((accwalkdistance + dist) <= maxdistance) {
                         double time = (accwalkdistance + dist) / parameters.expectedWalkingVelocity;
-                        IntTuple t = probutilsqueue.getAvailableCapandBikes(s, 0, time);
+                        IntTuple t = probutilsqueue.getAvailableCapandBikes(s, time);
                         suravcap += t.avcap;
                         suravslots += t.avslots;
                         suravbikes += t.avbikes;
@@ -143,7 +143,7 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Recomm
             initialbikes = Math.max(Math.min(initialbikes, suravcap), 0);
             StationProbabilitiesQueueBased pc = new StationProbabilitiesQueueBased(
                     StationProbabilitiesQueueBased.Type.RungeKutta, UtilitiesProbabilityCalculationQueue.h, surreturndemandrate,
-                    surtakedemandrate, suravcap, 1, initialbikes);
+                    surtakedemandrate, suravcap, initialbikes);
             int requiredbikes = 1 + parameters.additionalResourcesDesiredInProbability - surminpostchanges;
             double prob = pc.kOrMoreBikesProbability(requiredbikes);
             return prob;
@@ -167,7 +167,7 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Recomm
                 if (dist <= parameters.MaxDistanceSurroundingStations) {
                     dist = graphManager.estimateDistance(station.getStation().getPosition(), s.getPosition(), "bike");
                     double time = (accbikedistance + dist) / parameters.expectedCyclingVelocity;
-                    IntTuple t = probutilsqueue.getAvailableCapandBikes(s, 0, time);
+                    IntTuple t = probutilsqueue.getAvailableCapandBikes(s, time);
                     suravcap += t.avcap;
                     suravslots += t.avslots;
                     suravbikes += t.avbikes;
@@ -187,7 +187,7 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Recomm
             StationProbabilitiesQueueBased pc = new StationProbabilitiesQueueBased(
                     StationProbabilitiesQueueBased.Type.RungeKutta, UtilitiesProbabilityCalculationQueue.h,
                     surreturndemandrate,
-                    surtakedemandrate, suravcap, 1, initialbikes);
+                    surtakedemandrate, suravcap, initialbikes);
             int requiredslots = 1 + parameters.additionalResourcesDesiredInProbability + surmaxpostchanges;
             double prob = pc.kOrMoreSlotsProbability(requiredslots);
             return prob;

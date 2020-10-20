@@ -77,7 +77,7 @@ public class CostCalculatorSimple {
         double usercosttake = calculateCostRent(sd, sd.getProbabilityTake(), sd.getWalkTime());
         
         double timeoffset=timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getWalkTime());
-        ProbabilityData pd=probutils.calculateFutureTakeProbabilitiesWithArrival(sd.getStation(),0, timeoffset);
+        ProbabilityData pd=probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.getStation(),timeoffset);
 
        
         //analyze global costs
@@ -91,7 +91,7 @@ public class CostCalculatorSimple {
 
         double extracosttake = costtakeafter - costtake;
         double extracostreturn = costreturnafter - costreturn;
-        if (extracostreturn>0 || extracosttake<0){
+        if (extracostreturn>0.0000000001 || extracosttake<-0.0000000001){
                 System.out.println("EEEEERRRRROOOOORRRR: invalid cost station " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
         }
         //normalize the extracost
@@ -112,7 +112,7 @@ public class CostCalculatorSimple {
         double timeoffset=timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getBiketime());
         double usercostreturn = calculateCostReturn(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
 
-        ProbabilityData pd=probutils.calculateFutureReturnProbabilitiesWithArrival(sd.getStation(), 0,timeoffset);
+        ProbabilityData pd=probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.getStation(), timeoffset);
         //analyze global costs
         //takecost if bike is taken   
         double costtake = calculateCostRent(sd, pd.probabilityTake, estimatedavwalktimenearest);
@@ -124,7 +124,7 @@ public class CostCalculatorSimple {
         double costreturnafterhip = calculateCostReturn(sd, pd.probabilityReturnAfterReturn,estimatedavbiketimenearest, estimatedavwalktimenearest);
         double extracosttake = costtakeafter - costtake;
         double extracostreturn = costreturnafterhip - costreturnhip;
-        if (extracostreturn<0 || extracosttake>0){
+        if (extracostreturn<-0.0000000001 || extracosttake>0.0000000001){
                 System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
         }
         //normalize the extracost

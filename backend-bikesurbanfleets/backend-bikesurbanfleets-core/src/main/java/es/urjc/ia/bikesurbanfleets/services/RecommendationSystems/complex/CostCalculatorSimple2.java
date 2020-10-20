@@ -77,9 +77,9 @@ public class CostCalculatorSimple2 {
         double usercosttake = calculateCostRent(sd, sd.getProbabilityTake(), sd.getWalkTime());
         
         double expectedarrivaltime=sd.getWalkTime();
-        ProbabilityData pd=probutils.calculateFutureTakeProbabilitiesWithArrival(sd.getStation(), expectedarrivaltime,timeintervallforPrediction );
+        double futuretime=expectedarrivaltime+timeintervallforPrediction;
+        ProbabilityData pd=probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.getStation(), expectedarrivaltime,futuretime );
 
-       
         //analyze global costs
         //takecost if bike is taken   
         double costtake = calculateCostRent(sd, pd.probabilityTake, estimatedavwalktimenearest);
@@ -91,12 +91,12 @@ public class CostCalculatorSimple2 {
 
         double extracosttake = costtakeafter - costtake;
         double extracostreturn = costreturnafter - costreturn;
-        if (extracostreturn>0 || extracosttake<0){
-                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
+        if (extracostreturn>0.0000000001 || extracosttake<-0.0000000001){
+            System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in take  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
         }
         //normalize the extracost
-        extracosttake = extracosttake * getTakeFactor(sd.getStation(), expectedarrivaltime,timeintervallforPrediction) * sd.getProbabilityTake();
-        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), expectedarrivaltime,timeintervallforPrediction) * sd.getProbabilityTake();
+        extracosttake = extracosttake * getTakeFactor(sd.getStation(), expectedarrivaltime,futuretime) * sd.getProbabilityTake();
+        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), expectedarrivaltime,futuretime) * sd.getProbabilityTake();
         
   //      extracosttake = Math.min(extracosttake, 600);
    //     extracostreturn = Math.max(extracostreturn, 0);
@@ -110,9 +110,11 @@ public class CostCalculatorSimple2 {
         //return costs
         //take a close point to the station as hipotetical detsination
         double expectedarrivaltime=sd.getBiketime();
+        double futuretime=expectedarrivaltime+timeintervallforPrediction;
         double usercostreturn = calculateCostReturn(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
 
-        ProbabilityData pd=probutils.calculateFutureReturnProbabilitiesWithArrival(sd.getStation(), expectedarrivaltime,timeintervallforPrediction);
+        //now estimate extracosts or earnings for future users
+        ProbabilityData pd=probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.getStation(), expectedarrivaltime,futuretime);
         //analyze global costs
         //takecost if bike is taken   
         double costtake = calculateCostRent(sd, pd.probabilityTake, estimatedavwalktimenearest);
@@ -124,12 +126,12 @@ public class CostCalculatorSimple2 {
         double costreturnafterhip = calculateCostReturn(sd, pd.probabilityReturnAfterReturn,estimatedavbiketimenearest, estimatedavwalktimenearest);
         double extracosttake = costtakeafter - costtake;
         double extracostreturn = costreturnafterhip - costreturnhip;
-        if (extracostreturn<0 || extracosttake>0){
-                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
+        if (extracostreturn<-0.0000000001 || extracosttake>0.0000000001){
+            System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
         }
         //normalize the extracost
-        extracosttake = extracosttake * getTakeFactor(sd.getStation(), expectedarrivaltime,timeintervallforPrediction) * sd.getProbabilityReturn();
-        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), expectedarrivaltime,timeintervallforPrediction) * sd.getProbabilityReturn();
+        extracosttake = extracosttake * getTakeFactor(sd.getStation(), expectedarrivaltime,futuretime) * sd.getProbabilityReturn();
+        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), expectedarrivaltime,futuretime) * sd.getProbabilityReturn();
   //      extracosttake = Math.max(extracosttake, -300);
    //     extracostreturn = Math.min(extracostreturn, 0);
 
