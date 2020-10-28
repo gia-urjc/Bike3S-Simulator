@@ -5,13 +5,11 @@
  */
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.UtilitiesProbabilityCalculator.ProbabilityData;
 import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,72 +53,76 @@ public class CostCalculatorSimpleNew {
         return biketime + msdprob * walktime + (1 - msdprob) * maxCostValue;
     }
 
-    public double calculateCostRentSimple(StationUtilityData sd, double sdprob, double time) {
+    public double calculateCostRentSimple(StationData sd, double sdprob, double time) {
         return calculateCostRent(sdprob, time);
     }
 
-    public double calculateCostReturnSimple(StationUtilityData sd, double sdprob, double biketime, double walktime) {
+    public double calculateCostReturnSimple(StationData sd, double sdprob, double biketime, double walktime) {
         return calculateCostReturn(sdprob, biketime, walktime);
     }
 
-    public double calculateCostsRentAtStation(StationUtilityData sd, List<Station> allstats, double timeintervallforPrediction) {
+    public double calculateCostsRentAtStation(StationData sd, List<Station> allstats, double timeintervallforPrediction) {
         //takecosts
-        double usercosttake = calculateCostRent(sd.getProbabilityTake(), sd.getWalkTime());
+        double usercosttake = calculateCostRent(sd.probabilityTake, sd.walktime);
 
-        double timeoffset = sd.getWalkTime();//timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getWalkTime());
-        ProbabilityData pd = probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.getStation(), timeoffset);
+        double timeoffset = sd.walktime;//timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getWalkTime());
+        ProbabilityData pd = probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.station, timeoffset);
         double takeprobdiff = pd.probabilityTake - pd.probabilityTakeAfterTake;
         double returnprobdiff = pd.probabilityReturnAfterTake - pd.probabilityReturn;
 
-        double extracosttake= takeprobdiff * bestNeighbourRent(sd.getStation(), allstats);
-        double gaincostreturn= returnprobdiff * bestNeighbourReturn(sd.getStation(), allstats);
+        double extracosttake= takeprobdiff * bestNeighbourRent(sd.station, allstats);
+        double gaincostreturn= returnprobdiff * bestNeighbourReturn(sd.station, allstats);
         if (extracosttake<-0.0000000001  || gaincostreturn<-0.0000000001 ){
-                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in take " + sd.getStation().getId() +  " " + extracosttake+ " " + gaincostreturn );
+                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in take " + sd.station.getId() +  " " + extracosttake+ " " + gaincostreturn );
         }
         //normalize the extracost
         double takerate = probutils.dm.getStationTakeRateIntervall(
-                sd.getStation().getId(), 
+                sd.station.getId(), 
                 SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int)timeoffset), timeintervallforPrediction);
         double returnrate = probutils.dm.getStationReturnRateIntervall(
-                sd.getStation().getId(), 
+                sd.station.getId(), 
                 SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int)timeoffset), timeintervallforPrediction);
         extracosttake = extracosttake * takerate* normmultiplier;
         gaincostreturn = gaincostreturn * returnrate* normmultiplier ;
         
         double globalcost = usercosttake + extracosttake - gaincostreturn;
-        sd.setIndividualCost(usercosttake).setTakecostdiff(extracosttake).setReturncostdiff(-gaincostreturn )
-                .setTotalCost(globalcost);
+        sd.individualCost=usercosttake;
+        sd.takecostdiff=extracosttake;
+        sd.returncostdiff=-gaincostreturn;
+        sd.totalCost=globalcost;
         return globalcost;
     }
 
-    public double calculateCostsReturnAtStation(StationUtilityData sd, List<Station> allstats, double timeintervallforPrediction) {
+    public double calculateCostsReturnAtStation(StationData sd, List<Station> allstats, double timeintervallforPrediction) {
         //return costs
         //take a close point to the station as hipotetical detsination
-        double timeoffset = sd.getBiketime();//timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getBiketime());
-        double usercostreturn = calculateCostReturn(sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
+        double timeoffset = sd.biketime;//timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getBiketime());
+        double usercostreturn = calculateCostReturn(sd.probabilityReturn, sd.biketime, sd.walktime);
 
-        ProbabilityData pd = probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.getStation(), timeoffset);
+        ProbabilityData pd = probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.station, timeoffset);
         double takeprobdiff = pd.probabilityTakeAfterRerturn - pd.probabilityTake;
         double returnprobdiff = pd.probabilityReturn - pd.probabilityReturnAfterReturn;
 
-        double gaincosttake= takeprobdiff * bestNeighbourRent(sd.getStation(), allstats);
-        double extracostreturn= returnprobdiff * bestNeighbourReturn(sd.getStation(), allstats);
+        double gaincosttake= takeprobdiff * bestNeighbourRent(sd.station, allstats);
+        double extracostreturn= returnprobdiff * bestNeighbourReturn(sd.station, allstats);
         if (gaincosttake<-0.0000000001 || extracostreturn<-0.0000000001){
-                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return" + sd.getStation().getId() +  " " + gaincosttake+ " " + extracostreturn );
+                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return" + sd.station.getId() +  " " + gaincosttake+ " " + extracostreturn );
         }
         //normalize the extracost
         double takerate = probutils.dm.getStationTakeRateIntervall(
-                sd.getStation().getId(), 
+                sd.station.getId(), 
                 SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int)timeoffset), timeintervallforPrediction);
         double returnrate = probutils.dm.getStationReturnRateIntervall(
-                sd.getStation().getId(), 
+                sd.station.getId(), 
                 SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int)timeoffset), timeintervallforPrediction);
         gaincosttake = gaincosttake * takerate* normmultiplier;
         extracostreturn = extracostreturn * returnrate* normmultiplier ;
 
         double globalcost = usercostreturn-gaincosttake+extracostreturn;
-        sd.setIndividualCost(usercostreturn).setTakecostdiff(-gaincosttake).setReturncostdiff(extracostreturn)
-                .setTotalCost(globalcost);
+        sd.individualCost=usercostreturn;
+        sd.takecostdiff=-gaincosttake;
+        sd.returncostdiff=extracostreturn;
+        sd.totalCost=globalcost;
         return globalcost;
     }
 

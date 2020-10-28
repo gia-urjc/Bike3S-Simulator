@@ -4,30 +4,29 @@
  * and open the template in the editor.
  */
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
+
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
-import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
-import java.text.Bidi;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  *
  * @author holger
  */
 @RecommendationSystemType("DEMAND_cost_simple")
-public class RecommendationSystemDemandProbabilityCostSimple extends RecommendationSystemDemandProbabilityBased {
+public class RecommendationSystemDemandProbabilityCostSimple extends AbstractRecommendationSystemDemandProbabilityBased {
 
-    public static class RecommendationParameters extends RecommendationSystemDemandProbabilityBased.RecommendationParameters{
+    public static class RecommendationParameters extends AbstractRecommendationSystemDemandProbabilityBased.RecommendationParameters {
+
         private double desireableProbability = 0.8;
-        private double MaxCostValue = 6000 ;
-     }
+        private double unsucesscostRentPenalisation = 6000; //with calculator2bis=between 4000 and 6000
+        private double unsucesscostReturnPenalisation = 6000; //with calculator2bis=between 4000 and 6000
+    }
 
     private RecommendationParameters parameters;
     private CostCalculatorSimple scc;
@@ -37,63 +36,41 @@ public class RecommendationSystemDemandProbabilityCostSimple extends Recommendat
         //parameters are read in the superclass
         //afterwards, they have to be cast to this parameters class
         super(recomenderdef, ss, new RecommendationParameters());
-        this.parameters= (RecommendationParameters)(super.parameters);
-        scc=new CostCalculatorSimple(
-                parameters.MaxCostValue, 
+        this.parameters = (RecommendationParameters) (super.parameters);
+        scc = new CostCalculatorSimple(
+                parameters.unsucesscostRentPenalisation,
+                parameters.unsucesscostReturnPenalisation,
                 probutils, 0, 0,
                 parameters.expectedWalkingVelocity,
-                parameters.expectedCyclingVelocity, 
+                parameters.expectedCyclingVelocity,
                 graphManager);
     }
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
-        List<StationUtilityData> orderedlist = new ArrayList<>();
-        for (StationUtilityData sd : stationdata) {
-                double cost = scc.calculateCostRentSimple(sd, sd.getProbabilityTake(), sd.getWalkTime());
-                sd.setIndividualCost(cost).setTotalCost(cost);
-                sd.setExpectedtimeIfNotAbandon(sd.getWalkTime());
-                sd.setAbandonProbability(1-sd.getProbabilityTake());  
-                addrent(sd, orderedlist, maxdistance);
-        }
-        return orderedlist;
+    protected Stream<StationData> specificOrderStationsRent(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
+        return stationdata
+                .map(sd -> {
+                    double cost = scc.calculateCostRentSimple(sd, sd.probabilityTake, sd.walktime);
+                    sd.individualCost = cost;
+                    sd.totalCost = cost;
+                    sd.expectedTimeIfNotAbandon = sd.walktime;
+                    sd.abandonProbability = (1 - sd.probabilityTake);
+                    return sd;
+                })//apply function to calculate cost 
+                .sorted(costRentComparator(parameters.desireableProbability));
     }
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
-        List<StationUtilityData> orderedlist = new ArrayList<>();
-        for (StationUtilityData sd : stationdata) {
-                double cost = scc.calculateCostReturnSimple(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
-                sd.setIndividualCost(cost).setTotalCost(cost);
-                sd.setExpectedtimeIfNotAbandon(sd.getWalkTime()+sd.getBiketime());
-                sd.setAbandonProbability(1-sd.getProbabilityReturn());  
-                addreturn(sd, orderedlist);
-        }
-         return orderedlist;
-    }
-
-   
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
- /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
-                && oldSD.getProbabilityTake() < this.parameters.desireableProbability) {
-            return true;
-        }
-        if (newSD.getProbabilityTake() < this.parameters.desireableProbability
-                && oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-            return false;
-        }
-   */     return (newSD.getTotalCost() < oldSD.getTotalCost());
-    }
-
-    protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-  /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
-                && oldSD.getProbabilityReturn() < this.parameters.desireableProbability) {
-            return true;
-        }
-        if (newSD.getProbabilityReturn() < this.parameters.desireableProbability
-                && oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
-            return false;
-        }
-  */     return newSD.getTotalCost() < oldSD.getTotalCost();
+    protected Stream<StationData> specificOrderStationsReturn(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
+        return stationdata
+                .map(sd -> {
+                    double cost = scc.calculateCostReturnSimple(sd, sd.probabilityReturn, sd.biketime, sd.walktime);
+                    sd.individualCost = cost;
+                    sd.totalCost = cost;
+                    sd.expectedTimeIfNotAbandon = sd.walktime + sd.biketime;
+                    sd.abandonProbability = (1 - sd.probabilityReturn);
+                    return sd;
+                })//apply function to calculate cost
+                .sorted(costReturnComparator(parameters.desireableProbability));
     }
 }

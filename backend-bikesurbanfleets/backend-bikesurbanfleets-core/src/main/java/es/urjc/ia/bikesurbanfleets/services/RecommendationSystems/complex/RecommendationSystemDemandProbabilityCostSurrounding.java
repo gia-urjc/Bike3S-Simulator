@@ -7,32 +7,31 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.common.util.StationProbabilitiesQueueBased;
-import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
+import static es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.AbstractRecommendationSystemDemandProbabilityBased.costRentComparator;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.UtilitiesProbabilityCalculationQueue.IntTuple;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
-import java.text.Bidi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  *
  * @author holger
  */
 @RecommendationSystemType("DEMAND_cost_surrounding")
-public class RecommendationSystemDemandProbabilityCostSurrounding extends RecommendationSystemDemandProbabilityBased {
+public class RecommendationSystemDemandProbabilityCostSurrounding extends AbstractRecommendationSystemDemandProbabilityBased {
 
-    public static class RecommendationParameters extends RecommendationSystemDemandProbabilityBased.RecommendationParameters {
+    public static class RecommendationParameters extends AbstractRecommendationSystemDemandProbabilityBased.RecommendationParameters {
 
         private double desireableProbability = 0.8;
-        private double MaxCostValue = 6000;
+        private double unsucesscostRentPenalisation = 3000; //with calculator2bis=between 4000 and 6000
+        private double unsucesscostReturnPenalisation = 30000; //with calculator2bis=between 4000 and 6000
         private double MaxDistanceSurroundingStations = 500;
-        private double alfa=0.1;
     }
 
     private RecommendationParameters parameters;
@@ -47,64 +46,50 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Recomm
         super(recomenderdef, ss, new RecommendationParameters());
         this.parameters = (RecommendationParameters) (super.parameters);
         scc = new CostCalculatorSimple(
-                parameters.MaxCostValue,
+                parameters.unsucesscostRentPenalisation,
+                parameters.unsucesscostReturnPenalisation,
                 probutils, 0, 0,
                 parameters.expectedWalkingVelocity,
-                parameters.expectedCyclingVelocity, 
+                parameters.expectedCyclingVelocity,
                 graphManager);
         probutilsqueue = (UtilitiesProbabilityCalculationQueue) probutils;
     }
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
-        List<StationUtilityData> orderedlist = new ArrayList<>();
-        for (StationUtilityData sd : stationdata) {
+    protected Stream<StationData> specificOrderStationsRent(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
+        return stationdata
+                .map(sd -> {
+                    double prob = sd.probabilityTake;
 
-            double prob = sd.getProbabilityTake();
-            double msdprob = Math.pow(prob, 2.718);
-   //         double cost = sd.getWalkTime() + (1 - msdprob) * parameters.MaxCostValue;
+                    double secprob = getSurroundingProbRent(sd, sd.walkdist, allstations, maxdistance);
+                    double secextracost = (maxdistance - sd.walktime) / 2D;
+                    double cost = sd.walktime + (1 - prob)
+                            * (secextracost + (1 - secprob) * parameters.unsucesscostRentPenalisation);
 
-            double secprob=getSurroundingProbRent(sd, sd.getWalkdist(), allstations, maxdistance);
-            double seccost = secprob*sd.getWalkTime() + (1 - secprob) * parameters.MaxCostValue;
-
-            double cost = sd.getWalkTime() + (1 - msdprob) * 
-                    (parameters.alfa* seccost +(1-parameters.alfa)*parameters.MaxCostValue);
-
-            sd.setTotalCost(cost);
-            addrent(sd, orderedlist, maxdistance);
-        }
-        return orderedlist;
+                    sd.totalCost = cost;
+                    return sd;
+                })//apply function to calculate cost 
+                .sorted(costRentComparator(parameters.desireableProbability));
     }
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
-        List<StationUtilityData> orderedlist = new ArrayList<>();
-        for (StationUtilityData sd : stationdata) {
+    protected Stream<StationData> specificOrderStationsReturn(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
+        return stationdata
+                .map(sd -> {
+                    double prob = sd.probabilityReturn;
 
-            double prob = sd.getProbabilityReturn();
-            double msdprob = Math.pow(prob, 2.718);
-     //       double cost = sd.getWalkTime() + (1 - msdprob) * parameters.MaxCostValue;
+                    double secprob = getSurroundingProbReturn(sd, sd.bikedist, allstations);
+                    double secextracostbike = parameters.MaxDistanceSurroundingStations  / 2D;;
 
-            double secprob=getSurroundingProbReturn(sd, sd.getBikedist(), allstations);
-            double seccost = secprob*(sd.getBiketime()+sd.getWalkTime()) + (1 - secprob) * parameters.MaxCostValue;
-
-            double cost = sd.getBiketime() + msdprob * sd.getWalkTime() + (1 - msdprob) * 
-                    (parameters.alfa* seccost +(1-parameters.alfa)*parameters.MaxCostValue);
-            sd.setTotalCost(cost);
-            addreturn(sd, orderedlist);
-        }
-        return orderedlist;
+                    double cost = sd.biketime + sd.walktime + (1 - prob)
+                            * (secextracostbike + (1 - secprob) * parameters.unsucesscostReturnPenalisation);
+                    sd.totalCost = cost;
+                    return sd;
+                })//apply function to calculate cost
+                .sorted(costReturnComparator(parameters.desireableProbability));
     }
 
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
-        return (newSD.getTotalCost() < oldSD.getTotalCost());
-    }
-
-    protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        return newSD.getTotalCost() < oldSD.getTotalCost();
-    }
-
-    private double getSurroundingProbRent(StationUtilityData station,
+    private double getSurroundingProbRent(StationData station,
             double accwalkdistance, List<Station> stations, double maxdistance) {
         int suravcap = 0;
         int suravslots = 0;
@@ -114,13 +99,13 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Recomm
         double surtakedemandrate = 0;
         double surreturndemandrate = 0;
         boolean found = false;
-        List<StationUtilityData> temp = new ArrayList<>();
+        List<StationData> temp = new ArrayList<>();
         for (Station s : stations) {
-            if (s.getId() != station.getStation().getId()) {
-                double dist = station.getStation().getPosition().eucleadeanDistanceTo(s.getPosition());
+            if (s.getId() != station.station.getId()) {
+                double dist = station.station.getPosition().eucleadeanDistanceTo(s.getPosition());
                 if ((dist <= parameters.MaxDistanceSurroundingStations)
                         && (accwalkdistance + dist) <= maxdistance) {
-                    dist = graphManager.estimateDistance(station.getStation().getPosition(), s.getPosition(), "foot");
+                    dist = graphManager.estimateDistance(station.station.getPosition(), s.getPosition(), "foot");
                     if ((accwalkdistance + dist) <= maxdistance) {
                         double time = (accwalkdistance + dist) / parameters.expectedWalkingVelocity;
                         IntTuple t = probutilsqueue.getAvailableCapandBikes(s, time);
@@ -150,7 +135,7 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Recomm
         }
     }
 
-    private double getSurroundingProbReturn(StationUtilityData station,
+    private double getSurroundingProbReturn(StationData station,
             double accbikedistance, List<Station> stations) {
         int suravcap = 0;
         int suravslots = 0;
@@ -160,12 +145,12 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Recomm
         double surtakedemandrate = 0;
         double surreturndemandrate = 0;
         boolean found = false;
-        List<StationUtilityData> temp = new ArrayList<>();
+        List<StationData> temp = new ArrayList<>();
         for (Station s : stations) {
-            if (s.getId() != station.getStation().getId()) {
-                double dist = station.getStation().getPosition().eucleadeanDistanceTo(s.getPosition());
+            if (s.getId() != station.station.getId()) {
+                double dist = station.station.getPosition().eucleadeanDistanceTo(s.getPosition());
                 if (dist <= parameters.MaxDistanceSurroundingStations) {
-                    dist = graphManager.estimateDistance(station.getStation().getPosition(), s.getPosition(), "bike");
+                    dist = graphManager.estimateDistance(station.station.getPosition(), s.getPosition(), "bike");
                     double time = (accbikedistance + dist) / parameters.expectedCyclingVelocity;
                     IntTuple t = probutilsqueue.getAvailableCapandBikes(s, time);
                     suravcap += t.avcap;

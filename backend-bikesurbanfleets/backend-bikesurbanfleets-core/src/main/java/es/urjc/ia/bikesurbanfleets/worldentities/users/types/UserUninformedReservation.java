@@ -6,8 +6,8 @@
 package es.urjc.ia.bikesurbanfleets.worldentities.users.types;
 
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.services.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
@@ -18,7 +18,6 @@ import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionReserveBike;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionReserveSlot;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -29,60 +28,32 @@ public class UserUninformedReservation extends User {
 
     @Override
     public UserDecision decideAfterAppearning() {
-        Station s = determineStationToRentBike();        
+        Station s = determineStationToRentBike();
         if (s != null) { //user has found a station
-            double dist=routeService.estimateDistance(this.getPosition(), s.getPosition(), "foot");
-            if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionReserveBike(s);
-            }
-        } //if not he would leave
+            return new UserDecisionReserveBike(s);
+        } //station has not been found           
         return new UserDecisionLeaveSystem();
     }
 
     @Override
     public UserDecision decideAfterFailedRental() {
-//        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts ||
-//                getMemory().getReservationAttemptsCounter() >= parameters.minRentalAttempts) {
-//            return new UserDecisionLeaveSystem();
-//        } else {
-        Station s = determineStationToRentBike();
-        if (s != null) { //user has found a station
-            double dist=routeService.estimateDistance(this.getPosition(), s.getPosition(), "foot");
-            if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionReserveBike(s);
-            }
-        } //if not he would leave
-        return new UserDecisionLeaveSystem();
+        return decideAfterAppearning();
     }
 
-    //no reservations will take place
     @Override
     public UserDecision decideAfterFailedBikeReservation() {
-//        if (getMemory().getRentalAttemptsCounter() >= parameters.minRentalAttempts ||
-//                getMemory().getReservationAttemptsCounter() >= parameters.minRentalAttempts) {
-//            return new UserDecisionLeaveSystem();
-//        } else {
-        Station s = determineStationToRentBike();
-        if (s != null) { //user has found a station
-            double dist=routeService.estimateDistance(this.getPosition(), s.getPosition(), "foot");
-            if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionReserveBike(s);
-            }
-        } //if not he would leave
-        return new UserDecisionLeaveSystem();
+        return decideAfterAppearning();
     }
-    //TODO: change the implementation of this decision
+
     @Override
     public UserDecision decideAfterBikeReservationTimeout() {
         Station s = this.getDestinationStation();
-        if (s != null) { //user has found a station
-            double dist=routeService.estimateDistance(this.getPosition(), s.getPosition(), "foot");
-            if (dist<= parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance()) {
-                return new UserDecisionReserveBike(s);
-            }
-        } //if not he would leave
-        return new UserDecisionLeaveSystem();
-     }
+        if (s != null) {
+            return new UserDecisionReserveBike(s);
+        } else {
+            throw new RuntimeException("User " + this.getId() + " imposible state after timeout");
+        }
+    }
 
     @Override
     public UserDecision decideAfterGettingBike() {
@@ -114,26 +85,26 @@ public class UserUninformedReservation extends User {
 
     @Override
     public UserDecision decideAfterSlotReservationTimeout() {
-            Station s = this.getDestinationStation();
-            if (s != null) { //user has found a station
-                return new UserDecisionReserveSlot(s);
-            } else {
-                throw new RuntimeException("User " + this.getId() + " cant return a bike, no slots");
-            }
+        Station s = this.getDestinationStation();
+        if (s != null) { //user has found a station
+            return new UserDecisionReserveSlot(s);
+        } else {
+            throw new RuntimeException("User " + this.getId() + " imposible state after timeout");
+        }
     }
 
     public class Parameters {
 
-       //default constructor used if no parameters are specified
-        private Parameters() {}
-        
-        /**
-         * It is the number of times that the user will try to rent a bike (without a bike
-         * reservation) before deciding to leave the system.
-         */
- //        int minRentalAttempts = 3;
+        //default constructor used if no parameters are specified
+        private Parameters() {
+        }
 
-         double maxDistanceToRentBike = 600;
+        /**
+         * It is the number of times that the user will try to rent a bike
+         * (without a bike reservation) before deciding to leave the system.
+         */
+        //        int minRentalAttempts = 3;
+        double maxDistanceToRentBike = 600;
 
     }
 
@@ -155,30 +126,34 @@ public class UserUninformedReservation extends User {
 
     @Override
     protected Station determineStationToRentBike() {
-        Station destination = null;
-        List<Station> triedStations = getMemory().getStationsWithReservationRentalFailedAttempts(); 
+        double desiredmaxdistance = Math.max(0, parameters.maxDistanceToRentBike - getMemory().getWalkedToTakeBikeDistance());
 
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition(),"foot");
-        finalStations.removeAll(triedStations);
-
-        if (!finalStations.isEmpty()) {
-                    destination = finalStations.get(0);
+        List<Recommendation> stations = informationSystem.getStationsOrderedByWalkDistanceWithinMaxDistance(this.getPosition(), desiredmaxdistance);
+        UserUninformed.removeTriedStations(stations, getMemory().getStationsWithReservationRentalFailedAttempts());
+ 
+        if (printHints) {
+            informationSystem.printRecomendations(stations, desiredmaxdistance, true, maxNumberRecommendationPrint);
         }
-        return destination;
+
+        if (!stations.isEmpty()) {
+            return stations.get(0).getStation();
+        }
+        return null;
     }
 
     @Override
     protected Station determineStationToReturnBike() {
-        Station destination = null;
-        List<Station> triedStations = getMemory().getStationsWithReservationReturnFailedAttempts(); 
-
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace,"foot");
-        finalStations.removeAll(triedStations);
-        if (!finalStations.isEmpty()) {
-        	destination = finalStations.get(0);
-        } else {
-            throw new RuntimeException("[Error] User " + this.getId() + " cant return a bike, no slots");
+        List<Recommendation> stations = informationSystem.getAllStationsOrderedByWalkDistance(destinationPlace);
+        UserUninformed.removeTriedStations(stations, getMemory().getStationsWithReservationReturnFailedAttempts());
+        if (printHints) {
+            informationSystem.printRecomendations(stations, 0, false, maxNumberRecommendationPrint);
         }
-        return destination;
+
+        if (!stations.isEmpty()) {
+            return stations.get(0).getStation();
+       } else {
+            throw new RuntimeException("[Error] User " + this.getId() + " cant return a bike, all stations tried");
+        }
     }
+
 }

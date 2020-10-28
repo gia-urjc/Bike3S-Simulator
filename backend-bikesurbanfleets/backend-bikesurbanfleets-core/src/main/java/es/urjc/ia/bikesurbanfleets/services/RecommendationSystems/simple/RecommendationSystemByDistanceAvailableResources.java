@@ -5,20 +5,15 @@
  */
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple;
 
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.services.StationComparator;
-import es.urjc.ia.bikesurbanfleets.worldentities.stations.StationManager;
-import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
-import java.util.ArrayList;
+
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -27,7 +22,7 @@ import java.util.stream.Collectors;
 @RecommendationSystemType("DISTANCE_RESOURCES")
 public class RecommendationSystemByDistanceAvailableResources extends RecommendationSystem {
 
-    public static class RecommendationParameters extends RecommendationSystem.RecommendationParameters{
+    public static class RecommendationParameters extends RecommendationSystem.RecommendationParameters {
     }
     private RecommendationParameters parameters;
 
@@ -36,36 +31,29 @@ public class RecommendationSystemByDistanceAvailableResources extends Recommenda
         //parameters are read in the superclass
         //afterwards, they have to be cast to this parameters class
         super(recomenderdef, ss, new RecommendationParameters());
-        this.parameters= (RecommendationParameters)(super.parameters);
-  }
-
-    @Override
-   public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
-        List<Station> temp;
-        List<Recommendation> result = new ArrayList<>();
-        List<Station> candidatestations = stationsWithBikesInWalkingDistance( point,  maxdist);
-
-        if (!candidatestations.isEmpty()) {
-            temp = candidatestations.stream().sorted(
-                    StationComparator.byProportionBetweenDistanceAndBikes(point, graphManager,"foot")
-            ).collect(Collectors.toList());
-            result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
-        }
-        return result;
+        this.parameters = (RecommendationParameters) (super.parameters);
     }
 
-    @Override
-    public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
-        List<Station> temp;
-        List<Recommendation> result = new ArrayList<>();
-        List<Station> candidatestations = stationsWithSlots();
-        if (!candidatestations.isEmpty()) {
-            temp = candidatestations.stream().sorted(
-                    StationComparator.byProportionBetweenDistanceAndSlots(destination, graphManager, "foot")
-            ).collect(Collectors.toList());
-            result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
-        } 
-        return result;
+    public Stream<StationData> recommendStationToRentBike(final Stream<StationData> candidates, final GeoPoint point, double maxdist) {
+        return candidates
+                .filter(stationdata -> stationdata.availableBikes > 0)
+                .sorted(byProportionBetweenDistanceAndBikes());
     }
 
+    public Stream<StationData> recommendStationToReturnBike(final Stream<StationData> candidates, final GeoPoint currentposition, final GeoPoint destination) {
+        return candidates
+                .filter(stationdata -> stationdata.availableSlots > 0)
+                .sorted(byProportionBetweenDistanceAndSlots());
+    }
+    private Comparator<StationData> byProportionBetweenDistanceAndBikes() {
+        return (s1, s2) -> Double.compare(
+                s1.walkdist / s1.availableBikes,
+                s2.walkdist / s2.availableBikes);
+    }
+
+    private Comparator<StationData> byProportionBetweenDistanceAndSlots() {
+        return (s1, s2) -> Double.compare(
+                s1.walkdist / s1.availableSlots,
+                s2.walkdist / s2.availableSlots);
+    }
 }

@@ -5,18 +5,16 @@
  */
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple;
 
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -30,18 +28,7 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
          * It is the maximum distance in meters between a station and the
          * stations we take into account for checking the area
          */
-        private double MaxDistanceSurroundingStations = 300;
-    }
-    private class StationSurroundingData {
-        StationSurroundingData(Station s, double q, double d){
-            station=s;
-            quality=q;
-            distance=d;
-        }
-
-        Station station = null;
-        double quality = 0.0D;
-        double distance = 0.0D;
+        private double MaxDistanceSurroundingStations = 500;
     }
 
     private RecommendationParameters parameters;
@@ -55,67 +42,58 @@ public class RecommendetionSystemSurroundingByDistanceAvailableResources extends
     }
 
     @Override
-    public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
-        List<Recommendation> result = new ArrayList<>();
-        List<Station> candidatestations = stationsWithBikesInWalkingDistance( point,  maxdist);
-
-        if (!candidatestations.isEmpty()) {
-            List<StationSurroundingData> stationdata = getStationQualityandDistanceRenting(candidatestations, point);
-            List<StationSurroundingData> temp = stationdata.stream().sorted(byProportionBetweenDistanceAndQuality).collect(Collectors.toList());
-            result = temp.stream().map(StationSurroundingData -> new Recommendation(StationSurroundingData.station, null)).collect(Collectors.toList());
-        }
-        return result;
+    public Stream<StationData> recommendStationToRentBike(final Stream<StationData> candidates, final GeoPoint point, double maxdist) {
+        return candidates
+                .filter(s -> s.availableBikes > 0) //filter station candat¡dates
+                .map(s -> {
+                    getStationQuality(s, true);
+                    return s;
+                })//apply function to calculate utilities the utility data
+                .sorted(byProportionBetweenDistanceAndQuality()); //sort by utility
     }
 
-    public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
-        List<Recommendation> result = new ArrayList<>();
-        List<Station> candidatestations = stationsWithSlots();
-
-        if (!candidatestations.isEmpty()) {
-            List<StationSurroundingData> stationdata = getStationQualityandDistanceReturning(candidatestations, destination);
-            List<StationSurroundingData> temp = stationdata.stream().sorted(byProportionBetweenDistanceAndQuality).collect(Collectors.toList());
-            result = temp.stream().map(StationSurroundingData -> new Recommendation(StationSurroundingData.station, null)).collect(Collectors.toList());
-        } 
-        return result;
+    public Stream<StationData> recommendStationToReturnBike(final Stream<StationData> candidates, final GeoPoint currentposition, final GeoPoint destination) {
+        return candidates
+                .filter(s -> s.availableSlots > 0) //filter station candat¡dates
+                .map(s -> {
+                    getStationQuality(s, false);
+                    return s;
+                })//apply function to calculate utilities the utility data
+                .sorted(byProportionBetweenDistanceAndQuality()); //sort by utility
     }
 
-    private List<StationSurroundingData> getStationQualityandDistanceRenting(List<Station> stations, GeoPoint userpoint) {
-        List<StationSurroundingData> stationdat = new ArrayList<StationSurroundingData>();
-        for (Station candidatestation : stations) {
-            double summation = 0;
-            List<Station> otherstations = stationManager.consultStations().stream()
-                    .filter(other -> candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
-            double factor, multiplication;
-            for (Station other : otherstations) {
-                factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
-                multiplication = other.availableBikes() * factor;
+    private void getStationQuality(StationData s, boolean take) {
+        double summation = 0;
+        double factor, multiplication;
+        double nearestdist = Double.MAX_VALUE;
+        Station nearest = null;
+        for (Station other : stationManager.consultStations()) {
+            double dist = s.station.getPosition().eucleadeanDistanceTo(other.getPosition());
+            if (dist <= parameters.MaxDistanceSurroundingStations) {
+                factor = (parameters.MaxDistanceSurroundingStations - dist) / parameters.MaxDistanceSurroundingStations;
+                double slotsorbikes= take ? other.availableBikes() : other.availableSlots();
+                multiplication = slotsorbikes * factor;
                 summation += multiplication;
+                if (dist < nearestdist && other.getId() != s.station.getId()) {
+                    nearest = other;
+                    nearestdist = dist;
+                }
             }
-            double dist=graphManager.estimateDistance(userpoint, candidatestation.getPosition() ,"foot");
-            stationdat.add(new StationSurroundingData(candidatestation, summation,dist));
         }
-        return stationdat;
-    }
-
-    private List<StationSurroundingData> getStationQualityandDistanceReturning(List<Station> stations, GeoPoint userpoint) {
-        List<StationSurroundingData> stationdat = new ArrayList<StationSurroundingData>();
-
-        for (Station candidatestation : stations) {
-            double summation = 0;
-            List<Station> otherstations = stationManager.consultStations().stream()
-                    .filter(other -> candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition()) <= parameters.MaxDistanceSurroundingStations).collect(Collectors.toList());
-            double factor, multiplication;
-            for (Station other : otherstations) {
-                factor = (parameters.MaxDistanceSurroundingStations - candidatestation.getPosition().eucleadeanDistanceTo(other.getPosition())) / parameters.MaxDistanceSurroundingStations;
-                multiplication = other.availableSlots() * factor;
-                summation += multiplication;
-            }
-            double dist=graphManager.estimateDistance(candidatestation.getPosition(),userpoint ,"foot");
-            stationdat.add(new StationSurroundingData(candidatestation, summation,dist));
-        }
-        return stationdat;
+        s.quality = summation;
+        s.nearest = nearest;
+        s.nearestDistance = nearestdist;
     }
     
-    Comparator<StationSurroundingData> byProportionBetweenDistanceAndQuality = (sq1, sq2) ->  Double.compare(sq1.distance/ sq1.quality, sq2.distance/ sq2.quality);
-
+    private static Comparator<StationData> byProportionBetweenDistanceAndQuality() {
+        return (s1, s2) -> Double.compare(
+                s1.walkdist / s1.quality,
+                s2.walkdist / s2.quality);
+    }
+    
+    //default implementation for printing details
+    @Override
+    protected  void printRecomendationDetails(List<StationData> su, boolean rentbike, long maxnumber) {
+        RecommendationSystemSurroundingByAvailableResources.staticPrintRecomendationDetails(su, rentbike, maxnumber);
+    }
 }

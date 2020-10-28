@@ -35,14 +35,17 @@ public class CompareTestApplication {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // the following parameters may have to be changes
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_usersrandom_halfbikes"
-               + "/newProbAnalysisEucledean/sameVelocity_woutUsersSameStations/"
-     //    +"simple";
+        testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_usersrandom_halfbikes/Oct2020/"
+     //          + "newProbAnalysisEucledean/sameVelocity_woutUsersSameStations/"
+         +"cost";
+      //   +"cost_simple";
+      //   +"expected";
+      
      //  + "probability_queue";
       //          +"probability_skellam";
       // + "cost_simple";
       // + "cost_prediction_simple_prueba";
-       + "cost_prediction_simple";
+      // + "cost_prediction_simple";
      //  + "cost_prediction";
         
      //   + "cost_comp_prueba";

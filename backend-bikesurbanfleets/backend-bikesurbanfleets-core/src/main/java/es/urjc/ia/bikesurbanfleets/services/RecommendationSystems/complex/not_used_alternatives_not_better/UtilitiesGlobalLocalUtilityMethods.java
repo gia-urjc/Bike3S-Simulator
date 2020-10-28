@@ -6,12 +6,9 @@
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.not_used_alternatives_not_better;
 
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.PastRecommendations.ExpBikeChangeResult;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
-import java.time.LocalDateTime;
 
 /**
  *
@@ -29,8 +26,8 @@ public class UtilitiesGlobalLocalUtilityMethods {
     }
 
     // the method returns the difference of the OpenSquaredUtility after taking or returning a bike wrt the situation before
-    public double calculateOpenSquaredStationUtilityDifference(StationUtilityData sd, boolean rentbike) {
-        Station s =sd.getStation();
+    public double calculateOpenSquaredStationUtilityDifference(StationData sd, boolean rentbike) {
+        Station s =sd.station;
         double bikedemand = dm.getStationTakeRatePerHour(s.getId(),SimulationDateTime.getCurrentSimulationDateTime() );
         double slotdemand = dm.getStationReturnRatePerHour(s.getId(),SimulationDateTime.getCurrentSimulationDateTime());
         double currentutility = getOpenSquaredUtility(s.getCapacity(), s.availableBikes(), bikedemand, slotdemand);

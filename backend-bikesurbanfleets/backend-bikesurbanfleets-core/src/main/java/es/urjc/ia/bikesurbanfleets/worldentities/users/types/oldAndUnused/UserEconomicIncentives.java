@@ -1,18 +1,18 @@
-package es.urjc.ia.bikesurbanfleets.worldentities.users.types;
+package es.urjc.ia.bikesurbanfleets.worldentities.users.types.oldAndUnused;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
-import es.urjc.ia.bikesurbanfleets.services.StationComparator;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.services.Recommendation;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Incentives.Incentive;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Incentives.Money;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
+import es.urjc.ia.bikesurbanfleets.worldentities.users.types.UserObedient;
 
 import java.util.Comparator;
 import java.util.List;
@@ -197,17 +197,23 @@ public class UserEconomicIncentives extends UserObedient {
     }
 
     private Station nearestStationToRent(List<Station> stations, GeoPoint point) {
-        Comparator<Station> byDistance = StationComparator.byDistance(point, routeService,"foot");
+/*        Comparator<Station> byDistance = StationComparator.byDistance(point, routeService,"foot");
         List<Station> orderedStations = stations.stream().filter(s -> s.availableBikes() > 0)
                 .sorted(byDistance).collect(Collectors.toList());
         return orderedStations.get(0);
+*/
+//TODO
+return null;
     }
 
     private Station nearestStationToReturn(List<Station> stations, GeoPoint point) {
-        Comparator<Station> byDistance = StationComparator.byDistance(point, routeService,"foot");
+/*        Comparator<Station> byDistance = StationComparator.byDistance(point, routeService,"foot");
         List<Station> orderedStations = stations.stream().filter(s -> s.availableSlots() > 0)
                 .sorted(byDistance).collect(Collectors.toList());
         return orderedStations.get(0);
+*/
+//TODO
+return null;
     }
 
 }

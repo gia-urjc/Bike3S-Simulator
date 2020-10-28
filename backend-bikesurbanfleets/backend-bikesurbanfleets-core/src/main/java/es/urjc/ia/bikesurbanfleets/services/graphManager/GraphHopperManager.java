@@ -15,6 +15,7 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationExce
 import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
 import es.urjc.ia.bikesurbanfleets.common.util.CheckSum;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple.RecommendationSystemByAvailableResources;
 
 import org.apache.commons.io.FileUtils;
@@ -155,6 +156,18 @@ public class GraphHopperManager implements GraphManager {
         }
         return this.lastroute.getTotalDistance();
     }
-    
+        /**
+     * Each graph or route manager has a velocity factor to adapt the velocities in the system 
+     * to the distance calculation 
+     * this affects the "expected velocity" used in the system in recommenders (defined in GlobalConfigurationParameters)
+     * and also teh velocities of each user (defined in user parameters, and set un the user class)
+     * When an eucleadean graph manager is user, for example, the velocity factor we use is 0,625
+     * that is , a moving object moves slower in order to simulate real movements nort on a straight line
+     * a real distance estimator uses factor 1.
+     */
+    public double getVelocityFactor(){
+        return 1D; 
+    }
+
 }
 

@@ -13,7 +13,7 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.PastRecommendations;
 import es.urjc.ia.bikesurbanfleets.common.util.ProbabilityDistributions;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
@@ -197,31 +197,31 @@ public class UtilitiesProbabilityCalculationSkellam extends UtilitiesProbability
         return ProbabilityDistributions.calculateUpCDFPoissonProbability(returndemandrate, 1);
     }
    
-    public double getGlobalProbabilityImprovementIfTake(StationUtilityData sd ) {
-        int timeoffset=(int)sd.getWalkTime();
-        double futtakedemand = dm.getStationTakeRateIntervall(sd.getStation().getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
-        double futreturndemand = dm.getStationReturnRateIntervall(sd.getStation().getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
+    public double getGlobalProbabilityImprovementIfTake(StationData sd ) {
+        int timeoffset=(int)sd.walktime;
+        double futtakedemand = dm.getStationTakeRateIntervall(sd.station.getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
+        double futreturndemand = dm.getStationReturnRateIntervall(sd.station.getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
         double futglobaltakedem = dm.getGlobalTakeRateIntervall(SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
         double futglobalretdem = dm.getGlobalReturnRateIntervall(SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
 
         double relativeimprovemente = (futtakedemand / futglobaltakedem) * 
-                (sd.getProbabilityTakeAfterTake()-sd.getProbabilityTake())
+                (sd.probabilityTakeAfterTake-sd.probabilityTake)
                 + (futreturndemand / futglobalretdem) * 
-                (sd.getProbabilityReturnAfterTake()-sd.getProbabilityReturn());
+                (sd.probabilityReturnAfterTake-sd.probabilityReturn);
         return relativeimprovemente;
     }
 
-    public double getGlobalProbabilityImprovementIfReturn(StationUtilityData sd) {
-        int timeoffset =(int) sd.getBiketime();
-        double futtakedemand = dm.getStationTakeRateIntervall(sd.getStation().getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
-        double futreturndemand = dm.getStationReturnRateIntervall(sd.getStation().getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
+    public double getGlobalProbabilityImprovementIfReturn(StationData sd) {
+        int timeoffset =(int) sd.biketime;
+        double futtakedemand = dm.getStationTakeRateIntervall(sd.station.getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
+        double futreturndemand = dm.getStationReturnRateIntervall(sd.station.getId(), SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
         double futglobaltakedem = dm.getGlobalTakeRateIntervall(SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
         double futglobalretdem = dm.getGlobalReturnRateIntervall(SimulationDateTime.getCurrentSimulationDateTime().plusSeconds(timeoffset), 3600);
 
         double relativeimprovemente = (futtakedemand / futglobaltakedem) * 
-                (sd.getProbabilityTakeAfterRerturn()-sd.getProbabilityTake())
+                (sd.probabilityTakeAfterRerturn-sd.probabilityTake)
                 + (futreturndemand / futglobalretdem) * 
-                (sd.getProbabilityReturnAfterReturn()-sd.getProbabilityReturn());
+                (sd.probabilityReturnAfterReturn-sd.probabilityReturn);
         return relativeimprovemente;
     }
 }

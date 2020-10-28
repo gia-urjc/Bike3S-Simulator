@@ -1,8 +1,8 @@
 package es.urjc.ia.bikesurbanfleets.worldentities.users.types;
 
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
+import es.urjc.ia.bikesurbanfleets.services.Recommendation;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.User;
@@ -13,7 +13,6 @@ import es.urjc.ia.bikesurbanfleets.worldentities.users.UserDecisionLeaveSystem;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserParameters;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -33,11 +32,7 @@ public class SimulatedRealUser extends User {
 
     @Override
     public UserDecision decideAfterFailedRental() {
- /*       Station s = determineStationToRentBike();
-        if (s != null) { //user has found a station
-            return new UserDecisionStation(s, false);
-        } //if not he would leave
-   */     return new UserDecisionLeaveSystem();
+        return new UserDecisionLeaveSystem();
     }
 
     //no reservations will take place
@@ -110,27 +105,28 @@ public class SimulatedRealUser extends User {
 
     @Override
     protected Station determineStationToRentBike() {
-
-        Station destination = null;
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.getPosition(), "foot").stream().collect(Collectors.toList());
-
-        if (!finalStations.isEmpty()) {
-            destination = finalStations.get(0);
+        List<Recommendation> stations = informationSystem.getAllStationsOrderedByWalkDistance(this.getPosition());
+        if (printHints) {
+            informationSystem.printRecomendations(stations, 100000, true, maxNumberRecommendationPrint);
         }
-        return destination;
+        if (!stations.isEmpty()) {
+            return stations.get(0).getStation();
+        }
+        return null;
     }
 
     @Override
     protected Station determineStationToReturnBike() {
-        Station destination = null;
-        List<Station> triedStations = getMemory().getStationsWithReturnFailedAttempts();
-        List<Station> finalStations = informationSystem.getAllStationsOrderedByDistance(this.destinationPlace, "foot");
-        finalStations.removeAll(triedStations);
-        if (!finalStations.isEmpty()) {
-            destination = finalStations.get(0);
-        } else {
-            throw new RuntimeException("[Error] User " + this.getId() + " cant return a bike, no slots");
+        List<Recommendation> stations = informationSystem.getAllStationsOrderedByWalkDistance(destinationPlace);
+        UserUninformed.removeTriedStations(stations, getMemory().getStationsWithReturnFailedAttempts());
+
+        if (printHints) {
+            informationSystem.printRecomendations(stations, 0, false, maxNumberRecommendationPrint);
         }
-        return destination;
+        if (!stations.isEmpty()) {
+            return stations.get(0).getStation();
+        } else {
+            throw new RuntimeException("[Error] User " + this.getId() + " cant return a bike, all stations tried");
+        }
     }
 }

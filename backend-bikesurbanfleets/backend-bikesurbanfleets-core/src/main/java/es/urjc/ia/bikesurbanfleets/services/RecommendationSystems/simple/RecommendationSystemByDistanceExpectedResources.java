@@ -8,15 +8,14 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.simple;
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.PastRecommendations;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
-import es.urjc.ia.bikesurbanfleets.services.StationComparator;
-import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  *
@@ -37,64 +36,100 @@ public class RecommendationSystemByDistanceExpectedResources extends Recommendat
         this.parameters = (RecommendationParameters) (super.parameters);
     }
 
-    @Override
-    public List<Recommendation> recommendStationToRentBike(GeoPoint point, double maxdist) {
-        List<Station> temp;
-        List<Recommendation> result = new ArrayList<>();
-        List<Station> candidatestations = stationsWithExpectedBikesInWalkingDistance(point, maxdist);
+    public Stream<StationData> recommendStationToRentBike(final Stream<StationData> candidates, final GeoPoint point, double maxdist) {
+        return candidates
+                .filter(expectedBikes())
+                .sorted(byProportionBetweenDistanceAndBikes());
+    }
 
-        if (!candidatestations.isEmpty()) {
-            temp = candidatestations.stream().sorted(
-                    StationComparator.byProportionBetweenDistanceAndBikes(point, graphManager, "foot")
-            ).collect(Collectors.toList());
-            result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
-        }
-        return result;
+    public Stream<StationData> recommendStationToReturnBike(final Stream<StationData> candidates, final GeoPoint currentposition, final GeoPoint destination) {
+        return candidates
+                .filter(expectedSlots())
+                .sorted(byProportionBetweenDistanceAndSlots());
+    }
+
+    private Comparator<StationData> byProportionBetweenDistanceAndBikes() {
+        return (s1, s2) -> {
+            double aux1 = (double)s1.expectedbikesAtArrival/(double)s1.station.getCapacity();
+            double aux2 = (double)s2.expectedbikesAtArrival/(double)s2.station.getCapacity();
+     /*        return Double.compare(
+                    s1.walkdist / aux1,
+                    s2.walkdist / aux2);
+      */       return Double.compare(
+                    s1.walkdist / s1.expectedbikesAtArrival ,
+                    s2.walkdist / s2.expectedbikesAtArrival );
+    //                s1.walkdist + (1-aux1) * 1200 ,
+    //                s2.walkdist + (1-aux2) * 1200 );
+        };
+    }
+
+    private Comparator<StationData> byProportionBetweenDistanceAndSlots() {
+        return (s1, s2) -> {
+            double aux1 = (double)s1.expectedslotsAtArrival/(double)s1.station.getCapacity();
+            double aux2 = (double)s2.expectedslotsAtArrival/(double)s2.station.getCapacity();
+   /*         return Double.compare(
+                    s1.walkdist / aux1,
+                    s2.walkdist / aux2);
+    */        return Double.compare(
+                     s1.walkdist / s1.expectedslotsAtArrival ,
+                    s2.walkdist / s2.expectedslotsAtArrival );
+ //                  s1.walkdist + (1-aux1) * 1200 ,
+ //                   s2.walkdist + (1-aux2) * 1200 );
+        } ;
+    }
+
+    private Predicate<StationData> expectedBikes() {
+        return (StationData sd) -> {
+            PastRecommendations.ExpBikeChangeResult er = this.pastRecomendations.getExpectedBikechanges(sd.station.getId(), 0, sd.walktime);
+            sd.expectedbikesAtArrival = sd.station.availableBikes() + er.changes + er.minpostchanges;
+            return sd.expectedbikesAtArrival > 0;
+        };
+    }
+
+    private Predicate<StationData> expectedSlots() {
+        return (StationData sd) -> {
+            PastRecommendations.ExpBikeChangeResult er = this.pastRecomendations.getExpectedBikechanges(sd.station.getId(), 0, sd.biketime);
+            sd.expectedslotsAtArrival = sd.station.availableSlots() - er.changes - er.maxpostchanges;
+            return sd.expectedslotsAtArrival > 0;
+        };
     }
 
     @Override
-    public List<Recommendation> recommendStationToReturnBike(GeoPoint currentposition, GeoPoint destination) {
-        List<Station> temp;
-        List<Recommendation> result = new ArrayList<>();
-        List<Station> candidatestations = stationsWithExpectedSlotsInBikingDistance(currentposition);
-        if (!candidatestations.isEmpty()) {
-            temp = candidatestations.stream().sorted(
-                    StationComparator.byProportionBetweenDistanceAndSlots(destination, graphManager, "foot")
-            ).collect(Collectors.toList());
-            result = temp.stream().map(s -> new Recommendation(s, null)).collect(Collectors.toList());
-        }
-        return result;
-    }
-
-    private List<Station> stationsWithExpectedBikesInWalkingDistance(GeoPoint position, double maxdist) {
-        List<Station> temp = new ArrayList<>();
-        for (Station s : stationManager.consultStations()) {
-            double walkdist = graphManager.estimateDistance(position, s.getPosition(), "foot");
-            if (walkdist <= maxdist) {
-                double walktime = walkdist / parameters.expectedWalkingVelocity;
-                PastRecommendations.ExpBikeChangeResult er = this.pastRecomendations.getExpectedBikechanges(s.getId(), 0, walktime);
-                int expbikes = s.availableBikes() + er.changes + er.minpostchanges;
-                if (expbikes > 0) {
-                    temp.add(s);
+    protected void printRecomendationDetails(List<StationData> su, boolean rentbike, long maxnumber) {
+        if (rentbike) {
+            System.out.println("             id av ca expb    wtime");
+            int i = 1;
+            for (StationData s : su) {
+                if (i > maxnumber) {
+                    break;
                 }
+                System.out.format("%-3d Station %3d %2d %2d %2d   %8.2f %n",
+                        i,
+                        s.station.getId(),
+                        s.station.availableBikes(),
+                        s.station.getCapacity(),
+                        (int) Math.round(s.expectedbikesAtArrival),
+                        s.walktime);
+                i++;
+            }
+        } else {
+            System.out.println("             id av ca exps    wtime    btime");
+            int i = 1;
+            for (StationData s : su) {
+                if (i > maxnumber) {
+                    break;
+                }
+                System.out.format("%-3d Station %3d %2d %2d %2d   %8.2f %8.2f %n",
+                        i,
+                        s.station.getId(),
+                        s.station.availableBikes(),
+                        s.station.getCapacity(),
+                        (int) Math.round(s.expectedslotsAtArrival),
+                        s.walktime,
+                        s.biketime);
+                i++;
             }
         }
-        return temp;
-    }
-
-    private List<Station> stationsWithExpectedSlotsInBikingDistance(GeoPoint position) {
-        List<Station> temp = new ArrayList<>();
-        for (Station s : stationManager.consultStations()) {
-            double walkdist = graphManager.estimateDistance(position, s.getPosition(), "bike");
-            double walktime = walkdist / parameters.expectedWalkingVelocity;
-            PastRecommendations.ExpBikeChangeResult er = this.pastRecomendations.getExpectedBikechanges(s.getId(),0, walktime);
-            int expslots = s.availableSlots() - er.changes - er.maxpostchanges;
-            if (expslots > 0) {
-                temp.add(s);
-            }
-        }
-
-        return temp;
     }
 
 }

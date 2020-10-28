@@ -28,21 +28,26 @@ import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParam
  */
 public abstract class User implements Entity {
 
+    //variables for printing some output on the console
+    final protected boolean printHints = true;
+    final protected  int maxNumberRecommendationPrint = 5;
+
     public static IdGenerator idgenerator;
-    
-    public static void resetIdGenerator(){
-        idgenerator=new IdGenerator();
+
+    public static void resetIdGenerator() {
+        idgenerator = new IdGenerator();
     }
 
     public static enum STATE {
         APPEARED, TRY_BIKE_RESERVATION, WALK_TO_STATION, WITH_BIKE_TO_STATION, WITH_BIKE_ON_RIDE, TRY_SLOT_RESERVATION, WALK_TO_DESTINATION, EXIT_AFTER_TIMEOUT,
-        LEAVING, LEFT_SYSTEM 
+        LEAVING, LEFT_SYSTEM
     }
-    
+
     private int id;
-    
+
     /**
-     * It indicates what the user is doing at current moment, i.e., his/her state 
+     * It indicates what the user is doing at current moment, i.e., his/her
+     * state
      */
     private STATE state;
 
@@ -79,10 +84,11 @@ public abstract class User implements Entity {
     protected double cyclingVelocity;
 
     /**
-     * Intermediate position is a position in the area where the user whats to go between start end endposition
+     * Intermediate position is a position in the area where the user whats to
+     * go between start end endposition
      */
     protected GeoPoint intermediatePosition;
-    
+
     /**
      * It is the user current (bike or slot) reservation, i. e., the last
      * reservation user has made. If user hasn't made a reservation, this
@@ -170,8 +176,16 @@ public abstract class User implements Entity {
         if (aux != null) {
             intermediatePosition = gson.fromJson(aux, GeoPoint.class);
         } else {
-            intermediatePosition=null;
+            intermediatePosition = null;
         }
+
+        // the velocities here are real (estimated velocities) or from default values or from the user parameters
+        // assuming real velocities of 1.1 m/s and 4 m/s for walking and biking (aprox. to 4 and 14,4 km/h)
+        // a factor must be applied depending on the used route estimator (graphManager)
+        // this is necesary to simulate real velocitis when estimation with straight line distances
+        this.walkingVelocity = this.walkingVelocity * routeService.getVelocityFactor();
+        this.cyclingVelocity = this.cyclingVelocity * routeService.getVelocityFactor();;
+
     }
 
     public User(SimulationServices services, JsonObject userdef, long seed) {
@@ -181,15 +195,17 @@ public abstract class User implements Entity {
 
         this.bike = null;
         this.destinationStation = null;
-        this.state=STATE.APPEARED;
+        this.state = STATE.APPEARED;
         this.reservation = null;
-        
-        //get the parameters form the configuration json
-        this.readConfigParameters(userdef);
+
+        //get external services
         this.services = services;
         this.recommendationSystem = services.getRecommendationSystem();
         this.informationSystem = services.getInformationSystem();
-        this.routeService = services.getGraphManager(); 
+        this.routeService = services.getGraphManager();
+        //get the parameters form the configuration json
+        this.readConfigParameters(userdef);
+        
         this.memory = new UserMemory(this);
     }
 
@@ -215,28 +231,25 @@ public abstract class User implements Entity {
     }
 
     public void addReservation(Reservation reservation) {
-    	if (reservation.getState() == Reservation.ReservationState.EXPIRED 
-    			|| reservation.getState() == Reservation.ReservationState.SUCCESSFUL) {
-    		throw new RuntimeException ("invalid input: added reservations must be active or failed");
-    	}
-    	else if (reservation.getState() == Reservation.ReservationState.ACTIVE) {   
-    		this.reservation = reservation;
-    	}
-    	else if (reservation.getState() == Reservation.ReservationState.FAILED) {
-    		if (reservation.getType() == Reservation.ReservationType.BIKE) {
-    			this.getMemory().update(UserMemory.FactType.BIKE_FAILED_RESERVATION, reservation.getStation());
-    		}
-    		else {
-    			this.getMemory().update(UserMemory.FactType.SLOT_FAILED_RESERVATION, reservation.getStation());
-    		}
-    	}
+        if (reservation.getState() == Reservation.ReservationState.EXPIRED
+                || reservation.getState() == Reservation.ReservationState.SUCCESSFUL) {
+            throw new RuntimeException("invalid input: added reservations must be active or failed");
+        } else if (reservation.getState() == Reservation.ReservationState.ACTIVE) {
+            this.reservation = reservation;
+        } else if (reservation.getState() == Reservation.ReservationState.FAILED) {
+            if (reservation.getType() == Reservation.ReservationType.BIKE) {
+                this.getMemory().update(UserMemory.FactType.BIKE_FAILED_RESERVATION, reservation.getStation());
+            } else {
+                this.getMemory().update(UserMemory.FactType.SLOT_FAILED_RESERVATION, reservation.getStation());
+            }
+        }
         this.memory.getReservations().add(reservation);
     }
 
-    public Reservation  getReservation() {
+    public Reservation getReservation() {
         return this.reservation;
     }
-    
+
     public GeoPoint getPosition() {
         return position;
     }
@@ -254,14 +267,18 @@ public abstract class User implements Entity {
     }
 
     public boolean hasBikeReservation() {
-        if (reservation == null) return false;
-        return reservation.getType() == Reservation.ReservationType.BIKE 
+        if (reservation == null) {
+            return false;
+        }
+        return reservation.getType() == Reservation.ReservationType.BIKE
                 && reservation.getState() == Reservation.ReservationState.ACTIVE;
     }
 
     public boolean hasSlotReservation() {
-        if (reservation == null) return false;
-        return reservation.getType() == Reservation.ReservationType.SLOT 
+        if (reservation == null) {
+            return false;
+        }
+        return reservation.getType() == Reservation.ReservationType.SLOT
                 && reservation.getState() == Reservation.ReservationState.ACTIVE;
     }
 
@@ -305,9 +322,10 @@ public abstract class User implements Entity {
         if (!this.reservation.equals(reservation)) {
             throw new RuntimeException("invalid program state: cancelBikeReservation");
         }
-       reservation = null;
+        reservation = null;
     }
-       /**
+
+    /**
      * User tries to remove a bike from specified station.
      *
      * @param station: it is the station where he wnats to remove (rent) a bike.
@@ -329,11 +347,13 @@ public abstract class User implements Entity {
      */
     public boolean removeBikeWithReservationFrom(Station station, Reservation res, int instant) {
         if (hasBike() || !hasBikeReservation() || !res.equals(reservation)) {
-            throw new RuntimeException ("invalid program state: user.removeBikeWithReservationFrom");
+            throw new RuntimeException("invalid program state: user.removeBikeWithReservationFrom");
         }
         this.bike = station.removeBikeWithReservation(reservation, this, instant);
         this.reservation = null;
-        if (hasBike()) return true;
+        if (hasBike()) {
+            return true;
+        }
         throw new RuntimeException("invalid program flow: removeBikeWithReservationFrom");
     }
 
@@ -364,18 +384,21 @@ public abstract class User implements Entity {
      * return his bike.
      */
     public boolean returnBikeWithReservationTo(Station station, Reservation res, int instant) {
-        if (!hasBike() || !hasSlotReservation() || !res.equals(reservation) || !station.returnBikeWithReservation(this.bike, reservation, this, instant) ) {
-            throw new RuntimeException ("invalid program state: user.returnBikeWithReservationTo");
+        if (!hasBike() || !hasSlotReservation() || !res.equals(reservation) || !station.returnBikeWithReservation(this.bike, reservation, this, instant)) {
+            throw new RuntimeException("invalid program state: user.returnBikeWithReservationTo");
         }
         this.bike = null;
         this.reservation = null;
         return true;
-   }
-    
+    }
+
     /**
-     * It calculates the available routes between user position and his/her destination
+     * It calculates the available routes between user position and his/her
+     * destination
+     *
      * @param destinationPoint is the geographical point the user wants to reach
-     * @return the shortest route if user destination is not equals to his/her current position 
+     * @return the shortest route if user destination is not equals to his/her
+     * current position
      * @throws GeoRouteCreationException
      * @throws GraphHopperIntegrationException
      */
@@ -391,10 +414,11 @@ public abstract class User implements Entity {
     protected int timeToReach() {
         return (int) (route.getTotalDistance() / getAverageVelocity());
     }
-    
+
     /**
-     * It calculates the geographical point of the route the user has reached when 
-     * he/she loose the reservation because of its expiration.
+     * It calculates the geographical point of the route the user has reached
+     * when he/she loose the reservation because of its expiration.
+     *
      * @return the reached geographical point when reservation timeout happens
      */
     public GeoPoint reachedPointUntilTimeOut() {
@@ -419,7 +443,7 @@ public abstract class User implements Entity {
     final public int goToStation(Station dest) throws Exception {
         destinationStation = dest;
         route = calculateRoute(dest.getPosition());
-        return (int)(route.getTotalDistance() / getAverageVelocity());
+        return (int) (route.getTotalDistance() / getAverageVelocity());
     }
 
     /**
@@ -432,21 +456,24 @@ public abstract class User implements Entity {
         return (int) (route.getTotalDistance() / getAverageVelocity());
     }
 
-    /*****************************************************************
-    ** USER DECISION FUNCTIONS, to be implemented by specific users
-    *****************************************************************/
-            
     /**
-     * User decides what to do after appearing. possible outcomes is UserDecisionS¡tation or UserDecisionLeafSystem
+     * ***************************************************************
+     ** USER DECISION FUNCTIONS, to be implemented by specific users
+    ****************************************************************
+     */
+    /**
+     * User decides what to do after appearing. possible outcomes is
+     * UserDecisionS¡tation or UserDecisionLeafSystem
      *
      * @return a user decision.
      */
     public abstract UserDecision decideAfterAppearning();
-    
-     /**
-     * User decides what to do after beeing unable to take a bike at the station he arrived.
+
+    /**
+     * User decides what to do after beeing unable to take a bike at the station
+     * he arrived.
      *
-     * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
+     * @return a user decision. Possible outcomes is UserDecisionS¡tation with
      * or without a bike reservation or UserDecisionLeafSystem
      */
     public abstract UserDecision decideAfterFailedRental();
@@ -454,72 +481,77 @@ public abstract class User implements Entity {
     /**
      * User decides what to do after a failed bike Reservation.
      *
-     * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
+     * @return a user decision. Possible outcomes is UserDecisionS¡tation with
      * or without a bike reservation or UserDecisionLeafSystem
      */
     public abstract UserDecision decideAfterFailedBikeReservation();
-        
+
     /**
-     * User decides what to do after a reservation timeout for a rental has taken place  .
+     * User decides what to do after a reservation timeout for a rental has
+     * taken place .
      *
-     * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
+     * @return a user decision. Possible outcomes is UserDecisionS¡tation with
      * or without a bike reservation or UserDecisionLeafSystem
      */
     public abstract UserDecision decideAfterBikeReservationTimeout();
 
     /**
      * User decides what to do after getting a bike.
-     * 
-     * @return a user decision. possible outcomes is UserDecisionS¡tation (with 
+     *
+     * @return a user decision. possible outcomes is UserDecisionS¡tation (with
      * or without a slot reservation)
      */
     public abstract UserDecision decideAfterGettingBike();
-        
+
     /**
      * User decides what to do after a failed return attempt.
      *
-     * @return a user decision. Possible outcomes is UserDecisionStation with 
-     * or without a slot reservation 
+     * @return a user decision. Possible outcomes is UserDecisionStation with or
+     * without a slot reservation
      */
     public abstract UserDecision decideAfterFailedReturn();
 
-     /**
-     * User decides what to do after finishing a bike ride to a point in the city .
-     * @return a user decision. Possible outcomes are UserDecisionStation with 
-     * or without a slot reservation 
+    /**
+     * User decides what to do after finishing a bike ride to a point in the
+     * city .
+     *
+     * @return a user decision. Possible outcomes are UserDecisionStation with
+     * or without a slot reservation
      */
     public abstract UserDecision decideAfterFinishingRide();
 
     /**
      * User decides what to do after a failed Slot Reservation.
      *
-     * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
-     * r without a slot reservation
+     * @return a user decision. Possible outcomes is UserDecisionS¡tation with r
+     * without a slot reservation
      */
     public abstract UserDecision decideAfterFailedSlotReservation();
-    
-   /**
+
+    /**
      * User decides what to do after a Slot Reservation timeout.
      *
-     * @return a user decision. Possible outcomes is UserDecisionS¡tation with 
+     * @return a user decision. Possible outcomes is UserDecisionS¡tation with
      * or without a slot reservation
      */
     public abstract UserDecision decideAfterSlotReservationTimeout();
 
-    /********************************************
+    /**
+     * ******************************************
      * Methods for getting stations
-     * 
+     *
      */
-       /**
+    /**
      * It randomly chooses a station among the pre-established number of nearest
      * stations.
      */
     protected abstract Station determineStationToRentBike();
-    protected abstract Station determineStationToReturnBike() ;
-    
+
+    protected abstract Station determineStationToReturnBike();
+
     @Override
     public String toString() {
-        String result = this.getClass().getSimpleName()+" : | Id: " + getId();
+        String result = this.getClass().getSimpleName() + " : | Id: " + getId();
         result += " | State: " + state;
         if (position != null) {
             result += "| Actual Position: " + position.toString();
@@ -529,7 +561,7 @@ public abstract class User implements Entity {
         result += " | Has Bike: " + hasBike();
         result += " | Actual velocity: " + getAverageVelocity();
         result += "| Has reserved bike: " + hasBikeReservation();
-        result += " | Has reserved slot: " + hasSlotReservation() ;
+        result += " | Has reserved slot: " + hasSlotReservation();
         if (destinationStation != null) {
             result += "| Destination station: " + destinationStation.getId();
         } else {

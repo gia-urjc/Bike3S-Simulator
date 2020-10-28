@@ -2,15 +2,14 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
+import static es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.AbstractRecommendationSystemDemandProbabilityBased.costRentComparator;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * This class is a system which recommends the user the stations to which he
@@ -22,9 +21,9 @@ import java.util.List;
  *
  */
 @RecommendationSystemType("DEMAND_cost_prediction")
-public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends RecommendationSystemDemandProbabilityBased {
+public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends AbstractRecommendationSystemDemandProbabilityBased {
 
-    public static class RecommendationParameters extends RecommendationSystemDemandProbabilityBased.RecommendationParameters{
+    public static class RecommendationParameters extends AbstractRecommendationSystemDemandProbabilityBased.RecommendationParameters{
         //this is meters per second corresponds aprox. to 4 and 20 km/h
         private double maxDistanceRecommendationTake = 600;
         private double minimumMarginProbability = 0.0001;
@@ -32,11 +31,10 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         private double desireableProbability = 0.8;
         private double unsucesscostRentPenalisation = 6000;
         private double unsucesscostReturnPenalisation = 6000;
-        private double AbandonPenalisation = 24000;
         private int PredictionNorm = 0;
         private int predictionWindow = 900;
         private double normmultiplier = 0.5;
-        private double alfa=0.5;
+        private int maxNeighbours=30;
     }
 
     private RecommendationParameters parameters;
@@ -49,72 +47,40 @@ public class RecommendationSystemDemandProbabilityCostGlobalPrediction extends R
         super(recomenderdef, ss, new RecommendationParameters());
         this.parameters= (RecommendationParameters)(super.parameters);
         ucc = new ComplexCostCalculator(parameters.minimumMarginProbability, 
-                parameters.AbandonPenalisation, 
                 parameters.unsucesscostRentPenalisation,
                 parameters.unsucesscostReturnPenalisation,
                 parameters.expectedWalkingVelocity,
-                parameters.expectedCyclingVelocity, parameters.minProbBestNeighbourRecommendation,
-                probutils, parameters.PredictionNorm, parameters.normmultiplier,parameters.alfa,
+                parameters.expectedCyclingVelocity, 
+                parameters.minProbBestNeighbourRecommendation,
+                probutils, parameters.PredictionNorm, parameters.normmultiplier,
                 graphManager);
     }
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxuserdistance) {
-        List<StationUtilityData> orderedlist = new ArrayList<>();
-        for (StationUtilityData sd : stationdata) {
-             if (sd.getProbabilityTake() > 0) {
-                try {
-                    double cost = ucc.calculateCostsRentAtStation(sd, allstations, this.parameters.predictionWindow, maxuserdistance, this.parameters.maxDistanceRecommendationTake);
-                    sd.setTotalCost(cost);
-                    addrent(sd, orderedlist, maxuserdistance);
-                } catch (Exception e) {
-                    System.out.println("Better neighbour");
-
-                }
-            }
-        }
-        return orderedlist;
+    protected Stream<StationData> specificOrderStationsRent(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
+        return stationdata
+                .map(sd -> {
+                    double cost = ucc.calculateCostsRentAtStation(sd, allstations, this.parameters.predictionWindow, maxdistance, 
+                            this.parameters.maxDistanceRecommendationTake,
+                            parameters.maxNeighbours);
+                    sd.totalCost=cost;
+                    return sd;
+                })//apply function to calculate cost 
+                .sorted(costRentComparator(parameters.desireableProbability));
     }
-                    
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
-        List<StationUtilityData> orderedlist = new ArrayList<>();
-        for (StationUtilityData sd : stationdata) {
-            if (sd.getProbabilityReturn() > 0) {
-                try {
-                    double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, allstations, this.parameters.predictionWindow, this.parameters.maxDistanceRecommendationTake);
-                    sd.setTotalCost(cost);
-                    addreturn(sd, orderedlist);
-                } catch (Exception e) {
-                    System.out.println("Better neighbour");
-                }
-            }
-        }
-        return orderedlist;
+    protected Stream<StationData> specificOrderStationsReturn(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
+        return stationdata
+                .map(sd -> {
+                    double cost = ucc.calculateCostsReturnAtStation(sd, userdestination, allstations, 
+                            this.parameters.predictionWindow, 
+                            this.parameters.maxDistanceRecommendationTake,
+                            parameters.maxNeighbours);
+                    sd.totalCost=cost;
+                    return sd;
+                })//apply function to calculate cost
+                .sorted(costReturnComparator(parameters.desireableProbability));
     }
-
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
-        /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
-                && oldSD.getProbabilityTake() < this.parameters.desireableProbability) {
-            return true;
-        }
-        if (newSD.getProbabilityTake() < this.parameters.desireableProbability
-                && oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-            return false;
-        }
-         */ return (newSD.getTotalCost() < oldSD.getTotalCost());
-    }
-
-    protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
-                && oldSD.getProbabilityReturn() < this.parameters.desireableProbability) {
-            return true;
-        }
-        if (newSD.getProbabilityReturn() < this.parameters.desireableProbability
-                && oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
-            return false;
-        }
-         */ return newSD.getTotalCost() < oldSD.getTotalCost();
-    }
+                    
 }

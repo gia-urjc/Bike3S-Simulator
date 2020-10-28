@@ -2,18 +2,17 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.not_u
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystem;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.RecommendationSystemDemandProbabilityBased;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.AbstractRecommendationSystemDemandProbabilityBased;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import java.time.LocalDateTime;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * This class is a system which recommends the user the stations to which he
@@ -25,9 +24,10 @@ import java.util.List;
  *
  */
 @RecommendationSystemType("DEMAND_PROBABILITY_GLOBAL_UTILITY")
-public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction extends RecommendationSystemDemandProbabilityBased {
+public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction extends AbstractRecommendationSystemDemandProbabilityBased {
 
-    public static class RecommendationParameters extends RecommendationSystemDemandProbabilityBased.RecommendationParameters{
+    public static class RecommendationParameters extends AbstractRecommendationSystemDemandProbabilityBased.RecommendationParameters {
+
         private double upperProbabilityBound = 0.999;
         private double desireableProbability = 0.6;
 
@@ -42,55 +42,53 @@ public class RecommendationSystemDemandProbabilityGlobalUtilityOpenFunction exte
         //parameters are read in the superclass
         //afterwards, they have to be cast to this parameters class
         super(recomenderdef, ss, new RecommendationParameters());
-        this.parameters= (RecommendationParameters)(super.parameters);
+        this.parameters = (RecommendationParameters) (super.parameters);
         recutils = new UtilitiesGlobalLocalUtilityMethods(getDemandManager());
     }
+
     @Override
-    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
-        List<StationUtilityData> orderedlist = new ArrayList<>();
-        LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
-        for (StationUtilityData sd : stationdata) {
-            double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, true);
-            double normedUtilityDiff = util
-                * recutils.getDemandManager().getStationTakeRatePerHour(sd.getStation().getId(),current);
-            sd.setUtility(normedUtilityDiff);
-            addrent(sd, orderedlist, maxdistance);
-        }
-        return orderedlist;
+    protected Stream<StationData> specificOrderStationsRent(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
+        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
+        return stationdata
+                .map(sd -> {
+                    double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, true);
+                    double normedUtilityDiff = util
+                            * recutils.getDemandManager().getStationTakeRatePerHour(sd.station.getId(), current);
+                    sd.Utility = normedUtilityDiff;
+                    return sd;
+                })//apply function to calculate cost 
+                .sorted(rentComparator());
     }
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
-        List<StationUtilityData> orderedlist = new ArrayList<>();
-        LocalDateTime current=SimulationDateTime.getCurrentSimulationDateTime();
-        for (StationUtilityData sd : stationdata) {
-            double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, false);
-            double normedUtilityDiff = util
-                * recutils.getDemandManager().getStationReturnRatePerHour(sd.getStation().getId(),current);
-            sd.setUtility(normedUtilityDiff);
-            addreturn(sd, orderedlist);
-        }
-        return orderedlist;
-    }
- 
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
-        double distdiff = (newSD.getWalkdist() - oldSD.getWalkdist());
-        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * this.parameters.factorProb;
-        double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
-        if ((probdiff + utildiff) > (distdiff)) {
-            return true;
-        }
-        return false;
+    protected Stream<StationData> specificOrderStationsReturn(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
+        LocalDateTime current = SimulationDateTime.getCurrentSimulationDateTime();
+        return stationdata
+                .map(sd -> {
+                    double util = recutils.calculateOpenSquaredStationUtilityDifference(sd, false);
+                    double normedUtilityDiff = util
+                            * recutils.getDemandManager().getStationReturnRatePerHour(sd.station.getId(), current);
+                    sd.Utility = normedUtilityDiff;
+                    return sd;
+                })//apply function to calculate cost
+                .sorted(returnComparator());
     }
 
-    //take into account that distance newSD >= distance oldSD
-    protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-        double distdiff = (newSD.getWalkdist() - oldSD.getWalkdist());
-        double probdiff = (newSD.getProbabilityReturn()- oldSD.getProbabilityReturn()) * this.parameters.factorProb;
-        double utildiff = (newSD.getUtility() - oldSD.getUtility()) * this.parameters.factorImp;
-        if ((probdiff + utildiff) > (distdiff)) {
-            return true;
-        }
-        return false;
+    private Comparator<StationData> rentComparator() {
+        return (newSD, oldSD) -> {
+            double distdiff = (newSD.walktime - oldSD.walktime);
+            double probdiff = (newSD.probabilityTake - oldSD.probabilityTake) * this.parameters.factorProb;
+            double utildiff = (newSD.Utility - oldSD.Utility) * this.parameters.factorImp;
+            return Double.compare(distdiff, (probdiff + utildiff));
+        };
+    }
+
+    private Comparator<StationData> returnComparator() {
+        return (newSD, oldSD) -> {
+            double distdiff = (newSD.walktime - oldSD.walktime);
+            double probdiff = (newSD.probabilityReturn - oldSD.probabilityReturn) * this.parameters.factorProb;
+            double utildiff = (newSD.Utility - oldSD.Utility) * this.parameters.factorImp;
+            return Double.compare(distdiff, (probdiff + utildiff));
+        };
     }
 }

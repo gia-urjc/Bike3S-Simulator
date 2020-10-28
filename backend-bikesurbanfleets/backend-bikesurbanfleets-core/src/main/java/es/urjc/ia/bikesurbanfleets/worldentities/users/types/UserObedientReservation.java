@@ -6,7 +6,7 @@
 package es.urjc.ia.bikesurbanfleets.worldentities.users.types;
 
 import com.google.gson.JsonObject;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.Recommendation;
+import es.urjc.ia.bikesurbanfleets.services.Recommendation;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.worldentities.users.UserType;
@@ -29,36 +29,30 @@ public class UserObedientReservation extends UserUninformedReservation {
 
     @Override
     protected Station determineStationToRentBike() {
-        Station destination = null;
         if (printHints) {
              System.out.println("User: "+ this.getId() + " asks for renting recommendation%n");
         }
         double desiredmaxdistance=Math.max(0,parameters.maxDistanceToRentBike-getMemory().getWalkedToTakeBikeDistance());
-        List<Recommendation> originRecommendedStations = recommendationSystem.getRecomendedStationsToRentBike(this.getPosition(),desiredmaxdistance);
-        List<Recommendation> recommendedStations = originRecommendedStations.stream()
-                .filter(recomendation -> 
-                        routeService.estimateDistance(this.getPosition(), recomendation.getStation().getPosition(), "foot")
-                         <= desiredmaxdistance).collect(Collectors.toList());
-        boolean noStationAtdist=recommendedStations.isEmpty();
+
+        List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationsToRentBike(this.getPosition(),desiredmaxdistance);
+
+        boolean noStationsRecommended=recommendedStations.isEmpty();
 
         List<Station> triedStations = getMemory().getStationsWithReservationRentalFailedAttempts();
         removeTriedStations(recommendedStations, triedStations);
 
         if (!recommendedStations.isEmpty()) {
-            destination = recommendedStations.get(0).getStation();
+            return recommendedStations.get(0).getStation();
         } else {
             if (printHints) {
-                if (!originRecommendedStations.isEmpty() && noStationAtdist) {
-                    System.out.println("[UserInfo] User " + this.getId() + " not accepted recommended station when taking because of distance: " 
-                            + routeService.estimateDistance(this.getPosition(), originRecommendedStations.get(0).getStation().getPosition(), "foot"));
-                } else if (!originRecommendedStations.isEmpty() && !noStationAtdist) {
-                    System.out.println("[UserInfo] User " + this.getId() + " no station used (all recommendation tried already) ");
+                  if (noStationsRecommended) {
+                    System.out.format("[UserInfo] User " + this.getId() + " no recommendation obtained within the maximum distance of %f meters.", desiredmaxdistance);
                 } else {
-                    System.out.println("[UserInfo] User " + this.getId() + " no recommendation obtained ");
-                 }
+                    System.out.println("[UserInfo] User " + this.getId() + " no station used (all recommendations tried already) ");
+                }
             }
         }
-        return destination;
+        return null;
     }
     private void removeTriedStations(List<Recommendation> rec, List<Station> tried) {
 
@@ -78,22 +72,16 @@ public class UserObedientReservation extends UserUninformedReservation {
              System.out.println("User: "+ this.getId() + " asks for return recommendation%n");
         }
         List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationsToReturnBike( this.getPosition(), destinationPlace);
+        boolean noStationsRecommended = recommendedStations.isEmpty();
+
         List<Station> triedStations = getMemory().getStationsWithReservationReturnFailedAttempts();
         removeTriedStations(recommendedStations, triedStations);
 
         if (!recommendedStations.isEmpty()) {
-            destination = recommendedStations.get(0).getStation();
-        } else {            
-            System.out.println("[Warn] User " + this.getId() + " no (new) return station recommended, will try return at closest station with slot");
-            List<Station> finalStations = informationSystem.getStationsWithAvailableSlotsOrderedByDistance(this.destinationPlace,"foot");
-            if (!finalStations.isEmpty()) {
-                destination = finalStations.get(0);
-            } else {
-                throw new RuntimeException("[Error] User " + this.getId() + " cant return a bike, no slots");
-            }
-            return destination;
+            return recommendedStations.get(0).getStation();
+        } else {
+            throw new RuntimeException("[Error] User " + this.getId() + " cant return a bike, no station recommended or all are tried");
         }
-        return destination;
     }
 
 }

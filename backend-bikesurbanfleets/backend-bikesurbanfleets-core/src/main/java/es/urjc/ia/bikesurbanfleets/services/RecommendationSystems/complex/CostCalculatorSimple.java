@@ -6,11 +6,10 @@
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
 import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.UtilitiesProbabilityCalculator.ProbabilityData;
 import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,12 +19,15 @@ import java.util.List;
 public class CostCalculatorSimple {
 
     //methods for cost calculations
-    public CostCalculatorSimple(double maxcost,
+    public CostCalculatorSimple(
+            double unsucesscostRentPenalisation,
+            double unsucesscostReturnPenalisation,
             UtilitiesProbabilityCalculator recutils,
             int PredictionNorm, double normmultiplier,
             double walkvel, double cycvel, GraphManager gm) {
         this.probutils=recutils;
-        maxCostValue=maxcost;
+        unsucesscostRent=unsucesscostRentPenalisation;
+        unsucesscostReturn=unsucesscostReturnPenalisation;
         predictionNormalisation=PredictionNorm;
         this.normmultiplier=normmultiplier;
         graphManager=gm;
@@ -37,47 +39,53 @@ public class CostCalculatorSimple {
     final double expectedcyclingVelocity;    
     final GraphManager graphManager;
     final int predictionNormalisation;
-    final double maxCostValue;
+    final double unsucesscostRent;
+    final double unsucesscostReturn;
     UtilitiesProbabilityCalculator probutils;
     final double normmultiplier;
     final double estimatedavwalktimenearest=150;
     final double estimatedavbiketimenearest=0;
 
-    private double calculateCostRent(StationUtilityData sd, double sdprob, double time) {
-        double msdprob = Math.pow(sdprob,1);
+    private double calculateCostRent(StationData sd, double sdprob, double time) {
      //   double msdprob = 1-(1D/(1D+Math.pow(2,(10D*(sdprob-0.75D)))));
    //     return (-Math.log10((sdprob)))* maxCostValue +time;
    //         if (time >maxCostValue) return time;
   //          return  sdprob* time + (1-sdprob)* maxCostValue;
-            return  time + (1-msdprob)* maxCostValue;
+            return  time + (1-sdprob)* unsucesscostRent; //buena opción 2
+  //          return  time + (1-sdprob)* 30000; //buena opción 2
+ //           if (msdprob<0.0000001) return 100000;
+ //           return  Math.pow(time, 0.01D)/ (sdprob); //buena combinación1
             
     }
 
-    private double calculateCostReturn(StationUtilityData sd, double sdprob, double biketime, double walktime) {
-        double msdprob = Math.pow(sdprob,1);
+    private double calculateCostReturn(StationData sd, double sdprob, double biketime, double walktime) {
     //    double msdprob = 1-(1D/(1D+Math.pow(2,(10D*(sdprob-0.75D)))));
         
         double time= biketime+ walktime;
   //      return (-Math.log10((sdprob)))* maxCostValue +time;
    //         if (time >maxCostValue) return time;
  //           return  sdprob* time+ (1-sdprob)* maxCostValue;
-            return  biketime+ msdprob*walktime+ (1-msdprob)* maxCostValue;
-    }
+ //           return  time+  (1-msdprob)* maxCostValue;
+ //           return  biketime+ sdprob*walktime+ (1-sdprob)* 3000;//buena opción 2
+            return  biketime+ sdprob*walktime+ (1-sdprob)* unsucesscostReturn;//buena opción 2
+//            if (msdprob<0.0000001) return 100000;
+ //         return  Math.pow(time, 0.4D)/ (sdprob); //buena combinación1
+      }
 
-    public double calculateCostRentSimple(StationUtilityData sd, double sdprob, double time) {
+    public double calculateCostRentSimple(StationData sd, double sdprob, double time) {
         return calculateCostRent(sd,sdprob,time);
     }
 
-    public double calculateCostReturnSimple(StationUtilityData sd, double sdprob, double biketime, double walktime) {
+    public double calculateCostReturnSimple(StationData sd, double sdprob, double biketime, double walktime) {
         return calculateCostReturn(sd,sdprob,biketime,walktime);
     }
 
-    public double calculateCostsRentAtStation(StationUtilityData sd, List<Station> allstats,double timeintervallforPrediction) {
+    public double calculateCostsRentAtStation(StationData sd, List<Station> allstats,double timeintervallforPrediction) {
         //takecosts
-        double usercosttake = calculateCostRent(sd, sd.getProbabilityTake(), sd.getWalkTime());
+        double usercosttake = calculateCostRent(sd, sd.probabilityTake, sd.walktime);
         
         double timeoffset=timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getWalkTime());
-        ProbabilityData pd=probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.getStation(),timeoffset);
+        ProbabilityData pd=probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.station,timeoffset);
 
        
         //analyze global costs
@@ -92,27 +100,29 @@ public class CostCalculatorSimple {
         double extracosttake = costtakeafter - costtake;
         double extracostreturn = costreturnafter - costreturn;
         if (extracostreturn>0.0000000001 || extracosttake<-0.0000000001){
-                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
+                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station " + sd.station.getId() +  " " + extracosttake+ " " + extracostreturn );
         }
         //normalize the extracost
-        extracosttake = extracosttake * getTakeFactor(sd.getStation(), 0,timeoffset) * sd.getProbabilityTake();
-        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), 0,timeoffset) * sd.getProbabilityTake();
+        extracosttake = extracosttake * getTakeFactor(sd.station, 0,timeoffset) * sd.probabilityTake;
+        extracostreturn = extracostreturn* getReturnFactor(sd.station, 0,timeoffset) * sd.probabilityTake;
         
   //      extracosttake = Math.min(extracosttake, 600);
    //     extracostreturn = Math.max(extracostreturn, 0);
 
         double globalcost = usercosttake + extracosttake + extracostreturn;
-        sd.setIndividualCost(usercosttake).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
-                .setTotalCost(globalcost);
+        sd.individualCost=usercosttake;
+        sd.takecostdiff=extracosttake;
+        sd.returncostdiff=extracostreturn;
+        sd.totalCost=globalcost;
         return globalcost;
     }
-    public double calculateCostsReturnAtStation(StationUtilityData sd, List<Station> allstats,double timeintervallforPrediction) {
+    public double calculateCostsReturnAtStation(StationData sd, List<Station> allstats,double timeintervallforPrediction) {
         //return costs
         //take a close point to the station as hipotetical detsination
         double timeoffset=timeintervallforPrediction;//Math.max(timeintervallforPrediction, sd.getBiketime());
-        double usercostreturn = calculateCostReturn(sd, sd.getProbabilityReturn(), sd.getBiketime(), sd.getWalkTime());
+        double usercostreturn = calculateCostReturn(sd, sd.probabilityReturn, sd.biketime, sd.walktime);
 
-        ProbabilityData pd=probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.getStation(), timeoffset);
+        ProbabilityData pd=probutils.calculateFutureProbabilitiesWithAndWithoutArrival(sd.station, timeoffset);
         //analyze global costs
         //takecost if bike is taken   
         double costtake = calculateCostRent(sd, pd.probabilityTake, estimatedavwalktimenearest);
@@ -125,17 +135,19 @@ public class CostCalculatorSimple {
         double extracosttake = costtakeafter - costtake;
         double extracostreturn = costreturnafterhip - costreturnhip;
         if (extracostreturn<-0.0000000001 || extracosttake>0.0000000001){
-                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.getStation().getId() +  " " + extracosttake+ " " + extracostreturn );
+                System.out.println("EEEEERRRRROOOOORRRR: invalid cost station in return  " + sd.station.getId() +  " " + extracosttake+ " " + extracostreturn );
         }
         //normalize the extracost
-        extracosttake = extracosttake * getTakeFactor(sd.getStation(), 0,timeoffset) * sd.getProbabilityReturn();
-        extracostreturn = extracostreturn* getReturnFactor(sd.getStation(), 0,timeoffset) * sd.getProbabilityReturn();
+        extracosttake = extracosttake * getTakeFactor(sd.station, 0,timeoffset) * sd.probabilityReturn;
+        extracostreturn = extracostreturn* getReturnFactor(sd.station, 0,timeoffset) * sd.probabilityReturn;
   //      extracosttake = Math.max(extracosttake, -300);
    //     extracostreturn = Math.min(extracostreturn, 0);
 
         double globalcost = usercostreturn+extracosttake+extracostreturn;
-        sd.setIndividualCost(usercostreturn).setTakecostdiff(extracosttake).setReturncostdiff(extracostreturn)
-                .setTotalCost(globalcost);
+        sd.individualCost=usercostreturn;
+        sd.takecostdiff=extracosttake;
+        sd.returncostdiff=extracostreturn;
+        sd.totalCost=globalcost;
         return globalcost;
     }
      

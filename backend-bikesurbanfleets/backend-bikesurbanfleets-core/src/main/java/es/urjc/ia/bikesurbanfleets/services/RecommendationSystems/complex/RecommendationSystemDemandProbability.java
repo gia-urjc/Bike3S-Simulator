@@ -2,14 +2,14 @@ package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
 import com.google.gson.JsonObject;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import static es.urjc.ia.bikesurbanfleets.common.util.ParameterReader.getParameters;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * This class is a system which recommends the user the stations to which he
@@ -21,73 +21,66 @@ import java.util.List;
  *
  */
 @RecommendationSystemType("DEMAND_PROBABILITY")
-public final class RecommendationSystemDemandProbability extends RecommendationSystemDemandProbabilityBased {
+public final class RecommendationSystemDemandProbability extends AbstractRecommendationSystemDemandProbabilityBased {
 
-    public static class RecommendationParameters extends RecommendationSystemDemandProbabilityBased.RecommendationParameters{
-         double desireableProbability = 0.8;
-         double probfactor = 6000D;
+    public static class RecommendationParameters extends AbstractRecommendationSystemDemandProbabilityBased.RecommendationParameters {
+
+        double desireableProbability = 0.8;
+        double probfactor = 6000D;
     }
-    
+
     private RecommendationParameters parameters;
+
     public RecommendationSystemDemandProbability(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         //***********Parameter treatment*****************************
         //parameters are read in the superclass
         //afterwards, they have to be cast to this parameters class
         super(recomenderdef, ss, new RecommendationParameters());
-        getParameters(recomenderdef, parameters);
-        this.parameters= (RecommendationParameters)(super.parameters);
+        this.parameters = (RecommendationParameters) (super.parameters);
     }
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsRent(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
-        List<StationUtilityData> orderedlist = new ArrayList<>();
-        for (StationUtilityData sd : stationdata) {
-            addrent(sd, orderedlist, maxdistance);
-        }
-        return orderedlist;
+    protected Stream<StationData> specificOrderStationsRent(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
+        return stationdata.sorted(rentComparator());
     }
 
     @Override
-    protected List<StationUtilityData> specificOrderStationsReturn(List<StationUtilityData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
-        List<StationUtilityData> orderedlist = new ArrayList<>();
-        for (StationUtilityData sd : stationdata) {
-            addreturn(sd, orderedlist);
-        }
-        return orderedlist;
+    protected Stream<StationData> specificOrderStationsReturn(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
+        return stationdata.sorted(returnComparator());
     }
 
-    protected boolean betterOrSameRent(StationUtilityData newSD, StationUtilityData oldSD) {
- /*       if (newSD.getProbabilityTake() >= this.parameters.desireableProbability
-                && oldSD.getProbabilityTake() < this.parameters.desireableProbability) {
-            return true;
-        }
-        if (newSD.getProbabilityTake() < this.parameters.desireableProbability
-                && oldSD.getProbabilityTake() >= this.parameters.desireableProbability) {
-            return false;
-        }
-   */     double timediff = (newSD.getWalkTime() - oldSD.getWalkTime());
-    //    double pn=(Math.pow(newSD.getProbabilityTake(),2)+Math.log10(newSD.getProbabilityTake())+1)/2;
-    //    double po=(Math.pow(oldSD.getProbabilityTake(),2)+Math.log10(oldSD.getProbabilityTake())+1)/2;
-        double probdiff = (newSD.getProbabilityTake() - oldSD.getProbabilityTake()) * parameters.probfactor;
-    //    double probdiff = (pn-po) * parameters.probfactor;
-        return probdiff > timediff;
+    private Comparator<StationData> rentComparator() {
+        return (newSD, oldSD) -> {
+     /*       if (newSD.probabilityTake >= this.parameters.desireableProbability
+                    && oldSD.probabilityTake < this.parameters.desireableProbability) {
+                return -1;
+            }
+            if (newSD.probabilityTake < this.parameters.desireableProbability
+                    && oldSD.probabilityTake >= this.parameters.desireableProbability) {
+                return 1;
+            }*/
+            double timediff = (newSD.walktime - oldSD.walktime);
+            double probdiff = (newSD.probabilityTake - oldSD.probabilityTake) * parameters.probfactor;
+            return Double.compare(timediff, probdiff);
+        };
     }
- 
-    protected boolean betterOrSameReturn(StationUtilityData newSD, StationUtilityData oldSD) {
-  /*      if (newSD.getProbabilityReturn() >= this.parameters.desireableProbability
-                && oldSD.getProbabilityReturn() < this.parameters.desireableProbability) {
-            return true;
-        }
-        if (newSD.getProbabilityReturn() < this.parameters.desireableProbability
-                && oldSD.getProbabilityReturn() >= this.parameters.desireableProbability) {
-            return false;
-        }
-  */      double timediff = ((newSD.getBiketime() + newSD.getWalkTime())
-                - (oldSD.getBiketime() + oldSD.getWalkTime()));
-    //    double pn=(Math.pow(newSD.getProbabilityReturn(),2)+Math.log10(newSD.getProbabilityReturn())+1)/2;
-    //    double po=(Math.pow(oldSD.getProbabilityReturn(),2)+Math.log10(oldSD.getProbabilityReturn())+1)/2;
-        double probdiff = (newSD.getProbabilityReturn() - oldSD.getProbabilityReturn()) * parameters.probfactor;
-     //   double probdiff = (pn-po) * parameters.probfactor;
-        return probdiff > timediff;
+
+    private Comparator<StationData> returnComparator() {
+        return (newSD, oldSD) -> {
+       /*     if (newSD.probabilityReturn >= this.parameters.desireableProbability
+                    && oldSD.probabilityReturn < this.parameters.desireableProbability) {
+                return -1;
+            }
+            if (newSD.probabilityReturn < this.parameters.desireableProbability
+                    && oldSD.probabilityReturn >= this.parameters.desireableProbability) {
+                return 1;
+            }
+*/
+            double timediff = ((newSD.biketime + newSD.walktime)
+                    - (oldSD.biketime + oldSD.walktime));
+            double probdiff = (newSD.probabilityReturn - oldSD.probabilityReturn) * parameters.probfactor;
+            return Double.compare(timediff, probdiff);
+        };
     }
+
 }

@@ -5,8 +5,7 @@
  */
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
-import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
-import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationUtilityData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 
@@ -53,7 +52,7 @@ public abstract class UtilitiesProbabilityCalculator {
     public abstract double calculateProbabilityAtLeast1UserArrivingForTakeOnlyTakes(Station s, double fromtime,double duration) ;
     public abstract double calculateProbabilityAtLeast1UserArrivingForReturnOnlyReturns(Station s, double fromtime,double duration) ;
    
-    public  abstract double getGlobalProbabilityImprovementIfTake(StationUtilityData sd ) ;
+    public  abstract double getGlobalProbabilityImprovementIfTake(StationData sd ) ;
 
-    public abstract double getGlobalProbabilityImprovementIfReturn(StationUtilityData sd) ;
+    public abstract double getGlobalProbabilityImprovementIfReturn(StationData sd) ;
 }
