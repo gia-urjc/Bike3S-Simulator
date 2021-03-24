@@ -160,7 +160,7 @@ This project is prepared for any IDE or Text editor you want. Some editors/IDEs 
 
 # Publications 
 
-1. Fernández, A., Billhardt, H., Ossowski, S., Sánchez, Ó. (2020) Bike3S: A tool for bike sharing systems simulation. Journal of Simulation, 0 (0), pp. 1-17.
+1. Fernández, A., Billhardt, H., Ossowski, S., Sánchez, Ó. (2020) Bike3S: A tool for bike sharing systems simulation. Journal of Simulation, 14 (4), pp. 278-294.
     - link [https://doi.org/10.1080/17477778.2020.1718022](https://doi.org/10.1080/17477778.2020.1718022)
 
 2. Fernández A., Billhardt H., Timón S., Ruiz C., Sánchez Ó., Bernabé I. (2019) Balancing Strategies for Bike Sharing Systems. In: Lujak M. (eds) Agreement Technologies. AT 2018. Lecture Notes in Computer Science, vol 11327. pp 208-222. Springer, Cham
