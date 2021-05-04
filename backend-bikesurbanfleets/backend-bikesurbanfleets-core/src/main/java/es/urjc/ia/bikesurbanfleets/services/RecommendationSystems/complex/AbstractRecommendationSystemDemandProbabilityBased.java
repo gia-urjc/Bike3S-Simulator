@@ -29,7 +29,7 @@ public abstract class AbstractRecommendationSystemDemandProbabilityBased extends
         public boolean takeintoaccountexpected = true;
         public boolean takeintoaccountcompromised = true;
         public int additionalResourcesDesiredInProbability = 0;
-        public double probabilityExponent = Math.E;
+        public double probabilityExponent = 1D;
     }
     protected UtilitiesProbabilityCalculator probutils;
 
@@ -45,7 +45,7 @@ public abstract class AbstractRecommendationSystemDemandProbabilityBased extends
     @Override
     public Stream<StationData> recommendStationToRentBike(final Stream<StationData> candidates, final GeoPoint currentposition, double maxdist) {
         Stream<StationData> stationDataStream = candidates
-                //.filter(s -> s.availableBikes>0) //no filter; all stations are used
+          //      .filter(s -> s.availableBikes>0) //no filter; all stations are used
                 .map(sd -> {
                     sd.probabilityTake = probutils.calculateTakeProbability(sd.station, sd.walktime);
                     return sd;
@@ -58,7 +58,7 @@ public abstract class AbstractRecommendationSystemDemandProbabilityBased extends
     @Override
     public Stream<StationData> recommendStationToReturnBike(final Stream<StationData> candidates, final GeoPoint currentposition, final GeoPoint destination) {
         Stream<StationData> stationDataStream = candidates
-                //.filter(s -> s.availableSlots>0) //no filter; all stations are used
+        //        .filter(s -> s.availableSlots>0) //no filter; all stations are used
                 .map(sd -> {
                     sd.probabilityReturn = probutils.calculateReturnProbability(sd.station, sd.biketime);
                     return sd;
@@ -124,7 +124,7 @@ public abstract class AbstractRecommendationSystemDemandProbabilityBased extends
             //statistics
             StationData fistr = su.get(0);
             probst += fistr.probabilityTake;
-            avcost = ((avcost * callst) + fistr.expectedTimeIfNotAbandon) / (double) (callst + 1);
+            avcost = ((avcost * callst) + fistr.walktime) / (double) (callst + 1);
             avabandorate += fistr.abandonProbability;
             callst++;
             System.out.format("Expected successrate take: %9.8f abandon rate % 9.8f expected time (if sucess): %5.1f %n", (probst / callst), (avabandorate / callst), avcost);
@@ -170,7 +170,7 @@ public abstract class AbstractRecommendationSystemDemandProbabilityBased extends
             //statistics
             StationData fistr = su.get(0);
             probsr += fistr.probabilityReturn;
-            avcosr = ((avcosr * callsr) + fistr.expectedTimeIfNotAbandon) / (double) (callsr + 1);
+            avcosr = ((avcosr * callsr) + fistr.walktime+ fistr.biketime) / (double) (callsr + 1);
             callsr++;
             System.out.format("Expected successrate return: %9.8f expected time (if sucess): %5.1f %n", (probsr / callsr), avcosr);
             if (fistr.probabilityReturn < 0.6) {

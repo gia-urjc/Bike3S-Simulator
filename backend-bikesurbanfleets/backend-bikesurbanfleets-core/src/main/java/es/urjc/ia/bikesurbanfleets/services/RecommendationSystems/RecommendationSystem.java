@@ -16,8 +16,6 @@ import es.urjc.ia.bikesurbanfleets.worldentities.stations.StationManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,7 +23,7 @@ public abstract class RecommendationSystem {
 
     //variable to print debug output for analysis
     protected final boolean printHints = true;
-    protected final int maxNumberPrint = 5;
+    protected final int maxNumberPrint = 3;
 
     /**
      * It provides information about the infraestructure state.

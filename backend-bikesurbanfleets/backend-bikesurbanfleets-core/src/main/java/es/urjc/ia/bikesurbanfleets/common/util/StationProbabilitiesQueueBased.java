@@ -6,6 +6,8 @@ package es.urjc.ia.bikesurbanfleets.common.util;
  */
 public class StationProbabilitiesQueueBased {
     double[] probabilities;
+    double exprentUnsucceses=0;
+    double expreturnUnsucceses=0;
     int capacity;
     final double lambda;
     final double  my;
@@ -69,16 +71,10 @@ public class StationProbabilitiesQueueBased {
         calculateProbsWithStartDistributionAndChanges(changes,startDistribution);
     }
 
-    private void calculateProbs(int initialnumberbikes){
-        if (endtime<h) 
-            throw new RuntimeException("invalid endtime");
-
-        double[] oldprobs = new double[capacity + 1];
+    private void evolveProbs(double[] oldprobs){
         double[] newprobs = new double[capacity + 1];
-        for (int i = 0; i <= capacity; i++) {
-            oldprobs[i] = 0;
-        }
-        oldprobs[initialnumberbikes] = 1;
+        exprentUnsucceses=0;
+        expreturnUnsucceses=0;
 
         double accumulated_h = 0;
         double[] auxpr;
@@ -86,11 +82,31 @@ public class StationProbabilitiesQueueBased {
                 <= endtime) {
             updater.update(oldprobs, newprobs);
             accumulated_h = accumulated_h + h;
+            if (accumulated_h<=endtime){
+                exprentUnsucceses=exprentUnsucceses+h*my*(newprobs[0]+oldprobs[0])/2d;
+                expreturnUnsucceses=expreturnUnsucceses+h*lambda*(newprobs[capacity]+oldprobs[capacity])/2d;
+            } else {
+                exprentUnsucceses=exprentUnsucceses+(endtime-accumulated_h+h)*my*(newprobs[0]+oldprobs[0])/2d;
+                expreturnUnsucceses=expreturnUnsucceses+(endtime-accumulated_h+h)*lambda*(newprobs[capacity]+oldprobs[capacity])/2d;
+            }
             auxpr = oldprobs;
             oldprobs = newprobs;
             newprobs = auxpr;
         }
         probabilities = oldprobs;
+    }
+    
+    private void calculateProbs(int initialnumberbikes){
+        if (endtime<h) 
+            throw new RuntimeException("invalid endtime");
+
+        double[] oldprobs = new double[capacity + 1];
+        for (int i = 0; i <= capacity; i++) {
+            oldprobs[i] = 0;
+        }
+        oldprobs[initialnumberbikes] = 1;
+
+        evolveProbs(oldprobs);
     }
 
     private void calculateProbsWithStartDistributionAndChanges(int changes,double[] startDistribution) {
@@ -100,7 +116,6 @@ public class StationProbabilitiesQueueBased {
         
         //Copy and apply changes
         double[] oldprobs = new double[capacity + 1];
-        double[] newprobs = new double[capacity + 1];
         if (changes<=0){
             oldprobs[0] = startDistribution[0];
             for (int i=1; i<=-changes; i++) {
@@ -125,20 +140,17 @@ public class StationProbabilitiesQueueBased {
             }             
         }
 
-        double accumulated_h = 0;
-        double[] auxpr;
-        while (accumulated_h<= endtime) {
-            updater.update(oldprobs, newprobs);
-            accumulated_h = accumulated_h + h;
-            auxpr = oldprobs;
-            oldprobs = newprobs;
-            newprobs = auxpr;
-        }
-        probabilities = oldprobs;       
+        evolveProbs(oldprobs);
     }
 
     public double[] getProbabilityDistribution() {
         return probabilities;
+    }
+    public double getExpectedRentFailors() {
+        return exprentUnsucceses;
+    }
+    public double getExpectedReturnFailors() {
+        return expreturnUnsucceses;
     }
     //accumulated probability P(x>=k) (there are more or igual k bikes
     public double kOrMoreBikesProbability(int k) {

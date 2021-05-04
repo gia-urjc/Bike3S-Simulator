@@ -74,9 +74,9 @@ public class UserObedient extends UserUninformed {
         } else {
             if (printHints) {
                 if (noStationsRecommended) {
-                    System.out.format("[UserInfo] User " + this.getId() + " no recommendation obtained within the maximum distance of %f meters.", desiredmaxdistance);
+                    System.out.format("[UserInfo] User " + this.getId() + " no recommendation obtained within the maximum distance of %f meters.%n", desiredmaxdistance);
                 } else {
-                    System.out.println("[UserInfo] User " + this.getId() + " no station used (all recommendations tried already) ");
+                    System.out.println("[UserInfo] User " + this.getId() + " no station used (all recommendations tried already)");
                 }
             }
         }
@@ -86,8 +86,8 @@ public class UserObedient extends UserUninformed {
     @Override
     protected Station determineStationToReturnBike() {
         if (printHints) {
-            System.out.format("[UserInfo] User: %d asks for return recommendation; has walked %f meters of %f maximum.%n",
-                    this.getId(), getMemory().getWalkedToTakeBikeDistance(), parameters.maxDistanceToRentBike);
+            System.out.format("[UserInfo] User: %d asks for return recommendation; has cycled %f meters.%n",
+                    this.getId(), getMemory().getDistanceTraveledByBike());
         }
         List<Recommendation> recommendedStations = recommendationSystem.getRecomendedStationsToReturnBike(this.getPosition(), destinationPlace);
         boolean noStationsRecommended = recommendedStations.isEmpty();

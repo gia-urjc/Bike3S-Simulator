@@ -37,10 +37,16 @@ public class CompareTestApplication {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         testsDir = "/Users/holger/workspace/BikeProjects/Bike3S/Bike3STests/tests_20_7_2018_7_usersrandom_halfbikes/Oct2020/"
      //          + "newProbAnalysisEucledean/sameVelocity_woutUsersSameStations/"
-         +"cost";
-      //   +"cost_simple";
-      //   +"expected";
-      
+      //   +"cost";
+     //    +"cost_simple";
+    //    +"cost_predict";
+    //    +"simple_surround_predict";
+      //  +"surround_cost";
+      //  +"surround_cost_predict";
+      //  +"cost_simple_predict";
+      //  +"simpletest";
+     //    +"maxbikes";
+        + "article/cost_simple_predict";
      //  + "probability_queue";
       //          +"probability_skellam";
       // + "cost_simple";

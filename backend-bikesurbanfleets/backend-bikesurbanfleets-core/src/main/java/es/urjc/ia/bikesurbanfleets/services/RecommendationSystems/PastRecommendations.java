@@ -86,7 +86,8 @@ public class PastRecommendations {
                 if (postchanges > er.maxpostchanges) {
                     er.maxpostchanges = postchanges;
                 }
-            }
+                 er.lastendinstantexpected = e.expectedendtime;
+               }
         }
         return er;
     }

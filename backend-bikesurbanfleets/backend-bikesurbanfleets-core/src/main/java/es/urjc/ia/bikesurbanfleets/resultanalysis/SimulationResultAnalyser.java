@@ -8,21 +8,11 @@ package es.urjc.ia.bikesurbanfleets.resultanalysis;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphHopperManager;
 import es.urjc.ia.bikesurbanfleets.services.graphManager.GraphManager;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GeoRouteCreationException;
-import es.urjc.ia.bikesurbanfleets.common.graphs.exceptions.GraphHopperIntegrationException;
-import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.history.HistoryJsonClasses;
 import es.urjc.ia.bikesurbanfleets.history.HistoryJsonClasses.FinalGlobalValues;
-import es.urjc.ia.bikesurbanfleets.history.entities.HistoricStation;
-import es.urjc.ia.bikesurbanfleets.history.entities.HistoricUser;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.ManagerDataAnalyzer.GlobalManagerDataForExecution;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.StationDataAnalyzer.GlobalStationDataForExecution;
 import es.urjc.ia.bikesurbanfleets.resultanalysis.UserDataAnalyzer.GlobalUserDataForExecution;
@@ -34,12 +24,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  *

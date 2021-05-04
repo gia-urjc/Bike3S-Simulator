@@ -23,14 +23,14 @@ import java.util.stream.Stream;
  *
  * @author holger
  */
-@RecommendationSystemType("DEMAND_cost_surrounding")
-public class RecommendationSystemDemandProbabilityCostSurrounding extends AbstractRecommendationSystemDemandProbabilityBased {
+@RecommendationSystemType("SURROUNDINGCOST")
+public class RecommendationSystemDemandProbabilitySurroundingCost extends AbstractRecommendationSystemDemandProbabilityBased {
 
     public static class RecommendationParameters extends AbstractRecommendationSystemDemandProbabilityBased.RecommendationParameters {
 
         private double desireableProbability = 0.8;
         private double unsucesscostRentPenalisation = 3000; //with calculator2bis=between 4000 and 6000
-        private double unsucesscostReturnPenalisation = 30000; //with calculator2bis=between 4000 and 6000
+        private double unsucesscostReturnPenalisation = 3000; //with calculator2bis=between 4000 and 6000
         private double MaxDistanceSurroundingStations = 500;
     }
 
@@ -39,7 +39,7 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Abstra
 
     private UtilitiesProbabilityCalculationQueue probutilsqueue;
 
-    public RecommendationSystemDemandProbabilityCostSurrounding(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandProbabilitySurroundingCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         //***********Parameter treatment*****************************
         //parameters are read in the superclass
         //afterwards, they have to be cast to this parameters class
@@ -47,11 +47,7 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Abstra
         this.parameters = (RecommendationParameters) (super.parameters);
         scc = new CostCalculatorSimple(
                 parameters.unsucesscostRentPenalisation,
-                parameters.unsucesscostReturnPenalisation,
-                probutils, 0, 0,
-                parameters.expectedWalkingVelocity,
-                parameters.expectedCyclingVelocity,
-                graphManager);
+                parameters.unsucesscostReturnPenalisation);
         probutilsqueue = (UtilitiesProbabilityCalculationQueue) probutils;
     }
 
@@ -62,11 +58,19 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Abstra
                     double prob = sd.probabilityTake;
 
                     double secprob = getSurroundingProbRent(sd, sd.walkdist, allstations, maxdistance);
-                    double secextracost = (maxdistance - sd.walktime) / 2D;
-                    double cost = sd.walktime + (1 - prob)
-                            * (secextracost + (1 - secprob) * parameters.unsucesscostRentPenalisation);
+
+                    double secextracost = (maxdistance - sd.walkdist) / parameters.expectedWalkingVelocity;
+                    
+                    double cost = sd.walktime + 
+                            (1 - prob) * (
+                                0 * parameters.unsucesscostRentPenalisation + 
+                                1 *(secprob * secextracost +
+                                (1 - secprob) * parameters.unsucesscostRentPenalisation)
+                            ) ;
 
                     sd.totalCost = cost;
+                    sd.bestNeighbourProbability=secprob;
+                    sd.bestNeighbour=sd.station;
                     return sd;
                 })//apply function to calculate cost 
                 .sorted(costRentComparator(parameters.desireableProbability));
@@ -79,11 +83,18 @@ public class RecommendationSystemDemandProbabilityCostSurrounding extends Abstra
                     double prob = sd.probabilityReturn;
 
                     double secprob = getSurroundingProbReturn(sd, sd.bikedist, allstations);
-                    double secextracostbike = parameters.MaxDistanceSurroundingStations  / 2D;;
+                    double secextracostbike = parameters.MaxDistanceSurroundingStations / parameters.expectedCyclingVelocity;
 
-                    double cost = sd.biketime + sd.walktime + (1 - prob)
-                            * (secextracostbike + (1 - secprob) * parameters.unsucesscostReturnPenalisation);
+                    double cost = sd.biketime + sd.walktime +  
+                            (1 - prob) * (
+                                0 * parameters.unsucesscostReturnPenalisation + 
+                                1 * (secprob * secextracostbike +
+                                (1 - secprob) * parameters.unsucesscostReturnPenalisation)
+                            ) ;
+
                     sd.totalCost = cost;
+                    sd.bestNeighbourProbability=secprob;
+                    sd.bestNeighbour=sd.station;
                     return sd;
                 })//apply function to calculate cost
                 .sorted(costReturnComparator(parameters.desireableProbability));

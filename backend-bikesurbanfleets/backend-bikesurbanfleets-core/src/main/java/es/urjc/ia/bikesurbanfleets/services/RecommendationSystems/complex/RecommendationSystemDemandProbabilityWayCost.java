@@ -5,9 +5,12 @@ import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
 import es.urjc.ia.bikesurbanfleets.services.SimulationServices;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.RecommendationSystemType;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
+import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex.ComplexCostCalculatorNew.stationPoint;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import java.util.ArrayList;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -20,8 +23,8 @@ import java.util.stream.Stream;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_cost")
-public class RecommendationSystemDemandProbabilityCost extends AbstractRecommendationSystemDemandProbabilityBased {
+@RecommendationSystemType("WAYCOST")
+public class RecommendationSystemDemandProbabilityWayCost extends AbstractRecommendationSystemDemandProbabilityBased {
 
     public static class RecommendationParameters extends AbstractRecommendationSystemDemandProbabilityBased.RecommendationParameters {
 
@@ -34,29 +37,29 @@ public class RecommendationSystemDemandProbabilityCost extends AbstractRecommend
     }
 
     private RecommendationParameters parameters;
-    private ComplexCostCalculator ucc;
+    private ComplexCostCalculatorNew ucc;
 
-    public RecommendationSystemDemandProbabilityCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
+    public RecommendationSystemDemandProbabilityWayCost(JsonObject recomenderdef, SimulationServices ss) throws Exception {
         //***********Parameter treatment*****************************
         //parameters are read in the superclass
         //afterwards, they have to be cast to this parameters class
         super(recomenderdef, ss, new RecommendationParameters());
         this.parameters = (RecommendationParameters) (super.parameters);
 
-        ucc = new ComplexCostCalculator(parameters.minimumMarginProbability, 
+        ucc = new ComplexCostCalculatorNew(parameters.minimumMarginProbability, 
                 parameters.unsucesscostRentPenalisation,
                 parameters.unsucesscostReturnPenalisation,
                 parameters.expectedWalkingVelocity,
                 parameters.expectedCyclingVelocity, 
                 parameters.minProbBestNeighbourRecommendation,
-                probutils, 0, 0, graphManager);
+                probutils, graphManager);
     }
 
     @Override
     protected Stream<StationData> specificOrderStationsRent(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, double maxdistance) {
         return stationdata
                 .map(sd -> {
-                    sd.totalCost = ucc.calculateCostRentHeuristicNow(sd, allstations, maxdistance, parameters.maxNeighbours);
+                    sd.totalCost = ucc.calculateWayCostRentHeuristic(new LinkedList<>(), sd, sd.walkdist, new ArrayList<>(), allstations, sd.probabilityTake, 0, maxdistance, true, parameters.maxNeighbours);
                     return sd;
                 })//apply function to calculate cost 
                 .sorted(costRentComparator(parameters.desireableProbability));
@@ -66,7 +69,7 @@ public class RecommendationSystemDemandProbabilityCost extends AbstractRecommend
     protected Stream<StationData> specificOrderStationsReturn(Stream<StationData> stationdata, List<Station> allstations, GeoPoint currentuserposition, GeoPoint userdestination) {
         return stationdata
                 .map(sd -> {
-                    sd.totalCost = ucc.calculateCostReturnHeuristicNow(sd, userdestination, allstations,parameters.maxNeighbours);
+                    sd.totalCost = ucc.calculateWayCostReturnHeuristic(new LinkedList<>(), sd, sd.bikedist, userdestination,new ArrayList<>(), allstations, sd.probabilityReturn, 0, true, parameters.maxNeighbours);
                     return sd;
                 })//apply function to calculate cost
                 .sorted(costReturnComparator(parameters.desireableProbability));

@@ -9,7 +9,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import es.urjc.ia.bikesurbanfleets.common.graphs.GeoPoint;
-import es.urjc.ia.bikesurbanfleets.common.graphs.GeoRoute;
 import es.urjc.ia.bikesurbanfleets.common.interfaces.Event;
 import es.urjc.ia.bikesurbanfleets.core.UserEvents.EventUser;
 import es.urjc.ia.bikesurbanfleets.history.HistoryJsonClasses;
@@ -21,11 +20,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
-import es.urjc.ia.bikesurbanfleets.defaultConfiguration.GlobalConfigurationParameters;
 
 /**
  *

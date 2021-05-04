@@ -10,6 +10,7 @@ That is here, expected bikes in the futer (or takes of bikes) are treated as if 
  */
 package es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.complex;
 
+import java.util.List;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.PastRecommendations;
 import es.urjc.ia.bikesurbanfleets.common.util.ProbabilityDistributions;
 import es.urjc.ia.bikesurbanfleets.common.util.StationProbabilitiesQueueBased;
@@ -70,6 +71,10 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
         res.avcap = s.getCapacity() - s.getReservedBikes() - s.getReservedSlots();
         res.avbikes = s.availableBikes();
         res.avslots = res.avcap - res.avbikes;
+        res.takedemandrate = dm.getStationTakeRateIntervall(s.getId(),
+                SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
+        res.returndemandrate = dm.getStationReturnRateIntervall(s.getId(),
+                SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
         if (takeintoaccountexpected) {
             PastRecommendations.ExpBikeChangeResult er = pastrecs.getExpectedBikechanges(s.getId(), 0, timeoffset);
             res.avbikes = res.avbikes + (int) Math.floor(er.changes * probabilityUsersObey);
@@ -79,23 +84,25 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
                 res.maxpostchanges = (int) er.maxpostchanges;
                 res.minpostchanges = (int) er.minpostchanges;
             }
+            if (res.avbikes < 0) {
+                res.avbikes = 0;
+            }
+            if (res.avbikes > res.avcap) {
+                res.avbikes = res.avcap;
+            }
+            if (res.avslots < 0) {
+                res.avslots = 0;
+            }
+            if (res.avslots > res.avcap) {
+                res.avslots = res.avcap;
+            }
+            //modify the demandrates because of knowing some info
+            //     double factor = (SimulationDateTime.getCurrentSimulationInstant()
+            //             + timeoffset) - er.lastendinstantexpected;
+            //     factor = Math.max(0, Math.min(1, factor));
+            //     res.takedemandrate = res.takedemandrate * 0.5;
+            //     res.returndemandrate = res.returndemandrate * 0.5;
         }
-        if (res.avbikes < 0) {
-            res.avbikes = 0;
-        }
-        if (res.avbikes > res.avcap) {
-            res.avbikes = res.avcap;
-        }
-        if (res.avslots < 0) {
-            res.avslots = 0;
-        }
-        if (res.avslots > res.avcap) {
-            res.avslots = res.avcap;
-        }
-        res.takedemandrate = dm.getStationTakeRateIntervall(s.getId(),
-                SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
-        res.returndemandrate = dm.getStationReturnRateIntervall(s.getId(),
-                SimulationDateTime.getCurrentSimulationDateTime(), timeoffset);
         return res;
     }
 
@@ -153,62 +160,209 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
     }
 
     //method for calculation the expected fails (rental and return) if a bike is taken at 
-    //currenttime+aarivalofset
-    //calculates the probabilities of taking or returning bikes at a station at the moment 
-    //currenttime+predictionoffset,
-    // if (or if not) a bike is taken/returned at time currenttime+arrivaloffset
-    // arrivaltime may be before or after the predictioninterval
-    public ProbabilityData calculateExpectedFutureFailsWithAndWithoutArrival(Station s, double arrivaloffset, double predictionoffset) {
+    //currenttime+aarivalofset for users that arrive between 
+    //currenttime+aarivalofset and currenttime+aarivalofset+checkintervall
+    @Override
+    public ExpectedUnsuccessData calculateExpectedFutureFailsWithAndWithoutRent(Station s, double arrivaloffset, double checkintervall) {
 
-        ProbabilityData pd = new ProbabilityData();
+        ExpectedUnsuccessData pd = new ExpectedUnsuccessData();
+
+        //first analyse the probs if no take/return takes place or the take/return occures after currenttime+predictionoffset
+        //(probability distribution  obtained from currenttime up to currenttime+totime) 
+        IntTuple avCB = getAvailableCapandBikes(s, arrivaloffset);
+        int initialbikes = Math.max(Math.min(avCB.avbikes, avCB.avcap), 0);
+        StationProbabilitiesQueueBased pc = new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta, h, avCB.returndemandrate,
+                avCB.takedemandrate, avCB.avcap, initialbikes);
+        //this is the probability distribution of bikes at the moment the user arrives
+        double[] probdist = pc.getProbabilityDistribution();
+
+        //get the deman rates
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(),
+                SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int) arrivaloffset), checkintervall);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(),
+                SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int) arrivaloffset), checkintervall);
+
+        //now analyse the case where no bike is taken 
+        StationProbabilitiesQueueBased pcnew = new StationProbabilitiesQueueBased(
+                probdist, 0, StationProbabilitiesQueueBased.Type.RungeKutta, h, returndemandrate,
+                takedemandrate);
+        pd.expUnsuccessRentIfNoChange = pcnew.getExpectedRentFailors();
+        pd.expUnsuccessReturnIfNoChange = pcnew.getExpectedReturnFailors();
+
+        //now analyse the case where a bike is taken 
+        pcnew = new StationProbabilitiesQueueBased(
+                probdist, -1, StationProbabilitiesQueueBased.Type.RungeKutta, h, returndemandrate,
+                takedemandrate);
+        pd.expUnsuccessRentAfterTake = pcnew.getExpectedRentFailors();
+        pd.expUnsuccessReturnAfterTake = pcnew.getExpectedReturnFailors();
+        return pd;
+    }
+
+    //method for calculation the expected fails (rental and return) if a bike is taken at 
+    //currenttime+aarivalofset for users that arrive between 
+    //currenttime+aarivalofset and currenttime+aarivalofset+checkintervall
+    @Override
+    public ExpectedUnsuccessData calculateExpectedFutureFailsWithAndWithoutReturn(Station s, double arrivaloffset, double checkintervall) {
+
+        ExpectedUnsuccessData pd = new ExpectedUnsuccessData();
 
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // now there are two different cases
         //case1: predictionoffset<arrivaloffset
         //     here we consider the take/return like q compromised bike, thus, 
         //     of one bike we calc the prob of getting two bikes (similar for all combinations)
-        if (predictionoffset <= arrivaloffset) {
+        //first analyse the probs if no take/return takes place or the take/return occures after currenttime+predictionoffset
+        //(probability distribution  obtained from currenttime up to currenttime+totime) 
+        IntTuple avCB = getAvailableCapandBikes(s, arrivaloffset);
+        int initialbikes = Math.max(Math.min(avCB.avbikes, avCB.avcap), 0);
+        StationProbabilitiesQueueBased pc = new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta, h, avCB.returndemandrate,
+                avCB.takedemandrate, avCB.avcap, initialbikes);
+        //this is the probability distribution of bikes at the moment the user arrives
+        double[] probdist = pc.getProbabilityDistribution();
 
-            //first analyse the probs if no take/return takes place or the take/return occures after currenttime+predictionoffset
-            //(probability distribution  obtained from currenttime up to currenttime+totime) 
-            IntTuple avCB = getAvailableCapandBikes(s, predictionoffset);
-            int initialbikes = Math.max(Math.min(avCB.avbikes, avCB.avcap), 0);
-            StationProbabilitiesQueueBased pc = new StationProbabilitiesQueueBased(
-                    StationProbabilitiesQueueBased.Type.RungeKutta, h, avCB.returndemandrate,
-                    avCB.takedemandrate, avCB.avcap, initialbikes);
-            int requiredbikes = 1 + additionalResourcesDesiredInProbability - avCB.minpostchanges;
-            int requiredslots = 1 + additionalResourcesDesiredInProbability + avCB.maxpostchanges;
-            //probabilities if no take/return occurres
-            pd.probabilityTake = Math.pow(pc.kOrMoreBikesProbability(requiredbikes), probabilityExponent);
-            pd.probabilityReturn = Math.pow(pc.kOrMoreSlotsProbability(requiredslots), probabilityExponent);
+        //get the deman rates
+        double takedemandrate = dm.getStationTakeRateIntervall(s.getId(),
+                SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int) arrivaloffset), checkintervall);
+        double returndemandrate = dm.getStationReturnRateIntervall(s.getId(),
+                SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int) arrivaloffset), checkintervall);
 
-            //this part is assuming that we consider that a take/return takes place just at currenttime+predictionoffset
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            /*          pd.probabilityTakeAfterTake = Math.pow(pc.kOrMoreBikesProbability(requiredbikes+1), probabilityExponent);
-              pd.probabilityReturnAfterTake =pd.probabilityReturn;
-              pd.probabilityReturnAfterReturn = Math.pow(pc.kOrMoreSlotsProbability(requiredslots+1), probabilityExponent);
-              pd.probabilityTakeAfterRerturn = pd.probabilityTake;  
-             */
-            //in this part we assume that the take/return takes place at the beginning
-            // adding/resting a bike to the initial bikes
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // assume there was 1 more take (1 bike less)
-            initialbikes = Math.max(Math.min(avCB.avbikes - 1, avCB.avcap), 0);
-            pc = new StationProbabilitiesQueueBased(
-                    StationProbabilitiesQueueBased.Type.RungeKutta, h, avCB.returndemandrate,
-                    avCB.takedemandrate, avCB.avcap, initialbikes);
-            pd.probabilityTakeAfterTake = Math.pow(pc.kOrMoreBikesProbability(requiredbikes), probabilityExponent);
-            pd.probabilityReturnAfterTake = Math.pow(pc.kOrMoreSlotsProbability(requiredslots), probabilityExponent);
-            // assume there was 1 more return (1 bike more)
-            initialbikes = Math.max(Math.min(avCB.avbikes + 1, avCB.avcap), 0);
-            pc = new StationProbabilitiesQueueBased(
-                    StationProbabilitiesQueueBased.Type.RungeKutta, h, avCB.returndemandrate,
-                    avCB.takedemandrate, avCB.avcap, initialbikes);
-            pd.probabilityTakeAfterRerturn = Math.pow(pc.kOrMoreBikesProbability(requiredbikes), probabilityExponent);
-            pd.probabilityReturnAfterReturn = Math.pow(pc.kOrMoreSlotsProbability(requiredslots), probabilityExponent);
+        //now analyse the case where no bike is returned 
+        StationProbabilitiesQueueBased pcnew = new StationProbabilitiesQueueBased(
+                probdist, 0, StationProbabilitiesQueueBased.Type.RungeKutta, h, returndemandrate,
+                takedemandrate);
+        pd.expUnsuccessRentIfNoChange = pcnew.getExpectedRentFailors();
+        pd.expUnsuccessReturnIfNoChange = pcnew.getExpectedReturnFailors();
 
+        //now analyse the case where a bike is returned 
+        pcnew = new StationProbabilitiesQueueBased(
+                probdist, 1, StationProbabilitiesQueueBased.Type.RungeKutta, h, returndemandrate,
+                takedemandrate);
+        pd.expUnsuccessRentAfterReturn = pcnew.getExpectedRentFailors();
+        pd.expUnsuccessReturnAfterReturn = pcnew.getExpectedReturnFailors();
+        return pd;
+    }
+
+    //method for calculation the expected fails (rental and return) in the surroundings
+    //if a bike is taken at a station 
+    //currenttime+aarivalofset for users that arrive between 
+    //currenttime+aarivalofset and currenttime+aarivalofset+checkintervall
+    public ExpectedUnsuccessData calculateExpectedFutureFailsWithAndWithoutRentSurrounding(
+            Station s, double arrivaloffset, double checkintervall,
+            double maxdistancesurrounding, List<Station> allStations) {
+
+        ExpectedUnsuccessData pd = new ExpectedUnsuccessData();
+        //get the deman rates
+        double futuretakedemandrate = 0;
+        double futurereturndemandrate = 0;
+        double currenttakedemanrate = 0;
+        double currentreturndemandrate = 0;
+        double avbikes = 0;
+        double capacity = 0;
+        double factor;
+        for (Station other : allStations) {
+            double dist = s.getPosition().eucleadeanDistanceTo(other.getPosition());
+            if (dist < maxdistancesurrounding) {
+                //distance factor
+                factor = (maxdistancesurrounding - dist) / maxdistancesurrounding;
+                //available bikes, capacity and current demand rates
+                IntTuple avCB = getAvailableCapandBikes(other, arrivaloffset);
+                avbikes += factor * (double) avCB.avbikes;
+                capacity += factor * (double) avCB.avcap;
+                currenttakedemanrate += factor * avCB.takedemandrate;
+                currentreturndemandrate += factor * avCB.returndemandrate;
+                //future deman rates
+                futuretakedemandrate += factor * dm.getStationTakeRateIntervall(other.getId(),
+                        SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int) arrivaloffset), checkintervall);
+                futurereturndemandrate += factor * dm.getStationReturnRateIntervall(other.getId(),
+                        SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int) arrivaloffset), checkintervall);
+            }
         }
-        return null;
+        //normalize
+        int initcapacity = (int) (Math.round(capacity));
+        int initialbikes = (int) (Math.round(Math.max(Math.min(avbikes, capacity), 0)));
+
+        //first analyse the probs if no take/return takes place or the take/return occures after currenttime+predictionoffset
+        //(probability distribution  obtained from currenttime up to currenttime+totime) 
+        StationProbabilitiesQueueBased pc = new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta, h, currentreturndemandrate,
+                currenttakedemanrate, initcapacity, initialbikes);
+        //this is the probability distribution of bikes at the moment the user arrives
+        double[] probdist = pc.getProbabilityDistribution();
+
+        //now analyse the case where no bike is taken 
+        StationProbabilitiesQueueBased pcnew = new StationProbabilitiesQueueBased(
+                probdist, 0, StationProbabilitiesQueueBased.Type.RungeKutta, h, futurereturndemandrate,
+                futuretakedemandrate);
+        pd.expUnsuccessRentIfNoChange = pcnew.getExpectedRentFailors();
+        pd.expUnsuccessReturnIfNoChange = pcnew.getExpectedReturnFailors();
+
+        //now analyse the case where a bike is taken 
+        pcnew = new StationProbabilitiesQueueBased(
+                probdist, -1, StationProbabilitiesQueueBased.Type.RungeKutta, h, futurereturndemandrate,
+                futuretakedemandrate);
+        pd.expUnsuccessRentAfterTake = pcnew.getExpectedRentFailors();
+        pd.expUnsuccessReturnAfterTake = pcnew.getExpectedReturnFailors();
+        return pd;
+    }
+
+    public ExpectedUnsuccessData calculateExpectedFutureFailsWithAndWithoutReturnSurrounding(
+            Station s, double arrivaloffset, double checkintervall,
+            double maxdistancesurrounding, List<Station> allStations) {
+
+        ExpectedUnsuccessData pd = new ExpectedUnsuccessData();
+        //get the deman rates
+        double futuretakedemandrate = 0;
+        double futurereturndemandrate = 0;
+        double currenttakedemanrate = 0;
+        double currentreturndemandrate = 0;
+        double avbikes = 0;
+        double capacity = 0;
+        double factor;
+        for (Station other : allStations) {
+            double dist = s.getPosition().eucleadeanDistanceTo(other.getPosition());
+            if (dist < maxdistancesurrounding) {
+            //distance factor
+            factor = (maxdistancesurrounding -dist) / maxdistancesurrounding;
+            //available bikes, capacity and current demand rates
+            IntTuple avCB = getAvailableCapandBikes(other, arrivaloffset);
+            avbikes += factor * (double) avCB.avbikes;
+            capacity += factor * (double) avCB.avcap;
+            currenttakedemanrate += factor * avCB.takedemandrate;
+            currentreturndemandrate += factor * avCB.returndemandrate;
+            //future deman rates
+            futuretakedemandrate += factor * dm.getStationTakeRateIntervall(other.getId(),
+                    SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int) arrivaloffset), checkintervall);
+            futurereturndemandrate += factor * dm.getStationReturnRateIntervall(other.getId(),
+                    SimulationDateTime.getCurrentSimulationDateTime().plusSeconds((int) arrivaloffset), checkintervall);
+            }
+        }
+        //normalize
+        int initcapacity = (int) (Math.round(capacity));
+        int initialbikes = (int) (Math.round(Math.max(Math.min(avbikes, capacity), 0)));
+
+        //first analyse the probs if no take/return takes place or the take/return occures after currenttime+predictionoffset
+        //(probability distribution  obtained from currenttime up to currenttime+totime) 
+        StationProbabilitiesQueueBased pc = new StationProbabilitiesQueueBased(
+                StationProbabilitiesQueueBased.Type.RungeKutta, h, currentreturndemandrate,
+                currenttakedemanrate, initcapacity, initialbikes);
+        //this is the probability distribution of bikes at the moment the user arrives
+        double[] probdist = pc.getProbabilityDistribution();
+
+        //now analyse the case where no bike is taken 
+        StationProbabilitiesQueueBased pcnew = new StationProbabilitiesQueueBased(
+                probdist, 0, StationProbabilitiesQueueBased.Type.RungeKutta, h, futurereturndemandrate,
+                futuretakedemandrate);
+        pd.expUnsuccessRentIfNoChange = pcnew.getExpectedRentFailors();
+        pd.expUnsuccessReturnIfNoChange = pcnew.getExpectedReturnFailors();
+
+        //now analyse the case where a bike is taken 
+        pcnew = new StationProbabilitiesQueueBased(
+                probdist, 1, StationProbabilitiesQueueBased.Type.RungeKutta, h, futurereturndemandrate,
+                futuretakedemandrate);
+        pd.expUnsuccessRentAfterReturn = pcnew.getExpectedRentFailors();
+        pd.expUnsuccessReturnAfterReturn = pcnew.getExpectedReturnFailors();
+        return pd;
     }
 
     //methods for calculation probabilities    
@@ -240,31 +394,10 @@ public class UtilitiesProbabilityCalculationQueue extends UtilitiesProbabilityCa
             pd.probabilityTake = Math.pow(pc.kOrMoreBikesProbability(requiredbikes), probabilityExponent);
             pd.probabilityReturn = Math.pow(pc.kOrMoreSlotsProbability(requiredslots), probabilityExponent);
 
-            //this part is assuming that we consider that a take/return takes place just at currenttime+predictionoffset
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            /*          pd.probabilityTakeAfterTake = Math.pow(pc.kOrMoreBikesProbability(requiredbikes+1), probabilityExponent);
-              pd.probabilityReturnAfterTake =pd.probabilityReturn;
-              pd.probabilityReturnAfterReturn = Math.pow(pc.kOrMoreSlotsProbability(requiredslots+1), probabilityExponent);
-              pd.probabilityTakeAfterRerturn = pd.probabilityTake;  
-             */
-            //in this part we assume that the take/return takes place at the beginning
-            // adding/resting a bike to the initial bikes
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // assume there was 1 more take (1 bike less)
-            initialbikes = Math.max(Math.min(avCB.avbikes - 1, avCB.avcap), 0);
-            pc = new StationProbabilitiesQueueBased(
-                    StationProbabilitiesQueueBased.Type.RungeKutta, h, avCB.returndemandrate,
-                    avCB.takedemandrate, avCB.avcap, initialbikes);
-            pd.probabilityTakeAfterTake = Math.pow(pc.kOrMoreBikesProbability(requiredbikes), probabilityExponent);
-            pd.probabilityReturnAfterTake = Math.pow(pc.kOrMoreSlotsProbability(requiredslots), probabilityExponent);
-            // assume there was 1 more return (1 bike more)
-            initialbikes = Math.max(Math.min(avCB.avbikes + 1, avCB.avcap), 0);
-            pc = new StationProbabilitiesQueueBased(
-                    StationProbabilitiesQueueBased.Type.RungeKutta, h, avCB.returndemandrate,
-                    avCB.takedemandrate, avCB.avcap, initialbikes);
-            pd.probabilityTakeAfterRerturn = Math.pow(pc.kOrMoreBikesProbability(requiredbikes), probabilityExponent);
-            pd.probabilityReturnAfterReturn = Math.pow(pc.kOrMoreSlotsProbability(requiredslots), probabilityExponent);
-
+            pd.probabilityTakeAfterTake = Math.pow(pc.kOrMoreBikesProbability(requiredbikes + 1), probabilityExponent);
+            pd.probabilityReturnAfterTake = pd.probabilityReturn;
+            pd.probabilityReturnAfterReturn = Math.pow(pc.kOrMoreSlotsProbability(requiredslots + 1), probabilityExponent);
+            pd.probabilityTakeAfterRerturn = pd.probabilityTake;
         } //case2: predictionoffset>arrivaloffset
         //     here we calculate the distribution at currenttime+arrivaloffset; then add/return a bike
         //     and calculate the distribution from there to currenttime+predictionoffset 

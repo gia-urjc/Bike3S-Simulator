@@ -16,6 +16,7 @@ import es.urjc.ia.bikesurbanfleets.core.core.SimulationDateTime;
 import es.urjc.ia.bikesurbanfleets.services.RecommendationSystems.StationData;
 import es.urjc.ia.bikesurbanfleets.services.demandManager.DemandManager;
 import es.urjc.ia.bikesurbanfleets.worldentities.stations.entities.Station;
+import java.util.List;
 
 /**
  *
@@ -105,6 +106,23 @@ public class UtilitiesProbabilityCalculationSkellam extends UtilitiesProbability
         double prob = ProbabilityDistributions.calculateUpCDFSkellamProbability(avCB.takedemandrate, avCB.returndemandrate, k);
         return Math.pow(prob, probabilityExponent); 
     }   
+    
+   @Override
+    public ExpectedUnsuccessData calculateExpectedFutureFailsWithAndWithoutReturn(Station s, double arrivaloffset, double checkintervall) {
+        return null;
+    }
+   @Override
+    public ExpectedUnsuccessData calculateExpectedFutureFailsWithAndWithoutRent(Station s, double arrivaloffset, double checkintervall) {
+        return null;
+    }
+   @Override
+    public ExpectedUnsuccessData calculateExpectedFutureFailsWithAndWithoutReturnSurrounding(Station s, double arrivaloffset, double checkintervall, double maxdistancesurrounding, List<Station> allStations) {
+        return null;
+    }
+   @Override
+    public ExpectedUnsuccessData calculateExpectedFutureFailsWithAndWithoutRentSurrounding(Station s, double arrivaloffset, double checkintervall, double maxdistancesurrounding, List<Station> allStations) {
+        return null;
+    }
     //methods for calculation probabilities    
     //calculates the probabilities of taking or returning bikes at a station at the moment 
     //currenttime+predictionoffset,

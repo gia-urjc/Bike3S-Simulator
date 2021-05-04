@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  * @author IAgroup
  *
  */
-@RecommendationSystemType("DEMAND_PROBABILITY_GLOBAL_PREDICTION")
+@RecommendationSystemType("PROBABILITY_PREDICTION")
 public class RecommendationSystemDemandProbabilityGlobalPrediction extends AbstractRecommendationSystemDemandProbabilityBased {
 
     public static class RecommendationParameters extends AbstractRecommendationSystemDemandProbabilityBased.RecommendationParameters {
