@@ -57,7 +57,7 @@
     "@ng-bootstrap/ng-bootstrap": "^3.3.1",
     "ajv": "^6.12.3",
     "angular6-json-schema-form": "^7.0.1",
-    "bootstrap": "^4.0.0-beta.2",
+    "bootstrap": "^4.3.1",
     "commander": "^2.12.2",
     "conic-gradient": "github:leaverou/conic-gradient",
     "core-js": "^2.5.3",
