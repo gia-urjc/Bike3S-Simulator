@@ -71,7 +71,7 @@
     "jsoneditor": "^5.22.0",
     "leaflet": "^1.2.0",
     "leaflet-draw": "0.4",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.21",
     "moment": "^2.29.2",
     "ng-font-awesome": "github:tao-cumplido/ng-font-awesome",
     "npm": "^6.5.0",
