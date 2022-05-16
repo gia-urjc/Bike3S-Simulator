@@ -160,13 +160,17 @@ This project is prepared for any IDE or Text editor you want. Some editors/IDEs 
 
 # Publications 
 
+
 1. Fernández, A., Billhardt, H., Ossowski, S., Sánchez, Ó. (2020) Bike3S: A tool for bike sharing systems simulation. Journal of Simulation, 14 (4), pp. 278-294.
     - link [https://doi.org/10.1080/17477778.2020.1718022](https://doi.org/10.1080/17477778.2020.1718022)
 
-2. Fernández A., Billhardt H., Timón S., Ruiz C., Sánchez Ó., Bernabé I. (2019) Balancing Strategies for Bike Sharing Systems. In: Lujak M. (eds) Agreement Technologies. AT 2018. Lecture Notes in Computer Science, vol 11327. pp 208-222. Springer, Cham
+2. Billhardt, H.; Fernández, A.; Ossowski, S. (2021) Smart Recommendations for Renting Bikes in Bike-Sharing Systems. Applied Sciences, 11 (20), pp. 15.
+    - link [https://dx.doi.org/10.3390/app11209654](https://dx.doi.org/10.3390/app11209654)
+
+3. Fernández A., Billhardt H., Timón S., Ruiz C., Sánchez Ó., Bernabé I. (2019) Balancing Strategies for Bike Sharing Systems. In: Lujak M. (eds) Agreement Technologies. AT 2018. Lecture Notes in Computer Science, vol 11327. pp 208-222. Springer, Cham
     - link [https://doi.org/10.1007/978-3-030-17294-7_16](https://doi.org/10.1007/978-3-030-17294-7_16)
 
-3. Fernández A., Timón S., Ruiz C., Cumplido T., Billhardt H., Dunkel J. (2018) A Bike Sharing System Simulator. In: Bajo J. et al. (eds) Highlights of Practical Applications of Agents, Multi-Agent Systems, and Complexity: The PAAMS Collection. PAAMS 2018. Communications in Computer and Information Science, vol 887. pp 428-440. Springer, Cham
+4. Fernández A., Timón S., Ruiz C., Cumplido T., Billhardt H., Dunkel J. (2018) A Bike Sharing System Simulator. In: Bajo J. et al. (eds) Highlights of Practical Applications of Agents, Multi-Agent Systems, and Complexity: The PAAMS Collection. PAAMS 2018. Communications in Computer and Information Science, vol 887. pp 428-440. Springer, Cham
     - link [https://doi.org/10.1007/978-3-319-94779-2_37](https://doi.org/10.1007/978-3-319-94779-2_37)
     - Presentation: [BikeSharingSimulator-PAAMS-2018](https://cruizba.github.io/Bike3S-documentation/pdf/Bike3S-SCIA-PAAMS2018.pdf)
 
