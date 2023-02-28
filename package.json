@@ -74,7 +74,7 @@
     "lodash": "^4.17.4",
     "moment": "^2.29.2",
     "ng-font-awesome": "github:tao-cumplido/ng-font-awesome",
-    "npm": "^6.5.0",
+    "npm": "^6.14.18",
     "popper.js": "^1.14.3",
     "request": "^2.87.0",
     "request-progress": "^3.0.0",
